@@ -44,7 +44,7 @@ function(x, y, filename='', ...) {
 	outRaster <- setExtent(outRaster, e, keepres=TRUE)
 	outRaster@layernames <- layerNames(x)
 	
-	if (! inMemory(x)  &  ! fromDisk(x) ) {
+	if (! hasValues(x)) {
 		return(outRaster)
 	}
 	

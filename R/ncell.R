@@ -18,11 +18,7 @@ setMethod('ncell', signature(x='Raster'),
 
 setMethod('ncell', signature(x='ANY'), 
 	function(x) {
-		d <- dim(x)
-		if (is.null(d)) {
-			return(length(x))
-		}
-		return(prod(d))
+		NROW(x) * NCOL(x)
 	}
 )
 

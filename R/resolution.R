@@ -5,7 +5,7 @@
 
 
 
-'res<-' <- function(object, value) {
+'res<-' <- function(x, value) {
 	if (length(value) == 1) {
 		xr=value
 		yr=value
@@ -14,18 +14,18 @@
 		yr=value[2]
 	}
 	
-	bb <- extent(object)
+	bb <- extent(x)
 	nc <- max(1, round( (bb@xmax - bb@xmin) / xr ))
 	nr <- max(1, round( (bb@ymax - bb@ymin) / yr ))
-	if (nr != object@nrows | nc != object@ncols) {
-		if (extends(class(object), "Raster")) {
-			object <- clearValues(object)
+	if (nr != x@nrows | nc != x@ncols) {
+		if (extends(class(x), "Raster")) {
+			x <- clearValues(x)
 		}
 	}
 	bb@xmax <- bb@xmin + nc * xr
 	bb@ymin <- bb@ymax - nr * yr
-	extent(object) <- bb
-	dim(object) <- c(nr, nc)
-	return(object)
+	extent(x) <- bb
+	dim(x) <- c(nr, nc)
+	return(x)
 }
 

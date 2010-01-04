@@ -82,10 +82,10 @@ setMethod('raster', signature(x='character'),
 )
 
 
-setMethod('raster', signature(x='Raster'), 
+setMethod('raster', signature(x='BasicRaster'), 
 	function(x) {
 		e <- x@extent
-		r <- raster(xmn=e@xmin, xmx=e@xmax, ymn=e@ymin, ymx=e@ymax, nrows=x@nrows, ncols=x@ncols, crs=projection(x))
+		r <- raster(xmn=e@xmin, xmx=e@xmax, ymn=e@ymin, ymx=e@ymax, nrows=x@nrows, ncols=x@ncols, crs=x@crs)
 		return(r)
 	}
 )
@@ -208,11 +208,12 @@ setMethod('raster', signature(x='Spatial'),
 
 
 setMethod('raster', signature(x='SpatialGrid'), 
-	function(x, layer=1){
+	function(x, layer=1, values=TRUE){
 		r <- raster(extent(x))
 		projection(r) <- x@proj4string
 		dim(r) <- c(x@grid@cells.dim[2], x@grid@cells.dim[1])	
-		if (inherits(x, 'SpatialGridDataFrame')) {
+		
+		if (inherits(x, 'SpatialGridDataFrame') & values) {
 			if (dim(x@data)[2] > 0) {
 				layer = layer[1]
 				if (is.numeric(layer)) {
@@ -241,6 +242,7 @@ setMethod('raster', signature(x='SpatialGrid'),
 			}
 			
 		}
+		
 		return(r)
 	}	
 )

@@ -23,6 +23,23 @@ setMethod('ncol', signature(x='BasicRaster'),
 
 
 
+
+setMethod('dim<-', signature(x='BasicRaster'), 
+	function(x, value) {
+	
+		if (length(value) == 1) {
+			value <- c(value, ncol(x))
+		} 
+
+		value <- as.integer(pmax(round(value[1:2]), c(1,1)))
+		x@nrows <- value[1]
+		x@ncols <- value[2]
+		
+		return(x)	
+	}
+)
+
+
 setMethod('dim<-', signature(x='RasterLayer'), 
 	function(x, value) {
 	

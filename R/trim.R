@@ -13,7 +13,9 @@ if (!isGeneric("trim")) {
 
 setMethod('trim', signature(x='character'), 
 	function(x, ...) {
-		f <- function(s) {return( gsub('^[[:space:]]+', '',  gsub('[[:space:]]+$', '', s) ) )}
+		f <- function(s) {
+			return( gsub('^[[:space:]]+', '',  gsub('[[:space:]]+$', '', s) ) )
+		}
 		return(unlist(lapply(x, f)))
 	}
 )

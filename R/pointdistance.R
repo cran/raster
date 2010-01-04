@@ -36,45 +36,71 @@
 }
 
 
-pointDistance <- function (point1, point2, longlat=FALSE,  ...) {
+.distm <- function (x, longlat) {
+	if (longlat) { 
+		fun <- .haversine 
+	} else { 
+		fun <- .planedist
+	}
+    n = nrow(x)
+    dm = matrix(ncol = n, nrow = n)
+    dm[cbind(1:n, 1:n)] = 0
+    if (n == 1) {
+        return(dm)
+    }
+    for (i in 2:n) {
+        j = 1:(i - 1)
+        dm[i, j] = fun(x[i, 1], x[i, 2], x[j, 1], x[j, 2])
+    }
+    return(dm)
+}
+
+
+pointDistance <- function (p1, p2, longlat=FALSE,  ...) {
 
 	type <- list(...)$type
 	if (!is.null(type)) {
 		if (!(type %in% c('Euclidean', 'GreatCircle'))) {
 			stop('type should be Euclidean or GreatCircle')
 		}
-		if (type == 'Euclidean') { longlat <- FALSE } else { longlat <- TRUE }
-		if (longlat) {
-			# warning("type='Euclidean' is a depracated argument. Use 'longlat=TRUE'")
-		} else {
-			# warning("type='GreatCircle' is a depracated argument. Use 'longlat=FALSE'")
+		if (type == 'Euclidean') { 
+			longlat <- FALSE 
+			warning("type='Euclidean' is a depracated argument. Use 'longlat=TRUE'")
+		} else { 
+			longlat <- TRUE 
+			warning("type='GreatCircle' is a depracated argument. Use 'longlat=FALSE'")
 		}
 	}		
 
-	point1 <- .pointsToMatrix(point1)
-	point2 <- .pointsToMatrix(point2)
+	p1 <- .pointsToMatrix(p1)
+	if (missing(p2)) {
+		return(.distm(p1, longlat))
+	}
 	
-	if(length(point1[,1]) != length(point2[,1])) {
-		if(length(point1[,1]) > 1 & length(point2[,1]) > 1) {
-			stop('point1 and point2 do not have the same number of rows; and neither has only a single row')
+	p2 <- .pointsToMatrix(p2)
+	
+	if(length(p1[,1]) != length(p2[,1])) {
+		if(length(p1[,1]) > 1 & length(p2[,1]) > 1) {
+			stop('p1 and p2 do not have the same number of rows; and neither has only a single row')
 		}
 	}
 	
 	if (! longlat ) {
-		return ( sqrt(( point1[,1] -  point2[,1])^2 + (point1[,2] - point2[,2])^2) )
+		return( .planedist(p1[,1], p1[,2], p2[,1], p2[,2]) )
 	} else { 
-		return(.greatCircleDist(point1[,1], point1[,2], point2[,1], point2[,2], r=6378137) )
+		return( .haversine(p1[,1], p1[,2], p2[,1], p2[,2], r=6378137) )
 	}
 }
 
-.greatCircleDist <- function(x1, y1, x2, y2, r=6378137) {
+.planedist <- function(x1, y1, x2, y2) {
+	sqrt(( x1 -  x2)^2 + (y1 - y2)^2) 
+}
+
+.haversine <- function(x1, y1, x2, y2, r=6378137) {
 	x1 <- x1 * pi / 180
 	y1 <- y1 * pi / 180
 	x2 <- x2 * pi / 180
 	y2 <- y2 * pi / 180
-	#cosd <- sin(y1) * sin(y2) + cos(y1) * cos(y2) * cos(x1-x2)
-	#return(r * acos(cosd))
-	#  the following is supposedly more precise than above (http://en.wikipedia.org/wiki/Great_circle_distance)
 	x <- sqrt((cos(y2) * sin(x1-x2))^2 + (cos(y1) * sin(y2) - sin(y1) * cos(y2) * cos(x1-x2))^2)
 	y <- sin(y1) * sin(y2) + cos(y1) * cos(y2) * cos(x1-x2)
 	return ( r * atan2(x, y) )

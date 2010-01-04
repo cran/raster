@@ -53,27 +53,33 @@
 	
 	
 	
-.readRowsBrickNetCDF <- function(x, row, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs, layer=1, n=nlayers(x)-layer+1) {
+.readRowsBrickNetCDF <- function(x, row, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs) {
 	
 	if ( x@file@toptobottom ) { 
 		row <- x@nrows - row - nrows + 2
 	}
-	
 	navalue <- x@file@nodatavalue
+	
+	
+	#n the true number of layers
+	#nn the span of layers between the first and the last
+	#alyrs, the layers requested, scaled to start at one.
+	n <- nn <- nlayers(x)
 	if (missing(lyrs)) {
-		layer   =  min( max( round(layer), 1), nlayers(x))
-		n =  min( max( round(n), 1), nlayers(x)-layer+1 )
-		lyrs <- layer:(layer+n-1)
+		layer <- 1
+		lyrs <- 1:n
 	} else {
-		lyrs <- lyrs[lyrs %in% 1:lyrs]
+		lyrs <- lyrs[lyrs %in% 1:n]
 		if (length(lyrs) == 0) {
 			stop("no valid layers")
 		}
 		layer <- lyrs[1]
-		n <- lyrs[length(lyrs)] - lyrs[1] + 1
+		n <- length(lyrs)
+		nn <- lyrs[length(lyrs)] - lyrs[1] + 1
 	}
-	nlyrs <- length(lyrs)
-	alyrs <- nlyrs - layer + 1
+	alyrs <- lyrs - lyrs[1] + 1
+	lns <- layerNames(x)[lyrs]
+	
 	nrows <- min(round(nrows), x@nrows-row+1)
 	ncols <- min((x@ncols-col+1), ncols)
 	stopifnot(nrows > 0)
@@ -88,14 +94,14 @@
 	if (nc$var[[zvar]]$ndims == 4) {
 		if (x@data@dim3 == 4) {
 			start = c(col, row, x@data@level, layer)
-			count = c(ncols, nrows, x@data@level, n)
+			count = c(ncols, nrows, x@data@level, nn)
 		} else {
 			start = c(col, row, layer, x@data@level)
-			count = c(ncols, nrows, n, x@data@level)
+			count = c(ncols, nrows, nn, x@data@level)
 		}		
 	} else {
 		start = c(col, row, layer)
-		count = c(ncols, nrows, n)
+		count = c(ncols, nrows,  nn)
 	}
 	d <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
 	
@@ -109,8 +115,8 @@
 		if (length(dims) == 3) {
 			if ( x@file@toptobottom ) { 
 				v <- matrix(nrow=nrows*ncols, ncol=n)
-				for (i in alyrs) {
-					x <- d[,,i]
+				for (i in 1:length(alyrs)) {
+					x <- d[,,alyrs[i]]
 					v[,i] <- as.vector( x[, ncol(x):1] )
 				}
 			} else {
@@ -121,7 +127,7 @@
 			}
 		} else if (length(dims) == 2) {
 			if (nrows==1) {
-				d <- d[,alyrs,drop=FALSE]
+				d <- d[ , alyrs,drop=FALSE]
 				d[d == navalue] <- NA
 				return(d)
 				
@@ -137,7 +143,7 @@
 				if ( x@file@toptobottom ) { 
 					d <- d[nrow(d):1, ]
 				}
-				d <- d[ ,alyrs,drop=FALSE]
+				d <- d[ , alyrs, drop=FALSE]
 				d[d == navalue] <- NA
 				return(d)
 			}
@@ -146,7 +152,7 @@
 			if ( x@file@toptobottom & nrows > 1) {
 				d <- rev(d)
 			}
-			v[] <- d[,alyrs,drop=FALSE]
+			v[] <- d[, alyrs,drop=FALSE]
 		}
 	} else {
 		if ( x@file@toptobottom ) { 
@@ -155,10 +161,11 @@
 			v <- as.vector(d)
 		}
 		v <- matrix(v, ncol=1)
-		v <- v[,alyrs,drop=FALSE]
+		v <- v[,lyrs,drop=FALSE]
 	}
 	
 	v[v == navalue] <- NA
+	colnames(v) <- lns
 	return(v)
 }
 

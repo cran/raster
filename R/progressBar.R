@@ -8,11 +8,12 @@ pbCreate <- function(nsteps, type='text', style=3) {
 	if (type=='text') {
 		pb <- txtProgressBar(min=0, max=nsteps, style=style)
 	} else if (type %in% c('window', 'tcltk', 'windows')) {
+		tit <- paste(' Progress (', nsteps, ' steps)', sep='')
 		if (.Platform$OS.type == "windows" ) {
-			pb <- winProgressBar(title="Progress", min=0 , max=nsteps, width = 300, label='starting')
+			pb <- winProgressBar(title=tit, min=0 , max=nsteps, width = 300, label='starting')
 		} else {
 			require(tcltk)
-			pb <- tkProgressBar(title="Progress", min=0, max=nsteps, width = 300, label='starting')
+			pb <- tkProgressBar(title=tit, min=0, max=nsteps, width = 300, label='starting')
 		}
 	} else {
 		pb <- 'none'

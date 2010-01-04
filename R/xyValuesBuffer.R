@@ -5,7 +5,7 @@
 # Licence GPL v3
 
 
-.xyvBuf <- function(object, xy, buffer, fun=NULL, na.rm=TRUE, layer, n) { 
+.xyvBuf <- function(object, xy, buffer, fun=NULL, na.rm=TRUE, layer, nl, cellnumbers=FALSE) { 
 
 	buffer <- abs(buffer)
 	if (length(buffer == 1)) {
@@ -15,6 +15,8 @@
 	}
 	buffer[is.na(buffer)] <- 0
 
+	if (! is.null(fun)) { cellnumbers <- FALSE }
+	
 	cv <- list()
 	obj <- raster(object) 
 # ?	centralcells <- cellFromXY(obj, xy)
@@ -45,12 +47,21 @@
 			clFun <- function(i) {
 				s <- sum(rn[i], rx[i], cn[i], cx[i])
 				if (is.na(s)) {
-					return(NULL)
+					return(NA)
 				} else {
 					vals <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
 					cells <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
 					coords <- xyFromCell(obj, cells)
-					pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), vals)
+					if (cellnumbers) {
+						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), cells, vals)
+					} else {
+						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), vals)
+					}
+					if (nrow(pd) > 1) {
+						pd <- pd[pd[,1] <= buffer[i], -1]
+					} else { 
+						pd <- pd[,-1]
+					}					
 					return(pd)
 				}
 			}
@@ -63,13 +74,9 @@
 				
 				if (! d$value$success) {
 					stop('cluster error')
-				} else if (is.null(d$value$value)) {
-					cv[[i]] <- NA
-				} else if (nrow(d$value$value) > 1) {
-					cv[[i]] <- d$value$value[d$value$value[,1] <= buffer[i], -1]
-				} else { 
-					cv[[i]] <- d$value$value[,-1]
-				}
+				} else  {
+					cv[[i]] <- d$value$value
+				} 
 				
 				ni <- nodes + i 
 				if (ni <= nrow(xy)) {
@@ -87,7 +94,11 @@
 					vals <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
 					cells <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
 					coords <- xyFromCell(obj, cells)
-					pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), vals)
+					if (cellnumbers) {
+						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), cells, vals)
+					} else {
+						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), vals)
+					}
 					if (nrow(pd) > 1) {
 						cv[[i]] <- pd[pd[,1] <= buffer[i], -1]
 					} else { 
@@ -118,12 +129,21 @@
 			clFun <- function(i) {
 				s <- sum(rn[i], rx[i], cn[i], cx[i])
 				if (is.na(s)) {
-					return(NULL)
+					return(NA)
 				} else {
 					vals <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
 					cells <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
 					coords <- xyFromCell(obj, cells)
-					pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), vals)
+					if (cellnumbers) {
+						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), cells, vals)
+					} else {
+						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), vals)
+					}
+					if (nrow(pd) > 1) {
+						pd <- pd[pd[,1] <= buffer[i], -1]
+					} else { 
+						pd <- pd[,-1]
+					}					
 					return(pd)
 				}
 			}
@@ -135,12 +155,8 @@
 				d <- recvOneData(cl)
 				if (! d$value$success) {
 					stop('cluster error')
-				} else if (is.null(d$value$value)) {
-					cv[[i]] <- NA
-				} else if (nrow(d$value$value) > 1) {
-					cv[[i]] <- d$value$value[d$value$value[,1] <= buffer[i], -1]
-				} else { 
-					cv[[i]] <- d$value$value[,-1]
+				} else {
+					cv[[i]] <- d$value$value
 				}
 				ni <- nodes + i
 				if (ni <= nrow(xy)) {
@@ -156,10 +172,13 @@
 					vals <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
 					cells <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
 					coords <- xyFromCell(obj, cells)
-					pd <- cbind(pointDistance(xy[i,], coords, longlat=FALSE), vals)
+					if (cellnumbers) {
+						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), cells, vals)
+					} else {
+						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), vals)
+					}
 					if (nrow(pd) > 1) {
 						cv[[i]] <- pd[pd[,1] <= buffer[i], -1]
-					#	cells <- unique(c(cells, centralcells[i]))
 					} else { 
 						cv[[i]] <- pd[,-1]
 					}
@@ -171,8 +190,8 @@
 	nls <- nlayers(object)
 	nms <- layerNames(object)
 	if (nls > 1) {
-		if (layer > 1 | n < nls) {
-			lyrs <- layer:(layer+n-1) 
+		if (layer > 1 | nl < nls) {
+			lyrs <- layer:(layer+nl-1) 
 			nms <- nms[ lyrs ]
 			cv <- lapply(cv, function(x) x[, lyrs ])
 		}

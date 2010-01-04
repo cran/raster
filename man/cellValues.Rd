@@ -5,7 +5,7 @@
 \alias{cellValues}
 \alias{xyValues}
 
-\title{ Extract values for one or more cells / points }
+\title{ Obsolete functions }
 
 \description{
 Obsolete functions. Use \code{\link[raster]{extract}} in stead.
@@ -25,15 +25,10 @@ xyValues(object, xy, ...)
 }
 
 
-\value{
-a vector of cell values for a RasterLayer or or a matrix of values for a RasterStack or RasterBrick
-}
-
 \seealso{ \code{\link[raster]{extract}}}
 
 
 \author{Robert J. Hijmans }
-
 
 
 \keyword{methods}

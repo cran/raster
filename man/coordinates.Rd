@@ -1,5 +1,13 @@
-\name{coordinates}
+\name{Extent coordinates}
 
+\alias{xmin,BasicRaster-method}
+\alias{xmax,BasicRaster-method}
+\alias{ymin,BasicRaster-method}
+\alias{ymax,BasicRaster-method}
+\alias{xmin,Extent-method}
+\alias{xmax,Extent-method}
+\alias{ymin,Extent-method}
+\alias{ymax,Extent-method}
 \alias{xmin}
 \alias{xmax}
 \alias{ymin}
@@ -10,17 +18,17 @@
 \alias{ymax<-}
 
   
-\title{Coordinates}
+\title{Coordinates of the Extent of a Raster object}
 
 \description{
 These functions return or set the extreme coordinates of a Raster* object. 
 }
 
 \usage{
-xmin(object)
-xmax(object)
-ymin(object)
-ymax(object)
+xmin(x)
+xmax(x)
+ymin(x)
+ymax(x)
 
 xmin(x) <- value
 xmax(x) <- value
@@ -30,7 +38,6 @@ ymax(x) <- value
 }
 
 \arguments{
-  \item{object}{A Raster* object}
   \item{x}{A Raster* object}
   \item{value}{A new x or y coordinate}  
 }

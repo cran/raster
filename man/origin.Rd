@@ -1,6 +1,7 @@
 \name{origin}
 
 \alias{origin}
+\alias{origin,BasicRaster-method}
 
   
 \title{Origin}
@@ -11,16 +12,16 @@ that you could get if you moved towards that point in steps of the x and y resol
 }
 
 \usage{
-origin(object)
+origin(x)
 }
 
 \arguments{
-  \item{object}{Raster* object}
+  \item{x}{Raster* object}
 }
 
 
 \value{
-  A vector of two numbers (x and y coordinates).
+A vector of two numbers (x and y coordinates).
 }
 
 \seealso{ \code{\link[raster]{ncell}}, \code{\link[raster]{coordinates}} }
