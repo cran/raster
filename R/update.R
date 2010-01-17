@@ -372,43 +372,42 @@ function(object, v, cell, band) {
 		
 	if (is.matrix(v)) {
 
-			startrow <- rowFromCell(object, cell) - 1
-			startcol <- colFromCell(object, cell) - 1
-			putRasterData(gdal, t(v), band=band, offset= c(startrow, startcol) )
+		startrow <- rowFromCell(object, cell) - 1
+		startcol <- colFromCell(object, cell) - 1
+		putRasterData(gdal, t(v), band=band, offset= c(startrow, startcol) )
 
 	} else {
-		
-			if (length(cell) == 1) {
-				cell <- cell:(cell+length(v)-1)
-				rows <- rowFromCell(object, cell) - 1
-				cols <- colFromCell(object, cell) - 1
-				rows <- unique(rows)
-				cols <- unique(cols)
-				nr <- length(rows)
-				if (nr == 1) {
-					putRasterData(gdal, v, band=band, offset=c(rows, cols[1]))
-				} else {
-					offset <- c(rows[1], cols[1])
-					nc <- object@ncols - cols[1]
-					putRasterData(gdal, v[1:nc], band=band, offset=offset)
-					v <- v[-(1:nc)]
-					if (nr > 2) {
-						nrows <- nr-2
-						n <- nrows * object@ncols
-						putRasterData(gdal, v[1:n], band=band, offset=c(rows[2], 0))
-						v <- v[-(1:n)]
-					}
-					if (length(v) > 0) {
-						putRasterData(gdal, v, band=band, offset=c(rows[nr], 0))
-					}
-				} 
+		if (length(cell) == 1) {
+			cell <- cell:(cell+length(v)-1)
+			rows <- rowFromCell(object, cell) - 1
+			cols <- colFromCell(object, cell) - 1
+			rows <- unique(rows)
+			cols <- unique(cols)
+			nr <- length(rows)
+			if (nr == 1) {
+				putRasterData(gdal, v, band=band, offset=c(rows, cols[1]))
 			} else {
-				rows <- rowFromCell(object, cell) - 1
-				cols <- colFromCell(object, cell) - 1
-				for (i in 1:length(cell)) {
-					putRasterData(gdal, v[i], band=band, offset=c(rows[i], cols[i]))
-				} 
-			}
+				offset <- c(rows[1], cols[1])
+				nc <- object@ncols - cols[1]
+				putRasterData(gdal, v[1:nc], band=band, offset=offset)
+				v <- v[-(1:nc)]
+				if (nr > 2) {
+					nrows <- nr-2
+					n <- nrows * object@ncols
+					putRasterData(gdal, t(matrix(v[1:n], ncol=object@ncols, byrow=TRUE)), band=band, offset=c(rows[2], 0))
+					v <- v[-(1:n)]
+				}
+				if (length(v) > 0) {
+					putRasterData(gdal, v, band=band, offset=c(rows[nr], 0))
+				}
+			} 
+		} else {
+			rows <- rowFromCell(object, cell) - 1
+			cols <- colFromCell(object, cell) - 1
+			for (i in 1:length(cell)) {
+				putRasterData(gdal, v[i], band=band, offset=c(rows[i], cols[i]))
+			} 
+		}
 			
 	}
 

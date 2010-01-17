@@ -14,6 +14,7 @@
 \alias{brick,SpatialPixels-method}
 \alias{brick,SpatialGrid-method}
 \alias{brick,array-method}
+\alias{brick,kasc-method}
 
 \title{ Create a RasterBrick object}
 

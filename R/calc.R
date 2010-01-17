@@ -21,37 +21,35 @@ function(x, fun, filename='', ...) {
 		stop("function 'fun' is not valid here")
 	}
 	if (length(fun(1)) > 1) { 
-		stop("function 'fun' returns more than one value")
-	}
-
-
-	filename <- trim(filename)
-	outraster <- raster(x)
+		out <- brick(x)
+	} else {
+		out <- raster(x)
+	}	
 
 	if (canProcessInMemory(x, 3) |  inMemory(x)  ) {
 		x <- getValues(x)
-		outraster <- setValues(outraster, fun(x)) 
+		out <- setValues(out, fun(x)) 
 		if (filename != "") {
-			outraster <- writeRaster(outraster, filename=filename, ...)
+			out <- writeRaster(out, filename=filename, ...)
 		}
-		return(outraster)
+		return(out)
 		
 	} else if (filename == '') {
 		filename <- rasterTmpFile()
 	}
 	
-	outraster <- writeStart(outraster, filename=filename, ...)
-	tr <- blockSize(outraster)
+	out <- writeStart(out, filename=filename, ...)
+	tr <- blockSize(out)
 	pb <- pbCreate(tr$n, type=.progress(...))			
 	
 	for (i in 1:tr$n) {
 		vv <- fun( getValues(x, row=tr$row[i], nrows=tr$nrows[i]) )
-		outraster <- writeValues(outraster, vv, tr$row[i])
+		out <- writeValues(out, vv, tr$row[i])
 		pbStep(pb, i)
 	}
 	pbClose(pb)
-	outraster <- writeStop(outraster)
+	out <- writeStop(out)
 	
-	return(outraster)
+	return(out)
 }
 )

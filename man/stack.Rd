@@ -10,6 +10,8 @@
 \alias{stack,missing-method}
 \alias{stack,SpatialPixelsDataFrame-method}
 \alias{stack,SpatialGridDataFrame-method}
+\alias{stack,kasc-method}
+
 
 \title{ Create a RasterStack object}
 

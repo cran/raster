@@ -334,7 +334,9 @@ clusfun <- function(x, filename="", ...) {
 	# the function to be used (simple example)
 	clFun <- function(i) {
 		v <- getValues(x, bs$row[i], bs$nrows[i])
-		v <- v / 100 
+		for (i in 1:length(v)) {
+			v[i] <- v[i] / 100  
+		}
 		return(v)
 	}
 
@@ -344,9 +346,9 @@ clusfun <- function(x, filename="", ...) {
     }
 
 	filename <- trim(filename)
-	#if (!canProcessInMemory(out) & filename == "") {
-	#	filename <- rasterTmpFile()
-	#}
+	if (!canProcessInMemory(out) & filename == "") {
+		filename <- rasterTmpFile()
+	}
 	
 	if (filename != "") {
 		out <- writeStart(out, filename=filename, ... )
@@ -356,11 +358,15 @@ clusfun <- function(x, filename="", ...) {
 	for (i in 1:bs$n) {
 		# receive results from a node
 		d <- recvOneData(cl)
-
+		
+		# which block is this?
+		b <- d$value$tag
+		cat('received block: ',b,'\n'); flush.console();
+		
 		if (filename != "") {
-			out <- writeValues(out, d$value$value, bs$row[d$value$tag])
+			out <- writeValues(out, d$value$value, bs$row[b])
 		} else {
-			cols <- bs$row[d$value$tag]:(bs$row[d$value$tag]+bs$nrows[d$value$tag]-1)	
+			cols <- bs$row[b]:(bs$row[b] + bs$nrows[b]-1)	
 			vv[,cols] <- matrix(d$value$value, nrow=out@ncols)
 		}
 		
@@ -388,7 +394,7 @@ To use snow with raster, you need to set up a cluster first, with  'beginCluster
 r <- raster()
 # beginCluster()
 r[] <- ncell(r):1
-#x <- clusfun(r)
+# x <- clusfun(r)
 @
 
 \end{document}

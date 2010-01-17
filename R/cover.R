@@ -36,7 +36,7 @@ setMethod('cover', signature(x='RasterLayer', y='RasterLayer'),
 		if (isInt) { 
 			datatype  <- 'INT4S'
 		} else { 
-			datatype <- 'FLT4S'
+			datatype <- 'FLT8S'
 		}
 	}
 	

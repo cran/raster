@@ -63,7 +63,7 @@ Slots for Raster* objects
     \item{\code{file}:}{Object of class \code{"RasterFile"} }
     \item{\code{data}:}{Object of class \code{"SingleLayerData"} or \code{"MulitpleLayerData"}. Not in \code{RasterStack} objects}
     \item{\code{history}:}{To record processing history, not yet in use }
-    \item{\code{legend}:}{Default legend. Not yet implemented}
+    \item{\code{legend}:}{Default legend. Should store preferences for plotting. Not yet implemented except that it stores the color table of images, if available}
     \item{\code{extent}:}{Object of class \code{"Extent"} }
     \item{\code{ncols}:}{Integer} 
     \item{\code{nrows}:}{Integer} 

@@ -63,10 +63,7 @@ compare <- function(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=
 		}
 # Can also check orig through extent & rowcol, but orig is useful for e.g. Merge(raster, raster)
 		if (orig) {
-			dif1 <- origin(objects[[1]]) - origin(objects[[i]])
-			dif2 <- abs(origin(objects[[1]])) - origin(objects[[i]])
-			dif3 <- abs(origin(objects[[i]])) - origin(objects[[1]])
-			dif <- pmin(dif1, dif2, dif3)
+			dif <- abs(origin(objects[[i]])) - abs(origin(objects[[1]]))
 			if (!(isTRUE(all.equal(dif, c(0,0), tolerance=tolerance, scale=minres)))) {
 				result <- FALSE
 				if (stopiffalse) { stop('different origin') }

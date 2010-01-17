@@ -45,7 +45,7 @@ lineValues <- function(lns, x, ...) {
 		i <- sapply(res, is.null)
 		if (nlayers(x) > 1) {
 			j <- matrix(ncol=nlayers(x), nrow=length(res))
-			j[!i] <- t(sapply(res[!i], function(x) apply(x, 2, fun, na.rm)))
+			j[!i] <- t(sapply(res[!i], function(x) apply(x, 2, fun, na.rm=na.rm)))
 			colnames(j) <- layerNames(x)
 		} else {
 			j <- vector(length=length(i))

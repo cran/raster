@@ -1,14 +1,29 @@
-\name{indexing}
+\name{replacement}
 
 \docType{methods}
 
 
 \alias{[[,RasterLayer,ANY,ANY-method}
 \alias{[[,RasterStackBrick,ANY,ANY-method}
-\alias{[,Raster,ANY,ANY-method}
-\alias{[,Raster,Spatial,missing-method}
 
-\alias{[<-,RasterLayer-method}
+\alias{[,Raster,Spatial,missing-method}
+\alias{[,Raster,RasterLayer,missing-method}
+\alias{[,Raster,Extent,missing-method}
+\alias{[,Raster,numeric,numeric-method}
+\alias{[,Raster,numeric,missing-method}
+\alias{[,Raster,missing,numeric-method}
+\alias{[,Raster,missing,missing-method}
+\alias{[,Raster,logical,missing-method}
+
+\alias{[<-,RasterLayer,numeric,numeric-method}
+\alias{[<-,RasterLayer,numeric,missing-method}
+\alias{[<-,RasterLayer,logical,missing-method}
+\alias{[<-,RasterLayer,missing,numeric-method}
+\alias{[<-,RasterLayer,missing,missing-method}
+\alias{[<-,RasterLayer,RasterLayer,missing-method}
+\alias{[<-,RasterLayer,Spatial,missing-method}
+\alias{[<-,RasterLayer,Extent,missing-method}
+
 
 \title{Extract or replace cell values of a Raster object}
 
@@ -31,6 +46,7 @@ Double brackes '[[ ]]' can be used to extract one or more layers from a multi-la
 \bold{Get values}
 
 \code{x[i]}
+
 \code{x[i,j]}
 
 Arguments
@@ -44,6 +60,7 @@ Arguments
 \bold{Set values}
 
 \code{x[i] <- value}
+
 \code{x[i,j] <- value}
 
 Arguments

@@ -33,7 +33,7 @@ showOptions <- function() {
 
 clearOptions <- function() {
 	options(rasterFiletype = 'raster')
-	options(rasterDatatype = 'FLT4S')
+	options(rasterDatatype = 'FLT8S')
 	options(rasterOverwrite = FALSE)
 	options(rasterProgress = 'none')
 	options(rasterTimer = FALSE)

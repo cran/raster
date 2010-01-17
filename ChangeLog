@@ -1,3 +1,12 @@
+--- 17-Jan-2011,  version 1.7-28
+bug fix in update (reported by Matteo Mattiuzi) 
+calc can now return multiple layers when the input is a RasterLayer (Neil Best)
+bug fix in extract with buffer for non-long/lat rasters (reported by Richard Plant)
+
+--- 7-Jan-2011,  version 1.7-25
+Fixed projectRaster for multi-layer objects (bug reported by Alison Mynsberge)
+bug fix in sampleInt with very large numbers (as.integer set them to NA)
+
 --- 4-Jan-2011,  version 1.7-21
 Bug fix in reading values from Bricks from ncdf files (reported by Martin Brandt)
 

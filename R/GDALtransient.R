@@ -7,30 +7,22 @@
 # based on  create2GDAL and saveDataset from the rgdal package
 # authors: Timothy H. Keitt, Roger Bivand, Edzer Pebesma, Barry Rowlingson
 
-..xxnodatavalue <- function(x){
-	if (x == 'FLT4S') return(-3.4E38)
-	if (x == 'FLT8S') return(-1.7E308)
-	if (x == 'INT4S') return(-2147483647)
-    if (x == 'INT2S') return(-32768)
-    if (x == 'INT2U') return(65535)
-    if (x == 'INT1U') return(-1)
-    if (x == 'INT1S') return(-127)
-	if (x == 'INT8S') return(-9223372036854775808)
-	stop('cannot find matching nodata value')
-}
 
-.GDALnodatavalue <- function(x){
-	if (x == 'Float32') return(-3.4E38)
-	if (x == 'Float64') return(-1.7E308)
-	if (x == 'Int32') return(-2147483647)
-    if (x == 'Int16') return(-32768)
-    if (x == 'Int8') return(-128)
-    if (x == 'UInt16') return(65535)
-    if (x == 'Byte') return(255)
-	stop('cannot find matching nodata value')
-}
 
 .getGDALtransient <- function(r, filename, options, NAflag, ...)  {
+
+	.GDALnodatavalue <- function(x){
+		if (x == 'Float32') return(-3.4E38)
+		if (x == 'Float64') return(-1.7E308)
+		if (x == 'Int32') return(-2147483647)
+		if (x == 'Int16') return(-32768)
+		if (x == 'Int8') return(-128)
+		if (x == 'UInt16') return(65535)
+		if (x == 'UInt32') return(2147483647) #(4294967295) <- not supported as integer in R
+		stop('cannot find matching nodata value')
+	}
+
+
     nbands <- nlayers(r)
 	r <- raster(r)
 	datatype <- .datatype(...)
@@ -81,36 +73,3 @@
 	if (is.null(options)) options <- ''
 	return(list(transient, NAflag, options, dataformat))
 }
-
-
-.writeGDALall <- function(raster, filename, options=NULL, ...) {
-
-	if (! .requireRgdal() ) { stop('rgdal not available') }
-
-	nl <- nlayers(raster)
-	if (nl == 1) {
-		out <- raster(raster)
-		out <- .startGDALwriting(out, filename, options, ...) 
-		raster <- as.matrix(raster)
-		if (out@file@datanotation == 'INT1U') {
-			raster[raster < 0] <- NA
-		}
-		raster[is.na(raster)] <- out@file@nodatavalue
-		z <- putRasterData(out@file@transient, t(raster), band=1, c(0, 0)) 
-	} else {
-		out <- brick(raster, values=FALSE)
-		out <- .startGDALwriting(out, filename, options, ...) 
-		raster <- getValues(raster)
-		if (out@file@datanotation == 'INT1U') {
-			raster[raster < 0] <- NA
-		}
-		raster[is.na(raster)] = out@file@nodatavalue
-	    for (i in 1:nl) {
-			v <- matrix(raster[,i], nrow=out@ncols, ncol=out@nrows)
-			x <- putRasterData(out@file@transient, v, band=i, c(0, 0))
-		}
-	}	
-	
-	return( .stopGDALwriting(out) )
-}
-

@@ -9,17 +9,16 @@ sampleInt <- function(n, size, replace=FALSE) {
 	n = round(n[1])
 	size = round(size[1])
 	
-	if (n < 1) { stop('n should be >= 1') }
+	stopifnot(n > 0)
+	stopifnot(size > 0)
 
-	if (size < 0) { stop('size should be >= 0') }
-	if (size == 0) return( vector(mode = "integer", length = 0) )
-	
 	if (size > n & ! replace) {
 		warning('size changed to n because to it cannot be larger than n when replace is FALSE')
 		size <- n
 	}
 		
 	if (!replace) {
+	
 		switched = FALSE
 		if (size == n) { 
 			res <- 1:n
@@ -48,5 +47,5 @@ sampleInt <- function(n, size, replace=FALSE) {
 		samp <- ceiling(runif( size ) * n)
 	}
 	
-	return( as.integer(samp) )
+	return( samp )
 }

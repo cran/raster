@@ -101,7 +101,7 @@ rf <- writeRaster(r, filename="allint.grd", datatype='INT4S', overwrite=TRUE)
 
 # make a brick and save multi-band file
 b <- brick(r, sqrt(r))
-bf <- writeRaster(b, filename="mutli.grd", bandorder='BIL', overwrite=TRUE)
+bf <- writeRaster(b, filename="multi.grd", bandorder='BIL', overwrite=TRUE)
 
 # write to a new geotiff file (depends on rgdal)
 if (require(rgdal)) {

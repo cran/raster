@@ -17,7 +17,6 @@
 	raster@data@fromdisk <- TRUE
 	raster@file@name <- filename
 	return(raster)
-	
 }
 
 
@@ -28,7 +27,7 @@
 	if (packageDescription('rgdal')$Version > '0.6-28') {
 	
 		if (nl == 1) {
-			if (raster@data@haveminmax) {
+#			if (raster@data@haveminmax) {
 				if (inMemory(raster)) {
 					statistics <- c(raster@data@min, raster@data@max, mean(raster@data@values, na.rm=TRUE), sd(raster@data@values, na.rm=TRUE))
 				} else {
@@ -36,9 +35,9 @@
 				}
 				b <- new("GDALRasterBand", raster@file@transient, 1)
 				try ( .Call("RGDAL_SetStatistics", b, as.double(statistics), PACKAGE = "rgdal"), silent=TRUE )
-			}
+#			}
 		} else {
-			if (raster@data@haveminmax) {
+#			if (raster@data@haveminmax) {
 				if (inMemory(raster)) {
 					statistics <- cbind(raster@data@min, raster@data@max, apply(raster@data@values, 2, mean, na.rm=TRUE), apply(raster@data@values, 2, sd, na.rm=TRUE))
 				} else {
@@ -48,7 +47,7 @@
 					b <- new("GDALRasterBand", raster@file@transient, i)
 					try ( .Call("RGDAL_SetStatistics", b, as.double(statistics[i,]), PACKAGE = "rgdal"), silent=TRUE )
 				}		
-			}
+#			}
 		}
 		
 	}

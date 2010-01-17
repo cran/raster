@@ -46,12 +46,11 @@ setMethod('area', signature(x='RasterLayer'),
 
 		dy <- pointDistance(c(0,0),c(0, yres(out) ), longlat=TRUE)
 		y <- yFromRow(out, 1:nrow(out))
-		dx <- pointDistance(cbind(0, y), cbind(xres(out), y), longlat=TRUE)
+		#dx <- pointDistance(cbind(0, y), cbind(xres(out), y), longlat=TRUE)
+		dx <- .haversine(0, y, xres(out), y)
 
-		
-
-			tr <- blockSize(out)
-			pb <- pbCreate(tr$n, type=.progress(...))
+		tr <- blockSize(out)
+		pb <- pbCreate(tr$n, type=.progress(...))
 
 			for (i in 1:tr$n) {
 				r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)

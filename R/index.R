@@ -3,106 +3,115 @@
 # Version 0.9
 # Licence GPL v3
 
-setMethod("[[", "RasterLayer",
-function(x,i,j,...,drop=TRUE) {
-	stop('this method is not implemented for RasterLayer objects, use single brackets instead')
-})
-
-
-setMethod("[[", "RasterStackBrick",
-function(x,i,j,...,drop=TRUE) {
-	if ( missing(i)) { stop('you must provide an index') }
-	if (! is.numeric(i)) { stop('you must provide a numeric index') }
-	if (! missing(j)) { warning('second index is ignored') }
-	i <- round(i)
-	nl <- nlayers(x)
-	if (length(i) == 1) {
-		if (i < 1) { stop('index should be >= 1') }
-		if (i > nl) { stop('index should be < ', nl) }
-		return(raster(x, i))
-	} else {
-		if (i[1] < 1) { stop('index should be >= 1') }
-		if (i[1] > nl) { stop('index should be < ', nl) }
-		s <- stack(raster(x, i[1]))
-		for (j in i[-1]) {
-			if (j < 1) { stop('index should be >= 1') }
-			if (j > nl) { stop('index should be < ', nl) }
-			s <- addLayer(s, raster(x, j))
-		}
-		return(s)
-	}
-})
-
 
 setMethod("[", c("Raster", "Spatial", "missing"),
 function(x, i, j, ... ,drop=TRUE) {
-	if (inherits(i, 'SpatialGrid') | inherits(i, 'SpatialPixels')) {
-		i <-  as(i, 'SpatialPoints')
-	}
-	if (drop) {
-		extract(x, i, ...)
+
+	if (inherits(i, 'SpatialPoints')) {
+		i <- coordinates(i)
+		i <- cellFromXY(x, i)
+		.doExtract(x, i, ..., drop=drop)
+	
 	} else {
-		x <- crop(x, i, ...)
-		rasterize(i, x, mask=TRUE, ...)
+		if (drop) {
+			extract(x, i, ...)
+		} else {
+			x <- crop(x, i, ...)
+			rasterize(i, x, mask=TRUE, ...)
+		}
 	}
 })
 
 
-setMethod("[", "Raster",
-function(x, i, j, drop=TRUE) {
+
+setMethod("[", c("Raster", "RasterLayer", "missing"),
+function(x, i, j, ... ,drop=TRUE) {
 	
+	if (! hasValues(i) ) {
+		i <- extent(i)
+		callNextMethod(x, i=i, j=j, ..., drop=drop)
+	
+	} else if (compare(x, i, stopiffalse=FALSE, showwarning=FALSE)) {
+		i <- as.logical( getValues(i) )
+		callNextMethod(x, i=i, j=j, ..., drop=drop)
+		
+	} else {
+
+		i <- intersectExtent(x, i)
+		callNextMethod(x, i=i, j=j, ..., drop=drop)
+	}
+})
+
+
+setMethod("[", c("Raster", "Extent", "missing"),
+function(x, i, j, ... ,drop=TRUE) {
+	if (drop) {
+		return( extract(x, i) )
+	} else {
+		return( crop(x, i) )
+	}
+} )	
+	
+setMethod("[", c("Raster", "missing", "missing"),
+function(x, i, j, ... ,drop=TRUE) {
+	if (drop) {
+		return(getValues(x))
+	} else {
+		return(x)
+	}
+})
+
+setMethod("[", c("Raster", "numeric", "numeric"),
+function(x, i, j, ... ,drop=TRUE) {
+		i <- cellFromRowColCombine(x, i, j)
+		.doExtract(x, i, drop=drop)
+	}
+)
+
+setMethod("[", c("Raster", "missing", "numeric"),
+function(x, i, j, ... ,drop=TRUE) {
+	j <- cellFromCol(x, j)
+	.doExtract(x, j, drop=drop)
+})
+
+
+setMethod("[", c("Raster", "numeric", "missing"),
+function(x, i, j, ... ,drop=TRUE) {
+	theCall <- sys.call(-1)
+	narg <- length(theCall) - length(match.call(call=sys.call(-1)))
+	if (narg > 0) {
+		i <- cellFromRow(x, i)
+	}
+	.doExtract(x, i, drop=drop)
+})
+
+
+setMethod("[", c("Raster", "logical", "missing"),
+function(x, i, j, ... ,drop=TRUE) {
+	theCall <- sys.call(-1)
+	narg <- length(theCall) - length(match.call(call=sys.call(-1)))
+	if (narg > 0) {
+		stop('logical indices are only accepted if only the first index is used')
+	}
+	i[is.na(i)] <- FALSE
+	i <- 1:ncell(x)[i]
+	.doExtract(x, i, drop=drop)
+})
+
+
+.doExtract <- function(x, i, drop) {	
 	if (! hasValues(x) ) {
-		stop('no data associated with this RasterLayer object')
+		stop('no data associated with this Raster object')
 	}
 
-	if (! missing(j) ) { 
-		if (! is.numeric(j)) { 
-			stop('the second argument must be numeric (or missing)') 
-		}	
-		if (! missing(i)) {
-			if (! (is.numeric(i) | is.logical(i)) ) {
-				stop('you cannot supply a second argument if the first is not numeric or logical') 		
-			}
-		}
-	}
-	
-	if (missing(i)) {
-		if (missing(j)) {
-			if (drop) {
-				return(getValues(x))
-			} else {
-				return(x)
-			}
-		} else {
-			i <- cellFromCol(x, j)
-		}
-	} else {
-		if (inherits(i, "RasterLayer")) {
-			i <- (1:ncell(i))[ as.logical( getValues(i) ) ]
-		} else if (inherits(i, "Extent")) {
-			if (drop) {
-				return( extract(x, i) )
-			} else {
-				return( crop(x, i) )
-			}
-		} else {
-			if (missing(j)) {
-				theCall <- sys.call(-1)
-				narg <- length(theCall) - length(match.call(call=sys.call(-1)))
-				if (narg > 0) {
-					i <- cellFromRow(x, i)
-				}
-			} else {
-				i <- cellFromRowColCombine(x, i, j)
-			}
-		}
-	}
 	nacount <- sum(is.na(i))
 	if (nacount > 0) {
 		warning('some indices are invalid (NA returned)')
 	}	
+
 	if (drop) {
 		return( .cellValues(x, i) )
+		
 	} else {
 		i <- na.omit(i)
 		r <- rasterFromCells(x, i, values=FALSE)
@@ -119,4 +128,4 @@ function(x, i, j, drop=TRUE) {
 		}
 	}
 }
-)
+

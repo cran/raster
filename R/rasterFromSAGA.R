@@ -25,16 +25,16 @@
 	zfactor <- 1
 	
 	for (i in 1:length(ini[,1])) {
-		if (ini[i,2] == "POSITION_XMIN") {xn <- as.numeric(ini[i,3])} 
-		else if (ini[i,2] == "POSITION_YMIN") {yn <- as.numeric(ini[i,3])} 
-		else if (ini[i,2] == "CELLCOUNT_Y") {nr <- as.integer(ini[i,3])} 
-		else if (ini[i,2] == "CELLCOUNT_X") {nc <- as.integer(ini[i,3])} 
+		if (ini[i,2] == "POSITION_XMIN") { xn <- as.numeric(ini[i,3]) } 
+		else if (ini[i,2] == "POSITION_YMIN") { yn <- as.numeric(ini[i,3])} 
+		else if (ini[i,2] == "CELLCOUNT_Y") { nr <- as.integer(ini[i,3])} 
+		else if (ini[i,2] == "CELLCOUNT_X") { nc <- as.integer(ini[i,3])} 
 		else if (ini[i,2] == "CELLSIZE") { cellsize <- as.numeric(ini[i,3])} 
-		else if (ini[i,2] == "NODATA_VALUE") {nodataval <- as.numeric(ini[i,3])} 
-		else if (ini[i,2] == "DATAFORMAT") {inidatatype <- ini[i,3]} 
-		else if (ini[i,2] == "BYTEORDER_BIG") {byteorder <- as.logical(ini[i,3])} 
+		else if (ini[i,2] == "NODATA_VALUE") { nodataval <- as.numeric(ini[i,3])} 
+		else if (ini[i,2] == "DATAFORMAT") { inidatatype <- ini[i,3]} 
+		else if (ini[i,2] == "BYTEORDER_BIG") { byteorder <- as.logical(ini[i,3])} 
 #		else if (ini[i,2] == "NCELLVALS") {ncellvals <- ini[i,3]} 
-		else if (ini[i,2] == "NAME") {layernames <- ini[i,3]} 
+		else if (ini[i,2] == "NAME") { layernames <- ini[i,3]} 
 		else if (ini[i,2] == "Z_FACTOR") { zfactor <-  as.numeric(ini[i,3])}
 		else if (ini[i,2] == "TOPTOBOTTOM") { toptobottom <-  as.logical(ini[i,3])}
 		else if (ini[i,2] == "DATAFILE_OFFSET") { dfoffset <-  as.integer(ini[i,3])}

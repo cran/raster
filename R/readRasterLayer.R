@@ -90,14 +90,16 @@
 			result <- getBSQData(object, r=startrow, nrows=nrows, c=startcol, ncols=ncols, dtype=dtype, dsize=dsize, dsign=dsign) 
 		}
 		object <- closeConnection(object)
-			
+
 		if (! object@file@toptobottom ) {
 			result <- t(matrix(result, nrow=ncols, ncol=nrows))
 			result <- result[nrows:1,]
 			result <- as.vector(t(result))
 		}
 
-#		result[is.nan(result)] <- NA
+		if (object@file@datanotation == 'INT4U') {
+			result[result < 0] <- 2147483647 - result[result < 0] 
+		}
 		if (dtype == 'numeric') {
 			result[result <= (0.999999 * object@file@nodatavalue)] <- NA 	
 			result[is.nan(result)] <- NA
@@ -107,6 +109,7 @@
 		if (dtype == 'logical') {
 			result <- as.logical(result)
 		}
+		
 
 # ascii is internal to this package but not 'native' (not binary)
 	} else if (object@file@driver == 'ascii') {

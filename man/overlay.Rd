@@ -55,7 +55,7 @@ In all cases you can use these arguments:
 }
 
 \details{
-In stead of the overlay function you can also use aritmethic functions such as \code{*, /, +, -} with Raster objects (see examples). In that case you cannot specifiy an output filename. Moreover, the overlay function should be more efficient when using large data files that cannot be loaded into memory, as the use of the complex arithmetic functions might lead to the creation of many temporary files.
+Instead of the overlay function you can also use aritmethic functions such as \code{*, /, +, -} with Raster objects (see examples). In that case you cannot specifiy an output filename. Moreover, the overlay function should be more efficient when using large data files that cannot be loaded into memory, as the use of the complex arithmetic functions might lead to the creation of many temporary files.
 
 While you can supply functions such as \code{sum} or \code{mean}, it would be more direct to use the Raster* objects are arguments to those functions (e.g. \code{sum(r1,r2,r3)})  
 
