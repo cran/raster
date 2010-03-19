@@ -1,0 +1,44 @@
+\name{NAvalue}
+
+\alias{NAvalue<-}
+\alias{NAvalue}
+
+\title{Set the NA value of a RasterLayer }
+
+\description{
+NAvalue returns the value that is used to write NA values to disk (in 'raster' type files). 
+If you set the NA value of a RasterLayer, this value will be interpreted as NA when reading the values from a file. 
+Values already in memory will not be affected. 
+
+If the NA value is smaller than zero, all values smaller or equal to that number will be set to NA.
+}
+
+\usage{
+NAvalue(x) <- value
+}
+
+\arguments{
+ \item{x}{A \code{RasterLayer} object}
+ \item{value}{the value to be interpreted as NA; set this before reading the values from the file. Integer values are matched exactely; for decimal values files any value <= the value will be interpreted as NA}  
+}
+
+
+\value{
+Returns or set the NA value used for storage on disk.
+}
+
+
+\author{ Robert J. Hijmans }
+
+\examples{ 
+r1 <- raster(system.file("pictures/Rlogo.jpg", package="rgdal"))
+r2 <- r1
+NAvalue(r2)
+NAvalue(r2) <- 255
+#plot(r1)
+#x11()
+#plot(r2)
+}
+
+\keyword{ spatial }
+

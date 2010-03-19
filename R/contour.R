@@ -1,0 +1,56 @@
+# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# International Rice Research Institute
+# Date :  April 2009
+# Version 0.9
+# Licence GPL v3
+
+if (!isGeneric("contour")) {
+	setGeneric("contour", function(x,...)
+		standardGeneric("contour"))
+}	
+
+setMethod("contour", signature(x='RasterLayer'), 
+	function(x, maxpixels=100000, ...)  {
+		x <- sampleRegular(x, maxpixels, asRaster=TRUE)
+		contour(x=xFromCol(x,1:ncol(x)), y=yFromRow(x, nrow(x):1), z=t((values(x, format='matrix'))[nrow(x):1,]), ...)
+	}
+)
+
+
+setMethod("contour", signature(x='RasterStackBrick'), 
+	function(x, y=1, maxpixels=100000, ...)  {
+		if (y < 1) { y <- 1 }
+		if (y > nlayers(x)) { y <- nlayers(x) }
+		contour(x=x, y=y, maxpixels=maxpixels, ...)
+	}	
+)
+
+
+rasterToContour <- function(x,maxpixels=100000,...) {
+	x <- sampleRegular(x, size=maxpixels, asRaster=TRUE)
+	cL <- contourLines(x=xFromCol(x,1:ncol(x)), y=yFromRow(x, nrow(x):1), z=t((values(x, format='matrix'))[nrow(x):1,]), ...)
+	
+# The below was taken from ContourLines2SLDF(maptools), by Roger Bivand & Edzer Pebesma 
+	.contourLines2LineList <- function(cL) {
+		n <- length(cL)
+		res <- vector(mode="list", length=n)
+		for (i in 1:n) {
+			crds <- cbind(cL[[i]][[2]], cL[[i]][[3]])
+			res[[i]] <- Line(coords=crds)
+		}
+		res
+	}
+	
+    if (length(cL) < 1) stop("no contour lines")
+    cLstack <- tapply(1:length(cL), sapply(cL, function(x) x[[1]]), function(x) x, simplify = FALSE)
+    df <- data.frame(level = names(cLstack))
+    m <- length(cLstack)
+    res <- vector(mode = "list", length = m)
+    IDs <- paste("C", 1:m, sep = "_")
+    row.names(df) <- IDs
+    for (i in 1:m) {
+        res[[i]] <- Lines(.contourLines2LineList(cL[cLstack[[i]]]), ID = IDs[i])
+    }
+    SL <- SpatialLines(res, proj4string = projection(x, asText=FALSE))
+    SpatialLinesDataFrame(SL, data = df)
+}

@@ -1,0 +1,67 @@
+# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Date :  June 2008
+# Version 0.9
+# Licence GPL v3
+
+
+	
+if (!isGeneric("values")) {
+	setGeneric("values", function(x, ...)
+		standardGeneric("values"))
+}	
+
+
+setMethod('values', signature(x='RasterLayer'), 
+function(x, format='vector', names=FALSE, ...) {
+
+	if (dataContent(x)=="nodata") {
+		stop("No data in memory. Use getValues()") 
+	}
+	
+	if (format=='matrix') { 
+		if (dataContent(x) == 'all') {
+			x = matrix(x@data@values, nrow=nrow(x), ncol=ncol(x), byrow=TRUE)
+			if (names) {
+				colnames(x) <- 1:ncol(x)
+				rownames(x) <- 1:nrow(x)
+			}
+		} else if (dataContent(r)=="row") {
+			r = rowFromCell(x, dataIndices(x)[1])
+			x <- matrix(x@data@values, nrow=1, ncol=ncol(r))
+			if (names) {
+				colnames(x) <- 1:ncol(m)
+				rownames(x) <- r
+			}	
+		} else if (dataContent(x)=="block") {
+			rows <- rowFromCell(x, dataIndices(x))
+			nrows <- 1 + rows[2] - rows[1]
+			cols <- colFromCell(x, dataIndices(x))
+			ncols <- 1 + cols[2] - cols[1]
+			x <- matrix(x@data@values, ncol=ncols, nrow=nrows)
+			if (names) {
+				colnames(x) = cols[1]:cols[2]
+				rownames(x) = rows[1]:rows[2]				
+			}
+		}
+		return(x)
+	} else {
+		return(x@data@values) 
+	}
+} )
+
+
+setMethod('values', signature(x='RasterBrick'), 
+function(x, names=FALSE, ...) {
+	if (dataContent(x)=="nodata") {
+		stop("No data in memory. Use getValues()") 
+	}
+	if (names) {
+		x = x@data@values
+		colnames(x) <- 1:ncol(x)
+		rownames(x) <- 1:nrow(x)
+		return(x)
+	} else {
+		return(x@data@values)
+	}
+} )
+
