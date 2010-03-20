@@ -1,0 +1,42 @@
+# R function for the raster package
+# Author: Robert J. Hijmans
+# contact: r.hijmans@gmail.com
+# Date : January 2009
+# Version 0.9
+# Licence GPL v3
+
+
+drawPoly <- function(sp=TRUE, col='red', lwd=2, ...) {
+	xy <- locator(n=10000, type="l", col=col, lwd=lwd, ...)
+	xy <- cbind(xy$x, xy$y)
+	xy <- rbind(xy, xy[1,])
+	lines(xy[(length(xy[,1])-1):length(xy[,1]),], col=col, lwd=lwd, ...)
+	if (sp) {
+		return( SpatialPolygons(list(Polygons(list(Polygon(xy)), 1))) )
+	} else {
+		return(xy)
+	}
+}
+
+
+drawLine <- function(sp=TRUE, col='red', lwd=2, ...) {
+	xy <- locator(n=10000, type="l", col=col, lwd=lwd, ...)
+	xy <- cbind(xy$x, xy$y)
+	if (sp) {
+		return( SpatialLines(list(Lines(list(Line(xy)), "1"))) )
+	} else {
+		return(xy)
+	}
+}
+
+
+polygonFromExtent <- function(bndbox, sp=TRUE) {
+	bb <- extent(bndbox)
+	p <- rbind(c(bb@xmin, bb@ymin), c(bb@xmin, bb@ymax), c(bb@xmax, bb@ymax), c(bb@xmax, bb@ymin), c(bb@xmin, bb@ymin) )
+	if (sp) {
+		return( SpatialPolygons(list(Polygons(list(Polygon(p)), 1))) )
+	} else {
+		return(p)
+	}
+}
+

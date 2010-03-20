@@ -1,0 +1,123 @@
+# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Date : October 2008
+# Version 0.9
+# Licence GPL v3
+
+
+.asSpGrid <- function(object, type='grid', dataframe=TRUE)  {
+	if (type=='pixel') {
+		values = rasterToPoints(object, fun=NULL, asSpatialPoints=FALSE)
+		pts <- SpatialPoints(values[,1:2])
+		if (dataframe) {
+			sp <- SpatialPixelsDataFrame(points=pts, data=data.frame(values=values[,3]), proj4string=projection(object, FALSE)) 	
+		} else {
+			sp <- SpatialPixels(points=pts, proj4string=projection(object, FALSE))
+		}
+	} else if (type=='grid') {
+		bb <- bbox(object)
+		cs <- res(object)
+		cc <- bb[,1] + (cs/2)
+		cd <- ceiling(diff(t(bb))/cs)
+		grd <- GridTopology(cellcentre.offset=cc, cellsize=cs, cells.dim=cd)
+		if (dataframe) {
+			values <- data.frame(getValues(object))
+			sp <- SpatialGridDataFrame(grd, proj4string=projection(object, FALSE), data=values)
+		} else { 
+			sp  <- SpatialGrid(grd, proj4string=projection(object, FALSE))
+		}	
+	}
+	return(sp)
+}
+
+setAs('RasterLayer', 'SpatialPixels', 
+	function(from) { return(.asSpGrid(from, type='pixel', FALSE)) }
+)
+
+setAs('RasterLayer', 'SpatialPixelsDataFrame', 
+	function(from) { return(.asSpGrid(from, type='pixel', TRUE)) }
+)
+
+setAs('RasterLayer', 'SpatialGrid', 
+	function(from) { return(.asSpGrid(from, type='grid', FALSE)) }
+)
+
+setAs('RasterLayer', 'SpatialGridDataFrame', 
+	function(from) { return(.asSpGrid(from, type='grid', TRUE)) }
+)
+
+
+setAs('RasterStack', 'SpatialGridDataFrame', 
+	function(from) { return(.asSpGrid(from, type='grid', TRUE)) }
+)
+
+
+setAs('RasterStack', 'RasterLayer', 
+	function(from){ return( raster (from)) }
+)
+
+	
+setAs('SpatialGridDataFrame', 'RasterLayer', 
+	function(from){ return( raster (from)) }
+)
+
+setAs('SpatialPixelsDataFrame', 'RasterLayer', 
+	function(from){ return(raster (from)) }
+)
+
+setAs('SpatialGrid', 'RasterLayer', 
+	function(from){ return(raster (from)) }
+)
+
+setAs('SpatialPixels', 'RasterLayer', 
+	function(from){ return(raster (from)) }
+)
+
+
+setAs('SpatialGrid', 'RasterStack',
+	function(from){ return(stack(from)) }
+)
+
+setAs('SpatialGridDataFrame', 'RasterStack',
+	function(from){ return(stack(from)) }
+)
+
+setAs('SpatialPixels', 'RasterStack', 
+	function(from){ return(stack(from)) }
+)
+
+setAs('SpatialPixelsDataFrame', 'RasterStack', 
+	function(from){ return(stack(from)) }
+)
+
+
+
+setAs('matrix', 'RasterLayer',
+	function(from){ return(raster(from)) }
+)
+
+setAs('RasterLayer', 'matrix',
+	function(from){ return( getValues(from, format='matrix')) }
+)
+
+
+	
+setAs('RasterLayer', 'SpatialPointsDataFrame', 
+	function(from){ return( rasterToPoints (from)) }
+)
+
+setAs('RasterLayer', 'SpatialPolygonsDataFrame', 
+	function(from){ return( rasterToPolygons (from)) }
+)
+
+setAs('Extent', 'SpatialPolygonsDataFrame', 
+	function(from){ return( polygonFromExtent (from)) }
+)
+
+
+#setAs('im', 'RasterLayer', 
+#	function(from) {
+#		r = raster(nrows=from$dim[1], ncols=from$dim[2], xmn=from$xrange[1], xmx=from$xrange[2], ymn=from$yrange[1], ymx=from$yrange[2], projs='')
+#		r = setValues(r, from$v)
+#		flip(r, direction='y')
+#	}
+#)

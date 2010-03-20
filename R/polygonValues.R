@@ -1,0 +1,74 @@
+# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Date : December 2009
+# Version 0.9
+# Licence GPL v3
+
+
+
+if (!isGeneric("polygonValues")) {
+	setGeneric("polygonValues", function(p, r, ...)
+		standardGeneric("polygonValues"))
+}	
+
+
+setMethod("polygonValues", signature(p='SpatialPolygons', r='Raster'), 
+function(p, r, fun, weights=FALSE, cellnumbers=FALSE, ...) {
+	spbb <- bbox(p)
+	rsbb <- bbox(r)
+	if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
+		list()
+	}
+	npol <- length(p@polygons)
+	res <- list()
+	rr <- raster(r)
+	for (i in 1:npol) {
+		pp <- p[i,]
+		spbb <- bbox(pp)
+		
+		if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
+			res[[i]] <- NULL
+		} else {
+			rc <- crop(rr, extent(pp))
+			if (weights) {
+				rc <- polygonsToRaster(pp, rc, getCover=TRUE, silent=TRUE)
+				rc[rc==0] <- NA
+				xy <- rasterToPoints(rc)
+				weight <- xy[,3] / 100
+				xy <- xy[,-3]
+			} else {
+				rc <- polygonsToRaster(pp, rc, silent=TRUE)
+				xy <- rasterToPoints(rc)[,-3]
+			}
+			
+			if (length(xy) > 0)  {  # catch holes or very small polygons
+				if (weights) {
+					value <- xyValues(r, xy)
+					if (cellnumbers) {
+						cell <- cellFromXY(r, xy)
+						res[[i]] <- cbind(cell, value, weight)
+					} else {				
+						res[[i]] <- cbind(value, weight)
+					}
+				} else {
+					res[[i]] <- xyValues(r, xy)
+				}
+			} else {
+				res[[i]] <- NULL
+			}
+		}
+	}
+	
+	if (! missing(fun)) {
+		if (weights) {
+			res = unlist(lapply(x, function(x) if (!is.null(x)) {sum(apply(x, 1, prod)) / sum(x[,2])} else NA  ))
+		} else {
+			res = lapply(x, fun)
+		
+		}
+	}
+	
+	res
+}
+)
+
+
