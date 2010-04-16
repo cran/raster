@@ -15,20 +15,23 @@ setMethod("polygonValues", signature(p='SpatialPolygons', r='Raster'),
 function(p, r, fun, weights=FALSE, cellnumbers=FALSE, ...) {
 	spbb <- bbox(p)
 	rsbb <- bbox(r)
-	if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
-		list()
-	}
+	addres <- max(res(r))
 	npol <- length(p@polygons)
 	res <- list()
+	res[[npol+1]] = NA
+
+	if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
+		return(res[1:npol])
+	}
 	rr <- raster(r)
 	for (i in 1:npol) {
 		pp <- p[i,]
 		spbb <- bbox(pp)
 		
 		if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
-			res[[i]] <- NULL
+			# do nothing; res[[i]] <- NULL
 		} else {
-			rc <- crop(rr, extent(pp))
+			rc <- crop(rr, extent(pp)+addres)
 			if (weights) {
 				rc <- polygonsToRaster(pp, rc, getCover=TRUE, silent=TRUE)
 				rc[rc==0] <- NA
@@ -53,20 +56,20 @@ function(p, r, fun, weights=FALSE, cellnumbers=FALSE, ...) {
 					res[[i]] <- xyValues(r, xy)
 				}
 			} else {
-				res[[i]] <- NULL
+				# do nothing; res[[i]] <- NULL
 			}
 		}
 	}
+	
+	res = res[1:npol]
 	
 	if (! missing(fun)) {
 		if (weights) {
 			res = unlist(lapply(x, function(x) if (!is.null(x)) {sum(apply(x, 1, prod)) / sum(x[,2])} else NA  ))
 		} else {
 			res = lapply(x, fun)
-		
 		}
 	}
-	
 	res
 }
 )

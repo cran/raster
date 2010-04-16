@@ -58,7 +58,7 @@
 
 
 
-polygonsToRaster <- function(spPolys, raster, field=0, overlap='last', mask=FALSE, updateRaster=FALSE, updateValue="NA", getCover=FALSE, filename="", silent=FALSE, ...) {
+polygonsToRaster <- function(p, raster, field=0, overlap='last', mask=FALSE, updateRaster=FALSE, updateValue="NA", getCover=FALSE, filename="", silent=FALSE, ...) {
 						
 	filename <- trim(filename)
 	if (!canProcessInMemory(raster, 3) && filename == '') {
@@ -85,18 +85,18 @@ polygonsToRaster <- function(spPolys, raster, field=0, overlap='last', mask=FALS
 		}
 	}
 	raster <- raster(raster)
-	if (projection(spPolys) != "NA") {
-		projection(raster) = projection(spPolys)
+	if (projection(p) != "NA") {
+		projection(raster) = projection(p)
 	}
 
-# check if bbox of raster and spPolys overlap
-	spbb <- bbox(spPolys)
+# check if bbox of raster and p overlap
+	spbb <- bbox(p)
 	rsbb <- bbox(raster)
 	if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
 		stop('polygon and raster have no overlapping areas')
 	}
 	
-	npol <- length(spPolys@polygons)
+	npol <- length(p@polygons)
 	
 	if (length(field) > 1) { 
 		stop('field should be a single value') 
@@ -105,19 +105,19 @@ polygonsToRaster <- function(spPolys, raster, field=0, overlap='last', mask=FALS
 		putvals <- rep(1, length=npol)	
 	} else if (is.numeric(field) & field < 0) {
 		putvals <- rep(1, length=npol)	
-	} else if (class(spPolys) == 'SpatialPolygons' | field == 0) {
+	} else if (class(p) == 'SpatialPolygons' | field == 0) {
 		putvals <- as.integer(1:npol)
 	} else {
 		if (is.character(field)){ 
-			if (!(field %in% colnames(spPolys@data))) {
+			if (!(field %in% colnames(p@data))) {
 				stop('field does not exist')
 			}
 		} else if (is.numeric(field)){ 
-			if (field > dim(spPolys@data)[2]) {
+			if (field > dim(p@data)[2]) {
 				stop('field index too large')
 			}
 		}
-		putvals <- as.vector(spPolys@data[[field]])
+		putvals <- as.vector(p@data[[field]])
 		if (class(putvals) == 'character') {
 			stop('selected field is character type')
 		}
@@ -125,33 +125,34 @@ polygonsToRaster <- function(spPolys, raster, field=0, overlap='last', mask=FALS
 
 	polinfo <- matrix(NA, nrow=npol * 2, ncol=6)
 	addpol <- matrix(NA, nrow=500, ncol=6)
+
 	pollist <- list()
 	cnt <- 0
 	for (i in 1:npol) {
-		nsubpol <- length(spPolys@polygons[[i]]@Polygons)
+		nsubpol <- length(p@polygons[[i]]@Polygons)
 		for (j in 1:nsubpol) {
 			cnt <- cnt + 1
 			if (cnt > dim(polinfo)[1]) { 
 				polinfo <- rbind(polinfo, addpol)  
 			}
 			polinfo[cnt, 1] <- cnt
-			polinfo[cnt, 2] <- min(spPolys@polygons[[i]]@Polygons[[j]]@coords[,2])
-			polinfo[cnt, 3] <- max(spPolys@polygons[[i]]@Polygons[[j]]@coords[,2])
+			polinfo[cnt, 2] <- min(p@polygons[[i]]@Polygons[[j]]@coords[,2])
+			polinfo[cnt, 3] <- max(p@polygons[[i]]@Polygons[[j]]@coords[,2])
 			polinfo[cnt, 4] <- putvals[i]
-			if ( spPolys@polygons[[i]]@Polygons[[j]]@hole ) {
+			if ( p@polygons[[i]]@Polygons[[j]]@hole ) {
 				polinfo[cnt, 5] <- 1
 			} else {
 				polinfo[cnt, 5] <- 0
 			}
 			polinfo[cnt, 6] <- i
-			pollist[cnt] <- spPolys@polygons[[i]]@Polygons[[j]]
+			pollist[cnt] <- p@polygons[[i]]@Polygons[[j]]
 		}
 	}
 	
 	if (! silent) {  cat('Found', npol, 'region(s) and', cnt, 'polygon(s)\n') }
 	polinfo <- subset(polinfo, polinfo[,1] <= cnt, drop=FALSE)
 #	polinfo <- polinfo[order(polinfo[,1]),]
-	rm(spPolys)
+	rm(p)
 
 		
 	lxmin <- min(spbb[1,1], rsbb[1,1]) - xres(raster)
@@ -211,11 +212,13 @@ polygonsToRaster <- function(spPolys, raster, field=0, overlap='last', mask=FALS
 							#	txt <- paste('something funny at row:', r, 'polygon:',j)
 							#	stop(txt)
 							#}
-							if (x1 > rxmx) { next }
-							if (x2 < rxmn) { next }
+							#  if (x1 > rxmx) { next }
+							# if (x2 < rxmn) { next }
 							# adjust to skip first cell if the center is not covered by this polygon
 							x1a <- x1 + adj
 							x2a <- x2 - adj
+							if (x1a > rxmx) { next }
+							if (x2a < rxmn) { next }
 							x1a <- min(rxmx, max(rxmn, x1a))
 							x2a <- min(rxmx, max(rxmn, x2a))
 							col1 <- colFromX(raster, x1a)
@@ -402,27 +405,27 @@ polygonsToRaster <- function(spPolys, raster, field=0, overlap='last', mask=FALS
 
 
 
-.polygonsToRaster2 <- function(spPolys, raster, field=0, filename="", ...) {
+.polygonsToRaster2 <- function(p, raster, field=0, filename="", ...) {
 #  This is based on sampling by points. Should be slower except when  polygons very detailed and raster  has low resolution
 # but it could be optimized further
 # currently not used. Perhaps it should be used under certain conditions. 
 # this version does not deal with polygon holes 
 
-# check if bbox of raster and spPolys overlap
+# check if bbox of raster and p overlap
 	filename <- trim(filename)
 	raster <- raster(raster)
 	
 
-	spbb <- bbox(spPolys)
+	spbb <- bbox(p)
 	rsbb <- bbox(raster)
 	if (spbb[1,1] > rsbb[1,2] | spbb[2,1] > rsbb[2,2]) {
 		stop('polygon and raster have no overlapping areas')
 	}
 
-	if (class(spPolys) == 'SpatialPolygons' | field == 0) {
-		putvals <- as.integer(1:length(spPolys@polygons))
+	if (class(p) == 'SpatialPolygons' | field == 0) {
+		putvals <- as.integer(1:length(p@polygons))
 	} else {
-		putvals <- as.vector(spPolys@data[,field])
+		putvals <- as.vector(p@data[,field])
 		if (class(putvals) == 'character') {
 			stop('selected field is charater type')
 		}
@@ -441,7 +444,7 @@ polygonsToRaster <- function(spPolys, raster, field=0, overlap='last', mask=FALS
 		} else {
 			rowcol[,1] <- r
 			sppoints <- xyFromCell(raster, cellFromRowCol(raster, rowcol[,1], rowcol[,2]), TRUE)
-			over <- overlay(sppoints, spPolys)
+			over <- overlay(sppoints, p)
 			vals <- putvals[over]
 		}
 		if (filename == "") {

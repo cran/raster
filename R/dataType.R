@@ -4,6 +4,8 @@
 # Licence GPL v3
 
 
+
+
 'dataType<-' <- function(x, value) {
 	if (class(x) == 'RasterStack') {
 		stop('Cannot set datatype of a RasterStack')
@@ -11,15 +13,15 @@
 
 # for backward compatibility issues and non fatal mistakes.
 	datatype <- substr( toupper( trim(value) ), 1, 5)
-	if (datatype == 'LOGIC') {datatype <- 'LOG1S'}
-	if (datatype == 'BYTE') {datatype <- 'INT1U'}
-	if (datatype == 'SMALL') {datatype <- 'INT2S'}
-	if (datatype == 'INTEG') {datatype <- 'INT4S'}
-	if (datatype == 'NUMER') {datatype <- 'FLT4S'}
-	if (datatype == 'FLOAT') {datatype <- 'FLT4S'}
-	if (datatype == 'DOUBL') {datatype <- 'FLT8S'}
-	if (datatype == 'SINGL') {datatype <- 'FLT4S'}		
-	if (datatype == 'REAL') {datatype <- 'FLT4S'}	
+	if (datatype == 'LOGIC') {datatype <- 'LOG1S'
+	} else if (datatype == 'BYTE') {datatype <- 'INT1U'
+	} else if (datatype == 'SMALL') {datatype <- 'INT2S'
+	} else if (datatype == 'INTEG') {datatype <- 'INT2S'
+	} else if (datatype == 'NUMER') {datatype <- 'FLT4S'
+	} else if (datatype == 'FLOAT') {datatype <- 'FLT4S'
+	} else if (datatype == 'DOUBL') {datatype <- 'FLT8S'
+	} else if (datatype == 'SINGL') {datatype <- 'FLT4S'
+	} else if (datatype == 'REAL') {datatype <- 'FLT4S'}	
 	
 	if (nchar(datatype) < 3) {
 		stop(paste('invalid datatype:', datatype))

@@ -10,7 +10,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 	if (name=='GADM') {
 		.GADM(..., download=download, path=path)
 	} else if (name=='SRTM') {
-		.SRTM(..., download=download, path=path, ...)
+		.SRTM(..., download=download, path=path)
 	} else if (name=='alt') {
 		.raster(..., name=name, download=download, path=path)
 	} else if (name=='worldclim') {

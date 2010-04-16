@@ -57,7 +57,9 @@
 
 
 .readCellsGDAL <- function(raster, cells) {
-	if (!require(rgdal)) { stop() }
+
+	if (! .requireRgdal() ) { stop('rgdal not available') }
+
 	colrow <- matrix(ncol=3, nrow=length(cells))
 	colrow[,1] <- colFromCell(raster, cells)
 	colrow[,2] <- rowFromCell(raster, cells)
@@ -93,7 +95,8 @@
 	} else { 
 		dtype <- "integer"
 	}
-
+	signed <- dataSigned(raster@file@datanotation)
+	
 	if (! raster@file@toptobottom) {
 		rows <- rowFromCell(raster, cells)
 		cols <- colFromCell(raster, cells)
@@ -115,7 +118,7 @@
 	raster <- openConnection(raster)
 	for (i in seq(along=cells)) {
 		seek(raster@file@con, (cells[i]-1) * dsize)
-		res[i] <- readBin(raster@file@con, what=dtype, n=1, size=dsize, endian=raster@file@byteorder) 
+		res[i] <- readBin(raster@file@con, what=dtype, n=1, size=dsize, endian=raster@file@byteorder, signed=signed) 
 	}
 	raster <- closeConnection(raster)
 	

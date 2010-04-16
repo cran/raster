@@ -29,7 +29,7 @@ a Raster* object
 \author{ Robert J. Hijmans }
 
 \examples{ 
-r <- raster(system.file("pictures/Rlogo.jpg", package="rgdal"))
+r <- raster(system.file("external/test.grd", package="raster"))
 r
 r <- setMinMax(r)
 r

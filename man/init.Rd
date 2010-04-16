@@ -40,18 +40,16 @@ A new RasterLayer object, and, in some cases, the side effect of a new file on d
 \author{Robert J. Hijmans}
 
 \examples{
-
 r <- raster(ncols=36, nrows=18)
- r <- init(r, fun=runif)
- 
+r <- init(r, fun=runif)
 # there are different ways to set all values to 1 
-# with a function (this will work for very large files if a file name is supplied)
- set1function <- function(x){rep(1, x)}
- r <- init(r, fun=set1function, filename='test.grd', overwrite=TRUE)
+set1f <- function(x){rep(1, x)}
+r <- init(r, fun=set1f, filename='test.grd', overwrite=TRUE)
 # easier to do "manually"
- r <- setValues(r, rep(1, ncell(r)))
+r <- setValues(r, rep(1, ncell(r)))
 # or  
- r[] <- rep(1, ncell(r))
+r[] <- rep(1, ncell(r))
+r[] <- 1
 }
 
 \keyword{spatial}

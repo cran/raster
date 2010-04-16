@@ -45,7 +45,7 @@ If \code{x} is a \code{list}, no additional arguments  \code{...} are accepted.
 \seealso{ \code{\link[raster]{raster}} }
 
 \examples{
-  b <- brick(system.file("pictures/Rlogo.jpg", package="rgdal"))
+  b <- brick(system.file("external/rlogo.grd", package="raster"))
   b
   nlayers(b)
   layerNames(b)

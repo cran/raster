@@ -1,11 +1,10 @@
 # Author: Robert J. Hijmans, r.hijmans@gmail.com
-# International Rice Research Institute
 # Date :  June 2008
 # Version 0.9
 # Licence GPL v3
 
 setMethod('hist', signature(x='RasterStackBrick'), 
-	function(x, layer, maxsamp=10000, plot=TRUE, main, ...) {
+	function(x, layer, maxpixels=10000, plot=TRUE, main, ...) {
 		
 		if (missing(layer)) y = 1:nlayers(x)
 		else if (is.character(layer)) {
@@ -89,3 +88,5 @@ setMethod('hist', signature(x='RasterLayer'),
 		else return(res)
 	}	
 )
+
+

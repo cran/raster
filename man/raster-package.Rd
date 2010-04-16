@@ -66,6 +66,7 @@ RasterLayer, RasterStack, and RasterBrick objects are, as a group, referred to a
 
   \tabular{ll}{
     \code{\link{merge}} \tab Combine RasterLayer objects with different extents (but same origin and resolution) \cr
+    \code{\link{mosaic}} \tab Combine RasterLayer objects with different extents; using a function to set values for overlapping areas \cr
     \code{\link{crop}} \tab Select a geographic subset of a RasterLayer \cr
     \code{\link{expand}} \tab Enlarge a RasterLayer  \cr
     \code{\link{trim}} \tab Trim a RasterLayer by removing exterior rows and/or columns that only have NA values \cr
@@ -179,18 +180,15 @@ You can coerce Raster* objects to Spatial* objects using \code{as}, as in \code{
 You can also use indexing with \code{[} for cell numbers, and \code{[[} for row / column number combinations \cr
 }
 
-
-
-
-
 \section{X. Plotting}{
 
 Maps
   \tabular{ll}{
     \code{\link{plot}} \tab Plot a Raster* object\cr
+    \code{\link{plot3D}} \tab 3-dimensional plot of a RasterLayer \cr
+    \code{\link{plotRGB}} \tab Combine three layers (red, green, blue channels) into a single 'real color' image \cr
     \code{\link{image}} \tab Plot a Raster* using the image function \cr
     \code{\link{persp}} \tab Perspective plot of a RasterLayer \cr
-    \code{\link{plot3D}} \tab 3-dimensional plot of a RasterLayer \cr
     \code{\link{contour}} \tab Contour plot of a RasterLayer \cr
  }
 
@@ -368,7 +366,7 @@ It is also possible to use Arithmetic functions with Extent objects (but these w
 
 
 \section{Acknowledgements}{
-We thank the following persons for suggestions to improve the package: Herry Herry, Paul Hiemstra, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Agustin Lobo, and Kevin Ummel.
+We thank the following persons for suggestions to improve the package: Herry Herry, Paul Hiemstra, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Agustin Lobo, Matteo Mattiuzzi, and Kevin Ummel.
 }
 
 \keyword{package}

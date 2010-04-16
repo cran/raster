@@ -96,14 +96,51 @@ showOptions <- function() {
 	return(datatype)
 }
 
-.filetype <- function(..., format) {
+.getFormat <- function(filename) {
+	ext <- tolower(ext(filename))
+	if (nchar(ext) < 3) {
+		return('')
+	} else {
+		if (ext == '.tif' | ext == '.tiff') { return('GTiff')
+		} else if (ext == '.grd') { return('raster')
+		} else if (ext == '.asc') { return('ascii')
+		} else if (ext == '.nc') { return('netcdf')
+		} else if (ext == '.bil') { return('BIL')
+		} else if (ext == '.bsq') { return('BSQ')
+		} else if (ext == '.bip') { return('BIP')
+		} else if (ext == '.bmp') { return('BMP') 
+		} else if (ext == '.gen') { return('ADRG') 
+		} else if (ext == '.bt') { return('BT') 
+		} else if (ext == '.envi') { return('ENVI')
+		} else if (ext == '.ers') { return('ERS') 
+		} else if (ext == '.img') { return( 'HFA') 
+		} else if (ext == '.rst') { return('RST') 
+		} else if (ext == '.mpr') { return('ILWIS')
+		} else if (ext == '.sdat') { return('SAGA')
+		} else if (ext == '.rsw') { return('RMF')
+		} else { 
+			warning('extension', ext, 'is unknown. Using default format in stead')
+			return('') 
+		}
+	}
+	
+}
+
+
+.filetype <- function(..., format, filename='') {
 	if (missing(format)) { 
+		format <- .getFormat(filename)
+		if (format != '') {
+			return(format)
+		}
+		
 		format <- getOption('rasterFiletype')
 		if (is.null(format)) {
 			return('raster') 
 		} else {
 			return(format)
 		}
+		
 	} else { 
 		return(format)
 	}

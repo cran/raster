@@ -31,7 +31,7 @@ Returns or set the NA value used for storage on disk.
 \author{ Robert J. Hijmans }
 
 \examples{ 
-r1 <- raster(system.file("pictures/Rlogo.jpg", package="rgdal"))
+r1 <- raster(system.file("external/rlogo.grd", package="raster"))
 r2 <- r1
 NAvalue(r2)
 NAvalue(r2) <- 255

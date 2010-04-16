@@ -34,14 +34,18 @@ init <- function(raster, fun, v, filename="", ...) {
 			} else if (v == 'col') { outraster <- setValues(outraster, rep(1:ncol(outraster), times=nrow(outraster)))
 			} else if (v == 'x') { outraster <- setValues(outraster, rep(xFromCol(outraster, 1:ncol(outraster)), times=nrow(outraster))) }
 		} else {
-			for (r in 1:nrow(raster)) {
-				if (v == 'cell') { outraster <- setValues(outraster, cellFromRowCol(r,1):cellFromRowCol(r,ncol(outraster)), r)
-				} else if (v == 'row') { outraster <- setValues(outraster, rep(r, each=ncol(outraster)), r)
-				} else if (v == 'y') { outraster <- setValues(outraster, rep(yFromRow(outraster, r), each=ncol(outraster)), r)
-				} else if (v == 'col') { outraster <- setValues(outraster, 1:ncol(outraster), r)
-				} else if (v == 'x') { outraster <- setValues(outraster, xFromCol(1:ncol(outraster)), r) }
-				outraster <- writeRaster(outraster, filename=filename, doPB=TRUE, ...)
-			}	
+			outraster <- writeStart(outraster, filename=filename, ...)
+			pb <- pbCreate(nrow(outraster), type=.progress(...))
+			for (r in 1:nrow(outraster)) {
+				if (v == 'cell') { writeValues(outraster, cellFromRowCol(r,1):cellFromRowCol(r,ncol(outraster)), r)
+				} else if (v == 'row') { writeValues(outraster, rep(r, each=ncol(outraster)), r)
+				} else if (v == 'y') { writeValues(outraster, rep(yFromRow(outraster, r), each=ncol(outraster)), r)
+				} else if (v == 'col') { writeValues(outraster, 1:ncol(outraster), r)
+				} else if (v == 'x') { writeValues(outraster, xFromCol(1:ncol(outraster)), r) }
+				pbStep(pb, r)
+			}
+			pbClose(pb)
+			outraster <- writeStop(outraster)
 		}
 	} else {
 		if ( inmem ) {
@@ -49,10 +53,14 @@ init <- function(raster, fun, v, filename="", ...) {
 			outraster <- setValues(outraster, fun(n)) 
 		} else {
 			n <- ncol(raster)
+			outraster <- writeStart(outraster, filename=filename, ...)
+			pb <- pbCreate(nrow(outraster), type=.progress(...))
 			for (r in 1:nrow(raster)) {
-				outraster <- setValues(outraster, fun(n), r) 
-				outraster <- writeRaster(outraster, filename=filename, doPB=TRUE, ...)
+				writeValues(outraster, fun(n), r) 
+				pbStep(pb, r)
 			}
+			pbClose(pb)
+			outraster <- writeStop(outraster)
 		}
 	}
 	if (inmem & filename != '') {

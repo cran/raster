@@ -5,24 +5,29 @@
 # Version 0.9
 # Licence GPL v3
 
-.startGDALwriting <- function(raster, filename, options, doPB, ...) {
-	mvFlag <- NA
-	attr(raster@file, "transient") <- .getGDALtransient(raster, filename=filename, mvFlag=mvFlag, options=options, ...)
-	if (doPB)  { attr(raster@file, "pb") <- pbCreate(nrow(raster), type=.progress(...) ) }
+.startGDALwriting <- function(raster, filename, options, ...) {
+	temp <- .getGDALtransient(raster, filename=filename, options=options, ...)
+	
+	attr(raster@file, "transient") <- temp[[1]]
+	raster@file@nodatavalue <- temp[[2]]
+	
 	raster@file@driver <- 'gdal'
 	raster@data@source <- 'disk'		
 	raster@file@name <- filename
 	return(raster)
 }
 
-.stopGDALwriting <- function(raster, doPB) {
+
+.stopGDALwriting <- function(raster) {
+
 	saveDataset(raster@file@transient, raster@file@name)
 	GDAL.close(raster@file@transient) 
-	if (doPB) {
-		try (pbClose( attr(raster@file, "pb") ), silent=TRUE)
-		attr(raster@file, "pb") <- ''
+	
+	if (class(raster) == 'RasterBrick') {
+		rasterout <- brick(raster@file@name)
+	} else {
+		rasterout <- raster(raster@file@name)
 	}
-	rasterout <- raster(raster@file@name)
 	if (!raster@data@haveminmax) {
 		rasterout@data@min <- raster@data@min
 		rasterout@data@max <- raster@data@max
@@ -32,12 +37,15 @@
 	return(rasterout)
 }
 
-.writeGDALrow <- function(raster, filename,  options=NULL, doPB=FALSE, ... ) {
+
+.writeGDALrow <- function(raster, filename,  options=NULL, ... ) {
 	if (!require(rgdal)) { stop() }
+
+	if (! .requireRgdal() ) { stop('rgdal not available') }
 
 	rownr <- rowFromCell(raster, dataIndices(raster)[1])
 	if ( rownr == 1) {
-		raster <- .startGDALwriting(raster, filename=filename, options=options, doPB=doPB, ...)
+		raster <- .startGDALwriting(raster, filename=filename, options=options, ...)
 	}	
 	
 #	raster@data@values[is.nan(raster@data@values)] <- NA
@@ -59,17 +67,20 @@
 	
     nl <- nlayers(raster)
 	if (nl == 1) {
-		x <- putRasterData(raster@file@transient, values(raster, rownr), band=1, c((rownr-1), 0)) 	
+		v <- values(raster)
+		v[is.na(v)] <- raster@file@nodatavalue
+		x <- putRasterData(raster@file@transient, v, band=1, c((rownr-1), 0)) 	
 	} else {
 		for (i in 1:nl) {
-			x <- putRasterData(raster@file@transient, values(raster, rownr)[,i], band=i, c((rownr-1), 0)) 
+			v <- values(raster)[,i]
+			v[is.na(v)] <- raster@file@nodatavalue
+			x <- putRasterData(raster@file@transient, v, band=i, c((rownr-1), 0)) 
 		}
 	}
 
-	if (doPB) {	pbStep( attr(raster@file, "pb"), rownr ) 	}
-	
 	if ( rownr == nrow(raster)) {
-		raster <- .stopGDALwriting(raster, doPB=doPB)
+		raster <- .stopGDALwriting(raster)
 	}
 	return(raster)
 }
+
