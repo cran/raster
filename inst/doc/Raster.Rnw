@@ -97,13 +97,13 @@ nlayers(s)
 b1 <- brick(r1, r2, r3)
 b2 <- brick(s)
 # create a RasterBrick from file
-b <- brick(system.file("pictures/Rlogo.jpg", package="rgdal"))
+b <- brick(system.file("external/rlogo.grd", package="raster"))
 b
 nlayers(b)
 # extract a single RasterLayer
 r <- raster(b, layer=2)
 # equivalent to creating it from disk
-r <- raster(system.file("pictures/Rlogo.jpg", package="rgdal"), band=2)
+r <- raster(system.file("external/rlogo.grd", package="raster"), band=2)
 @
 
 
@@ -153,7 +153,7 @@ r[] <- 1:ncell(r)
 ra <- aggregate(r, 10)
 r1 <- crop(r, extent(-180,0,0,30))
 r2 <- crop(r, extent(-10,180,-20,10))
-m <- merge(r1, r2, filename='test.tif', format='GTiff', overwrite=TRUE)
+m <- merge(r1, r2, filename='test.grd', overwrite=TRUE)
 @
 
 {\bf flip} lets you flip the data (reverse order) in horizontal or vertical direction -- typically to correct for a 'communication problem' between different R packages or a misinterpreted file. {\bf rotate} lets you rotate longitude/latitude rasters that have longitudes from 0 to 360 degrees to the standard -180 to 180 degrees system. 

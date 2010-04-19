@@ -44,11 +44,11 @@ A new RasterLayer object, and in some cases the side effect of a new file on dis
 
 \examples{
 r <- raster(ncols=10, nrows=10)
-rd <- disaggregate(r, fact=c(10, 5))
+rd <- disaggregate(r, fact=c(10, 2))
 ncol(rd)
 nrow(rd)
 r[] <- 1:ncell(r)
-rd <- disaggregate(r, fact=c(10, 5), method='bilinear')
+rd <- disaggregate(r, fact=c(4, 2), method='bilinear')
 
 }
 

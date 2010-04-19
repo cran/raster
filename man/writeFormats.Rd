@@ -5,7 +5,9 @@
 \title{File types for writing}
 
 \description{
-List supported file types for writing RasterLayer values to disk
+List supported file types for writing RasterLayer values to disk.
+
+When a function writes a file to disk, the file format is determined by the 'format=' argument if supplied, or else by the file extension (if the extension is known). If other cases the default format is used. The 'factory-fresh' default format is 'raster', but this can be changed using \code{\link[raster]{setOptions}}.
 }
 
 \usage{
@@ -17,19 +19,18 @@ writeFormats returns a matrix of the file formats (the "drivers") that are suppo
 
 Supported formats include:
 
-\tabular{rll}{
-\tab \bold{Format} \tab \bold{Long name} \cr
-\tab \code{raster} \tab 'Native' raster package format \cr
-\tab \code{ascii}  \tab ESRI Ascii \cr
-\tab \code{ENVI}   \tab ENVI .hdr Labelled \cr
-\tab \code{EHdr}   \tab ESRI .hdr Labelled \cr
-\tab \code{ERS}  \tab ERMapper .ers Labelled \cr
-\tab \code{GTiff}  \tab GeoTiff \cr
-\tab \code{HFA}  \tab Erdas Imagine (.img) \cr
-\tab \code{ILWIS}   \tab ILWIS raster \cr
-\tab \code{PAux}   \tab PCI .aux Labelled \cr
-\tab \code{PCIDSK}   \tab PCIDSK Database File \cr
-\tab \code{RST}  \tab  Idrisi Raster A.1 \cr
+
+\tabular{llllr}{
+	\tab \bold{File type} \tab \bold{Long name} \tab \bold{default extension} \tab \bold{Multiband support} \cr
+    \tab \code{raster}    \tab 'Native' raster package format \tab .grd \tab Yes \cr
+    \tab \code{ascii}     \tab ESRI Ascii  \tab .asc                 \tab  No \cr
+    \tab \code{SAGA}      \tab SAGA GIS    \tab .sdat                \tab  No \cr
+    \tab \code{IDRISI}    \tab IDRISI      \tab .rst                 \tab  No \cr
+    \tab \code{CDF}       \tab netCDF (requires RNetCDF) \tab .nc    \tab  pending \cr
+    \tab \code{GTiff}     \tab GeoTiff (requires rgdal) \tab .tif    \tab  Yes  \cr
+    \tab \code{ENVI}      \tab ENVI .hdr Labelled       \tab .envi   \tab Yes  \cr
+    \tab \code{EHdr}      \tab ESRI .hdr Labelled       \tab  .bil   \tab Yes  \cr
+    \tab \code{HFA}       \tab Erdas Imagine Images (.img)  \tab .img \tab Yes  \cr
 }
 }
 

@@ -18,6 +18,29 @@ setMethod('trim', signature(x='character'),
 	}
 )
 
+setMethod('trim', signature(x='data.frame'), 
+	function(x, ...) {
+		for (i in 1:ncol(x)) {
+			if (class(x[,i]) == 'character') {
+				x[,i] <- trim(x[,i])
+			}
+			if (class(x[,i]) == 'factor') {
+				x[,i] <- as.factor(trim(as.character(x[,i])))
+			}			
+		}
+		return(x)
+	}
+)
+
+
+setMethod('trim', signature(x='matrix'), 
+	function(x, ...) {
+		if (is.character(x)) {
+			x[] = trim(as.vector(x))
+		}
+		return(x)
+	}
+)
 
 	
 setMethod('trim', signature(x='RasterLayer'), 

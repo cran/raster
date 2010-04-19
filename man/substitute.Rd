@@ -32,7 +32,7 @@ A full call to \code{subs} is:
   \item{\code{y}}{data.frame}
   \item{\code{by}}{The column number or name that is the key (ID) to match a the \code{data.frame} row to a value of the RasterLayer. Default is 1}
   \item{\code{which}}{The column number or name that has the new (replacement) values. Default is 2}
-  \item{\code{subsWithNA}}{Logical. If \code{TRUE} values that are not matched become NA. If \code{FALSE}, they retain their original value (which could also be NA. This latter option is handy when you want to replace only one or a few values. }
+  \item{\code{subsWithNA}}{Logical. If \code{TRUE} values that are not matched become NA. If \code{FALSE}, they retain their original value (which could also be NA. This latter option is handy when you want to replace only one or a few values). }
   \item{\code{filename}}{Character. output filename}
   \item{\code{...}}{Standard additional variables, see below}
   

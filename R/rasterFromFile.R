@@ -5,6 +5,14 @@
 # Licence GPL v3
 
 
+.requireRgdal <- function() {
+	w <- getOption('warn')
+	options('warn'=-1) 
+	r <- try( require(rgdal, quietly=TRUE ) )
+	options('warn'= w) 
+	return(r)
+}
+
 
 .rasterObjectFromFile <- function(x, band=1, objecttype='RasterLayer', native=FALSE, ...) {
 	x <- trim(x)
@@ -46,7 +54,7 @@
 	}
 
 	if(!native) {
-		if (!(require(rgdal))) { native <- TRUE }  
+		if (! .requireRgdal() )  { native <- TRUE }  
 	}
 	if (native) {
 		if ( fileext == ".ASC" ) {
@@ -60,7 +68,7 @@
 			return ( .rasterFromIDRISIFile(x) )
 		}
 	}
-	if (!require(rgdal)) {
+	if (! .requireRgdal() ) {
 		stop("Cannot create RasterLayer object from this file; perhaps you need to install rgdal first")
 	}
 	test <- try ( r <- .rasterFromGDAL(x, band, objecttype), silent=TRUE )

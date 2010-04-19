@@ -47,9 +47,9 @@ The following additional arguments can be passed, to replace default values for 
 
 
 \examples{
-r <- raster(ncol=36,nrow=18)
+r <- raster(ncol=10,nrow=10)
 r[] <- NA
-r[500] <- 1
+r[48] <- 1
 distRaster <- gridDistance(r) 
 plot(distRaster)
 }

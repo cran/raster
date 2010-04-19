@@ -65,26 +65,22 @@ xyValues(r, xy)
 xyValues(r, xy, method='bilinear')
 
 # examples with a buffer
-xyValues(r, xy, buffer=10000, fun=mean)
-xyValues(r, xy[2:4,], buffer=150000)
+xyValues(r, xy[1:3,], buffer=100000)
+xyValues(r, xy[1:3,], buffer=100000, fun=mean)
 
 ## illustrating the varying size of a buffer (expressed in meters) on a longitude/latitude raster
  z <- xyValues(r, xy, buffer=1000000)
  s <- raster(r)
  for (i in 1:length(z)) { s[z[[i]]] <- i }
- plot(s)
- points(xy, pch=20, col='red')
- library(maptools)
- data(wrld_simpl)
- plot(wrld_simpl, add=TRUE)
 ## compare with raster that is not longitude/latitude
  projection(r) <- NA 
  xy[,1] <- 50
  z <- xyValues(r, xy, buffer=8)
  for (i in 1:length(z)) { s[z[[i]]] <- i }
  plot(s)
- plot(wrld_simpl, add=TRUE)
-
+# library(maptools)
+# data(wrld_simpl)
+# plot(wrld_simpl, add=TRUE)
 }
 
 \keyword{methods}

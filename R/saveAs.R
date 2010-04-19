@@ -55,6 +55,7 @@ function(x, filename, ...) {
 
 setMethod('saveAs', signature(x='RasterStackBrick', filename='character'), 
 	function(x, filename, bandorder='BIL', ...) {
+
 		filename <- trim(filename)
 		if ( toupper(x@file@name == toupper(filename) )) {
 			stop('filenames of source and destination should be different')
@@ -65,11 +66,16 @@ setMethod('saveAs', signature(x='RasterStackBrick', filename='character'),
 			return( .writeBrick(object=x, filename=filename, bandorder=bandorder, ...) )
 		} else {
 			b <- brick(x)
-			for (r in 1:nrow(x)) {
-				v <- getValues(x, r)
-				b <- setValues(b, v)
-				b <- .writeGDALrow(b, filename=filename, ...)
-			}	
+			tr <- blockSize(b)
+			pb <- pbCreate(tr$n, type=.progress())
+			b <- writeStart(b, filename=filename, bandorder=bandorder, ...)
+			for (i in 1:tr$n) {
+				v <- getValuesBlock(x, row=tr$row[i], nrows=tr$size)
+				writeValues(b, v, tr$row[i])
+				pbStep(pb, i)
+			}
+			b <- writeStop(b)
+			pbClose(pb)
 			return(b)
 		}
 	}
@@ -92,7 +98,8 @@ setMethod('saveAs', signature(x='RasterStackBrick', filename='character'),
 	for (r in 1:nrow(newr)) {
 		x <- readRow(x, r)
 		newr <- setValues(newr, values(x), r)
-		newr <- writeRaster(newr, filename=filename, ..., doPB=TRUE)
+		newr <- writeRaster(newr, filename=filename, ...)
 	}
 	return(newr)
 }
+

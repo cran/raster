@@ -3,6 +3,8 @@
 \alias{trim}
 \alias{trim,RasterLayer-method}
 \alias{trim,character-method}
+\alias{trim,matrix-method}
+\alias{trim,data.frame-method}
 
 \title{Trim}
 

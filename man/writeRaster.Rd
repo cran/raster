@@ -10,7 +10,9 @@
 
 \description{
 Write raster values to a file. Either as binary ('raster') format, Ascii (ESRI Arc Ascii) format, and other GDAL supported formats. 
-You can write an entire raster dataset at once, or by row.
+You can write an entire raster dataset at once, or by row. 
+
+When writing a file to disk, the file format is determined by the 'format=' argument if supplied, or else by the file extension (if the extension is known). If other cases the default format is used. The 'factory-fresh' default format is 'raster', but this can be changed using \code{\link[raster]{setOptions}}.
 }
 
 \usage{
@@ -67,17 +69,17 @@ See \code{writeFormats} for supported file types ("formats", "drivers"); the rgd
 
 Supported file types include:
 
-\tabular{lllr}{
-	\tab \bold{File type} \tab \bold{Long name} \tab \bold{Multiband support} \cr
-    \tab \code{raster} \tab 'Native' raster package format \tab Yes \cr
-    \tab \code{ascii}  \tab ESRI Ascii \tab No \cr
-    \tab \code{SAGA}  \tab SAGA GIS \tab No \cr
-    \tab \code{IDRISI}  \tab IDRISI \tab No \cr
-    \tab \code{CDF}  \tab netCDF (requires RNetCDF) \tab pending \cr
-    \tab \code{GTiff}  \tab GeoTiff (requires rgdal) \tab Yes  \cr
-    \tab \code{ENVI}   \tab ENVI .hdr Labelled \tab Yes  \cr
-    \tab \code{EHdr}   \tab ESRI .hdr Labelled \tab Yes  \cr
-    \tab \code{HFA}  \tab Erdas Imagine Images (.img) \tab Yes  \cr
+\tabular{llllr}{
+	\tab \bold{File type} \tab \bold{Long name} \tab \bold{default extension} \tab \bold{Multiband support} \cr
+    \tab \code{raster}    \tab 'Native' raster package format \tab .grd \tab Yes \cr
+    \tab \code{ascii}     \tab ESRI Ascii  \tab .asc                 \tab  No \cr
+    \tab \code{SAGA}      \tab SAGA GIS    \tab .sdat                \tab  No \cr
+    \tab \code{IDRISI}    \tab IDRISI      \tab .rst                 \tab  No \cr
+    \tab \code{CDF}       \tab netCDF (requires RNetCDF) \tab .nc    \tab  pending \cr
+    \tab \code{GTiff}     \tab GeoTiff (requires rgdal) \tab .tif    \tab  Yes  \cr
+    \tab \code{ENVI}      \tab ENVI .hdr Labelled       \tab .envi   \tab Yes  \cr
+    \tab \code{EHdr}      \tab ESRI .hdr Labelled       \tab  .bil   \tab Yes  \cr
+    \tab \code{HFA}       \tab Erdas Imagine Images (.img)  \tab .img \tab Yes  \cr
 }
 }
 
@@ -87,63 +89,40 @@ This function is used for the side-effect of writing values to a file.
 
 \author{Robert J. Hijmans}
 
-\seealso{\code{\link[raster]{writeFormats}} }  
+\seealso{\code{\link[raster]{writeFormats}}, and for faster writing: \code{\link[raster]{writeValues}} }  
 
 \examples{ 
 rst <- raster(system.file("external/test.grd", package="raster"))
- 
-# read all data
-rst <- readAll(rst)
 
-# write all to a new binary file
-rst <- writeRaster(rst, filename="binall.grd", overwrite=TRUE)
-
-# write all to a new ERDAS .img file
-rst <- writeRaster(rst, filename="binall.img", format="HFA", overwrite=TRUE)
+# take a small part
+rst <- crop(rst, extent(179880, 180800, 329880, 330840) )
 
 # write all to an integer binary file
-rst <- writeRaster(rst, filename="binallint.grd", datatype='INT4S', overwrite=TRUE)
- 
-# write all to ascii file
-rst <- writeRaster(rst, filename="ascall.asc", format='ascii', overwrite=TRUE)
+r <- writeRaster(rst, filename="allint.grd", datatype='INT4S', overwrite=TRUE)
+
+# write all to a new geotiff file (depends on rgdal)
+if (require(rgdal)) {
+  r <- writeRaster(rst, filename="test.tif", format="GTiff", overwrite=TRUE)
+}
 
 # make a brick and save multi-band file
 b <- brick(rst, sqrt(rst))
-rst <- writeRaster(b, filename="mutli.grd", bandorder='BIL', overwrite=TRUE)
+b <- writeRaster(b, filename="mutli.grd", bandorder='BIL', overwrite=TRUE)
  
-# read and write row by row; write to ascii file
-rst <- raster(system.file("external/test.grd", package="raster"))
-ascras <- raster(rst)
-for (r in 1:nrow(rst)) {
-	rst <- readRow(rst, r)
-	v <- values(rst) * 10
-	ascras <- setValues(ascras, v, r)
-	ascras <- writeRaster(ascras, filename='ascrow.asc', format='ascii', overwrite=TRUE) 
-}
-	
-# read and write row by row; write to binary file
+# read and write row by row
 binras <- raster(rst)
-for (r in 1:nrow(rst)) {
-	rst <- readRow(rst, r)
-	binras <- setValues(binras, values(rst), r)
-	binras <- writeRaster(binras, 'binbyrow', overwrite=TRUE) 
-}
-
-# read and write row by row; write to GeoTiff binary file
-binras <- raster(rst)
-for (r in 1:nrow(rst)) {
-	rst <- readRow(rst, r)
-	binras <- setValues(binras, values(rst), r)
-	binras <- writeRaster(binras, 'binbyrow2.tif', format="GTiff", overwrite=TRUE) 
+for (r in 1:nrow(binras)) {
+	v <- getValues(rst, r)
+	binras <- setValues(binras, v, r)
+	binras <- writeRaster(binras, 'byrow.grd', overwrite=TRUE) 
 }
 
 # write to netcdf 
 if (require(RNetCDF)) {	
-    rst <- readAll(rst)
     writeRaster(rst, filename='netCDF.nc', format="CDF", overwrite=TRUE)   
 }
-
 }
 
 \keyword{ spatial }
 \keyword{ methods }
+

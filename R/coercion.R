@@ -4,7 +4,18 @@
 # Licence GPL v3
 
 
-.asSpGrid <- function(object, type='grid', dataframe=TRUE)  {
+.hasValues <- function(x) {
+	if (class(x) == 'BasicRaster') { return(FALSE) }
+	if (dataSource(x) != 'disk' & dataContent(x) != 'all') {
+		return(FALSE)
+	} else {
+		return(TRUE)
+	}
+}
+
+
+.asSpGrid <- function(object, type='grid', dataframe)  {
+		
 	if (type=='pixel') {
 		values = rasterToPoints(object, fun=NULL, asSpatialPoints=FALSE)
 		pts <- SpatialPoints(values[,1:2])
@@ -29,40 +40,23 @@
 	return(sp)
 }
 
-setAs('RasterLayer', 'SpatialPixels', 
+setAs('Raster', 'SpatialPixels', 
 	function(from) { return(.asSpGrid(from, type='pixel', FALSE)) }
 )
 
-setAs('RasterLayer', 'SpatialPixelsDataFrame', 
+setAs('Raster', 'SpatialPixelsDataFrame', 
 	function(from) { return(.asSpGrid(from, type='pixel', TRUE)) }
 )
 
-setAs('RasterLayer', 'SpatialGrid', 
+setAs('Raster', 'SpatialGrid', 
 	function(from) { return(.asSpGrid(from, type='grid', FALSE)) }
 )
 
-setAs('RasterLayer', 'SpatialGridDataFrame', 
+setAs('Raster', 'SpatialGridDataFrame', 
 	function(from) { return(.asSpGrid(from, type='grid', TRUE)) }
 )
 
-
-setAs('RasterStack', 'SpatialGridDataFrame', 
-	function(from) { return(.asSpGrid(from, type='grid', TRUE)) }
-)
-
-
-setAs('RasterStack', 'RasterLayer', 
-	function(from){ return( raster (from)) }
-)
-
-	
-setAs('SpatialGridDataFrame', 'RasterLayer', 
-	function(from){ return( raster (from)) }
-)
-
-setAs('SpatialPixelsDataFrame', 'RasterLayer', 
-	function(from){ return(raster (from)) }
-)
+# to RasterLayer
 
 setAs('SpatialGrid', 'RasterLayer', 
 	function(from){ return(raster (from)) }
@@ -72,12 +66,8 @@ setAs('SpatialPixels', 'RasterLayer',
 	function(from){ return(raster (from)) }
 )
 
-
+# to RasterStack
 setAs('SpatialGrid', 'RasterStack',
-	function(from){ return(stack(from)) }
-)
-
-setAs('SpatialGridDataFrame', 'RasterStack',
 	function(from){ return(stack(from)) }
 )
 
@@ -85,11 +75,38 @@ setAs('SpatialPixels', 'RasterStack',
 	function(from){ return(stack(from)) }
 )
 
-setAs('SpatialPixelsDataFrame', 'RasterStack', 
-	function(from){ return(stack(from)) }
+
+# to RasterBrick
+
+setAs('SpatialGrid', 'RasterBrick',
+	function(from){ return(brick(from)) }
 )
 
 
+setAs('SpatialPixels', 'RasterBrick', 
+	function(from){ return(brick(from)) }
+)
+
+
+
+
+# Between Raster objects
+setAs('RasterStack', 'RasterLayer', 
+	function(from){ return( raster(from)) }
+)
+
+setAs('RasterBrick', 'RasterLayer', 
+	function(from){ return( raster(from)) }
+)
+
+
+setAs('RasterLayer', 'RasterStack', 
+	function(from){ return( stack(from)) }
+)
+
+setAs('RasterLayer', 'RasterBrick', 
+	function(from){ return( brick(from)) }
+)
 
 setAs('matrix', 'RasterLayer',
 	function(from){ return(raster(from)) }
@@ -101,6 +118,7 @@ setAs('RasterLayer', 'matrix',
 
 
 	
+# Between Raster and sp vector objects	
 setAs('RasterLayer', 'SpatialPointsDataFrame', 
 	function(from){ return( rasterToPoints (from)) }
 )
@@ -114,10 +132,11 @@ setAs('Extent', 'SpatialPolygonsDataFrame',
 )
 
 
-#setAs('im', 'RasterLayer', 
-#	function(from) {
-#		r = raster(nrows=from$dim[1], ncols=from$dim[2], xmn=from$xrange[1], xmx=from$xrange[2], ymn=from$yrange[1], ymx=from$yrange[2], projs='')
-#		r = setValues(r, from$v)
-#		flip(r, direction='y')
-#	}
-#)
+# spatstat
+setAs('im', 'RasterLayer', 
+	function(from) {
+		r = raster(nrows=from$dim[1], ncols=from$dim[2], xmn=from$xrange[1], xmx=from$xrange[2], ymn=from$yrange[1], ymx=from$yrange[2], projs='')
+		r = setValues(r, from$v)
+		flip(r, direction='y')
+	}
+)

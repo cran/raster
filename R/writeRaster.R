@@ -6,20 +6,20 @@
 if (!isGeneric('writeRaster')) {
 	setGeneric('writeRaster', function(x, filename, ...)
 		standardGeneric('writeRaster')) 
-}  
-	
+}
+
 
 setMethod('writeRaster', signature(x='RasterLayer', filename='character'), 
-function(x, filename, ...) {
+function(x, filename, format, ...) {
 
-	filetype <- .filetype(...)
-
+	filename <- trim(filename)
+	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)
 	
 	dc <- dataContent(x)
 	if (dc == 'nodata') {
 		if (dataSource(x) == 'disk') {
-			return( saveAs(x, filename, ...) )
+			return( saveAs(x, filename, format=filetype, ...) )
 		} else {
 			stop('No usable data available for writing.')
 		}
@@ -28,19 +28,19 @@ function(x, filename, ...) {
 	
 	if (.isNativeDriver(filetype)) {
 		if (substr(dc, 1, 3) == 'row' ) {
-			x <- .writeRasterRow(x, filename=filename, ...)
+			x <- .writeRasterRow(x, filename=filename, format=filetype, ...)
 		} else {
-			x <- .writeRasterAll(x, filename=filename, ...)
+			x <- .writeRasterAll(x, filename=filename, format=filetype, ...)
 		}  
 	} else if (filetype=='ascii') {
-		x <- .writeAscii(x, filename=filename, ...)
+		x <- .writeAscii(x, filename=filename, format=filetype,...)
 	} else if (filetype=='CDF') {
-		x <- .writeRasterCDF(x, filename=filename, ...)
+		x <- .writeRasterCDF(x, filename=filename, format=filetype, ...)
 	} else { 
 		if (substr(dc, 1, 3) == 'row' ) {
-			x <- .writeGDALrow(x, filename=filename, ...)
+			x <- .writeGDALrow(x, filename=filename, format=filetype, ...)
 		} else if (dc == 'all') {
-			x <- .writeGDALall(x, filename=filename, ...)
+			x <- .writeGDALall(x, filename=filename, format=filetype, ...)
 		} else {
 			stop('cannot write data')
 		}		
@@ -51,15 +51,16 @@ function(x, filename, ...) {
 
 
 setMethod('writeRaster', signature(x='RasterBrick', filename='character'), 
-function(x, filename, bandorder='BIL', ...) {
+function(x, filename, bandorder='BIL', format, ...) {
 
-	filetype <- .filetype(...)
+	filename <- trim(filename)
+	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)
 	
 	dc <- dataContent(x)
 	if (! dc %in% c('row', 'all') ) {
 		if (dataSource(x) == 'disk') {
-			return( saveAs(x, filename, bandorder=bandorder, ...) )
+			return( saveAs(x, filename, bandorder=bandorder, format=filetype, ...) )
 		} else {
 			stop('No usable data available for writing.')
 		}
@@ -69,13 +70,13 @@ function(x, filename, bandorder='BIL', ...) {
 		if (dc == 'row' ) {
 			return( .writeBrickRow(object=x, filename=filename, bandorder=bandorder, ...) )
 		} else {
-			return( .writeBrick(object=x, filename=filename, bandorder=bandorder, ...) )
+			return( .writeBrick(object=x, filename=filename, format=filetype, bandorder=bandorder, ...) )
 		}
 	} else {
 		if (dc == 'row' ) {
-			x <- .writeGDALrow(x, filename=filename, ...)
+			x <- .writeGDALrow(x, filename=filename, format=filetype, ...)
 		} else {
-			x <- .writeGDALall(x, filename=filename, ...)
+			x <- .writeGDALall(x, filename=filename, format=filetype, ...)
 		}
 	}
 }
@@ -83,19 +84,25 @@ function(x, filename, bandorder='BIL', ...) {
 
 
 setMethod('writeRaster', signature(x='RasterStack', filename='character'), 
-function(x, filename, bandorder='BIL', ...) {
-	test <- try( b <- brick(x) )
-	if (class(test) != "try-error") {
-		b <- writeRaster(b, filename=filename, bandorder=bandorder, ...)
-		return(invisible(b))
-	}
+function(x, filename, bandorder='BIL', format, ...) {
 
-	b <- brick(raster(x))
-	for (r in 1:nrow(x)) {
-		v <- getValues(x, r)
-		b <- setValues(b, v, r)
-		b <- writeRaster(b, filename=filename, bandorder=bandorder, ...)
+	filename <- trim(filename)
+	filetype <- .filetype(format=format, filename=filename)
+	filename <- .getExtension(filename, filetype)
+
+	b <- brick(x, values=FALSE)
+	b <- writeStart(b, filename=filename, bandorder=bandorder, format=filetype, ...)
+	tr <- blockSize(b)
+	pb <- pbCreate(tr$n, type=.progress(...))
+	for (i in 1:tr$n) {
+		v <- getValuesBlock(x, row=tr$row[i], nrows=tr$size)
+		writeValues(b, v, tr$row[i])
+		pbStep(pb, i)
 	}
+	pbClose(pb)
+	b <- writeStop(b)
 	return(invisible(b))
+	
 }
 )
+

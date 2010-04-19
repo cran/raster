@@ -44,7 +44,7 @@
 				coords <- xyFromCell(obj, cells)
 				pd <- cbind(pointDistance(xy[i,], coords, 'GreatCircle'), vals)
 				if (nrow(pd) > 1) {
-					cv[[i]] <- pd[pd[,2] <= buffer[i], -1]
+					cv[[i]] <- pd[pd[,1] <= buffer[i], -1]
 				} else { 
 					cv[[i]] <- pd[,-1]
 				}

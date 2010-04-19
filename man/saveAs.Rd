@@ -41,7 +41,7 @@ A RasterLayer or RasterBrick object. This primary use of this function is its si
 
 \examples{ 
 r1 <- raster(system.file("external/test.grd", package="raster"))
-r2 <- saveAs(r1, 'test.tif', format='GTiff')
+r2 <- saveAs(r1, 'testnew.grd', format='raster')
 }
 
 \keyword{ spatial }

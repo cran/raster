@@ -29,7 +29,11 @@ interpolate(object, ...)
   \tab  \code{object} \tab a RasterLayer object \cr
   \tab  \code{model}  \tab A fitted model\cr
   \tab  \code{filename}  \tab Output filename for a new raster; if NA the result is not written to a file but returned with the RasterLayer object, in the data slot \cr
-  \tab  \code{index}  \tab Which gstat variable do you want (see predict.gstat). In the case of kriging, 1=prediction and 2=prediction variance. \cr
+  \tab  \code{xyOnly} \tab Logical. If \code{TRUE}, values of the Raster* object are not considered as co-variables; and only x and y (longitude and latitude) are used. This should match the model \cr
+  \tab  \code{ext} \tab An Extent object to limit the prediction to a sub-region of \code{x} \cr
+  \tab  \code{const}  \tab data.frame. Can be used to add a constant for which there is no Raster object for model predictions. Particulalry useful if the constant is a character-like factor value \cr
+  \tab  \code{index}  \tab Integer. To select the column if 'predict.model' returns a matrix with multiple columns \cr
+  \tab  \code{na.rm}  \tab Logical. Remove cells with NA values in the predictors before solving the model (and return a NA value for those cells). In most cases this will not affect the output. This option prevents errors with models that cannot handle NA values. \cr  
   \tab  \code{...}  \tab Additional arguments, see below \cr
 }
 
@@ -53,7 +57,8 @@ a RasterLayer object
 
 \examples{
 ## Thin plate spline interpolation with x and y only
-require(fields)
+if (require(spam)) {
+if (require(fields)) {
 r <- raster(system.file("external/test.grd", package="raster"))
 ra <- aggregate(r, 10)
 xy <- data.frame(xyFromCell(ra, 1:ncell(ra)))
@@ -63,26 +68,27 @@ p <- raster(r)
 p <- interpolate(p, tps)
 p <- mask(p, r)
 plot(p)
-## 
+}
+}
 
 ##gstat examples
-#require(gstat)
 
+if (require(gstat)) {
 ## inverse distance weighted interpolation with gstat
-#r <- raster(system.file("external/test.grd", package="raster"))
-#data(meuse)
-#mg <- gstat(id = "zinc", formula = zinc~1, locations = ~x+y, data=meuse, nmax=7, set=list(idp = .5))
-#z <- interpolate(r, mg)
-#z <- mask(z, r)
+r <- raster(system.file("external/test.grd", package="raster"))
+data(meuse)
+mg <- gstat(id = "zinc", formula = zinc~1, locations = ~x+y, data=meuse, nmax=7, set=list(idp = .5))
+z <- interpolate(r, mg)
+z <- mask(z, r)
 
 ## kriging
-#data(meuse)
 #coordinates(meuse) = ~x+y
 #v <- variogram(log(zinc)~1, meuse)
 #m <- fit.variogram(v, vgm(1, "Sph", 300, 1))
 #g <- gstat(NULL, "log.zinc", log(zinc)~1, meuse, model = m)
 #projection(r) <- projection(meuse)
 #x <- interpolate(r, g)
+}
 }
 
 \keyword{methods}

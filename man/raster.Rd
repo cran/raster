@@ -164,7 +164,7 @@ RasterLayer object
 \examples{
 #from file
 r <- raster(system.file("external/test.grd", package="raster"))
-logo <- raster(system.file("pictures/Rlogo.jpg", package="rgdal"), values=TRUE) 
+logo <- raster(system.file("external/rlogo.grd", package="raster"), values=TRUE) 
 
 #from scratch
 r1 <- raster(nrows=108, ncols=21, xmn=0, xmx=10)

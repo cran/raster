@@ -29,6 +29,7 @@ dataType <- function(x) {
 	return(x@file@datanotation)
 }
 
+
 dataContent <- function(object) {
 	return(object@data@content)
 }

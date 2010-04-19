@@ -6,34 +6,46 @@
 
 
 
-rasterToPoints <- function(raster, fun=NULL, asSpatialPoints=FALSE) {
-
-	if (dataSource(raster) == 'ram' & dataContent(raster) != 'all') {
-		if (asSpatialPoints) {
-			coords <- xyFromCell(raster, 1:ncell(raster))
-			row.names(coords) <- 1:nrow(coords)
-			return(SpatialPoints(coords=coords, proj4string=projection(raster, asText=FALSE)))
-		} else {
-			return(xyFromCell(raster, 1:ncell(raster)))
+rasterToPoints <- function(x, fun=NULL, asSpatialPoints=FALSE) {
+	
+	nl = nlayers(x)
+	if (nl > 1) {
+		if (! is.null(fun)) {
+			stop('you can only supply a fun argument if "x" has a single layer')		
 		}
 	}
 	
-	if (dataContent(raster) == 'all') {
-		xyv <- cbind(xyFromCell(raster, 1:ncell(raster)), values(raster))
-		raster <- clearValues(raster)
-		xyv <- subset(xyv, !(is.na(xyv[,3])))
+	if (dataSource(x) == 'ram' & dataContent(x) != 'all') {
+		if (asSpatialPoints) {
+			coords <- xyFromCell(x, 1:ncell(x))
+			row.names(coords) <- 1:nrow(coords)
+			return(SpatialPoints(coords=coords, proj4string=projection(x, asText=FALSE)))
+		} else {
+			return(xyFromCell(x, 1:ncell(x)))
+		}
+	}
+	
+	if (canProcessInMemory(x, 3)) {
+		xyv <- cbind(xyFromCell(x, 1:ncell(x)), getValues(x))
+		x = NULL
+		if (nl > 1) {
+			notna = apply(xyv[,3:ncol(xyv)], 1, function(x){ sum(is.na(x)) < length(x) })
+			xyv <- xyv[notna,]
+		} else {
+			xyv <- na.omit(xyv)
+		}
 		if (!is.null(fun)) {
 			xyv <- subset(xyv, fun(xyv[,3]))
 		}
 	} else {
-		xyv <- matrix(NA, ncol=3, nrow=0)
+		xyv <- matrix(NA, ncol=2+nlayers(x), nrow=0)
 		colnames(xyv) <- c('x', 'y', 'v')
-		x <- xFromCol(raster, 1:ncol(raster))
-		for (r in 1:nrow(raster)) {
-			y <- yFromRow(raster, r)
-			raster <- readRow(raster, r)
-			xyvr <- cbind(x, y, values(raster))
-			xyvr <- subset(xyvr, !(is.na(xyvr[,3])))
+		x <- xFromCol(x, 1:ncol(x))
+		y <- yFromRow(x, 1:nrow(x))
+		for (r in 1:nrow(x)) {
+			xyvr <- cbind(x, y[r], getValues(x, r))
+			notna = apply(xyv[,3:ncol(xyv)], 1, function(x){ sum(is.na(x)) < length(x) })
+			xyvr <- xyvr[notna, ]
 			if (!is.null(fun)) {
 				xyvr <- subset(xyvr, fun(xyvr[,3]))
 			}
@@ -46,7 +58,7 @@ rasterToPoints <- function(raster, fun=NULL, asSpatialPoints=FALSE) {
 		colnames(coords) <- c('x', 'y')
 		rastvals <- as.data.frame(xyv[,3])
 		colnames(rastvals) <- 'value'
-		return(SpatialPointsDataFrame(coords=coords, data=rastvals, proj4string=projection(raster, asText=FALSE)))
+		return(SpatialPointsDataFrame(coords=coords, data=rastvals, proj4string=projection(x, asText=FALSE)))
 	} else {
 		return(xyv)
 	}

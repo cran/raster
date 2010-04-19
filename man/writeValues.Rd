@@ -19,7 +19,7 @@ Low level functions for writing blocks (>= 1 row) of values to files. For progra
 }
 
 \usage{
-blockSize(x, chunksize, n=1, minblocks=2)
+blockSize(x, chunksize, n=nlayers(x), minblocks=2)
 writeStart(x, filename, ...)
 writeValues(x, v, ...)
 writeStop(x)
@@ -77,6 +77,7 @@ for (i in 1:tr$n) {
 }
 s <- writeStop(s)
 
+if(require(rgdal)){
 s2 <- writeStart(s, filename='test2.tif', format='GTiff', overwrite=TRUE)
 # writing last row first
 for (i in tr$n:1) {
@@ -87,6 +88,21 @@ for (i in tr$n:1) {
 v <- getValuesBlock(r, row=5, nrows=1)
 writeValues(s2, v, 5)
 s2 <- writeStop(s2)
+}
+
+## write values of a RasterStack to a RasterBrick
+s <- stack(system.file("external/rlogo.grd", package="raster"))
+# create empty brick
+b <- brick(s, values=FALSE)  
+b <- writeStart(b, filename="test.grd", format="raster",overwrite=TRUE)
+tr <- blockSize(b)
+for (i in 1:tr$n) {
+	v <- getValuesBlock(s, row=tr$row[i], nrows=tr$size)
+	writeValues(b, v, tr$row[i])
+}
+b <- writeStop(b)
+# note that the above is equivalent to 
+# b <- writeRaster(s, filename="test.grd", format="raster",overwrite=TRUE)
 
 }
 

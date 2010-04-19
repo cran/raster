@@ -7,7 +7,7 @@ if (!isGeneric("interpolate")) {
 
 setMethod('interpolate', signature(object='Raster'), 
 	
-	function(object, model, filename="", ext=NULL, const=NULL, index=1, debug.level=1, na.rm=TRUE, ...) {
+	function(object, model, filename="", xyOnly=TRUE, ext=NULL, const=NULL, index=1, debug.level=1, na.rm=TRUE, ...) {
 		
 		predrast <- raster(object)
 				
@@ -51,17 +51,20 @@ setMethod('interpolate', signature(object='Raster'),
 			v <- matrix(NA, ncol=nrow(predrast), nrow=ncol(predrast))
 		} 
 
-		xyOnly <- FALSE
-		if (class(object) == 'RasterStack') {
-			if (nlayers(object)==0) { 
-				xyOnly <- TRUE 
-			}
-		} else {
-			if (dataSource(object) == 'ram') {
-				if (dataContent(object) != 'all') {
+		if (! xyOnly) {
+			if (class(object) == 'RasterStack') {
+				if (nlayers(object)==0) { 
+					warning('"object" has no data, xyOnly set to TRUE')
 					xyOnly <- TRUE 
 				}
-			}				
+			} else {
+				if (dataSource(object) == 'ram') {
+					if (dataContent(object) != 'all') {
+						warning('"object" has no data, xyOnly set to TRUE')
+						xyOnly <- TRUE 
+					}
+				}				
+			}
 		}
 		if (xyOnly) na.rm <- FALSE
 		

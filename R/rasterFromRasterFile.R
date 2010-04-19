@@ -58,6 +58,7 @@
     }  
 	
 	if (projstring == 'GEOGRAPHIC') { projstring <- "+proj=longlat" }
+	if (projstring == 'UNKNOWN') { projstring <- "NA" }
 
 	
 	if (band < 1) {
@@ -96,7 +97,11 @@
 	if (nchar(layernames) > 1) {
 		layernames <- unlist(strsplit(layernames, ':'))
 	}
-	x@layernames <- layernames
+	if (type == 'RasterBrick') {
+		x@layernames <- layernames
+	} else {
+		x@layernames <- layernames[band]	
+	}
 	shortname <- gsub(" ", "_", ext(basename(filename), ""))
 	x <- .enforceGoodLayerNames(x, shortname)
 	

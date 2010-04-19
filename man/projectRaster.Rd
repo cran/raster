@@ -65,6 +65,7 @@ r <- setValues(r, 1:ncell(r))
 newproj <- "+proj=lcc +lat_1=48 +lat_2=33 +lon_0=-100 +ellps=WGS84"
 
 # create a new RasterLayer with a projected extent (no values are transferred)
+if (require(rgdal)) {
 pr <- projectExtent(r, newproj)
 # Adjust the cell size 
 res(pr) <- 100000
@@ -80,7 +81,7 @@ inv <- projectRaster(pr, r)
 # inv <- projectRaster(pr, r, method='bilinear')
 # dif <- r - inv
 # plot(dif)
-
+}
 }
 
 \keyword{spatial}

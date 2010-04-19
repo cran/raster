@@ -5,7 +5,7 @@
 
 
 .rasterFromGDAL <- function(filename, band, type) {	
-	if (!require(rgdal)) { stop('package rgdal is missing') }
+	if (! .requireRgdal() ) { stop('package rgdal is not available') }
 
 	# suppressing the geoTransform warning...
 	w <- getOption('warn')
@@ -73,7 +73,6 @@
 	dataType(x) <- datatype
 	x@data@min <- minv 
 	x@data@max <- maxv
-
 	
 #oblique.x   0  #oblique.y   0 
 	return(x)
