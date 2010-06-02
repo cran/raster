@@ -23,52 +23,46 @@ function(x, y, filename='', datatype=dataType(x), ...) {
 # we could also allow the raster to expand but for now let's not and first make a separate expand function
 	e <- intersectExtent(x, y)
 	e <- alignExtent(e, x)
-	outraster <- raster(x)
-	outraster <- setExtent(outraster, e, keepres=TRUE)
-	col1 <- colFromX(x, xmin(outraster)+0.5*xres(outraster))
-	col2 <- colFromX(x, xmax(outraster)-0.5*xres(outraster))
-	row1 <- rowFromY(x, ymax(outraster)-0.5*yres(outraster))
-	row2 <- rowFromY(x, ymin(outraster)+0.5*yres(outraster))
+	outRaster <- raster(x)
+	outRaster <- setExtent(outRaster, e, keepres=TRUE)
+	
+	if (dataContent(x) != 'all' & dataSource(x) != 'disk') {
+		return(outRaster)
+	}
+	
+	col1 <- colFromX(x, xmin(outRaster)+0.5*xres(outRaster))
+	col2 <- colFromX(x, xmax(outRaster)-0.5*xres(outRaster))
+	row1 <- rowFromY(x, ymax(outRaster)-0.5*yres(outRaster))
+	row2 <- rowFromY(x, ymin(outRaster)+0.5*yres(outRaster))
+	nc <- ncol(outRaster)
+	nr <- row2 - row1 + 1
 	
 	datatype=dataType(x)
 
-	if (dataContent(x) == 'all')  {
-		x <- values(x, format='matrix')[(row1:row2), (col1:col2)]
-		outraster <- setValues(outraster, as.vector(t(x)))
+	
+	if (canProcessInMemory(outRaster, 3)) {
+		x <- getValuesBlock(x, row1, nrows=nr, col=col1, ncols=nc)
+		outRaster <- setValues(outRaster, x)
 		if (filename != "") { 
-			outraster <- writeRaster(outraster, filename=filename, datatype=datatype, ...)
+			outRaster <- writeRaster(outRaster, filename=filename, datatype=datatype, ...)
 		}
-
-	} else if ( dataSource(x) == 'disk') { 
-		nc <- ncol(outraster)
-		nr <- row2 - row1 + 1
-		if (canProcessInMemory(outraster, 3)) {
-			v <- values(.readRasterLayerValues(x, row1, nrows=nr, startcol=col1, ncols=nc))
-			outraster <- setValues(outraster, as.vector(v) )
-			if (filename != '') { 
-				outraster <- writeRaster(outraster, filename=filename, datatype=datatype, ...) 
-			}
-			return(outraster)
-		} else if ( filename == '') {
-			filename <- rasterTmpFile()
-									
+	} else { 
+		if ( filename == '') {
+			filename <- rasterTmpFile()								
 		}
-		rownr <- 1
-		pb <- pbCreate(nrow(outraster), type=.progress(...))
-		for (r in row1:row2) {
-			vv <- getValues(x, r)[col1:col2]
-			outraster <- setValues(outraster, vv, rownr)
-			outraster <- writeRaster(outraster, filename=filename, datatype=datatype, ...)
-			rownr <- rownr + 1
+		tr <- blockSize(outRaster)
+		pb <- pbCreate(tr$n, type=.progress(...))
+		outRaster <- writeStart(outRaster, filename=filename, datatype=datatype, ... )
+		tr$row <- tr$row+row1-1
+		for (i in 1:tr$n) {
+			vv <- getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i], col1, nc)
+			outRaster <- writeValues(outRaster, vv)
 			pbStep(pb, r) 			
 		} 
-		if (filename == '') { 
-			outraster <- setValues(outraster, as.vector(v) )
-		}
+		outRaster <- writeStop(outRaster)
 		pbClose(pb)
-		
 	}
-	return(outraster)
+	return(outRaster)
 }
 )
 

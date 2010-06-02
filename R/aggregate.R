@@ -58,21 +58,23 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", ...)  {
 		return(outRaster)
 	}	
 
-	if (dataContent(x) == 'all') { nl = 3 }  else { nl = 4 }
-
-	if (canProcessInMemory(outRaster, nl)) {
-
-		cols <- rep(rep(1:csteps, each=xfact)[1:ncol(x)], times=nrow(x))
-		rows <- rep(1:rsteps, each=ncol(x) * yfact)[1:ncell(x)]
-		cells <- cellFromRowCol(x, rows, cols)
+	if (dataContent(x) == 'all') { nl = 2 }  else { nl = 3 }
+	
+	if (canProcessInMemory(x, nl)) {
+		xx <- raster(x)		
+		x <- getValues(x)
+		cols <- rep(rep(1:csteps, each=xfact)[1:ncol(xx)], times=nrow(xx))
+		rows <- rep(1:rsteps, each=ncol(xx) * yfact)[1:ncell(xx)]
+		cells <- cellFromRowCol(xx, rows, cols)
 		
-		outRaster <- setValues(outRaster, as.vector( tapply( getValues(x), cells, thefun )))
+		x <- as.vector( tapply(x, cells, thefun ))
+		rm(cells)
 		
+		x <- setValues(outRaster, x)
 		if (filename != "") {
-			outRaster <- writeRaster(outRaster, filename=filename, ...)
+			x <- writeRaster(x, filename=filename, ...)
 		}
-		
-		return(outRaster)
+		return(x)
 
 	} else  { 
 	
@@ -109,7 +111,7 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", ...)  {
 			if (filename == "") {
 				v[,r] <- vals
 			} else {
-				writeValues(outRaster, vals, r)
+				outRaster <- writeValues(outRaster, vals, r)
 			}
 		
 			pbStep(pb, r) 

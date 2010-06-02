@@ -17,7 +17,7 @@ setMethod("is.na", signature(x='RasterLayer'),
 			r <- writeStart(r, filename=rasterTmpFile(), datatype='LOG1S', format=.filetype(), overwrite=TRUE )
 			for (i in 1:tr$n) {
 				v <- is.na( getValuesBlock(x, row=tr$row[i], nrows=tr$size) )
-				writeValues(r, v, tr$row[i])
+				r <- writeValues(r, v, tr$row[i])
 				pbStep(pb, i) 
 			}
 			r <- writeStop(r)
@@ -43,7 +43,7 @@ setMethod("is.nan", signature(x='RasterLayer'),
 			r <- writeStart(r, filename=rasterTmpFile(), datatype='LOG1S', format=.filetype(), overwrite=TRUE )
 			for (i in 1:tr$n) {
 				v <- is.nan( getValuesBlock(x, row=tr$row[i], nrows=tr$size) )
-				writeValues(r, v, tr$row[i])
+				r <- writeValues(r, v, tr$row[i])
 				pbStep(pb, i) 
 			}
 			r <- writeStop(r)
@@ -70,7 +70,7 @@ setMethod("is.finite", signature(x='RasterLayer'),
 			r <- writeStart(r, filename=rasterTmpFile(), datatype='LOG1S', format=.filetype(), overwrite=TRUE )
 			for (i in 1:tr$n) {
 				v <- is.finite( getValuesBlock(x, row=tr$row[i], nrows=tr$size) )
-				writeValues(r, v, tr$row[i])
+				r <- writeValues(r, v, tr$row[i])
 				pbStep(pb, i) 
 			}
 			r <- writeStop(r)
@@ -97,7 +97,7 @@ setMethod("is.infinite", signature(x='RasterLayer'),
 			r <- writeStart(r, filename=rasterTmpFile(), datatype='LOG1S', format=.filetype(), overwrite=TRUE )
 			for (i in 1:tr$n) {
 				v <- is.infinite( getValuesBlock(x, row=tr$row[i], nrows=tr$size) )
-				writeValues(r, v, tr$row[i])
+				r <- writeValues(r, v, tr$row[i])
 				pbStep(pb, i) 
 			}
 			r <- writeStop(r)

@@ -187,7 +187,7 @@ linesToRaster <- function(spLines, raster, field=0, filename="", updateRaster=FA
 			}
 		}
 		if (updateRaster) {
-			oldvals <- values(readRow(oldraster, r))
+			oldvals <- getValues(oldraster, r)
 			if (updateValue == "all") {
 				ind <- which(!is.na(rv))
 			} else if (updateValue == "zero") {

@@ -48,9 +48,13 @@ function(x, padding=0, filename='', ...) {
 
 	filename <- trim(filename)
 
-	if (dataContent(x) != 'all' & dataSource(x) == 'disk')  {
-		if (canProcessInMemory(x, 3)) {
-			x <- readAll(x)
+	if (dataContent(x) != 'all') {
+		if (dataSource(x) == 'disk')  {
+			if (canProcessInMemory(x, 3)) {
+				x <- readAll(x)
+			}
+		} else {
+			stop('A RasterLayer with no values cannot be trimmed')
 		}
 	}
 	

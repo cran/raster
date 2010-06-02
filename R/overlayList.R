@@ -59,14 +59,14 @@
 		if (applymethod) {
 			valmat <- vector()
 			for (i in 1:length(x)) {
-				valmat <- cbind(valmat, values(x[[i]]))
+				valmat <- cbind(valmat, x[[i]]@data@values)
 				x[[i]] <- clearValues(x[[i]])
 			}	
 			pbStep(pb, 2)
 			vals <- apply(valmat, 1, fun)
 		} else {
 			for (i in 1:length(x)) {
-				vallist[[i]] <- values(x[[i]])
+				vallist[[i]] <- x[[i]]@data@values 
 				x[[i]] <- clearValues(x[[i]])
 			}
 			pbStep(pb, 2)
@@ -123,7 +123,7 @@
 				v[,cols] <- vv
 
 			} else {
-				writeValues(outraster, vv, tr$row[i])
+				outraster <- writeValues(outraster, vv, tr$row[i])
 			}	
 			pbStep(pb, i)
 		}

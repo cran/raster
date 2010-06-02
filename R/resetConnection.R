@@ -1,9 +1,7 @@
 # Author: Robert J. Hijmans, r.hijmans@gmail.com
-# International Rice Research Institute
 # Date : April  2009
 # Version 0.9
 # Licence GPL v3
-
 
 
 openConnection <- function(raster, silent=FALSE) {

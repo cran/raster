@@ -15,24 +15,24 @@
 \title{Write values to a file}
 
 \description{
-Low level functions for writing blocks (>= 1 row) of values to files. For programmers and advanced users to speed up functions. Others are adviced to use \link[raster]{writeRaster} which is safer but more limited. writeRaster can only take all values (for smaller data sets) or a single row at a time (for larger data sets). The advantage of the functions described here is that they allow writing values to file using chunks of any size (and some additional optimization for speed). Function \code{blockSize} can be used to suggest chunks of a number of rows that can be much larger than 1 (up to all rows). This reduces the number of loops and the number of file i/o requests and hence could speed up writing values to file. These functions do not have many validity tests and will try to do as requested, or perhaps fail, or write invalid files. Hence the adviced to use \link[raster]{writeRaster} instead (or first, and later optimize with the functions described here). 
+Functions for writing blocks (>= 1 row(s)) of values to files. If you want to write all values of a Raster* object at once, you can also use \link[raster]{writeRaster} which is easier to use but more limited. The functions described here allow writing values to file using chunks of different sizes (e.g. 1 or 10 rows). Function \code{blockSize} can be used to suggest chunks of a number of rows that can be much larger than 1 (up to all rows).  
 }
 
 \usage{
-blockSize(x, chunksize, n=nlayers(x), minblocks=2)
 writeStart(x, filename, ...)
 writeValues(x, v, ...)
 writeStop(x)
+blockSize(x, chunksize, n=nlayers(x), minblocks=2)
 }
 
 \arguments{
   \item{x}{Raster* object}
+  \item{filename}{Output filename}
+  \item{...}{Additional arguments. See under Methods}    
   \item{chunksize}{Integer, normally missing. Can be used to set the block size; unit is number of cells. Block size is then computed in units of number of rows (always >= 1)  }
   \item{n}{Integer. number of layers to consider. The function divides chunksize by n to determine blocksize }
   \item{minblocks}{Integer. Minimum number of blocks }
-  \item{filename}{Output filename}
   \item{v}{vector}
-  \item{...}{Additional arguments. See under Methods}    
 }
 
 \section{Methods}{
@@ -47,15 +47,21 @@ writeStop(x)
 }}
 
 \details{
-First open a file with \code{writeStart}, then write values to it in chunks. When writing is done close the file with \code{writeStop}. \code{chunkSize} can help set the number of rows of each chunk and it returns the row-numbers from where to start reading.
+First open a file with \code{writeStart}, then write values to it in chunks. When writing is done close the file with \code{writeStop}. \code{blockSize} can help set the number of rows of each chunk and it returns the row-numbers from where to start reading.
 
-Files with a 'native' format must be written in sequence of cell numbers. In contrast, the values of files written via rgdal can be written in any order (but you must write 1 or more entire rows, you cannot write part of a row). For files written via rgdal, an argument \code{start} must be provided to \code{writeValues} so that it knows where to write the values. This argument is ignored for the native formats (values are assumed to be in sequence). 
+When writing a file to disk, the file format is determined by the 'format=' argument if supplied, or else by the file extension (if the extension is known). If other cases the default format is used. The 'factory-fresh' default format is 'raster', but this can be changed using \code{\link[raster]{setOptions}}.
+
+Files with a 'native' format must be written in sequence of cell numbers. E.g. when writing by row, you must write all rows, and you must write them in sequence. Start at row=1, and end at row=nrow(raster).
+
+In contrast, the values of files written via rgdal can be written in any order (but you must write 1 or more entire rows, you cannot write part of a row). For files written via rgdal, an argument \code{start} must be provided to \code{writeValues} so that it knows where to write the values. This argument is ignored for the native formats (values are assumed to be in sequence). 
+ 
+You cannot overwrite an isolated single row in an existing raster file. 
 }
 
 \value{
-the write functions are used for the side-effect of writing values to a file.
+The write functions return a Raster* object. 
 
-tileSize returns a list with \code{rows}, the suggested row numbers at which to start the blocks for reading and writing, \code{size}, the block size (number of rows) and \code{n}, the total number of blocks 
+blockSize returns a list with \code{rows}, the suggested row numbers at which to start the blocks for reading and writing, \code{size}, the block size (number of rows) and \code{n}, the total number of blocks 
 }
 
 \author{Robert J. Hijmans}
@@ -68,12 +74,12 @@ r <- raster(system.file("external/test.grd", package="raster"))
 # write to a new binary file in chunks
 s <- raster(r)
 # 
-tr <- blockSize(r, 25)
+tr <- blockSize(r)
 tr
 s <- writeStart(s, filename='test.grd',  overwrite=TRUE)
 for (i in 1:tr$n) {
 	v <- getValuesBlock(r, row=tr$row[i], nrows=tr$size)
-	writeValues(s, v, tr$row[i])
+	s <- writeValues(s, v, tr$row[i])
 }
 s <- writeStop(s)
 
@@ -82,7 +88,7 @@ s2 <- writeStart(s, filename='test2.tif', format='GTiff', overwrite=TRUE)
 # writing last row first
 for (i in tr$n:1) {
 	v <- getValuesBlock(r, row=tr$row[i], nrows=tr$size)
-	writeValues(s2, v, tr$row[i])
+	s2 <- writeValues(s2, v, tr$row[i])
 }
 # row number 5 once more
 v <- getValuesBlock(r, row=5, nrows=1)
@@ -98,7 +104,7 @@ b <- writeStart(b, filename="test.grd", format="raster",overwrite=TRUE)
 tr <- blockSize(b)
 for (i in 1:tr$n) {
 	v <- getValuesBlock(s, row=tr$row[i], nrows=tr$size)
-	writeValues(b, v, tr$row[i])
+	b <- writeValues(b, v, tr$row[i])
 }
 b <- writeStop(b)
 # note that the above is equivalent to 

@@ -71,9 +71,9 @@
 	object@data@max <- pmax(object@data@max,  apply(values, 2, function(x){max(x, na.rm=T)}))
 	
 	if (bandorder=='BIL') {
-		values <- as.vector(values(object))
+		values <- as.vector(object@data@values)
 	} else 	if (bandorder=='BIP') {
-		values <- as.vector(t(values(object)))
+		values <- as.vector(t(object@data@values))
 	}
 	if (object@file@dtype == "INT" || object@file@dtype =='LOG' ) { 
 		values <- as.integer(round(object@data@values))  

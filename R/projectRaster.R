@@ -4,13 +4,13 @@
 # Licence GPL v3
 
 
-projectExtent <- function(object, projs) {
+projectExtent <- function(object, crs) {
 	if (! .requireRgdal() ) { stop('rgdal not available') }
 
 	validObject(projection(object, asText=FALSE))
-	validObject(projection(projs, asText=FALSE))
+	validObject(projection(crs, asText=FALSE))
 	projfrom <- projection(object)
-	projto <- projection(projs)
+	projto <- projection(crs)
 	
 	xy1 <- xyFromCell(object, cellFromCol(object, 1))
 	xy1[,1] <- xy1[,1] - 0.5 * xres(object)
@@ -47,7 +47,7 @@ projectExtent <- function(object, projs) {
 		miny <- miny - 0.5
 	}
 	
-	obj <- raster(extent(minx, maxx, miny,  maxy), nrows=nrow(object), ncols=ncol(object), proj=(projs))
+	obj <- raster(extent(minx, maxx, miny,  maxy), nrows=nrow(object), ncols=ncol(object), crs=crs)
 	return(obj)
 }
 
@@ -56,8 +56,7 @@ projectRaster <- function(from, to, method="ngb", filename="", ...)  {
 
 	if (! .requireRgdal() ) { stop('rgdal not available') }
 	
-	
-	if (dataContent(from) != 'all' & dataSource(from) == 'ram') { stop('no vales for "from". Nothing to do') }
+	if (dataContent(from) != 'all' & dataSource(from) == 'ram') { stop('no vales for "from". Nothing to do.') }
 
 	validObject(to)
 	validObject(projection(from, asText=FALSE))
@@ -72,48 +71,54 @@ projectRaster <- function(from, to, method="ngb", filename="", ...)  {
 	validObject(bb)
 
 	if (!method %in% c('bilinear', 'ngb')) { stop('invalid method') }
-	filename <- trim(filename)
-	to <- raster(to, filename=filename)
-
-	rowCells <- 1:ncol(to)
-
-	if (!canProcessInMemory(to, 1) && filename == "") {
-		filename <- rasterTmpFile()
-		
-	}
-	inMemory <- filename == ""
-	if (inMemory) {
-		v <- matrix(NA, nrow=ncol(to), ncol=nrow(to))
-	}
-	
 	if (method=='ngb') {
 		xymethod <- 'simple' 
 	} else {
 		xymethod <- 'bilinear' 	
 	}
+
+	filename <- trim(filename)
 	
+	to <- raster(to)
+	if (!canProcessInMemory(to, 1) && filename == "") {
+		filename <- rasterTmpFile()
+	}
+
+	inMemory <- filename == ""
+	if (inMemory) {
+		v <- matrix(NA, nrow=ncol(to), ncol=nrow(to))
+	} else {
+		to <- writeStart(to, filename=filename, ... )
+	}
 	
-	pb <- pbCreate(nrow(to), type=.progress(...))
-	
-	for (r in 1:nrow(to)) {
-		cells <- rowCells + (r-1) * ncol(to)
-		xy <- xyFromCell(to, cells)
-		res <- .Call("transform", projto, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
-		unProjXY <- cbind(res[[1]], res[[2]])
+	rowCells <- 1:ncol(to)
+	tr <- blockSize(to)
+	pb <- pbCreate(tr$n, type=.progress(...))
+	for (i in 1:tr$n) {
+		r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
+		xy <- xyFromCell(to, cellFromRowCol(to, tr$row[i], 1) : cellFromRowCol(to, tr$row[i]+tr$nrows[i]-1, ncol(to)) ) 
+
+		unProjXY <- .Call("transform", projto, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
+		unProjXY <- cbind(unProjXY[[1]], unProjXY[[2]])
 		vals <- xyValues(from, unProjXY, method=xymethod)
+		
 		if (inMemory) {
-			v[,r] <- vals
+			v[, tr$row[i]:(tr$row[i]+tr$nrows[i]-1)] <- matrix(vals, nrow=ncol(to))
 		} else {
-			to <- setValues(to, vals, r)
-			to <- writeRaster(to, filename=filename, ...)
+			to <- writeValues(to, tr$row[i])
 		}
-		pbStep(pb, r)
+		pbStep(pb)
+		
 	}
 	pbClose(pb)
+	
 	if (inMemory) {
 		to <- setValues(to, as.vector(v))
+	} else {
+		to <- writeStop(to)	
 	}
 	return(to)
 }
+
 
 

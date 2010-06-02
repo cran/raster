@@ -23,10 +23,22 @@ setOptions <- function(format, overwrite, datatype, tmpdir, progress, chunksize,
 	
 	setTmpdir <- function(tmpdir) {
 		if (!missing(tmpdir)) {
-			res <- file.exists(tmpdir)
-			if (!res) { res <- dir.create(tmpdir,  showWarnings = FALSE) }
-			if (res) { options(rasterTmpDir = tmpdir) 
-			} else { warning(paste('could not create tmpdir:',tmpdir))	}
+			tmpdir <- trim(tmpdir)
+			if (tmpdir != '') {
+				lastchar = substr(tmpdir, nchar(tmpdir), nchar(tmpdir))
+				if (lastchar != "/" & lastchar != '\\') {
+					tmpdir <- paste(tmpdir, '/', sep='')
+				}		
+				res <- file.exists(substr(tmpdir, 1, nchar(tmpdir)-1))
+				if (!res) { 
+					res <- dir.create(tmpdir, recursive=TRUE, showWarnings = FALSE) 
+				}
+				if (res) { 
+					options(rasterTmpDir = tmpdir) 
+				} else { 
+					warning(paste('could not create tmpdir:',tmpdir))	
+				}
+			}
 		}
 	}
 	

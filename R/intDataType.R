@@ -36,7 +36,7 @@
 			ok <- FALSE
 		}
 	} else if (dtype == 'INT1U') {
-		if (mn <=0 | mx > 256) {
+		if (mn < 0 | mx > 256) {
 			ok <- FALSE		
 		}
 	} else  if (dtype == 'INT2S') {

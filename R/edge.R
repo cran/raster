@@ -151,7 +151,7 @@ function(x, filename="", classes=TRUE, type='both', asNA=FALSE, asZero=TRUE, ...
 		if (inmem) {
 			v[,r] <- vv
 		} else {
-			writeValues(out, vv, r)
+			out <- writeValues(out, vv, r)
 		}
 		pbStep(pb, r)
 	}

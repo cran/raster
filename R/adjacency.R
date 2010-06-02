@@ -12,7 +12,7 @@
 
 
 .isGlobalLatLon <- function(raster) {
-	if (isLonLat(raster)) {
+	if (.couldBeLonLat(raster)) {
 		tolerance <- 0.1
 		scale <- xres(raster)
 		if (isTRUE(all.equal(xmin(raster), -180, tolerance=tolerance, scale=scale)) & isTRUE(all.equal(xmax(raster), 180, tolerance=tolerance, scale=scale))) {

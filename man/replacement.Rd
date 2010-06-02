@@ -2,7 +2,7 @@
 \docType{methods}
 
 \alias{[,Raster-method}
-\alias{[,Raster,ANY,ANY-method}
+\alias{[,RasterStack,ANY,missing-method}
 \alias{[,Raster,ANY,missing-method}
 
 \alias{[[,RasterLayer,ANY,ANY-method}

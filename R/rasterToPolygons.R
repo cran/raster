@@ -10,7 +10,7 @@ rasterToPolygons <- function(raster, fun=NULL) {
 		xyv <- xyFromCell(raster, 1:ncell(raster))
 		xyv <- cbind(xyv, NA)
 	} else if (dataContent(raster) == 'all') {
-		xyv <- cbind(xyFromCell(raster, 1:ncell(raster)), values(raster))
+		xyv <- cbind(xyFromCell(raster, 1:ncell(raster)), getValues(raster))
 		raster <- clearValues(raster)
 		xyv <- subset(xyv, !(is.na(xyv[,3])))
 		if (!is.null(fun)) {
@@ -22,8 +22,7 @@ rasterToPolygons <- function(raster, fun=NULL) {
 		x <- xFromCol(raster, 1:ncol(raster))
 		for (r in 1:nrow(raster)) {
 			y <- yFromRow(raster, r)
-			raster <- readRow(raster, r)
-			xyvr <- cbind(x, y, values(raster))
+			xyvr <- cbind(x, y, getValues(raster, r))
 			xyvr <- subset(xyvr, !(is.na(xyvr[,3])))
 			if (!is.null(fun)) {
 				xyvr <- subset(xyvr, fun(xyvr[,3]))

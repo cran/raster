@@ -17,18 +17,18 @@
 .asSpGrid <- function(object, type='grid', dataframe)  {
 		
 	if (type=='pixel') {
-		values = rasterToPoints(object, fun=NULL, asSpatialPoints=FALSE)
+		values <- rasterToPoints(object, fun=NULL, spatial=FALSE)
 		pts <- SpatialPoints(values[,1:2])
 		if (dataframe) {
 			sp <- SpatialPixelsDataFrame(points=pts, data=data.frame(values=values[,3]), proj4string=projection(object, FALSE)) 	
 		} else {
 			sp <- SpatialPixels(points=pts, proj4string=projection(object, FALSE))
 		}
-	} else if (type=='grid') {
+	} else {
 		bb <- bbox(object)
 		cs <- res(object)
 		cc <- bb[,1] + (cs/2)
-		cd <- ceiling(diff(t(bb))/cs)
+		cd <- cbind(ncol(object), nrow(object))
 		grd <- GridTopology(cellcentre.offset=cc, cellsize=cs, cells.dim=cd)
 		if (dataframe) {
 			values <- data.frame(getValues(object))
@@ -39,6 +39,19 @@
 	}
 	return(sp)
 }
+
+setAs('Raster', 'SpatialPointsDataFrame', 
+	function(from) { 
+		return(rasterToPoints(from, spatial=TRUE)) 
+	}
+)
+
+setAs('Raster', 'SpatialPoints', 
+	function(from) { 
+		sp <- SpatialPoints(rasterToPoints(from, spatial=FALSE)[,1:2])
+		return(sp)
+	}
+)
 
 setAs('Raster', 'SpatialPixels', 
 	function(from) { return(.asSpGrid(from, type='pixel', FALSE)) }
@@ -120,22 +133,22 @@ setAs('RasterLayer', 'matrix',
 	
 # Between Raster and sp vector objects	
 setAs('RasterLayer', 'SpatialPointsDataFrame', 
-	function(from){ return( rasterToPoints (from)) }
+	function(from){ return( rasterToPoints(from)) }
 )
 
 setAs('RasterLayer', 'SpatialPolygonsDataFrame', 
-	function(from){ return( rasterToPolygons (from)) }
+	function(from){ return( rasterToPolygons(from)) }
 )
 
 setAs('Extent', 'SpatialPolygonsDataFrame', 
-	function(from){ return( polygonFromExtent (from)) }
+	function(from){ return( polygonFromExtent(from)) }
 )
 
 
 # spatstat
 setAs('im', 'RasterLayer', 
 	function(from) {
-		r = raster(nrows=from$dim[1], ncols=from$dim[2], xmn=from$xrange[1], xmx=from$xrange[2], ymn=from$yrange[1], ymx=from$yrange[2], projs='')
+		r = raster(nrows=from$dim[1], ncols=from$dim[2], xmn=from$xrange[1], xmx=from$xrange[2], ymn=from$yrange[1], ymx=from$yrange[2], crs='')
 		r = setValues(r, from$v)
 		flip(r, direction='y')
 	}

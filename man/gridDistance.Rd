@@ -8,21 +8,20 @@
 \description{
  The function calculates the distance to cells of a RasterLayer when the path has to follow the center of neighboring raster cells (currently only implemented as a 'queen' case).
  
- Origin cells should have value TRUE (or 1), destination cells should be \code{NA} and cells that can not be traversed should be set to FALSE (or 0).
- 
  The distance is in meters if the RasterLayer is not projected (\code{+proj=longlat}) and in map units (typically meters) when it is projected.
  
  Distances are calculated by summing local distances between cells, which are connected with their neighbours in 8 directions.
 
- This function currently only works for RasterLayer objects of which all values can be stored in memory 
 }
 
 \usage{
-gridDistance(x, filename = "", ...) 
+gridDistance(object, originValue, omitValue, filename, ...) 
 }
 
 \arguments{
-\item{x}{a RasterLayer object}
+\item{object}{a RasterLayer object}
+\item{originValue}{value of the cells from which the distance is calculated}
+\item{omitValue}{value of the cells which cannot be traversed}
 \item{filename}{character. output filename}
 \item{...}{additional arguments. See Details.}  
 }
@@ -47,11 +46,20 @@ The following additional arguments can be passed, to replace default values for 
 
 
 \examples{
+
+#world lonlat raster
 r <- raster(ncol=10,nrow=10)
-r[] <- NA
-r[48] <- 1
-distRaster <- gridDistance(r) 
+r[] <- 1
+r[48] <- 2
+r[66:68] <- 3
+distRaster <- gridDistance(r,originValue=2,omitValue=3) 
 plot(distRaster)
+
+#UTM small area
+projection(r) <- "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs"
+distRaster <- gridDistance(r,originValue=2,omitValue=3) 
+plot(distRaster)
+
 }
 
 

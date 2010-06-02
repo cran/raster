@@ -3,7 +3,6 @@
 \alias{setValues}
 \alias{setValues,RasterLayer-method}
 \alias{setValues,RasterBrick-method}
-\alias{setValuesRows}
 \alias{clearValues}
 
 \title{Set values}
@@ -15,17 +14,14 @@ you would do that at your own peril because when setting values, multiple slots 
 
 \usage{
 setValues(object, values, rownr=-1, layer=-1) 
-setValuesRows(object, values, startrow, nrows) 
 clearValues(object)
 }
 
 \arguments{
   \item{object}{A \code{RasterLayer} or \code{RasterBrick} object }
   \item{values}{Data values to associate with the RasterLayer object. There should be values for all cells or for a single row}
-  \item{layer}{Layer number (only relevant for RasterStack objects) }
+  \item{layer}{Layer number (only relevant for RasterStack and RasterBrick objects) }
   \item{rownr}{Row number, between 1 and nrow(raster) }
-  \item{startrow}{First row for which values are added}
-  \item{nrows}{Number of rows}
 }
 
 
@@ -38,13 +34,13 @@ a Raster* object
 \author{ Robert J. Hijmans }
 
 \examples{ 
-rs <- raster(ncol=10, nrow=10)
-vals <- 1:ncell(rs)
-rs <- setValues(rs, vals)
-rs <- clearValues(rs)
-rowvals <- 1:ncol(rs)
-rs <- setValues(rs, rowvals, 3)
+r <- raster(ncol=10, nrow=10)
+vals <- 1:ncell(r)
+r <- setValues(r, vals)
+# equivalent to
+r[] <- vals
 }
+
 
 \keyword{ spatial }
 \keyword{ methods }

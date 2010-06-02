@@ -11,7 +11,6 @@
 	filetype <- .filetype(...)
 	
 	filename <- .setFileExtensionHeader(filename, filetype)
-	raster@file@name <- filename
 	fnamevals <- .setFileExtensionValues(filename, filetype)
 	datatype <- .datatype(...)
 	dataType(raster) <- datatype
@@ -19,7 +18,7 @@
 	if (filetype %in% c('SAGA')) {
 		resdif <- abs((yres(raster) - xres(raster)) / yres(raster) )
 		if (resdif > 0.01) {
-			stop(paste("raster has unequal horizontal and vertical resolutions. Such data cannot be stored in arc-ascii format"))
+			stop(paste("raster has unequal horizontal and vertical resolutions. Such data cannot be stored in SAGA format"))
 		}
 	}
 
@@ -36,6 +35,7 @@
 	raster@data@max <- rep(-Inf, nlayers(raster))
 	raster@data@haveminmax <- FALSE
 	raster@file@driver <- filetype
+	raster@file@name <- filename
 
 	return(raster)
 }
@@ -54,13 +54,8 @@
 #		raster@data@max <- as.logical(raster@data@max)
 	}
 	writeRasterHdr(raster, .driver(raster)) 
-
-	raster@data@source <- 'disk'
-	raster@data@content <- 'nodata'
-	raster@file@driver <- 'raster'
-	raster <- clearValues(raster)
-
-	return(raster)
+	filename <- .setFileExtensionValues(filename(raster), raster@file@driver)
+	return(raster(filename, native=TRUE))
 }		
  
  

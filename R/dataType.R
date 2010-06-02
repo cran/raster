@@ -51,9 +51,9 @@
 	if (type == "FLT") {
 		if (dataContent(x) != 'nodata') { 
 			if (class(x)  == 'RasterLayer') {
-				x@data@values <- as.numeric(values(x))
+				x@data@values <- as.numeric(x@data@values)
 			} else {
-				x@data@values <- matrix(as.numeric(values(x)), ncol=nlayers(x))
+				x@data@values <- matrix(as.numeric(x@data@values), ncol=nlayers(x))
 			}
 		}
 		if (size == '4') {
@@ -70,9 +70,9 @@
 		x@data@max <- round(x@data@max)
 		if (dataContent(x) != 'nodata') { 
 			if (class(x)  == 'RasterLayer') {
-				x@data@values <- as.integer(round(values(x)))
+				x@data@values <- as.integer(round(x@data@values))
 			} else {
-				x@data@values <- matrix(as.integer(round(values(x))), ncol=nlayers(x))
+				x@data@values <- matrix(as.integer(round(x@data@values)), ncol=nlayers(x))
 			}                  
 		}
 		
@@ -88,14 +88,13 @@
 				x@file@nodatavalue <- 65535
 			}
 		} else if (size == '1') {
-			# there is no nodata value for byte
-			x@file@nodatavalue <- -9999
 			if (signed) {
 				x@file@datanotation <- 'INT1S'
+				x@file@nodatavalue <- -128
 			} else {
 				x@file@datanotation <- 'INT1U'
+				x@file@nodatavalue <- 255
 			}
-			#warning("binary files of a single byte do not have NA values on disk")
 		} else if (size == '8') {
 			x@file@nodatavalue <- -9223372036854775808
 			x@file@datanotation <- 'INT8S'							

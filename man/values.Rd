@@ -9,7 +9,9 @@
 \title{Get raster values}
 
 \description{
-This function returns the raster cell values for a RasterLayer or RasterBrick object that are currently in memory (typically after read* has been used).
+This function will be removed shortly. Use \code{\link[raster]{getValues}} instead. 
+
+It returns the raster cell values for a RasterLayer or RasterBrick object that are currently in memory (typically after read* has been used). 
 }
 
 \usage{
@@ -40,9 +42,6 @@ a vector or matrix
 r <- raster(ncol=10, nrow=10)
 r <- setValues(r, 1:ncell(r))
 values(r)
-r <- raster(system.file("external/test.grd", package="raster"))
-r <- readBlock(r, startrow=100, nrows=3, startcol=5, ncolumns=5)
-values(r, format='matrix', names=TRUE)
 }
 
 \keyword{spatial}

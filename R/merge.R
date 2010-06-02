@@ -98,7 +98,7 @@ function(x,y,..., tolerance=0.05, filename="", format, overwrite, progress){
 			}		
 		}
 		
-		writeValues(outraster, rd, r)
+		outraster <- writeValues(outraster, rd, r)
 		pbStep(pb, r)
 	}
 	pbClose(pb)

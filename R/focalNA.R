@@ -37,7 +37,6 @@
 focalNA <- function(x, ngb=3, fun=mean, recursive=FALSE, maxrec=0, filename="", ...) {
 	filename <- trim(filename)
 	if (recursive) {
-		fn <- ''
 		ovwr <- .overwrite(...)
 		if (filename != '' & file.exists(filename) & !ovwr) {
 			stop('file exists, use overwrite=TRUE to overwrite it')
@@ -49,7 +48,7 @@ focalNA <- function(x, ngb=3, fun=mean, recursive=FALSE, maxrec=0, filename="", 
 			iterator <- 1 + iterator
 			cat('iteration', iterator , '\n')
 			flush.console()
-			x <- .focNA(x[[1]], fun=fun, ngb=ngb, recursive=TRUE, filename=fn) 
+			x <- .focNA(x[[1]], fun=fun, ngb=ngb, recursive=TRUE, filename='') 
 			if (x[[2]]) {
 				stop('all values are NA')
 			}
@@ -57,7 +56,7 @@ focalNA <- function(x, ngb=3, fun=mean, recursive=FALSE, maxrec=0, filename="", 
 			if (iterator == maxrec) { keepGoing <- FALSE }
 		} 
 		if (filename != '') {
-			x[[1]] <- saveAs(x[[1]], filename=filename, ...)
+			x[[1]] <- writeRaster(x[[1]], filename=filename, ...)
 		}
 		return(x[[1]])
 	} else {

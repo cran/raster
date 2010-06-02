@@ -14,11 +14,11 @@ init <- function(raster, fun, v, filename="", ...) {
 		}
 	}
 
-	outraster <- raster(raster)
+	outRaster <- raster(raster)
 	filename <- trim(filename)
 	
 	inmem=TRUE
-	if (!canProcessInMemory(outraster, 2)) {
+	if (!canProcessInMemory(outRaster, 2)) {
 		inmem=FALSE
 		if (filename == '') {
 			filename <- rasterTmpFile()
@@ -28,44 +28,44 @@ init <- function(raster, fun, v, filename="", ...) {
 	
 	if (missing(fun)) {
 		if ( inmem ) {
-			if (v == 'cell') { outraster <- setValues(outraster, 1:ncell(outraster)) 
-			} else if (v == 'row') { outraster <- setValues(outraster, rep(1:nrow(outraster), each=ncol(outraster)))
-			} else if (v == 'y') { outraster <- setValues(outraster, rep(yFromRow(outraster, 1:nrow(outraster)), each=ncol(outraster)))
-			} else if (v == 'col') { outraster <- setValues(outraster, rep(1:ncol(outraster), times=nrow(outraster)))
-			} else if (v == 'x') { outraster <- setValues(outraster, rep(xFromCol(outraster, 1:ncol(outraster)), times=nrow(outraster))) }
+			if (v == 'cell') { outRaster <- setValues(outRaster, 1:ncell(outRaster)) 
+			} else if (v == 'row') { outRaster <- setValues(outRaster, rep(1:nrow(outRaster), each=ncol(outRaster)))
+			} else if (v == 'y') { outRaster <- setValues(outRaster, rep(yFromRow(outRaster, 1:nrow(outRaster)), each=ncol(outRaster)))
+			} else if (v == 'col') { outRaster <- setValues(outRaster, rep(1:ncol(outRaster), times=nrow(outRaster)))
+			} else if (v == 'x') { outRaster <- setValues(outRaster, rep(xFromCol(outRaster, 1:ncol(outRaster)), times=nrow(outRaster))) }
 		} else {
-			outraster <- writeStart(outraster, filename=filename, ...)
-			pb <- pbCreate(nrow(outraster), type=.progress(...))
-			for (r in 1:nrow(outraster)) {
-				if (v == 'cell') { writeValues(outraster, cellFromRowCol(r,1):cellFromRowCol(r,ncol(outraster)), r)
-				} else if (v == 'row') { writeValues(outraster, rep(r, each=ncol(outraster)), r)
-				} else if (v == 'y') { writeValues(outraster, rep(yFromRow(outraster, r), each=ncol(outraster)), r)
-				} else if (v == 'col') { writeValues(outraster, 1:ncol(outraster), r)
-				} else if (v == 'x') { writeValues(outraster, xFromCol(1:ncol(outraster)), r) }
+			outRaster <- writeStart(outRaster, filename=filename, ...)
+			pb <- pbCreate(nrow(outRaster), type=.progress(...))
+			for (r in 1:nrow(outRaster)) {
+				if (v == 'cell') { outRaster <- writeValues(outRaster, cellFromRowCol(r,1):cellFromRowCol(r,ncol(outRaster)), r)
+				} else if (v == 'row') {outRaster <-  writeValues(outRaster, rep(r, each=ncol(outRaster)), r)
+				} else if (v == 'y') { outRaster <- writeValues(outRaster, rep(yFromRow(outRaster, r), each=ncol(outRaster)), r)
+				} else if (v == 'col') { outRaster <- writeValues(outRaster, 1:ncol(outRaster), r)
+				} else if (v == 'x') { outRaster <- writeValues(outRaster, xFromCol(1:ncol(outRaster)), r) }
 				pbStep(pb, r)
 			}
 			pbClose(pb)
-			outraster <- writeStop(outraster)
+			outRaster <- writeStop(outRaster)
 		}
 	} else {
 		if ( inmem ) {
 			n <- ncell(raster)
-			outraster <- setValues(outraster, fun(n)) 
+			outRaster <- setValues(outRaster, fun(n)) 
 		} else {
 			n <- ncol(raster)
-			outraster <- writeStart(outraster, filename=filename, ...)
-			pb <- pbCreate(nrow(outraster), type=.progress(...))
+			outRaster <- writeStart(outRaster, filename=filename, ...)
+			pb <- pbCreate(nrow(outRaster), type=.progress(...))
 			for (r in 1:nrow(raster)) {
-				writeValues(outraster, fun(n), r) 
+				outRaster <- writeValues(outRaster, fun(n), r) 
 				pbStep(pb, r)
 			}
 			pbClose(pb)
-			outraster <- writeStop(outraster)
+			outRaster <- writeStop(outRaster)
 		}
 	}
 	if (inmem & filename != '') {
-		outraster = writeRaster(outraster, filename=filename, ...)
+		outRaster = writeRaster(outRaster, filename=filename, ...)
 	}
-	return(outraster)
+	return(outRaster)
 }
 

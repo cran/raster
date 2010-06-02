@@ -11,9 +11,16 @@ if (!isGeneric("brick")) {
 
 
 setMethod('brick', signature(x='missing'), 
-	function(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, projs="+proj=longlat +datum=WGS84", nlayers=1) {
-		ext <- extent(xmn, xmx, ymn, ymx)
-		b <- brick(ext, nrows=nrows, ncols=ncols, projs=projs, nlayers=nlayers)
+	function(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, nlayers=1, crs) {
+		e <- extent(xmn, xmx, ymn, ymx)
+		if (missing(crs)) {
+			if (e@xmin > -400 & e@xmax < 400 & e@ymin > -90.1 & e@ymax < 90.1) { 
+				crs ="+proj=longlat +datum=WGS84"
+			} else {
+				crs=NA
+			}
+		}
+		b <- brick(e, nrows=nrows, ncols=ncols, crs=crs, nlayers=nlayers)
 		return(b)
 	}
 )
@@ -21,13 +28,13 @@ setMethod('brick', signature(x='missing'),
 
 
 setMethod('brick', signature(x='character'), 
-	function(x, values=FALSE, proj=NULL, ...) {
+	function(x, values=FALSE, crs=NULL, ...) {
 		b <- .rasterObjectFromFile(x, objecttype='RasterBrick', ...)
 		if (values) {
 			b <- readAll(b)
 		}
-		if (!is.null(proj)) {
-			projection(b) <- proj
+		if (!is.null(crs)) {
+			projection(b) <- crs
 		}
 		return(b)
 	}
@@ -67,14 +74,14 @@ setMethod('brick', signature(x='RasterBrick'),
 
 
 setMethod('brick', signature(x='Extent'), 
-	function(x, nrows=10, ncols=10, projs=NA, nlayers=1) {
+	function(x, nrows=10, ncols=10, crs=NA, nlayers=1) {
 		bb <- extent(x)
 		nr = as.integer(round(nrows))
 		nc = as.integer(round(ncols))
 		if (nc < 1) { stop("ncols should be > 0") }
 		if (nr < 1) { stop("nrows should be > 0") }
 		b <- new("RasterBrick", extent=bb, ncols=nc, nrows=nr)
-		projection(b) <- projs
+		projection(b) <- crs
 		b@data@nlayers <- as.integer(nlayers)
 		return(b) 
 	}

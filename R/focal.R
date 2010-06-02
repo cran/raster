@@ -100,7 +100,7 @@ focal <- function(x, ngb=3, fun=mean, na.rm=TRUE, filename="", ...) {
 		if (inmem) {
 			v[,r] <- vv
 		} else {
-			writeValues(out, as.vector(vv), r)
+			out <- writeValues(out, as.vector(vv), r)
 		}
 		
 		pbStep(pb, r)

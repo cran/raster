@@ -58,7 +58,7 @@ a Raster* object
 \examples{ 
 r <- raster(system.file("external/test.grd", package="raster"))
 dataType(r)
-s <- saveAs(r, 'test.grd', datatype='INT2U')
+s <- writeRaster(r, 'new.grd', datatype='INT2U')
 dataType(s)
 }
 

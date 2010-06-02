@@ -16,27 +16,36 @@ function(x, fun, filename='', ...) {
 	filename <- trim(filename)
 	outraster <- raster(x)
 
-	if (!canProcessInMemory(x, 4) & filename == '') {
+	if (!canProcessInMemory(x, 2) & filename == '') {
 		filename <- rasterTmpFile()
-	}
-	v <- vector(length=0)
-
+	} 
 	
-	pb <- pbCreate(nrow(x), type=.progress(...))
-	for (r in 1:nrow(x)) {
-		sv <- apply(getValues(x, r), 1, fun)
+	if (filename == '') {
+		v <- matrix(NA, nrow=ncol(outraster), ncol=nrow(outraster))
+	} else {
+		outraster <- writeStart(outraster, filename=filename, ...)
+	}
+	tr <- blockSize(outraster)
+	pb <- pbCreate(tr$n, type=.progress(...))			
+
+	for (i in 1:tr$n) {
+		
+		sv <- apply(getValues(x, row=tr$row[i], nrows=tr$nrows[i]) ,  1,  fun)
 		if (filename == "") {
-			v <- c(v, sv)
+			v[, tr$row[i]:(tr$row[i]+tr$nrows[i]-1)] <- matrix(sv, nrow=ncol(outraster))
 		} else {
-			outraster <- setValues(outraster, sv, r) 
-			outraster <- writeRaster(outraster, filename=filename, ...)
+			outraster <- writeValues(outraster, sv, tr$row[i])
 		}
-		pbStep(pb, r) 
+		pbStep(pb) 
 	}
+
+	if (filename == "") { 	
+		outraster <- setValues(outraster, as.vector(v))		
+	} else {
+		outraster <- writeStop(outraster)
+	}
+
 	pbClose(pb)
-	if (filename == "") { 
-		outraster <- setValues(outraster, v) 
-	}
 	return(outraster)
 }
 )

@@ -43,7 +43,7 @@ function(x, arr.ind=FALSE) {
 			} else {
 				v <- as.logical(v)
 				v[is.na(v)] <- FALSE
-				writeValues(out, v, tr$row[i])
+				out <- writeValues(out, v, tr$row[i])
 			}
 			pbStep(pb, i)
 		}

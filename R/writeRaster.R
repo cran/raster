@@ -13,15 +13,18 @@ setMethod('writeRaster', signature(x='RasterLayer', filename='character'),
 function(x, filename, format, ...) {
 
 	filename <- trim(filename)
+	if (filename == '') {
+		stop('provide a filename')
+	}
 	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)
 	
 	dc <- dataContent(x)
 	if (dc == 'nodata') {
 		if (dataSource(x) == 'disk') {
-			return( saveAs(x, filename, format=filetype, ...) )
+			return( .saveAsRaster(x, filename, format=filetype, ...) )
 		} else {
-			stop('No usable data available for writing.')
+			stop('No usable data available for writing')
 		}
 	}
 	
@@ -60,7 +63,7 @@ function(x, filename, bandorder='BIL', format, ...) {
 	dc <- dataContent(x)
 	if (! dc %in% c('row', 'all') ) {
 		if (dataSource(x) == 'disk') {
-			return( saveAs(x, filename, bandorder=bandorder, format=filetype, ...) )
+			return( .saveAsBrick(x, filename, bandorder=bandorder, format=filetype, ...) )
 		} else {
 			stop('No usable data available for writing.')
 		}
@@ -96,7 +99,7 @@ function(x, filename, bandorder='BIL', format, ...) {
 	pb <- pbCreate(tr$n, type=.progress(...))
 	for (i in 1:tr$n) {
 		v <- getValuesBlock(x, row=tr$row[i], nrows=tr$size)
-		writeValues(b, v, tr$row[i])
+		b <- writeValues(b, v, tr$row[i])
 		pbStep(pb, i)
 	}
 	pbClose(pb)

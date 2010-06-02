@@ -18,7 +18,7 @@ function(x,i,j,...,drop=TRUE) {
 	}
 
 	if (dataContent(x) == 'all') {
-		m <- matrix(values(x), nrow(x), ncol(x), byrow=TRUE)
+		m <- matrix(x@data@values, nrow(x), ncol(x), byrow=TRUE)
 		rm(x)
 		return(m[i=i, j=j, drop=drop])
 	} else {

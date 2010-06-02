@@ -15,10 +15,7 @@ setMethod('freq', signature(x='RasterLayer'),
 
 		if (canProcessInMemory(x, 3)) {
 	
-			if (dataContent(x) != 'all') {
-				x <- readAll(x)
-			}
-			d <- round(values(x), digits=digits)
+			d <- round(getValues(x), digits=digits)
 			res <- table(d, useNA="ifany" )
 		
 		} else {

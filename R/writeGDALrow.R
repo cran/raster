@@ -39,7 +39,6 @@
 
 
 .writeGDALrow <- function(raster, filename,  options=NULL, ... ) {
-	if (!require(rgdal)) { stop() }
 
 	if (! .requireRgdal() ) { stop('rgdal not available') }
 
@@ -67,12 +66,12 @@
 	
     nl <- nlayers(raster)
 	if (nl == 1) {
-		v <- values(raster)
+		v <- raster@data@values
 		v[is.na(v)] <- raster@file@nodatavalue
 		x <- putRasterData(raster@file@transient, v, band=1, c((rownr-1), 0)) 	
 	} else {
 		for (i in 1:nl) {
-			v <- values(raster)[,i]
+			v <- raster@data@values[,i]
 			v[is.na(v)] <- raster@file@nodatavalue
 			x <- putRasterData(raster@file@transient, v, band=i, c((rownr-1), 0)) 
 		}

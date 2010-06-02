@@ -6,7 +6,7 @@
 # Licence GPL v3
 
 KML <- function (raster, filename, col=rainbow(255), maxpixels=100000) {
-    if (!isLonLat(raster)) { 
+    if (! .couldBeLonLat(raster)) { 
         stop("raster must be in geographical coordinates")
 	}
 	raster <- sampleRegular(raster, size=maxpixels, asRaster = TRUE, corners=TRUE)

@@ -70,7 +70,7 @@ netCDF data can only be read if the data are stored in 2 (x and y) or 3 (x, y, a
 
 2) Create a RasterLayer object from scratch
 
-\code{raster(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, projs="+proj=longlat +datum=WGS84")}
+\code{raster(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, crs="+proj=longlat +datum=WGS84")}
 
 \tabular{rll}{
  \tab \code{nrows} \tab number of rows \cr
@@ -79,20 +79,20 @@ netCDF data can only be read if the data are stored in 2 (x and y) or 3 (x, y, a
  \tab \code{xmx} \tab maximum x coordinate (right border) \cr
  \tab \code{ymn} \tab minimum y coordinate (bottom border) \cr
  \tab \code{ymx} \tab maximum y coordinate (top border) \cr
- \tab \code{projs} \tab Character. PROJ4 type description of a Coordinate Reference System (map projection) \cr
+ \tab \code{crs} \tab Character or object of class CRS. PROJ4 type description of a Coordinate Reference System (map projection) \cr
 }
 (item \code{x} is 'missing' in this case)
 
  
 3) Create a RasterLayer object from an Extent object
   
-\code{raster(x, nrows=10, ncols=10, projs=NA)}
+\code{raster(x, nrows=10, ncols=10, crs=NA)}
 
 \tabular{rll}{
  \tab \code{x} \tab Extent object \cr
  \tab \code{nrows} \tab number of rows  \cr
  \tab \code{ncols} \tab number of columns \cr
- \tab \code{projs} \tab PROJ4 type description of a map projection \cr
+ \tab \code{crs} \tab PROJ4 type description of a map projection \cr
 }
 
 
@@ -131,7 +131,7 @@ but does not copy the filename nor the data associated with the original Raster 
 
 7) Create a RasterLayer object from a matrix. The default extent is set to be between 0 and 1 in the x and y direction but can be changed at creation of the RasterLayer object or later. You can also provide a projection.  
 
-\code{function(x, xmn=0, xmx=1, ymn=0, ymx=1, projs=NA)}
+\code{function(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA)}
 
 \tabular{rll}{
  \tab \code{x} \tab a matrix \cr
@@ -139,7 +139,7 @@ but does not copy the filename nor the data associated with the original Raster 
  \tab \code{xmx} \tab maximum x coordinate (right border) \cr
  \tab \code{ymn} \tab minimum y coordinate (bottom border) \cr
  \tab \code{ymx} \tab maximum y coordinate (top border) \cr
- \tab \code{projs} \tab PROJ4 type description of a map projection \cr
+ \tab \code{crs} \tab PROJ4 type description of a map projection \cr
 }
 
 }}

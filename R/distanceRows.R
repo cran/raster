@@ -58,7 +58,7 @@
 				# after the first round, compare new values with previously written values
 				v = pmin(v, .getTransientRows(r, tr$row[j], n=tr$nrows[j])) 
 			} 
-			writeValues(r, v, tr$row[j])			
+			r <- writeValues(r, v, tr$row[j])			
 		}
 		hasWritten = TRUE
 		pbStep(pb, i) 			
@@ -66,7 +66,7 @@
 	r <- writeStop(r)
 	pbClose(pb)
 	
-	r = saveAs(r, filename=filename, ...)
+	r = writeRaster(r, filename=filename, ...)
 	return(r)
 }	
 

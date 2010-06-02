@@ -16,15 +16,13 @@
 		
 	xvar <- (xmin(x) + 1:ncol(x) * xres(x)) - 0.5 * xres(x)
 	yvar <- (ymin(x) + 1:nrow(x) * yres(x)) - 0.5 * yres(x)
-		if (dataContent(x) != 'all') {
-			x <- readAll(x)
-		}
-		zvar <- values(x)
-		if (class(zvar) == 'numeric') {
-			dtype <- 'NC_DOUBLE'
-		} else {
-			dtype <- 'NC_INT' 
-		}
+
+	zvar <- getValues(x)
+	if (class(zvar) == 'numeric') {
+		dtype <- 'NC_DOUBLE'
+	} else {
+		dtype <- 'NC_INT' 
+	}
 		
 		zvar <- matrix(zvar, ncol=ncol(x), nrow=nrow(x), byrow=TRUE)
 		zvar <- t(zvar[nrow(zvar):1, ])

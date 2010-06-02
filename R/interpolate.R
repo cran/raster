@@ -182,7 +182,7 @@ setMethod('interpolate', signature(object='Raster'),
 					print(dim(v))
 				}
 			} else {
-				writeValues(predrast, predv, tr$row[i])
+				predrast <- writeValues(predrast, predv, tr$row[i])
 			}
 			pbStep(pb, i) 
 		}

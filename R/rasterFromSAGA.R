@@ -44,7 +44,7 @@
 	yx <- yn + nr * cellsize - (0.5 * cellsize)
 	yn <- yn - (0.5 * cellsize)
 	
-	x <- raster(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, projs=projstring)
+	x <- raster(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs=projstring)
 
 	x@file@offset <- dfoffset
 	x@file@toptobottom <- toptobottom
