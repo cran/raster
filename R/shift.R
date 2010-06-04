@@ -17,7 +17,7 @@ setMethod('shift', signature(object='Raster'),
 		object@extent@xmax <- object@extent@xmax + x
 		object@extent@ymax <- object@extent@ymax + y
 		if (filename != '') {
-			object <- saveAs(object, filename=filename, ...)
+			object <- writeRaster(object, filename=filename, ...)
 		}
 		return(object)
 	}

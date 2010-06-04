@@ -5,7 +5,7 @@
 \alias{plot3D}
 \alias{plot3D,RasterLayer-method}
 
-\title{Interative 3D plot of a RasterLayer}
+\title{Interactive 3D plot of a RasterLayer}
 
 \description{
 Make an interactive 3D plot (map) of a RasterLayer. This is a wrapper around \code{surface3d} in the rgl package

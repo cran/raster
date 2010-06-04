@@ -21,10 +21,7 @@ cellStats <- function(raster, stat='mean', ...) {
 	if (class(stat) != 'character') {
 		if (dataContent(raster) == 'all') { n <- 1 } else {n <- 2}
 		if (canProcessInMemory(raster, n)) {
-			if (dataContent(raster) != 'all') {
-				raster <- readAll(raster)
-			}
-			d <- na.omit(values(raster))
+			d <- na.omit(getValues(raster))
 			return( stat(d) )
 		} else {
 			stop("RasterLayer is too large. You can use fun='sum', 'mean', 'min', or 'max', but not a function")

@@ -34,15 +34,17 @@ writeRasterHdr <- function(raster, format) {
 
  
  
-.writeStx <- function(raster, filename) {
+.writeStx <- function(raster, filename='') {
 	if (raster@data@haveminmax) {
-		if (missing(filename)) {
+		if (filename=='') {
 			filename <- filename(raster)
 		} 
-		ext(filename) <- ".stx"
-		thefile <- file(filename, "w")  # open a txt file connectionis
-		cat(1, " ", minValue(raster), " ", maxValue(raster), "\n", file = thefile)
-		close(thefile)
+		if (filename!='') {
+			ext(filename) <- ".stx"
+			thefile <- file(filename, "w")  # open a txt file connectionis
+			cat(1, " ", minValue(raster), " ", maxValue(raster), "\n", file = thefile)
+			close(thefile)
+		}
 	}	
 }
  

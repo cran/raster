@@ -52,7 +52,7 @@ p3 <- rbind(c(-125,0), c(0,60), c(40,5), c(15,-45), c(-125,0))
 pols <- SpatialPolygons( list(  Polygons(list(Polygon(p1), Polygon(hole)), 1), Polygons(list(Polygon(p2)), 2), Polygons(list(Polygon(p3)), 3)))
 pols@polygons[[1]]@Polygons[[2]]@hole <- TRUE
 
-r <- raster()
+r <- raster(ncol=180, nrow=90)
 r <- polygonsToRaster(pols, r, overlap='sum')
 #plot(r)
 #plot(pols, add=T)

@@ -9,8 +9,7 @@
 \title{Write raster data to a file}
 
 \description{
-Write raster values to a file. Either as binary ('raster') format, Ascii (ESRI Arc Ascii) format, and other GDAL supported formats. 
-You can write an entire raster dataset at once, or by row. 
+Write an entire Raster* object to a file, using one of the many supported formats. See \code{\link[raster]{writeValues}} for writing in chunks (e.g.  by row). 
 
 When writing a file to disk, the file format is determined by the 'format=' argument if supplied, or else by the file extension (if the extension is known). If other cases the default format is used. The 'factory-fresh' default format is 'raster', but this can be changed using \code{\link[raster]{setOptions}}.
 }
@@ -58,14 +57,11 @@ writeRaster(x, filename, ...)
 }}
 
 \details{
-Values in a \code{RasterLayer} object are written to a file. Relatively small datasets can be loaded into memory, manipulated, and saved to disk in their entirety. Large datasets can be read and written row by row. 
-When writing by row, you must write all rows, and you must write them in sequence. Start at row=1, and end at row=nrow(raster). Only when all rows have been appended to the data file on disk, the file becomes readable. You cannot overwrite an isolated single row in an existing raster file. 
+See \code{writeFormats} for supported file types ("formats", "drivers").
 
-In multi-band files (i.e. files saved from RasterStack or RasterBrick objects), the bandorder can be set to BIL ('Bands Interleaved by Line'), BIP ('Bands Interleaved by Pixels') or BSQ ('Bands SeQuential')
+The rgdal package is needed for this most formats. Except for the 'raster', 'BIL', 'BIP', 'BSQ', 'SAGA', 'ascii', 'IDRISI', and 'CDF' formats. Some of these formats can be used with or without rgdal (idrisi, SAGA, ascii). 
 
-Note that the values of a RasterBrick and RasterLayer objects can be written to a single file in a row by row fashion; but the values of a RasterStack can only be saved to a file in one go.  
-
-See \code{writeFormats} for supported file types ("formats", "drivers"); the rgdal package is needed for this function, exxcept for the 'raster', ascii, and 'CDF' formats.
+In multi-band files  (i.e. files saved from RasterStack or RasterBrick objects), in the native 'raster' format, the bandorder can be set to BIL ('Bands Interleaved by Line'), BIP ('Bands Interleaved by Pixels') or BSQ ('Bands SeQuential'). Note that bandorder is not the same as filetype here. 
 
 Supported file types include:
 
@@ -97,10 +93,10 @@ rst <- raster(system.file("external/test.grd", package="raster"))
 # take a small part
 rst <- crop(rst, extent(179880, 180800, 329880, 330840) )
 
-# write all to an integer binary file
+# write to an integer binary file
 r <- writeRaster(rst, filename="allint.grd", datatype='INT4S', overwrite=TRUE)
 
-# write all to a new geotiff file (depends on rgdal)
+# write to a new geotiff file (depends on rgdal)
 if (require(rgdal)) {
   r <- writeRaster(rst, filename="test.tif", format="GTiff", overwrite=TRUE)
 }
@@ -109,14 +105,6 @@ if (require(rgdal)) {
 b <- brick(rst, sqrt(rst))
 b <- writeRaster(b, filename="mutli.grd", bandorder='BIL', overwrite=TRUE)
  
-# read and write row by row
-binras <- raster(rst)
-for (r in 1:nrow(binras)) {
-	v <- getValues(rst, r)
-	binras <- setValues(binras, v, r)
-	binras <- writeRaster(binras, 'byrow.grd', overwrite=TRUE) 
-}
-
 # write to netcdf 
 if (require(RNetCDF)) {	
     writeRaster(rst, filename='netCDF.nc', format="CDF", overwrite=TRUE)   

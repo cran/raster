@@ -65,9 +65,13 @@ function(p, r, fun, weights=FALSE, cellnumbers=FALSE, ...) {
 	
 	if (! missing(fun)) {
 		if (weights) {
-			res = unlist(lapply(x, function(x) if (!is.null(x)) {sum(apply(x, 1, prod)) / sum(x[,2])} else NA  ))
+			res <- unlist(lapply(res, function(x) if (!is.null(x)) {sum(apply(x, 1, prod)) / sum(x[,2])} else NA  ))
 		} else {
-			res = lapply(x, fun)
+			i <- sapply(res, is.null)
+			j <- vector(length=length(i))
+			j[i] <- NA
+			j[!i] <- sapply(res[!i], fun)
+			res <- j
 		}
 	}
 	res

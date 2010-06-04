@@ -109,7 +109,7 @@ function(x, fun=NULL, from=FALSE, filename='', ...) {
 		if (filename == "") {
 			v[,r] <- vals
 		} else {
-			writeValues(out, vals, r)
+			out <- writeValues(out, vals, r)
 		}
 		pbStep(pb, r) 	
 	}	

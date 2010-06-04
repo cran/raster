@@ -35,7 +35,7 @@
     }  
 	xx <- xn + nc * d
 	yx <- yn + nr * d
-	x <- raster(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, projs='')	
+	x <- raster(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs='')	
 	x@data@source <- 'disk'
 	x@file@driver <- 'ascii'
 	x@file@nodatavalue <- nodataval

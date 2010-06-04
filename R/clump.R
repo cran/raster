@@ -32,7 +32,7 @@ function(x, filename='', directions=8, ...) {
 		if (class(igt) != 'try-error' & canProcessInMemory(x1, 6)) {
 			pb <- pbCreate(2, type=.progress(...))
 			val <- which(getValues(x)!=0)
-			if (length(val) == 0) { stop('input raster has not values that are not zero') }
+			if (length(val) == 0) { stop('input raster has no values that are not zero') }
 			pbStep(pb, 1)
 			adjv <- as.vector( t ( adjacency(x1, val, val, directions=directions) ) )
 			cl <- clusters(graph(adjv, directed=FALSE))$membership[val+1]
@@ -146,7 +146,7 @@ function(x, filename='', directions=8, ...) {
 				}	
 		
 				x1 <- setValues(x1, c2, r)
-				x1 <- writeRaster(x1, filename=tmpfile, format='raster', datatype='INT4S')
+				x1 <- writeRaster(x1, filename=tmpfile, format='raster', datatype='INT4U')
 
 				trcl <- unique(trcl)
 				rcl <- unique(rbind(rcl, trcl))
@@ -184,7 +184,7 @@ function(x, filename='', directions=8, ...) {
 				}	
 		
 				x1 <- setValues(x1, c2, r)
-				x1 <- writeRaster(x1, filename=tmpfile, format='raster', datatype='INT4S')
+				x1 <- writeRaster(x1, filename=tmpfile, format='raster', datatype='INT4U')
 				
 				trcl <- unique(trcl)
 				rcl <- unique(rbind(rcl, trcl))

@@ -45,7 +45,7 @@ function(x, mask, filename="", ...){
 			m <- getValuesBlock( mask, row=tr$row[i], nrows=tr$nrows[i] )
 			v[is.na(m)] <- NA
 			if (filename != '') {
-				writeValues(out, v, tr$row[i])
+				out <- writeValues(out, v, tr$row[i])
 			} else {
 				vv <- matrix(vv, nrow=ncol(outRaster))
 				cols <- tr$row[i]:(tr$row[i]+dim(vv)[2]-1)	

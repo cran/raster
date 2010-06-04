@@ -71,7 +71,7 @@ setMethod('cover', signature(x='RasterLayer', y='RasterLayer'),
 			cols <- tr$row[i]:(tr$row[i]+dim(vv)[2]-1)	
 			v[,cols] <- vv
 		} else {
-			writeValues(outRaster, vv, tr$row[i])
+			outRaster <- writeValues(outRaster, vv, tr$row[i])
 		}
 		pbStep(pb, i) 
 	}

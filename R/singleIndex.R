@@ -17,7 +17,7 @@ function(x,i,j,...,drop=TRUE) {
 		if (dataContent(x) == 'all') {
 			return(x@data@values)
 		} else {
-			return(values(readAll(x)))
+			return(getValues(x))
 		}
 	}
 
@@ -38,6 +38,24 @@ function(x,i,j,...,drop=TRUE) {
 	} else {
 		return(cellValues(x, i))
 	}
+}
+)
+
+
+
+
+setMethod("[", c("RasterStack","ANY", "missing"),
+function(x,i,j,...,drop=TRUE) {
+	
+	if (missing(i)) { 
+		return(getValues(x))
+	}
+
+	if (class(i) == "RasterLayer") {
+		i <- as.logical( getValues(i) ) 
+	}
+	
+	return(cellValues(x, i))
 }
 )
 

@@ -29,6 +29,7 @@
 
 	datatype <- .datatype(...)
 	dtype <- .shortDataType(datatype)
+	dataType(raster) <- datatype
 	
 	mn <- minValue(raster)
 	mx <- maxValue(raster)

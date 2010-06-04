@@ -87,7 +87,7 @@ function(x, rcl, update=FALSE, filename='', ...)  {
 			for (i in 1:tr$n) {
 				res <- getValuesBlock( x, row=tr$row[i], nrows=tr$nrows[i] )
 				res[ is.na(res) ] <- naVAL	
-				writeValues(out, res, tr$row[i])
+				out <- writeValues(out, res, tr$row[i])
 				pbStep(pb, i)
 			}
 		} else if (update) {
@@ -99,7 +99,7 @@ function(x, rcl, update=FALSE, filename='', ...)  {
 				if (hasNA) {
 					res[ is.na(res) ] <- naVAL
 				}	
-				writeValues(out, res, tr$row[i])
+				out <- writeValues(out, res, tr$row[i])
 				pbStep(pb, i)
 			}
 		} else {
@@ -112,7 +112,7 @@ function(x, rcl, update=FALSE, filename='', ...)  {
 				if (hasNA) {
 					res[ is.na(vals) ] <- naVAL
 				}	
-				writeValues(out, res, tr$row[i])
+				out <- writeValues(out, res, tr$row[i])
 				pbStep(pb, i)
 			}
 			out <- writeStop(out)

@@ -1,5 +1,5 @@
 # Author: Robert J. Hijmans, r.hijmans@gmail.com
-# Date : June 2008
+# Date : December 2009
 # Version 0.9
 # Licence GPL v3
 
@@ -26,29 +26,33 @@ setMethod('area', signature(x='Raster'),
 		if (filename == '') {
 			v <- matrix(NA, ncol=nrow(x), nrow=ncol(x))
 		} else {
-			v <- vector(length=ncol(x))
+			x <- writeStart(x, filename=filename, ...)
 		}
 
-		ry <- yres(x)
-		rx <- xres(x)		
-		dy <- pointDistance(c(0,0),c(0,ry),'GreatCircle')
+		dy <- pointDistance(c(0,0),c(0, yres(x) ),'GreatCircle')
+		y <- yFromRow(x, 1:nrow(x))
+		dx <- pointDistance(cbind(0, y), cbind(xres(x), y), 'GreatCircle')
 
-		pb <- pbCreate(nrow(x), type=.progress(...))
-		for (r in 1:nrow(x)) {
-			y <- yFromRow(x, r)
-			dx <- pointDistance(c(0,y), c(rx,y), 'GreatCircle')
+		tr <- blockSize(x)
+		pb <- pbCreate(tr$n, type=.progress(...))
+
+		for (i in 1:tr$n) {
+			r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
+			vv <- dx[r] * dy / 1000000
+			vv <- rep(vv, each=ncol(x))
 			if (filename == "") {
-				v[,r] <- dx * dy / 1000000
+				v[,r] <- vv
 			} else {
-				v[] <- dx * dy / 1000000
-				x <- setValues(x, v, r)
-				x <- writeRaster(x)
+				x <- writeValues(x, vv, tr$row[i])
 			}
-			pbStep(pb, r)
+			pbStep(pb, i)
 		}
 		pbClose(pb)
+		
 		if (filename == "") { 
 			x <- setValues(x, as.vector(v))
+		} else {
+			x <- writeStop(x)	
 		}
 		return(x)		
 	}

@@ -14,7 +14,7 @@
 \alias{brick,SpatialPixels-method}
 \alias{brick,SpatialGrid-method}
 
-\title{ Create a Rasterbrick object}
+\title{ Create a RasterBrick object}
 
 \description{
 A RasterBrick is a multi-layered RasterLayer. They are typically created from a multi-band file; but they can also exist entirely in memory. They are similar to a RasterStack, but processing time should be shorter. Yet they are less flexible as they can only point to a single file.

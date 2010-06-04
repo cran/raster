@@ -37,18 +37,18 @@ setMethod('readAll', signature(object='RasterBrick'),
 
 
 
-if (!isGeneric("readRow")) {
-	setGeneric("readRow", function(object, rownr)
-		standardGeneric("readRow"))
+if (!isGeneric("..readRow")) {
+	setGeneric("..readRow", function(object, rownr)
+		standardGeneric("..readRow"))
 }
 
-setMethod('readRow', signature(object='RasterLayer'), 
+setMethod('..readRow', signature(object='RasterLayer'), 
 	function(object, rownr){ 
 		.readRasterLayerValues(object, rownr, 1)
 	}
 )
 
-setMethod('readRow', signature(object='RasterStack'), 
+setMethod('..readRow', signature(object='RasterStack'), 
 	function(object, rownr) { 
 		for (i in seq(nlayers(object))) {
 			object@layers[[i]] <- .readRasterLayerValues(object@layers[[i]], rownr, 1)
@@ -58,7 +58,7 @@ setMethod('readRow', signature(object='RasterStack'),
 )
 
 
-setMethod('readRow', signature(object='RasterBrick'), 
+setMethod('..readRow', signature(object='RasterBrick'), 
 	function(object, rownr){ 
 		.readRasterBrickValues(object, rownr, 1)
 	}
@@ -66,18 +66,18 @@ setMethod('readRow', signature(object='RasterBrick'),
 
 
 	
-if (!isGeneric("readRows")) {
-	setGeneric("readRows", function(object, startrow, nrows)
-		standardGeneric("readRows"))
+if (!isGeneric("..readRows")) {
+	setGeneric("..readRows", function(object, startrow, nrows)
+		standardGeneric("..readRows"))
 }	
 
-setMethod('readRows', signature(object='RasterLayer'), 
+setMethod('..readRows', signature(object='RasterLayer'), 
 	function(object, startrow, nrows) { 
 		.readRasterLayerValues(object, startrow, nrows)
 	}
 )
 
-setMethod('readRows', signature(object='RasterStack'), 
+setMethod('..readRows', signature(object='RasterStack'), 
 	function(object, startrow, nrows) { 
 		for (i in seq(nlayers(object))) {
 			object@layers[[i]] <- .readRasterLayerValues(object@layers[[i]], startrow, nrows)
@@ -86,7 +86,7 @@ setMethod('readRows', signature(object='RasterStack'),
 	}
 )
 
-setMethod('readRows', signature(object='RasterBrick'), 
+setMethod('..readRows', signature(object='RasterBrick'), 
 	function(object, startrow, nrows) { 
 		.readRasterBrickValues(object, startrow, nrows)
 	}
@@ -94,18 +94,18 @@ setMethod('readRows', signature(object='RasterBrick'),
 
 
 
-if (!isGeneric("readBlock")) {
-	setGeneric("readBlock", function(object, startrow, nrows=3, startcol=1, ncolumns=(ncol(object)-startcol+1))
-		standardGeneric("readBlock"))
+if (!isGeneric("..readBlock")) {
+	setGeneric("..readBlock", function(object, startrow, nrows=3, startcol=1, ncolumns=(ncol(object)-startcol+1))
+		standardGeneric("..readBlock"))
 }	
 
-setMethod('readBlock', signature(object='RasterLayer'), 
+setMethod('..readBlock', signature(object='RasterLayer'), 
 	function(object, startrow, nrows=3, startcol=1, ncolumns=(ncol(object)-startcol+1)) { 
 		.readRasterLayerValues(object, startrow, nrows, startcol, ncolumns)
 	}
 )
 
-setMethod('readBlock', signature(object='RasterStack'), 
+setMethod('..readBlock', signature(object='RasterStack'), 
 	function(object, startrow, nrows=3, startcol=1, ncolumns=(ncol(object)-startcol+1)) { 
 		for (i in seq(nlayers(object))) {
 			object@layers[[i]] <- .readRasterLayerValues(object@layers[[i]], startrow, nrows, startcol, ncolumns)
@@ -114,7 +114,7 @@ setMethod('readBlock', signature(object='RasterStack'),
 	}
 )
 
-setMethod('readBlock', signature(object='RasterBrick'), 
+setMethod('..readBlock', signature(object='RasterBrick'), 
 	function(object, startrow, nrows=3, startcol=1,  ncolumns=(ncol(object)-startcol+1)) { 
 		.readRasterBrickValues(object, startrow, nrows, startcol, ncolumns)
 	}

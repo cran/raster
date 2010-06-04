@@ -24,7 +24,7 @@ function(x, filename='', ...) {
 		pb <- pbCreate(tr$n, type=.progress(...))	
 		for (i in 1:tr$n) {
 			v <- as.logical ( getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i] ) )
-			writeValues(out, v, tr$row[i])
+			out <- writeValues(out, v, tr$row[i])
 			pbStep(pb, i) 
 		} 
 		pbClose(pb)			

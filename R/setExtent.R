@@ -39,13 +39,13 @@ setExtent <- function(x, bndbox, keepres=FALSE, snap=FALSE) {
 		
 		if (dataContent(x) == 'all') {
 			if (ncol(x) == ncol(newobj) & nrow(x) == nrow(newobj)) {
-				newobj <- setValues(newobj, values(x))
+				newobj <- setValues(newobj, x@data@values)
 			} else {
 				newobj@data@source <- 'ram'
 				indices <- cellsFromExtent(x, bb, expand=TRUE)
 				v <- vector(length=length(indices))
 				v[] <- NA
-				v[!is.na(indices)] <- values(x)[!is.na(indices)]
+				v[!is.na(indices)] <- x@data@values[!is.na(indices)]
 				newobj <- setValues(newobj, v)
 			}
 		}
@@ -53,7 +53,7 @@ setExtent <- function(x, bndbox, keepres=FALSE, snap=FALSE) {
 	} else if (class(x) != "BasicRaster" & class(x) != "RasterStack") {
 		if (ncol(x)==ncol(newobj) & nrow(x)==nrow(newobj))  {
 			if (dataContent(x) == 'all') {
-				newobj <- setValues(newobj, values(x))
+				newobj <- setValues(newobj, x@data@values)
 			}	
 		}
 	}

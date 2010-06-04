@@ -23,12 +23,10 @@ setMethod('flip', signature(x='RasterLayer', direction='ANY'),
 	
 		if (!canProcessInMemory(outRaster, 2) && filename == '') {
 			filename <- rasterTmpFile()
-									
 			inmemory = FALSE
 		} else {
 			inmemory = TRUE
 		}
-	
 		
 		if ( inmemory ) {
 			v <- getValues(x, format='matrix')
@@ -43,23 +41,30 @@ setMethod('flip', signature(x='RasterLayer', direction='ANY'),
 				outRaster = writeRaster(outRaster, filename=filename, ...)
 			}
 		} else {
-			pb <- pbCreate(nrow(outRaster), type=.progress(...))
+			tr <- blockSize(outRaster)
+			pb <- pbCreate(tr$n, type=.progress(...))
+			outRaster <- writeStart(outRaster, filename=filename, datatype=dataType(x), ... )
 			if (direction == 'y') {
-				readRows = nrow(x):1
-				for (r in 1:nrow(outRaster)) {
-					res <- getValues(x, readRows[r])
-					outRaster <- setValues(outRaster, res, r)
-					outRaster <- writeRaster(outRaster, filename=filename, ...)
-					pbStep(pb, r)
+				trinv <- tr
+				trinv$row <- rev(trinv$row)
+				trinv$size <- rev(trinv$size)
+				for (i in 1:tr$n) {
+					v = getValues(x, row=trinv$row[i], nrows=trinv$size)
+					v = matrix(v, ncol=ncol(x), byrow=TRUE)
+					v = as.vector(t(v[nrow(v):1, ]))
+					outRaster <- writeValues(outRaster, v, tr$row[i])
+					pbStep(pb, i) 
 				}
 			} else {
-				for (r in 1:nrow(outRaster)) {
-					res <- getValues(x, r)
-					outRaster <- setValues(outRaster, rev(res), r)
-					outRaster <- writeRaster(outRaster, filename=filename, ...)
-					pbStep(pb, r)
+				for (i in 1:tr$n) {
+					v = getValues(x, row=tr$row[i], nrows=tr$size)
+					v = matrix(v, ncol=ncol(x), byrow=TRUE)
+					v = as.vector(t(v[, ncol(v):1]))
+					outRaster <- writeValues(outRaster, v, tr$row[i])
+					pbStep(pb, i) 
 				}
 			}
+			outRaster <- writeStop(outRaster)
 			pbClose(pb)
 		}
 		return(outRaster)

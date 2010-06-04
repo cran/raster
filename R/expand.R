@@ -39,13 +39,10 @@ function(x, y, filename='', value=NA, ...) {
 	outraster <- setExtent(outraster, bndbox, keepres=TRUE)
 
 	if (canProcessInMemory(outraster, 2)) {
-		if (dataContent(x) != 'all') { 
-			x <- readAll(x) 
-		}
 		d <- vector(length=ncell(outraster))
 		d[] <- value
 		cells <- cellsFromExtent(outraster, extent(x))
-		d[cells] <- values(x)
+		d[cells] <- getValues(x)
 		outraster <- setValues(outraster, d)	
 		if (filename != '') {
 			outraster <- writeRaster(outraster, filename=filename, datatype=dataType(x), ...)

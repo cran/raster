@@ -29,11 +29,11 @@ If \code{stat} is a \code{function} rather than a character string, \code{zonal}
 you can use the character string function name if applicable. Otherwise you could use a sample of the RasterLayer that can be held in memory (see 
 \code{\link[raster]{sampleRandom}} and \code{\link[raster]{sampleRegular}} )
 
-\code{stat='sd'} returns slightly different values than \code{stat=sd}, because the former computes the standard deviation of the population
+\code{stat='sd'} returns slightly different values than \code{stat=sd}, because the former computes the standard deviation of the population (rather than of a sample)
 using this formula: \code{sqrt((1/N) * sum(x^2) - mean(x)^2)}
 }
 
-\seealso{ \code{\link[raster]{setMinMax} } }
+\seealso{ \code{\link[raster]{quantile} }, \code{\link[raster]{minValue} }, \code{\link[raster]{maxValue} }, \code{\link[raster]{setMinMax} } }
 
 \author{Robert J. Hijmans}
 

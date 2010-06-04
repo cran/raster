@@ -4,11 +4,11 @@
 # Licence GPL v3
 
 
-
 if (!isGeneric('setMinMax')) {
 	setGeneric('setMinMax', function(x)
 		standardGeneric('setMinMax')) 
 	}	
+
 
 	
 setMethod('setMinMax', signature(x='RasterLayer'), 
@@ -21,7 +21,7 @@ function(x) {
 	}
 	
 	if (dataContent(x)=='all' ) {
-		vals <- na.omit(values(x)) 
+		vals <- na.omit(getValues(x)) 
 		if (length(vals) > 0) {
 			x@data@min <- min(vals)
 			x@data@max <- max(vals)
@@ -35,7 +35,7 @@ function(x) {
 		tr <- blockSize(x)
 		pb <- pbCreate(tr$n, type=.progress())			
 		for (i in 1:tr$n) {
-			v <- na.omit ( getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i]) )
+			v <- na.omit ( getValues(x, row=tr$row[i], nrows=tr$nrows[i]) )
 			if (length(v) > 0) {
 				x@data@min <- min(x@data@min, min(v))
 				x@data@max <- max(x@data@max, max(v))
@@ -84,19 +84,17 @@ function(x) {
 #		}
 		if (clear) {x <- clearValues(x)}
 	} else {
-		x@data@min <- rep(Inf, nlayers(x))
-		x@data@max <- rep(-Inf, nlayers(x))
-		for (r in 1:nrow(x)) {
-			x <- readRow(x, r)
-			for (i in 1:nlayers(x)) {
-				rsd <- na.omit(values(x)[,i]) # min and max values
-				if (length(rsd) > 0) {
-					x@data@min[i] <- min(x@data@min[i], min(rsd))
-					x@data@max[i] <- max(x@data@max[i], max(rsd))
-				}	
-			}
+		minv <- rep(Inf, nlayers(x))
+		maxv <- rep(-Inf, nlayers(x))
+		minmax <- rbind(minv, maxv)
+		
+		tr <- blockSize(x)
+		for (i in 1:tr$n) {		
+			rsd <- rbind(getValues(x, row=tr$row[i], nrows=tr$nrows[i]), minmax)
+			minmax <- apply(rsd, 2, range, na.rm=TRUE)
 		}
-		x <- clearValues(x)
+		x@data@min <- minmax[1,]
+		x@data@max <- minmax[2,]
 	}
 #	if (datatype == 'logical') {
 #		x@data@min <- as.logical(x@data@min)

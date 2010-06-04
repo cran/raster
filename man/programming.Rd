@@ -24,7 +24,7 @@ canProcessInMemory(raster, n=4)
 closeConnection(raster)
 openConnection(raster, silent=FALSE)
 pbCreate(nsteps, type, style=3)
-pbStep(pb, step, label='step')
+pbStep(pb, step=NULL, label='step')
 pbClose(pb, time=FALSE)
 }
 
@@ -33,10 +33,10 @@ pbClose(pb, time=FALSE)
   \item{n}{the number of copies of a RasterLayer object with values that a function needs to store in memory}  
   \item{silent}{Logical. passed on to GDAL.open}  
   \item{nsteps}{Integer. Number of steps the progress bar will make from start to end (e.g. nrow(raster)) }
-  \item{type}{Character. 'txt', 'tcltk', or 'windows'}
+  \item{type}{Character. 'text', 'tcltk', or 'windows'}
   \item{style}{style for text progress bar. See \code{\link[utils]{txtProgressBar}} }
   \item{pb}{a progress bar object created with pbCreate }
-  \item{step}{which step is this ( 1 <= step <= nsteps ) }
+  \item{step}{which step is this ( 1 <= step <= nsteps ). If step is \code{NULL}, a single step is taken }
   \item{label}{label for the non-text progress bars}
   \item{time}{Logical. If \code{TRUE}, time to completion will be printed}
 }

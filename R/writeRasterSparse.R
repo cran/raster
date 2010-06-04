@@ -11,13 +11,13 @@
 		stop(filename, "exists. Use 'overwrite=TRUE' if you want to overwrite it") 
 	}
 
-	raster@data@values[is.nan(values(raster))] <- NA
+	raster@data@values[is.nan(raster@data@values)] <- NA
 
 	dtype <- .shortDataType(raster@data@datanotation)
 	if (dtype == "integer") { 
-		raster@data@values <- as.integer(values(raster)) 
+		raster@data@values <- as.integer(raster@data@values) 
 	}
-	if (class(values(raster))=='integer') {
+	if (class(raster@data@values)=='integer') {
 		dataType(raster) <- 'INT4S'
 	}	
 	raster <- setMinMax(raster)
@@ -26,7 +26,7 @@
 
 	raster <- openConnection(raster)
 	writeBin( as.vector(dataIndices(raster)), raster@file@con, size = as.integer(4)) 
-	writeBin( as.vector(values(raster)), raster@file@con, size = dataSize(raster@file@datanotation) ) 
+	writeBin( as.vector(raster@data@values), raster@file@con, size = dataSize(raster@file@datanotation) ) 
 	raster <- closeConnection(raster)
 
 	# add the 'sparse' key word to the hdr file!!!

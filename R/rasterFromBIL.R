@@ -98,12 +98,12 @@
 	}
 	
 	if (type == 'RasterBrick') {
-		x <- brick(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, projs=projstring)
+		x <- brick(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs=projstring)
 		x@data@nlayers <-  as.integer(nbands)
 		x@data@min <- minval
 		x@data@max <- maxval
 	} else {
-		x <- raster(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, projs=projstring)
+		x <- raster(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs=projstring)
 		x@data@band <- as.integer(band)
 		x@data@min <- minval[band]
 		x@data@max <- maxval[band]
@@ -130,7 +130,7 @@
 		if (pixtype == 'SIGNEDINT') {
 			dataType(x) <- 'INT1S'
 		} else {
-			if (pixtype != 'UNSIGNEDINT') warning('assumed data is unsigned. If not, use  dataType(x) <- "INT2S"')
+			if (pixtype != 'UNSIGNEDINT') warning('assumed data is unsigned. If not, use  dataType(x) <- "INT1S"')
 			dataType(x) <- 'INT1U'		
 		}
 	} else if (nbits == 16) {
@@ -141,9 +141,17 @@
 			dataType(x) <- 'INT2U'		
 		}
 	} else if (nbits == 32) {
-		dataType(x) <- 'INT4S'
+		if (pixtype == 'FLOAT') {
+			dataType(x) <- 'FLT4S'
+		} else {
+			dataType(x) <- 'INT4S'
+		}
 	} else if (nbits == 64) {
-		dataType(x) <- 'INT8S'
+		if (pixtype == 'FLOAT') {
+			dataType(x) <- 'FLT8S'
+		} else {
+			dataType(x) <- 'INT8S'
+		}
 	} else {
 		stop(paste('unexpected nbits in BIL:', nbits))
 	}

@@ -46,7 +46,7 @@
 		stop('cannot read packed binary files, read via rgdal?')
 	}
 	
-	x <- raster(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, projs=projstring)
+	x <- raster(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs=projstring)
 	
 	if (nchar(layernames) > 1) {
 		layernames <- unlist(strsplit(layernames, ':'))

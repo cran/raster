@@ -2,8 +2,6 @@
 # Date :  June 2008
 # Version 0.9
 # Licence GPL v3
-
-
 	
 if (!isGeneric("values")) {
 	setGeneric("values", function(x, ...)
@@ -16,6 +14,10 @@ function(x, format='vector', names=FALSE, ...) {
 
 	if (dataContent(x)=="nodata") {
 		stop("No data in memory. Use getValues()") 
+	}
+
+	if (dataContent(x) != 'all') {
+		warning('"values" is depracated for Raster* object that do not have all values in memory; use getValues instead')
 	}
 	
 	if (format=='matrix') { 
@@ -52,6 +54,10 @@ function(x, format='vector', names=FALSE, ...) {
 
 setMethod('values', signature(x='RasterBrick'), 
 function(x, names=FALSE, ...) {
+
+	warning('"values" is depracated; use getValues instead')
+
+
 	if (dataContent(x)=="nodata") {
 		stop("No data in memory. Use getValues()") 
 	}

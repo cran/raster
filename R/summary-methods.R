@@ -98,7 +98,7 @@ setMethod("Summary", signature(x='Raster'),
 			cols <- tr$row[i]:(tr$row[i]+dim(vv)[2]-1)	
 			v[,cols] <- vv
 		} else {
-			writeValues(r, vv, tr$row[i])
+			r <- writeValues(r, vv, tr$row[i])
 		}
 		pbStep(pb, i) 
 	} 

@@ -18,12 +18,12 @@ writeRasterHdr(raster, format)
 }
 
 \details{
-You can use saveAs to save a existing file in another format. You can also specify a non-default 'format' in writeRaster to obtain a different raster file format. But if you have a file in a 'raster' format (or similar), you can also only export a header file, and use the data file that already exists. writeHeader can write an ENVI, or BIL header (.hdr) file; an Erdas Raw (.raw) header file; an IDRISI (.rdc) or SAGA (.sgrd). This (hopefully) allows for reading the binary data ("raster.gri"), perhaps after changing the file extension, in other programs such as ENVI or ArcMap.
+You can use writeRaster to save a existing file in another format. But if you have a file in a 'raster' format (or similar), you can also only export a header file, and use the data file that already exists. writeHeader can write an ENVI, or BIL header (.hdr) file; an Erdas Raw (.raw) header file; an IDRISI (.rdc) or SAGA (.sgrd). This (hopefully) allows for reading the binary data ("raster.gri"), perhaps after changing the file extension, in other programs such as ENVI or ArcMap.
 }
 
 \author{Robert J. Hijmans}
 
-\seealso{ \code{\link[raster]{saveAs}}, \code{\link[raster]{writeRaster}}, \code{\link[rgdal]{writeGDAL}} }
+\seealso{ \code{\link[raster]{writeRaster}}, \code{\link[rgdal]{writeGDAL}} }
 
 \examples{ 
 r <- raster(system.file("external/test.grd", package="raster"))

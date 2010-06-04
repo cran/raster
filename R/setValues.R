@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-setValuesRows <- function(object, values, startrow, nrows) {
+..setValuesRows <- function(object, values, startrow, nrows) {
 	if (!is.vector(values)) {stop('values must be a vector')}
 	if (!(is.numeric(values) | is.integer(values) | is.logical(values))) {
 		stop('values must be numeric, integer or logical.')	

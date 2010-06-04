@@ -107,7 +107,7 @@ function(x, y, ..., fun, na.rm=TRUE, tolerance=0.05, filename="", format, overwr
 		res <- apply(rdd, 1, FUN=fun, na.rm=na.rm)
 		
 		if (todisk) {
-			writeValues(outraster, res, r)
+			outraster <- writeValues(outraster, res, r)
 		} else {
 			v[,r] = res
 		}

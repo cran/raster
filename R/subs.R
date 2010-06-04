@@ -10,40 +10,50 @@ if (!isGeneric("subs")) {
 }
 
 setMethod('subs', signature(x='RasterLayer', y='data.frame'), 
+
 	function(x, y, by=1, which=2, subsWithNA=TRUE, filename='', ...) { 
 	
 		localmerge <- function(x, y, subNA) {
-			x = cbind(x, 1:length(x))
+			x <- cbind(x, 1:length(x))
 			if (! subNA) {
-				y = merge(x, y, by=1, all.x=TRUE)
-				y = y[order(y[,2]), 3]	
-				y[is.na(y)] = x[is.na(y),1]
+				y <- merge(x, y, by=1, all.x=TRUE)
+				y <- y[order(y[,2]), 3]	
+				y[is.na(y)] <- x[is.na(y),1]
 				return(y)
 			} else {
-				x = merge(x, y, by=1, all.x=TRUE)
-				x = x[order(x[,2]), 3]
+				x <- merge(x, y, by=1, all.x=TRUE)
+				x <- x[order(x[,2]), 3]
 				return(x)
 			}
 		}
 
-		y = y[ , c(by, which)]
-		r = raster(x)
+		y <- y[ , c(by, which)]
+		r <- raster(x)
+		
+		filename <- trim(filename)
 		
 		if (canProcessInMemory(x, 3)) {
-			return ( setValues(r, localmerge( getValues(x), y, subsWithNA)) )
+			r <- setValues(r, localmerge( getValues(x), y, subsWithNA))
+			if (filename != '') {
+				r <- writeRaster(r, filename=filename, ...)
+			}
+			return(r)
 			
 		} else {
-			if (trim(filename) == '') filename <- rasterTmpFile()
+			if (filename == '') {
+				filename <- rasterTmpFile()
+			}
 			tr <- blockSize(r)
 			pb <- pbCreate(tr$n, type=.progress(...))
-			r <- writeStart(r, filename=filename, ... )
+			r <- writeStart(r, filename=filename, ...)
 			for (i in 1:tr$n) {
-				v = getValuesBlock(x, row=tr$row[i], nrows=tr$size)
-				writeValues(r, localmerge(v, y, subsWithNA), tr$row[i])
-				pbStep(pb, i) 
+				v <- getValues(x, row=tr$row[i], nrows=tr$size)
+				r <- writeValues(r, localmerge(v, y, subsWithNA), tr$row[i])
+				pbStep(pb) 
 			}
 			pbClose(pb)			
-			return( writeStop(r) )
+			r <- writeStop(r)
+			return(r)
 		}
 	}
 )

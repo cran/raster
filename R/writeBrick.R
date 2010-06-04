@@ -5,6 +5,7 @@
 
 
 .writeBrick <- function(object, filename, bandorder='BIL', ...) {
+
 	filename <- trim(filename)
 	if (filename == '') {	stop('you must supply a filename') 	}
 	if (!bandorder %in% c('BIL', 'BSQ', 'BIP')) { stop("invalid bandorder, should be 'BIL', 'BSQ' or 'BIP'") }
@@ -18,8 +19,8 @@
 	if (bandorder=='BSQ') {
 		if (class(object) != 'RasterStack') {
 			if (dataContent(object) == 'all') {
-				writeValues(rout, as.vector(values(object)))
-				v <- na.omit(values(object)) 
+				writeValues(rout, as.vector(object@data@values))
+				v <- na.omit(object@data@values) 
 				if (length(v) > 0) {
 					rout@data@min <- apply(v, 2, min)
 					rout@data@max <- apply(v, 2, max)
@@ -81,6 +82,6 @@
 #	rout@file@bandorder <- bandorder
 #	rout@layernames <- layerNames(object)
 #	writeRasterHdr(rout, format=.filetype(...))
-	return(rout)
+	return(brick(filename))
 }
 

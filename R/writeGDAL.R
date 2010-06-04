@@ -93,12 +93,12 @@
 	nl <- nlayers(raster)
 
 	if (nl == 1) {
-		v <- values(raster, format='matrix')
+		v <- getValues(raster, format='matrix')
 		v[is.na(v)] = naValue
 		x <- putRasterData(transient, t(v), band=1, c(0, 0)) 
 	} else {
 	    for (i in 1:nl) {
-			v <- values(raster)[,i]
+			v <- getValues(raster)[,i]
 			v[is.na(v)] = naValue
 			v <- matrix(v, nrow=nrow(raster), ncol=ncol(raster), byrow=TRUE)
 			x <- putRasterData(transient, t(v), band=i, c(0, 0))

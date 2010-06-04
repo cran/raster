@@ -47,40 +47,17 @@ function(x, row, nrows) {
 		readrow <- TRUE
 	} else if (dataContent(x) == 'all'){
 		res <- x@data@values[startcell:endcell]
-	} else if (dataContent(x) == 'rows') {
-		if ( (dataIndices(x)[1] <= startcell) & (dataIndices(x)[2] >= endcell) ) {
-			s <- startcell-dataIndices(x)[1]+1
-			e <- s+(endcell-startcell)
-			res <- x@data@values[s:e]
-		} else {
-			readrow <- TRUE
-		}
 	} else if (dataContent(x) == 'row') {
 		if ( (dataIndices(x)[1] == startcell) & (dataIndices(x)[2] == endcell) ) {
 			res <- (x@data@values)
 		} else {
 			readrow <- TRUE
 		}
-	} else if (dataContent(x) == 'block') {
-		firstcol <- colFromCell(x, dataIndices(x)[1])
-		lastcol <- colFromCell(x, dataIndices(x)[2])
-		if (firstcol != 1 | lastcol != x@ncols) {
-			readrow <- TRUE
-		} else {
-			firstrow <- rowFromCell(x, dataIndices(x)[1])
-			lastrow <- rowFromCell(x, dataIndices(x)[2])
-			if (row < firstrow | (row+nrows-1) > lastrow) {
-				readrow <- TRUE
-			} else {
-				cells <- startcell:endcell-dataIndices(x)[1]
-				res <- x@data@values[cells]
-			}
-		}
 	} else {
 		stop('something is wrong with the RasterLayer dataContent')
 	}
 	
-	if (readrow) {	res <- values(readRows(x, row, nrows))	}
+	if (readrow) {	res <- ..readRows(x, row, nrows)@data@values }
 	res
 }
 )
@@ -106,41 +83,17 @@ function(x, row, nrows) {
 		readrow <- TRUE
 	} else if (dataContent(x) == 'all'){
 		res <- x@data@values[startcell:endcell,]
-	} else if (dataContent(x) == 'rows') {
-		if ( (dataIndices(x)[1] <= startcell) & (dataIndices(x)[2] >= endcell) ) {
-			s <- startcell-dataIndices(x)[1]+1
-			e <- s+(endcell-startcell)
-			res <- x@data@values[s:e,]
-		} else {
-			readrow <- TRUE
-		}
 	} else if (dataContent(x) == 'row') {
 		if ( (dataIndices(x)[1] == startcell) & (dataIndices(x)[2] == endcell) ) {
 			res <- x@data@values
 		} else {
 			readrow <- TRUE
 		}
-	} else if (dataContent(x) == 'block') {
-		firstcol <- colFromCell(x, dataIndices(x)[1])
-		lastcol <- colFromCell(x, dataIndices(x)[2])
-		if (firstcol != 1 | lastcol != ncol(x)) {
-			readrow <- TRUE
-		} else {
-			firstrow <- rowFromCell(x, dataIndices(x)[1])
-			lastrow <- rowFromCell(x, dataIndices(x)[2])
-			if (row < firstrow | row > lastrow) {
-				readrow <- TRUE
-			} else {
-				res <- x@data@values[startcell:endcell,]
-			}
-		}
-#	} else if (dataContent(x) == 'sparse') {
-#		res <- .values.sparse(x, row)
 	} else {
 		stop('something is wrong with the RasterLayer dataContent')
 	}
 	if (readrow) {
-		res <- values(.readRasterBrickValues(x, row, nrows))
+		res <- .readRasterBrickValues(x, row, nrows)@data@values
 	}
 	colnames(res) <- layerNames(x)
 	return(res)

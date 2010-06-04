@@ -15,8 +15,8 @@ setMethod('crosstab', signature(x='RasterLayer', y='RasterLayer'),
 		compare(c(x, y))
 		if (missing(progress)) { progress <- .progress() }
 
-		if (dataContent(x) == 'all' & dataContent(y) == 'all') {
-			return( table(first=round(values(x), digits=digits), second=round(values(y), digits=digits)) )	
+		if (canProcessInMemory(x, 3) | (dataContent(x) == 'all' & dataContent(y) == 'all')) {
+			return( table(first=round(getValues(x), digits=digits), second=round(getValues(y), digits=digits)) )	
 		}
 		
 		res=NULL

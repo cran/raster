@@ -36,9 +36,13 @@ showOptions <- function() {
 	if (is.null(d)) {
 		d <- paste(dirname(tempdir()), '/R_raster_tmp/', sep="")
 	}
-	if (!file.exists(d)) {
+	lastchar = substr(d, nchar(d), nchar(d))
+	if (lastchar == "/" | lastchar == '\\') {
+		dd <- substr(d, 1, nchar(d)-1)
+	}		
+	if (!file.exists(dd)) {
 		d <- paste(dirname(tempdir()), '/R_raster_tmp/', sep="")
-		dir.create(d, showWarnings=FALSE )
+		dir.create(d, recursive=TRUE, showWarnings=FALSE )
 	}
 	return(d)
 }
@@ -91,7 +95,7 @@ showOptions <- function() {
 		} 
 	} 
 	if (! datatype %in% c('LOG1S', 'INT1S', 'INT2S', 'INT4S', 'INT8S', 'INT1U', 'INT2U', 'FLT4S', 'FLT8S')) {
-		warning(datatype, 'is an invalid datatype, changed to FLT4S')
+		warning(datatype, ' is an invalid datatype, changed to FLT4S')
 	}
 	return(datatype)
 }
@@ -105,6 +109,7 @@ showOptions <- function() {
 		} else if (ext == '.grd') { return('raster')
 		} else if (ext == '.asc') { return('ascii')
 		} else if (ext == '.nc') { return('netcdf')
+		} else if (ext == '.sgrd') { return('SAGA')
 		} else if (ext == '.bil') { return('BIL')
 		} else if (ext == '.bsq') { return('BSQ')
 		} else if (ext == '.bip') { return('BIP')
@@ -119,7 +124,7 @@ showOptions <- function() {
 		} else if (ext == '.sdat') { return('SAGA')
 		} else if (ext == '.rsw') { return('RMF')
 		} else { 
-			warning('extension', ext, 'is unknown. Using default format in stead')
+			warning('extension ', ext, 'is unknown. Using default format.')
 			return('') 
 		}
 	}

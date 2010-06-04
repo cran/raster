@@ -11,8 +11,8 @@ if (!isGeneric("contour")) {
 
 setMethod("contour", signature(x='RasterLayer'), 
 	function(x, maxpixels=100000, ...)  {
-		x <- sampleRegular(x, maxpixels, asRaster=TRUE)
-		contour(x=xFromCol(x,1:ncol(x)), y=yFromRow(x, nrow(x):1), z=t((values(x, format='matrix'))[nrow(x):1,]), ...)
+		x <- sampleRegular(x, maxpixels, asRaster=TRUE, corners=TRUE)
+		contour(x=xFromCol(x,1:ncol(x)), y=yFromRow(x, nrow(x):1), z=t((getValues(x, format='matrix'))[nrow(x):1,]), ...)
 	}
 )
 
@@ -27,8 +27,8 @@ setMethod("contour", signature(x='RasterStackBrick'),
 
 
 rasterToContour <- function(x,maxpixels=100000,...) {
-	x <- sampleRegular(x, size=maxpixels, asRaster=TRUE)
-	cL <- contourLines(x=xFromCol(x,1:ncol(x)), y=yFromRow(x, nrow(x):1), z=t((values(x, format='matrix'))[nrow(x):1,]), ...)
+	x <- sampleRegular(x, size=maxpixels, asRaster=TRUE, corners=TRUE)
+	cL <- contourLines(x=xFromCol(x,1:ncol(x)), y=yFromRow(x, nrow(x):1), z=t((getValues(x, format='matrix'))[nrow(x):1,]), ...)
 	
 # The below was taken from ContourLines2SLDF(maptools), by Roger Bivand & Edzer Pebesma 
 	.contourLines2LineList <- function(cL) {
@@ -53,4 +53,14 @@ rasterToContour <- function(x,maxpixels=100000,...) {
     }
     SL <- SpatialLines(res, proj4string = projection(x, asText=FALSE))
     SpatialLinesDataFrame(SL, data = df)
+}
+
+
+filledContour <- function(x, y=1, maxpixels=100000, ...) {
+	if (nlayers(x) > 1) {	x = raster(x, y) }
+	x <- sampleRegular(x, maxpixels, asRaster=TRUE, corners=TRUE)
+	X <- xFromCol(x, 1:ncol(x))
+	Y <- yFromRow(x, nrow(x):1)
+	Z <- t( matrix( getValues(x), ncol=x@ncols, byrow=TRUE)[nrow(x):1,] )
+	filled.contour(x=X,y=Y,z=Z,...)
 }

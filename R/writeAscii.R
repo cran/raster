@@ -40,23 +40,25 @@
 	if (dtype == 'INT') {
 		raster@data@values <- round(raster@data@values)
 	}
-	raster@data@values[is.na(values(raster))] <- .nodatavalue(raster)
+	raster@data@values[is.na(raster@data@values)] <- .nodatavalue(raster)
+	
 	
 	if (dataContent(raster) == 'all') {
-		for (r in 1:nrow(raster)) {
-			write.table(t(getValues(raster, r)), filename, append = TRUE, quote = FALSE, 
+		write.table(getValues(raster, format='matrix'), filename, append = TRUE, quote = FALSE, 
 								sep = " ", eol = "\n", dec = ".", row.names = FALSE, col.names = FALSE)
-		}					
-	} else {
-		write.table(t(values(raster)), filename, append = TRUE, quote = FALSE, 
-							sep = " ", eol = "\n", dec = ".", row.names = FALSE, col.names = FALSE)
-    }
-	
-	if ( dataIndices(raster)[2] == ncell(raster)) {
+								
 		return(raster(filename))
+		
 	} else {
-		return(raster)
-	}	
+		write.table(t(raster@data@values), filename, append = TRUE, quote = FALSE, 
+							sep = " ", eol = "\n", dec = ".", row.names = FALSE, col.names = FALSE)
+    	
+		if ( dataIndices(raster)[2] == ncell(raster)) {
+			return(raster(filename))
+		} else {
+			return(raster)
+		}	
+	}
 }
  
  

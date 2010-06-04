@@ -3,7 +3,7 @@
 \docType{methods}
 
 \alias{plotRGB}
-\alias{plotRGB,Raster-method}
+\alias{plotRGB,RasterStackBrick-method}
 
 \title{Red-Green-Blue plot of RasterLayers}
 
@@ -14,7 +14,7 @@ Make a Red-Green-Blue plot based on three layers (in a RasterBrick or RasterStac
 \section{Methods}{
 \describe{
 
-\code{plotRGB(x, r=1, g=2, b=3, scale=255 maxpixels=100000,  ...)}
+\code{plotRGB(x, r=1, g=2, b=3, scale=255, maxpixels=100000, extent=NULL, ...)}
 
 \tabular{rll}{
 \tab \code{x} \tab a RasterLayer object \cr
@@ -23,6 +23,7 @@ Make a Red-Green-Blue plot based on three layers (in a RasterBrick or RasterStac
 \tab \code{b}  \tab  Integer. Index of the Blue channel, between 1 and nlayers(x)\cr
 \tab \code{scale}  \tab Integer. Maximum (possible) value in the three channels \cr 
 \tab \code{maxpixels}  \tab  Maximum number of pixels to use  \cr
+\tab \code{extent}  \tab  An extent object to zoom in a region \cr
 \tab \code{...} \tab Any argument that can be passed to \code{\link[graphics]{image}} (graphics package) \cr
 }
 }}

@@ -12,16 +12,20 @@ if (!isGeneric("unique")) {
 
 setMethod('unique', signature(x='RasterLayer', incomparables='missing'), 
 function(x, progress='') {
-	if (canProcessInMemory(x, 2)) {
-		if (dataContent(x) != 'all') {
-			x <- readAll(x)
+	
+	if (dataContent(x) != 'all') {
+		if (dataSource(x) == 'disk') {
+			if (canProcessInMemory(x, 2)) {
+				x <- readAll(x)
+			}
+		} else {
+			stop('This RasterLayer has no values')	
 		}
 	} 
+
 	if (dataContent(x) == 'all') {
 		x <- unique(x@data@values)
 		return(sort(x))
-	} else if (dataSource(x) != 'disk' ) {
-		stop('This RasterLayer has no values')	
 	} else {
 		u1 <- vector()
 		u2 <- vector()

@@ -38,7 +38,7 @@ focalFilter <- function(raster, filter, fun=sum, filename="", ...) {
 		if (dataContent(raster)=='all') {
 			rowdata <- getValues(raster, r)
 		} else {	
-			rowdata <- values(readRow(raster, r))
+			rowdata <- getValues(raster, r)
 		}
 		ngbdata <- rbind(ngbdata, rowdata)
 	}
@@ -66,7 +66,7 @@ focalFilter <- function(raster, filter, fun=sum, filename="", ...) {
 			if (dataContent(raster)=='all') {
 				rowdata <- getValues(raster, rr)
 			} else {	
-				rowdata <- values(readRow(raster, rr))
+				rowdata <- getValues(raster, rr)
 			}
 			if (dim(ngbdata)[1] == ngb[1]) {
 				ngbdata <- rbind(ngbdata[2:ngb[1],], rowdata)

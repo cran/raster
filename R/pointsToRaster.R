@@ -46,6 +46,7 @@ pointsToRaster <- function(raster, xy, values=1, fun=length, background=NA, file
 			dna <- matrix(background, nrow=ncol(rs), ncol=nres)
 		}
 		pb <- pbCreate(nrow(rs), type=.progress(...))
+		rs <- writeStart(rs, filename=filename, ...)
 		for (r in 1:rs@nrows) {
 			d <- dna
 			if (r %in% urows) {
@@ -67,11 +68,12 @@ pointsToRaster <- function(raster, xy, values=1, fun=length, background=NA, file
 					d[cells] <- v
 				}
 			}
-			rs <- setValues(rs, d, r)
-			rs <- writeRaster(rs, filename=filename, ...) 
+			rs <- writeValues(rs, d) 
 			pbStep(pb, r)
 		}
+		rs <- writeStop(rs)
 		pbClose(pb)
+		
 	} else {
 		v = tapply(values, cells, fun)
 		cells <- as.numeric(rownames(v))

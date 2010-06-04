@@ -18,7 +18,7 @@ function(x, maxpixels=100000, zfac=6, drape=NULL, col=terrain.colors, rev=FALSE,
 		x <- sampleRegular(x, size=maxpixels, asRaster=TRUE)
 		X <- xFromCol(x,1:ncol(x))
 		Y <- yFromRow(x, nrow(x):1)
-		Z <- t((values(x, format='matrix'))[nrow(x):1,])
+		Z <- t((getValues(x, format='matrix'))[nrow(x):1,])
 
 		background <- min(Z, na.rm=TRUE) - 1
 		Z[is.na(Z)] <- background
@@ -50,7 +50,7 @@ function(x, maxpixels=100000, zfac=6, drape=NULL, col=terrain.colors, rev=FALSE,
 		x <- sampleRegular(x, size=maxpixels, asRaster=TRUE)
 		X <- xFromCol(x,1:ncol(x))
 		Y <- yFromRow(x, nrow(x):1)
-		Z <- t((values(x, format='matrix'))[nrow(x):1,])
+		Z <- t((getValues(x, format='matrix'))[nrow(x):1,])
 		
 		background <- min(Z, na.rm=TRUE) - 1
 		Z[is.na(Z)] <- background
@@ -64,7 +64,7 @@ function(x, maxpixels=100000, zfac=6, drape=NULL, col=terrain.colors, rev=FALSE,
 		Y <- Y * adj * zfac
 
 		x <- sampleRegular(drape, size=maxpixels, asRaster=TRUE)
-		Zcol <- t((values(x, format='matrix'))[nrow(x):1,])
+		Zcol <- t((getValues(x, format='matrix'))[nrow(x):1,])
 		background <- min(Zcol, na.rm=TRUE) - 1
 		Zcol[is.na(Zcol)] <- background
 		

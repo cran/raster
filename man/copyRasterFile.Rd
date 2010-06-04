@@ -32,13 +32,10 @@ a RasterLayer
 
 \author{Robert J. Hijmans}
 
-\seealso{ \code{\link[raster]{saveAs}} }  
-
 \examples{ 
 r <- raster(system.file("external/test.grd", package="raster"))
-r <- saveAs(r, filename='test.grd', format='raster', overwrite=TRUE)
 rc <- copyRasterFile(r, filename='test2.grd', overwrite=TRUE)
-rm <- moveRasterFile(r, filename='test3.grd', overwrite=TRUE)
+rm <- moveRasterFile(rc, filename='test3.grd', overwrite=TRUE)
 }
 
 \keyword{ spatial }

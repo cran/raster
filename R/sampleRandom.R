@@ -15,7 +15,7 @@ setMethod('sampleRandom', signature(x='Raster'),
 
 function(x, size, na.rm=TRUE, ...) {
 	if (dataContent(x) == 'all') {
-		values <- values(x)
+		values <- getValues(x)
 		if (na.rm) { values <- na.omit(values) }
 		if (length(values) > size) {
 			s = sampleInt(length(values), size)

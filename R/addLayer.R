@@ -109,7 +109,6 @@ function(x, ..., keepone=FALSE) {
 				x@data@max <- r@data@max			
 			}
 		} else {
-			if (dataContent(x) != 'all') { x <- readAll(x) }
 			
 			if (x@file@driver != '') {
 				x@file@driver <- ''

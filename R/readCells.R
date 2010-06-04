@@ -29,7 +29,7 @@
 
 	if (length(uniquecells) > 0) {
 		if (dataContent(raster) == 'all') {
-			vals <- values(raster)[uniquecells]
+			vals <- getValues(raster)[uniquecells]
 		} else if (dataSource(raster) == 'disk') {
 			if (length(uniquecells) > 100 & canProcessInMemory(raster, 2)) {
 				vals <- getValues(raster)

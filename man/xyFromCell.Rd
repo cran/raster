@@ -16,7 +16,7 @@ These functions get coordinates of the center of raster cells for a row, column,
 \usage{
 xFromCol(object, colnr)
 yFromRow(object, rownr)
-xyFromCell(object, cell, asSpatialPoints=FALSE)
+xyFromCell(object, cell, spatial=FALSE)
 xFromCell(object, cell)
 yFromCell(object, cell)
 }
@@ -27,7 +27,7 @@ yFromCell(object, cell)
   \item{cell}{cell number(s)}
   \item{colnr}{column number; or vector of column numbers}
   \item{rownr}{row number; or vector of row numbers}
-  \item{asSpatialPoints}{return a SpatialPoints object (sp package) instead of a matrix}
+  \item{spatial}{return a SpatialPoints object (sp package) instead of a matrix}
 }
   
 \details{

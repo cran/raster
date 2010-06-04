@@ -38,7 +38,7 @@ If \code{name} is 'SRTM' you must provide 'lon' and 'lat' arguments (longitude a
 
 If \code{name='worldclim'} you must also provide a variable name 'var=', and a resolution 'res='. Valid variables names are 'tmin', 'tmax', 'prec' and 'bio'. Valid resolutions are 0.5, 2.5, 5, and 10 (minutes of a degree). In the case of res=0.5, you must also provide a lon and lat argument for a tile; for the lower resolutions global data will be downloaded. In all cases there are 12 (monthly) files for each variable except for 'bio' which contains 19 files.
 
-\code{getData('worldclim', var='tmin', res=0.5, x=5, y=45)}
+\code{getData('worldclim', var='tmin', res=0.5, lon=5, lat=45)}
 
 \code{getData('worldclim', var='bio', res=10)}
 }

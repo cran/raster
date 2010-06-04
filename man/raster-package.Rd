@@ -184,12 +184,13 @@ You can also use indexing with \code{[} for cell numbers, and \code{[[} for row 
 
 Maps
   \tabular{ll}{
-    \code{\link{plot}} \tab Plot a Raster* object\cr
-    \code{\link{plot3D}} \tab 3-dimensional plot of a RasterLayer \cr
+    \code{\link{plot}} \tab Plot a Raster* object. The main method to create a map \cr
     \code{\link{plotRGB}} \tab Combine three layers (red, green, blue channels) into a single 'real color' image \cr
+    \code{\link{plot3D}} \tab 3-dimensional plot of a RasterLayer \cr
     \code{\link{image}} \tab Plot a Raster* using the image function \cr
     \code{\link{persp}} \tab Perspective plot of a RasterLayer \cr
     \code{\link{contour}} \tab Contour plot of a RasterLayer \cr
+    \code{\link{filledContour}} \tab Filled contour plot of a RasterLayer \cr
  }
 
 Interacting with a map (plot of a RasterLayer)
@@ -263,17 +264,14 @@ Cell numbers start at 1 in the upper-left corner. They increase within rows, fro
 
 
 \section{XIII. Reading data}{
-
   \tabular{ll}{
     \code{\link{readAll}} \tab Read all values into memory \cr
-    \code{\link{readRow}} \tab Read a row of data into memory \cr
-    \code{\link{readBlock}} \tab Read a block of data into memory \cr
     \code{\link{values}} \tab Returns the values read with read* \cr
     \code{\link{dataContent}} \tab How much data (if any) is in memory? \cr
     \code{\link{dataIndices}} \tab Values for which cells are in memory? \cr	
     \code{\link{dataSource}} \tab What is the source of the values (disk or RAM)? \cr	
   }
-  Rather then reading data & using values, it is avisble to use getValues* functions (see above)
+  Rather then reading data & using values, it is advisable to use \code{\link{getValues}*} functions (see above)
 }
 
   
@@ -283,8 +281,7 @@ Basic writing
   \tabular{ll}{
     \code{\link{setValues}} \tab Put new values in a Raster* object \cr
     \code{\link{dataContent}} \tab How much data (if any) is in memory? \cr
-    \code{\link{writeRaster}} \tab Write raster data to disk, either a row or all values \cr
-    \code{\link{saveAs}} \tab Save raster file under other name and perhaps in different format \cr
+    \code{\link{writeRaster}} \tab Write all values of Raster* object to disk \cr
     \code{\link{KML}} \tab Save raster as KML file \cr	
   }
 
@@ -366,7 +363,9 @@ It is also possible to use Arithmetic functions with Extent objects (but these w
 
 
 \section{Acknowledgements}{
-We thank the following persons for suggestions to improve the package: Herry Herry, Paul Hiemstra, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Agustin Lobo, Matteo Mattiuzzi, and Kevin Ummel.
+We thank the following persons for suggestions to improve the package: 
+Jonathan Greenberg, Herry Herry, Paul Hiemstra, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Agustin Lobo, 
+Matteo Mattiuzzi, Edzer Pebesma, and Kevin Ummel.
 }
 
 \keyword{package}

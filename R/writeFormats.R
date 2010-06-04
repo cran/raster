@@ -18,7 +18,7 @@
 }
 
 writeFormats <- function() {
-	if (require(rgdal)) { 
+	if ( .requireRgdal() ) {
 		gd <- .gdalWriteFormats() 
 		short <- c(.nativeDrivers(),  'ascii', as.vector(gd[,1]))
 		long <- c(.nativeDriversLong(), 'Arc ASCII', as.vector(gd[,2]))

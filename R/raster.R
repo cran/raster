@@ -12,17 +12,24 @@ if (!isGeneric("raster")) {
 
 
 setMethod('raster', signature(x='missing'), 
-	function(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, projs="+proj=longlat +datum=WGS84") {
-		ext <- extent(xmn, xmx, ymn, ymx)
-		r <- raster(ext, nrows=nrows, ncols=ncols, projs=projs)
+	function(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, crs) {
+		e <- extent(xmn, xmx, ymn, ymx)
+		if (missing(crs)) {
+			if (e@xmin > -400 & e@xmax < 400 & e@ymin > -90.1 & e@ymax < 90.1) { 
+				crs ="+proj=longlat +datum=WGS84"
+			} else {
+				crs=NA
+			}
+		}
+		r <- raster(e, nrows=nrows, ncols=ncols, crs=crs)
 		return(r)
 	}
 )
 
 
 setMethod('raster', signature(x='matrix'), 
-	function(x, xmn=0, xmx=1, ymn=0, ymx=1, projs=NA) {
-		r <- raster(ncols=ncol(x), nrows=nrow(x), projs=projs, xmn=xmn, xmx=xmx, ymn=ymn, ymx=ymx)
+	function(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA) {
+		r <- raster(ncols=ncol(x), nrows=nrow(x), xmn=xmn, xmx=xmx, ymn=ymn, ymx=ymx, crs=crs)
 		r <- setValues(r, as.vector(t(x)))
 		return(r)
 	}
@@ -45,7 +52,7 @@ setMethod('raster', signature(x='character'),
 
 setMethod('raster', signature(x='Raster'), 
 	function(x, filename="", values=NULL) {
-		r <- raster(xmn=xmin(x), xmx=xmax(x), ymn=ymin(x), ymx=ymax(x), nrows=nrow(x), ncols=ncol(x), projs=projection(x))
+		r <- raster(xmn=xmin(x), xmx=xmax(x), ymn=ymin(x), ymx=ymax(x), nrows=nrow(x), ncols=ncol(x), crs=projection(x))
 		filename(r) <- filename
 		if (!is.null(values)) {
 			x <- setValues(x, values)
@@ -104,14 +111,14 @@ setMethod('raster', signature(x='RasterBrick'),
 				r <- raster(filename(x), band=dindex)
 				layerNames(r) <- layerNames(x)[dindex]
 			} else {
-				r <- raster(extent(x), nrows=nrow(x), ncols=ncol(x), projs=projection(x))	
+				r <- raster(extent(x), nrows=nrow(x), ncols=ncol(x), crs=projection(x))	
 				if (dataContent(x) == 'all') {
 					if (dindex != layer) { warning(paste("layer was changed to", dindex))}
-					r <- setValues(r, values(x)[,dindex])
+					r <- setValues(r, getValues(x)[,dindex])
 				}
 			}
 		} else {
-			r <- raster(extent(x), nrows=nrow(x), ncols=ncol(x), projs=projection(x))	
+			r <- raster(extent(x), nrows=nrow(x), ncols=ncol(x), crs=projection(x))	
 		}
 		return(r)
 	}
@@ -119,11 +126,11 @@ setMethod('raster', signature(x='RasterBrick'),
 
 
 setMethod('raster', signature(x='Extent'), 
-	function(x, nrows=10, ncols=10, projs=NA) {
+	function(x, nrows=10, ncols=10, crs=NA) {
 		nrows = as.integer(max(1, round(nrows)))
 		ncols = as.integer(max(1, round(ncols)))
 		r <- new("RasterLayer", extent=x, ncols=ncols, nrows=nrows)
-		projection(r) <- projs
+		projection(r) <- crs
 		return(r)
 	}
 )

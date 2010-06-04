@@ -29,7 +29,8 @@ setMethod('summary', signature(object='Raster'),
 			sumobj@NAs <- sum(is.na(v))
 			sumobj@values <- as.matrix( summary(v) )
 		} else {
-			stop('no cell values associated with this RasterLayer')
+			sumobj@NAs <- sumobj@ncell
+			sumobj@values <- as.matrix(rep(NA, 6))
 		}
 		colnames(sumobj@values)=""
 		return(sumobj)
@@ -140,4 +141,3 @@ setMethod('show', signature(object='RasterSummary'),
 	}	
 )
 	
-

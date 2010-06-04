@@ -1,144 +1,150 @@
-# Author: Jacob van Etten and Robert J. Hijmans
+# Author: Jacob van Etten
 # email jacobvanetten@yahoo.com
-# Date :  November 2009
-# Version 0.9
+# Date :  May 2010
+# Version 1.0.x
 # Licence GPL v3
 
-#for data on disk only proof of concept version. In reality, we need Dijkstra´s algorithm (igraph) and read/write a couple of row at once to gain some speed
+#the igraph method is speedy for a low number of origin cells, as it calculates shortest distances for each origin cell individually. 
+#We could ask the igraph author to make it possible to calculate shortest distance for several origin nodes simultaneously. 
+#However, I think I asked this more than a year ago and he seemed not very convinced.
 
-#setGeneric("gridDistance", function(x, ...) standardGeneric("gridDistance"))
+# We could -- perhaps -- speed it up for cases with many origin cells by only considering the 'edge' cells (all the others have distance = 0
+# see the edge function. Or perhaps use igraph to compute the edges??? 
 
-#setMethod("gridDistance", signature(x = "RasterLayer"), def =	
+#setGeneric("gridDistance", function(object, ...) standardGeneric("gridDistance"))
 
-gridDistance <- function(x, filename="", ...) {
+#setMethod("gridDistance", signature(object = "RasterLayer"), def =	
 
-	if ((dataContent(x) != 'all') & (dataSource(x) != 'disk')) {
-		stop('cannot compute distance on a RasterLayer with no data')
+gridDistance <- function(object, originValue, omitValue, filename="", ...) 
+{
+	if( !require(igraph)) {
+		stop('you need to install the igraph package to be able to use this function')
 	}
-
+	
+	if ((dataContent(object) != 'all') & (dataSource(object) != 'disk')) {
+			stop('cannot compute distance on a RasterLayer with no data')
+	}
+	lonlat <- .couldBeLonLat(object)
 	filename <- trim(filename)
 	
-	object <- raster(x)
-	n <- ncell(object)
-		
-	if(canProcessInMemory(object, n=5)) {
-		
-		x = getValues(x)
-		
-		outRaster <- raster(object)
-
-		fromCells <- which(!is.na(x))
-		fromCells <- fromCells[which(x[fromCells] == TRUE)]
-		toCells <- which(is.na(x))
-		accDist <- rep(0,times=n)
-		accDist[toCells] <- Inf
-		if (isLonLat(object)) {
-			while(length(fromCells)>0) {			
-				adj <- adjacency(object,fromCells=fromCells,toCells=toCells,directions=8)
-				coord <- cbind(xyFromCell(object,adj[,1]),xyFromCell(object,adj[,2]))
-				distance <- apply(coord,1,function(x){pointDistance(x[1:2],x[3:4], type='GreatCircle')})
-				#What follows is the same as for  projected  data ( further below)
-				transitionValues <- accDist[adj[,1]] + distance
-				transitionValues <- tapply(transitionValues,adj[,2],min)
-				transitionValues <- transitionValues[transitionValues < Inf]
-				index <- as.integer(names(transitionValues))
-				fromCells <- index[transitionValues < accDist[index]]
-				accDist[index] <- pmin(transitionValues,accDist[index])
-			}
-		} else {
-			while(length(fromCells)>0) {			
-				adj1 <- adjacency(object,fromCells=fromCells,toCells=toCells,directions=4)
-				adj2 <- adjacency(object,fromCells=fromCells,toCells=toCells,directions="Bishop")
-				distance <- c(rep(1,length=length(adj1[,1])),rep(sqrt(2),length=length(adj2[,1])))
-				adj <- rbind(adj1,adj2)
-				#What follows is the same as for LatLon
-				transitionValues <- accDist[adj[,1]] + distance
-				transitionValues <- tapply(transitionValues,adj[,2],min)
-				transitionValues <- transitionValues[transitionValues < Inf]
-				index <- as.integer(names(transitionValues))
-				fromCells <- index[transitionValues < accDist[index]]
-				accDist[index] <- pmin(transitionValues,accDist[index])
-			}
-		}
-			
-		outRaster <- setValues(outRaster, accDist)	
-		if (filename != "") {
-			outRaster <- writeRaster(outRaster, filename=filename, ...)
-		}
-		return(outRaster)
-
-	} else { 
-		stop('not yet implemented for large rasters')
-		maxDist <- pointDistance(xyFromCell(object,1),xyFromCell(object,ncell(object)), type='GreatCircle')
-		nrows <- nrow(object)
-		ncols <- ncol(object)
-		func <- function(x) 
-		{
-			x[is.na(x)] <- maxDist
-			x[x==0] <- NA
-			x[x==1] <- 0
-			return(x)
-		}
-			f1 <- rasterTmpFile()
-			f2 <- rasterTmpFile()
-			r1 <- calc(object, func, filename=f1, overwrite=TRUE, datatype="FLT4S")
-			r2 <- raster(r1)
-			remainingCells <- TRUE
-			while (remainingCells) 
-			{
-				remainingCells <- FALSE
-				r1 <- getValues(r1, 1)
-				rowWindow <- values(r1)
-				for(r in 1:(nrows-1))
-				{
-					r1 <- getValues(r1, r+1)
-					rowWindow <- c(rowWindow, values(r1))
-					fromCells <- ((((r-1)*ncols)+1):((r+1)*ncols))[!is.na(rowWindow) & !((maxDist - rowWindow) < 1e-60)] 
-					toCells <- ((((r-1)*ncols)+1):((r+1)*ncols))[!is.na(rowWindow)] 
-					if(isLonLat(object))
-					{						
-						adj <- adjacency(object, fromCells=fromCells, toCells=toCells, directions=8)
-						coord <- cbind(xyFromCell(object,adj[,1]), xyFromCell(object, adj[,2]))
-						distance <- apply(coord,1,function(x){pointDistance(x[1:2],x[3:4], type='GreatCircle')})
-					} else
-					{
-						adj1 <- adjacency(object,fromCells=fromCells,toCells=toCells,directions=4)
-						adj2 <- adjacency(object,fromCells=fromCells,toCells=toCells,directions="Bishop")
-						distance <- c(rep(1,length=length(adj1[,1])),rep(sqrt(2),length=length(adj2[,1])))
-						adj <- rbind(adj1,adj2)
-					}
-					if(length(adj[,1]) > 0)
-					{
-						adj <- adj-(r-1)*ncols
-						transitionValues <- as.vector(rowWindow)[adj[,1]] + distance
-						transitionValues <- tapply(transitionValues,adj[,2],min)
-						transitionVal <- rowWindow
-						index <- as.integer(names(transitionValues))
-						transitionVal[index] <- transitionValues
-						newValues <- as.vector(pmin(transitionVal,rowWindow))
- 						if (sum(newValues) < sum(rowWindow) - 1e-3) #in reality, this should be 0 with floating point precision. Given the terrible inefficiency of the current algorithm, we choose a high value.
-						{
-							remainingCells <- TRUE
-						}
-					} else {newValues <- rowWindow}
-					r2 <- setValues(r2, newValues[1:ncols], r)
-					r2 <- writeRaster(r2, f2, overwrite=TRUE)
-					rowWindow <- newValues[-(1:ncols)]
-				}
-				r2 <- setValues(r2, rowWindow, r+1)
-				r2 <- writeRaster(r2, f2, overwrite=TRUE)
-				#plot(r2) #for some reason this doesn´t work, why?
-				ftmp <- f2
-				f2 <- f1
-				f1 <- ftmp
-				r1 <- raster(f1)
-				r2 <- raster(r1)
-			}
-			outRaster <- saveAs(r1, filename=filename, ...)
-			removeRasterFile(f1)	 
-            removeRasterFile(f2)
-			return(outRaster)
+	if (filename != ""  & file.exists(filename)) {
+		if (! .overwrite(...)) {
+			stop("file exists. Use another name or 'overwrite=TRUE' if you want to overwrite it")
 		}
 	}
-#)
+	
+	if (dataContent(object) == 'all') nr=4 else nr=5
+	
+	if(canProcessInMemory(object, n=nr)) {
+		outRaster <- raster(object)
+		object <- getValues(object) # to avoid keeping values in memory twice
+		
+		oC <- which(object %in% originValue) #select cells not surrounded by other origin cells
+		ftC <- which(!(object %in% omitValue))
+		chunkSize <- ncell(outRaster)
+		outRaster <- setValues(outRaster, .calcDist(outRaster, chunkSize, ftC, oC))
+		outRaster[is.infinite(outRaster)] <- NA
+		if (filename != "") {
+			outRaster <- writeRaster(outRaster, filename, ...)
+		}
+		return(outRaster)
+		
+	} else 	{
+		tr <- blockSize(object, n=5)
+		pb <- pbCreate(tr$n*2 - 1, type=.progress(...))
 
+		#going up
+		r1 <- writeStart(raster(object), rasterTmpFile(), overwrite=TRUE)
+		for(i in tr$n:1) {
+			chunk <- getValues(object, row=tr$row[i], nrows=tr$nrows[i]) 
+			startCell <- (tr$row[i]-1) * ncol(object)
+			chunkSize <- length(chunk)
+			oC <- which(chunk %in% originValue) 
+			ftC <- which(!(chunk %in% omitValue))
+			if(i < tr$n) {
+				firstRowftC <- which(!(firstRow %in% omitValue)) + chunkSize
+				chunkDist <- .calcDist(object, 
+								chunkSize=chunkSize+ncol(object), 
+								ftC=c(ftC, firstRowftC), 
+								oC=c(oC, firstRowftC), 
+								perCell=c(rep(0,times=length(oC)),firstRowDist), 
+								startCell=startCell)[1:chunkSize]
+			} else {
+				chunkDist <- .calcDist(object, 
+								chunkSize=chunkSize, 
+								ftC=ftC, 
+								oC=oC, 
+								perCell=0, 
+								startCell=startCell)
+			}
+			firstRow <- chunk[1:nrow(object)]
+			firstRowDist <- chunkDist[1:nrow(object)]
+			chunkDist[is.infinite(chunkDist)] <- NA
+			r1 <- writeValues(r1, chunkDist)
+			pbStep(pb) 
+		}
+		r1 <- writeStop(r1)
+		
+		#going down
+		if (filename == '') {filename <- rasterTmpFile()}
+		
+		outRaster <- writeStart(raster(object), filename=filename, overwrite=TRUE, ...)			
+		for(i in 1:tr$n) {
+			iM <- tr$n - i + 1
+			chunk <- getValues(object, row=tr$row[i], nrows=tr$nrows[i]) 
+			chunkSize <- length(chunk)
+			startCell <- (tr$row[i]-1) * ncol(object)
+			oC <- which(chunk %in% originValue) 
+			ftC <- which(!(chunk %in% omitValue))
+			chunkDist <- getValues(r1, row=tr$row[iM], nrows=tr$nrows[iM])
+			chunkDist[is.na(chunkDist)] <- Inf
+			if (i > 1) {
+				chunkDist <- pmin(chunkDist,
+					.calcDist(object, 
+							chunkSize=chunkSize+ncol(object), 
+							ftC=c(lastRowftC, ftC+ncol(object)), 
+							oC = c(lastRowftC, oC+ncol(object)), 
+							perCell=c(lastRowDist, rep(0,times=length(oC))), 
+							startCell = startCell - ncol(object))[-(1:length(lastRowftC))])
+				}
+			lastRow <- chunk[(length(chunk)-ncol(object)+1):length(chunk)]
+			lastRowDist <- chunkDist[(length(chunkDist)-ncol(object)+1):length(chunkDist)]
+			lastRowftC <- which(!(lastRow %in% omitValue))
+			chunkDist[is.infinite(chunkDist)] <- NA				
+			outRaster <- writeValues(outRaster, chunkDist, tr$row[i])
+			pbStep(pb) 
+		}
+		outRaster <- writeStop(outRaster)
+		pbClose(pb)
+		return(outRaster)
+	}
+}
+
+
+.calcDist <- function(object, chunkSize, ftC, oC, perCell=0, startCell=0)
+{
+	shortestPaths <- rep(Inf, times=max(ftC))
+	if(length(oC)>0)
+	{
+		lonlat <- .couldBeLonLat(object)
+		adj <- adjacency(object,fromCells=ftC,toCells=ftC,directions=8) #OPTIMIZE: omit oC cells surrounded by other origin cells
+		distGraph <- graph.edgelist(adj-1, directed=FALSE)
+		if (lonlat) 
+		{
+			coord <- cbind(xyFromCell(object,adj[,1]+startCell),xyFromCell(object,adj[,2]+startCell))
+			distance <- apply(coord,1,function(x){pointDistance(x[1:2],x[3:4], type='GreatCircle')})
+			E(distGraph)$weight <- distance
+		}
+		else
+		{
+			sameRow <- rowFromCell(object, adj[,1]) == rowFromCell(object, adj[,2]) 
+			sameCol <- colFromCell(object, adj[,1]) == colFromCell(object, adj[,2])
+			E(distGraph)$weight[sameRow] <- xres(object)
+			E(distGraph)$weight[sameCol] <- yres(object)
+			E(distGraph)$weight[!sameCol & !sameRow] <- sqrt(xres(object)^2 + yres(object)^2)
+		}
+		shortestPaths <- pmin(shortestPaths, apply(shortest.paths(distGraph, oC-1) + perCell, 2, min))
+		if(max(ftC) < chunkSize){shortestPaths <- c(shortestPaths,rep(Inf,times=chunkSize-max(ftC)))}
+	}
+	return(shortestPaths)
+}
