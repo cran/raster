@@ -1,13 +1,13 @@
 \name{crop}
 
 \alias{crop}
-\alias{crop,RasterLayer-method}
-\alias{crop,RasterLayer,ANY-method}
+\alias{crop,Raster-method}
+\alias{crop,RasterStack-method}
 
 \title{Crop}
 
 \description{
-crop returns a geographic subset of the input RasterLayer as specified by an Extent object (or object from which an extent object can be extracted/created). Areas in the bounding box outside of the intput RasterLayer are ignored, and the Extent is aligned to the cells of the input RasterLayer. 
+crop returns a geographic subset of the input Raster* object as specified by an Extent object (or object from which an extent object can be extracted/created). Areas in the bounding box outside of the intput RasterLayer are ignored, and the Extent is aligned to the cells of the input RasterLayer. 
 }
 
 \usage{
@@ -15,7 +15,7 @@ crop(x, y, ...)
 }
 
 \arguments{
-  \item{x}{A RasterLayer object}
+  \item{x}{A Raster* object}
   \item{y}{Extent object, or any object from which an Extent object can be extracted (see below)}
   \item{...}{additional arguments. See Details.}  
 }
@@ -30,12 +30,12 @@ The following additional arguments can be passed, to replace default values for 
  \tab \code{filename}  \tab Output filename (can be absent for RasterLayers that can be stored in memory) \cr
  \tab \code{format}  \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
  \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
- \tab \code{progress}  \tab Character. Valid values are "text", "tcltk", "windows" (on that platform only) and ""  \cr
+ \tab \code{progress}  \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
 } 
 }
 
 \value{
-A new RasterLayer object, and in some cases the side effect of a new file on disk.
+A new Raster* object, and in some cases the side effect of a new file on disk.
 }
 
 \author{Robert J. Hijmans}

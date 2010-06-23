@@ -18,6 +18,7 @@ clearOptions <- function() {
 	options(rasterFiletype = 'raster')
 	options(rasterOverwrite = FALSE)
 	options(rasterProgress = 'none')
+	options(rasterTimer = FALSE)
 	options(rasterTmpDir = .tmpdir())
 	options(rasterFilename = '')
 	options(rasterDataLocation = '')
@@ -41,6 +42,7 @@ saveOptions <- function() {
 	lst <- c(lst, paste("options(rasterDatatype='", .datatype(), "')", sep=''))
 	lst <- c(lst, paste("options(rasterOverwrite=", .overwrite(), ')', sep=''))
 	lst <- c(lst, paste("options(rasterProgress='", .progress(), "')", sep=''))
+	lst <- c(lst, paste("options(rasterTimer='", .timer(), "')", sep=''))
 	lst <- c(lst, paste("options(rasterTmpDir='", .tmpdir(), "')", sep=''))
 	lst <- c(lst, paste("options(rasterDataDir='", .dataloc(), "')", sep=''))
 

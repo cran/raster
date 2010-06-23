@@ -1,7 +1,7 @@
 \name{trim}
 
 \alias{trim}
-\alias{trim,RasterLayer-method}
+\alias{trim,Raster-method}
 \alias{trim,character-method}
 \alias{trim,matrix-method}
 \alias{trim,data.frame-method}
@@ -31,7 +31,7 @@ If \code{x} is a RasterLayer, the following additional arguments can be passed, 
   \tab \code{format}  \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
   \tab \code{datatype}  \tab Character. Output data type; can be 'INT', 'FLT', or a complete datatype description, see \code{\link[raster]{dataType}} \cr
   \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-  \tab \code{progress}  \tab Character. Valid values are "text", "tcltk", "windows" (on that platform only) and ""  \cr
+  \tab \code{progress}  \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
  }
 }
 

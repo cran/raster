@@ -10,7 +10,7 @@ if (!isGeneric("expand")) {
 		standardGeneric("expand"))
 }	
 
-setMethod('expand', signature(x='RasterLayer', y='ANY'), 
+setMethod('expand', signature(x='Raster', y='ANY'), 
 function(x, y, filename='', value=NA, ...) {
 
 	test <- try ( y <- extent(y), silent=TRUE )
@@ -34,48 +34,60 @@ function(x, y, filename='', value=NA, ...) {
 	ymn <- min(ymn, ymin(x))
 	ymx <- max(ymx, ymax(x))
 	
-	outraster <- raster(x)
+	if (inherits(x, 'RasterLayer')) {
+		outRaster <- raster(x)
+	} else {
+		outRaster <- brick(x, values=FALSE)
+	}
+	
 	bndbox <- extent(xmn, xmx, ymn, ymx)
-	outraster <- setExtent(outraster, bndbox, keepres=TRUE)
+	outRaster <- setExtent(outRaster, bndbox, keepres=TRUE)
 
-	if (canProcessInMemory(outraster, 2)) {
-		d <- vector(length=ncell(outraster))
+	datatype <- list(...)$datatype
+	if (is.null(datatype)) {
+		if (inherits(x, 'RasterStack')) {
+			datatype <- 'FLT4S'
+		} else {
+			datatype <- dataType(x)
+		}
+	} 
+	
+	if (canProcessInMemory(outRaster, 2)) {
+		d <- matrix(nrow=ncell(outRaster), ncol=nlayers(x))
 		d[] <- value
-		cells <- cellsFromExtent(outraster, extent(x))
-		d[cells] <- getValues(x)
-		outraster <- setValues(outraster, d)	
+		cells <- cellsFromExtent(outRaster, extent(x))
+		d[cells, ] <- getValues(x)
+		outRaster <- setValues(outRaster, d)	
 		if (filename != '') {
-			outraster <- writeRaster(outraster, filename=filename, datatype=dataType(x), ...)
+			outRaster <- writeRaster(outRaster, filename=filename, datatype=datatype, ...)
 		}
 	} else { 
 		if (filename == '') {
-			filename <- rasterTmpFile()
-									
+			filename <- rasterTmpFile()						
 		}
 
-		startrow <- rowFromY(outraster, yFromRow(x, 1))
-		endrow <- rowFromY(outraster, yFromRow(x, nrow(x)))
-		startcol <- colFromX(outraster, xFromCol(x, 1))
-		endcol <- colFromX(outraster, xFromCol(x, ncol(x)))
+		startrow <- rowFromY(outRaster, yFromRow(x, 1))
+		endrow <- rowFromY(outRaster, yFromRow(x, nrow(x)))
+		startcol <- colFromX(outRaster, xFromCol(x, 1))
+		endcol <- colFromX(outRaster, xFromCol(x, ncol(x)))
 		
-		pb <- pbCreate(nrow(outraster), type=.progress(...))
-		d <- vector(length=ncol(outraster))
-		d[] = value
-		datatype <- dataType(x)
+		d <- matrix(nrow=ncol(outRaster), ncol=nlayers(x))
 		xr <- 0
-		for (r in 1:nrow(outraster)) {
-			d[] <- NA
+		outRaster <- writeStart(outRaster, filename=filename, datatype=datatype, ... )
+		pb <- pbCreate(nrow(outRaster), type=.progress(...))
+		for (r in 1:nrow(outRaster)) {
+			d[] <- value
 			if (r >= startrow & r <= endrow) {
 				xr <- xr + 1
-				d[startcol:endcol] <- getValues(x, xr)
+				d[startcol:endcol, ] <- getValues(x, xr)
 			}
-			outraster <- setValues(outraster, d, r)
-			outraster <- writeRaster(outraster, filename=filename, datatype=datatype, ...)
+			outRaster <- writeValues(outRaster, d, r)
 			pbStep(pb, r) 			
 		}
 		pbClose(pb)
+		outRaster <- writeStop(outRaster)
 	} 
-	return(outraster)
+	return(outRaster)
 }
 )
 

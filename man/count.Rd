@@ -16,7 +16,7 @@ count(raster, value, digits=0, progress)
   \item{raster}{A RasterLayer}
   \item{value}{The value to be counted}  
   \item{digits}{the number of digits for rounding the values}   
-  \item{progress}{Character. Optional. Can be "text", "tcltk", "windows" (on that platform only) and ""}  
+  \item{progress}{Character. Choose from "text", "window", or "" (the default, no progress bar)}
 }
 
 \value{

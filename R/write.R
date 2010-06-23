@@ -99,10 +99,15 @@ setMethod('writeValues', signature(x='RasterLayer'),
 			writeBin(v, x@file@con, size=x@file@dsize )
 			
 		} else if ( x@file@driver == 'ascii') {
-			if (x@file@dtype == 'INT') {v <- round(v)}
+			opsci = options('scipen')
+			if (x@file@dtype == 'INT') {
+				options(scipen=10)
+				v <- round(v)				
+			}
 			v[is.na(v)] <- x@file@nodatavalue
 			v <- matrix(v, ncol=ncol(x), byrow=TRUE)
 			write.table(v, x@file@name, append = TRUE, quote = FALSE, sep = " ", eol = "\n", dec = ".", row.names = FALSE, col.names = FALSE)
+			options(scipen=opsci)
 
 		} else {
 			off = c(start-1, 0)
@@ -119,28 +124,38 @@ setMethod('writeValues', signature(x='RasterLayer'),
 
 setMethod('writeValues', signature(x='RasterBrick'), 
 	function(x, v, start) {
+	
 		v[is.infinite(v)] <- NA
-	
-		rsd <- na.omit(v) # min and max values
-		if (length(rsd) > 0) {
-			x@data@min <- pmin(x@data@min, rsd)
-			x@data@max <- pmax(x@data@max, rsd)
-		}	
-	
-		native <- x@file@driver %in% .nativeDrivers()
 		
-		if (native) {
+		if ( x@file@driver %in% .nativeDrivers() ) {
+			
 			if (x@file@dtype == "INT") { 
 				v[is.na(v)] <- x@file@nodatavalue		
-				v <- as.integer(round(v))  
+				v[] <- as.integer(round(v))  
 			} else if ( x@file@dtype =='LOG' ) {
 				v[v != 1] <- 0
 				v[is.na(v)] <- x@file@nodatavalue
-				v <- as.integer(v)  
+				v[] <- as.integer(v)  
 			} else { 
-				v  <- as.numeric( v ) 
+				v[]  <- as.numeric( v ) 
 			}
-			writeBin(v, x@file@con, size=x@file@dsize )
+
+
+			w <- getOption('warn')
+			options('warn'=-1) 
+			rng <- apply(v, 2, range, na.rm=TRUE)
+			x@data@min <- pmin(x@data@min, rng[1,])
+			x@data@max <- pmax(x@data@max, rng[2,])
+			options('warn'= w) 
+
+		
+			loop <- nrow(v) / x@ncols
+			start <- 1
+			for (i in 1:loop) {
+				end <- start + x@ncols - 1
+				writeBin(as.vector(v[start:end,]), x@file@con, size=x@file@dsize )
+				start <- end + 1
+			}
 			
 		} else {
 			nl <- nlayers(x)

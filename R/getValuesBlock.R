@@ -54,11 +54,11 @@ setMethod('getValuesBlock', signature(x='RasterBrick', row='numeric'),
 			for (i in 1:nlayers(x)) {
 				# to do: need a more efficient function here that only goes to disk once.
 				if (i==1) {
-					v <- .readRasterLayerValues(raster(x, i), row, nrows, col, ncols)@data@values
+					v <- .readRasterLayerValues(raster(x, i), row, nrows, col, ncols)
 					res <- matrix(ncol=nlayers(x), nrow=length(v))
 					res[,1] <- v
 				} else {
-					res[,i] <- values(.readRasterLayerValues(raster(x, i), row, nrows, col, ncols))
+					res[,i] <- .readRasterLayerValues(raster(x, i), row, nrows, col, ncols)
 				}
 			}
 		}
@@ -104,20 +104,12 @@ setMethod('getValuesBlock', signature(x='RasterLayer', row='numeric'),
 			}
 
 			
-		} else if (dataContent(x) == 'row') {
-		
-			if ( (dataIndices(x)[1] == startcell) & (dataIndices(x)[2] == endcell) ) {
-				res <- x@data@values[col:lastcol]
-			} else {
-				readrow <- TRUE
-			}
-			
 		} else {
 			stop('something is wrong with the RasterLayer dataContent')
 		}
 	
 		if (readrow) {	
-			res <- .readRasterLayerValues(x, row, nrows, col, ncols)@data@values
+			res <- .readRasterLayerValues(x, row, nrows, col, ncols)
 		}
 		if (format=='matrix') {
 			res = matrix(res, nrow=nrows , ncol=ncols )

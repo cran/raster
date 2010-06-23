@@ -1,12 +1,12 @@
 \name{resample}
+
 \alias{resample}
 
 \title{Resample}
 
 \description{
-Resample transfers values between non matching RasterLayers (in terms of origin and resolution). 
 
-Avoid using this function if you can use functions like (dis)aggregate, crop and merge instead, because these functions are more accurate and much faster.
+Resample transfers values between non matching Raster* objects (in terms of origin and resolution). Avoid using this function if you can. Use functions like (dis)aggregate, crop and merge instead, because these functions are more accurate.
 }
 
 \usage{
@@ -14,7 +14,7 @@ resample(from, to, method="ngb", filename="", ...)
 }
 
 \arguments{
-  \item{from}{a RasterLayer object}
+  \item{from}{a Raster* object object}
   \item{to}{a Raster* object}
   \item{method}{method used to compute values for the new RasterLayer}
   \item{filename}{character. output filename}  
@@ -30,18 +30,18 @@ The following additional arguments can be passed, to replace default values for 
   \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
   \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
   \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-  \tab \code{progress} \tab Character. Valid values are "text", "tcltk", "windows" (on that platform only) and ""  \cr
+  \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
  }
 }
 
 \value{
-A RasterLayer object, and, in some cases, the side-effect of a file with the values of the new RasterLayer 
+A RasterLayer or RasterBrick object, and, in some cases, the side-effect of a file with the values of the new RasterLayer 
 }
 
 \author{Robert J. Hijmans }
 
 
-\seealso{ \code{\link[raster]{aggregate}}, \code{\link[raster]{disaggregate}}, \code{\link[raster]{crop}}, , \code{\link[raster]{expand}}, \code{\link[raster]{merge}}, \code{\link[raster]{projectRaster}} }
+\seealso{ \code{\link[raster]{aggregate}}, \code{\link[raster]{disaggregate}}, \code{\link[raster]{crop}}, \code{\link[raster]{expand}}, \code{\link[raster]{merge}}, \code{\link[raster]{projectRaster}} }
 
 
 \examples{

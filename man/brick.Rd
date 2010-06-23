@@ -22,19 +22,13 @@ A RasterBrick is a multi-layered RasterLayer. They are typically created from a 
 A RasterBrick can be created from RasterLayer objects, or from a file. The can also be created from SpatialPixels or SpatialGrid objects.
 }
 
-\section{Methods}{
-\describe{
-\code{brick(x, ...)}
+\usage{brick(x, ...)}
 
-  \item{\code{x}}{ filename (character), Raster* object, SpatialGrid*, SpatialPixels*, or list (of filenames and/or Raster* objects) }
-  \item{\code{...}}{additional RasterLayer objects }
+\arguments{
+ \item{x}{ Filename (character), Raster* object, SpatialGrid*, SpatialPixels*, or list of Raster* objects }
+ \item{...}{ Additional Raster* objects }
+}
 
-\code{x} can be a filename from which a RasterLayer can be created (with \code{raster}, a Raster* object, 
-or a list of filenames and/or Raster* objects.
-
-If \code{x} is a \code{list}, no additional arguments  \code{...} are accepted.
-
-}}
 
 \value{
   a RasterBrick object
@@ -45,11 +39,11 @@ If \code{x} is a \code{list}, no additional arguments  \code{...} are accepted.
 \seealso{ \code{\link[raster]{raster}} }
 
 \examples{
-  b <- brick(system.file("external/rlogo.grd", package="raster"))
-  b
-  nlayers(b)
-  layerNames(b)
-  cellValues(b, 870)
+b <- brick(system.file("external/rlogo.grd", package="raster"))
+b
+nlayers(b)
+layerNames(b)
+cellValues(b, 870)
 }
 
 \keyword{methods}

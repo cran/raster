@@ -42,35 +42,30 @@ setMethod('trim', signature(x='matrix'),
 	}
 )
 
-	
-setMethod('trim', signature(x='RasterLayer'), 
+
+
+setMethod('trim', signature(x='Raster'), 
+
 function(x, padding=0, filename='', ...) {
 
 	filename <- trim(filename)
 
-	if (dataContent(x) != 'all') {
-		if (dataSource(x) == 'disk')  {
-			if (canProcessInMemory(x, 3)) {
-				x <- readAll(x)
-			}
-		} else {
-			stop('A RasterLayer with no values cannot be trimmed')
-		}
-	}
-	
 	nr <- nrow(x)
 	nc <- ncol(x)
+	nrl <- nr * nlayers(x)
+	ncl <- nc * nlayers(x)
+	
 
 	for (r in 1:nr) {
 		v <- getValues(x, r)
-		if (sum(is.na(v)) < nc) { break }
+		if (sum(is.na(v)) < ncl) { break }
 	}
 	if ( r == nr) { stop('only NA values found') }
 	firstrow <- min(max(r-padding, 1), nr)
 	
 	for (r in nr:1) {
 		v <- getValues(x, r)
-		if (sum(is.na(v)) < nc) { break }
+		if (sum(is.na(v)) < ncl) { break }
 	}
 	lastrow <- max(min(r+padding, nr), 1)
 	
@@ -80,19 +75,15 @@ function(x, padding=0, filename='', ...) {
 		lastrow <- tmp
 	}
 	
-	cells <- cellFromCol(x, 1)
 	for (c in 1:nc) {
-		v <- cellValues(x, cells)
-		if (sum(is.na(v)) < nr) { break }
-		cells <- cells + 1
+		v <- getValuesBlock(x, 1 ,nrow(x), c, 1)
+		if (sum(is.na(v)) < nrl) { break }
 	}
 	firstcol <- min(max(c-padding, 1), nc) 
 	
-	cells <- cellFromCol(x, nc)
 	for (c in nc:1) {
-		v <- cellValues(x, cells)
-		if (sum(is.na(v)) < nr) { break }
-		cells <- cells - 1
+		v <- getValuesBlock(x, 1 ,nrow(x), c, 1)
+		if (sum(is.na(v)) < nrl) { break }
 	}
 	lastcol <- max(min(c+padding, nc), 1)
 	

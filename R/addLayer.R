@@ -121,7 +121,7 @@ function(x, ..., keepone=FALSE) {
 				
 			if (dataSource(r) == 'ram') {
 				if (dataContent(r) != 'all') { 
-					stop('Cannot add a RasterLayer with no associated data in memory or on disk to a RasterStack')
+					stop('Cannot add a RasterLayer with no associated data in memory or on disk to a RasterBrick')
 				}
 			}
 			
@@ -129,22 +129,20 @@ function(x, ..., keepone=FALSE) {
 				
 			nl <- x@data@nlayers + 1 
 			x@data@nlayers <- as.integer(nl)
-			count <- 1
-			cname <- trim(r@layernames)
-			if (cname == "") {
-				cname <- paste("layer", nl, sep="")
+			cn <- trim(r@layernames)
+			if (cn == "") {
+				cn <- paste("layer", nl, sep="")
 			}
-			cn <- cname
+			count <- 1
 			for (j in 1:(nl-1)) {
 				if ( cn == layerNames(x)[j] ) { 
-				count <- count + 1 
-				cn <- paste(cname, "_", count, sep="")
+					count <- count + 1 
+					cn <- paste(cn, "_", count, sep="")
 				}
 			}	
 			x@layernames[nl] <- cn
 			x@data@min[nl] <- r@data@min
 			x@data@max[nl] <- r@data@max			
-			
 		}
 	}	
 	return(x)

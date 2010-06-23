@@ -7,7 +7,7 @@ if (!isGeneric("interpolate")) {
 
 setMethod('interpolate', signature(object='Raster'), 
 	
-	function(object, model, filename="", xyOnly=TRUE, ext=NULL, const=NULL, index=1, debug.level=1, na.rm=TRUE, ...) {
+	function(object, model, filename="", xyOnly=TRUE, ext=NULL, const=NULL, index=1, na.rm=TRUE, debug.level=1, ...) {
 		
 		predrast <- raster(object)
 				

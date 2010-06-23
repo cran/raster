@@ -66,7 +66,7 @@ function(x, filename='', ...) {
 	if (filename == "") { 
 		out <- setValues(out, as.vector(v)) 
 	} else {
-		writeStop(out)
+		out <- writeStop(out)
 	}
 	return(out)
 }

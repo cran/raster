@@ -57,15 +57,21 @@ setMethod('brick', signature(x='RasterStack'),
 		} else {
 			b <- brick(raster(x))
 			b@data@nlayers <- nlayers(x)
+			b@data@min <- rep(Inf, b@data@nlayers)
+			b@data@max <- rep(-Inf, b@data@nlayers)
+			b@data@source <- 'ram'
+
 		}
 		layerNames(b) <- layerNames(x)
+		
 		return(b)
 	}
 )
 
 setMethod('brick', signature(x='RasterBrick'), 
-	function(x){
+	function(x, ...){
 		x <- clearValues(x)
+		x@data@source <- 'ram'
 		filename(x) <- ''
 		return(x)
 	}
@@ -93,13 +99,19 @@ setMethod('brick', signature(x='SpatialGrid'),
 		b <- brick()
 		extent(b) <- extent(x)
 		projection(b) <- x@proj4string
-		rowcol(b) <- c(x@grid@cells.dim[2], x@grid@cells.dim[1])		
+		rowcol(b) <- c(x@grid@cells.dim[2], x@grid@cells.dim[1])	
+		
 		if (class(x) == 'SpatialGridDataFrame') {
-			m = as.matrix(x@data)
-			if (! is.numeric(m)) {
-				m[] = as.numeric(m)
+			for (i in 1:ncol(x@data)) {
+				if (is.character(x@data[,i])) {
+					x@data[,i] =  as.factor(x@data[,i])
+				}
+				if (is.factor(x@data[,i])) {
+					x@data[,i] = as.numeric(x@data[,i])
+				}
 			}
-			b <- setValues(b, m)
+			b <- setValues(b, as.matrix(x@data))
+			b@layernames <- colnames(x@data)
 		}
 		return(b)
 	}	
@@ -108,19 +120,12 @@ setMethod('brick', signature(x='SpatialGrid'),
 
 setMethod('brick', signature(x='SpatialPixels'), 
 	function(x) {
-		b <- brick()
-		exent(b) <- extent(x)
-		projection(b) <- x@proj4string
-		rowcol(b) <- c(x@grid@cells.dim[2], x@grid@cells.dim[1])
-		if (class(x) == 'SpatialPixelsDataFrame') {
+		if (inherits( x, 'SpatialPixelsDataFrame')) {
 			x <- as(x, 'SpatialGridDataFrame')
-			m = as.matrix(x@data)
-			if (! is.numeric(m)) {
-				m[] = as.numeric(m)
-			}
-			b <- setValues(b, m)
+		} else {	
+			x <- as(x, 'SpatialGrid')
 		}
-		return(b)
+		return(brick(x))
 	}
 )
 

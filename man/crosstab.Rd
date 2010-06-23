@@ -28,7 +28,7 @@ crosstab(x, y, ...)
 
 \tabular{rll}{
 \tab \code{digits} \tab Integer. The number of digits for rounding the values before cross-tabulation\cr
-\tab \code{progress} \tab Character. Valid values are "text", "tcltk", "windows" (on that platform only) and ""  \cr
+\tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
 }
 }
 

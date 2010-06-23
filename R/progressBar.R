@@ -4,17 +4,15 @@
 # Licence GPL v3
 
 
-pbCreate <- function(nsteps, type, style=3) {
+pbCreate <- function(nsteps, type='text', style=3) {
 	if (type=='text') {
 		pb <- txtProgressBar(min=0, max=nsteps, style=style)
-	} else if (type == 'tcltk') {
-		require(tcltk)
-		pb <- tkProgressBar(title="progress bar", min=0, max=nsteps, width = 300)
-	} else if (type == 'windows') {
+	} else if (type %in% c('window', 'tcltk', 'windows')) {
 		if (.Platform$OS.type == "windows" ) {
-			pb <- winProgressBar(title="progress bar", min=0 , max=nsteps, width = 300)
+			pb <- winProgressBar(title="Progress", min=0 , max=nsteps, width = 300, label='starting')
 		} else {
-			pb <- tkProgressBar(title="progress bar", min=0, max=nsteps, width = 300)
+			require(tcltk)
+			pb <- tkProgressBar(title="Progress", min=0, max=nsteps, width = 300, label='starting')
 		}
 	} else {
 		pb <- 'none'
@@ -35,11 +33,11 @@ pbStep <- function(pb, step=NULL, label='step') {
 		setTkProgressBar(pb, step, label=paste(label, step))	
 	} else if (pbclass=="winProgressBar") {
 		if (is.null(step)) { step <- getWinProgressBar(pb)+1  }
-		setWinProgressBar(pb, step, title=paste(label, step))	
+		setWinProgressBar(pb, step, label=paste(label, step))	
 	} 
 }
 
-pbClose <- function(pb, time=FALSE) {
+pbClose <- function(pb, timer) {
 	pbclass <- class(pb)
 	if (pbclass=="txtProgressBar") {
 		cat("\n")
@@ -49,8 +47,11 @@ pbClose <- function(pb, time=FALSE) {
 	} else if (pbclass=="winProgressBar") {
 		close(pb)
 	} 
-	if (time) {
+	if (missing(timer)) {
+		timer <- .timer()		
+	}
+	if (timer) {
 		elapsed <- (proc.time() - 	attr(pb, "starttime"))[3]
-		cat('Finished in ', elapsed, ' seconds\n')
+		cat(elapsed, 'seconds\n')
 	}
 }

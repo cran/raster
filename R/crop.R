@@ -11,7 +11,20 @@ if (!isGeneric("crop")) {
 }	
 
 
-setMethod('crop', signature(x='RasterLayer', y='ANY'), 
+setMethod('crop', signature(x='RasterStack', y='ANY'), 
+function(x, y, filename='', datatype=dataType(x), ...) {
+
+	for (i in 1:nlayers(x)) {
+		x@layers[[i]] <- crop(x@layers[[i]], y=y, filename='', datatype=datatype, ...)
+	}
+	
+	return(x)
+}
+)
+
+
+
+setMethod('crop', signature(x='Raster', y='ANY'), 
 function(x, y, filename='', datatype=dataType(x), ...) {
 	filename <- trim(filename)
 
@@ -23,7 +36,12 @@ function(x, y, filename='', datatype=dataType(x), ...) {
 # we could also allow the raster to expand but for now let's not and first make a separate expand function
 	e <- intersectExtent(x, y)
 	e <- alignExtent(e, x)
-	outRaster <- raster(x)
+	
+	if (class(x) == 'RasterBrick') {
+		outRaster <- brick(x, values=FALSE)	
+	} else {
+		outRaster <- raster(x)
+	}
 	outRaster <- setExtent(outRaster, e, keepres=TRUE)
 	
 	if (dataContent(x) != 'all' & dataSource(x) != 'disk') {
@@ -53,10 +71,10 @@ function(x, y, filename='', datatype=dataType(x), ...) {
 		tr <- blockSize(outRaster)
 		pb <- pbCreate(tr$n, type=.progress(...))
 		outRaster <- writeStart(outRaster, filename=filename, datatype=datatype, ... )
-		tr$row <- tr$row+row1-1
+		tr$row <- tr$row
 		for (i in 1:tr$n) {
-			vv <- getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i], col1, nc)
-			outRaster <- writeValues(outRaster, vv)
+			vv <- getValuesBlock(x, row=tr$row[i]+row1-1, nrows=tr$nrows[i], col1, nc)
+			outRaster <- writeValues(outRaster, vv, tr$row[i])
 			pbStep(pb, r) 			
 		} 
 		outRaster <- writeStop(outRaster)

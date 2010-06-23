@@ -12,11 +12,21 @@
 These methods return values of a Raster* object for the cells specified  )
 }
 
-\usage{cellValues(x, cells)}
+\usage{cellValues(x, cells, ...)}
 
 \arguments{
  \item{x}{RasterLayer or RasterStack object}
  \item{cells}{vector of cell numbers, cell numbers should be between 1 and ncells(x)}
+ \item{...}{Additional arguments, see Details}
+}
+
+
+\details{
+Multi-layer Raster* objects accept these two additional arguments:
+\tabular{rll}{
+  \tab \code{layer}  \tab Integer. First layer for which you want values \cr
+  \tab \code{nlayers}  \tab Integer. Number of layers for which you want values \cr
+}
 }
 
 \value{
@@ -34,8 +44,8 @@ r <- raster(ncol=10, nrow=10)
 r <- setValues(r, 1:ncell(r))
 cellValues(r, c(1, 10, 100))
 
-s <- stack(r, sqrt(r))
-cellValues(s, c(1, 10, 100))
+s <- stack(r, sqrt(r), r/r)
+cellValues(s, c(1, 10, 100), layer=2, nlayers=2)
 }
 
 

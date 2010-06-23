@@ -21,6 +21,10 @@ gridDistance <- function(object, originValue, omitValue, filename="", ...)
 		stop('you need to install the igraph package to be able to use this function')
 	}
 	
+	if (missing(originValue)) stop("you must supply an 'originValue' argument")
+	if (missing(omitValue)) stop("you must supply an 'omitValue' argument")
+	
+	
 	if ((dataContent(object) != 'all') & (dataSource(object) != 'disk')) {
 			stop('cannot compute distance on a RasterLayer with no data')
 	}

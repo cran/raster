@@ -1,4 +1,4 @@
-\name{setProjection}
+\name{projection}
 
 \alias{projection<-}
 \alias{projection}

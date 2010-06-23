@@ -1,7 +1,7 @@
 \name{disaggregate}
 
 \alias{disaggregate}
-\alias{disaggregate,RasterLayer,numeric-method}
+\alias{disaggregate,Raster,numeric-method}
 
 \title{Disaggregate}
 
@@ -31,7 +31,7 @@ The following additional arguments can be passed, to replace default values for 
   \tab \code{filename}  \tab Filename for the output RasterLayer \cr
   \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
   \tab \code{overwrite} \tab if \code{TRUE}, "filename" will be overwritten if it exists \cr
-  \tab \code{progress} \tab Character. Valid values are "text", "tcltk", "windows" (on that platform only) and ""  \cr
+  \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
  }
 }
 

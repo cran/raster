@@ -6,8 +6,7 @@
 \alias{xyValues,Raster,SpatialPoints-method}
 \alias{xyValues,Raster,data.frame-method}
 \alias{xyValues,RasterLayer,matrix-method}
-\alias{xyValues,RasterStack,matrix-method}
-\alias{xyValues,RasterBrick,matrix-method}
+\alias{xyValues,RasterStackBrick,matrix-method}
 
 
 \title{ Extract values at xy coordinates }
@@ -46,7 +45,14 @@ If the data are not projected (latitude/longitude), the unit should be meters. O
 take a single numeric vector as argument and return a single values (e.g. mean, min or max). 
 
 4) \code{na.rm}. Only useful when \code{fun} is supplied. If \code{na.rm=TRUE} (the default value), NA values are removed before fun is applied. 
+
+Multi-layer Raster* objects accept these two additional arguments:
+
+5) \code{layer}. Integer. First layer for which you want values 
+
+6) \code{nlayers}. Integer. Number of layers for which you want values
 }
+
 
 
 \value{

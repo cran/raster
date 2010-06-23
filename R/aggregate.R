@@ -4,7 +4,7 @@
 # Version 0.9
 # Licence GPL v3
 
-setMethod('aggregate', signature(x='RasterLayer'), 
+setMethod('aggregate', signature(x='Raster'), 
 
 function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", ...)  {
 
@@ -34,7 +34,11 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", ...)  {
 	ymn <- ymax(x) - rsteps * yfact * yres(x)
 	xmx <- xmin(x) + csteps * xfact * xres(x)
 		
-	outRaster <- raster(x, filename)
+	if (inherits(x, 'RasterBrick')) {
+		outRaster <- brick(x)
+	} else {
+		outRaster <- raster(x)	
+	}
 	bndbox <- extent(xmin(x), xmx, ymn, ymax(x))
 	extent(outRaster) <- bndbox
 	rowcol(outRaster) <- c(rsteps, csteps) 
@@ -54,20 +58,22 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", ...)  {
 		thefun <- fun
 	}
 
-	if (dataSource(x) != 'disk' & dataContent(x) != 'all') {
-		return(outRaster)
+	if (! inherits(x, 'RasterStack' )) {
+		if (dataSource(x) != 'disk' & dataContent(x) != 'all') {
+			return(outRaster)
+		}
 	}	
 
-	if (dataContent(x) == 'all') { nl = 2 }  else { nl = 3 }
+	if (canProcessInMemory(x, nlayers(x)+2)) {
 	
-	if (canProcessInMemory(x, nl)) {
 		xx <- raster(x)		
 		x <- getValues(x)
 		cols <- rep(rep(1:csteps, each=xfact)[1:ncol(xx)], times=nrow(xx))
 		rows <- rep(1:rsteps, each=ncol(xx) * yfact)[1:ncell(xx)]
 		cells <- cellFromRowCol(xx, rows, cols)
 		
-		x <- as.vector( tapply(x, cells, thefun ))
+		x <- as.matrix( aggregate(x, list(cells), thefun ))[,-1]
+#		x <- as.vector( tapply(x, cells, thefun ))
 		rm(cells)
 		
 		x <- setValues(outRaster, x)
@@ -86,7 +92,7 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", ...)  {
 		rows <- rep(1, each=(ncol(x) * yfact))
 		
 		if (filename == '') {
-			v <- matrix(NA, ncol=nrow(outRaster), nrow=ncol(outRaster))
+			v <- matrix(NA, ncol=ncell(outRaster), nrow=nlayers(outRaster))
 		} else {
 			outRaster <- writeStart(outRaster, filename=filename, ...)
 		}
@@ -106,10 +112,13 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", ...)  {
 				cells <- cellFromRowCol(x, theserows, cols)
 			}	
 			vals <- getValues(x, startrow, nrows)
-			vals <- as.vector( tapply(vals, cells, thefun ) )
+			# vals <- as.vector( tapply(vals, cells, thefun ) )
+			vals <- as.matrix( aggregate(vals, list(cells), thefun ))[,-1]
 			
 			if (filename == "") {
-				v[,r] <- vals
+				start <- cellFromRowCol(outRaster, tr$row[i], 1)
+				end <- cellFromRowCol(outRaster, tr$row[i]+tr$nrows[i]-1, to@ncols)
+				v[start:end, ] <- vals
 			} else {
 				outRaster <- writeValues(outRaster, vals, r)
 			}

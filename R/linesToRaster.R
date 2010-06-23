@@ -158,7 +158,12 @@ linesToRaster <- function(spLines, raster, field=0, filename="", updateRaster=FA
 		}
 	}
 		
-	v <- vector(length=0)
+
+	if (filename == "") {
+		v <- matrix(NA, ncol=nrow(raster), nrow=ncol(raster))
+	} else {
+		raster <- writeStart(raster, filename=filename, ...)
+	}
 	
 	pb <- pbCreate(nrow(raster), type=.progress(...))
 	for (r in 1:nrow(raster)) {
@@ -201,11 +206,11 @@ linesToRaster <- function(spLines, raster, field=0, filename="", updateRaster=FA
 			rv <- oldvals
 		}
 
+		
 		if (filename == "") {
-			v <- c(v, rv)
+			v[,r] <- rv
 		} else {
-			raster <- setValues(raster, values=rv, rownr=r)
-			raster <- writeRaster(raster, filename=filename, ...)
+			raster <- writeValues(raster, rv)
 		}
 		
 		pbStep(pb, r)
@@ -213,8 +218,11 @@ linesToRaster <- function(spLines, raster, field=0, filename="", updateRaster=FA
 	pbClose(pb)
 
 	if (filename == "") {
-		raster <- setValues(raster, v)
+		raster <- setValues(raster, as.vector(v))
+	} else {
+		raster <- writeStop(raster)
 	}
+
 	return(raster)
 }
 

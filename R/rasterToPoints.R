@@ -15,16 +15,20 @@ rasterToPoints <- function(x, fun=NULL, spatial=FALSE, progress='') {
 	}
 	crs = projection(x, asText=FALSE)
 	
-	if (dataSource(x) == 'ram' & dataContent(x) != 'all') {
-		if (spatial) {
-			return(SpatialPoints(coords=xyFromCell(x, 1:ncell(x)), proj4string=crs) )
-		} else {
-			return(xyFromCell(x, 1:ncell(x)))
+	if (class(x) != 'RasterStack' ) {
+		if ( dataSource(x) == 'ram' & dataContent(x) != 'all') {
+			if (spatial) {
+				return(SpatialPoints(coords=xyFromCell(x, 1:ncell(x)), proj4string=crs) )
+			} else {
+				return(xyFromCell(x, 1:ncell(x)))
+			}
 		}
 	}
 
 	
 	if (canProcessInMemory(x, 3)) {
+		if (spatial) laynam <- .enforceGoodLayerNames(x, returnNames=TRUE)
+		
 		xyv <- cbind(xyFromCell(x, 1:ncell(x)), getValues(x))
 		x = NULL
 		if (nl > 1) {
@@ -65,7 +69,9 @@ rasterToPoints <- function(x, fun=NULL, spatial=FALSE, progress='') {
 	}
 	
 	if (spatial) {
-		return( SpatialPointsDataFrame(coords=xyv[,1:2], data=data.frame(value = xyv[,3]), proj4string=crs ) )
+		v = data.frame(xyv[,-c(1:2)])
+		colnames(v) <- laynam
+		return( SpatialPointsDataFrame(coords=xyv[,1:2], data=v, proj4string=crs ) )
 		
 	} else {
 		return(xyv)

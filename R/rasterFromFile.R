@@ -25,14 +25,14 @@
 		grifile <- .setFileExtensionValues(x, 'raster')
 		grdfile <- .setFileExtensionHeader(x, 'raster')
 		if ( file.exists( grdfile) & file.exists( grifile)) {
-			return ( .rasterFromRasterFile(grdfile, band, objecttype) )
+			return ( .rasterFromRasterFile(grdfile, band=band, objecttype) )
 		} 
 	}
 	if (! file.exists(x)) {
 		grifile <- .setFileExtensionValues(x, 'raster')
 		grdfile <- .setFileExtensionHeader(x, 'raster')
 		if ( file.exists( grdfile) & file.exists( grifile)) {
-			return ( .rasterFromRasterFile(grdfile, band, objecttype) )
+			return ( .rasterFromRasterFile(grdfile, band=band, objecttype) )
 		} else {
 			stop('file: ', x, ' does not exist')
 		}
@@ -43,12 +43,14 @@
 		return ( .rasterFromSAGAFile(x) )
 	}
 	if ( fileext %in% c(".NC", ".NCDF", ".NETCDF")) {
-		return ( .rasterFromCDF(x, objecttype, ...) )
+		return ( .rasterObjectFromCDF(x, type=objecttype, band=band, ...) )
+		# return ( .rasterFromCDF(x, objecttype, ...) )
 	}
 	if ( fileext == ".GRD") {
 		if (require(RNetCDF)) {
 			if (.isNetCDF(x)) {
-				return ( .rasterFromCDF(x, objecttype, ...) )
+				# return ( .rasterFromCDF(x, objecttype, ...) )
+				return ( .rasterObjectFromCDF(x, type=objecttype, band=band, ...) )
 			}
 		}
 	}
@@ -71,7 +73,7 @@
 	if (! .requireRgdal() ) {
 		stop("Cannot create RasterLayer object from this file; perhaps you need to install rgdal first")
 	}
-	test <- try ( r <- .rasterFromGDAL(x, band, objecttype), silent=TRUE )
+	test <- try ( r <- .rasterFromGDAL(x, band=band, objecttype), silent=TRUE )
 	if (class(test) == "try-error") {
 		stop("Cannot create a RasterLayer object from this file.")
 	} else {

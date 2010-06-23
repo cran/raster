@@ -9,7 +9,7 @@
 	return(length(layerNames(x)) == length(unique(layerNames(x))))
 }
 
-.enforceGoodLayerNames <- function(x, prefix='') {
+.enforceGoodLayerNames <- function(x, prefix='', returnNames=FALSE) {
 	if (prefix == '') { prefix <- 'layer'}
 	ln <- x@layernames
 	ln <- ln[1:nlayers(x)]
@@ -49,8 +49,12 @@
 			}
 		}
 	}
-	x@layernames <- ln
-	return(x)
+	if (returnNames) {
+		return(ln)
+	} else {
+		x@layernames <- ln
+		return(x)
+	}
 }
 
 
