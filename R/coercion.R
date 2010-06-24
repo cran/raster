@@ -16,13 +16,14 @@
 
 .asSpGrid <- function(object, type='grid', dataframe)  {
 		
+	crs = projection(object, FALSE)
 	if (type=='pixel') {
 		values <- rasterToPoints(object, fun=NULL, spatial=FALSE)
 		pts <- SpatialPoints(values[,1:2])
 		if (dataframe) {
-			sp <- SpatialPixelsDataFrame(points=pts, data=data.frame(values=values[,3]), proj4string=projection(object, FALSE)) 	
+			sp <- SpatialPixelsDataFrame(points=pts, data=data.frame(values=values[,3]), proj4string=crs) 	
 		} else {
-			sp <- SpatialPixels(points=pts, proj4string=projection(object, FALSE))
+			sp <- SpatialPixels(points=pts, proj4string=crs)
 		}
 	} else {
 		bb <- bbox(object)
@@ -31,10 +32,9 @@
 		cd <- cbind(ncol(object), nrow(object))
 		grd <- GridTopology(cellcentre.offset=cc, cellsize=cs, cells.dim=cd)
 		if (dataframe) {
-			values <- data.frame(getValues(object))
-			sp <- SpatialGridDataFrame(grd, proj4string=projection(object, FALSE), data=values)
+			sp <- SpatialGridDataFrame(grd, proj4string=crs, data=data.frame(values=getValues(object)))
 		} else { 
-			sp  <- SpatialGrid(grd, proj4string=projection(object, FALSE))
+			sp  <- SpatialGrid(grd, proj4string=crs)
 		}	
 	}
 	return(sp)
@@ -153,3 +153,91 @@ setAs('im', 'RasterLayer',
 		flip(r, direction='y')
 	}
 )
+
+# adehabitat
+setAs('asc', 'RasterLayer', 
+	function(from) {
+		d <- t(from[])
+		d <- d[nrow(d):1, ]
+		type <- attr(from, "type") 
+		if (type == 'factor') {
+			warning('factor type converted to numeric')
+		}
+		cz <- attr(from, "cellsize")
+		xmn <- attr(from, 'xll') - 0.5 * cz
+		ymn <- attr(from, 'yll') - 0.5 * cz
+		xmx <- xmn + ncol(d) * cz
+		ymx <- ymn + nrow(d) * cz
+		e <- extent(xmn, xmx, ymn, ymx)
+		d <- raster(d)
+		extent(d) = e
+		return(d)
+	}
+)
+
+
+setAs('RasterLayer', 'asc', 
+	function(from) {
+		asc <- getValues(from, format='matrix')
+		asc <- asc[nrow(asc):1, ]
+		attr(asc, "cellsize") <- xres(from)
+		attr(asc, "xll") <- xmin(from) + 0.5 * xres(from)
+		attr(asc, "yll") <- ymin(from) + 0.5 * yres(from)
+		attr(asc, "type") <- 'numeric'
+		class(asc) <- "asc"		
+		return(asc)	
+	}
+)
+
+
+setAs('kasc', 'RasterBrick', 
+	function(from) {
+		names <- colnames(from)
+		cz <- attr(from, "cellsize")
+		ncol <- attr(from, 'ncol')
+		nrow <- attr(from, 'nrow')
+		xmn <- attr(from, 'xll') - 0.5 * cz
+		ymn <- attr(from, 'yll') - 0.5 * cz
+		xmx <- xmn + ncol * cz
+		ymx <- ymn + nrow * cz
+		e <- extent(xmn, xmx, ymn, ymx)
+		b <- brick(e, nrow=nrow, ncol=ncol)
+		m = matrix(NA, ncol=ncol(from), nrow=nrow(from))
+		for (i in 1:ncol(m)) {
+			m[,i] <- as.numeric(from[,i])
+		}	
+		dim(m) <- dim(from)
+		b <- setValues(b, m)
+		layerNames(b) <- names
+		return(b)
+	}
+)
+
+
+
+setAs('kasc', 'RasterStack', 
+	function(from) {
+		names <- colnames(from)
+		cz <- attr(from, "cellsize")
+		ncol <- attr(from, 'ncol')
+		nrow <- attr(from, 'nrow')
+		xmn <- attr(from, 'xll') - 0.5 * cz
+		ymn <- attr(from, 'yll') - 0.5 * cz
+		xmx <- xmn + ncol * cz
+		ymx <- ymn + nrow * cz
+		e <- extent(xmn, xmx, ymn, ymx)
+		r <- raster(e, nrow=nrow, ncol=ncol)
+		r <- setValues(r, as.numeric(from[,1]))
+		layerNames(r) <- names[1]
+		s <- stack(r)
+		if (ncol(from) > 1) {
+			for (i in 2:ncol(from)) {
+				r <- setValues(r, as.numeric(from[,i]))
+				layerNames(r) <- names[i]
+				s <- addLayer(s, r)
+			}	
+		}
+		return(s)
+	}
+)
+

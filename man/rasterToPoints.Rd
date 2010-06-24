@@ -16,7 +16,7 @@ rasterToPoints(x, fun=NULL, spatial=FALSE, progress='')
  \item{x}{A Raster* object }
  \item{fun}{Function to select a subset of raster values}
  \item{spatial}{Logical. If \code{TRUE}, the function returns a SpatialPointsDataFrame object }
- \item{progress}{Character. Choice of progress bar. Valid values are "text", "tcltk", "windows" (on that platform only) and ""}
+ \item{progress}{Character. Choice of progress bar. "text", "window", or "" (the default, no progress bar)}
 }
 
 \details{

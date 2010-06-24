@@ -48,7 +48,9 @@
 		else if (ini[i,2] == "BYTEORDER") {byteorder <- ini[i,3]} 
 		else if (ini[i,2] == "NBANDS") {nbands <- ini[i,3]} 
 		else if (ini[i,2] == "LAYOUT") {bandorder <- ini[i,3]} 
-		else if (ini[i,2] == "PROJECTION") {projstring <- ini[i,3]} 
+		else if (ini[i,2] == "PROJECTION=") {projstring <- ini[i,3]} 
+		else if (ini[i,2] == "MINVALUE=") {try (minval <- as.numeric(unlist(strsplit(trim(ini[i,3]), ' ')))) } 
+		else if (ini[i,2] == "MAXVALUE=") {try (maxval <- as.numeric(unlist(strsplit(trim(ini[i,3]), ' ')))) } 
     }  
 	
 	if (is.null(xd)) {
@@ -108,6 +110,9 @@
 		x@data@min <- minval[band]
 		x@data@max <- maxval[band]
 	}
+	if (x@data@min[1] != Inf) {x@data@haveminmax <- TRUE
+	} else 	{ x@data@haveminmax <- FALSE }
+
 
 	x@file@nbands <- as.integer(nbands)
 
@@ -116,10 +121,9 @@
 	}
 
 	shortname <- gsub(" ", "_", ext(basename(filename), ""))
-	x <- .enforceGoodLayerNames(x, shortname)
+	x <- raster:::.enforceGoodLayerNames(x, shortname)
 	
 	x@file@name <- .fullFilename(filename)
-	x@data@haveminmax <- FALSE
 
 	if (!is.null(SIGNEDINT)) {
 		if(SIGNEDINT) { pixtype <- 'SIGNEDINT' 

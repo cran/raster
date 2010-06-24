@@ -49,13 +49,9 @@
 	signed <- substr(datatype,5,5) != 'U'
 	
 	if (type == "FLT") {
-		if (dataContent(x) != 'nodata') { 
-			if (class(x)  == 'RasterLayer') {
-				x@data@values <- as.numeric(x@data@values)
-			} else {
-				x@data@values <- matrix(as.numeric(x@data@values), ncol=nlayers(x))
-			}
-		}
+#		if (dataContent(x) != 'nodata') { 
+#			x@data@values[] <- as.numeric(x@data@values)
+#		}
 		if (size == '4') {
 			x@file@datanotation <- 'FLT4S'
 			x@file@nodatavalue <- -3.4E38
@@ -66,15 +62,12 @@
 			stop("invalid datasize for a FLT (should be 4 or 8)") 
 		}
 	} else if (type == "INT") {
-		x@data@min <- round(x@data@min)
-		x@data@max <- round(x@data@max)
-		if (dataContent(x) != 'nodata') { 
-			if (class(x)  == 'RasterLayer') {
-				x@data@values <- as.integer(round(x@data@values))
-			} else {
-				x@data@values <- matrix(as.integer(round(x@data@values)), ncol=nlayers(x))
-			}                  
-		}
+#		x@data@min <- round(x@data@min)
+#		x@data@max <- round(x@data@max)
+#		if (dataContent(x) != 'nodata') { 
+#				x@data@values[] <- as.integer(round(x@data@values))
+#			}                  
+#		}
 		
 		if (size == '4') {
 			x@file@datanotation <- 'INT4S'

@@ -3,22 +3,7 @@
 # Version 0.9
 # Licence GPL v3
 
-
-
 #read data on the raster for cell numbers
-
-.brickReadCells <- function(object, cells) {
-	result <- matrix(nrow=length(cells), ncol=nlayers(object))
-	for (i in 1:nlayers(object)) {
-		r <- raster(object, i)
-		result[,i] <- .readCells(r, cells)
-	}
-	if (!(is.null(dim(result)))) {
-		colnames(result) <- layerNames(object)
-	}	
-	return(result)
-}
-
 
 
 .readCells <- function(raster, cells) {
@@ -34,10 +19,12 @@
 			if (length(uniquecells) > 100 & canProcessInMemory(raster, 2)) {
 				vals <- getValues(raster)
 				vals <- vals[uniquecells]
-			} else if (.driver(raster) == 'gdal') {
+			} else if (raster@file@driver == 'gdal') {
 				vals <- .readCellsGDAL(raster, uniquecells)
-			} else if (.driver(raster) == 'ascii') {
+			} else if (raster@file@driver == 'ascii') {
 				vals <- .readCellsAscii(raster, uniquecells)			
+			} else if (raster@file@driver == 'netcdf') {
+				vals <- .readRasterCellsNetCDF(raster, uniquecells)			
 			} else {
 				vals <- .readCellsRaster(raster, uniquecells)
 			}	

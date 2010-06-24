@@ -21,7 +21,7 @@ function(x) {
 	}
 	
 	if (dataContent(x)=='all' ) {
-		vals <- na.omit(getValues(x)) 
+		vals <- na.omit(x@data@values) 
 		if (length(vals) > 0) {
 			x@data@min <- min(vals)
 			x@data@max <- max(vals)

@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-setOptions <- function(format, overwrite, datatype, tmpdir, progress, chunksize, todisk) {
+setOptions <- function(format, overwrite, datatype, tmpdir, progress, timer, chunksize, todisk) {
 	
 	setFiletype <- function(format) {
 		if (.isSupportedFormat(format)) {	options(rasterFiletype = format)	
@@ -44,24 +44,27 @@ setOptions <- function(format, overwrite, datatype, tmpdir, progress, chunksize,
 	
 	setProgress <- function(progress) {
 		if (is.character(progress)) {
-			progress <- trim(progress)
-			if (progress %in% c('text', 'tcltk', 'windows', 'none', '')) {
-				if (substr( R.Version()$platform, 1, 7) != "i386-pc" ) {
-					if (progress == 'windows') {
-						warning('The windows progress bar is only availble on the Windows Operating System')
-					} else {
-						options(rasterProgress = progress )
-					}
-				} else {
-					options(rasterProgress = progress )
-				}
+			progress <- tolower(trim(progress))
+			if (progress %in% c('window', 'tcltk', 'windows')) { progress <- 'window' }
+			if (! progress %in% c('text', 'window', '')) { 
+				warning('invalid value for progress. Should be "window", "text", or ""')
+			} else {
+				options(rasterProgress = progress )
 			}
 		} else {
-			warning(paste('progress must be a character value'))	
+			warning('progress must be a character value')
 		}
 	}
 	
-
+	setTimer <- function(timer) {
+		if (is.logical(timer)) {
+			options(rasterTimer = timer )
+		} else {
+			warning(paste('timer must be a logical value'))	
+		}
+	}
+	
+	
 	setToDisk <- function(todisk) {
 		if (is.logical(todisk)) { 
 			options(rasterToDisk = todisk )
@@ -79,6 +82,7 @@ setOptions <- function(format, overwrite, datatype, tmpdir, progress, chunksize,
 	if (!missing(overwrite)) { setOverwrite(overwrite) }
 	if (!missing(datatype)) { setDataType(datatype) }
 	if (!missing(progress)) { setProgress(progress) }
+	if (!missing(timer)) { setTimer(timer) }
 	if (!missing(tmpdir)) { setTmpdir(tmpdir) }
 	if (!missing(todisk)) { setToDisk(todisk) }
 	if (!missing(chunksize)) { setChunksize(chunksize) }

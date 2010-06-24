@@ -54,12 +54,12 @@ Additional arguments:
 \tab \code{native} \tab Logical.  Default is \code{FALSE} except when package rgdal is missing. If \code{TRUE}, reading and writing of IDRISI, BIL, BSQ, BIP, and ArcAscii files is done with native (raster package) drivers, rather then via rgdal. 'raster', RSAGA, and netcdf format files are always read with native drivers.
 }
 
-More additional arguments, that can be used for netCDF files only:
+More additional arguments, that are only meaningful with netCDF files (CF convention):
 \tabular{rll}{
-\tab \code{xvar} \tab character. The x variable (e.g. 'longitude' or 'x') \cr
-\tab \code{yvar} \tab character. The y variable (e.g. 'latitude' or 'y')\cr
-\tab \code{zvar} \tab character. The z variable (e.g. 'altitide' or 'precipitation')\cr
-\tab \code{time} \tab integer > 0. The 'time' variable (if there are any) (default=NA)\cr
+\tab \code{x} \tab character. The x variable (e.g. 'longitude' or 'x') \cr
+\tab \code{y} \tab character. The y variable (e.g. 'latitude' or 'y')\cr
+\tab \code{varname} \tab character. The variable name (e.g. 'altitide' or 'precipitation')\cr
+\tab \code{band} \tab integer > 0. The 'band' (layer) number of the file. E.g., the 'time' variable (if there are any) (default=NA)\cr
 }
 
 If \code{x} is a character value, it should be a filename of a file that the raster package can read. Supported file types are the 'native' raster package format and those that can be read via rgdal. See \code{\link[rgdal]{readGDAL}} help for supported file types.

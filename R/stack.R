@@ -24,12 +24,10 @@ function(x, ..., bands=NULL) {
 
 
 
-
-
 setMethod("stack", signature(x='character'), 
-function(x, ..., bands=NULL, xvar='', yvar='', zvar='', time='') {
-    if (xvar != '' | yvar != '' | zvar != '' | is.numeric(time)) {
-		return(.rasterFromCDF(x, type='RasterStack', xvar, yvar, zvar, time))
+function(x, ..., bands=NULL, xvar='', yvar='', varname='') {
+    if (xvar != '' | yvar != '' | varname != '') {
+		return(.stackCDF(x, xvar, yvar, varname, bands))
 	} else {
 		rlist <- c(x, list(...))
 		return(stack(rlist, bands))

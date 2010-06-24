@@ -53,10 +53,13 @@ projectExtent <- function(object, crs) {
 
 
 projectRaster <- function(from, to, method="ngb", filename="", ...)  {
-
 	if (! .requireRgdal() ) { stop('rgdal not available') }
 	
-	if (dataContent(from) != 'all' & dataSource(from) == 'ram') { stop('no vales for "from". Nothing to do.') }
+	if (! inherits(from, 'RasterStack' )) {
+		if ( dataSource(from) == 'ram' & dataContent(from) != 'all') {
+			if (dataContent(from) != 'all' & dataSource(from) == 'ram') { stop('no vales for "from". Nothing to do.') }
+		}
+	}
 
 	validObject(to)
 	validObject(projection(from, asText=FALSE))
@@ -79,19 +82,23 @@ projectRaster <- function(from, to, method="ngb", filename="", ...)  {
 
 	filename <- trim(filename)
 	
-	to <- raster(to)
+	if (inherits(from, 'RasterLayer')) {
+		to <- raster(to)
+	} else {
+		to <- brick(to, values=FALSE)
+	}
+	
 	if (!canProcessInMemory(to, 1) && filename == "") {
 		filename <- rasterTmpFile()
 	}
 
 	inMemory <- filename == ""
 	if (inMemory) {
-		v <- matrix(NA, nrow=ncol(to), ncol=nrow(to))
+		v <- matrix(NA, nrow=ncell(to), nlayers(from))
 	} else {
 		to <- writeStart(to, filename=filename, ... )
 	}
 	
-	rowCells <- 1:ncol(to)
 	tr <- blockSize(to)
 	pb <- pbCreate(tr$n, type=.progress(...))
 	for (i in 1:tr$n) {
@@ -100,12 +107,15 @@ projectRaster <- function(from, to, method="ngb", filename="", ...)  {
 
 		unProjXY <- .Call("transform", projto, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
 		unProjXY <- cbind(unProjXY[[1]], unProjXY[[2]])
+		
 		vals <- xyValues(from, unProjXY, method=xymethod)
 		
 		if (inMemory) {
-			v[, tr$row[i]:(tr$row[i]+tr$nrows[i]-1)] <- matrix(vals, nrow=ncol(to))
+			start <- cellFromRowCol(to, tr$row[i], 1)
+			end <- cellFromRowCol(to, tr$row[i]+tr$nrows[i]-1, to@ncols)
+			v[start:end, ] <- vals
 		} else {
-			to <- writeValues(to, tr$row[i])
+			to <- writeValues(to, vals, tr$row[i])
 		}
 		pbStep(pb)
 		
@@ -113,12 +123,10 @@ projectRaster <- function(from, to, method="ngb", filename="", ...)  {
 	pbClose(pb)
 	
 	if (inMemory) {
-		to <- setValues(to, as.vector(v))
+		to <- setValues(to, v)
 	} else {
 		to <- writeStop(to)	
 	}
 	return(to)
 }
-
-
 

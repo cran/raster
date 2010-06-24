@@ -6,50 +6,62 @@
 
 resample <- function(from, to, method="ngb", filename="", ...)  {
 	
-	if (!method %in% c('bilinear', 'ngb')) { stop('invalid method') 	}
+	if (!method %in% c('bilinear', 'ngb')) {
+		stop('invalid method') 
+	}
+	if (method == 'ngb') method <- 'simple'
+	
 	filename <- trim(filename)
 	
-	to <- raster(to)
+	if (inherits(from, 'RasterLayer')) {
+		to <- raster(to)
+	} else {
+		to <- brick(to, values=FALSE)
+	}
 
 	e = intersectExtent(from, to, validate=TRUE)
 	
 	if (is.null(filename)){filename <- ""}
 	
 	if (!canProcessInMemory(to, 1) && filename == '') {
-		filename <- rasterTmpFile()
-		
+		filename <- rasterTmpFile()	
 	}
-	inMemory <- (filename == "")
+	inMemory <- filename == ""
+	if (inMemory) {
+		v <- matrix(NA, nrow=ncell(to), nlayers(from))
+	} else {
+		to <- writeStart(to, filename=filename, ... )
+	}
 
-	v <- vector(length=0)
 	rowCells <- 1:ncol(to)
-
-			
 	pb <- pbCreate(nrow(to), type=.progress(...))
 
 	
-	
-	for (r in 1:nrow(to)) {
-		cells <- rowCells + (r-1) * ncol(to)
-		xy <- xyFromCell(to, cells)
-		if (method=='ngb') {
-			vals <- xyValues(from, xy)
-		} else {
-			vals <- xyValues(from, xy, method='bilinear')
-		}
+	tr <- blockSize(to)
+	pb <- pbCreate(tr$n, type=.progress(...))
+	for (i in 1:tr$n) {
+		r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
+		xy <- xyFromCell(to, cellFromRowCol(to, tr$row[i], 1) : cellFromRowCol(to, tr$row[i]+tr$nrows[i]-1, ncol(to)) ) 
+
+		vals <- xyValues(from, xy, method=method)
+
 		if (inMemory) {
-			v <- c(v, vals)
+			start <- cellFromRowCol(to, tr$row[i], 1)
+			end <- cellFromRowCol(to, tr$row[i]+tr$nrows[i]-1, to@ncols)
+			v[start:end, ] <- vals
 		} else {
-			to <- setValues(to, vals, r)
-			to <- writeRaster(to, filename, ...)
+			to <- writeValues(to, vals, tr$row[i])
 		}
 
-		pbStep(pb, r)
+		pbStep(pb, i)
+		
 	}
 	pbClose(pb)
-
+	
 	if (inMemory) {
-		to <- setValues(to, v) 
+		to <- setValues(to, v)
+	} else {
+		to <- writeStop(to)	
 	}
 	return(to)
 }

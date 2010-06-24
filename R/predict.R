@@ -20,8 +20,8 @@ setMethod('predict', signature(object='Raster'),
 				
 		if (!is.null(ext)) {
 			predrast <- crop(predrast, extent(ext))
-			firstrow <- rowFromY(object, yFromRow(out, 1))
-			firstcol <- colFromX(object, xFromCol(out, 1))
+			firstrow <- rowFromY(object, yFromRow(predrast, 1))
+			firstcol <- colFromX(object, xFromCol(predrast, 1))
 		} else {
 			firstrow <- 1
 			firstcol <- 1

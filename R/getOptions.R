@@ -9,6 +9,7 @@ showOptions <- function() {
 	cat('datatype :', .datatype(), '\n')
 	cat('overwrite:', .overwrite(), '\n')
 	cat('progress :', .progress(), '\n')
+	cat('timer    :', .timer(), '\n')
 	cat('chunksize:', .chunksize(), '\n')
 	cat('tmpdir   :', .tmpdir(), '\n')
 	if (.toDisk()) {
@@ -108,7 +109,8 @@ showOptions <- function() {
 		if (ext == '.tif' | ext == '.tiff') { return('GTiff')
 		} else if (ext == '.grd') { return('raster')
 		} else if (ext == '.asc') { return('ascii')
-		} else if (ext == '.nc') { return('netcdf')
+		} else if (ext == '.nc') { return('CDF')
+		} else if (ext == '.ncdf') { return('CDF')
 		} else if (ext == '.sgrd') { return('SAGA')
 		} else if (ext == '.bil') { return('BIL')
 		} else if (ext == '.bsq') { return('BSQ')
@@ -124,7 +126,7 @@ showOptions <- function() {
 		} else if (ext == '.sdat') { return('SAGA')
 		} else if (ext == '.rsw') { return('RMF')
 		} else { 
-			warning('extension ', ext, 'is unknown. Using default format.')
+			warning('extension ', ext, ' is unknown. Using default format.')
 			return('') 
 		}
 	}
@@ -158,7 +160,7 @@ showOptions <- function() {
 			return('none') 
 		} else {
 			if (is.character(progress)) {
-				if (progress[1] %in% c('text', 'tcltk', 'windows')) {
+				if (progress[1] %in% c('text', 'window', 'tcltk', 'windows')) {
 					return(progress[1])
 				} else {
 					return('none')
@@ -169,7 +171,7 @@ showOptions <- function() {
 		}
 	} else { 
 		if (is.character(progress)) {
-			if (progress[1] %in% c('text', 'tcltk', 'windows')) {
+			if (progress[1] %in% c('text', 'window', 'tcltk', 'windows')) {
 				return(progress[1])
 			} else {
 				return('none')
@@ -180,6 +182,20 @@ showOptions <- function() {
 	}
 }
 
+
+.timer <- function(..., timer) {
+	if (missing(timer)) { 
+		timer <- getOption('rasterTimer')
+		if (is.null(timer)) {
+			return(FALSE) 
+		} else {
+			return( as.logical(timer) )
+		}
+	} else {
+		return(as.logical(timer))
+	}
+}	
+	
 
 .toDisk <- function(..., todisk) {
 	if (missing(todisk)) { 

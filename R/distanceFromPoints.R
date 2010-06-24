@@ -28,6 +28,8 @@ distanceFromPoints <- function(object, xy, filename='', ...) {
 	} 
 	
 	pb <- pbCreate(nrow(rst), type=.progress(...))
+	rst <- writeStart(rst, filename=filename, ...)
+
 	for (r in 1:nrow(rst)) {	
 		vals <- arow
 		xy[,2] <- yFromRow(rst, r)
@@ -37,8 +39,7 @@ distanceFromPoints <- function(object, xy, filename='', ...) {
 		if (filename == "") {
 			v[,r] <- vals
 		} else {
-			rst <- setValues(rst, vals, r)
-			rst <- writeRaster(rst, filename=filename, ...)
+			rst <- writeValues(rst, vals, r)
 		}
 		pbStep(pb, r) 	
 	}	
@@ -46,6 +47,8 @@ distanceFromPoints <- function(object, xy, filename='', ...) {
 	
 	if (filename == "") { 
 		rst <- setValues(rst, as.vector(v)) 
+	} else {
+		rst <- writeStop(rst)
 	}
 	return(rst)
 }

@@ -87,7 +87,7 @@ s
 Note how, in the above example, first a new empty RasterLayer, 'out' is created using the {bf raster} function. 'out' has the same extent and resolution as 'x', but it does not have the values of 'x'.
 
 
-\section{Block by block}
+\section{Multiple rows at once}
 
 Row by row processing is easy to do but it can be a bit inefficient. There is some overhead associated with each read and write operation. An alternative is to read, calculate, and write by block; here defined as a number of rows (1 or more). The function {bf blocksize} is a helper function to determine appropriate block size (number of rows). 
 
@@ -97,7 +97,7 @@ f4 <- function(x, a, filename) {
 	bs <- blockSize(r)
 	out <- writeStart(out, filename, overwrite=TRUE)
 	for (i in 1:bs$n) {
-		v <- getValuesBlock(x, row=bs$row[i], nrows=bs$nrows[i] )
+		v <- getValues(x, row=bs$row[i], nrows=bs$nrows[i] )
 		v <- v + a
 		writeValues(out, v, bs$row[i])
 	}
@@ -170,7 +170,7 @@ f6 <- function(x, a, filename='') {
 	
 	bs <- blockSize(r)
 	for (i in 1:bs$n) {
-		v <- getValuesBlock(x, row=bs$row[i], nrows=bs$nrows[i] )
+		v <- getValues(x, row=bs$row[i], nrows=bs$nrows[i] )
 		v <- v + a
 		if (todisk) {
 			writeValues(out, v, bs$row[i])
@@ -214,7 +214,7 @@ f7 <- function(x, a, filename='') {
 	
 	bs <- blockSize(r)
 	for (i in 1:bs$n) {
-		v <- getValuesBlock(x, row=bs$row[i], nrows=bs$nrows[i] )
+		v <- getValues(x, row=bs$row[i], nrows=bs$nrows[i] )
 		v <- v + a
 		writeValues(out, v, bs$row[i])
 	}
@@ -249,7 +249,7 @@ f8 <- function(x, a, filename='', ...) {
 	pb <- pbCreate(bs$n, type=raster:::.progress(...))
 
 	for (i in 1:bs$n) {
-		v <- getValuesBlock(x, row=bs$row[i], nrows=bs$nrows[i] )
+		v <- getValues(x, row=bs$row[i], nrows=bs$nrows[i] )
 		v <- v + a
 		if (todisk) {
 			writeValues(out, v, bs$row[i])

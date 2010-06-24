@@ -25,7 +25,7 @@ To permanentely set any of these options, you can add them to \code{<your R inst
 }
 
 \usage{
-setOptions(format, overwrite, datatype, tmpdir, progress, chunksize, todisk)
+setOptions(format, overwrite, datatype, tmpdir, progress, timer, chunksize, todisk)
 showOptions()
 saveOptions()
 clearOptions()
@@ -36,7 +36,8 @@ clearOptions()
 \item{overwrite}{Logical. The default value for overwriting existing files. If \code{TRUE}, existing files will be overwritten}
 \item{datatype}{Character. The default data type to use. See \code{\link[raster]{dataType}}}
 \item{tmpdir}{Character. The default location for writing temporary files}
-\item{progress}{Character. Valid values are "text", "tcltk" (requirs the tcltk package), "windows" (on that platform only) and "" (the default in most functions, no progress bar)}
+\item{progress}{Character. Valid values are "text",  "window" and "" (the default in most functions, no progress bar)}
+\item{timer}{Logical. If \code{TRUE}, the time it took to complete the function is printed}
 \item{chunksize}{Integer. Maximum number of cells to read/write in a single chunk while processing (chunk by chunk) disk based Raster* objects}
 \item{todisk}{Logical. For debugging only. Default is \code{FALSE} and should normally not be changed. If \code{TRUE}, results are always written to disk, even if no filename is supplied (a temporary filename is used)}
 }

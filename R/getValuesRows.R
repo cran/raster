@@ -33,34 +33,24 @@ setMethod('getValues', signature(x='RasterLayer', row='numeric', nrows='missing'
 
 setMethod('getValues', signature(x='RasterLayer', row='numeric', nrows='numeric'), 
 function(x, row, nrows) {
+
 	if (!is.atomic(row)) {	stop() }
 	if (!is.atomic(nrows)) { stop() }
 	row <- as.integer(round(row))
 	nrows <- as.integer(round(nrows))
-	readrow <- FALSE
-	startcell <- cellFromRowCol(x, row, 1)
-	endcell <- cellFromRowCol(x, row+nrows-1, x@ncols)
-
 	if (!(validRow(x, row))) {	stop(paste(row, 'is not a valid rownumber')) }
-	
-	if (dataContent(x) == 'nodata') {
-		readrow <- TRUE
-	} else if (dataContent(x) == 'all'){
-		res <- x@data@values[startcell:endcell]
-	} else if (dataContent(x) == 'row') {
-		if ( (dataIndices(x)[1] == startcell) & (dataIndices(x)[2] == endcell) ) {
-			res <- (x@data@values)
-		} else {
-			readrow <- TRUE
-		}
+
+	if (dataContent(x) == 'all'){
+		startcell <- cellFromRowCol(x, row, 1)
+		endcell <- cellFromRowCol(x, row+nrows-1, x@ncols)
+		return( x@data@values[startcell:endcell] )
 	} else {
-		stop('something is wrong with the RasterLayer dataContent')
+		return( .readRasterLayerValues(x, row, nrows) )
 	}
 	
-	if (readrow) {	res <- ..readRows(x, row, nrows)@data@values }
-	res
 }
 )
+
 
 setMethod('getValues', signature(x='RasterBrick', row='numeric', nrows='missing'), 
 	function(x, row, nrows) {
@@ -83,17 +73,11 @@ function(x, row, nrows) {
 		readrow <- TRUE
 	} else if (dataContent(x) == 'all'){
 		res <- x@data@values[startcell:endcell,]
-	} else if (dataContent(x) == 'row') {
-		if ( (dataIndices(x)[1] == startcell) & (dataIndices(x)[2] == endcell) ) {
-			res <- x@data@values
-		} else {
-			readrow <- TRUE
-		}
 	} else {
 		stop('something is wrong with the RasterLayer dataContent')
 	}
 	if (readrow) {
-		res <- .readRasterBrickValues(x, row, nrows)@data@values
+		res <- .readRasterBrickValues(x, row, nrows)
 	}
 	colnames(res) <- layerNames(x)
 	return(res)

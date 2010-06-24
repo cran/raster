@@ -12,10 +12,10 @@
 # Licence GPL v3
 
 
-.plotSpace <- function(legend.mar = 3.1, legend.width = 0.5, legend.shrink = 0.5) {
+.plotSpace <- function(asp=1, legend.mar = 3.1, legend.width = 0.5, legend.shrink = 0.5) {
 	
 	par <- par()
-	char.size <- par$cin[1]/par$din[1]
+	char.size <- par$cin[1] / par$din[1]
     offset <- char.size * par$mar[4] 
     legend.width <- char.size * legend.width
     legend.mar <- legend.mar * char.size
@@ -27,13 +27,25 @@
     legendPlot[4] <- legendPlot[4] - pr
     legendPlot[3] <- legendPlot[3] + pr
 	
-    bigplot <- par$plt
-    bigplot[2] <- min(bigplot[2], legendPlot[1] - offset)
-
-    dp <- legendPlot[2] - legendPlot[1]
-    legendPlot[1] <- min(bigplot[2] + 0.5 * offset, legendPlot[1])
+    bp <- par$plt
+    bp[2] <- min(bp[2], legendPlot[1] - offset)
+	aspbp = (bp[4]-bp[3]) / (bp[2]-bp[1])
+	adj = aspbp / asp
+	if (adj < 1) {
+		adjust = (bp[4]-bp[3]) - ((bp[4]-bp[3]) * adj)
+	} else {
+		adjust = (bp[4]-bp[3]) / adj - ((bp[4]-bp[3]))	
+	}
+	adjust = adjust / 2
+bp
+	bp[3] = bp[3] + adjust
+	bp[4] = bp[4] - adjust	
+  bp
+  
+	dp <- legendPlot[2] - legendPlot[1]
+    legendPlot[1] <- min(bp[2] + 0.5 * offset, legendPlot[1])
     legendPlot[2] <- legendPlot[1] + dp
-    return(list(legendPlot = legendPlot, mainPlot = bigplot))
+    return(list(legendPlot = legendPlot, mainPlot = bp))
 }
 
 
@@ -108,7 +120,6 @@
 
 .plot2 <- function(x, maxpixels=100000, col=rev(terrain.colors(25)), xlab='', ylab='', asp, box=TRUE, add=FALSE, legend=TRUE, legend.at='', ...)  {
 		
-	plotArea <- .plotSpace()
 
 	if (!add & missing(asp)) {
 		if (.couldBeLonLat(x)) {
@@ -118,6 +129,9 @@
 			asp = 1
 		}		
 	}
+
+	plotArea <- .plotSpace(asp)
+
 	x <- sampleRegular(x, maxpixels, asRaster=TRUE, corners=TRUE)
 
 	xticks <- axTicks(1, c(xmin(x), xmax(x), 4))

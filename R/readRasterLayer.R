@@ -109,8 +109,12 @@
 		}
 
 # ascii is internal to this package but not 'native' (not binary)
-	} else if (.driver(object) == 'ascii') {
+	} else if (object@file@driver == 'ascii') {
 		result <- .readRowsAscii(object, startrow, nrows, startcol, ncols)
+		
+	} else if (object@file@driver == 'netcdf') {
+		result <- .readRowsNetCDF(object, startrow, nrows, startcol, ncols)
+		
 		
 #use GDAL  		
 	} else { 
@@ -130,22 +134,24 @@
 		
 	} 
 	
-	firstcell <- cellFromRowCol(object, startrow, startcol)
-	lastcell <- cellFromRowCol(object, (startrow+nrows-1), endcol)
-	object@data@indices <- c(firstcell, lastcell)
-	if (all(object@data@indices == c(1, ncell(object)))) {
-		object@data@content <- 'all' 
-	} else if (startcol==1 & ncols==object@ncols) {
-		if (nrows==1) {
-			object@data@content <- 'row' 
-		} else {	
-			object@data@content <- 'rows' 
-		}
-	} else {
-		object@data@content <- 'block' 
-	}
-	object@data@values <- result
-	return(object)
+	return(result)
+	
+#	firstcell <- cellFromRowCol(object, startrow, startcol)
+#	lastcell <- cellFromRowCol(object, (startrow+nrows-1), endcol)
+#	object@data@indices <- c(firstcell, lastcell)
+#	if (all(object@data@indices == c(1, ncell(object)))) {
+#		object@data@content <- 'all' 
+#	} else if (startcol==1 & ncols==object@ncols) {
+#		if (nrows==1) {
+#			object@data@content <- 'row' 
+#		} else {	
+#			object@data@content <- 'rows' 
+#		}
+#	} else {
+#		object@data@content <- 'block' 
+#	}
+#	object@data@values <- result
+#	return(object)
 }
 
 

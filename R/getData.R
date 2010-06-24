@@ -22,6 +22,17 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 	}
 }
 
+
+.download <- function(aurl, filename) {
+	fn <- paste(tempfile(), '.download', sep='')
+	res <- download.file(url=aurl, destfile=fn, method="auto", quiet = FALSE, mode = "wb", cacheOK = TRUE)
+	if (res) {
+		file.rename(fn, filename)
+	} else {
+		stop('could not download the file' )
+	}
+}
+
 .countries <- function() {
 	path <- paste(system.file(package="raster"), "/external", sep='')
 	d <- read.csv(paste(path, "/countries.csv", sep=""), header=T, quote = "!@!")
@@ -89,7 +100,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 	if (!file.exists(filename)) {
 		if (download) {
 			theurl <- paste("http://gadm.org/data/rda/", country, '_adm', level, ".RData", sep="")
-			download.file(url=theurl, destfile=filename, method="auto", quiet = FALSE, mode = "wb", cacheOK = TRUE)
+			.download(theurl, filename)
 			if (!file.exists(filename))
 				{ cat("\nCould not download file -- perhaps it does not exist \n") }
 		} else {
@@ -149,7 +160,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 	if (fc < 24) {
 		if (!file.exists(zipfile)) {
 			if (download) {
-				download.file(url=theurl, destfile=zipfile, method="auto", quiet = FALSE, mode = "wb", cacheOK = TRUE)
+				.download(theurl, zipfile)
 				if (!file.exists(zipfile))	{ 
 					cat("\n Could not download file -- perhaps it does not exist \n") 
 				}
@@ -172,8 +183,6 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 .raster <- function(country, name, mask=TRUE, path, download, ...) {
 
 	country <- .getCountry(country)
-
-	
 	path <- .getDataPath(path)
 	if (mask) {
 		mskname <- '_msk_'
@@ -192,7 +201,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 		if (!file.exists(zipfilename)) {
 			if (download) {
 				theurl <- paste("http://diva-gis.org/data/", mskpath, name, "/", country, mskname, name, ".zip", sep="")
-				download.file(url=theurl, destfile=zipfilename, method="auto", quiet = FALSE, mode = "wb", cacheOK = TRUE)
+				.download(theurl, zipfilename)
 				if (!file.exists(zipfilename))	{ cat("\nCould not download file -- perhaps it does not exist \n") }
 			} else {
 				cat("\nFile not available locally. Use 'download = TRUE'\n")
@@ -226,7 +235,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 		if (!file.exists(zipfilename)) {
 			if (download) { 
 				theurl <- paste("http://hypersphere.telascience.org/elevation/cgiar_srtm_v4/tiff/zip/", f, ".ZIP", sep="")
-				download.file(url=theurl, destfile=zipfilename, method="auto", quiet = FALSE, mode = 'wb', cacheOK = TRUE)
+				.download(theurl, zipfilename)
 			} else {cat('file not available locally, use download=TRUE\n') }	
 		}
 		if (file.exists(zipfilename)) { 
@@ -238,6 +247,8 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 		rs <- raster(tiffilename)
 		projection(rs) <- "+proj=longlat +datum=WGS84"
 		return(rs)
-	}	
+	} else {
+		stop('file not found')
+	}
 }
 

@@ -4,27 +4,28 @@
 # Licence GPL v3
 
 
-if (!isGeneric("which")) {
-	setGeneric("which", function(x, arr.ind=FALSE)
-		standardGeneric("which"))
+if (!isGeneric("Which")) {
+	setGeneric("Which", function(x, ...)
+		standardGeneric("Which"))
 }	
 
 
-setMethod('which', signature(x='RasterLayer'), 
-function(x, arr.ind=FALSE) {
+setMethod('Which', signature(x='RasterLayer'), 
+function(x, cells=FALSE, ...) {
 
 		
 	if (canProcessInMemory(x, 2)){
-		if (arr.ind) {
+		if (cells) {
 			return(which(getValues(x)==TRUE))
 		} else {
 			x <- as.logical(x)
 			x[is.na(x)] <- FALSE
 			return(x)
 		}
+		
 	} else {
 		out <- raster(x)
-		if (arr.ind) {
+		if (cells) {
 			vv <- vector()
 		} else {
 			filename <- rasterTmpFile()
@@ -37,7 +38,7 @@ function(x, arr.ind=FALSE) {
 		for (i in 1:tr$n) {
 			v <- getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i] ) 
 			
-			if (arr.ind) {
+			if (cells) {
 				offs = (tr$row[i]-1) * out@ncols
 				vv <- c(vv, which(v==TRUE) + offs)
 			} else {
@@ -50,7 +51,7 @@ function(x, arr.ind=FALSE) {
 		pbClose(pb)
 		
 		
-		if (arr.ind) { 
+		if (cells) { 
 			return(vv)
 		} else { 
 			x <- writeStop(x)

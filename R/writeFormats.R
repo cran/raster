@@ -23,9 +23,10 @@ writeFormats <- function() {
 		short <- c(.nativeDrivers(),  'ascii', as.vector(gd[,1]))
 		long <- c(.nativeDriversLong(), 'Arc ASCII', as.vector(gd[,2]))
 	} else {
-		short <- c(.nativeDrivers(), 'ascii', "")
-		long <- c(.nativeDriversLong(), "Arc ASCII", "rgdal not installed")
+		short <- c(.nativeDrivers(), 'ascii', 'CDF', "")
+		long <- c(.nativeDriversLong(), "Arc ASCII", "netCDF / CF", "rgdal not installed")
 	}
+	
 	m <- cbind(short, long)
 	colnames(m) <- c("name", "long_name")
 	return(m)

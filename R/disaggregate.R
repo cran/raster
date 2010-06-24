@@ -21,7 +21,7 @@ if (!isGeneric("disaggregate")) {
 		standardGeneric("disaggregate"))
 }
 
-setMethod('disaggregate', signature(x='RasterLayer', fact='numeric'), 
+setMethod('disaggregate', signature(x='Raster', fact='numeric'), 
 function(x, fact, filename='', ...) {
 
 	hasmethod <- .hasmethod(...)
@@ -40,51 +40,73 @@ function(x, fact, filename='', ...) {
 	}
 
 	filename <- trim(filename)
-	outraster <- raster(x)
-	rowcol(outraster) <- c(nrow(x) * yfact, ncol(x) * xfact) 
+	
+	if (inherits(x, 'RasterLayer')) {
+		outRaster <- raster(x)
+	} else {
+		outRaster <- brick(x, values=FALSE)
+	}
+	
+	rowcol(outRaster) <- c(nrow(x) * yfact, ncol(x) * xfact) 
 
-	if (dataContent(x) != 'all' & dataSource(x) == 'ram') {
-		return(outraster)
+	
+	if (! inherits(x, 'RasterStack')) {
+		if (dataContent(x) != 'all' & dataSource(x) == 'ram') {
+			return(outRaster)
+		}
 	}
 	
 	if (hasmethod) {
-		return(resample(x, outraster, ...))
+		return(resample(x, outRaster, ...))
 	}
 	
 	
-	if (canProcessInMemory(outraster, 3)) { 
+	if (canProcessInMemory(outRaster, 3)) { 
 	
 		cols <- rep(rep(1:ncol(x), each=xfact), times=nrow(x)*yfact)
 		rows <- rep(1:nrow(x), each=ncol(x)*xfact*yfact)
 		cells <- cellFromRowCol(x, rows, cols)
-		outraster <- setValues(outraster, getValues(x)[cells])
+		x <- getValues(x)
+		if (is.matrix(x)) {
+			x <- x[cells, ]
+		} else {
+			x <- x[cells]
+		}
+		outRaster <- setValues(outRaster, x)
 
 		if (filename != '') {
-			outraster <- writeRaster(outraster, filename=filename,...)
+			outRaster <- writeRaster(outRaster, filename=filename,...)
 		}
 		
 	} else { 
 		if (filename == '') {
 			filename <- rasterTmpFile()						
 		}
-	# to speed up getValues
-		if (dataContent(x) != 'all') { x <- clearValues(x) }
-		v <- vector(length=0)
 		cols <- rep(rep(1:ncol(x), each=xfact), times=yfact)
 
 		pb <- pbCreate(nrow(x), type=.progress(...))
-		outraster <- writeStart(outraster, filename=filename, datatype=dataType(x), ...)
-		for (r in 1:nrow(x)) {
-			vals <- getValues(x, r)
-			rown <- (r-1) * xfact + 1
-			outraster <- writeValues(outraster, vals[cols], rown)
-			pbStep(pb, r)
+		outRaster <- writeStart(outRaster, filename=filename, datatype=dataType(x), ...)
+		if (inherits(x, 'RasterLayer')) {
+			for (r in 1:nrow(x)) {
+				vals <- getValues(x, r)
+				rown <- (r-1) * xfact + 1
+				outRaster <- writeValues(outRaster, vals[cols], rown)
+				pbStep(pb, r)
+			}
+		} else {
+			for (r in 1:nrow(x)) {
+				vals <- getValues(x, r)
+				rown <- (r-1) * xfact + 1
+				outRaster <- writeValues(outRaster, vals[cols, ], rown)
+				pbStep(pb, r)
+			}
 		}
-		outraster <- writeStop(outraster)
+
+		outRaster <- writeStop(outRaster)
 		pbClose(pb)
 	}
 
-	return(outraster)
+	return(outRaster)
 }
 )
 

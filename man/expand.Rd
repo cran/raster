@@ -1,15 +1,14 @@
 \name{expand}
 
 \alias{expand}
-\alias{expand,RasterLayer-method}
-\alias{expand,RasterLayer,ANY-method}
+\alias{expand,Raster-method}
 
 \title{Expand}
 
 \description{
 Expand returns an RasterLayer with a larger spatial extent. 
-The output RasterLayer has the extreme minimum and maximum coordinates of the input RasterLayer and input Extent arguments. 
-Thus, all of the cells of the original raster are included.
+The output RasterLayer has the outer minimum and maximum coordinates of the input RasterLayer and Extent arguments. 
+Thus, all of the cells of the original raster are included. See \code{\link[raster]{crop}} if you (also) want to remove rows or columns. 
 }
 
 \usage{
@@ -34,7 +33,7 @@ The following additional arguments can be passed, to replace default values for 
   \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
   \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
   \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-  \tab \code{progress} \tab Character. Valid values are "text", "tcltk", "windows" (on that platform only) and ""  \cr
+  \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
  }
 }
 

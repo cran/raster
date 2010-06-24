@@ -32,7 +32,7 @@ A full call as implemented here:
 
 the \code{digits} argument is used passed to \code{\link[base]{round}}
 
-with \code{progress} a progress bar can be specied ('text', 'tcltk', or "windows")
+with \code{progress}, a progres bar can be specified. Choose from "text", "window", or "" (the default, no progress bar)
 }}
 
 

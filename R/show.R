@@ -3,6 +3,17 @@
 # Version 0.9
 # Licence GPL v3
 
+setMethod ('print' , 'Raster', 
+	function(x, ...) {
+		if (x@file@driver == 'netcdf') {
+			nc = open.nc(x@file@name)
+			print.nc(nc)
+			close.nc(nc)
+		}
+		else callNextMethod(x, ...)
+	}
+)
+
 
 
 setMethod ('show' , 'Extent', 

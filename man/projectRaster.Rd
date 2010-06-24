@@ -17,7 +17,7 @@ projectExtent(object, crs)
 }
 
 \arguments{
-  \item{from}{a RasterLayer object}
+  \item{from}{a Raster* object}
   \item{to}{a Raster* object}
   \item{method}{method used to compute values for the new RasterLayer. Either 'ngb' (nearest neighbor) or 'bilinear' (bilinear interpolation).}
   \item{filename}{character. output filename}  
@@ -28,10 +28,9 @@ projectExtent(object, crs)
 }
 
 \details{
-First create a template RasterLayer with a projected extent; also set the number of rows and columns (or the resolution); and perhaps adjust the extent. 
-Then use that object to project the input RasterLayer to. 
+First create a template RasterLayer with a projected extent; also set the number of rows and columns (or the resolution); and perhaps adjust the extent. Then use that object to project the input RasterLayer to. 
 
-The resolution of the output RasterLayer should not be much larger of that of the input RasterLayer.
+The resolution of the output raster should normally be similar to that of the input raster.
 
 See \code{projInfo('proj')}, \code{projInfo('ellps')}, and \code{projInfo('datum')} for options for valid PROJ.4 strings. 
  
@@ -45,12 +44,12 @@ The following additional arguments can be passed, to replace default values for 
   \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
   \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
   \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-  \tab \code{progress} \tab Character. Valid values are "text", "tcltk", "windows" (on that platform only) and ""  \cr
+  \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
  }
 }
 
 \value{
-A RasterLayer object, and, in some cases, the side-effect of a raster file written to disk.
+A RasterLayer or RasterBrick object, and, in some cases, the side-effect of a raster file written to disk.
 }
 
 \author{Robert J. Hijmans}
