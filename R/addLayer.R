@@ -27,7 +27,7 @@ function(x, ...) {
 			
 			projection(x) <- projection(r)
 
-			if (dataSource(r) == 'ram' & dataContent(r) != 'all') {
+			if (! fromDisk(r)  & ! inMemory(r) ) {
 				stop('Cannot add a RasterLayer with no associated data in memory or on disk to a RasterStack')
 			} else {
 				nl <- 1
@@ -43,8 +43,8 @@ function(x, ...) {
 			if (!compare(c(x, r))) { 
 				stop(paste("could not add r:", filename(r))) 
 			}
-			if (dataSource(r) == 'ram') {
-				if (dataContent(r) != 'all') { 
+			if (! fromDisk(r) ) {
+				if (! inMemory(r) ) { 
 					stop('Cannot add a RasterLayer with no associated data in memory or on disk to a RasterStack')
 				}
 			}
@@ -63,7 +63,7 @@ function(x, ...) {
 			}	
 			x@layernames[nl] <- cn
 			
-			if (dataSource(r) == 'disk') {
+			if ( fromDisk(r) ) {
 				r <- clearValues(r)
 			}
 			x@layers[nl] <- r 
@@ -92,7 +92,7 @@ function(x, ..., keepone=FALSE) {
 			x@ncols <- ncol(r)
 			x@extent <- extent(r)
 			projection(x) <- projection(r)
-			if (dataSource(r) == 'ram' & dataContent(r) != 'all') {
+			if (! fromDisk(r)  & ! inMemory(r) ) {
 				# done
 			} else {
 				nl <- 1
@@ -104,7 +104,8 @@ function(x, ..., keepone=FALSE) {
 				x@layernames <- cname
 				x@data@values <- as.matrix(getValues(r))
 				x@data@nlayers <- as.integer(1)
-				x@data@content <- 'all'
+				x@data@inmemory <- TRUE
+				
 				x@data@min <- r@data@min
 				x@data@max <- r@data@max			
 			}
@@ -119,8 +120,8 @@ function(x, ..., keepone=FALSE) {
 				stop(paste("could not add r:", filename(r))) 
 			}
 				
-			if (dataSource(r) == 'ram') {
-				if (dataContent(r) != 'all') { 
+			if (! fromDisk(r) ) {
+				if (! inMemory(r) ) { 
 					stop('Cannot add a RasterLayer with no associated data in memory or on disk to a RasterBrick')
 				}
 			}

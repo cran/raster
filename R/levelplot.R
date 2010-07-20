@@ -7,8 +7,8 @@
 
 .levelplotraster <- function(object, maxpixels=100000, xlab='', ylab='', extent=NULL, ticks=c(6,6), ...) {
 	if (! require(lattice) ) { stop('cannot find the lattice package') }
-	if ( dataContent(object) != 'all') { 
-		if ( dataSource(object) != 'disk') {
+	if ( ! inMemory(object) ) { 
+		if (  !  fromDisk(object) ) {
 			stop('no values associated with this RasterLayer')
 		} 
 		if (canProcessInMemory(object, 2)) {

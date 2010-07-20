@@ -15,11 +15,11 @@ setMethod('summary', signature(object='Raster'),
 	function(object, maxsamp=5000, ...) {
 		sumobj <- new("RasterSummary")
 		sumobj@ncell <- ncell(object)
-		sumobj@dataContent <- dataContent(object) 
-		if ( sumobj@dataContent == "all") {
+		sumobj@inmemory <- inMemory(object) 
+		if ( sumobj@inmemory ) {
 			sumobj@NAs <- sum(is.na(object@data@values))
 			sumobj@values <- as.matrix( summary(object@data@values) )
-		} else if (dataSource(object) == 'disk') {
+		} else if (  fromDisk(object) ) {
 			if (ncell(object) > maxsamp) {
 				v = sampleRandom(object, maxsamp)
 				sumobj@warning = paste('summary based on a sample of', maxsamp, 'cells, which is', 100*maxsamp/ncell(object), '% of all cells')
@@ -45,8 +45,8 @@ setMethod('summary', signature(object='RasterStack'),
 		sumobj <- new("RasterSummary")
 		sumobj@ncell <- ncell(object)
 		for (n in 1:nlayers(object)) {
-			sumobj@dataContent <- c(sumobj@dataContent, dataContent(object@layers[[n]]) )
-			if (dataContent(object@layers[[n]]) == 'all') {
+			sumobj@inmemory <- c(sumobj@inmemory, inMemory(object@layers[[n]]) )
+			if ( inMemory(object@layers[[n]]) ) {
 				nas <- sum(is.na(object@layers[[n]]@data@values))
 				sm = as.matrix( summary(object@layers[[n]]@data@values) )
 			} else {
@@ -75,9 +75,9 @@ setMethod('summary', signature(object='RasterBrick'),
 	function(object, maxsamp=5000, ...) {
 		sumobj <- new("RasterSummary")
 		sumobj@ncell <- ncell(object)
-		sumobj@dataContent <- dataContent(object)
+		sumobj@inmemory <- inMemory(object)
 
-		if (dataContent(object) == 'all') {
+		if ( inMemory(object) ) {
 			for (n in 1:nlayers(object)) {
 				sumobj@NAs <- c(sumobj@NAs, sum(is.na(object@data@values[, n])))
 				sm = as.matrix( summary( object@data@values[,n] ) )
@@ -86,7 +86,7 @@ setMethod('summary', signature(object='RasterBrick'),
 			} 
 			colnames(sumobj@values) <- 1:nlayers(object)
 			
-		} else if (dataSource(object) == 'disk') {
+		} else if (  fromDisk(object) ) {
 		
 			if (sumobj@ncell > maxsamp) {
 				v = sampleRandom(object, maxsamp)
@@ -115,13 +115,13 @@ setMethod('summary', signature(object='RasterBrick'),
 setClass('RasterSummary',
 	representation (
 		ncell = 'numeric',
-		dataContent = 'vector',
+		inmemory = 'logical',
 		NAs = 'vector',
 		values = 'matrix',
 		warning = 'character'
 	),
 	prototype (	
-		dataContent = vector(mode='character'),
+		inmemory = vector(mode='logical'),
 		NAs = vector(mode='numeric'),
 		values = matrix(nrow=6, ncol=0),
 		warning = ''

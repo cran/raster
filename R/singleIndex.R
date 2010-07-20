@@ -7,14 +7,14 @@
 setMethod("[", c("Raster","ANY", "missing"),
 function(x,i,j,...,drop=TRUE) {
 	
-	if (dataContent(x) != 'all') {
-		if (dataSource(x) != 'disk') {
+	if (! inMemory(x) ) {
+		if ( ! fromDisk(x) ) {
 			stop('no data associated with this RasterLayer object')
 		}
 	}
 	
 	if (missing(i)) {
-		if (dataContent(x) == 'all') {
+		if ( inMemory(x) ) {
 			return(x@data@values)
 		} else {
 			return(getValues(x))
@@ -25,7 +25,7 @@ function(x,i,j,...,drop=TRUE) {
 		i <- as.logical( getValues(i) ) 
 	}
 	
-	if (dataContent(x) != 'all') {
+	if (! inMemory(x) ) {
 		if (canProcessInMemory(x, 2)) {
 			if (length(i) > 0.5 * ncell(x)) {
 				x <- readAll(x)
@@ -33,7 +33,7 @@ function(x,i,j,...,drop=TRUE) {
 		}
 	}
 	
-	if (dataContent(x) == 'all') {
+	if ( inMemory(x) ) {
 		x@data@values[i, drop=drop]
 	} else {
 		return(cellValues(x, i))

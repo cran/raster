@@ -51,7 +51,7 @@ function(x, fact, filename='', ...) {
 
 	
 	if (! inherits(x, 'RasterStack')) {
-		if (dataContent(x) != 'all' & dataSource(x) == 'ram') {
+		if (! inMemory(x)  & ! fromDisk(x) ) {
 			return(outRaster)
 		}
 	}

@@ -140,14 +140,13 @@ setMethod('writeValues', signature(x='RasterBrick'),
 				v[]  <- as.numeric( v ) 
 			}
 
-
 			w <- getOption('warn')
 			options('warn'=-1) 
+			if (!is.matrix(v)) v <- matrix(v, ncol=1)
 			rng <- apply(v, 2, range, na.rm=TRUE)
 			x@data@min <- pmin(x@data@min, rng[1,])
 			x@data@max <- pmax(x@data@max, rng[2,])
 			options('warn'= w) 
-
 		
 			loop <- nrow(v) / x@ncols
 			start <- 1

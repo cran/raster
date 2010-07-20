@@ -114,7 +114,8 @@
 	if ((byteorder == "little") | (byteorder == "big")) { 
 		x@file@byteorder <- byteorder 
 	} 	
-	x@data@source <- 'disk'
+	x@data@fromdisk <- TRUE
+	
 	x@file@driver <- "raster"
 	
     return(x)

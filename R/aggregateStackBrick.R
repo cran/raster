@@ -4,9 +4,8 @@
 # Version 0.9
 # Licence GPL v3
 
-setMethod('aggregate', signature(x='Raster'), 
-
-function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", ...)  {
+setMethod('aggregate', signature(x='RasterStackBrick'), 
+function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", old=FALSE, ...)  {
 
 	if (length(fact)==1) {
 		fact <- as.integer(round(fact))
@@ -20,8 +19,8 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", ...)  {
 	} else {
 		stop('length(fact) should be 1 or 2')
 	}
-	if (xfact > ncol(x)) {warning('aggregation factor is larger than the number of columns') }
-	if (yfact > nrow(x)) {warning('aggregation factor is larger than the number of rows')}
+	if (xfact > ncol(x)) { warning('aggregation factor is larger than the number of columns') }
+	if (yfact > nrow(x)) { warning('aggregation factor is larger than the number of rows')}
 
 	if (expand) {
 		rsteps <- as.integer(ceiling(nrow(x)/yfact))
@@ -34,32 +33,17 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", ...)  {
 	ymn <- ymax(x) - rsteps * yfact * yres(x)
 	xmx <- xmin(x) + csteps * xfact * xres(x)
 		
-	if (inherits(x, 'RasterBrick')) {
-		outRaster <- brick(x)
-	} else {
-		outRaster <- raster(x)	
-	}
+	outRaster <- brick(x, values=FALSE)
+
 	bndbox <- extent(xmin(x), xmx, ymn, ymax(x))
 	extent(outRaster) <- bndbox
 	rowcol(outRaster) <- c(rsteps, csteps) 
 	
 	
-	if (na.rm) {
-		# this avoid warning messages 
-		thefun <- function(x) { 
-			x <- na.omit(x)
-			if (length(x) == 0) { 
-				return(NA)
-			} else { 
-				return( fun(x) )
-			}
-		}
-	} else {
-		thefun <- fun
-	}
+	thefun <- fun
 
 	if (! inherits(x, 'RasterStack' )) {
-		if (dataSource(x) != 'disk' & dataContent(x) != 'all') {
+		if ( ! fromDisk(x)  & ! inMemory(x) ) {
 			return(outRaster)
 		}
 	}	
@@ -72,7 +56,7 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", ...)  {
 		rows <- rep(1:rsteps, each=ncol(xx) * yfact)[1:ncell(xx)]
 		cells <- cellFromRowCol(xx, rows, cols)
 		
-		x <- as.matrix( aggregate(x, list(cells), thefun ))[,-1]
+		x <- as.matrix( aggregate(x, list(cells), fun, na.rm=na.rm ))[,-1]
 #		x <- as.vector( tapply(x, cells, thefun ))
 		rm(cells)
 		
@@ -84,22 +68,18 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", ...)  {
 
 	} else  { 
 	
-		if (filename == '') {
-			filename <- rasterTmpFile()								
-		}
+		if (filename == '') { filename <- rasterTmpFile() }
 		
 		cols <- rep(rep(1:csteps,each=xfact)[1:ncol(x)], times=yfact)
 		rows <- rep(1, each=(ncol(x) * yfact))
 		
-		if (filename == '') {
-			v <- matrix(NA, ncol=ncell(outRaster), nrow=nlayers(outRaster))
-		} else {
-			outRaster <- writeStart(outRaster, filename=filename, ...)
-		}
+		outRaster <- writeStart(outRaster, filename=filename, ...)
 		
 		cells <- cellFromRowCol(x, rows, cols)
 		nrows = yfact
 
+		on.exit( options('warn'= getOption('warn')) )
+		options('warn'=-1) 
 		
 		pb <- pbCreate(rsteps, type=.progress(...))
 		for (r in 1:rsteps) {
@@ -113,25 +93,15 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", ...)  {
 			}	
 			vals <- getValues(x, startrow, nrows)
 			# vals <- as.vector( tapply(vals, cells, thefun ) )
-			vals <- as.matrix( aggregate(vals, list(cells), thefun ))[,-1]
-			
-			if (filename == "") {
-				start <- cellFromRowCol(outRaster, tr$row[i], 1)
-				end <- cellFromRowCol(outRaster, tr$row[i]+tr$nrows[i]-1, to@ncols)
-				v[start:end, ] <- vals
-			} else {
-				outRaster <- writeValues(outRaster, vals, r)
-			}
+			vals <- as.matrix( aggregate(vals, list(cells), fun, na.rm=na.rm ))[,-1]
 		
+			outRaster <- writeValues(outRaster, vals, r)
 			pbStep(pb, r) 
 		} 
 		pbClose(pb)
-		if (filename == "") { 
-			outRaster <- setValues( outRaster, as.vector(v) )
-		} else {
-			outRaster <- writeStop(outRaster)
-		}
+		outRaster <- writeStop(outRaster)
 		return(outRaster)
 	}
 }
 )
+

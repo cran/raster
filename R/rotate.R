@@ -10,7 +10,7 @@ if (!isGeneric("rotate")) {
 }	
 
 
-setMethod('rotate', signature(x='RasterLayer'), 
+setMethod('rotate', signature(x='Raster'), 
 	function(x, ...) {
 		xr <- xmax(x) - xmin(x)
 		hx <- xr / 2

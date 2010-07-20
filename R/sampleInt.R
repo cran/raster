@@ -4,35 +4,49 @@
 # Licence GPL v3
 
 
-sampleInt <- function(n, size) {
+sampleInt <- function(n, size, replace=FALSE) {
 	
 	n = round(n[1])
 	size = round(size[1])
 	
 	if (n < 1) { stop('n should be >= 1') }
-	if (size < 1) { stop('size should be >= 1') }
+
+	if (size < 0) { stop('size should be >= 0') }
+	if (size == 0) return( vector(mode = "integer", length = 0) )
+	
+	if (size > n & ! replace) {
+		warning('size changed to n because to it cannot be larger than n when replace is FALSE')
+		size <- n
+	}
 		
-	if (size >= n) return(1:n)
-	
-	switched = FALSE
-	if (size > (0.5 * n)) {
-		switched = TRUE
-		size = n - size
-	}
-	
-	done = FALSE
-	samp = NULL
-	while (! done) {
-		f = round(runif(size*1.1) * n)
-		samp = unique(c(samp, f))
-		if (length(samp) >= size) {
-			samp = samp[1:size]
-			done = TRUE
+	if (!replace) {
+		switched = FALSE
+		if (size == n) { 
+			res <- 1:n
+			return(res[order(runif(length(res)))])
+		} else {
+			if (size > (0.5 * n)) {
+				switched = TRUE
+				size = n - size
+			}
 		}
-	}
-	if (switched) {
-		return( (1:n)[-samp] )
+		done = FALSE
+		samp = NULL
+		while (! done) {
+			f = ceiling(runif(size * 1.1) * n)
+			samp = unique(c(samp, f))
+			if (length(samp) >= size) {
+				samp = samp[1:size]
+				done = TRUE
+			}
+		}
+		if (switched) { 
+			samp <- (1:n)[-samp] 
+		}
+		
 	} else {
-		return(samp)
+		samp <- ceiling(runif( size ) * n)
 	}
+	
+	return( as.integer(samp) )
 }

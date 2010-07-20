@@ -11,7 +11,6 @@ if (!isGeneric("plotRGB")) {
 }	
 
 setMethod("plotRGB", signature(x='RasterStackBrick'), 
-
 function(x, r=1, g=2, b=3, scale=255, maxpixels=100000, extent=NULL, axes=TRUE, xlab='', ylab='', asp, ...) { 
 	
  	if (missing(asp)) {
@@ -28,8 +27,19 @@ function(x, r=1, g=2, b=3, scale=255, maxpixels=100000, extent=NULL, axes=TRUE, 
 	g <- sampleRegular(raster(x,g), maxpixels, extent=extent, asRaster=TRUE, corners=TRUE)
 	b <- sampleRegular(raster(x,b), maxpixels, extent=extent, asRaster=TRUE, corners=TRUE)
 	scale = as.vector(scale)[1]
-	z <- rgb(getValues(r), getValues(g), getValues(b), max=scale)
+	
+	RGB <- na.omit(cbind(getValues(r), getValues(g), getValues(b)))
+	
+	naind <- as.vector(attr(RGB, "na.action"))
+	if (!is.null(naind)) {
+		z = vector(length=ncell(r))
+		z[-naind] <- rgb(RGB[,1], RGB[,2], RGB[,3], max=scale)
+	} else {
+		z <- rgb(RGB[,1], RGB[,2], RGB[,3], max=scale)
+	}
+	
 	col <- unique(z)
+	col[col==FALSE] <- "#000000"
 	z <- match(z, col)
 
 	x <- xFromCol(r, 1:ncol(r))

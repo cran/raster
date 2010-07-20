@@ -24,7 +24,7 @@ polygonValues(p, r, ...)
 \details{
 There are two related additional arguments:
 
-\code{weights}. If \code{TRUE}, the function returns, for each polygon, a matrix with the cell values and the approximate fraction of each cell covered (rounded to 1/100; and the sum of weights should be ~1. The weights can be used for averaging; see examples. This option can be useful if the polygons are small relative to the cells size of the RasterLayer
+\code{weights}. If \code{TRUE}, the function returns, for each polygon, a matrix with the cell values and the approximate fraction of each cell that is covered by the polygon(rounded to 1/100). The weights can be used for averaging; see examples. This option can be useful if the polygons are small relative to the cells size of the RasterLayer
 
 \code{cellnumbers}. If \code{cellnumbers=TRUE} and \code{weights=TRUE}, cellnumbers will also be returned. 
 }

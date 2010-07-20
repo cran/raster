@@ -37,9 +37,6 @@ r <- raster(system.file("external/test.grd", package="raster"))
 dataSize(r)
 dataSigned(r)
 dataType(r)
-
-dataContent(r)
-dataSource(r)
 }
 
 \keyword{spatial}

@@ -91,32 +91,51 @@ setClass('RasterFile',
 setClass('SingleLayerData', 
 	representation (
 		values='vector', 
-		content='character', #nodata, all, row, block
-		indices = 'vector',
+		#content='character', #nodata, all, row, block
+		#source='character', # ram, disk
+
+		inmemory='logical',
+		fromdisk='logical',
+		
 		isfactor = 'logical',
 		levels = 'vector',
 		labels = 'vector',
 		haveminmax = 'logical',
 		min = 'vector',
 		max = 'vector',
-		source='character', # ram, disk
 		band = 'integer'
 		),
 	prototype (	
 		values=vector(),
-		content='nodata', 
-		indices = vector(mode='numeric'),
+#		content='nodata', 
+#		indices = vector(mode='numeric'),
+#		source='ram',
+
+		inmemory=FALSE,
+		fromdisk=FALSE,
+
 		isfactor = FALSE,
 		levels = vector(mode='numeric'),
 		labels = vector(mode='character'),
 		haveminmax = FALSE,
 		min = c(Inf),
 		max = c(-Inf),
-		source='ram',
 		band = as.integer(1)		
 	),	
 	validity = function(object) {
 	}
+)
+
+
+
+setClass('SingleLayerDataSparse', 
+	contains = 'SingleLayerData',
+	representation (
+		indices = 'vector'
+	),
+	prototype (	
+		indices = vector(mode='numeric')
+	)
 )
 
 
@@ -165,28 +184,36 @@ setClass('MultipleRasterData',
 	representation (
 		values='matrix', 
 		content='character', #nodata, all, row, block
-		indices = 'vector',
+		#indices = 'vector',
+		source='character', # ram, disk
+
+		inmemory='logical',
+		fromdisk='logical',
+
 		nlayers='integer',
 		dropped = 'vector',
 		isfactor = 'logical',
 		levels = 'vector',
 		haveminmax = 'logical',
 		min = 'vector',
-		max = 'vector',
-		source='character' # ram, disk
+		max = 'vector'
 		),
 	prototype (	
 		values=matrix(NA,0,0),
 		content='nodata', 
-		indices =vector(mode='numeric'),
+		#indices =vector(mode='numeric'),
+		source='ram',
+
+		inmemory=FALSE,
+		fromdisk=FALSE,
+
 		nlayers=as.integer(0),
 		dropped=NULL,
 		isfactor = FALSE,
 		levels = matrix(NA),
 		haveminmax = FALSE,
 		min = c(Inf),
-		max = c(-Inf),
-		source='ram'
+		max = c(-Inf)
 	),	
 	validity = function(object) {
 	}

@@ -30,9 +30,9 @@
 	thefile <- file(filename, "w")  # open an txt file connection
 	cat("NCOLS", ncol(x), "\n", file = thefile)
 	cat("NROWS", nrow(x), "\n", file = thefile)
-	cat("XLLCORNER", xmin(x), "\n", file = thefile)
-	cat("YLLCORNER", ymin(x), "\n", file = thefile)
-	cat("CELLSIZE",  xres(x), "\n", file = thefile)
+	cat("XLLCORNER", as.character(xmin(x)), "\n", file = thefile)
+	cat("YLLCORNER", as.character(ymin(x)), "\n", file = thefile)
+	cat("CELLSIZE",  as.character(xres(x)), "\n", file = thefile)
 	cat("NODATA_value", .nodatavalue(x), "\n", file = thefile)
 	close(thefile) #close connection
 	

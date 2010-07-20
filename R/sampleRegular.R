@@ -108,7 +108,7 @@ sampleRegular <- function(x, size, extent=NULL, cells=FALSE, asRaster=FALSE, cor
 #	m <- as.vector(m)
 	cell <- cellFromRowCol(x, rep(rows, each=nc), rep(cols, times=nr))
 	
-	if ( dataContent(x) != 'all') { 
+	if ( ! inMemory(x) ) { 
 		if (canProcessInMemory(x, 4)) {
 			x <- readAll(x)
 		}

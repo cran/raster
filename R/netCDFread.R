@@ -9,6 +9,8 @@
 	if ( x@file@toptobottom ) { row <- x@nrows - row - nrows + 2	}
 	
 	nc <- open.nc(x@file@name)
+	on.exit( close.nc(nc) )
+	
 	zvar = x@data@zvar
 
 	if (file.inq.nc(nc)$ndims == 2) {
@@ -21,7 +23,6 @@
 		count = c(ncols, nrows, 1)
 		d <- var.get.nc(nc, variable=zvar, start=start, count=count)
 	}
-	close.nc(nc)	
 
 	if (!is.na(x@file@nodatavalue)) { 
 		d[d==x@file@nodatavalue] <- NA
@@ -47,11 +48,12 @@
 	nlayers =  min( max( round(nlayers), 1), nlayers(x)-layer+1 )
 	
 	nc <- open.nc(x@file@name)
+	on.exit( close.nc(nc) )
+
 	zvar = x@data@zvar
 	start = c(col, row, layer)
 	count = c(ncols, nrows, nlayers)
 	d <- var.get.nc(nc, variable=zvar, start=start, count=count)
-	close.nc(nc)
 	
 
 	if (!is.na(x@file@nodatavalue)) { 

@@ -41,8 +41,11 @@ setMethod('brick', signature(x='character'),
 )
 
 
-setMethod('brick', signature(x='Raster'), 
+setMethod('brick', signature(x='RasterLayer'), 
 	function(x, ...) {
+		if (fromDisk(x) & nbands(x) == 1) {
+			return( brick( filename(x) ) )
+		}
 		b <- new('RasterBrick')
 		return( addLayer(b, x, ..., keepone=TRUE) )
 	}
@@ -59,7 +62,7 @@ setMethod('brick', signature(x='RasterStack'),
 			b@data@nlayers <- nlayers(x)
 			b@data@min <- rep(Inf, b@data@nlayers)
 			b@data@max <- rep(-Inf, b@data@nlayers)
-			b@data@source <- 'ram'
+			b@data@fromdisk <- FALSE
 
 		}
 		layerNames(b) <- layerNames(x)
@@ -71,7 +74,8 @@ setMethod('brick', signature(x='RasterStack'),
 setMethod('brick', signature(x='RasterBrick'), 
 	function(x, ...){
 		x <- clearValues(x)
-		x@data@source <- 'ram'
+		x@data@fromdisk <- FALSE
+
 		filename(x) <- ''
 		return(x)
 	}

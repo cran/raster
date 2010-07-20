@@ -56,17 +56,15 @@ Additional arguments:
 
 More additional arguments, that are only meaningful with netCDF files (CF convention):
 \tabular{rll}{
-\tab \code{x} \tab character. The x variable (e.g. 'longitude' or 'x') \cr
-\tab \code{y} \tab character. The y variable (e.g. 'latitude' or 'y')\cr
+\tab \code{xvar} \tab character. The x variable (e.g. 'longitude' or 'x') \cr
+\tab \code{yvar} \tab character. The y variable (e.g. 'latitude' or 'y')\cr
 \tab \code{varname} \tab character. The variable name (e.g. 'altitide' or 'precipitation')\cr
 \tab \code{band} \tab integer > 0. The 'band' (layer) number of the file. E.g., the 'time' variable (if there are any) (default=NA)\cr
 }
 
 If \code{x} is a character value, it should be a filename of a file that the raster package can read. Supported file types are the 'native' raster package format and those that can be read via rgdal. See \code{\link[rgdal]{readGDAL}} help for supported file types.
 
-For netCDF files, the function will try to guess values for the \code{xvar}, \code{yvar}, and \code{zvar} if they are not supplied. For this function to work, the RNetCDF package needs to have been installed. Note that currently, a raster object made from a netCDF file will load all values from file at creation (unlike other raster objects), and that \code{read*} functions are therefore not applicable. 
-netCDF data can only be read if the data are stored in 2 (x and y) or 3 (x, y, and time) dimensions. If the data has three dimensions, a value must be supplied for \code{time}
-
+To read netCDF files, the RNetCDF package needs to have been installed. For netCDF files, the function will try to guess values for \code{xar} and \code{yvar} if they are not supplied. netCDF data can only be read if the data are stored in 2 (x and y) or 3 (x, y, and time) dimensions. 
 
 2) Create a RasterLayer object from scratch
 

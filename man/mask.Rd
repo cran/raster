@@ -4,8 +4,7 @@
 
 \alias{mask}
 \alias{mask,RasterLayer,RasterLayer-method}
-\alias{mask,RasterStack,RasterLayer-method}
-\alias{mask,RasterBrick,RasterLayer-method}
+\alias{mask,RasterStackBrick,RasterLayer-method}
 
 \title{mask}
 

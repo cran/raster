@@ -70,6 +70,10 @@ focal <- function(x, ngb=3, fun=mean, na.rm=TRUE, filename="", ...) {
 		rr = rr + 1
 		ngbdata[rr,] = getValues(x, rr)
 	}
+	
+	on.exit(options('warn'= getOption('warn')))
+	options('warn'=-1) 
+
 	for (r in 1:nrow(out)) {	
 		rr = rr + 1
 		if (rr <= ngb[1]) {

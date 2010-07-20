@@ -58,7 +58,8 @@
 	r@file@offset <- 56
 	r@file@toptobottom <- FALSE
 	dataType(r) <- 'FLT4S'
-	r@data@source <- 'disk'
+	r@data@fromdisk <- TRUE
+	
 	r@file@driver <- "surfer"
 	return(r)
 }

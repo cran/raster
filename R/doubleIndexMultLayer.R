@@ -16,7 +16,7 @@ function(x,i,j,...,drop=TRUE) {
 	} else {
 		cells <- cellFromRowColCombine(x, i, j)
 	}
-	if (dataContent(x) == 'all') {
+	if ( inMemory(x) ) {
 		return(x@data@values[i=cells, , drop=drop])
 	} else {
 		return(cellValues(x, cells))

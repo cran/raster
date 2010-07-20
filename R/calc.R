@@ -19,14 +19,14 @@ function(x, fun, filename='', ...) {
 		stop("function 'fun' returns more than one value")
 	}
 
-	if (!(dataContent(x) == 'all' | dataSource(x) == 'disk')) {
+	if (!( inMemory(x)  |  fromDisk(x) )) {
 		stop('RasterLayer has no data on disk, nor a complete set of values in memory')
 	}
 
 	filename <- trim(filename)
 	outraster <- raster(x)
 
-	if (canProcessInMemory(x, 3) | dataContent(x) == 'all' ) {
+	if (canProcessInMemory(x, 3) |  inMemory(x)  ) {
 		x <- getValues(x)
 		outraster <- setValues(outraster, fun(x)) 
 		if (filename != "") {

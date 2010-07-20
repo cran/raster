@@ -13,9 +13,9 @@
 	uniquecells <- uniquecells[(uniquecells > 0) & (uniquecells <= ncell(raster))]
 
 	if (length(uniquecells) > 0) {
-		if (dataContent(raster) == 'all') {
+		if ( inMemory(raster) ) {
 			vals <- getValues(raster)[uniquecells]
-		} else if (dataSource(raster) == 'disk') {
+		} else if ( fromDisk(raster) ) {
 			if (length(uniquecells) > 100 & canProcessInMemory(raster, 2)) {
 				vals <- getValues(raster)
 				vals <- vals[uniquecells]

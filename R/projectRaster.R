@@ -56,8 +56,8 @@ projectRaster <- function(from, to, method="ngb", filename="", ...)  {
 	if (! .requireRgdal() ) { stop('rgdal not available') }
 	
 	if (! inherits(from, 'RasterStack' )) {
-		if ( dataSource(from) == 'ram' & dataContent(from) != 'all') {
-			if (dataContent(from) != 'all' & dataSource(from) == 'ram') { stop('no vales for "from". Nothing to do.') }
+		if ( ! inMemory(from) & ! fromDisk(from) ) {
+			stop('no vales for "from". Nothing to do.')
 		}
 	}
 

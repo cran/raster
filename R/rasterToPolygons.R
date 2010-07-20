@@ -6,10 +6,10 @@
 
 rasterToPolygons <- function(raster, fun=NULL) {
 
-	if (dataSource(raster) == 'ram' & dataContent(raster) != 'all') {
+	if (! fromDisk(raster) & ! inMemory(raster)) {
 		xyv <- xyFromCell(raster, 1:ncell(raster))
 		xyv <- cbind(xyv, NA)
-	} else if (dataContent(raster) == 'all') {
+	} else if ( inMemory(raster) ) {
 		xyv <- cbind(xyFromCell(raster, 1:ncell(raster)), getValues(raster))
 		raster <- clearValues(raster)
 		xyv <- subset(xyv, !(is.na(xyv[,3])))

@@ -25,7 +25,7 @@
 	binraster <- .setFileExtensionValues(raster@file@name, 'raster')
 
 	raster <- openConnection(raster)
-	writeBin( as.vector(dataIndices(raster)), raster@file@con, size = as.integer(4)) 
+	writeBin( as.vector(raster@data@indices), raster@file@con, size = as.integer(4)) 
 	writeBin( as.vector(raster@data@values), raster@file@con, size = dataSize(raster@file@datanotation) ) 
 	raster <- closeConnection(raster)
 

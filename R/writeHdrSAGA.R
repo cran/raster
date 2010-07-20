@@ -30,8 +30,8 @@
     if (.Platform$endian == 'little') { bo <- 'FALSE' } else { bo <- 'TRUE' }
 	cat("BYTEORDER_BIG\t=", bo, "\n", file = thefile)
 
-	cat("POSITION_XMIN\t= ",  xmin(raster) + 0.5 * xres(raster), "\n", file = thefile)
-	cat("POSITION_YMIN\t= ",  ymin(raster) + 0.5 * yres(raster), "\n", file = thefile)
+	cat("POSITION_XMIN\t= ",  as.character(xmin(raster) + 0.5 * xres(raster)), "\n", file = thefile)
+	cat("POSITION_YMIN\t= ",  as.character(ymin(raster) + 0.5 * yres(raster)), "\n", file = thefile)
 
 	cat("CELLCOUNT_Y\t= ",  nrow(raster), "\n", file = thefile)
 	cat("CELLCOUNT_X\t= ",  ncol(raster), "\n", file = thefile)

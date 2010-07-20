@@ -31,13 +31,40 @@ dataType <- function(x) {
 
 
 dataContent <- function(object) {
-	return(object@data@content)
+#	return(object@data@content)
+	if (object@data@inmemory) {
+		return('all')
+	} else {
+		return('nodata')
+	}
 }
 
-dataIndices <- function(object) {
-	return(object@data@indices)
+..dataIndices <- function(object) {
+#	return(object@data@indices)
 }
 
-dataSource <- function(object) {
-	return(object@data@source)
+.dataSource <- function(object) {
+#	return(object@data@source)
+	if (object@data@fromdisk) {
+		return('disk')
+	} else {
+		return('ram')
+	}
 }
+
+fromDisk <- function(object) {
+	if (inherits( object, 'RasterStack' )) {
+		return( all( sapply( object@layers, function(x) x@data@fromdisk )))
+	} else {
+		return( object@data@fromdisk )
+	}
+}
+	
+inMemory <- function(object) {
+	if (inherits( object, 'RasterStack' )) {
+		return( all( sapply( object@layers, function(x) x@data@inmemory )))
+	} else {
+		return( object@data@inmemory )
+	}
+}
+

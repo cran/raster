@@ -35,7 +35,7 @@ focalFilter <- function(raster, filter, fun=sum, filename="", ...) {
 	ngbdata <- matrix(NA, nrow=0, ncol=ncol(ngbgrid))
 # add all rows needed for first ngb, minus 1 that will be read in first loop	
 	for (r in 1:limrow) {
-		if (dataContent(raster)=='all') {
+		if (inMemory(raster) ) {
 			rowdata <- getValues(raster, r)
 		} else {	
 			rowdata <- getValues(raster, r)
@@ -63,7 +63,7 @@ focalFilter <- function(raster, filter, fun=sum, filename="", ...) {
 	for (r in 1:nrow(ngbgrid)) {		
 		rr <- r + limrow
 		if (rr <= nrow(ngbgrid)) {
-			if (dataContent(raster)=='all') {
+			if (inMemory(raster) ) {
 				rowdata <- getValues(raster, rr)
 			} else {	
 				rowdata <- getValues(raster, rr)

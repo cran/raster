@@ -36,9 +36,11 @@ function(object, values, layer=-1) {
 
 	if (length(values) == ncell(object)) { 
 		object@data@values <- values
-		object@data@content <- 'all'
-		object@data@source <- 'ram'
-		object@data@indices <- c(1, ncell(object))
+
+		object@data@inmemory <- TRUE
+		object@data@fromdisk <- FALSE
+
+#		object@data@indices <- c(1, ncell(object))
 		object <- setMinMax(object)
 		return(object)
 		
@@ -79,8 +81,9 @@ setMethod('setValues', signature(object='RasterBrick'),
 		}
 		if (nrow(values) == ncell(object)) {
 			object@data@nlayers <- ncol(values)
-			object@data@content <- 'all'
-			object@data@indices <- c(1, ncell(object))
+			object@data@inmemory <- TRUE
+			
+#			object@data@indices <- c(1, ncell(object))
 			object@data@values <- values
 			object <- setMinMax(object)
 			
@@ -111,7 +114,7 @@ setMethod('setValues', signature(object='RasterBrick'),
 		if (layer > nlayers(object)) {stop('layer number too high')}
 		
 		if (length(values) == ncell(object)) { 
-			if (dataContent(object) != 'all') { 
+			if ( ! inMemory(object) ) { 
 				atry <- try(object <- readAll(object), silent=T)
 				if (class(atry) == "try-error") {
 					stop("you can only setValues for a single layer if all values are in memory. But values could not be loaded")				

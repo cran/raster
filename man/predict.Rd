@@ -24,12 +24,13 @@ predict(object, ...)
 \section{Methods}{
 \describe{
  
-\code{predict(object, model, filename='', ext=NULL, const=NULL, index=1, se.fit=FALSE, na.rm=TRUE, ...)}
+\code{predict(object, model, filename='', fun=predict, ext=NULL, const=NULL, index=1, se.fit=FALSE, na.rm=TRUE, ...)}
   
 \tabular{rll}{  
   \tab  \code{object} \tab a Raster* object. Typcially a multi-layer type (RasterStack or RasterBrick) \cr
   \tab  \code{model}  \tab A fitted model of any class that has a 'predict' method. E.g. glm, gam, or randomForest \cr
   \tab  \code{filename}  \tab Output filename for a new raster; if NA the result is not written to a file but returned with the RasterLayer object, in the data slot \cr
+  \tab  \code{fun} \tab Function. Default value is 'predict', but can be replaced with e.g. predict.se (depending on the type of model)\cr
   \tab  \code{ext} \tab An Extent object to limit the prediction to a sub-region of \code{x} \cr
   \tab  \code{const}  \tab data.frame. Can be used to add a constant for which there is no Raster object for model predictions. Particulalry useful if the constant is a character-like factor value for which it is currently not possible to make a RasterLayer \cr
   \tab  \code{index}  \tab Integer. To select the column if predict.'model' returns a matrix with multiple columns \cr

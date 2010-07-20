@@ -9,16 +9,17 @@ Take a random sample from a range of Integer values between 1 and n. Its purpose
 }
 
 \usage{
-sampleInt(n, size)
+sampleInt(n, size, replace=FALSE)
 }
 
 \arguments{
-  \item{n}{ a non-negative integer, the number of items to choose from }
-  \item{size}{positive integer giving the number of items to choose.}  
-}
+  \item{n}{a poistive number (integer); the number of items to choose from }
+  \item{size}{a non-negative integer; the number of items to choose.}  
+  \item{replace}{logical. Should sampling be with replacement?}
+ }
 
 
-\value{vector of numeric (representing integer numbers)}
+\value{vector of integer numbers}
 
 \author{Robert J. Hijmans}
 

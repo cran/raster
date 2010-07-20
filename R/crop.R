@@ -44,7 +44,7 @@ function(x, y, filename='', datatype=dataType(x), ...) {
 	}
 	outRaster <- setExtent(outRaster, e, keepres=TRUE)
 	
-	if (dataContent(x) != 'all' & dataSource(x) != 'disk') {
+	if (! inMemory(x)  &  ! fromDisk(x) ) {
 		return(outRaster)
 	}
 	
