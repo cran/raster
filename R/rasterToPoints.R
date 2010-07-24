@@ -16,7 +16,7 @@ rasterToPoints <- function(x, fun=NULL, spatial=FALSE, progress='') {
 	crs = projection(x, asText=FALSE)
 	
 	if (class(x) != 'RasterStack' ) {
-		if ( dataSource(x) == 'ram' & dataContent(x) != 'all') {
+		if ( ! fromDisk(x) & ! inMemory(x) ) {
 			if (spatial) {
 				return(SpatialPoints(coords=xyFromCell(x, 1:ncell(x)), proj4string=crs) )
 			} else {

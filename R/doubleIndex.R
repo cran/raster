@@ -11,13 +11,13 @@ function(x,i,j,...,drop=TRUE) {
 		i <- as.logical( getValues(i) ) 
 	}
 
-	if (dataContent(x) != 'all') {
-		if (dataSource(x) != 'disk') {
+	if (! inMemory(x) ) {
+		if ( ! fromDisk(x) ) {
 			stop('no data associated with this RasterLayer object')
 		}
 	}
 
-	if (dataContent(x) == 'all') {
+	if ( inMemory(x) ) {
 		m <- matrix(x@data@values, nrow(x), ncol(x), byrow=TRUE)
 		rm(x)
 		return(m[i=i, j=j, drop=drop])

@@ -20,8 +20,8 @@
 	}
 
 
-	if ( dataContent(object) != 'all') { 
-		if ( dataSource(object) != 'disk') {
+	if ( ! inMemory(object) ) { 
+		if (  !  fromDisk(object) ) {
 			stop('no values associated with this RasterLayer')
 		} 
 	}

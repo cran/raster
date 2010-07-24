@@ -102,9 +102,10 @@
 
 .stopWriteCDF <-  function(x) {
 	nc <- open.nc(x@file@name, write=TRUE)
+	on.exit( close.nc(nc) )
+	
 	att.put.nc(nc, 'value', 'min', 'NC_DOUBLE', as.numeric(x@data@min))
 	att.put.nc(nc, 'value', 'max', 'NC_DOUBLE', as.numeric(x@data@max))
-	close.nc(nc)
 
 	if (inherits(x, 'RasterBrick')) {
 		r <- brick(x@file@name, zvar='value')

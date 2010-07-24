@@ -34,9 +34,7 @@ function(x, y, ..., fun, na.rm=TRUE, tolerance=0.05, filename="", format, overwr
 	outraster <- raster(rasters[[1]])
 	outraster <- setExtent(outraster, e, keepres=TRUE, snap=FALSE)
 
-	ds = sapply(rasters, dataSource)
-	dc = sapply(rasters, dataContent)
-	hasvalues = ds == 'disk' | dc == 'all'
+	hasvalues = sapply(rasters, fromDisk) | sapply(rasters, inMemory)
 	if (! all(hasvalues)) {
 		rasters = rasters[hasvalues]
 		if (length(rasters) == 0 ) {

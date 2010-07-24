@@ -14,13 +14,14 @@ if (!isGeneric('setMinMax')) {
 setMethod('setMinMax', signature(x='RasterLayer'), 
 function(x) {
 	clear <- FALSE
-	if (dataContent(x) != 'all') {
-		if (dataSource(x) == 'ram') {
+	inMem <- inMemory(x)
+	if (! inMem ) {
+		if (! fromDisk(x)) {
 			stop('no, or not enough, values associated with this Layer')
 		}
 	}
 	
-	if (dataContent(x)=='all' ) {
+	if ( inMem ) {
 		vals <- na.omit(x@data@values) 
 		if (length(vals) > 0) {
 			x@data@min <- min(vals)
@@ -57,9 +58,11 @@ function(x) {
 setMethod('setMinMax', signature(x='RasterBrick'), 
 function(x) {
 	clear <- FALSE
-	if (dataContent(x) != 'all') {
-		if (dataSource(x) == 'ram') {
-			stop('no values associated with this Layer')
+	inMem <- inMemory(x)
+
+	if ( ! inMem ) {
+		if (! fromDisk(x) ) {
+			stop('no values associated with this RasterBrick')
 		}
 		if (canProcessInMemory(x, (2 + nlayers(x)))) {
 			x <- readAll(x)
@@ -67,7 +70,7 @@ function(x) {
 		}
 	}
 	
-	if (dataContent(x)=='all') {
+	if ( inMem ) {
 		rge <- apply(x@data@values, 2, FUN=function(x){range(x, na.rm=TRUE)})
 		x@data@min <- rge[1,]
 		x@data@max <- rge[2,]

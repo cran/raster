@@ -14,14 +14,14 @@ if (!isGeneric("sampleRandom")) {
 setMethod('sampleRandom', signature(x='Raster'), 
 
 function(x, size, na.rm=TRUE, ...) {
-	if (dataContent(x) == 'all') {
+	if ( inMemory(x) ) {
 		values <- getValues(x)
 		if (na.rm) { values <- na.omit(values) }
 		if (length(values) > size) {
 			s = sampleInt(length(values), size)
 			values <- values[s]
 		}
-	} else if (dataSource(x) == 'disk') {
+	} else if ( fromDisk(x) ) {
 		if (ncell(x) <= size) {
 			values <- cbind(1:ncell(x), getValues(x))
 			if (na.rm) { values <- na.omit(values) }

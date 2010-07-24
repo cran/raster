@@ -12,11 +12,11 @@ if (!isGeneric("values")) {
 setMethod('values', signature(x='RasterLayer'), 
 function(x, format='vector', names=FALSE, ...) {
 
-	if (dataContent(x)=="nodata") {
+	if (! inMemory(x) ) {
 		stop("No data in memory. Use getValues()") 
 	}
 
-	if (dataContent(x) != 'all') {
+	if (! inMemory(x) ) {
 		warning('"values" is depracated for Raster* object that do not have all values in memory; use getValues instead')
 	}
 	
@@ -39,7 +39,7 @@ function(x, names=FALSE, ...) {
 	warning('"values" is depracated; use getValues instead')
 
 
-	if (dataContent(x)=="nodata") {
+	if (! inMemory(x) ) {
 		stop("No data in memory. Use getValues()") 
 	}
 	if (names) {

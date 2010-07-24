@@ -46,8 +46,8 @@ function(x, i) {
 	i <- i[i < (nlayers(x)+1)]
 	if (length(i) > 0) {
 
-		if (dataSource(x) == 'disk') {
-			if (dataContent(x) != 'all') {
+		if ( fromDisk(x) ) {
+			if (! inMemory(x) ) {
 				x = try(readAll(x))
 				if (class(x) == 'try-error') {
 					stop('cannot yet drop a layer from a brick that cannot be loaded into memory')

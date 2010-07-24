@@ -39,7 +39,7 @@
 		}
 	}
 	for (i in rev(seq(along=x))) {
-		if (dataContent(x[[i]]) != 'all'  &  dataSource(x[[i]]) == 'ram' ) {
+		if (! inMemory(x[[i]])  &  ! fromDisk(x[[i]]) ) {
 			if (length(x) > 1 ) {
 				x <- x[[-i]] 
 				warning('RasterLayer with no data ignored')

@@ -20,8 +20,8 @@ function(x, filename, format, ...) {
 	filename <- .getExtension(filename, filetype)
 	
 
-	if (dataContent(x) != 'all') {
-		if (dataSource(x) == 'disk') {
+	if (! inMemory(x) ) {
+		if ( fromDisk(x) ) {
 			return( .saveAsRaster(x, filename, format=filetype, ...) )
 		} else {
 			stop('No usable data available for writing')
@@ -49,9 +49,8 @@ function(x, filename, format='raster', bandorder='BIL', ...) {
 	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)
 	
-	dc <- dataContent(x)
-	if (dc != 'all') {
-		if (dataSource(x) == 'disk') {
+	if (! inMemory(x) ) {
+		if ( fromDisk(x) ) {
 			return( .saveAsBrick(x, filename, bandorder=bandorder, format=filetype, ...) )
 		} else {
 			stop('No usable data available for writing.')
@@ -75,7 +74,11 @@ function(x, filename, bandorder='BIL', format, ...) {
 	filename <- trim(filename)
 	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)
-
+	if (filetype=='CDF') {
+		# not memory safe
+		x <- brick(x)
+		return( .rasterSaveAsNetCDF(x, filename=filename, ...) )
+	}
 	b <- brick(x, values=FALSE)
 	b <- writeStart(b, filename=filename, bandorder=bandorder, format=filetype, ...)
 	tr <- blockSize(b)

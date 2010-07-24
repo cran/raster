@@ -13,7 +13,7 @@
 		} else if ('Longitude' %in% vars) { xvar <- 'Longitude' 
 		} else { stop('Cannot find an obvious xvar in file. Select one from:\n', paste(vars, collapse=", "))  
 		}
-	} else if (!(xvar %in% vars)) { stop( paste('Cannot find obvious "xvar" in file. Select one from:\n', paste(vars, collapse=", "))) }	
+	} else if (!(xvar %in% vars)) { stop( paste(xvar, ' does not exist in the file. Select one from:\n', paste(vars, collapse=", "))) }	
 	return(xvar)
 }
 
@@ -26,14 +26,14 @@
 		} else if ('Latitude' %in% vars) { yvar <- 'Latitude' 
 		} else { stop('Cannot find an obvious yvar in file. Select one from:\n', paste(vars, collapse=", "))  
 		}
-	} else if (!(yvar %in% vars)) { stop( paste('Cannot find obvious "yvar" in file. Select one from:\n', paste(vars, collapse=", "))) }	
+	} else if (!(yvar %in% vars)) { stop( paste(yvar, ' does not exist in the file. Select one from:\n', paste(vars, collapse=", "))) }	
 	return(yvar)
 }
 
 
 .getVarname <- function(varname, vars) {
 	if (varname == '') { varname <- 'value' }
-	if (!(varname %in% vars)) { stop ( 'Cannot find an obvious "varname" in file. Select one from:\n', paste(vars, collapse=", ") ) }
+	if (!(varname %in% vars)) { stop ( varname,  ' does not exist in the file. Select one from:\n', paste(vars, collapse=", ") ) }
 	return(varname)
 }
 
@@ -42,6 +42,8 @@
 
 	if (!require(RNetCDF)) { stop('You need to install the RNetCDF package first') }
 	nc <- open.nc(filename)
+	on.exit( close.nc(nc) )
+	
 	conv <- 'CF'
 	natt <- file.inq.nc(nc)$ngatts
 	if (natt > 0) {
@@ -169,7 +171,7 @@
 	if (! is.na(missing_value)) {
 		r@file@nodatavalue <- missing_value
 	}
-	r@data@source <- 'disk'
+	r@data@fromdisk <- TRUE
 	
 	if (dims == 2) {
 		nbands = 1
@@ -199,7 +201,6 @@
 		} 
 		r@data@nlayers <- r@file@nbands
 	}
-	close.nc(nc)
 	return(r)
 }
 

@@ -29,8 +29,8 @@ setReplaceMethod("[", c("RasterLayer", "ANY", "missing"),
 		}
 
 
-		if (dataContent(x) != 'all') {
-			if (dataSource(x) == 'disk') {
+		if (! inMemory(x) ) {
+			if ( fromDisk(x) ) {
 				x <- try( readAll(x) )
 			} else {
 				x <- try (setValues(x, rep(NA, times=ncell(x))) )
@@ -49,7 +49,8 @@ setReplaceMethod("[", c("RasterLayer", "ANY", "missing"),
 		}
 
 		x@data@values[i] <- value
-		x@data@source <- 'ram'
+		x@data@fromdisk <- FALSE
+		
 		filename(x) <- ""
 		x <- setMinMax(x)
 		return(x)

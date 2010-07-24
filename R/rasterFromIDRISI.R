@@ -71,7 +71,8 @@
 		stop(paste('unsupported IDRISI data type:', inidatatype))
 	}
 	
-	x@data@source <- 'disk'
+	x@data@fromdisk <- TRUE
+
 	x@file@driver <- 'IDRISI'
     return(x)
 }

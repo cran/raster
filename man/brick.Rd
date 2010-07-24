@@ -5,7 +5,7 @@
 \alias{brick}
 
 \alias{brick,character-method}
-\alias{brick,Raster-method}
+\alias{brick,RasterLayer-method}
 \alias{brick,RasterStack-method}
 \alias{brick,RasterBrick-method}
 \alias{brick,Extent-method}

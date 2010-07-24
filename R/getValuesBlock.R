@@ -31,7 +31,7 @@ setMethod('getValuesBlock', signature(x='RasterStack', row='numeric'),
 setMethod('getValuesBlock', signature(x='RasterBrick', row='numeric'), 
 	function(x, row, nrows=1, col=1, ncols=(ncol(x)-col+1)) {
 	
-		if (dataContent(x) == 'all'){
+		if ( inMemory(x) ){
 			row <- as.integer(round(row))
 			nrows <- as.integer(round(nrows))
 			lastrow <- row + nrows - 1
@@ -50,7 +50,7 @@ setMethod('getValuesBlock', signature(x='RasterBrick', row='numeric'),
 				cells <- cellFromRowColCombine(x, row:lastrow, col:lastcol)
 				res <- x@data@values[cells, ]
 			}
-		} else {
+		} else if ( fromDisk(x) ) {
 			for (i in 1:nlayers(x)) {
 				# to do: need a more efficient function here that only goes to disk once.
 				if (i==1) {
@@ -61,12 +61,14 @@ setMethod('getValuesBlock', signature(x='RasterBrick', row='numeric'),
 					res[,i] <- .readRasterLayerValues(raster(x, i), row, nrows, col, ncols)
 				}
 			}
+		} else {
+			res <- ( rep(NA, nrows * ncols) )
 		}
-		colnames(res) = layerNames(x)
-		res
+		
+	colnames(res) <- layerNames(x)
+	return(res)
 	}
 )
-
 
 
 
@@ -80,21 +82,20 @@ setMethod('getValuesBlock', signature(x='RasterLayer', row='numeric'),
 		lastcol <- col + round(ncols[1]) - 1
 		ncols <- lastcol - col + 1
 		
-		readrow <- FALSE
 		startcell <- cellFromRowCol(x, row, col)
 		lastcell <- cellFromRowCol(x, lastrow, lastcol)
 
 		if (!(validRow(x, row))) {	stop(paste(row, 'is not a valid rownumber')) }
 	
-		if (dataContent(x) == 'nodata') {
+		if (!  inMemory(x) ) {
 			
-			if (dataSource(x) == 'ram') {
+			if (! fromDisk(x)) {
 				return(rep(NA, times=(lastcell-startcell+1)))
 			}
 			
-			readrow <- TRUE			
+			res <- .readRasterLayerValues(x, row, nrows, col, ncols)
 			
-		} else if (dataContent(x) == 'all') {
+		} else  {
 		
 			if (col==1 & ncols==ncol(x)) {
 				res <- x@data@values[startcell:lastcell]
@@ -102,15 +103,9 @@ setMethod('getValuesBlock', signature(x='RasterLayer', row='numeric'),
 				cells <- cellFromRowColCombine(x, row:lastrow, col:lastcol)
 				res <- x@data@values[cells]
 			}
-
 			
-		} else {
-			stop('something is wrong with the RasterLayer dataContent')
-		}
+		} 
 	
-		if (readrow) {	
-			res <- .readRasterLayerValues(x, row, nrows, col, ncols)
-		}
 		if (format=='matrix') {
 			res = matrix(res, nrow=nrows , ncol=ncols )
 			colnames(res) <- col:lastcol

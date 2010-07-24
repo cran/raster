@@ -13,9 +13,9 @@ function(x, format='') {
 	
 	xx = c(x@ncols, x@nrows)
 	
-	if (dataContent(x) == "all") {
+	if ( inMemory(x) ) {
 		x <- x@data@values
-	} else if (dataSource(x) == 'disk') {
+	} else if ( fromDisk(x) ) {
 		x <- .readRasterLayerValues(x, 1, x@nrows)
 	} else {
 		x <- rep(NA, ncell(x))
@@ -32,8 +32,8 @@ function(x, format='') {
 
 setMethod("getValues", signature(x='RasterBrick', row='missing', nrows='missing'), 
 function(x) {
-	if (dataContent(x) != "all") {
-		if (dataSource(x) == 'disk') {
+	if (! inMemory(x) ) {
+		if ( fromDisk(x) ) {
 			x <- readAll(x)
 		} else {
 			stop('no values available')

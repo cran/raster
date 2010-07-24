@@ -19,8 +19,12 @@
 		if (ln=="") { 
 			ln <- prefix
 		} 
-		x@layernames <- ln
-		return(x)
+		if (returnNames) {
+			return(ln)
+		} else {
+			x@layernames <- ln
+			return(x)
+		}
 	}
 	
 	loops <- seq(along=ln)

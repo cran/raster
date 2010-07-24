@@ -6,7 +6,7 @@
 
 .hasValues <- function(x) {
 	if (class(x) == 'BasicRaster') { return(FALSE) }
-	if (dataSource(x) != 'disk' & dataContent(x) != 'all') {
+	if ( ! fromDisk(x)  & ! inMemory(x) ) {
 		return(FALSE)
 	} else {
 		return(TRUE)

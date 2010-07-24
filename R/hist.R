@@ -59,9 +59,9 @@ setMethod('hist', signature(x='RasterStackBrick'),
 
 setMethod('hist', signature(x='RasterLayer'), 
 	function(x, layer=1, maxpixels=100000, main=NA,  plot=TRUE, ...){
-		if (dataContent(x) == 'all') {
+		if ( inMemory(x) ) {
 			values <- getValues(x)
-		} else if (dataSource(x) == 'disk') {
+		} else if ( fromDisk(x) ) {
 			
 			if (ncell(x) <= maxpixels) {
 				values <- na.omit(getValues(x))

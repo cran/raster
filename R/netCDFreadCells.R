@@ -38,6 +38,8 @@
 	time = x@data@band
 	
 	nc <- open.nc(x@file@name)
+	on.exit( close.nc(nc) )
+	
 	count = c(x@ncols, 1, 1)
 	for (i in 1:length(rows)) {
 		start = c(1, readrows[i], time)
@@ -45,7 +47,6 @@
 		thisrow <- subset(colrow, colrow[,2] == rows[i])
 		colrow[colrow[,2]==rows[i], 3] <- values[thisrow[,1]]
 	}	
-	close.nc(nc)	
 	
 	colrow <- colrow[,3]
 	if (!is.na(x@file@nodatavalue)) { 
@@ -79,13 +80,14 @@
 	if ( x@file@toptobottom ) { rows <- x@nrows - rows + 1 }
 		
 	nc <- open.nc(x@file@name)
+	on.exit( close.nc(nc) )
+	
 	count = c(1, 1, nlayers)
 	res <- matrix(nrow=length(cells), ncol=nlayers)
 	for (i in 1:length(cells)) {
 		start = c(cols[i], rows[i], layer)
 		res[i,] <- var.get.nc(nc, variable=zvar, start=start, count=count)
 	}	
-	close.nc(nc)	
 
 	if (!is.na(x@file@nodatavalue)) { 
 		res[res==x@file@nodatavalue] <- NA

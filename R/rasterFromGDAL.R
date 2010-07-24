@@ -52,7 +52,8 @@
 	
 	x@file@driver <- 'gdal' 
 	projection(x) <- attr(gdalinfo, "projection")
-	x@data@source <- 'disk'
+	x@data@fromdisk <- TRUE
+	
 	
 	datatype <- "FLT4S"
 	minv = 	rep(Inf, nlayers(x))

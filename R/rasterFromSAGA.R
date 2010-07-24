@@ -69,7 +69,8 @@
 	} else  {
 		x@file@byteorder <- 'little'
 	}
-	x@data@source <- 'disk'
+	x@data@fromdisk <- TRUE
+	
 	x@file@driver <- 'SAGA'
     return(x)
 }

@@ -15,7 +15,7 @@
 	
 	inram <- TRUE
 	for (i in 1:length(x)) {
-		if (dataContent(x[[i]]) != 'all') {
+		if (! inMemory(x[[i]]) ) {
 			inram <- FALSE
 		} 
 	}	

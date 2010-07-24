@@ -6,7 +6,7 @@
 setMethod ('print' , 'Raster', 
 	function(x, ...) {
 		if (x@file@driver == 'netcdf') {
-			nc = open.nc(x@file@name)
+			nc <- open.nc(x@file@name)
 			print.nc(nc)
 			close.nc(nc)
 		}
@@ -63,7 +63,7 @@ setMethod ('show' , 'RasterLayer',
 				cat('min value   :' , minValue(object), '\n')
 				cat('max value   :' , maxValue(object), '\n')
 			} else { 
-				if (object@data@source == 'disk')  {
+				if (object@data@fromdisk) {
 					cat('min value   : ? \n')
 					cat('max value   : ? \n')
 				} else {
@@ -130,12 +130,12 @@ setMethod ('show' , 'RasterStack',
 			cat('min value   :', paste(minv, collapse=' '), '\n')
 			cat('max value   :', paste(maxv, collapse=' '), '\n')
 		}
-		cat ('xmin        :' , xmin(object), '\n')
-		cat ('xmax        :' , xmax(object), '\n')
-		cat ('ymin        :' , ymin(object), '\n')
-		cat ('ymax        :' , ymax(object), '\n')
-		cat ('xres        :' , xres(object), '\n')
-		cat ('yres        :' , yres(object), '\n')
+		cat ('xmin        :' , as.character(xmin(object)), '\n')
+		cat ('xmax        :' , as.character(xmax(object)), '\n')
+		cat ('ymin        :' , as.character(ymin(object)), '\n')
+		cat ('ymax        :' , as.character(ymax(object)), '\n')
+		cat ('xres        :' , as.character(xres(object)), '\n')
+		cat ('yres        :' , as.character(yres(object)), '\n')
 		cat ('\n')
 	}
 )

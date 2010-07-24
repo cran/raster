@@ -168,7 +168,8 @@
 		x@file@byteorder <- .Platform$endian
 	}
 	
-	x@data@source <- 'disk'
+	x@data@fromdisk <- TRUE
+	
 	x@file@driver <- bandorder
 	x@file@nodatavalue <- nodataval
 

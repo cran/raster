@@ -62,21 +62,21 @@ RasterLayer, RasterStack, and RasterBrick objects are, as a group, referred to a
 
 
 
-\section{II. Changing the spatial extent and/or resolution of RasterLayer objects}{
+\section{II. Changing the spatial extent and/or resolution of Raster* objects}{
 
   \tabular{ll}{
-    \code{\link{merge}} \tab Combine RasterLayer objects with different extents (but same origin and resolution) \cr
+    \code{\link{merge}} \tab Combine Raster* objects with different extents (but same origin and resolution) \cr
     \code{\link{mosaic}} \tab Combine RasterLayer objects with different extents; using a function to set values for overlapping areas \cr
-    \code{\link{crop}} \tab Select a geographic subset of a RasterLayer \cr
-    \code{\link{expand}} \tab Enlarge a RasterLayer  \cr
-    \code{\link{trim}} \tab Trim a RasterLayer by removing exterior rows and/or columns that only have NA values \cr
+    \code{\link{crop}} \tab Select a geographic subset of a Raster* object \cr
+    \code{\link{expand}} \tab Enlarge a Raster* object \cr
+    \code{\link{trim}} \tab Trim a Raster* object by removing exterior rows and/or columns that only have NA values \cr
     \code{\link{aggregate}} \tab Combine cells to create larger cells \cr
     \code{\link{disaggregate}} \tab Subdivide cells \cr
-    \code{\link{shift}} \tab Shift the location of RasterLayer \cr
+    \code{\link{shift}} \tab Move the location of Raster \cr
     \code{\link{flip}} \tab  Flip values horizontally or vertically \cr
     \code{\link{rotate}} \tab Rotate values (for lon/lat data) \cr
-    \code{\link{resample}} \tab Warp values to a RasterLayer with a different origin or resolution that can not easily be (dis)aggregated to \cr	
-    \code{\link{projectRaster}} \tab Warp values to a RasterLayer with a different coordinate reference system  \cr	
+    \code{\link{resample}} \tab Warp values to a Raster* object with a different origin or resolution \cr	
+    \code{\link{projectRaster}} \tab Warp values to a Raster* object with a different coordinate reference system  \cr	
   }
 }
 
@@ -267,8 +267,8 @@ Cell numbers start at 1 in the upper-left corner. They increase within rows, fro
   \tabular{ll}{
     \code{\link{readAll}} \tab Read all values into memory \cr
     \code{\link{values}} \tab Returns the values read with read* \cr
-    \code{\link{dataContent}} \tab Are the cell values in memory? \cr
-    \code{\link{dataSource}} \tab What is the source of the values (disk or RAM)? \cr	
+    \code{\link{inMemory}} \tab Are the cell values in memory? \cr
+    \code{\link{fromDisk}} \tab Are the cell values read from a file? \cr	
   }
   Rather then reading data & using values, it is advisable to use \code{\link{getValues}*} functions (see above)
 }
@@ -279,7 +279,6 @@ Cell numbers start at 1 in the upper-left corner. They increase within rows, fro
 Basic writing
   \tabular{ll}{
     \code{\link{setValues}} \tab Put new values in a Raster* object \cr
-    \code{\link{dataContent}} \tab Are the cell values in memory? \cr
     \code{\link{writeRaster}} \tab Write all values of Raster* object to disk \cr
     \code{\link{KML}} \tab Save raster as KML file \cr	
   }

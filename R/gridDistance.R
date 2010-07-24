@@ -25,7 +25,7 @@ gridDistance <- function(object, originValue, omitValue, filename="", ...)
 	if (missing(omitValue)) stop("you must supply an 'omitValue' argument")
 	
 	
-	if ((dataContent(object) != 'all') & (dataSource(object) != 'disk')) {
+	if ((! inMemory(object) ) & ( !  fromDisk(object) )) {
 			stop('cannot compute distance on a RasterLayer with no data')
 	}
 	lonlat <- .couldBeLonLat(object)
@@ -37,7 +37,7 @@ gridDistance <- function(object, originValue, omitValue, filename="", ...)
 		}
 	}
 	
-	if (dataContent(object) == 'all') nr=4 else nr=5
+	if ( inMemory(object) ) nr=4 else nr=5
 	
 	if(canProcessInMemory(object, n=nr)) {
 		outRaster <- raster(object)

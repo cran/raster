@@ -30,7 +30,7 @@ setMethod("xyValues", signature(object='Raster', xy='vector'),
 		if (length(xy) == 2) {
 			callGeneric(object, matrix(xy, ncol=2), ...)
 		} else {
-			stop('Provide a two-column matrix or data.frame, or a vector of two numbers as xy coordinates.')
+			stop('xy coordinates should be a two-column matrix or data.frame, or a vector of two numbers.')
 		}
 	} )
 
@@ -43,16 +43,7 @@ setMethod("xyValues", signature(object='RasterLayer', xy='matrix'),
 		}
 
 		if (! is.null(buffer)) {
-			buffer <- abs(buffer)
-			if (is.atomic(buffer)) {
-				if (buffer!=0)  {
-					return( .xyvBuf(object, xy, buffer, fun, na.rm=na.rm) )
-				}
-			} else {
-				if (min(buffer)<0 | max(buffer)>0) {
-					.xyvBuf(object, xy, buffer, fun, na.rm=na.rm)
-				}
-			}
+			return( .xyvBuf(object, xy, buffer, fun, na.rm=na.rm) )
 		}
 
 		if (method=='bilinear') {
@@ -67,9 +58,18 @@ setMethod("xyValues", signature(object='RasterLayer', xy='matrix'),
 )	
 
 
-
-setMethod("xyValues", signature(object='RasterStackBrick', xy='matrix'), 
+setMethod("xyValues", signature(object='RasterStack', xy='matrix'), 
 	function(object, xy, method='simple', buffer=NULL, fun=NULL, na.rm=TRUE, ...) { 
+		.xyvStackBrick(object, xy, method, buffer, fun, na.rm, ...)
+} )
+
+setMethod("xyValues", signature(object='RasterBrick', xy='matrix'), 
+	function(object, xy, method='simple', buffer=NULL, fun=NULL, na.rm=TRUE, ...) { 
+		.xyvStackBrick(object, xy, method, buffer, fun, na.rm, ...)
+} )
+
+
+.xyvStackBrick <- function(object, xy, method='simple', buffer=NULL, fun=NULL, na.rm=TRUE, ...) { 
 
 		dots <- list(...)
 		layer <- dots$layer
@@ -121,5 +121,5 @@ setMethod("xyValues", signature(object='RasterStackBrick', xy='matrix'),
 			stop('invalid method argument. Should be simple or bilinear.')
 		}
 	}
-)
+
 

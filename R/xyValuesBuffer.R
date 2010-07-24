@@ -26,14 +26,17 @@
 		bufx1 <- buffer / pointDistance(cbind(0, ymx), cbind(1, ymx), 'GreatCircle')
 		bufx2 <- buffer / pointDistance(cbind(0, ymn), cbind(1, ymn), 'GreatCircle')
 		bufx <- pmax(bufx1, bufx2)
-		cn <- colFromX(obj, xy[,1]-bufx)
-		cx <- colFromX(obj, xy[,1]+bufx)
-		cn[is.na(cn)] <- 1
-		cx[is.na(cx)] <- ncol(obj)
-		rn <- rowFromY(obj, xy[,2]+bufy)
-		rx <- rowFromY(obj, xy[,2]-bufy)
-		rn[is.na(rn) & !is.na(rx)] <- 1
-		rx[is.na(rx) & !is.na(rn)] <- nrow(obj)
+
+		cn <- colFromX(obj, xy[,1]-buffer)
+		cx <- colFromX(obj, xy[,1]+buffer)
+		cn[is.na(cn) &  (xy[,1]-buffer <= xmin(obj) & xy[,1]+buffer >= xmin(obj))] <- 1
+		cx[is.na(cx) &  (xy[,1]-buffer <= xmax(obj) & xy[,1]+buffer > xmax(obj))] <- ncol(obj)
+		rn <- rowFromY(obj, xy[,2]+buffer)
+		rx <- rowFromY(obj, xy[,2]-buffer)
+		rn[is.na(rn) &  (xy[,2]-buffer <= ymax(obj) & xy[,2]+buffer >= ymax(obj))] <- 1
+		rx[is.na(rx) &  (xy[,2]-buffer <= ymin(obj) & xy[,2]+buffer >= ymin(obj))] <- nrow(obj)
+
+		
 		for (i in 1:nrow(xy)) {
 			s <- sum(rn[i], rx[i], cn[i], cx[i])
 			if (is.na(s)) {
@@ -54,12 +57,14 @@
 
 		cn <- colFromX(obj, xy[,1]-buffer)
 		cx <- colFromX(obj, xy[,1]+buffer)
-		cn[is.na(cn) & !is.na(cx)] <- 1
-		cx[is.na(cx) & !is.na(cn)] <- ncol(obj)
+		cn[is.na(cn) &  (xy[,1]-buffer <= xmin(obj) & xy[,1]+buffer >= xmin(obj))] <- 1
+		cx[is.na(cx) &  (xy[,1]-buffer <= xmax(obj) & xy[,1]+buffer > xmax(obj))] <- ncol(obj)
 		rn <- rowFromY(obj, xy[,2]+buffer)
 		rx <- rowFromY(obj, xy[,2]-buffer)
-		rn[is.na(rn) & !is.na(rx)] <- 1
-		rx[is.na(rx) & !is.na(rn)] <- nrow(obj)
+		rn[is.na(rn) &  (xy[,2]-buffer <= ymax(obj) & xy[,2]+buffer >= ymax(obj))] <- 1
+		rx[is.na(rx) &  (xy[,2]-buffer <= ymin(obj) & xy[,2]+buffer >= ymin(obj))] <- nrow(obj)
+
+		
 		for (i in 1:nrow(xy)) {
 			s <- sum(rn[i], rx[i], cn[i], cx[i])
 			if (is.na(s)) {

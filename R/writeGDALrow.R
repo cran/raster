@@ -12,7 +12,9 @@
 	raster@file@nodatavalue <- temp[[2]]
 	
 	raster@file@driver <- 'gdal'
-	raster@data@source <- 'disk'		
+
+	raster@data@fromdisk <- TRUE
+	
 	raster@file@name <- filename
 	return(raster)
 }

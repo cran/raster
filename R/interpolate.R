@@ -7,7 +7,7 @@ if (!isGeneric("interpolate")) {
 
 setMethod('interpolate', signature(object='Raster'), 
 	
-	function(object, model, filename="", xyOnly=TRUE, ext=NULL, const=NULL, index=1, na.rm=TRUE, debug.level=1, ...) {
+	function(object, model, filename="", fun=predict, xyOnly=TRUE, ext=NULL, const=NULL, index=1, na.rm=TRUE, debug.level=1, ...) {
 		
 		predrast <- raster(object)
 				
@@ -58,8 +58,8 @@ setMethod('interpolate', signature(object='Raster'),
 					xyOnly <- TRUE 
 				}
 			} else {
-				if (dataSource(object) == 'ram') {
-					if (dataContent(object) != 'all') {
+				if ( !  fromDisk(object) ) {
+					if (! inMemory(object) ) {
 						warning('"object" has no data, xyOnly set to TRUE')
 						xyOnly <- TRUE 
 					}
@@ -146,7 +146,7 @@ setMethod('interpolate', signature(object='Raster'),
 				if (nrow(blockvals) == 0 ) {
 					predv <- napred
 				} else {
-					predv <- predict(model, blockvals, ...)	
+					predv <- fun(model, blockvals, ...)	
 				}
 
 				if (class(predv)[1] == 'list') {

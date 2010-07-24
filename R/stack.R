@@ -36,7 +36,10 @@ function(x, ..., bands=NULL, xvar='', yvar='', varname='') {
 
 
 setMethod("stack", signature(x='list'), 
-function(x, bands=NULL) {
+function(x, bands=NULL, ...) {
+	if (class(x) == 'data.frame') {
+		return(utils::stack(x, ...))
+	}
 	j <- 0
 	r <- list()
 	if (is.null(bands)) { bands = rep(-1, length(x)) }
@@ -79,11 +82,9 @@ function(x, bands=NULL) {
 setMethod("stack", signature(x='SpatialGridDataFrame'), 
 	function(x) {
 		stk <- new("RasterStack")
-		if (class(x)=='SpatialGridDataFrame') {
-			for (i in 1:ncol(x@data)) {
-				rs <- raster(x, i)
-				stk <- addLayer(stk, rs)
-			}
+		for (i in 1:ncol(x@data)) {
+			rs <- raster(x, i)
+			stk <- addLayer(stk, rs)
 		}
 		return(stk)
 	}

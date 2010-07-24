@@ -106,7 +106,7 @@ setMethod('raster', signature(x='RasterBrick'),
 		}
 		if (layer > 0) {
 			dindex <- max(1, min(nlayers(x), layer))
-			if (dataSource(x) == 'disk') {
+			if ( fromDisk(x) ) {
 				if (dindex != layer) { warning(paste("layer was changed to", dindex))}
 				if (x@file@driver == 'netcdf') {
 					r <- raster(x@file@name, xvar=x@data@xvar, yvar=x@data@yvar, varname=x@data@zvar, band=dindex)				
@@ -116,7 +116,7 @@ setMethod('raster', signature(x='RasterBrick'),
 				layerNames(r) <- layerNames(x)[dindex]
 			} else {
 				r <- raster(extent(x), nrows=nrow(x), ncols=ncol(x), crs=projection(x))	
-				if (dataContent(x) == 'all') {
+				if ( inMemory(x) ) {
 					if (dindex != layer) { warning(paste("layer was changed to", dindex))}
 					r <- setValues(r, getValues(x)[,dindex])
 				}
