@@ -18,16 +18,16 @@ options(keep.source = TRUE, width = 60)
 foo <- packageDescription("raster")
 @
 
-\title{The "raster" package (Version \Sexpr{foo$Version})}
+\title{Introduction to the 'raster' package (Version \Sexpr{foo$Version})}
 \author{Robert J. Hijmans}
 \maketitle
 
 
 \section{Introduction}
 
-This vignette describes the R package '\verb@raster@'. A raster is a spatial (geographic) data structure that divides an area into rectangles. Such a data structure is also referred to as a 'grid' and is often contrasted with 'vector' data (which represents points, lines, and polygons). The \verb@raster@ package has functions for reading, manipulating, and writing raster data. The package was developed (1) to provide general low-level raster data manipulation functions (e.g. read raster values by row) that can easily be used to develop higher level specific functions; (2) to provide 'high level' functions for raster data manipulation that are common in other spatial data analysis software (often referred to as 'GIS'); (3) to assure that all these functions work with very large raster datasets that are stored on disk and cannot be loaded into memory; and (4) to provide a raster algebra implementation. 
+This vignette describes the R package '\verb@raster@'. A raster is a spatial (geographic) data structure that divides an area into rectangles. Such a data structure is also referred to as a 'grid' and is often contrasted with 'vector' data (which represents points, lines, and polygons). The \verb@raster@ package has functions for reading, manipulating, and writing raster data. The package provides (1) general low-level raster data manipulation functions (e.g. read raster values by row), covert cell numbers into coordinates and back, that can easily be used to develop higher level specific functions; (2) 'high level' functions for raster data manipulation that are common in other spatial data analysis software (often referred to as 'GIS');  (3) to provide a raster algebra implementation. 
 
-The raster package can work with extremely large files because it does not load the contents of these files into memory. When a Raster object is created form a file, the object gathers some basic information, such as the number of rows and columns, and spatial extent. In computations with a Raster object, data will be read and processes in chunks. If no output filename specified, and the output raster is too large to keep in memory, the results are written to a temporary file. 
+A notable feature of the pakcage is that its functions can work with very large raster datasets that are stored on disk and cannot be loaded into memory. The raster package can work with extremely large files because it does not load all the contents of these files into memory when a Raster type object is created from a file. In stead, the object gathers some basic information, such as the number of rows and columns, and the spatial extent. In computations with a Raster object, data then will be read and processes in chunks. If no output filename specified, and the output raster is too large to keep in memory, the results are written to a temporary file. 
 
 The package is built around a number of 'S4' classes of which the RasterLayer, RasterBrick, and RasterStack classes are the most important. 
 

@@ -44,6 +44,12 @@
 			band <- 1 
 		}
 		x@data@band <- as.integer(band)
+		
+		gd <- GDAL.open(filename)
+		ct <- getColorTable( gd )
+		if (! is.null(ct)) { x@legend@colortable <- ct }
+		GDAL.close(gd)
+		
 	}
 
 	shortname <- gsub(" ", "_", ext(basename(filename), ""))

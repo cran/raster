@@ -33,10 +33,9 @@
 
 .getVarname <- function(varname, vars) {
 	if (varname == '') { varname <- 'value' }
-	if (!(varname %in% vars)) { stop ( varname,  ' does not exist in the file. Select one from:\n', paste(vars, collapse=", ") ) }
+	if (!(varname %in% vars)) { stop ( 'varname: ', varname, ' does not exist in the file. Select one from:\n', paste(vars, collapse=", ") ) }
 	return(varname)
 }
-
 
 .rasterObjectFromCDF <- function(filename, x='', y='', varname='', band=NA, type='RasterLayer', ...) {
 
@@ -61,6 +60,18 @@
 	nv <- file.inq.nc(nc)$nvars
     vars <- vector()
 	for (i in 1:nv) { vars <- c(var.inq.nc(nc,i-1)$name, vars) }
+	
+	if (varname=='') { 
+		a=NULL
+		for (i in 1:nv) { 
+			a = c(a, var.inq.nc(nc, (i-1))$ndims) 
+		}
+		i <- which.max(a) - 1
+		varname <- var.inq.nc(nc, i)$name
+		# should also check its dimensions with those of x and y 
+		warning('Guessing that varname should be: ', varname, '\nIf that is not correct, set it to one of: ', paste(vars, collapse=", ") )
+	}
+
 	zvar <- .getVarname(varname, vars) 
 
 	varinfo <- try(var.inq.nc(nc, zvar))

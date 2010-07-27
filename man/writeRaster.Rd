@@ -107,7 +107,7 @@ b <- writeRaster(b, filename="mutli.grd", bandorder='BIL', overwrite=TRUE)
  
 # write to netcdf 
 if (require(RNetCDF)) {	
-    writeRaster(rst, filename='netCDF.nc', format="CDF", overwrite=TRUE)   
+    rnc <- writeRaster(rst, filename='netCDF.nc', format="CDF", overwrite=TRUE)   
 }
 }
 

@@ -23,9 +23,10 @@ resample <- function(from, to, method="ngb", filename="", ...)  {
 	
 	if (is.null(filename)){filename <- ""}
 	
-	if (!canProcessInMemory(to, 1) && filename == '') {
+	if (!canProcessInMemory(to, 3) && filename == '') {
 		filename <- rasterTmpFile()	
 	}
+	
 	inMemory <- filename == ""
 	if (inMemory) {
 		v <- matrix(NA, nrow=ncell(to), nlayers(from))

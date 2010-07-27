@@ -144,7 +144,8 @@ setClass ('RasterLegend',
 	representation (
 		type = 'character',
 		values = 'vector',
-		color = 'vector'
+		color = 'vector',
+		colortable = 'vector'
 		),
 	prototype (
 		)

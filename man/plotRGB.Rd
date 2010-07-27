@@ -5,7 +5,7 @@
 \alias{plotRGB}
 \alias{plotRGB,RasterStackBrick-method}
 
-\title{Red-Green-Blue plot of RasterLayers}
+\title{Red-Green-Blue plot of a multi-layered Raster object}
 
 \description{
 Make a Red-Green-Blue plot based on three layers (in a RasterBrick or RasterStack). Three layers (bands) are combined such that one is the red channel, one is the green channel, and one is the blue channel. This function could be used to make 'True (or false) color images' from Landsat and other multi-band satellite images. 
@@ -14,10 +14,10 @@ Make a Red-Green-Blue plot based on three layers (in a RasterBrick or RasterStac
 \section{Methods}{
 \describe{
 
-\code{plotRGB(x, r=1, g=2, b=3, scale=255, maxpixels=100000, extent=NULL, ...)}
+\code{plotRGB(x, r=1, g=2, b=3, scale=255, maxpixels=500000, extent=NULL, ...)}
 
 \tabular{rll}{
-\tab \code{x} \tab a RasterLayer object \cr
+\tab \code{x} \tab a RasterBrick or RasterStack object \cr
 \tab \code{r}  \tab  Integer. Index of the Red channel, between 1 and nlayers(x) \cr
 \tab \code{g}  \tab  Integer. Index of the Green channel, between 1 and nlayers(x) \cr
 \tab \code{b}  \tab  Integer. Index of the Blue channel, between 1 and nlayers(x)\cr
@@ -30,6 +30,7 @@ Make a Red-Green-Blue plot based on three layers (in a RasterBrick or RasterStac
 
 \author{ Robert J. Hijmans; based on functions in the pixmap package by Friedrich Leisch }
 
+\seealso{ \code{\link[raster]{plot}} }
 
 \examples{
 b <- brick(system.file("external/rlogo.grd", package="raster"))
