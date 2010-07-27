@@ -32,18 +32,29 @@ Points, lines, and polygons can be drawn on top of a map using \code{plot(..., a
 }
 
 
+If \code{x} has a 'Color table', the default all to \code{plot} is:
+
+\code{plot(x, maxpixels=500000, extent=NULL, interpolate=FALSE,  axes=FALSE, xlab="", ylab="", ...)}
+
+
+\tabular{rll}{
+\tab \code{extent}  \tab  An extent object to zoom in a region \cr
+\tab \code{interpolate} \tab Logical. Should the image be interpolated?  \cr 
+\tab \code{axes} \tab Logical. Should axes be drawn?  \cr 
+\tab \code{...} \tab Graphical parameters \cr
+}
+
+
 
 \bold{x=RasterStack or RasterBrick, y=numeric or missing}
 
-\code{plot(x, col=rev(terrain.colors(25)), subsample=TRUE, maxpixels=100000, addbox=TRUE, axes = TRUE, xlab="", ylab="", ...)}
+\code{plot(x, col=rev(terrain.colors(25)), subsample=TRUE, maxpixels=100000, axes=TRUE, xlab="", ylab="", ...)}
 
 \tabular{rll}{
 \tab \code{x} \tab a RasterStack or RasterBrick object \cr
 \tab \code{y} \tab The index of a RasterLayer in a RasterStack to be plotted. Either a single number between 1 and nlayers(rstack), a vector of numbers, or missing. If y is missing, all RasterLayers in the RasterStack will be plotted.\cr
 \tab \code{col}  \tab  A color palette, i.e. a vector of n contiguous colors such as \code{rainbow}, \code{heat.colors}, and \code{topo.colors}, on one or your own making \cr
-\tab \code{subsample}  \tab  Logical. If \code{TRUE}, the image is resampled using maxpixels \cr
 \tab \code{maxpixels}  \tab  Maximum number of pixels used for the map  \cr
-\tab \code{addbox}  \tab  Logical. If \code{TRUE} a box is drawn around the map \cr
 \tab \code{axes}  \tab  see \code{?image} \cr
 \tab \code{xlab}  \tab  see \code{?image} \cr
 \tab \code{ylab}  \tab  see \code{?image} \cr
@@ -80,16 +91,33 @@ Most of the code for this function was taken from image.plot (fields package)
 }
 
 \seealso{
- \code{\link[raster]{persp}}, \code{\link[raster]{contour}}, \code{\link[raster]{pairs}}, \code{\link[raster]{hist}}, \code{\link[raster]{plot3D}}  
+  \code{ \link[raster]{plotRGB}, \link[raster]{plot3D}, \link[raster]{persp}, \link[raster]{contour}, \link[raster]{pairs}, \link[raster]{hist}}  
 }
 
 \author{ Robert J. Hijmans }
 
 \examples{ 
+# RasterLayer
 r <- raster(nrows=36, ncols=18)
 r <- setValues(r, runif(ncell(r)))
 plot(r)
 plot(extent(r))
+
+
+# 2 RasterLayers
+r2 <- sqrt(r)
+plot(r, r2)
+
+# RasterStack
+s <- stack(r, r2, r/r)
+plot(s, 2)
+plot(s)
+
+# plotting of a file with a color table:
+data(drg)
+e <- c(-220185.3, -219058.2, -30911.26, -29966.9)
+plot(drg, extent=e)
+#plot(drg, maxpixels=ncell(drg), interpolate=TRUE)
 }
 
 \keyword{methods}

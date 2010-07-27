@@ -6,17 +6,23 @@
 # Licence GPL v3
 
 
-setMethod('bbox', signature(obj='Raster'), 
+setMethod('bbox', signature(obj='Extent'), 
 	function(obj) {
-		b <- extent(obj)
 		bb <- matrix(ncol=2, nrow=2)
 		colnames(bb) <- c("min","max")
 		rownames(bb) <- c("s1","s2")
-		bb[1,1] <- b@xmin
-		bb[1,2] <- b@xmax
-		bb[2,1] <- b@ymin
-		bb[2,2] <- b@ymax
+		bb[1,1] <- obj@xmin
+		bb[1,2] <- obj@xmax
+		bb[2,1] <- obj@ymin
+		bb[2,2] <- obj@ymax
 		return(bb)
+	}	
+)
+
+setMethod('bbox', signature(obj='Raster'), 
+	function(obj) {
+		obj <- extent(obj)
+		return( bbox(obj) )
 	}	
 )
 

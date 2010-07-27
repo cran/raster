@@ -33,7 +33,6 @@ setMethod('extent', signature(x='Spatial'),
 )
 
 setMethod('extent', signature(x='matrix'), 
-# matrix is here to catch a sp bbox object
 	function(x){ 
 		d <- dim(x)
 		if (min(d) < 2) {
@@ -41,10 +40,19 @@ setMethod('extent', signature(x='matrix'),
 		if (d[2] > 2) {
 			stop('matrix should not have more than 2 columns') }		
 		e <- new('Extent')
-		e@xmin <- min(x[1,])
-		e@xmax <- max(x[1,])
-		e@ymin <- min(x[2,])
-		e@ymax <- max(x[2,])
+		if (nrow(x) == 2) {
+		# assuming a 'sp' bbox object
+			e@xmin <- min(x[1,])
+			e@xmax <- max(x[1,])
+			e@ymin <- min(x[2,])
+			e@ymax <- max(x[2,])
+		} else {
+			a = apply(x, 2, range, na.rm=TRUE)
+			e@xmin <- a[1,1]
+			e@xmax <- a[2,1]
+			e@ymin <- a[1,2]
+			e@ymax <- a[2,2]
+		}
 		return(e)
 	}
 )

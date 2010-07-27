@@ -6,6 +6,7 @@
 
 .couldBeLonLat <- function(x, warnings=TRUE) {
 	crsLL <- isLonLat(x)
+	if (class(x) == 'character') { return(crsLL) }
 	crsNA <- projection(x)=='NA'
 	e <- extent(x)
 	extLL <- (e@xmin > -365 & e@xmax < 365 & e@ymin > -90.1 & e@ymax < 90.1) 

@@ -85,6 +85,7 @@ setMethod('raster', signature(x='RasterStack'),
 			rowcol(r) <- c(nrow(x), ncol(x))
 			projection(r) <- projection(x)
 		}
+		extent(r) <- extent(x) # perhaps it was changed by user and different on disk
 		return(r)
 	}
 )
@@ -114,6 +115,7 @@ setMethod('raster', signature(x='RasterBrick'),
 					r <- raster(filename(x), band=dindex)
 				}
 				layerNames(r) <- layerNames(x)[dindex]
+				extent(r) <- extent(x) # perhaps it was changed by user and different on disk
 			} else {
 				r <- raster(extent(x), nrows=nrow(x), ncols=ncol(x), crs=projection(x))	
 				if ( inMemory(x) ) {
