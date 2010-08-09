@@ -37,22 +37,20 @@
 	zvar = x@data@zvar
 	time = x@data@band
 	
-	nc <- open.nc(x@file@name)
-	on.exit( close.nc(nc) )
+	nc <- open.ncdf(x@file@name)
+	on.exit( close.ncdf(nc) )
 	
 	count = c(x@ncols, 1, 1)
 	for (i in 1:length(rows)) {
 		start = c(1, readrows[i], time)
-		values <- as.vector(var.get.nc(nc, variable=zvar, start=start, count=count))
+		values <- as.vector(get.var.ncdf(nc, varid=zvar, start=start, count=count))
 		thisrow <- subset(colrow, colrow[,2] == rows[i])
 		colrow[colrow[,2]==rows[i], 3] <- values[thisrow[,1]]
 	}	
 	
 	colrow <- colrow[,3]
-	if (!is.na(x@file@nodatavalue)) { 
-		colrow[colrow==x@file@nodatavalue] <- NA
-	}
-	colrow <- x@data@add_offset + colrow * x@data@scale_factor
+	#if (!is.na(x@file@nodatavalue)) { colrow[colrow==x@file@nodatavalue] <- NA	}
+	#colrow <- x@data@add_offset + colrow * x@data@scale_factor
 
 	return(colrow) 
 }
@@ -79,20 +77,18 @@
 	rows <- rowFromCell(x, cells)
 	if ( x@file@toptobottom ) { rows <- x@nrows - rows + 1 }
 		
-	nc <- open.nc(x@file@name)
-	on.exit( close.nc(nc) )
+	nc <- open.ncdf(x@file@name)
+	on.exit( close.ncdf(nc) )
 	
 	count = c(1, 1, nlayers)
 	res <- matrix(nrow=length(cells), ncol=nlayers)
 	for (i in 1:length(cells)) {
 		start = c(cols[i], rows[i], layer)
-		res[i,] <- var.get.nc(nc, variable=zvar, start=start, count=count)
+		res[i,] <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
 	}	
 
-	if (!is.na(x@file@nodatavalue)) { 
-		res[res==x@file@nodatavalue] <- NA
-	}
-	res <- x@data@add_offset + res * x@data@scale_factor
+	#if (!is.na(x@file@nodatavalue)) { res[res==x@file@nodatavalue] <- NA	}
+	#res <- x@data@add_offset + res * x@data@scale_factor
 
 	return(res) 
 }

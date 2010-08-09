@@ -60,6 +60,10 @@
 
 polygonsToRaster <- function(p, raster, field=0, overlap='last', mask=FALSE, updateRaster=FALSE, updateValue="NA", getCover=FALSE, filename="", silent=FALSE, ...) {
 						
+	if (! inherits(p, 'SpatialPolygons') ) {
+		stop('The first argument should be an object of the "SpatialPolygons*" lineage')
+	}
+						
 	filename <- trim(filename)
 	if (!canProcessInMemory(raster, 3) && filename == '') {
 		filename <- rasterTmpFile()
@@ -394,7 +398,7 @@ polygonsToRaster <- function(p, raster, field=0, overlap='last', mask=FALSE, upd
 		if (filename == "") {
 			v[,rr] <- av
 		} else {
-			bigraster <- writeValues(bigraster, values)
+			bigraster <- writeValues(bigraster, av)
 		}
 		pbStep(pb, rr)
 	}

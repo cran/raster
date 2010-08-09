@@ -6,7 +6,7 @@
 
 \description{
 This function returns a new raster based on an existing raster and cell numbers for that raster.
-The new raster is cropped to the cellnumbers provided, and has values that are the cell numbers of the original raster.
+The new raster is cropped to the cell numbers provided, and has values that are the cell numbers of the original raster.
 }
 
 \usage{
@@ -35,7 +35,7 @@ A RasterLayer
 r <- raster(ncols=100, nrows=100)
 cells <- c(3:5, 210)
 r <- rasterFromCells(r, cells)
-cbind(1:ncell(r), values(r))
+cbind(1:ncell(r), getValues(r))
 }
 
 \keyword{spatial}

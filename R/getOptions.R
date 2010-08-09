@@ -4,20 +4,6 @@
 # Licence GPL v3
 
 
-showOptions <- function() {
-	cat('format   :', .filetype(), '\n' )
-	cat('datatype :', .datatype(), '\n')
-	cat('overwrite:', .overwrite(), '\n')
-	cat('progress :', .progress(), '\n')
-	cat('timer    :', .timer(), '\n')
-	cat('chunksize:', .chunksize(), '\n')
-	cat('tmpdir   :', .tmpdir(), '\n')
-	if (.toDisk()) {
-		cat('toDisk   : TRUE\n')
-	}
-}
-
-
 .dataloc <- function(){
 	d <- getOption('rasterDataDir')
 	if (is.null(d) ) {
@@ -62,8 +48,27 @@ showOptions <- function() {
 	if (d < 1) {
 		d <- 1000000
 	} 
+	d <- max(d, 10000)
 	return(d)
 }	
+
+
+.maxmemory <- function() {
+	default <- 100000000
+	d <- getOption('rasterMaxMemory')
+	if (is.null(d)) {
+		return( default )
+	} 
+	d <- round(as.numeric(d[1]))
+	if (is.na(d)) {
+		d <- default
+	} 
+	if (d < 1) {
+		d <- default
+	} 
+	d <- max(d, 10000)
+	return(d)
+}
 
 
 .overwrite <- function(..., overwrite) {

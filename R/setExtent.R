@@ -10,20 +10,29 @@
 }
 
 
-setExtent <- function(x, bndbox, keepres=FALSE, snap=FALSE) {
-	if (class(x) == 'RasterStack' ) {
-		stop('you can not change the extent of a RasterStack that has one or more layers')
-	}
-
-	oldbb <- extent(x)
-	bb <- extent(bndbox)
-	newobj <- clearValues(x)
+setExtent <- function(x, ext, keepres=FALSE, snap=FALSE) {
 	
+	oldbb <- extent(x)
+	bb <- extent(ext)
+	newobj <- clearValues(x)
 	if (snap) {
 		bb <- alignExtent(bb, newobj)
 	}
-
 	newobj@extent <- bb
+
+	if (inherits(x, 'RasterStack')) {
+		if (keepres) {
+			stop('you cannot use keepres=TRUE with a RasterStack')
+		}
+		x@extent <- bb
+		if (nlayers(x) > 0) {
+			for (i in 1:nlayers(x)) {
+				x@layers[[i]]@extent <- bb
+			}
+		} 
+		return(x)
+	}
+
 	
 	if (keepres) {
 		xrs <- xres(x)
@@ -42,16 +51,18 @@ setExtent <- function(x, bndbox, keepres=FALSE, snap=FALSE) {
 				newobj <- setValues(newobj, x@data@values)
 			} else {
 				newobj@data@fromdisk <- FALSE
-
-				indices <- cellsFromExtent(x, bb, expand=TRUE)
-				v <- vector(length=length(indices))
-				v[] <- NA
-				v[!is.na(indices)] <- x@data@values[!is.na(indices)]
-				newobj <- setValues(newobj, v)
+				z <- cellsFromExtent(x, bb, expand=TRUE)
+				if (inherits(x, 'RasterBrick')) {
+					z[!is.na(z), ] <- getValues(x)[!is.na(z), ]
+					newobj <- setValues(newobj, z)
+				} else {
+					z[!is.na(z)] <- getValues(x)[!is.na(z)]
+					newobj <- setValues(newobj, z)
+				}
 			}
 		}
 		
-	} else if (class(x) != "BasicRaster" & class(x) != "RasterStack") {
+	} else if (class(x) != "BasicRaster") {
 		if (ncol(x)==ncol(newobj) & nrow(x)==nrow(newobj))  {
 			if ( inMemory(x) ) {
 				newobj <- setValues(newobj, x@data@values)

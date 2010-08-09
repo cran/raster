@@ -12,7 +12,7 @@
 		crs <- .newCRS(value)
 	}	
 	
-	if (class(x) == 'RasterStack') {
+	if (inherits(x, 'RasterStack')) {
 		if (nlayers(x) > 0) {
 			for (i in 1:nlayers(x)) {
 				x@layers[[i]]@crs <- crs

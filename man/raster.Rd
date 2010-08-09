@@ -54,17 +54,16 @@ Additional arguments:
 \tab \code{native} \tab Logical.  Default is \code{FALSE} except when package rgdal is missing. If \code{TRUE}, reading and writing of IDRISI, BIL, BSQ, BIP, and ArcAscii files is done with native (raster package) drivers, rather then via rgdal. 'raster', RSAGA, and netcdf format files are always read with native drivers.
 }
 
-More additional arguments, that are only meaningful with netCDF files (CF convention):
+For netCDF files (CF convention):
 \tabular{rll}{
-\tab \code{xvar} \tab character. The x variable (e.g. 'longitude' or 'x') \cr
-\tab \code{yvar} \tab character. The y variable (e.g. 'latitude' or 'y')\cr
-\tab \code{varname} \tab character. The variable name (e.g. 'altitide' or 'precipitation')\cr
+\tab \code{varname} \tab character. The variable name (e.g. 'altitude' or 'precipitation'. If not supplied and the file has multiple variables are a guess will be made (and reported))\cr
 \tab \code{band} \tab integer > 0. The 'band' (layer) number of the file. E.g., the 'time' variable (if there are any) (default=NA)\cr
 }
+To read netCDF files, the \code{ncdf} package needs to be available. Only files that store data in 2 (x and y) or 3 (x, y, time) dimensions can be used. 
+
 
 If \code{x} is a character value, it should be a filename of a file that the raster package can read. Supported file types are the 'native' raster package format and those that can be read via rgdal. See \code{\link[rgdal]{readGDAL}} help for supported file types.
 
-To read netCDF files, the RNetCDF package needs to have been installed. For netCDF files, the function will try to guess values for \code{xar} and \code{yvar} if they are not supplied. netCDF data can only be read if the data are stored in 2 (x and y) or 3 (x, y, and time) dimensions. 
 
 2) Create a RasterLayer object from scratch
 

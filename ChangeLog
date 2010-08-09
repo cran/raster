@@ -1,0 +1,33 @@
+4-Aug-2010, version 1.3-10
+
+Expanded sampleRandom by adding a 'cells' and 'extent' argument; 
+
+-------------------------------------------------------------
+3-Aug-2010, version 1.3-9
+
+Switched from RNetCDF to ncdf package for netcdf file support
+
+Added three slots to class BasicRaster
+unit='vector' ; to store the unit of the layer(s), e.g. kg m-2 s-1
+zname='character' ; to store the name of the z (layers) variable, e.g. "time"
+zvalue='vector' ; to store the values of the z variable, e.g. the dates corresponding to each later
+These slots are now filled for values from netcdf files with "CF" type convention (e.g. cmip), with an attempt to covert "days since" to a Date (coverted to string).
+Not yet used in writing, or with other formats
+
+-------------------------------------------------------------
+2-Aug-2010, version 1.3-8
+
+New clump function, also using igraph for large rasters & minor bug fix
+
+Fixes to subs function (needs more checking)
+
+To allow for better behaviour when using objects derived from Raster* objects (perhaps in other packages), replaced code like
+  if (class(x) == 'RasterLayer') 
+with
+  if (inherits(x, 'RasterLayer'))
+
+Bug fix: error when indexing a RasterStack as in s[1]  (as reported by Kevin Ummel)
+
+-------------------------------------------------------------
+27-July-2010, version 1.3-3
+Starting this log

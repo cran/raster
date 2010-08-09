@@ -73,14 +73,14 @@ setMethod("xyValues", signature(object='RasterBrick', xy='matrix'),
 
 		dots <- list(...)
 		layer <- dots$layer
-		nlayers <- dots$nlayers
+		n <- dots$nlayers
 		nl <- nlayers(object)
 		if (is.null(layer)) { layer <- 1 } 
-		if (is.null(nlayers)) { nlayers <- nl } 
+		if (is.null(n)) { n <- nl } 
 	
 		layer <- min(max(1, round(layer)), nl)
 		maxnl = nl - layer + 1
-		nlayers <- min(max(1, round(nlayers)), maxnl)
+		nlayers <- min(max(1, round(n)), maxnl)
 	
 		if (dim(xy)[2] != 2) {
 			stop('xy has wrong dimensions; there should be 2 columns only' )
@@ -115,7 +115,7 @@ setMethod("xyValues", signature(object='RasterBrick', xy='matrix'),
 		} else if (method=='simple') {
 		
 			cells <- cellFromXY(object, xy)
-			return( cellValues(object, cells, layer=layer, nlayers=nlayers) )
+			return( cellValues(object, cells, layer=layer, n=n) )
 			
 		} else {
 			stop('invalid method argument. Should be simple or bilinear.')

@@ -95,7 +95,7 @@
 		} else {
 			fun2 <- fun
 		}
-		if (class(object) == 'RasterLayer') {
+		if (inherits(object, 'RasterLayer')) {
 			cv <- unlist(lapply(cv, fun2))
 		} else {
 			cv <- lapply(cv, function(x) {apply(x,2,fun2)})

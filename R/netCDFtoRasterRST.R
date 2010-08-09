@@ -5,22 +5,20 @@
 
 .rasterObjectFromCDFrst <- function(filename, band=NA, type='RasterLayer', ...) {
 
-	if (!require(RNetCDF)) { stop('You need to install the RNetCDF package first') }
+	if (!require(ncdf)) { stop('You need to install the ncdf package first') }
 
-	nc <- open.nc(filename)
-	on.exit( close.nc(nc) )
+	nc <- open.ncdf(filename)
+	on.exit( close.ncdf(nc) )
 
-	varinfo <- try(var.inq.nc(nc, 'value'))
+	datatype <- .getRasterDTypeFromCDF(nc$var[[1]]$prec )
 	
-	datatype <- .getRasterDTypeFromCDF(varinfo$type)
-	
-	ncols <- att.get.nc(nc, "NC_GLOBAL", 'ncols')
-	nrows <- att.get.nc(nc, "NC_GLOBAL", 'nrows')
-	xmn <- att.get.nc(nc, "NC_GLOBAL", 'xmin')
-	xmx <- att.get.nc(nc, "NC_GLOBAL", 'xmax')
-	ymn <- att.get.nc(nc, "NC_GLOBAL", 'ymin')
-	ymx <- att.get.nc(nc, "NC_GLOBAL", 'ymax')
-	crs <- att.get.nc(nc, "NC_GLOBAL", 'crs')
+	ncols <- att.get.ncdf(nc, 0, 'ncols')
+	nrows <- att.get.ncdf(nc, 0, 'nrows')
+	xmn <- att.get.ncdf(nc, 0, 'xmin')
+	xmx <- att.get.ncdf(nc, 0, 'xmax')
+	ymn <- att.get.ncdf(nc, 0, 'ymin')
+	ymx <- att.get.ncdf(nc, 0, 'ymax')
+	crs <- att.get.ncdf(nc, 0, 'crs')
 	
 	if (type == 'RasterLayer') {
 		r <- raster(xmn=xmn, xmx=xmx, ymn=ymn, ymx=ymx, ncols=ncols, nrows=nrows, crs=crs)
@@ -32,19 +30,18 @@
 	r@file@driver <- "netcdf"	
 	r@data@fromdisk <- TRUE
 
-	varinfo <- try(var.inq.nc(nc, 'value'))
-	datatype <- .getRasterDTypeFromCDF(varinfo$type)
-	dims <- varinfo$ndims
+	dims <- nc$var[[1]]$ndims
 	
-	r@file@nbands <- as.integer(dim.inq.nc(nc, var.inq.nc(nc, 'value')$dimids[2])$length)
+	r@file@nbands <- nc$var[[1]]$dim[[3]]$len
+	
 	if (is.na(band)) {
 		r@file@band <- 1
 	} else {
 		r@file@band <- min(max(1, band), r@file@nbands)
 	}
 
-	r@data@min <- att.get.nc(nc, "value", 'min')
-	r@data@max <- att.get.nc(nc, "value", 'max')
+	r@data@min <- att.get.ncdf(nc, "value", 'min')
+	r@data@max <- att.get.ncdf(nc, "value", 'max')
 
 	return(r)
 }

@@ -71,7 +71,7 @@ Supported file types include:
     \tab \code{ascii}     \tab ESRI Ascii  \tab .asc                 \tab  No \cr
     \tab \code{SAGA}      \tab SAGA GIS    \tab .sdat                \tab  No \cr
     \tab \code{IDRISI}    \tab IDRISI      \tab .rst                 \tab  No \cr
-    \tab \code{CDF}       \tab netCDF (requires RNetCDF) \tab .nc    \tab  pending \cr
+    \tab \code{CDF}       \tab netCDF (requires ncdf) \tab .nc    \tab  pending \cr
     \tab \code{GTiff}     \tab GeoTiff (requires rgdal) \tab .tif    \tab  Yes  \cr
     \tab \code{ENVI}      \tab ENVI .hdr Labelled       \tab .envi   \tab Yes  \cr
     \tab \code{EHdr}      \tab ESRI .hdr Labelled       \tab  .bil   \tab Yes  \cr
@@ -106,7 +106,7 @@ b <- brick(rst, sqrt(rst))
 b <- writeRaster(b, filename="mutli.grd", bandorder='BIL', overwrite=TRUE)
  
 # write to netcdf 
-if (require(RNetCDF)) {	
+if (require(ncdf)) {	
     rnc <- writeRaster(rst, filename='netCDF.nc', format="CDF", overwrite=TRUE)   
 }
 }

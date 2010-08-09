@@ -11,15 +11,14 @@ if (!isGeneric("subs")) {
 
 setMethod('subs', signature(x='RasterLayer', y='data.frame'), 
 
-	function(x, y, by=1, which=2, subsWithNA=TRUE, filename='', ...) { 
+function(x, y, by=1, which=2, subsWithNA=TRUE, filename='', ...) { 
 	
 		localmerge <- function(x, y, subNA) {
-			x <- cbind(x, 1:length(x))
+			x <- cbind( x, 1:length(x) )
 			if (! subNA) {
-				y <- merge(x, y, by=1, all.x=TRUE)
-				y <- y[order(y[,2]), 3]	
-				y[is.na(y)] <- x[is.na(y),1]
-				return(y)
+				y <- merge(x, y, by=1)
+				x[y[,2], 1] <- y[,3]
+				return(x[,1])
 			} else {
 				x <- merge(x, y, by=1, all.x=TRUE)
 				x <- x[order(x[,2]), 3]
@@ -28,6 +27,13 @@ setMethod('subs', signature(x='RasterLayer', y='data.frame'),
 		}
 
 		y <- y[ , c(by, which)]
+
+		tt <- table(y[,1])
+		tt <- tt[ which(tt > 1) ]
+		if (length(tt) > 0) {
+			stop('duplicate "by" values not allowed')
+		}
+
 		r <- raster(x)
 		
 		filename <- trim(filename)

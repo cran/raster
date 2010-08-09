@@ -9,7 +9,7 @@
 setMethod("modal", signature(x='Raster'),
 	function(x, ..., ties='random', na.rm=FALSE){
 		rasters <- list(...)
-		if (class(x) == 'RasterLayer') {
+		if (inherits(x, 'RasterLayer')) {
 			if (length(rasters)==0) { 
 				return(x) 
 			}
@@ -17,7 +17,7 @@ setMethod("modal", signature(x='Raster'),
 		rasters <- c(x, rasters)
 		rm(x)
 		for (i in 1:length(rasters)) {
-			if (class(rasters[[i]]) == 'RasterStack') {
+			if (inherits(rasters[[i]], 'RasterStack')) {
 				r <- rasters[[i]]
 				rasters <- rasters[-i]
 				rasters <- c(rasters, unstack(r))

@@ -74,16 +74,16 @@ layerNames <- function(object) {
 	if (length(value) != nlayers(object)) {
 		stop('value has wrong length')
 	}
-	if (class(object) == "RasterLayer") {
+	if (inherits(object, "RasterLayer")) {
 		object@layernames <- value
 		return(object)
-	} else if (class(object) == "RasterBrick") {
+	} else if (inherits(object, "RasterBrick")) {
 		object@layernames <- value
 		if (length(unique(object@layernames)) != nlayers(object)) {
 			stop('layer names must be unique')
 		}
 		return(object)
-	} else if (class(object) == "RasterStack") {
+	} else if (inherits(object, "RasterStack")) {
 		object@layernames <- value
 		if (length(unique(object@layernames)) != nlayers(object)) {
 			stop('layer names must be unique')

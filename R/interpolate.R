@@ -52,7 +52,7 @@ setMethod('interpolate', signature(object='Raster'),
 		} 
 
 		if (! xyOnly) {
-			if (class(object) == 'RasterStack') {
+			if (inherits(object, 'RasterStack')) {
 				if (nlayers(object)==0) { 
 					warning('"object" has no data, xyOnly set to TRUE')
 					xyOnly <- TRUE 

@@ -23,23 +23,23 @@ setMethod("cellValues", signature(x='RasterLayer', cells='vector'),
 
 
 setMethod("cellValues", signature(x='RasterStack', cells='vector'), 
-	function(x, cells, layer=1, nlayers) { 
+	function(x, cells, layer=1, n) { 
 	
 		layer = min( max( round(layer), 1), nlayers(x))
-		if (missing(nlayers)) {
-			nlayers = nlayers(x)-layer+1 
+		if (missing(n)) {
+			n = nlayers(x)-layer+1 
 		} else {
-			nlayers =  min( max( round(nlayers), 1), nlayers(x)-layer+1 )
+			n =  min( max( round(n), 1), nlayers(x)-layer+1 )
 		}
 
-		result <- matrix(ncol=nlayers, nrow=length(cells))
-		lyrs <- layer:(layer+nlayers-1)
-		for (i in 1:nlayers) {
+		result <- matrix(ncol=n, nrow=length(cells))
+		lyrs <- layer:(layer+n-1)
+		for (i in 1:n) {
 			j = lyrs[i]
 			result[,i] <- .readCells( x@layers[[j]], cells )
 		}
 		if (!(is.null(dim(result)))) {
-			colnames(result) <- layerNames(x)[layer:(layer+nlayers-1)]
+			colnames(result) <- layerNames(x)[layer:(layer+n-1)]
 		}
 		result
 	}
@@ -50,22 +50,22 @@ function(x, cells, ...) {
 
 	dots <- list(...)
 	layer <- dots$layer
-	nlayers <- dots$nlayers
+	n <- dots$n
 	if (is.null(layer)) { layer <- 1 } 
-	if (is.null(nlayers)) { nlayers <- x@data@nlayers } 
+	if (is.null(n)) { n <- x@data@nlayers } 
 	
 	nl <- x@data@nlayers 
 	layer <- min(max(1, round(layer)), nl)
 	maxnl = nl - layer + 1
-	nlayers <- min(max(1, round(nlayers)), maxnl)
+	n <- min(max(1, round(n)), maxnl)
 
 	if (x@file@driver == 'netcdf') {
-		return( .readBrickCellsNetCDF(x, cells, layer, nlayers) )
+		return( .readBrickCellsNetCDF(x, cells, layer, n) )
 	} 
 
-	result <- matrix(nrow=length(cells), ncol=nlayers)
-	lyrs <- layer:(layer+nlayers-1)
-	for (i in 1:nlayers) {
+	result <- matrix(nrow=length(cells), ncol=n)
+	lyrs <- layer:(layer+n-1)
+	for (i in 1:n) {
 		j <- lyrs[i]
 		r <- raster(x, j)
 		result[,i] <- .readCells(r, cells)

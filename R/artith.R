@@ -129,6 +129,24 @@ setMethod("Arith", signature(e1='numeric', e2='RasterBrick'),
 )
 
 
+setMethod("Arith", signature(e1='RasterStack', e2='numeric'),
+    function(e1, e2) {
+		for (i in 1:nlayers(e1)) {
+			e1@layers[[i]] <- callGeneric(e1@layers[[i]], e2) 
+		}
+		return(e1)
+	}
+)
+
+setMethod("Arith", signature(e1='numeric', e2='RasterStack'),
+    function(e1, e2){ 
+		for (i in 1:nlayers(e2)) {
+			e2@layers[[i]] <- callGeneric(e2@layers[[i]], e1) 
+		}
+		return(e2)
+	}
+)
+
 
 
 setMethod("Arith", signature(e1='Extent', e2='numeric'),

@@ -11,13 +11,13 @@ coordinates one by one.
 }
 
 \usage{
-setExtent(x, bndbox, keepres=FALSE, snap=FALSE)
+setExtent(x, ext, keepres=FALSE, snap=FALSE)
 extent(x) <- value
 }
 
 \arguments{
   \item{x}{A Raster* object}
-  \item{bndbox}{An object of class Extent (which you can create with \code{\link[raster]{extent}} )}  
+  \item{ext}{ An object of class Extent (which you can create with \code{\link[raster]{extent}}, or an object that has an extent (e.g. a Raster* or Spatial* object) ) }   
   \item{keepres}{logical. If \code{TRUE}, the resolution of the cells will stay the same after adjusting the bounding box (by adjusting the number of rows and columns). 
   If \code{FALSE}, the number of rows and columns will stay the same, and the resolution will be adjusted.
 }

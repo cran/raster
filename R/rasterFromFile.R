@@ -47,7 +47,7 @@
 		# return ( .rasterFromCDF(x, objecttype, ...) )
 	}
 	if ( fileext == ".GRD") {
-		if (require(RNetCDF)) {
+		if (require(ncdf)) {
 			if (.isNetCDF(x)) {
 				# return ( .rasterFromCDF(x, objecttype, ...) )
 				return ( .rasterObjectFromCDF(x, type=objecttype, band=band, ...) )

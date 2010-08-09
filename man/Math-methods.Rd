@@ -3,7 +3,6 @@
 \docType{methods}
 
 \alias{Math-methods}
-\alias{Math,RasterLayer-method}
 
 \title{Mathematical functions}
 

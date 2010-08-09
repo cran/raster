@@ -26,7 +26,7 @@
 	
 	rout <- writeStart(rout, filename, ...)
 	if (bandorder=='BSQ') {
-		if (class(object) != 'RasterStack') {
+		if (! inherits(object, 'RasterStack')) {
 			if (inMemory(object)) {
 				rout <- writeValues(rout, object@data@values)
 				rout <- writeStop(rout)

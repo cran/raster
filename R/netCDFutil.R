@@ -17,12 +17,12 @@
 
 
 .getRasterDTypeFromCDF <- function(type) { 
-	if (type == "NC_CHAR" )  { return("INT1U") 
-	} else if (type == "NC_BYTE" ) { return("INT1S")
-	} else if (type == "NC_SHORT" ) { return("INT2S")
-	} else if (type == "NC_INT" ) { return("INT4S")
-	} else if (type == "NC_FLOAT" ) { return("FLT4S")
-	} else if (type =="NC_DOUBLE" ) { return("FLT8S") 
+	if (type == "char" )  { return("INT1U") 
+	} else if (type == "byte" ) { return("INT1S")
+	} else if (type == "short" ) { return("INT2S")
+	} else if (type == "int" ) { return("INT4S")
+	} else if (type == "float" ) { return("FLT4S")
+	} else if (type =="double" ) { return("FLT8S") 
 	} else { return("FLT4S") }
 }
 
@@ -37,19 +37,19 @@
 	
 	if (size == 8) {
 		if (!signed) {
-			return("NC_CHAR") #8-bit characters intended for representing text.
+			return("char") #8-bit characters intended for representing text.
 		} else {
-			return("NC_BYTE")
+			return("byte")
 		}
-	} else if (type == 'INT') {
+	} else if (type == 'int') {
 		if (!signed) {
 			warning('netcdf only stores signed integers')
 		}
-		if (size == 16) { return( "NC_SHORT" ) 
-		} else { return( "NC_INT" ) }
+		if (size == 16) { return( "short" ) 
+		} else { return( "int" ) }
 	} else {
-		if (size == 32) { return( "NC_FLOAT" ) 
-		} else {  return ( "NC_DOUBLE" )  }
+		if (size == 32) { return( "float" ) 
+		} else {  return ( "double" )  }
 	}
 }
 

@@ -29,7 +29,7 @@ nbands <- function(x) {
 
 
 .bandOrder <- function(x) {
-	if (class(x) == "RasterStack") {
+	if (inherits(x, "RasterStack")) {
 		stop(paste("not implemented for RasterStack objects"))
 	} else {
 		return(paste(x@file@bandorder))

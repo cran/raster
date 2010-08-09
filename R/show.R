@@ -6,9 +6,9 @@
 setMethod ('print' , 'Raster', 
 	function(x, ...) {
 		if (x@file@driver == 'netcdf') {
-			nc <- open.nc(x@file@name)
-			print.nc(nc)
-			close.nc(nc)
+			nc <- open.ncdf(x@file@name)
+			print(nc)
+			close.ncdf(nc)
 		}
 		else callNextMethod(x, ...)
 	}

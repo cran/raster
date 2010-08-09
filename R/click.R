@@ -25,7 +25,7 @@ click <- function(object, n=1, id=FALSE, xy=FALSE, type="n", ...) {
 
 	value <- cellValues(object, cells)
 
-	if (class(object) == 'RasterStack' | class(object) == 'RasterBrick') {
+	if (inherits(object, 'RasterStack') | inherits(object, 'RasterBrick')) {
 		value <- t(matrix(value, nrow=n))
 		rownames(value) <- layerNames(object)
 	} else {

@@ -4,38 +4,32 @@
 # Licence GPL v3
 
 
-.stackCDF <- function(filename, x='', y='', varname='', bands='') {
+.stackCDF <- function(filename, varname='', bands='') {
 
-	if (!require(RNetCDF)) { stop('You need to install the RNetCDF package first') }
+	if (!require(ncdf)) { stop('You need to install the ncdf package first') }
 
-	nc <- open.nc(filename)
-	on.exit( close.nc(nc) )
+	nc <- open.ncdf(filename)
+	on.exit( close.ncdf(nc) )
 
-	nv <- file.inq.nc(nc)$nvars
-    vars <- vector()
-	for (i in 1:nv) { vars <- c(var.inq.nc(nc,i-1)$name, vars) }
-	zvar <- .getVarname(varname, vars) 
-	xvar <- .getxvar(x, vars) 
-	yvar <- .getyvar(y, vars) 
+	zvar <- .varName(nc, varname)
 
-	varinfo <- try(var.inq.nc(nc, zvar))
-	dims <- varinfo$ndims
+	dims <- nc$var[[zvar]]$ndims	
 	
 	if (dims== 1) { 
 		stop('zvar only has a single dimension; I cannot make a RasterLayer from this')
 	} else if (dims > 3) { 
 		stop(zvar, 'has ', length(dims), ' dimensions, I do not know how to process these data')
 	} else if (dims == 2) {
-		return( stack ( raster(filename, x=xvar, y=yvar, varname=zvar )  )  )
+		return( stack ( raster(filename, varname=zvar )  )  )
 	} else {
 		if (is.null(bands)) { bands <- ''}
 		if (bands[1] == '') {
-			bands = 1 : ( as.integer( dim.inq.nc(nc, var.inq.nc(nc, zvar)$dimids[3])$length ) )
+			bands = 1 : ( as.integer( dim.inq.ncdf(nc, var.inq.ncdf(nc, zvar)$dimids[3])$length ) )
 		}
-		st = stack( raster(filename, xvar=x, yvar=y, varname=zvar, band=bands[1]) )
+		st = stack( raster(filename, varname=zvar, band=bands[1]) )
 		if (length(bands) > 1) {
 			for (i in 2:length(bands)) {
-				st <- addLayer(st, raster(filename, xvar=x, yvar=y, varname=zvar, band=bands[i]) )
+				st <- addLayer(st, raster(filename, varname=zvar, band=bands[i]) )
 			}
 		}
 		return( st )

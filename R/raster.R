@@ -110,7 +110,7 @@ setMethod('raster', signature(x='RasterBrick'),
 			if ( fromDisk(x) ) {
 				if (dindex != layer) { warning(paste("layer was changed to", dindex))}
 				if (x@file@driver == 'netcdf') {
-					r <- raster(x@file@name, xvar=x@data@xvar, yvar=x@data@yvar, varname=x@data@zvar, band=dindex)				
+					r <- raster(x@file@name, varname=x@data@zvar, band=dindex)				
 				} else {
 					r <- raster(filename(x), band=dindex)
 				}

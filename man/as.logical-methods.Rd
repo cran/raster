@@ -4,7 +4,7 @@
 
 \alias{as.logical,RasterLayer-method}
 
-\title{ as.logical}
+\title{ Change values to logical}
 
 \description{
  Change values of a RasterLayer to logical values (zero becomes FALSE, all other values become TRUE)

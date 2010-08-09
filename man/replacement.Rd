@@ -48,14 +48,14 @@ Arguments
 \examples{
 r <- raster(ncol=10, nrow=5)
 r[] <- 1:ncell(r) * 2
-values(r)
+getValues(r)
 r[1]
 r[1:10]
 r[3:8] <- NA
 r[1:10]
 
 #equivalent to
-values(r, format='matrix')
+getValues(r, format='matrix')
 r[[1,1]]
 r[[1:2,1:2]]
 #first column
@@ -63,6 +63,9 @@ r[[,1]]
 # first row
 r[[1,]]
 r[[]]
+
+s <- stack(r,sqrt(r))
+s[1:3]
 }
 
 \keyword{methods}
