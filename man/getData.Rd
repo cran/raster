@@ -4,7 +4,7 @@
 \title{Get geographic data }
 
 \description{
-Get geographic data objects for anywhere in the world. Data are read from files that are first downloaded if necessary
+Get geographic data for anywhere in the world. Data are read from files that are first downloaded if necessary.
 }
 
 \usage{
@@ -14,8 +14,8 @@ getData(name, download=TRUE, path='', ...)
 \arguments{
   \item{name}{Data set name, currently supported are 'GADM', 'SRTM', 'alt', and 'worldclim'}
   \item{download}{Logical. If \code{TRUE} data will be downloaded if not locally available}
-  \item{path}{ path name to store the data. Default is the current working directory }
-  \item{...}{additional required(!) paramenters, data set specific. See Details}   
+  \item{path}{Character. Path name indicating where to store the data. Default is the current working directory }
+  \item{...}{ Additional required (!) parameters. These are data set specific. See Details}   
 }
  
 \value{

@@ -25,9 +25,9 @@ function(x, ..., bands=NULL) {
 
 
 setMethod("stack", signature(x='character'), 
-function(x, ..., bands=NULL, xvar='', yvar='', varname='') {
-    if (xvar != '' | yvar != '' | varname != '') {
-		return(.stackCDF(x, xvar, yvar, varname, bands))
+function(x, ..., bands=NULL, varname='') {
+    if ( varname != '') {
+		return(.stackCDF(x, varname, bands))
 	} else {
 		rlist <- c(x, list(...))
 		return(stack(rlist, bands))

@@ -16,9 +16,7 @@ function(x, format='vector', names=FALSE, ...) {
 		stop("No data in memory. Use getValues()") 
 	}
 
-	if (! inMemory(x) ) {
-		warning('"values" is depracated for Raster* object that do not have all values in memory; use getValues instead')
-	}
+	warning('"values" is depracated; use getValues instead')
 	
 	if (format=='matrix') { 
 		x = matrix(x@data@values, nrow=nrow(x), ncol=ncol(x), byrow=TRUE)
@@ -29,26 +27,6 @@ function(x, format='vector', names=FALSE, ...) {
 		return(x)
 	} else {
 		return(x@data@values) 
-	}
-} )
-
-
-setMethod('values', signature(x='RasterBrick'), 
-function(x, names=FALSE, ...) {
-
-	warning('"values" is depracated; use getValues instead')
-
-
-	if (! inMemory(x) ) {
-		stop("No data in memory. Use getValues()") 
-	}
-	if (names) {
-		x = x@data@values
-		colnames(x) <- 1:ncol(x)
-		rownames(x) <- 1:nrow(x)
-		return(x)
-	} else {
-		return(x@data@values)
 	}
 } )
 

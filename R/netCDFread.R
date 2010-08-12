@@ -6,28 +6,27 @@
 
 .readRowsNetCDF <- function(x, row, nrows=1, col=1, ncols=(ncol(x)-col+1)) {
 
-	if ( x@file@toptobottom ) { row <- x@nrows - row - nrows + 2	}
+	if ( x@file@toptobottom ) { row <- x@nrows - row - nrows + 2 }
 	
-	nc <- open.nc(x@file@name)
-	on.exit( close.nc(nc) )
+	nc <- open.ncdf(x@file@name)
+	on.exit( close.ncdf(nc) )
 	
-	zvar = x@data@zvar
-
-	if (file.inq.nc(nc)$ndims == 2) {
+	zvar <- x@data@zvar
+		
+	if (nc$var[[zvar]]$ndims == 2) {
 		start = c(col, row)
 		count = c(ncols, nrows)
-		d <- var.get.nc( nc,  variable=zvar,  start=start, count=count )
+		d <- get.var.ncdf( nc,  varid=zvar,  start=start, count=count )
 
 	} else {
 		start = c(col, row, x@data@band)
 		count = c(ncols, nrows, 1)
-		d <- var.get.nc(nc, variable=zvar, start=start, count=count)
+		d <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
+		
 	}
 
-	if (!is.na(x@file@nodatavalue)) { 
-		d[d==x@file@nodatavalue] <- NA
-	}
-	d <- x@data@add_offset + d * x@data@scale_factor
+	#if (!is.na(x@file@nodatavalue)) { d[d==x@file@nodatavalue] <- NA }
+	#d <- x@data@add_offset + d * x@data@scale_factor
 	
 	if (length(dim(d)) > 1) {
 		if ( x@file@toptobottom ) { 
@@ -47,19 +46,17 @@
 	layer   =  min( max( round(layer), 1), nlayers(x))
 	nlayers =  min( max( round(nlayers), 1), nlayers(x)-layer+1 )
 	
-	nc <- open.nc(x@file@name)
-	on.exit( close.nc(nc) )
+	nc <- open.ncdf(x@file@name)
+	on.exit( close.ncdf(nc) )
 
 	zvar = x@data@zvar
 	start = c(col, row, layer)
 	count = c(ncols, nrows, nlayers)
-	d <- var.get.nc(nc, variable=zvar, start=start, count=count)
+	d <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
 	
 
-	if (!is.na(x@file@nodatavalue)) { 
-		d[d==x@file@nodatavalue] <- NA
-	}
-	d <- x@data@add_offset + d * x@data@scale_factor
+	#if (!is.na(x@file@nodatavalue)) { 	d[d==x@file@nodatavalue] <- NA	}
+	#d <- x@data@add_offset + d * x@data@scale_factor
 	
 	dims = dim(d)
 	if (length(dims) == 3) {

@@ -3,20 +3,13 @@
 # Version 0.9
 # Licence GPL v3
 
-	
-if (!isGeneric("clump")) {
-	setGeneric("clump", function(x, ...)
-		standardGeneric("clump"))
-}	
+.clumpOld <- function(x, filename='', directions=8, ...) {
 
-setMethod('clump', signature(x='RasterLayer'), 
-function(x, filename='', directions=8, ...) {
-
-	if (! directions %in% c(4,8)) {stop('directions should be 4 or 8')}
+	if (! directions %in% c(4,8)) { stop('directions should be 4 or 8') }
 
 	if (filename != ""  & file.exists(filename)) {
 		if (.overwrite(...)==FALSE) {
-			stop("file exists. Use another name or 'overwrite=TRUE' if you want to overwrite it")
+			stop( "file exists. Use another name or 'overwrite=TRUE' if you want to overwrite it" )
 		}
 	}
 
@@ -232,5 +225,5 @@ function(x, filename='', directions=8, ...) {
 		return(x1)
 	}
 }
-)
+
 

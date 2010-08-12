@@ -111,7 +111,7 @@ blockSize(s)
 
 \section{Filename optional}
 
-In the above examples (functions f3 and f4) you must supply a filename. In the raster package that is never the case, it is always optional. If a filename is provided, values are written to disk. If no filename is provided the values are only written to disk if they cannot be stored in RAM. To determine whether the output needs to be written to disk, the function {bf canProcessInMemory} is used. This function uses the size of the output raster to determine the total memory size needed. However, additional copies of the values are often made when doing computations. And perhaps you are combining values from several RasterLayer objects in which case you need to be able to use much more memory than for the output RasterLayer object alone. To account for this you can supply an additional parameter, indicating the total memory need. In the examples below we use '3', indicating that we would need RAM equivalent to three times the size of the output RasterLayer. That seems reasonably safe in this case.
+In the above examples (functions f3 and f4) you must supply a filename. In the raster package that is never the case, it is always optional. If a filename is provided, values are written to disk. If no filename is provided the values are only written to disk if they cannot be stored in RAM. To determine whether the output needs to be written to disk, the function {\bf canProcessInMemory} is used. This function uses the size of the output raster to determine the total memory size needed. However, additional copies of the values are often made when doing computations. And perhaps you are combining values from several RasterLayer objects in which case you need to be able to use much more memory than for the output RasterLayer object alone. To account for this you can supply an additional parameter, indicating the total memory need. In the examples below we use '3', indicating that we would need RAM equivalent to three times the size of the output RasterLayer. That seems reasonably safe in this case.
 
 
 First an example for row by row processing:
@@ -119,9 +119,10 @@ First an example for row by row processing:
 <<code-6>>=
 f5 <- function(x, a, filename='') {
 	out <- raster(x)
-	big <- canProcessInMemory(out, 3)
+	small <- canProcessInMemory(out, 3)
 	filename <- trim(filename)
-	if (big & filename == '') {
+	
+	if (small & filename == '') {
 		filename <- rasterTmpFile()
 	}
 	if (filename != '') {
@@ -151,14 +152,15 @@ s <- f5(r, 5)
 @
 
 
-Now using blocks:
+Now, the same function, but looping over blocks of multiple rows, instead of a single row at a time (which can make a function very slow).
 
 <<code-7>>=
 f6 <- function(x, a, filename='') {
 	out <- raster(x)
-	big <- canProcessInMemory(out, 3)
+	small <- canProcessInMemory(out, 3)
 	filename <- trim(filename)
-	if (big & filename == '') {
+	
+	if (! small & filename == '') {
 		filename <- rasterTmpFile()
 	}
 	if (filename != '') {
@@ -166,6 +168,7 @@ f6 <- function(x, a, filename='') {
 		todisk <- TRUE
 	} else {
 		vv <- matrix(ncol=nrow(out), nrow=ncol(out))
+		todisk <- FALSE
 	}
 	
 	bs <- blockSize(r)
@@ -176,7 +179,7 @@ f6 <- function(x, a, filename='') {
 			writeValues(out, v, bs$row[i])
 		} else {
 			cols <- bs$row[i]:(bs$row[i]+bs$nrows[i]-1)	
-			vv[,cols] <- matrix(vv, nrow=out@ncols)
+			vv[,cols] <- matrix(v, nrow=out@ncols)
 		}
 	}
 	if (todisk) {
@@ -186,18 +189,19 @@ f6 <- function(x, a, filename='') {
 	}
 	return(out)
 }
+
 s <- f6(r, 5)
 @
 
 
-The next example is an alternative implementation that you might prefer if you wanted to optimze speed when values can be processed in memory. Optimizing for that situation is generally not that important as it tends to be relatively fast in any case. Moreover, while the below example is fine, this may not be an ideal approach for more complex functions as you would have to implement some parts of your algorithm twice. If you are not careful, your function might then give different results depending on whether the output must be written to disk or not. In other words, debugging and code maintenance can become more difficult. Having said that, there certainly are cases where processing chuck by chunk is inefficient, and where avoiding it when possible is worth the effort.
+The next example is an alternative implementation that you might prefer if you wanted to optimze speed when values can be processed in memory. Optimizing for that situation is generally not that important as it tends to be relatively fast in any case. Moreover, while the below example is fine, this may not be an ideal approach for more complex functions as you would have to implement some parts of your algorithm twice. If you are not careful, your function might then give different results depending on whether the output must be written to disk or not. In other words, debugging and code maintenance can become more difficult. Having said that, there certainly are cases where processing chuck by chunk is inefficient, and where avoiding it can be worth the effort.
 
 <<code-8>>=
 f7 <- function(x, a, filename='') {
 	out <- raster(x)
-	big <- canProcessInMemory(out, 3)
+	small <- canProcessInMemory(out, 3)
 	
-	if (!big) {
+	if (small) {
 		v <- getValues(x) + a
 		out <- setValues(out, v)
 		if (filename != '') {
@@ -227,11 +231,11 @@ s <- f7(r, 5)
 
 \section{A complete function}
 
-Finally, let's add some useful bells and whistles. For example, you may want to specify a file format and data type, be able to overwrite an existing file, and use a progress bar. So far, default values have been used. If you use the below function, the dots '...' allow you to change these by providing additional arguments 'overwrite', 'format', 'datatype', and 'progress'. (In all cases you can also set default values with {\bf setOptions}).
+Finally, let's add some useful bells and whistles. For example, you may want to specify a file format and data type, be able to overwrite an existing file, and use a progress bar. So far, default values have been used. If you use the below function, the dots '...' allow you to change these by providing additional arguments 'overwrite', 'format', and 'datatype'. (In all cases you can also set default values with {\bf setOptions}).
 
 
 <<code-9>>=
-f8 <- function(x, a, filename='', ...) {
+f8 <- function(x, a, filename='', progress='', ...) {
 	out <- raster(x)
 	big <- canProcessInMemory(out, 3)
 	filename <- trim(filename)
@@ -246,7 +250,7 @@ f8 <- function(x, a, filename='', ...) {
 	}
 	
 	bs <- blockSize(r)
-	pb <- pbCreate(bs$n, type=raster:::.progress(...))
+	pb <- pbCreate(bs$n, type=progress)
 
 	for (i in 1:bs$n) {
 		v <- getValues(x, row=bs$row[i], nrows=bs$nrows[i] )
@@ -278,11 +282,6 @@ Note that most of the additional arguments are passed on to writeStart:
 
 out <- writeStart(out, filename, ...)
 
-The only exception is 'progress'. To set the type of the progress bar we use the hidden function .progress().Hidden functions are normally only used internally, but here is an exception. To access a hidden function, use the package name followed by three colons:
-
-pb <- pbCreate(bs\$n, type= raster:::.progress(...) )
-
-By providing it with a dots argument it will use the value of argument 'progress' if such an argument was provided to the main function, and the default value (normally '') if no such argument was provided.
 
 
 \section{Debugging}

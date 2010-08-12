@@ -4,16 +4,40 @@
 # Licence GPL v3
 
 
+# adapted from .isSDI in the svMisc package, copyright Philippe Grosjean,
+# Romain Francois & Kamil Barton (via the sp package)
+.warnIfSDI <- function()	 {
+# have we been here before?
+	d <- getOption('rasterImageSDIWarningGiven')
+	if (is.null(d)) {
+# Check if Rgui was started in SDI mode 
+# 1) First is it Rgui?
+		options('rasterImageSDIWarningGiven' = TRUE)
+		if (.Platform$OS.type == "windows") {
+			if (.Platform$GUI[1] == "Rgui") { 
+# RGui SDI mode: returns "R Console", in MDI mode: returns "RGui"
+				if (getIdentification() == "R Console")  {
+					warning ("Because of a bug in SDI raster handling your R graphics window may stop displaying output")
+				}
+			}
+		}
+	}
+}
+
+
 .plotCT <- function(x, maxpixels=500000, extent=NULL, interpolate=FALSE, axes=FALSE, xlab='', ylab='', asp, ...) { 
-	
-	if (!axes) par(plt=c(0,1,0,1))
+# plotting with a color table
 	
 	# rasterImage is new in R 2.11
-	v <- version
-	major <- as.numeric( v$major )
-	minor <- as.numeric( v$minor )
-	if (major < 2 | (major == 2 & minor < 11)) stop('You need R version 2.11 or higher to use this function')
+	if (! exists("rasterImage") ) {
+		stop('You need R version 2.11 or higher to use this function')
+	}
 	
+	.warnIfSDI()
+	
+
+	if (!axes) par(plt=c(0,1,0,1))
+
  	if (missing(asp)) {
 		if (.couldBeLonLat(x)) {
 			ym <- mean(x@extent@ymax + x@extent@ymin)
@@ -23,8 +47,6 @@
 			asp = 1
 		}		
 	}
-
-
 
 	r <- sampleRegular(x, maxpixels, extent=extent, asRaster=TRUE, corners=TRUE)
 	z <- getValues(r) + 1

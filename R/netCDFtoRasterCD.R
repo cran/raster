@@ -4,94 +4,166 @@
 # Licence GPL v3
 
 
-.getxvar <- function(xvar, vars) {
-	if (xvar == '') {
-		if ('x' %in% vars) { xvar <- 'x'
-		} else if ('lon' %in% vars) { xvar <- 'lon' 
-		} else if ('long' %in% vars) { xvar <- 'long' 
-		} else if ('longitude' %in% vars) { xvar <- 'longitude' 
-		} else if ('Longitude' %in% vars) { xvar <- 'Longitude' 
-		} else { stop('Cannot find an obvious xvar in file. Select one from:\n', paste(vars, collapse=", "))  
+#.getxvar <- function(xvar, vars) {
+#	if (xvar == '') {
+#		if ('x' %in% vars) { xvar <- 'x'
+#		} else if ('lon' %in% vars) { xvar <- 'lon' 
+#		} else if ('long' %in% vars) { xvar <- 'long' 
+#		} else if ('longitude' %in% vars) { xvar <- 'longitude' 
+#		} else if ('Longitude' %in% vars) { xvar <- 'Longitude' 
+#		} else { stop('Cannot find an obvious xvar in file. Select one from:\n', paste(vars, collapse=", "))  
+#		}
+#	} else if ( !(xvar %in% vars) ) { stop( paste(xvar, ' does not exist in the file. Select one from:\n', paste(vars, collapse=", "))) }	
+#	return(xvar)
+#}
+
+
+#.getyvar <- function(yvar, vars) {
+#	if (yvar == '') { 
+#		if ('y' %in% vars){ yvar <- 'y'
+#		} else if ('lat' %in% vars) { yvar <- 'lat' 
+#		} else if ('latitude' %in% vars) { yvar <- 'latitude' 
+#		} else if ('Latitude' %in% vars) { yvar <- 'Latitude' 
+#		} else { stop('Cannot find an obvious yvar in file. Select one from:\n', paste(vars, collapse=", "))  
+#		}
+#	} else if (!(yvar %in% vars)) { stop( paste(yvar, ' does not exist in the file. Select one from:\n', paste(vars, collapse=", "))) }	
+#	return(yvar)
+#}
+
+
+.doTime <- function(x, nc) {
+	dodays <- TRUE
+	dohours <- FALSE
+	
+	un = att.get.ncdf(nc, "time", "units")$value
+	if (substr(un, 1, 10) == "days since") { 
+		startDate = as.Date(substr(un, 12, 22))
+	} else {
+		if (substr(un, 1, 11) == "hours since") { 
+			dohours <- TRUE
 		}
-	} else if (!(xvar %in% vars)) { stop( paste(xvar, ' does not exist in the file. Select one from:\n', paste(vars, collapse=", "))) }	
-	return(xvar)
+		dodays <- FALSE
+	}
+	if (dohours) {
+		startTime = substr(un, 13, 30)
+		startTime = strptime(startTime, "%Y-%m-%d %H:%M:%OS")
+		time <- startTime + as.numeric(x@zvalue) * 3600
+		time <- as.character(time)
+		if (!is.na(time[1])) {
+			x@zvalue <- time
+			x@zname <- as.character('Date/time')
+		}
+	}
+	if (dodays) {
+		cal = att.get.ncdf(nc, "time", "calendar")$value
+		if (cal =='gregorian' | cal=='standard') {
+			greg = TRUE
+		} else if (cal == 'noleap' | cal == '365 day' | cal == '365_day') { 
+			greg = FALSE
+		} else {
+			greg = TRUE
+			warning('assuming a standard calender')
+		}
+
+		time <- x@zvalue
+		if (greg) {
+			time <- as.Date(time, origin=startDate)
+		} else {
+			a <- as.numeric(time)/365
+			year <- trunc(a)
+			doy <- (time - (year * 365))
+			time <- as.Date(doy, origin=paste(year-1, "-12-31", sep=''))
+		}
+		x@zvalue <- as.character(time)
+		x@zname <- as.character('Date')
+		
+	}
+	return(x)
 }
 
 
-.getyvar <- function(yvar, vars) {
-	if (yvar == '') { 
-		if ('y' %in% vars){ yvar <- 'y'
-		} else if ('lat' %in% vars) { yvar <- 'lat' 
-		} else if ('latitude' %in% vars) { yvar <- 'latitude' 
-		} else if ('Latitude' %in% vars) { yvar <- 'Latitude' 
-		} else { stop('Cannot find an obvious yvar in file. Select one from:\n', paste(vars, collapse=", "))  
+
+.dimNames <- function(nc) {
+	n <- nc$dim
+	nams <- vector(length=n)
+	if (n > 0) {
+		for (i in 1:n) {
+			nams[i] <- nc$dim[[i]]$name
 		}
-	} else if (!(yvar %in% vars)) { stop( paste(yvar, ' does not exist in the file. Select one from:\n', paste(vars, collapse=", "))) }	
-	return(yvar)
+	}
+	return(nams)
 }
 
 
-.getVarname <- function(varname, vars) {
-	if (varname == '') { varname <- 'value' }
-	if (!(varname %in% vars)) { stop ( 'varname: ', varname, ' does not exist in the file. Select one from:\n', paste(vars, collapse=", ") ) }
+.varName <- function(nc, varname='') {
+	n <- nc$nvars
+	vars <- vector(length=n)
+	if (n > 0) {
+		for (i in 1:n) {
+			vars[i] <- nc$var[[i]]$name
+		}
+	}
+
+	if (varname=='') { 
+		nv <- length(vars)
+		if (nv == 0) {
+			stop()
+		} 
+		
+		if (nv  == 1) {
+			varname <- vars
+		} else {
+			# should also check its dimensions with those of x and y 
+			a=NULL
+			for (i in 1:nv) { 
+				a = c(a, nc$var[[i]]$ndims) 
+			}
+			varname <- vars[which.max(a)]
+			warning('varname used is: ', varname, '\nIf that is not correct, set it to one of: ', paste(vars, collapse=", ") )
+		}
+	}
+
+	zvar <- which(varname == vars)
+	if (length(zvar) == 0) {
+		stop('varname: ', varname, ' does not exist in the file. Select one from:\n', paste(vars, collapse=", ") )
+	}
 	return(varname)
 }
 
+
 .rasterObjectFromCDF <- function(filename, x='', y='', varname='', band=NA, type='RasterLayer', ...) {
 
-	if (!require(RNetCDF)) { stop('You need to install the RNetCDF package first') }
-	nc <- open.nc(filename)
-	on.exit( close.nc(nc) )
+	if (!require(ncdf)) { stop('You need to install the ncdf package first') }
+	nc <- open.ncdf(filename)
+	on.exit( close.ncdf(nc) )
 	
 	conv <- 'CF'
-	natt <- file.inq.nc(nc)$ngatts
-	if (natt > 0) {
-		for (i in 1:natt) {
-			if (att.inq.nc(nc,"NC_GLOBAL", i-1)$name == 'Conventions') {
-				conv <- att.get.nc(nc, "NC_GLOBAL", 'Conventions')
-			}
-		}
-	}	
-	if (substr(conv, 1, 3) == 'RST') {
-		close.nc(nc)
+	
+	
+	conv <- att.get.ncdf(nc, 0,  "Conventions")
+	if (substr(conv$value, 1, 3) == 'RST') {
+		close.ncdf(nc)
 		return( .rasterObjectFromCDFrst(filename, band=band, type='RasterLayer', ...) )
+	} else {
+		# assuming "CF-1.0"
 	}
 	
-	nv <- file.inq.nc(nc)$nvars
-    vars <- vector()
-	for (i in 1:nv) { vars <- c(var.inq.nc(nc,i-1)$name, vars) }
+	zvar <- .varName(nc, varname)
 	
-	if (varname=='') { 
-		a=NULL
-		for (i in 1:nv) { 
-			a = c(a, var.inq.nc(nc, (i-1))$ndims) 
-		}
-		i <- which.max(a) - 1
-		varname <- var.inq.nc(nc, i)$name
-		# should also check its dimensions with those of x and y 
-		warning('Guessing that varname should be: ', varname, '\nIf that is not correct, set it to one of: ', paste(vars, collapse=", ") )
-	}
-
-	zvar <- .getVarname(varname, vars) 
-
-	varinfo <- try(var.inq.nc(nc, zvar))
+	datatype <- .getRasterDTypeFromCDF( nc$var[[zvar]]$prec )
 	
-	datatype <- .getRasterDTypeFromCDF(varinfo$type)
 	
-	dims <- varinfo$ndims
+	dims <- nc$var[[zvar]]$ndims
 	if (dims== 1) { 
 		stop('"varname" only has a single dimension; I cannot make a RasterLayer from this')
 	} else if (dims > 3) { 
 		stop('"varname" has ', length(dims), ' dimensions, I do not know how to process this')
 	}
 	
-	xvar <- .getxvar(x, vars) 
-	yvar <- .getyvar(y, vars) 
+	ncols <- nc$var[[zvar]]$dim[[1]]$len
+	nrows <- nc$var[[zvar]]$dim[[2]]$len
 
-	ncols <- dim.inq.nc(nc, xvar)$length
-	nrows <- dim.inq.nc(nc, yvar)$length
-
-	xx <- as.vector(var.get.nc(nc, xvar))
+	xx <- nc$var[[zvar]]$dim[[1]]$vals
 	rs <- xx[-length(xx)] - xx[-1]
 	
 	if (! isTRUE ( all.equal( min(rs), max(rs), scale= min(rs)/100 ) ) ) {
@@ -102,7 +174,7 @@
 	resx <- (xrange[2] - xrange[1]) / (ncols-1)
 	rm(xx)
 
-	yy <- as.vector(var.get.nc(nc, yvar))
+	yy <- nc$var[[zvar]]$dim[[2]]$vals
 	rs <- yy[-length(yy)] - yy[-1]
 	if (! isTRUE ( all.equal( min(rs), max(rs), scale= min(rs)/100 ) ) ) {
 		stop('cells are not equally spaced; you should extract values as points') }
@@ -119,45 +191,33 @@
 	yrange[1] <- yrange[1] - 0.5 * resy
 	yrange[2] <- yrange[2] + 0.5 * resy
  
-	att <- var.inq.nc(nc, variable=zvar)
-	add_offset <- 0
-	scale_factor <- 1
+#	add_offset <- 0
+#	scale_factor <- 1
 	long_name <- zvar
 	missing_value <- NA
 	projection <- NA
-	if (att$natts > 0) {
-		for (i in 0:(att$natts-1)) {
-			if (att.inq.nc(nc, zvar, i)$name == "add_offset") {
-				add_offset <- att.get.nc(nc, zvar, i)
-			}
-			if (att.inq.nc(nc, zvar, i)$name == "scale_factor") {
-				scale_factor <- att.get.nc(nc, zvar, i)
-			}
-			if (att.inq.nc(nc, zvar, i)$name == "long_name") {
-				long_name <- att.get.nc(nc, zvar, i)
-			}
-			if (att.inq.nc(nc, zvar, i)$name == "missing_value") {
-				missing_value <- att.get.nc(nc, zvar, i)
-			}
-			if (att.inq.nc(nc, zvar, i)$name == "grid_mapping") {
-				projection <- att.get.nc(nc, zvar, i)
-			}
-		}
-	}
-	
+	unit <- ''
+#	a <- att.get.ncdf(nc, zvar, "add_offset")
+#	if (a$hasatt) { add_offset <- a$value }
+#	a <- att.get.ncdf(nc, zvar, "scale_factor")
+#	if (a$hasatt) { scale_factor <- a$value }
+	a <- att.get.ncdf(nc, zvar, "long_name")
+	if (a$hasatt) { long_name <- a$value }
+	a <- att.get.ncdf(nc, zvar, "units")
+	if (a$hasatt) { unit <- a$value }
+	a <- att.get.ncdf(nc, zvar, "missing_value")
+	if (a$hasatt) { missing_value <- a$value }
+	a <- att.get.ncdf(nc, zvar, "grid_mapping")
+	if ( a$hasatt ) { projection  <- a$value }
+
 	prj = list()
 	if (!is.na(projection)) {
-		att <- var.inq.nc(nc, projection)
-		if (att$natts > 0) {
-			for (i in 0:(att$natts-1)) {
-				prj[[i+1]] <- att.get.nc(nc, projection, i)
-				names(prj)[i+1] <- att.inq.nc(nc, projection, i)$name
-			}
-		# now what?
+		att <- nc$var[[projection]]
+		prj <- as.list(unlist(att))
+		# now parse .....
 		# projection(r) <- ...
-		} 
 	}
-	
+		
 	if (type == 'RasterLayer') {
 		r <- raster(xmn=xrange[1], xmx=xrange[2], ymn=yrange[1], ymx=yrange[2], ncols=ncols, nrows=nrows)
 	} else {
@@ -170,12 +230,14 @@
 	r@file@name <- filename
 	r@file@toptobottom <- toptobottom
 	r <- .enforceGoodLayerNames(r, long_name)
-
-	attr(r@data, "xvar") <- xvar
-	attr(r@data, "yvar") <- yvar
+	r@unit <- unit
+	
+	
+#	attr(r@data, "xvar") <- xvar
+#	attr(r@data, "yvar") <- yvar
 	attr(r@data, "zvar") <- zvar
-	attr(r@data, "add_offset") <- add_offset
-	attr(r@data, "scale_factor") <- scale_factor
+#	attr(r@data, "add_offset") <- add_offset
+#	attr(r@data, "scale_factor") <- scale_factor
 	
 	attr(r, "prj") <- prj 
 	r@file@driver <- "netcdf"	
@@ -187,12 +249,18 @@
 	if (dims == 2) {
 		nbands = 1
 	} else {
-		r@file@nbands <- as.integer(dim.inq.nc(nc, var.inq.nc(nc, zvar)$dimids[3])$length)
+		r@file@nbands <- nc$var[[zvar]]$dim[[3]]$len
+		r@zname <- nc$var[[zvar]]$dim[[3]]$units
+		r@zvalue <- nc$var[[zvar]]$dim[[3]]$vals
+		
+		if ( nc$var[[zvar]]$dim[[3]]$name == 'time' ) {
+			r <- .doTime(r, nc)
+		}
 	}
-
+	
 	if (type == 'RasterLayer') {
 		if (is.na(band) | is.null(band)) {
-			if (length(dims)== 3) { 
+			if (dims == 3) { 
 				stop(zvar, 'has three dimensions, provide a "band" value between 1 and ', dims[3])
 			} 
 		} else {
@@ -204,11 +272,12 @@
 			} else {
 				r@data@band <- as.integer( min(max(1, band), r@file@nbands) )
 			}
+			r@zvalue <- r@zvalue[r@data@band]
 		} 
 
 	} else {
 		if (length(dims)== 2) { 
-			stop('cannot make a RasterStack or Brick from a data that has only two dimensions (no time step), use raster() instead, and then make a stack or brick from that')	
+			stop('cannot make a RasterStack or RasterBrick from a data that has only two dimensions (no time step), use raster() instead, and then make a stack or brick from that')	
 		} 
 		r@data@nlayers <- r@file@nbands
 	}
@@ -217,4 +286,3 @@
 
 #f = "G:/cmip/ipcc/20c3m/atm/mo/pr/bccr_bcm2_0/run1/pr_A1_1.nc"
 #p = .rasterObjectFromCDF(f, zvar='pr', type='RasterLayer', time=10)
-

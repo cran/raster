@@ -22,15 +22,15 @@
 clearValues <- function(object) {
 	if (class(object) == "BasicRaster" ) {
 		return(object)
-	} else if (class(object) == "RasterLayer" ) {
+	} else if (inherits(object, "RasterLayer" )) {
 		object <- .clearRaster(object)
-	} else if (class(object) == "RasterStack" ) {
+	} else if (inherits(object, "RasterStack") ) {
 		for (i in seq(along=nlayers(object))) {
 			if (fromDisk(object@layers[[i]])) {
 				object@layers[[i]] <- .clearRaster(object@layers[[i]])
 			}
 		}
-	} else if (class(object) == 'RasterBrick') {
+	} else if (inherits(object, 'RasterBrick')) {
 		object@data@values <- matrix(NA,0,0)
 		object@data@inmemory <- FALSE
 		

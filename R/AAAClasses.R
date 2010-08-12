@@ -37,12 +37,18 @@ setClass ('BasicRaster',
 		ncols ='integer',
 		nrows ='integer',
 		crs = 'CRS',
-		layernames = 'vector'
+		layernames = 'vector',
+		zname='character',
+		zvalue='vector',
+		unit = 'vector'
 	),
 	prototype (	
 		ncols= as.integer(1),
 		nrows= as.integer(1),
 		layernames=c(""),
+		unit=c(""),
+		zname='',
+		zvalue='',
 		crs = CRS(as.character(NA))
 	),
 	validity = function(object) {
@@ -192,6 +198,7 @@ setClass('MultipleRasterData',
 		fromdisk='logical',
 
 		nlayers='integer',
+		
 		dropped = 'vector',
 		isfactor = 'logical',
 		levels = 'vector',
@@ -209,6 +216,7 @@ setClass('MultipleRasterData',
 		fromdisk=FALSE,
 
 		nlayers=as.integer(0),
+		
 		dropped=NULL,
 		isfactor = FALSE,
 		levels = matrix(NA),

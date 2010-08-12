@@ -28,7 +28,7 @@
 
 .startWriteCDF <- function(x, filename, datatype='FLT4S', overwrite=FALSE) {
 
-	if (!require(RNetCDF)) { stop('You need to install the RNetCDF package') }
+	if (!require(ncdf)) { stop('You need to install the ncdf package') }
 
 	filename = trim(filename)
 	if (filename == '') { stop('provide a filename') }
@@ -51,44 +51,24 @@
 		unit = 'meter' # probably
 	}
 	
-	nc <- create.nc(filename)	
 	
-	dim.def.nc(nc, 'x', ncol(x) )
-	var.def.nc(nc, 'x', "NC_DOUBLE", 0)
-	att.put.nc(nc, 'x', 'long_name', 'NC_CHAR', xname)
-	att.put.nc(nc, 'x', 'standard_name', 'NC_CHAR', xname)
-	att.put.nc(nc, 'x', 'axis', 'NC_CHAR', 'X')
-	att.put.nc(nc, 'x', 'units', 'NC_CHAR', unit)
-
-	
-	dim.def.nc(nc, 'y', nrow(x) ) 
-	var.def.nc(nc, 'y', "NC_DOUBLE", 1)
-	att.put.nc(nc, 'y', 'long_name', 'NC_CHAR', yname)
-	att.put.nc(nc, 'y', 'standard_name', 'NC_CHAR', yname)
-	att.put.nc(nc, 'y', 'axis', 'NC_CHAR', 'Y')
-	att.put.nc(nc, 'y', 'units', 'NC_CHAR', unit)
-
-	var.put.nc(nc, 'x', xFromCol(x, 1:ncol(x)), start=NA, count=NA, na.mode=0)
-	var.put.nc(nc, 'y', yFromRow(x, 1:nrow(x)), start=NA, count=NA, na.mode=0)
-
+	xdim <- dim.def.ncdf( xname, unit,  xFromCol(x, 1:ncol(x)) )
+	ydim <- dim.def.ncdf( yname, unit, yFromRow(x, 1:nrow(x)) )
 	if (inherits(x, 'RasterBrick')) {
-		dim.def.nc(nc, 'z', nlayers(x), unlim=TRUE)
-		var.def.nc(nc, 'z', "NC_INT", 2)
-		var.put.nc(nc, 'z', 1:nlayers(x), start=NA, count=NA, na.mode=0)
-		var.def.nc(nc, 'value', datatype, c(0,1,2))
+		zdim <- dim.def.ncdf( 'z', 'unit', 1:nlayers(x), unlim=TRUE )
+		vardef <- var.def.ncdf( 'value', 'unit', list(xdim,ydim,zdim), -3.4e+38 )
 	} else {
-		var.def.nc(nc, 'value', datatype, c(0,1))	
+		vardef <- var.def.ncdf( 'value', 'unit', list(xdim,ydim), -3.4e+38 )
 	}
+	nc <- create.ncdf(filename, vardef)
 	
-	att.put.nc(nc, 'value', 'missing_value', datatype, x@file@nodatavalue)
-	att.put.nc(nc, 'value', 'long_name', 'NC_CHAR', layerNames(x))
-
-	att.put.nc(nc, "NC_GLOBAL", 'Conventions', 'NC_CHAR', 'CF-1.4')
+	att.put.ncdf(nc, 'value', 'missing_value', x@file@nodatavalue)
+	att.put.ncdf(nc, 'value', 'long_name', layerNames(x))
+	att.put.ncdf(nc, 0, 'Conventions', 'CF-1.4')
 	pkgversion = drop(read.dcf(file=system.file("DESCRIPTION", package='raster'), fields=c("Version")))
-	att.put.nc(nc, "NC_GLOBAL", 'created_by', 'NC_CHAR', paste('R, raster package, version', pkgversion))
-	att.put.nc(nc, "NC_GLOBAL", 'date', 'NC_CHAR', format(Sys.time(), "%Y-%m-%d %H:%M:%S"))
-
-	close.nc(nc)
+	att.put.ncdf(nc, 0, 'created_by', paste('R, raster package, version', pkgversion))
+	att.put.ncdf(nc, 0, 'date', format(Sys.time(), "%Y-%m-%d %H:%M:%S"))
+	close.ncdf(nc)
 	
 	x@data@min <- rep(Inf, nlayers(x))
 	x@data@max <- rep(-Inf, nlayers(x))
@@ -101,11 +81,11 @@
 
 
 .stopWriteCDF <-  function(x) {
-	nc <- open.nc(x@file@name, write=TRUE)
-	on.exit( close.nc(nc) )
+	nc <- open.ncdf(x@file@name, write=TRUE)
+	on.exit( close.ncdf(nc) )
 	
-	att.put.nc(nc, 'value', 'min', 'NC_DOUBLE', as.numeric(x@data@min))
-	att.put.nc(nc, 'value', 'max', 'NC_DOUBLE', as.numeric(x@data@max))
+	att.put.ncdf(nc, 'value', 'min', as.numeric(x@data@min))
+	att.put.ncdf(nc, 'value', 'max', as.numeric(x@data@max))
 
 	if (inherits(x, 'RasterBrick')) {
 		r <- brick(x@file@name, zvar='value')
@@ -128,9 +108,9 @@
 	v[is.na(v)] = x@file@nodatavalue
 	v <- matrix(v, ncol=x@nrows)
 
-	nc <- open.nc(x@file@name, write=TRUE)
-	try ( var.put.nc(nc, 'value', v, start=c(1, start), count=NA, na.mode=0) )
-	close.nc(nc)
+	nc <- open.ncdf(x@file@name, write=TRUE)
+	try ( put.var.ncdf(nc, 'value', v, start=c(1, start), count=NA) )
+	close.ncdf(nc)
 	
 	return(x)
 }
@@ -170,9 +150,9 @@
 	rows <- length(v) / (ncols * nl)
 	v <- array(v, c(rows, ncols, nl))
 	
-	nc <- open.nc(x@file@name, write=TRUE)
-	try ( var.put.nc(nc, 'value', v, start=c(1, start, lstart), count=c(ncols, rows, lend), na.mode=0) )
-	close.nc(nc)
+	nc <- open.ncdf(x@file@name, write=TRUE)
+	try ( put.var.ncdf(nc, 'value', v, start=c(1, start, lstart), count=c(ncols, rows, lend) ) )
+	close.ncdf(nc)
 	
 	return(x)
 }

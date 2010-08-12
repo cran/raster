@@ -1,11 +1,16 @@
 # Authors: Robert J. Hijmans and Jacob van Etten, 
-# Date : May 2009
+# Date : May 2010
 # Version 0.9
 # Licence GPL v3
 
 
+if (!isGeneric("clump")) {
+	setGeneric("clump", function(x, ...)
+		standardGeneric("clump"))
+}	
 
-.clump <- function(x, directions) {
+
+.smallClump <- function(x, directions=8) {
 	x1 <- raster(x)
 	val <- which(getValues(x) != 0)
 	if (length(val) == 0) { 
@@ -13,25 +18,30 @@
 	}
 	adjv <- as.vector( t ( adjacency(x1, val, val, directions=directions) ) )
 	cl <- clusters(graph(adjv, directed=FALSE))$membership[val+1]
-	ucl <- sort(unique(cl))
-	ucl <- data.frame(id=ucl, value=1:length(ucl))
-	#test <- subset(ucl, ucl$id != ucl$value)
-	#if (nrow(test) > 0 ) {
-	#	cl <- merge(cl, ucl, by=1, all.x=TRUE)
-	#}
-	x1[val] <- cl
+	
+	add = val[! val %in% adjv]		   # RH
+	adjv <- c(adjv, rep(add, each=2))  # fixed problem of missing the last single cells, perhaps clumsy?
+	
+	cl <- clusters(graph(adjv, directed=FALSE))$membership[val+1]
+	#ucl <- sort(unique(cl))
+	#ucl <- data.frame(id=ucl, value=1:length(ucl))
+
+	x1[val] <- as.numeric(as.factor(cl)) # RH force 1 to n
 	return(x1)
 }
 
 
-.clump2 <- function(x, filename='', directions=8, ...) {
+setMethod('clump', signature(x='RasterLayer'), 
+
+function(x, filename='', directions=8, gaps=TRUE, datatype='INT2U', ...) {
 
 	if( !require(igraph)) {
 		stop('you need to install the igraph package to be able to use this function')
 	}
 
-	if (! directions %in% c(4,8)) {stop('directions should be 4 or 8')}
+	if (! directions %in% c(4,8)) { stop('directions should be 4 or 8') }
 
+	filename <- trim(filename)
 	if (filename != ""  & file.exists(filename)) {
 		if (.overwrite(...)==FALSE) {
 			stop("file exists. Use another name or 'overwrite=TRUE' if you want to overwrite it")
@@ -39,15 +49,17 @@
 	}
 
 	outRaster <- raster(x)
-	global <- .isGlobalLatLon(outRaster)
 	
 	if (canProcessInMemory(outRaster, 3)) {
-		x <- .clump(x, directions)
+		x <- .smallClump(x, directions)
+		if (filename != '') {
+			x <- writeRaster(x, filename, ...)
+		}
 		return(x)
 	} 
 	# else 
-	
-	outRaster <- writeStart(outRaster, filename=rasterTmpFile(), ...)
+
+	outRaster <- writeStart(outRaster, filename=rasterTmpFile(), datatype='INT2U')
 
 	tr <- blockSize(outRaster)
 	pb <- pbCreate(tr$n, type=.progress(...))
@@ -55,31 +67,55 @@
 	ext <- c(xmin(outRaster), xmax(outRaster), ymax(outRaster), NA)
 	maxval <- 0
 	
-	rcl <- NULL
+	rcl <- matrix(nrow=0, ncol=2)
+	
 	for (i in 1:tr$n) {
-		ext[4] <- ext[3]
-		ext[3] <- yFromRow(tr$row[i] + 1) # one more row
-		xc <- crop(x, ext)
-		xc <- .clump(xc, directions) + maxval
+	
+		ext[4] <- yFromRow(outRaster, tr$row[i]) + 0.5 * yres(outRaster)
+		
+		endrow <- tr$row[i] + tr$nrows[i] - 1 
+		ext[3] <- yFromRow(outRaster, endrow) - 1.5 * yres(outRaster) # one additional row for overlap
+		xc <- crop(x, extent(ext))
+		
+		xc <- .smallClump(xc, directions) + maxval
 		if (i > 1) {
 			firstrow <- getValues(xc, 1)
-			rc <- na.omit(unique(cbind(firstrow, lastrow)))
+			rc <- na.omit(unique(cbind(lastrow, firstrow)))
 			rcl <- rbind(rcl, rc)
 		}
 		lastrow <- getValues(xc, nrow(xc))
 		
-		maxval <- max(getValues(xc))
-		outRaster <- writeValues(outRaster, getValues(xc, 1, tr$nrows[i]))
+		maxval <- maxValue(xc)
+		outRaster <- writeValues(outRaster, getValues(xc, 1, tr$nrows[i]), tr$row[i])
+		pbStep(pb)
 	}
 	outRaster <- writeStop(outRaster)
-
-	if (filename == '') filename <- rasterTmpFile()
-
-	# now reclass
-	rcl <- graph.edgelist(rcl, directed=FALSE)
-	cl <- clusters(rcl)$membership + 1
-	outRaster <- reclass(outRaster, cbind(V(rcl),cl))
-	return(outRaster)
+	pbClose(pb)
+	
+	
+	if (nrow(rcl) > 0) {
+		g <- graph.edgelist(rcl, directed=FALSE)
+		cl <- clusters(g)$membership
+		rc <- cbind(V(g),cl)
+		i <- rc[,1] != rc[,2]
+		rc <- rc[i, ,drop=FALSE]
+		outRaster <- subs(outRaster, data.frame(rc), subsWithNA=FALSE, filename=filename, datatype=datatype, ...)
+		return(outRaster)
+		
+	} else if (!gaps) {
+		un <- unique(outRaster)
+		un <- data.frame(cbind(un, 1:length(un)))
+		return( subs(outRaster, un, subsWithNA=FALSE, filename=filename, datatype=datatype, ...) )
+		
+		
+	} else if (filename != '') {
+		return( writeRaster(outRaster, filename=filename, datatype=datatype, ...) )
+		
+	} else {
+		return(outRaster)
+	}
 }
+
+)
 
 

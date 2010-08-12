@@ -25,7 +25,7 @@ These methods return values of a Raster* object for the cells specified  )
 Multi-layer Raster* objects accept these two additional arguments:
 \tabular{rll}{
   \tab \code{layer}  \tab Integer. First layer for which you want values \cr
-  \tab \code{nlayers}  \tab Integer. Number of layers for which you want values \cr
+  \tab \code{n}  \tab Integer. Number of layers for which you want values \cr
 }
 }
 
@@ -45,7 +45,7 @@ r <- setValues(r, 1:ncell(r))
 cellValues(r, c(1, 10, 100))
 
 s <- stack(r, sqrt(r), r/r)
-cellValues(s, c(1, 10, 100), layer=2, nlayers=2)
+cellValues(s, c(1, 10, 100), layer=2, n=2)
 }
 
 

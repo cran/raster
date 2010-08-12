@@ -16,7 +16,7 @@
 
 
 .nodatavalue <- function(object) {
-	if (class(object) == 'RasterStack') {
+	if (inherits(object, 'RasterStack')) {
 		stop("no such thing exist for an entire 'RasterStack'")
 	}
 	return(object@file@nodatavalue)

@@ -7,8 +7,10 @@
 setMethod("[[", c("RasterLayer","ANY", "ANY"),
 function(x,i,j,...,drop=TRUE) {
 
-	if (!missing(i) && class(i) == "RasterLayer") {
-		i <- as.logical( getValues(i) ) 
+	if (!missing(i)) {
+		if (inherits(i, "RasterLayer")) {
+			i <- as.logical( getValues(i) ) 
+		}
 	}
 
 	if (! inMemory(x) ) {

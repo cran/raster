@@ -300,9 +300,11 @@ Raster can read most, and write several raster file formats, via the \verb@rgdal
 There are a number of session options that can be set and these can be saved to make them persistent in between sessions. We would advice against changing the default values unless you have pressing need to do so. They all have to do with reading and writing files. You can set the preferred file format and data type. You can set the default value for overwrite to TRUE (be careful with that one!), and you specify a default progress-bar. All of these values can also be provided as arguments of functions where they apply. Except for generic functions like mean, '+', and sqrt. These functions may write a file when the result is too large to hold in memory and then these options can only be set through the session options. You can also set the tmpdir, the location where such files are written. The option chunksize determines the maximum size (in number of cells) of a single chunk of values that is read/written in chunk-by-chunk processing of very large files. 
 
 
-\section{Coercion to sp objects}
+\section{Coercion to objects of other classes}
 
-Although the raster package defines its own set of classes, it is easy to coerce objects of these classes to objects of the 'spatial' family defined in the sp package. This allows for using functions defined by sp (e.g. spplot) and for using other packages that expect spatial* objects. To create a RasterLayer from variable n in a SpatialGrid* x use \verb@raster(x, n)@ or \verb@stack(x)@. Vice versa use \verb@as( , )@
+Although the raster package defines its own set of classes, it is easy to coerce objects of these classes to objects of the 'spatial' family defined in the sp package. This allows for using functions defined by sp (e.g. spplot) and for using other packages that expect spatial* objects. To create a Raster object from variable n in a SpatialGrid* x use \verb@raster(x, n)@ or \verb@stack(x)@ or \verb@brick(x)@. Vice versa use \verb@as( , )@
+
+You can also convert objects of class "im" (spatstat) and "asc" (adehabitat) to a RasterLayer and "kasc" (adehabitat) to a RasterStack or Brick using the \verb@raster(x)@, \verb@stack(x)@ or \verb@brick(x)@ function.
 
 <<raster-20>>=
 r1 <- raster(ncol=36, nrow=18)
@@ -313,6 +315,45 @@ s <- stack(r1, r2)
 sgdf <- as(s, 'SpatialGridDataFrame')
 newr2 <- raster(sgdf, 2)
 news <- stack(sgdf)
+@
+
+
+\section{Extending raster objects}
+
+It is straightforward to build on the Raster* objecs using the S4 inheritance mechanism. Say you need objects that behave like a RasterLayer, but have some additional proerties that you need to use in your own functions (S4 methods). See John Chambers' book "Software for Data Analysis, Programming with R" (Springer, 2008), and the help pages of the Methods package for more info. Below is an example:
+
+<<raster-32, fig=TRUE>>=
+setClass ('myRaster',
+	contains = 'RasterLayer',
+	representation (
+		important = 'data.frame',
+		essential = 'character'
+	) ,
+	prototype (
+		important = data.frame(),
+		essential = ''
+	)
+)
+	
+r = raster(nrow=10, ncol=10)
+
+m <- as(r, 'myRaster')
+m@important <- data.frame(id=1:10, value=runif(10))
+m@essential <- 'my own slot'
+m[] <- 1:ncell(m)
+plot(m)
+@
+
+<<raster-33>>=
+setMethod ('show' , 'myRaster', 
+	function(object) {
+		callNextMethod(object) # call show(RasterLayer)
+		cat('essential:', object@essential, '\n')
+		cat('important information:\n')
+		print( object@important)
+	})	
+	
+m
 @
 
 

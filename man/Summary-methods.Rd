@@ -3,7 +3,6 @@
 \docType{methods}
 
 \alias{Summary-methods}
-\alias{Summary,Raster-method}
 \alias{mean,Raster-method}
 \alias{Median}
 \alias{Median,ANY-method}

@@ -6,7 +6,7 @@
 
 .startWriteCDFrst <- function(x, filename, datatype='FLT4S', overwrite=FALSE) {
 
-	if (!require(RNetCDF)) { stop('You need to install the RNetCDF package') }
+	if (!require(ncdf)) { stop('You need to install the ncdf package') }
 
 	filename = trim(filename)
 	if (filename == '') { stop('provide a filename') }
@@ -16,39 +16,34 @@
 	}
 	
 	dataType(x) <- datatype
-	datatype = raster:::.getNetCDFDType(datatype)
+	datatype = .getNetCDFDType(datatype)
 	
-	nc <- create.nc(filename)	
 
-	att.put.nc(nc, "NC_GLOBAL", 'Conventions', 'NC_CHAR', 'RST-0.1')
-	
+	cdim <- dim.def.ncdf( 'cell', 'cell number',  1:ncell(x) )
+	if (inherits(x, 'RasterBrick')) {
+		zdim <- dim.def.ncdf( 'z', 'bands', 1:nlayers(x), unlim=TRUE )
+		vardef <- var.def.ncdf( 'value', 'unit', list(cdim, zdim) -3.4e+38 )
+	} else {
+		vardef <- var.def.ncdf( 'value', 'unit', list(cdim), -3.4e+38 )
+	}
+	nc <- create.ncdf(filename, vardef)
+
+	att.put.ncdf(nc, 0, 'Conventions', 'NC_CHAR', 'RST-0.1')
 	pkgversion = drop(read.dcf(file=system.file("DESCRIPTION", package='raster'), fields=c("Version")))
-	att.put.nc(nc, "NC_GLOBAL", 'created_by', 'NC_CHAR', paste('R, raster package, version', pkgversion))
-	att.put.nc(nc, "NC_GLOBAL", 'date', 'NC_CHAR', format(Sys.time(), "%Y-%m-%d %H:%M:%S"))
+	att.put.ncdf(nc, 0, 'created_by', paste('R, raster package, version', pkgversion))
+	att.put.ncdf(nc, 0, 'date', format(Sys.time(), "%Y-%m-%d %H:%M:%S"))
 
-	att.put.nc(nc, "NC_GLOBAL", 'ncols', 'NC_INT', as.numeric(x@ncols))
-	att.put.nc(nc, "NC_GLOBAL", 'nrows', 'NC_INT', as.numeric(x@nrows))
-	att.put.nc(nc, "NC_GLOBAL", 'xmin', 'NC_DOUBLE', x@extent@xmin)
-	att.put.nc(nc, "NC_GLOBAL", 'xmax', 'NC_DOUBLE', x@extent@xmax)
-	att.put.nc(nc, "NC_GLOBAL", 'ymin', 'NC_DOUBLE', x@extent@ymin)
-	att.put.nc(nc, "NC_GLOBAL", 'ymax', 'NC_DOUBLE', x@extent@ymax)
-	att.put.nc(nc, "NC_GLOBAL", 'crs', 'NC_CHAR', projection(x))
-	
+	att.put.ncdf(nc, 0, 'ncols', as.numeric(x@ncols))
+	att.put.ncdf(nc, 0, 'nrows', as.numeric(x@nrows))
+	att.put.ncdf(nc, 0, 'xmin', x@extent@xmin)
+	att.put.ncdf(nc, 0, 'xmax', x@extent@xmax)
+	att.put.ncdf(nc, 0, 'ymin', x@extent@ymin)
+	att.put.ncdf(nc, 0, 'ymax', x@extent@ymax)
+	att.put.ncdf(nc, 0, 'crs', projection(x))
+	att.put.ncdf(nc, 'value', 'missing_value', x@file@nodatavalue)
+	att.put.ncdf(nc, 'value', 'long_name', layerNames(x))
 
-	dim.def.nc(nc, 'cell', ncell(x) )
-	var.def.nc(nc, 'x', "NC_INT", 0)
-	att.put.nc(nc, 'x', 'long_name', 'NC_CHAR', 'cell number')
-	att.put.nc(nc, 'x', 'standard_name', 'NC_CHAR', 'cell number')
-
-	dim.def.nc(nc, 'z', nlayers(x), unlim=TRUE)
-	var.def.nc(nc, 'z', "NC_INT", 1)
-	var.put.nc(nc, 'z', 1:nlayers(x), start=NA, count=NA, na.mode=0)
-	var.def.nc(nc, 'value', datatype, c(0,1))
-	
-	att.put.nc(nc, 'value', 'missing_value', datatype, x@file@nodatavalue)
-	att.put.nc(nc, 'value', 'long_name', 'NC_CHAR', layerNames(x))
-
-	close.nc(nc)
+	close.ncdf(nc)
 	
 	x@data@min <- rep(Inf, nlayers(x))
 	x@data@max <- rep(-Inf, nlayers(x))
@@ -72,9 +67,9 @@
 	v[is.na(v)] = x@file@nodatavalue
 	v <- matrix(v)
 
-	nc <- open.nc(x@file@name, write=TRUE)
-	try ( var.put.nc(nc, 'value', v, start=c(start, 1), count=NA, na.mode=0) )
-	close.nc(nc)
+	nc <- open.ncdf(x@file@name, write=TRUE)
+	try ( put.var.ncdf(nc, 'value', v, start=c(start, 1), count=NA ) )
+	close.ncdf(nc)
 	
 	return(x)
 }
@@ -112,19 +107,19 @@
 
 	v[is.na(v)] = x@file@nodatavalue
 	
-	nc <- open.nc(x@file@name, write=TRUE)
-	try ( var.put.nc(nc, 'value', v, start=c(start, lstart), count=c(nrow(v), lend), na.mode=0) )
-	close.nc(nc)
+	nc <- open.ncdf(x@file@name, write=TRUE)
+	try (  put.var.ncdf(nc, 'value', v, start=c(start, lstart), count=c(nrow(v), lend) )  )
+	close.ncdf(nc)
 	
 	return(x)
 }
 
 
 .stopWriteCDFrst <-  function(x) {
-	nc <- open.nc(x@file@name, write=TRUE)
-	att.put.nc(nc, 'value', 'min', 'NC_DOUBLE', as.numeric(x@data@min))
-	att.put.nc(nc, 'value', 'max', 'NC_DOUBLE', as.numeric(x@data@max))
-	close.nc(nc)
+	nc <- open.ncdf(x@file@name, write=TRUE)
+	att.put.ncdf(nc, 'value', 'min', 'double', as.numeric(x@data@min))
+	att.put.ncdf(nc, 'value', 'max', 'double', as.numeric(x@data@max))
+	close.ncdf(nc)
 
 	if (inherits(x, 'RasterBrick')) {
 		r <- brick(x@file@name, convention='RST')

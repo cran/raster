@@ -12,13 +12,21 @@ if (!isGeneric("crop")) {
 
 
 setMethod('crop', signature(x='RasterStack', y='ANY'), 
-function(x, y, filename='', datatype=dataType(x), ...) {
+function(x, y, filename='', ...) {
+	
+	if (nlayers(x) == 0) {
+		return(stack(crop(raster(x), y, filename='')))
+	}
 
 	for (i in 1:nlayers(x)) {
-		x@layers[[i]] <- crop(x@layers[[i]], y=y, filename='', datatype=datatype, ...)
+		x@layers[[i]] <- crop(x@layers[[i]], y=y, filename='', ...)
 	}
-	
+	x@extent <- x@layers[[1]]@extent
+	x@nrows <- x@layers[[1]]@nrows
+	x@ncols <- x@layers[[1]]@ncols
+	x@filename <- ''
 	return(x)
+	
 }
 )
 
@@ -37,7 +45,7 @@ function(x, y, filename='', datatype=dataType(x), ...) {
 	e <- intersectExtent(x, y)
 	e <- alignExtent(e, x)
 	
-	if (class(x) == 'RasterBrick') {
+	if (inherits(x, 'RasterBrick')) {
 		outRaster <- brick(x, values=FALSE)	
 	} else {
 		outRaster <- raster(x)

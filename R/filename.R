@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 filename <- function(x) {
-	if (class(x) == 'RasterStack') { 
+	if (inherits(x, 'RasterStack')) { 
 		return(x@filename) 
 	} 
 	return(x@file@name)
@@ -25,12 +25,12 @@ filename <- function(x) {
 	}
 	
 # could also throw in normalizePath(utils) 
-	if (class(x)=='RasterStack') {
+	if (inherits(x, 'RasterStack')) {
 		ext(filename) <- ".stk"
 		x@filename <- filename
 	} else {
 		x@file@name <- filename
-		if (class(x)=='RasterLayer') {	
+		if (inherits(x, 'RasterLayer')) {	
 			shortname <- basename(filename)
 			ext(shortname) <- ""
 			shortname <- gsub(" ", "_", shortname)

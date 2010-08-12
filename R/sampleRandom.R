@@ -4,7 +4,6 @@
 # Licence GPL v3
 
 
-
 if (!isGeneric("sampleRandom")) {
 	setGeneric("sampleRandom", function(x, size, ...)
 		standardGeneric("sampleRandom"))
@@ -12,73 +11,133 @@ if (!isGeneric("sampleRandom")) {
 
 
 setMethod('sampleRandom', signature(x='Raster'), 
+function(x, size, na.rm=TRUE, extent=NULL, cells=FALSE, ...) {
 
-function(x, size, na.rm=TRUE, ...) {
+	r <- raster(x)
+	layn <- layerNames(x)
+	
 	if ( inMemory(x) ) {
-		values <- getValues(x)
-		if (na.rm) { values <- na.omit(values) }
-		if (length(values) > size) {
-			s = sampleInt(length(values), size)
-			values <- values[s]
+		if (is.null(extent)) {
+			x <- getValues(x)
+		} else {
+			x <- crop(x, extent)
+			r1 <- r
+			r <- raster(x)
+			x <- getValues(x)
 		}
-	} else if ( fromDisk(x) ) {
-		if (ncell(x) <= size) {
-			values <- cbind(1:ncell(x), getValues(x))
-			if (na.rm) { values <- na.omit(values) }
-		} else {	
-			if (na.rm) {
-				N <- size 
+		
+		if (cells) {
+			if (is.null(extent)) {
+				x <- cbind(cell=1:ncell(r), value=x)			
 			} else {
-				N <- 2 * size 
-			}	
-			cells <- sampleInt(ncell(x), N)
-			values <- cellValues(x, cells)
+				xy <- xyFromCell(r, 1:ncell(r))
+				cell <- cellFromXY(r1, xy)
+				x <- cbind(cell, value=x)
+			}
+		}
+
+		if (na.rm) { 
+			x <- na.omit(x) 
+		}
+
+		if (is.matrix(x)) {
+			d <- dim(x)
+			x <- matrix(as.vector(x), d[1], d[2])
+			if ( nrow(x) > size) {
+				s = sampleInt(nrow(x), size)
+				x <- x[s, ]
+			}
+		} else { 
+			x <- as.vector(x)
+			if (length(x) > size ) {
+				s = sampleInt(length(x), size)
+				x <- x[s]			
+			}
+		}
+		
+	} else if ( fromDisk(x) | inherits(x, 'RasterStack')) {
+		
+		if (! is.null(extent)) {
+			r <- crop(r, extent)
+		}
+			
+		if (size >= ncell(r)) {
+			
+			if (is.null(extent)) {
+				x <- cbind(1:ncell(r), getValues(x))
+			} else {
+				x <- cbind(1:ncell(r), getValues(crop(x, extent)))			
+			}
+			
+			if (cells) {
+				if (is.null(extent)) {
+					x <- cbind(cell=1:ncell(r), value=x)
+				} else {
+					xy <- xyFromCell(r, 1:ncell(r))
+					cell <- cellFromXY(x, xy)
+					x <- cbind(cell, value=x)
+				}
+			}
+			if (na.rm) { 
+				x <- na.omit(x) 
+				if (is.matrix(x)) {
+					d <- dim(x)
+					x <- matrix(as.vector(x), d[1], d[2])
+				} else {
+					x <- as.vector(x)
+				}
+			}
+						
+		} else {	
+		
 			if (na.rm) {
-				values <- na.omit(values)
-				if (length(values) >= size) {
-					if (is.matrix(values)) {
-						values <- values[1:size, ]
-					} else {
-						values <- values[1:size]
+				N <- 4 * size 
+			} else {
+				N <- size 
+			}	
+
+			rcells <- sampleInt(ncell(r), N)
+			
+			if (!is.null(extent)) {
+				xy <- xyFromCell(r, rcells)
+				rcells <- cellFromXY(x, xy)
+			}
+			
+			x <- cellValues(x, rcells)
+			if (cells) {
+				x <- cbind(cell=rcells, value=x)
+			}
+			
+			if (na.rm) {
+				x <- na.omit(x)
+				if (is.matrix(x)) {
+					d <- dim(x)
+					x <- matrix(as.vector(x), d[1], d[2])
+					if (nrow(x) > size) {
+						x <- x[1:size, ]
+					}
+				} else {
+					x <- as.vector(x)
+					if ( length(x) > size ) {
+						x <- x[1:size]
 					}
 				}
 			}	
 		}
+		
 	} else {
 		stop('No values associated with the Raster object')
 	}
-	return(values)
-}
-)
 
-
-setMethod('sampleRandom', signature(x='RasterStack'), 
-
-	function(x, size, na.rm=TRUE, ...) {
-		if (ncell(x) <= size) {
-			values <- cbind(1:ncell(x), getValues(x))
-			if (na.rm) { values <- na.omit(values) }
-		} else {	
-			if (na.rm) {
-				N <- size 
-			} else {
-				N <- 2 * size 
-			}	
-			cells <- sampleInt(ncell(x), N)
-			values <- cellValues(x, cells)
-			if (na.rm) {
-				values <- na.omit(values)
-				if (length(values) >= size) {
-					if (is.matrix(values)) {
-						values <- values[1:size, ]
-					} else {
-						values <- values[1:size]
-					}
-				}
-			}	
+	if (is.matrix(x)) {
+		if (cells) {
+			colnames(x) <- c('cell', layn)
+		} else {
+			colnames(x) <- layn
 		}
-		return(values)
 	}
+	return(x)
+}
 )
 
 

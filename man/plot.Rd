@@ -112,12 +112,6 @@ plot(r, r2)
 s <- stack(r, r2, r/r)
 plot(s, 2)
 plot(s)
-
-# plotting of a file with a color table:
-data(drg)
-e <- c(-220185.3, -219058.2, -30911.26, -29966.9)
-plot(drg, extent=e)
-#plot(drg, maxpixels=ncell(drg), interpolate=TRUE)
 }
 
 \keyword{methods}

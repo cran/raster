@@ -21,7 +21,7 @@ function(x,i,j,...,drop=TRUE) {
 		}
 	}
 
-	if (class(i) == "RasterLayer") {
+	if (inherits(i, "RasterLayer")) {
 		i <- as.logical( getValues(i) ) 
 	}
 	
@@ -51,7 +51,7 @@ function(x,i,j,...,drop=TRUE) {
 		return(getValues(x))
 	}
 
-	if (class(i) == "RasterLayer") {
+	if (inherits(i, "RasterLayer")) {
 		i <- as.logical( getValues(i) ) 
 	}
 	

@@ -7,7 +7,7 @@
 
 
 'dataType<-' <- function(x, value) {
-	if (class(x) == 'RasterStack') {
+	if (inherits(x, 'RasterStack')) {
 		stop('Cannot set datatype of a RasterStack')
 	}
 

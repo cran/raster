@@ -5,7 +5,7 @@
 
 
 sampleRegular <- function(x, size, extent=NULL, cells=FALSE, asRaster=FALSE, corners=FALSE) {
-	if (class(x) == 'RasterLayer') {
+	if (inherits(x, 'RasterLayer')) {
 		return(.sampleRegular(x, n=size, extent=extent, cells=cells, asRaster=asRaster, corners=corners))
 	} else {
 	# ugly & inefficient hack :

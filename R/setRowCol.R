@@ -19,7 +19,7 @@ setMethod('ncol', signature(x='BasicRaster'),
 
 'rowcol<-' <- function(x, value) {
 	if (! inherits(x, 'Raster') ) stop('x is an object of the wrong class. Should be Raster*')
-	if (class(x) == 'RasterStack')  stop('Cannot change parameters of a RasterStack')
+	if (inherits(x, 'RasterStack'))  stop('Cannot change parameters of a RasterStack')
 	
 	if (length(value) == 1) {
 		value <- c(value, ncol(x))
