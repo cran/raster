@@ -9,14 +9,14 @@ Raster to point conversion. Cells with NA are not converted. A function can be u
 }
 
 \usage{
-rasterToPoints(x, fun=NULL, spatial=FALSE, progress='')
+rasterToPoints(x, fun=NULL, spatial=FALSE, ...)
 }
 
 \arguments{
  \item{x}{A Raster* object }
  \item{fun}{Function to select a subset of raster values}
  \item{spatial}{Logical. If \code{TRUE}, the function returns a SpatialPointsDataFrame object }
- \item{progress}{Character. Choice of progress bar. "text", "window", or "" (the default, no progress bar)}
+ \item{...}{Additional arguments. Currently only \code{progress} to specify a progress bar. "text", "window", or "" (the default, no progress bar)}
 }
 
 \details{

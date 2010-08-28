@@ -53,6 +53,16 @@
 }	
 
 
+
+.setfileext <- function() {
+	d <- getOption('rasterSetFileExt')
+	if (is.null(d)) {
+		return( TRUE )
+	} 
+	return(as.logical(d))
+}	
+
+
 .maxmemory <- function() {
 	default <- 100000000
 	d <- getOption('rasterMaxMemory')
@@ -107,7 +117,7 @@
 }
 
 .getFormat <- function(filename) {
-	ext <- tolower(ext(filename))
+	ext <- tolower(ext(filename, maxchar=5))
 	if (nchar(ext) < 3) {
 		return('')
 	} else {

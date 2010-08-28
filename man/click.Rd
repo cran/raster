@@ -4,7 +4,7 @@
 \title{ Click }
 
 \description{
-  Click on a plot (map) of a RasterLayer to get values of a Raster* object at a location; and optionally the coordinates for the location. 
+  Click on a map (plot) to get values of a Raster* object at a location; and optionally the coordinates of the location. 
   Multiple locations can be clicked on by specifying \code{n=}. 
 }
 
@@ -14,7 +14,7 @@ click(object, n=1, id=FALSE, xy=FALSE, type = "n", ...)
 
 
 \arguments{
-  \item{object}{RasterLayer or RasterStack object}
+  \item{object}{Raster* object}
   \item{n}{number of clicks on the map}
   \item{id}{Logical. If \code{TRUE}, a numeric ID is shown on the map that corresponds to the row number of the output}
   \item{xy}{Logical. If \code{TRUE}, xy coordinates are included in the output}
@@ -32,7 +32,7 @@ The value(s) of \code{object} at the point(s) clicked on; and the coordinates of
   with the layer that is plotted.
   
   Unless the process is terminated prematurely values at at most \code{n} positions are determined. 
-  The identification process can be terminated by clicking the second button and selecting 'Stop' from the menu,
+  The identification process can be terminated by clicking the second mouse button and selecting 'Stop' from the menu,
   or from the 'Stop' menu on the graphics window. 
 }
 

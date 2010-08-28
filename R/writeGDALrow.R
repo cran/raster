@@ -6,10 +6,13 @@
 # Licence GPL v3
 
 .startGDALwriting <- function(raster, filename, options, ...) {
+	
 	temp <- .getGDALtransient(raster, filename=filename, options=options, ...)
 	
 	attr(raster@file, "transient") <- temp[[1]]
 	raster@file@nodatavalue <- temp[[2]]
+	attr(raster@file, "options") <- temp[[3]]
+	
 	
 	raster@file@driver <- 'gdal'
 
@@ -22,7 +25,13 @@
 
 .stopGDALwriting <- function(raster) {
 
-	saveDataset(raster@file@transient, raster@file@name)
+	if (raster@file@options[1] == "") {
+		options <- NULL
+	} else {
+		options <- raster@file@options	
+	}
+	
+	saveDataset(raster@file@transient, raster@file@name, options=options)
 	GDAL.close(raster@file@transient) 
 	
 	if (inherits(raster, 'RasterBrick')) {

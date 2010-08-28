@@ -15,8 +15,12 @@ pointsToRaster(raster, xy, values=1, fun=length, background=NA, filename="", ...
 \arguments{
   \item{raster}{RasterLayer object}
   \item{xy}{Matrix of x and y coordinates (in the same map reference system as the raster) or a SpatialPoints* object}
-  \item{values}{Vector of length of the number of points (i.e., dim(xy)[1] if xy is a matrix) with the values to be used; alternatively you can supply a single value which is then assigned to each point} 
-  \item{fun}{Function to be applied, on a cell by cell basis, to the points a cell; the default function is \code{length}, i.e. it returns the number of points in a cell. Typical examples of other functions that can be used are mean, sum, max and \code{function(x)length(unique(x))} to get the number of unique values ('richness')}
+  \item{values}{Vector of length of the number of points (i.e., dim(xy)[1] if xy is a matrix) with the values to be used; alternatively 
+  you can supply a single value which is then assigned to each point} 
+  \item{fun}{Function to be applied, on a cell by cell basis, to the points a cell; the default function is \code{length},
+  i.e. it returns the number of points in a cell. Typical examples of other functions that can be used are mean, sum, max and 
+  \code{function(x)length(unique(x))} to get the number of unique values ('richness'). You can also pass multiple functions 
+  using a statement like \code{fun=c(lenght,mean)}}, in which case the returned object is a RasterBrick (multiple layers)
   \item{background}{Numeric. The value to be applied to the cells in which no points fall (typically \code{NA} or \code{0})}
   \item{filename}{Character. Output filename}
   \item{...}{Additional arguments. See Details}  
@@ -43,7 +47,7 @@ The following additional arguments can be passed, to replace default values for 
   RasterLayer object
 }
 
-\author{Robert J. Hijmans}
+\author{Robert J. Hijmans & Paul Hiemstra}
 
 \seealso{ \code{\link[raster]{linesToRaster}}, \code{\link[raster]{polygonsToRaster}}}
 

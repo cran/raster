@@ -10,12 +10,17 @@ if (!isGeneric("plotRGB")) {
 		standardGeneric("plotRGB"))
 }	
 
+
+
+
+
 setMethod("plotRGB", signature(x='RasterStackBrick'), 
 function(x, r=1, g=2, b=3, scale=255, maxpixels=500000, extent=NULL, interpolate=FALSE, axes=TRUE, xlab='', ylab='', asp, ...) { 
 	
 	# rasterImage is new in R 2.11
 	if (! exists("rasterImage") ) {
-		stop('You need R version 2.11 or higher to use this function')
+		.oldPlotRGB(x, r, g, b, scale, maxpixels, extent, axes, xlab, ylab, asp, ...)
+		return(NULL)
 	}
 	
 	.warnIfSDI()
@@ -39,7 +44,7 @@ function(x, r=1, g=2, b=3, scale=255, maxpixels=500000, extent=NULL, interpolate
 	
 	RGB <- na.omit(cbind(getValues(r), getValues(g), getValues(b)))
 	
-	naind <- as.vector(attr(RGB, "na.action"))
+	naind <- as.vector( attr(RGB, "na.action") )
 	if (!is.null(naind)) {
 		z <- rep( "#000000", times=ncell(r))
 		z[-naind] <- rgb(RGB[,1], RGB[,2], RGB[,3], max=scale)
@@ -67,3 +72,52 @@ function(x, r=1, g=2, b=3, scale=255, maxpixels=500000, extent=NULL, interpolate
 }
 )
 
+
+
+.oldPlotRGB <- function(x, r=1, g=2, b=3, scale=255, maxpixels=100000, extent=NULL, axes=TRUE, xlab='', ylab='', asp, ...) { 
+	
+ 	if (missing(asp)) {
+		if (.couldBeLonLat(x)) {
+			ym <- mean(x@extent@ymax + x@extent@ymin)
+			asp <- min(5, 1/cos((ym * pi)/180))
+			asp = NA
+		} else {
+			asp = 1
+		}		
+	}
+
+	r <- sampleRegular(raster(x,r), maxpixels, extent=extent, asRaster=TRUE, corners=TRUE)
+	g <- sampleRegular(raster(x,g), maxpixels, extent=extent, asRaster=TRUE, corners=TRUE)
+	b <- sampleRegular(raster(x,b), maxpixels, extent=extent, asRaster=TRUE, corners=TRUE)
+	scale = as.vector(scale)[1]
+	
+	RGB <- na.omit(cbind(getValues(r), getValues(g), getValues(b)))
+	
+	naind <- as.vector(attr(RGB, "na.action"))
+	if (!is.null(naind)) {
+		z = vector(length=ncell(r))
+		z[-naind] <- rgb(RGB[,1], RGB[,2], RGB[,3], max=scale)
+	} else {
+		z <- rgb(RGB[,1], RGB[,2], RGB[,3], max=scale)
+	}
+	
+	col <- unique(z)
+	col[col==FALSE] <- "#000000"
+	z <- match(z, col)
+
+	x <- xFromCol(r, 1:ncol(r))
+	y <- yFromRow(r, nrow(r):1)
+	z <- matrix(z, nrow=nrow(r), ncol=ncol(r), byrow=T)
+	z <- t(z[nrow(z):1,])
+
+	xticks <- axTicks(1, c(xmin(r), xmax(r), 4))
+	yticks <- axTicks(2, c(ymin(r), ymax(r), 4))
+	if (xres(r) %% 1 == 0) xticks = round(xticks)
+	if (yres(r) %% 1 == 0) yticks = round(yticks)
+	
+	image(x=x, y=y, z=z,  col=col, axes=FALSE, xlab=xlab, ylab=ylab, asp=asp, ...)
+	axis(1, at=xticks)
+	axis(2, at=yticks, las = 1)
+	axis(3, at=xticks, labels=FALSE, lwd.ticks=0)
+	axis(4, at=yticks, labels=FALSE, lwd.ticks=0)
+}

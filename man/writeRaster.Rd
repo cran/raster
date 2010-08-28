@@ -49,17 +49,17 @@ writeRaster(x, filename, ...)
 
 \bold{Additional arguments}
 \tabular{rll}{
+\tab \code{options} \tab Character. File format specific GDAL options. E.g., when writing a geotiff file: \code{options=c("COMPRESS=NONE", "TFW=YES")}\cr
 \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeFormats}} \cr
 \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
 \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
 }
-
 }}
 
 \details{
 See \code{writeFormats} for supported file types ("formats", "drivers").
 
-The rgdal package is needed for this most formats. Except for the 'raster', 'BIL', 'BIP', 'BSQ', 'SAGA', 'ascii', 'IDRISI', and 'CDF' formats. Some of these formats can be used with or without rgdal (idrisi, SAGA, ascii). 
+The rgdal package is needed, except for these file formats: 'raster', 'BIL', 'BIP', 'BSQ', 'SAGA', 'ascii', 'IDRISI', and 'CDF'. Some of these formats can be used with or without rgdal (idrisi, SAGA, ascii).  You need the 'ncdf' library for the 'CDF' format. 
 
 In multi-band files  (i.e. files saved from RasterStack or RasterBrick objects), in the native 'raster' format, the bandorder can be set to BIL ('Bands Interleaved by Line'), BIP ('Bands Interleaved by Pixels') or BSQ ('Bands SeQuential'). Note that bandorder is not the same as filetype here. 
 

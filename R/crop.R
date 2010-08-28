@@ -83,7 +83,7 @@ function(x, y, filename='', datatype=dataType(x), ...) {
 		for (i in 1:tr$n) {
 			vv <- getValuesBlock(x, row=tr$row[i]+row1-1, nrows=tr$nrows[i], col1, nc)
 			outRaster <- writeValues(outRaster, vv, tr$row[i])
-			pbStep(pb, r) 			
+			pbStep(pb, i) 			
 		} 
 		outRaster <- writeStop(outRaster)
 		pbClose(pb)

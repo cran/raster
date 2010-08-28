@@ -62,21 +62,21 @@ function(x, mask, filename="", ...){
 
 	compare(x, mask)
 	
-	outRaster <- brick(x, values=FALSE)
+	out <- brick(x, values=FALSE)
 	
 	if (canProcessInMemory(x, nlayers(x)+4)) {
 
 		x <- getValues(x)
 		x[is.na(getValues(mask)), ] <- NA
-		outRaster <- setValues(outRaster, x)
+		out <- setValues(out, x)
 		if (filename != '') {
-			outRaster <- writeRaster(outRaster, filename, ...)
+			out <- writeRaster(out, filename, ...)
 		} 
-		return(outRaster)
+		return(out)
 		
 	} else {
 	
-		out <- brick(x)
+
 		if ( filename=='') { filename <- rasterTmpFile() }
 
 		out <- writeStart(out, filename=filename, ...)
@@ -88,6 +88,106 @@ function(x, mask, filename="", ...){
 			v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
 			m <- getValues( mask, row=tr$row[i], nrows=tr$nrows[i] )
 			v[is.na(m), ] <- NA
+			out <- writeValues(out, v, tr$row[i])
+			pbStep(pb, i)
+		} 
+		pbClose(pb)
+
+		out <- writeStop(out)
+		return(out)
+	}
+}
+)
+
+
+setMethod('mask', signature(x='RasterLayer', mask='RasterStackBrick'), 
+function(x, mask, filename="", ...){ 
+
+	compare(x, mask)
+	
+	out <- brick(mask, values=FALSE)
+	
+	if (canProcessInMemory(mask, nlayers(x)*2+2)) {
+
+		x <- getValues(x)
+		x <- matrix(rep(x, nlayers(out)), ncol=nlayers(out))
+		x[is.na(getValues(mask))] <- NA
+		out <- setValues(out, x)
+		if (filename != '') {
+			out <- writeRaster(out, filename, ...)
+		} 
+		return(out)
+		
+	} else {
+	
+
+		if ( filename=='') { filename <- rasterTmpFile() }
+
+		out <- writeStart(out, filename=filename, ...)
+
+		tr <- blockSize(out)
+		pb <- pbCreate(tr$n, type=.progress(...))
+
+		for (i in 1:tr$n) {
+			v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
+			v <- matrix(rep(v, nlayers(out)), ncol=nlayers(out))
+			m <- getValues( mask, row=tr$row[i], nrows=tr$nrows[i] )
+			v[is.na(m)] <- NA
+			out <- writeValues(out, v, tr$row[i])
+			pbStep(pb, i)
+		} 
+		pbClose(pb)
+
+		out <- writeStop(out)
+		return(out)
+	}
+}
+)
+
+
+
+setMethod('mask', signature(x='RasterStackBrick', mask='RasterStackBrick'), 
+function(x, mask, filename="", ...){ 
+
+
+	if ( nlayers(x) != nlayers(mask) ) {
+		if (nlayers(x) == 1) {
+			x <- raster(x)
+			return(mask(x, mask))
+		}
+		if (nlayers(mask) == 1) {
+			mask <- raster(mask)
+			return(mask(x, mask))
+		}
+		stop('number of layers of x and mask must match')
+	}
+	
+	compare(x, mask)
+	out <- brick(x, values=FALSE)
+	
+	if (canProcessInMemory(x, nlayers(x)+4)) {
+
+		x <- getValues(x)
+		x[is.na(getValues(mask))] <- NA
+		out <- setValues(out, x)
+		if (filename != '') {
+			out <- writeRaster(out, filename, ...)
+		} 
+		return(out)
+		
+	} else {
+
+		if ( filename=='') { filename <- rasterTmpFile() }
+
+		out <- writeStart(out, filename=filename, ...)
+
+		tr <- blockSize(out)
+		pb <- pbCreate(tr$n, type=.progress(...))
+
+		for (i in 1:tr$n) {
+			v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
+			m <- getValues( mask, row=tr$row[i], nrows=tr$nrows[i] )
+			v[is.na(m)] <- NA
 			out <- writeValues(out, v, tr$row[i])
 			pbStep(pb, i)
 		} 

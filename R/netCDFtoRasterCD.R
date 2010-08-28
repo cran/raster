@@ -191,22 +191,13 @@
 	yrange[1] <- yrange[1] - 0.5 * resy
 	yrange[2] <- yrange[2] + 0.5 * resy
  
-#	add_offset <- 0
-#	scale_factor <- 1
 	long_name <- zvar
-	missing_value <- NA
 	projection <- NA
 	unit <- ''
-#	a <- att.get.ncdf(nc, zvar, "add_offset")
-#	if (a$hasatt) { add_offset <- a$value }
-#	a <- att.get.ncdf(nc, zvar, "scale_factor")
-#	if (a$hasatt) { scale_factor <- a$value }
 	a <- att.get.ncdf(nc, zvar, "long_name")
 	if (a$hasatt) { long_name <- a$value }
 	a <- att.get.ncdf(nc, zvar, "units")
 	if (a$hasatt) { unit <- a$value }
-	a <- att.get.ncdf(nc, zvar, "missing_value")
-	if (a$hasatt) { missing_value <- a$value }
 	a <- att.get.ncdf(nc, zvar, "grid_mapping")
 	if ( a$hasatt ) { projection  <- a$value }
 
@@ -220,8 +211,10 @@
 		
 	if (type == 'RasterLayer') {
 		r <- raster(xmn=xrange[1], xmx=xrange[2], ymn=yrange[1], ymx=yrange[2], ncols=ncols, nrows=nrows)
+		r <- .enforceGoodLayerNames(r, long_name)
 	} else {
 		r <- brick(xmn=xrange[1], xmx=xrange[2], ymn=yrange[1], ymx=yrange[2], ncols=ncols, nrows=nrows)
+		r@title <- long_name
 	}
 	
 	if (xrange[1] < -181 | xrange[2] > 181 | yrange[1] < -91 | yrange[2] > 91) {
@@ -229,7 +222,6 @@
 	}
 	r@file@name <- filename
 	r@file@toptobottom <- toptobottom
-	r <- .enforceGoodLayerNames(r, long_name)
 	r@unit <- unit
 	
 	
@@ -241,8 +233,10 @@
 	
 	attr(r, "prj") <- prj 
 	r@file@driver <- "netcdf"	
-	if (! is.na(missing_value)) {
-		r@file@nodatavalue <- missing_value
+	
+	natest <- att.get.ncdf(nc, zvar, "_FillValue")
+	if (natest$hasatt) { 
+		r@file@nodatavalue <- natest$value
 	}
 	r@data@fromdisk <- TRUE
 	
@@ -280,7 +274,9 @@
 			stop('cannot make a RasterStack or RasterBrick from a data that has only two dimensions (no time step), use raster() instead, and then make a stack or brick from that')	
 		} 
 		r@data@nlayers <- r@file@nbands
+		try( layerNames(r) <- r@zvalue, silent=TRUE )
 	}
+	
 	return(r)
 }
 

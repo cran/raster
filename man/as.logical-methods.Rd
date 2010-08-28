@@ -2,12 +2,13 @@
 
 \docType{methods}
 
-\alias{as.logical,RasterLayer-method}
+\alias{as.logical,Raster-method}
 
 \title{ Change values to logical}
 
 \description{
- Change values of a RasterLayer to logical values (zero becomes FALSE, all other values become TRUE)
+ Change values of a Raster* object to logical values (zero becomes \code{FALSE}, all other values become \code{TRUE})
+ You can provide the standard additional arguments: filename, format, overwrite, and progress. 
 }
 
 \seealso{ \code{\link[base]{as.logical}} }

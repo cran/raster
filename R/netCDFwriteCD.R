@@ -62,6 +62,7 @@
 	}
 	nc <- create.ncdf(filename, vardef)
 	
+	att.put.ncdf(nc, 'value', '_FillValue', x@file@nodatavalue)
 	att.put.ncdf(nc, 'value', 'missing_value', x@file@nodatavalue)
 	att.put.ncdf(nc, 'value', 'long_name', layerNames(x))
 	att.put.ncdf(nc, 0, 'Conventions', 'CF-1.4')

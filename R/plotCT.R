@@ -17,7 +17,7 @@
 			if (.Platform$GUI[1] == "Rgui") { 
 # RGui SDI mode: returns "R Console", in MDI mode: returns "RGui"
 				if (getIdentification() == "R Console")  {
-					warning ("Because of a bug in SDI raster handling your R graphics window may stop displaying output")
+					warning ("Because of a bug in SDI raster handling your R graphics window may stop displaying output. When this happens, colse the graphics window and plot again.")
 				}
 			}
 		}
@@ -28,13 +28,7 @@
 .plotCT <- function(x, maxpixels=500000, extent=NULL, interpolate=FALSE, axes=FALSE, xlab='', ylab='', asp, ...) { 
 # plotting with a color table
 	
-	# rasterImage is new in R 2.11
-	if (! exists("rasterImage") ) {
-		stop('You need R version 2.11 or higher to use this function')
-	}
-	
 	.warnIfSDI()
-	
 
 	if (!axes) par(plt=c(0,1,0,1))
 

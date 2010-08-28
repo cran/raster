@@ -8,7 +8,7 @@
 \title{Interactive 3D plot of a RasterLayer}
 
 \description{
-Make an interactive 3D plot (map) of a RasterLayer. This is a wrapper around \code{surface3d} in the rgl package
+Make an interactive 3D plot (map) of a RasterLayer. This is a wrapper around \code{surface3d} in the rgl package. You can use \code{decorate3d} to add axes.
 }
 
 \section{Methods}{
@@ -22,9 +22,9 @@ Make an interactive 3D plot (map) of a RasterLayer. This is a wrapper around \co
 \tab \code{maxpixels}  \tab  Maximum number of pixels to use  \cr
 \tab \code{zfac}  \tab  Numeric, to set the elevation scale relative to x and y \cr
 \tab \code{drape}  \tab  RasterLayer, to 'drape' colors representing the values of this layer on the 3D representation of layer \code{x}. In this case\code{x} typically has elevation data\cr
-\tab \code{col}  \tab  A color palette, i.e. a vector of n contiguous colors such as \code{rainbow}, \code{heat.colors}, and \code{topo.colors}, on one or your own making \cr
+\tab \code{col}  \tab  A color palette, i.e. a vector of n contiguous colors such as \code{rainbow}, \code{heat.colors}, and \code{topo.colors}, or one or your own making \cr
 \tab \code{rev}  \tab  Logical. If \code{TRUE}, the color palette values are reversed in order \cr
-\tab \code{...}  \tab  Any argument that can be passed to \code{\link[rgl]{plot3d}}  \cr
+\tab \code{...}  \tab  Any argument that can be passed to \code{\link[rgl]{surface3d}}  \cr
 }
 }}
 
@@ -32,10 +32,13 @@ Make an interactive 3D plot (map) of a RasterLayer. This is a wrapper around \co
 
 
 \examples{
-
 if (require(rgl)) {
 r <- raster(system.file("external/test.grd", package="raster"))
-plot3D(r)
+x = r
+x[] = 1:ncell(x)
+x <- mask(x, r)
+plot3D(r, drape=x)
+decorate3d(xlab = "x", ylab = "y", zlab = "z", axes=TRUE)
 }
 
 }

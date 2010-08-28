@@ -1,3 +1,54 @@
+27-Aug-2010, version 1.4-8
+Minor bug fixes in ncdf/brick handling
+
+Bug fixes in dropLayer for a RasterBrick (reported by Steven Mosher)
+
+Added option 'setfileext' (default TRUE) to turn off the automatic setting of the file extension when writing raster files (based on the format). (requested by Jonathan Greenberg)
+
+ext(filename) <- 'x'  now only removes the old extension if it has less than 5 characters (including the dot).
+
+Added arguments to all xyValues methods such that both of the below functions work (before only test1 would work; bug reported by Roman Lustrik)
+test1 = function(r, xy, ...) {  return( xyValues(r, xy, ...) ) }
+test2 = function(r, xy, buffer, fun) { return( xyValues(r, xy, buffer=buffer, fun=fun) )}
+
+-------------------------------------------------------------
+25-Aug-2010, version 1.4-7
+
+bug fixes: 
+writing via gdal did not respond to the 'options' argument (reported by Tom Kurkowski and  Jorrel Aunario)
+cellValues (and getValues) bug in ncdf brick fixed. (reported by Steven Mosher)
+
+new function:
+stackApply applies a function over sets of layers of a RasterStack/Brick
+'hasValues' while 'dataContent' has now been removed. 
+
+improvements:
+area now takes na.rm=TRUE and weights=TRUE arguments, and returns a Brick if input is Stack/Brick and na.rm=T (suggested by Steven Mosher). 
+as.logical now works for a multi-layer object (suggested by Steven Mosher)
+
+-------------------------------------------------------------
+23-Aug-2010, version 1.4-5
+
+Setting the nodata value with NAvalues now also affects reading of values from netcdf files (suggested by Steven Mosher)
+cellStats now returns values per layer (rather than all combined) (suggested by Steven Mosher)
+Minor bug fix in rasterToPoints with multi-layer objects (reported by Jon Olav Skoien).
+-------------------------------------------------------------
+20-Aug-2010, version 1.4-4
+
+Minor bug fixes in crop (reported by Jon Olav Skoien) and in focalNA (reported by Matteo Mattiuzzi)
+Changes in gridDistance to avoid it (igraph) from crashing when using very complex grids.
+-------------------------------------------------------------
+14-Aug-2010, version 1.4-2
+
+Added @data@gain and @data@offset slots to Raster* objects and use these when reading values from file
+v = v * r@gain + r@offset  (suggestion by Jonathan Greenberg)
+
+It is now possible to do Arith (e.g. addition, multiplication) with a RasterStack or Brick using a vector argument of lenght that equals nlayers(object).
+E.g. you can mutliply a RasterStack with 5 layers with vector c(1,3,5,3,1), where indices are matched to layers.
+
+It is also possible to do Arith & Math with mutliple RasterStackBrick objects (as long as nlayers is the same) and with a RasterStack/Brick and a RasterLayer objects.
+
+-------------------------------------------------------------
 4-Aug-2010, version 1.3-10
 
 Expanded sampleRandom by adding a 'cells' and 'extent' argument; 
@@ -17,7 +68,7 @@ Not yet used in writing, or with other formats
 -------------------------------------------------------------
 2-Aug-2010, version 1.3-8
 
-New clump function, also using igraph for large rasters & minor bug fix
+New clump function, now always using igraph (also for large rasters) & minor bug fix
 
 Fixes to subs function (needs more checking)
 

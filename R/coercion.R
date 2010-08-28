@@ -4,15 +4,6 @@
 # Licence GPL v3
 
 
-.hasValues <- function(x) {
-	if (class(x) == 'BasicRaster') { return(FALSE) }
-	if ( ! fromDisk(x)  & ! inMemory(x) ) {
-		return(FALSE)
-	} else {
-		return(TRUE)
-	}
-}
-
 
 .asSpGrid <- function(object, type='grid', dataframe)  {
 		

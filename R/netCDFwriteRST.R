@@ -40,6 +40,7 @@
 	att.put.ncdf(nc, 0, 'ymin', x@extent@ymin)
 	att.put.ncdf(nc, 0, 'ymax', x@extent@ymax)
 	att.put.ncdf(nc, 0, 'crs', projection(x))
+	att.put.ncdf(nc, 'value', '_FillValue', x@file@nodatavalue)
 	att.put.ncdf(nc, 'value', 'missing_value', x@file@nodatavalue)
 	att.put.ncdf(nc, 'value', 'long_name', layerNames(x))
 

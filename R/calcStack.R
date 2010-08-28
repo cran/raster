@@ -4,15 +4,20 @@
 # Licence GPL v3
 
 
-#mCalc <- function(...) { stop('mCalc has been replaced by generic function "calc"')}
-
 setMethod('calc', signature(x='RasterStackBrick', fun='function'), 
 
 function(x, fun, filename='', ...) {
 
-	if (length(fun(seq(1:5))) > 1) { 
-		stop("function 'fun' returns more than one value") 
+	nl <- nlayers(x)
+	test <- length(fun(1:nl))
+	if (test != 1) {
+		if (test == nl) {
+			return( .calcLayers(x, fun, filename, ...) )
+		} else {
+			stop("'fun' does not return the correct number of values. It should be 1 or nlayers(x)") 
+		}
 	}
+
 	filename <- trim(filename)
 	outraster <- raster(x)
 

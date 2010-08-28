@@ -31,7 +31,7 @@ A full call to the method is
   \tab  \code{object} \tab Raster* object \cr
   \tab  \code{model}  \tab Fitted model object\cr
   \tab  \code{filename}  \tab Output filename for a new raster; if NA the result is not written to a file but returned with the RasterLayer object, in the data slot \cr
-  \tab  \code{fun} \tab Function. Default value is 'predict', but can be replaced with e.g. predict.se (depending on the type of model)\cr
+  \tab  \code{fun} \tab Function. Default value is 'predict', but can be replaced with e.g. 'predict.se' (depending on the class of the model)\cr
   \tab  \code{xyOnly} \tab Logical. If \code{TRUE}, values of the Raster* object are not considered as co-variables; and only x and y (longitude and latitude) are used. This should match the model \cr
   \tab  \code{ext} \tab An Extent object to limit the prediction to a sub-region of \code{x} \cr
   \tab  \code{const}  \tab data.frame. Can be used to add a constant for which there is no Raster object for model predictions. Particulalry useful if the constant is a character-like factor value \cr

@@ -176,11 +176,7 @@ setMethod('interpolate', signature(object='Raster'),
 			if (filename == '') {
 				predv = matrix(predv, nrow=ncol(predrast))
 				cols = tr$row[i]:(tr$row[i]+dim(predv)[2]-1)
-				a = try( v[,cols] <- predv )
-				if (class(a) == 'try-error') {
-					print(cols)
-					print(dim(v))
-				}
+				v[,cols] <- predv 
 			} else {
 				predrast <- writeValues(predrast, predv, tr$row[i])
 			}

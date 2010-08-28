@@ -441,7 +441,12 @@ polygonsToRaster <- function(p, raster, field=0, overlap='last', mask=FALSE, upd
 	}
 	
 	
-	v <- vector(length=0)
+	if (filename == "") {
+		v <- vector(length=0) # replace this
+	} else {
+		raster <- writeStart(raster, filename=filename, ...)
+	}
+	
 	rowcol <- cbind(0, 1:ncol(raster))
 
 	firstrow <- rowFromY(raster, spbb[2,2])
@@ -459,12 +464,13 @@ polygonsToRaster <- function(p, raster, field=0, overlap='last', mask=FALSE, upd
 		if (filename == "") {
 			v <- c(v, vals)
 		} else {
-			raster <- setValues(raster, vals, r)
-			raster <- writeRaster(raster, filename=filename, ...)
+			raster <- writeValues(raster, vals)
 		}
 	}
 	if (filename == "") {
 		raster <- setValues(raster, v)
+	} else {
+		raster <- writeStop(raster)
 	}
 	return(raster)
 }

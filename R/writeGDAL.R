@@ -34,7 +34,7 @@
 	overwrite <- .overwrite(...)
 	gdalfiletype <- .filetype(...)
 
-	.isSupportedFormat(gdalfiletype)
+	raster:::.isSupportedFormat(gdalfiletype)
 	
 	if (filename == "") {	
 		stop('provide a filename')	
@@ -57,8 +57,11 @@
 		if (bytes > (4 * 1024 * 1024 * 1000) ) {  # ~ 4GB
 			options <- c(options, 'BIGTIFF=YES')
 		}
+		options <- c(options, "COMPRESS=LZW")
 	}
+
 	driver = new("GDALDriver", gdalfiletype)
+	
     transient = new("GDALTransientDataset", driver=driver, rows=r@nrows, cols=r@ncols, bands=nbands, type=dataformat, fname=filename, options=options, handle=NULL)
  
 	for (i in 1:nbands) {
@@ -72,7 +75,8 @@
     p4s <- projection(r)
     .Call("RGDAL_SetProject", transient, p4s, PACKAGE = "rgdal")
 
-	return(list(transient, naValue))
+	if (is.null(options)) options <- ''
+	return(list(transient, naValue, options))
 }
 
 
@@ -90,6 +94,12 @@
 	temp <- .getGDALtransient(raster, filename=filename, options=options, ...)
 	transient <- temp[[1]]
 	naValue <- temp[[2]]
+	if (temp[[3]][1] == "") {
+		options <- NULL
+	} else {
+		options <- temp[[3]]
+	}
+	
 	nl <- nlayers(raster)
 
 	if (nl == 1) {
@@ -104,8 +114,8 @@
 			x <- putRasterData(transient, t(v), band=i, c(0, 0))
 		}
 	}	
-
- 	saveDataset(transient, filename )
+	
+ 	saveDataset(transient, filename, options=options )
 	GDAL.close(transient) 
 #	.writeStx(raster, filename) 
 

@@ -6,16 +6,16 @@
 
 \description{
 Compute statistics for the cells of a single RasterLayer. In the \code{raster} package, functions such as max, min, and mean,
-when used with a RasterLayer objects as argument, return another RasterLayer. In contrasct, cellStats returns a single value, 
-computed from the values of a single RasterLayer.
+when used with a Raster objects as argument, return a new RasterLayer (with a value computed for each cell). In contrast, cellStats returns a single value, 
+computed from the all the values of a layer.
 }
 
 \usage{
-cellStats(raster, stat='mean', ...)
+cellStats(x, stat='mean', ...)
 }
 
 \arguments{
- \item{raster}{A RasterLayer}
+ \item{x}{A Raster* object}
  \item{stat}{The function to be applied. Either as character: 'mean', 'min', 'max', 'sum', or 'sd'; or a function (see Details) }
  \item{...}{Additional argument. See \code{\link[raster]{rasterOptions}} }  
 }
@@ -44,6 +44,8 @@ r[] <- runif(ncell(r)) * 10
 cellStats(r, 'mean')
 # same, but does not work for very large files
 cellStats(r, mean)
+# multi-layer object
+cellStats(brick(r,r), mean)
 
 # not quite the same
 cellStats(r, 'sd')

@@ -95,7 +95,7 @@
 	}
 
 	if (nchar(layernames) > 1) {
-		layernames <- unlist(strsplit(layernames, ':'))
+		layernames <- as.vector(unlist(strsplit(layernames, ':')))
 	}
 	if (type == 'RasterBrick') {
 		x@layernames <- layernames

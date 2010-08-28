@@ -10,13 +10,14 @@ Get or change a filename extension
 }
 
 \usage{
-ext(filename, value=NULL)
+ext(filename, value=NULL, maxchar=10)
 ext(filename) <- value
 }
 
 \arguments{
 \item{filename}{A filename, with or without the path}
-\item{value}{A file extension including the dot, e.g., ".txt" }
+\item{value}{A file extension with or without a dot, e.g., ".txt" or "txt"}
+\item{maxchar}{Maximum number of characters after the last dot in the filename, for that string to be considered a filename extension }
 }
 
 \value{
@@ -33,7 +34,9 @@ fn <- "c:/temp folder/filename.exten sion"
 ext(fn)
 ext(fn) <- ".txt"
 ext(fn)
-ext(fn, '.document')
+fn <- ext(fn, '.document')
+ext(fn)
+ext(fn, maxchar=4)
 }
 
 \keyword{file}

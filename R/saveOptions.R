@@ -16,16 +16,17 @@
 
 
 showOptions <- function() {
-	cat('format   :', .filetype(), '\n' )
-	cat('datatype :', .datatype(), '\n')
-	cat('overwrite:', .overwrite(), '\n')
-	cat('progress :', .progress(), '\n')
-	cat('timer    :', .timer(), '\n')
-	cat('chunksize:', .chunksize(), '\n')
-	cat('maxmemory:', .maxmemory(), '\n')
-	cat('tmpdir   :', .tmpdir(), '\n')
+	cat('format    :', .filetype(), '\n' )
+	cat('datatype  :', .datatype(), '\n')
+	cat('overwrite :', .overwrite(), '\n')
+	cat('progress  :', .progress(), '\n')
+	cat('timer     :', .timer(), '\n')
+	cat('chunksize :', .chunksize(), '\n')
+	cat('maxmemory :', .maxmemory(), '\n')
+	cat('tmpdir    :', .tmpdir(), '\n')
+	cat('setfileext:', .setfileext(), '\n')
 	if (.toDisk()) {
-		cat('toDisk   : TRUE\n')
+		cat('toDisk    : TRUE\n')
 	}
 }
 
@@ -37,6 +38,7 @@ clearOptions <- function() {
 	options(rasterTimer = FALSE)
 	options(rasterChunkSize = 1000000)
 	options(rasterMaxMemory = 100000000)
+	options(setfileext = TRUE)
 	options(rasterTmpDir = .tmpdir())
 		
 	fn <- paste(R.home(component="etc"), '/', 'Rprofile.site', sep='')
@@ -61,6 +63,7 @@ saveOptions <- function() {
 	lst <- c(lst, paste("options(rasterTimer='", .timer(), "')", sep=''))
 	lst <- c(lst, paste("options(rasterChunkSize='", .chunksize(), "')", sep=''))
 	lst <- c(lst, paste("options(rasterMaxMemory='", .maxmemory(), "')", sep=''))
+	lst <- c(lst, paste("options(rasterSetFileExt='", .setfileext(), "')", sep=''))
 	lst <- c(lst, paste("options(rasterTmpDir='", .tmpdir(), "')", sep=''))
 
 	r <- try( write(unlist(lst), fn), silent = TRUE )

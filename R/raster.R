@@ -123,6 +123,10 @@ setMethod('raster', signature(x='RasterBrick'),
 					r <- setValues(r, getValues(x)[,dindex])
 				}
 			}
+			r@data@offset <- x@data@offset
+			r@data@gain <- x@data@gain
+			r@file@nodatavalue <- x@file@nodatavalue
+			
 		} else {
 			r <- raster(extent(x), nrows=nrow(x), ncols=ncol(x), crs=projection(x))	
 		}
