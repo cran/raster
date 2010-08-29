@@ -12,23 +12,23 @@ if (!isGeneric("xyValues")) {
 
 
 setMethod("xyValues", signature(object='Raster', xy='SpatialPoints'), 
-	function(object, xy, ...) { 
-		callGeneric(object, coordinates(xy), ...)
+	function(object, xy, method='simple', buffer=NULL, fun=NULL, na.rm=TRUE,...) { 
+		callGeneric(object, coordinates(xy),  method, buffer, fun, na.rm, ...)
 	}	
 )
 
 
 setMethod("xyValues", signature(object='Raster', xy='data.frame'), 
-	function(object, xy, ...) { 
-		callGeneric(object, as.matrix(xy), ...)
+	function(object, xy, method='simple', buffer=NULL, fun=NULL, na.rm=TRUE,...) { 
+		callGeneric(object, as.matrix(xy), method, buffer, fun, na.rm, ...)
 	}	
 )
 
 
 setMethod("xyValues", signature(object='Raster', xy='vector'), 
-	function(object, xy, ...) { 
+	function(object, xy, method='simple', buffer=NULL, fun=NULL, na.rm=TRUE, ...) { 
 		if (length(xy) == 2) {
-			callGeneric(object, matrix(xy, ncol=2), ...)
+			callGeneric(object, matrix(xy, ncol=2), method, buffer, fun, na.rm,  ...)
 		} else {
 			stop('xy coordinates should be a two-column matrix or data.frame, or a vector of two numbers.')
 		}
@@ -36,7 +36,7 @@ setMethod("xyValues", signature(object='Raster', xy='vector'),
 
 	
 setMethod("xyValues", signature(object='RasterLayer', xy='matrix'), 
-	function(object, xy, method='simple', buffer=NULL, fun=NULL, na.rm=TRUE) { 
+	function(object, xy, method='simple', buffer=NULL, fun=NULL, na.rm=TRUE, ...) { 
 
 		if (dim(xy)[2] != 2) {
 			stop('xy has wrong dimensions; it should have 2 columns' )

@@ -6,7 +6,8 @@
 \title{project a RasterLayer}
 
 \description{
-Change the projection of a RasterLayer. 
+Project the values of a RasterLayer to a new RasterLayer with another coordinate reference system. 
+
 \code{projecExtent} returns a RasterLayer with a projected extent, but without any values. This RasterLayer can then 
 be used as \code{'to'} RasterLayer in \code{projectRaster}. \code{projectRaster} computes values for the cells of the new RasterLayer.
 }
@@ -23,21 +24,23 @@ projectExtent(object, crs)
   \item{filename}{character. output filename}  
   \item{...}{additional arguments. See Details.}    
   \item{object}{Extent or Raster* object}
-  \item{crs}{Character or object of class CRS. PROJ4 type descriptin of the coordinate reference system}
+  \item{crs}{Character or object of class CRS. PROJ4 type description of the coordinate reference system}
 
 }
 
 \details{
-First create a template RasterLayer with a projected extent; also set the number of rows and columns (or the resolution); and perhaps adjust the extent. Then use that object to project the input RasterLayer to. 
+First create a template RasterLayer with an extent in the coordinate system of the crs you want to project to. You can use \code{projectExtent} for this
+or an existing Raster* object.
+Also set the number of rows and columns (or the resolution), and perhaps adjust the extent. The resolution of the output raster should normally be similar to that of the input raster.
+Then use that object to project the input RasterLayer to. 
 
-The resolution of the output raster should normally be similar to that of the input raster.
+Projection is performed using the PROJ.4 library accesed through the rgdal package. 
 
-See \code{projInfo('proj')}, \code{projInfo('ellps')}, and \code{projInfo('datum')} for options for valid PROJ.4 strings. 
- 
-You can consult this page: \url{http://www.remotesensing.org/geotiff/proj_list/} to find the parameter options and names for projections.
- 
-Projection is performed using the PROJ.4 library accesed through the rgdal package. Also see \code{?CRS}
+The best place to find PROJ4 coordinate reference system descriptions is \url{http://www.spatialreference.org}. 
 
+You can also consult this page: \url{http://www.remotesensing.org/geotiff/proj_list/} to find the parameter options and names for projections.
+
+Also see \code{projInfo('proj')}, \code{projInfo('ellps')}, and \code{projInfo('datum')} for valid PROJ.4 values. 
 
 The following additional arguments can be passed, to replace default values for this function
 \tabular{rll}{
@@ -46,6 +49,10 @@ The following additional arguments can be passed, to replace default values for 
   \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
   \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
  }
+}
+
+\note{
+Vector (points, lines, polygons) can be transformed with \code{\link[rgdal]{spTransform}}.
 }
 
 \value{

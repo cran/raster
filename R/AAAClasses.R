@@ -97,9 +97,9 @@ setClass('RasterFile',
 setClass('SingleLayerData', 
 	representation (
 		values='vector', 
-		#content='character', #nodata, all, row, block
-		#source='character', # ram, disk
-
+		offset='numeric',
+		gain='numeric',
+		
 		inmemory='logical',
 		fromdisk='logical',
 		
@@ -113,10 +113,9 @@ setClass('SingleLayerData',
 		),
 	prototype (	
 		values=vector(),
-#		content='nodata', 
-#		indices = vector(mode='numeric'),
-#		source='ram',
-
+		offset=0,
+		gain=1,
+		
 		inmemory=FALSE,
 		fromdisk=FALSE,
 
@@ -190,9 +189,9 @@ setClass ('RasterLayerSparse',
 setClass('MultipleRasterData', 
 	representation (
 		values='matrix', 
-		content='character', #nodata, all, row, block
-		#indices = 'vector',
-		source='character', # ram, disk
+
+		offset='numeric',
+		gain='numeric',
 
 		inmemory='logical',
 		fromdisk='logical',
@@ -205,12 +204,13 @@ setClass('MultipleRasterData',
 		haveminmax = 'logical',
 		min = 'vector',
 		max = 'vector'
+		
 		),
 	prototype (	
 		values=matrix(NA,0,0),
-		content='nodata', 
+		offset=0,
+		gain=1,
 		#indices =vector(mode='numeric'),
-		source='ram',
 
 		inmemory=FALSE,
 		fromdisk=FALSE,
@@ -288,6 +288,6 @@ setClass ('RasterList',
 )
 
 
-setClassUnion("RasterStackBrickList", c("RasterStack", "RasterBrick", "RasterList"))
+#setClassUnion("RasterStackBrickList", c("RasterStack", "RasterBrick", "RasterList"))
 
 

@@ -29,9 +29,11 @@
 
 
 .getExtension <- function(f, format) {
-	def <- .defaultExtension(format)
-	if (def != '') {
-		ext(f) <- def
+	if (.setfileext()) {
+		def <- .defaultExtension(format)
+		if (def != '') {
+			ext(f) <- def
+		}
 	}
 	return(f)
 }

@@ -17,8 +17,6 @@
 	cat("ymin=", as.character(ymin(raster)), "\n", file = thefile)
 	cat("xmax=", as.character(xmax(raster)), "\n", file = thefile)
 	cat("ymax=", as.character(ymax(raster)), "\n", file = thefile)
-#	cat("xres=", xres(raster), "\n", file = thefile)
-#	cat("yres=", yres(raster), "\n", file = thefile)
 	cat("projection=", projection(raster), "\n", file = thefile)
 
 	cat("[data]", "\n", file = thefile)
@@ -42,7 +40,8 @@
 	cat("color=",  paste(raster@legend@color, collapse=':'), "\n", file = thefile)
 
 	cat("[description]", "\n", file = thefile)
-	cat("layername=", paste(layerNames(raster), collapse=':'), "\n", file = thefile)
+	ln <- gsub(":", ".", layerNames(raster))
+	cat("layername=", paste(ln, collapse=':'), "\n", file = thefile)
 	cat("history=",  raster@history, "\n", file = thefile)
 	close(thefile)
 	return(TRUE)

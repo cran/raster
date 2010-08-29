@@ -7,6 +7,7 @@
 \alias{RasterLayer-class}
 \alias{RasterStack-class}
 \alias{RasterBrick-class}
+\alias{RasterStackBrick-class}
 
 \alias{print,Raster-method}
 \alias{show,BasicRaster-method}
@@ -69,26 +70,8 @@ Slots for Raster* objects
     \item{\code{crs}:}{Object of class \code{"CRS"}, i.e. the coordinate reference system }
   }
 }
-\section{Extends}{
-Classes \code{Raster*} extend class \code{"\linkS4class{Raster}"}, directly.
-Classes \code{Raster*} extend class \code{"\linkS4class{BasicRaster}"}, by class "Raster", distance 2.
-}
 
-\section{Methods}{
-  \describe{
-    \item{[}{\code{signature(x = "RasterLayer", i = "ANY", j = "ANY")}: ... }
-    \item{[<-}{\code{signature(x = "RasterLayer", i = "ANY", j = "ANY")}: ... }
-    \item{plot}{\code{signature(x = "RasterLayer", y = "RasterLayer")}: ... }
-    \item{show}{\code{signature(object = "RasterLayer")}: ... }
-    \item{summary}{\code{signature(object = "RasterLayer")}: ... }
-	
-    \item{raster}{\code{signature(object = "RasterStack")}: ... }
-    \item{show}{\code{signature(object = "RasterStack")}: ... }
-    \item{summary}{\code{signature(object = "RasterStack")}: ... }
-	
-	And many other methods (see the other entries in this help file)
-	}
-}
+
 
 \author{ Robert J. Hijmans }
 

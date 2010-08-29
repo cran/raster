@@ -3,12 +3,12 @@
 \docType{methods}
 
 \alias{Logic-methods}
-\alias{Logic,RasterLayer,RasterLayer-method}
-\alias{is.na,RasterLayer-method}
-\alias{is.nan,RasterLayer-method}
-\alias{is.finite,RasterLayer-method}
-\alias{is.infinite,RasterLayer-method}
-\alias{!,RasterLayer-method}
+\alias{Logic,Raster,Raster-method}
+\alias{is.na,Raster-method}
+\alias{is.nan,Raster-method}
+\alias{is.finite,Raster-method}
+\alias{is.infinite,Raster-method}
+\alias{!,Raster-method}
 
 
 \title{Logical operators and functions}
@@ -17,19 +17,20 @@ The following logical (boolean) operators are available for computations with Ra
 
 \code{&, |, and !}
 
-The following functions are also available with a RasterLayer argument: 
+The following functions are available with a Raster* argument: 
 
 \code{is.na}, \code{is.nan}, \code{is.finite}, \code{is.infinite}
 }
 
 \value{
-A RasterLayer object with logical (\code{TRUE/FALSE} values)
+A Raster object with logical (\code{TRUE/FALSE} values)
 }
 
 
 \section{Note}{
  These are convenient operators/functions that are most usful for relatively small RasterLayers for which all the values can be held in memory. 
- If the values of the output RasterLayer cannot be held in memory, they will be saved to a temporary file. In that case it could be more efficient to use \code{\link[raster]{calc}} instead.
+ If the values of the output RasterLayer cannot be held in memory, they will be saved to a temporary file. In that case it could be more 
+ efficient to use \code{\link[raster]{calc}} instead.
 }
 
 \seealso{ \code{\link[raster]{Math-methods}}, \code{\link[raster]{overlay}}, \code{\link[raster]{calc}} }

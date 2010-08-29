@@ -6,6 +6,14 @@
 
 
 rasterTmpFile <- function()  {
+	f <- getOption('rasterTmpFile')
+	if (!is.null(f)) {
+		f <- trim(f)
+		if (! f == '' ) {
+			options('rasterTmpFile' = NULL)
+			return(f)
+		}
+	}
 	extension <- .defaultExtension(.filetype())
 	d <- .tmpdir()
 	dir.create(d,  showWarnings = FALSE)

@@ -10,51 +10,164 @@ if (!isGeneric("area")) {
 }	
 
 
-setMethod('area', signature(x='Raster'), 
-	function(x, filename='', ...) {
-		x = raster(x)
+setMethod('area', signature(x='RasterLayer'), 
+	function(x, filename='', na.rm=FALSE, weights=FALSE, ...) {
+
+		out = raster(x)
 	
-		if (! .couldBeLonLat(x)) {
+		if (na.rm) {
+			if (! hasValues(x) ) {
+				na.rm <- FALSE
+				warning("'x' has no values, ignoring 'na.rm=TRUE'")
+				rm(x)
+			}
+		} else {
+			rm(x)
+		}	
+	
+		if (! .couldBeLonLat(out)) {
 			stop('This function is only useful for layer with a longitude/latitude coordinates')
 		}
 	
 		filename <- trim(filename)
-		if (!canProcessInMemory(x, 3) & filename == '') {
+		if (!canProcessInMemory(out, 3) & filename == '') {
 			filename <- rasterTmpFile()
 		}
 		
 		if (filename == '') {
-			v <- matrix(NA, ncol=nrow(x), nrow=ncol(x))
+			v <- matrix(NA, ncol=nrow(out), nrow=ncol(out))
 		} else {
-			x <- writeStart(x, filename=filename, ...)
+			if (weights) {
+				outfname = filename
+				filename = rasterTmpFile()
+			}
+			out <- writeStart(out, filename=filename, ...)
 		}
 
-		dy <- pointDistance(c(0,0),c(0, yres(x) ),'GreatCircle')
-		y <- yFromRow(x, 1:nrow(x))
-		dx <- pointDistance(cbind(0, y), cbind(xres(x), y), 'GreatCircle')
+		dy <- pointDistance(c(0,0),c(0, yres(out) ),'GreatCircle')
+		y <- yFromRow(out, 1:nrow(out))
+		dx <- pointDistance(cbind(0, y), cbind(xres(out), y), 'GreatCircle')
 
-		tr <- blockSize(x)
+		tr <- blockSize(out)
 		pb <- pbCreate(tr$n, type=.progress(...))
 
 		for (i in 1:tr$n) {
 			r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
 			vv <- dx[r] * dy / 1000000
-			vv <- rep(vv, each=ncol(x))
+			vv <- rep(vv, each=out@ncols)
+			if (na.rm) {
+				a <- getValues(x, tr$row[i], tr$nrows[i])
+				vv[is.na(a)] <- NA
+			}
 			if (filename == "") {
 				v[,r] <- vv
 			} else {
-				x <- writeValues(x, vv, tr$row[i])
+				out <- writeValues(out, vv, tr$row[i])
 			}
 			pbStep(pb, i)
 		}
 		pbClose(pb)
 		
 		if (filename == "") { 
-			x <- setValues(x, as.vector(v))
+			v <- as.vector(v)
+			if (weights) {
+				v <- v / sum(v, na.rm=TRUE)
+			}
+			out <- setValues(out, v)
 		} else {
-			x <- writeStop(x)	
+			out <- writeStop(out)	
+			if (weights) {
+				total <- cellStats(out, 'sum')
+				out <- calc(out, fun=function(x){x/total}, filename=outfname, ...)
+			}
 		}
-		return(x)		
+		
+		return(out)
+	}
+)
+
+
+
+setMethod('area', signature(x='RasterStackBrick'), 
+	function(x, filename='', na.rm=FALSE, weights=FALSE, ...) {
+
+		if (! na.rm) {
+			return( area(raster(x), filename=filename, na.rm=FALSE, weights=weights, ...) )
+		}	
+		
+		out = brick(x, values=FALSE)
+
+		if (! .couldBeLonLat(out)) {
+			stop('This function is only useful for layer with a longitude/latitude coordinates')
+		}
+	
+		filename <- trim(filename)
+		if (!canProcessInMemory(out) & filename == '') {
+			filename <- rasterTmpFile()
+		}
+
+		nl <- nlayers(out)
+		
+		if (filename == '') {
+			v <- matrix(NA, ncol=nl, nrow=ncell(out))
+		} else {
+			if (weights) {
+				outfname = filename
+				filename = rasterTmpFile()
+			}
+			out <- writeStart(out, filename=filename, ...)
+		}
+
+		dy <- pointDistance(c(0,0),c(0, yres(out) ),'GreatCircle')
+		y <- yFromRow(out, 1:nrow(out))
+		dx <- pointDistance(cbind(0, y), cbind(xres(out), y), 'GreatCircle')
+
+		tr <- blockSize(out)
+		pb <- pbCreate(tr$n, type=.progress(...))
+		
+		rows <- 1
+		for (i in 1:tr$n) {
+			r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
+			vv <- dx[r] * dy / 1000000
+			vv <- rep(vv, each=out@ncols)
+			
+			vv <- matrix(rep(vv, times=nl), ncol=nl)
+			a <- getValues(x, tr$row[i], tr$nrows[i])
+			vv[is.na(a)] <- NA
+
+			if (filename == "") {
+				start <- (r[1]-1) * ncol(out) + 1
+				end <- r[length(r)] * ncol(out) 
+				v[start:end, ] <- vv
+			} else {
+				out <- writeValues(out, vvv, tr$row[i])
+				
+				#for (j in 1:tr$nrows[i]) {
+				#	jj <- 1:ncol(out) + (j-1) * ncol(out)
+				#	vvv <- vv[jj,]
+				#	out <- writeValues(out, vvv, rows)
+				#	rows <- rows + 1
+				#}
+			}
+			pbStep(pb, i)
+		}
+		pbClose(pb)
+		
+		if (filename == "") { 
+			if (weights) {
+				total <- apply(v, 2, sum, na.rm=TRUE)
+				v <- t( t(v) / total )
+			}
+			out <- setValues(out, v)
+		} else {
+			out <- writeStop(out)	
+			if (weights) {
+				total <- cellStats(out, 'sum')
+				out <- calc(out, fun=function(x){x / total}, filename=outfname, ...)
+			}
+		}
+		
+		return(out)
 	}
 )
 

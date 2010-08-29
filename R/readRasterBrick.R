@@ -152,9 +152,9 @@
  	} else if (object@file@driver == 'netcdf') {
 		result <- .readRowsBrickNetCDF(object, startrow, nrows, startcol, ncols)
 	
- #use GDAL  			
  
 	} else {
+	#use GDAL  			
 		result <- matrix(nrow=ncols*nrows, ncol=nlayers(object))
 		offs <- c((startrow-1), (startcol-1)) 
 		reg <- c(nrows, ncols)
@@ -166,24 +166,12 @@
 		# if  NAvalue() has been used.....
 		result[result == object@file@nodatavalue] <- NA 					
 	}
-	
-#	firstcell <- cellFromRowCol(object, startrow, 1)
-#	lastcell <- cellFromRowCol(object, (startrow+nrows-1), object@ncols)
-#	object@data@indices <- c(firstcell, lastcell)
-#	if (all(object@data@indices == c(1, ncell(object)))) {
-#		object@data@content <- 'all' 
-#	} else if (startcol==1 & ncols==object@ncols) {
-#		if (nrows==1) {
-#			object@data@content <- 'row' 
-#		} else {	
-#			object@data@content <- 'rows' 
-#		}
-#	} else {
-#		object@data@content <- 'block' 
-#	}
+
+	if (object@data@gain != 1 | object@data@offset != 0) {
+		result <- result * object@data@gain + object@data@offset
+	}
+
 	colnames(result) <- layerNames(object)
-#	object@data@values <- result
-#	return(object)
 	return(result)
 }
 

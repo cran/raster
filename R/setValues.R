@@ -15,6 +15,9 @@ if (!isGeneric('setValues')) {
 setMethod('setValues', signature(object='RasterLayer'), 
 function(object, values, layer=-1) {
   
+  # check, to avoid a row argument which used to be legal
+	if (layer != -1) stop('the layer argument cannot be used on a RasterLayer')
+  
 	if (is.matrix(values)) { 
 		if (ncol(values) == object@ncols & nrow(values) == object@nrows) {
 			values <- as.vector(t(values)) 
@@ -46,16 +49,7 @@ function(object, values, layer=-1) {
 		
 	} else if (length(values) == ncol(object)) {
 		stop('setValues no longer supports setting rows of values')
-#		rownr <- round(rownr)
-#		if (rownr < 1 | rownr > nrow(object)) {
-#			stop(paste("rownumber out of bounds:", rownr))
-#		}
-#		object@data@values <- values
-#		object@data@content <- 'row' 
-#		firstcell <- cellFromRowCol(object, rownr=rownr, colnr=1)
-#		lastcell <- cellFromRowCol(object, rownr=rownr, colnr=ncol(object))
-#		object@data@indices <- c(firstcell, lastcell)
-#		return(object)
+
 	} else {
 		stop("length(values) is not equal to ncell(object), or to 1") 
 	}
@@ -66,7 +60,8 @@ function(object, values, layer=-1) {
 
 setMethod('setValues', signature(object='RasterBrick'), 
   function(object, values, layer=-1) {
-	if (!(is.vector(values) | is.matrix(values))) {
+  
+	if ( ! (is.vector(values) | is.matrix(values)) ) {
 		stop('values must be a vector or a matrix')
 	}
 	if (!(is.numeric(values) | is.integer(values) | is.logical(values))) {
@@ -90,21 +85,6 @@ setMethod('setValues', signature(object='RasterBrick'),
 		} else if (nrow(values) == ncol(object)) {
 			stop('setValues no longer supports setting rows of values')
 
-#			if (!validRow(object, rownr)) {
-#				stop(paste("rownumber out of bounds:", rownr))
-#			}
-#			if (object@data@nlayers != ncol(values)) {
-#				if (rownr==1) {
-#					object@data@nlayers <- ncol(values)
-#				} else {
-#					stop('ncol does not match nlayers' )
-#				}
-#			}	
-#			object@data@content <- 'row'
-#			firstcell <- cellFromRowCol(object, rownr=rownr, colnr=1)
-#			lastcell <- cellFromRowCol(object, rownr=rownr, colnr=ncol(object))
-#			object@data@indices <- c(firstcell, lastcell)				
-#			object@data@values <- values
 		} else {
 			stop('either set all data or a single row')
 		}
@@ -126,16 +106,6 @@ setMethod('setValues', signature(object='RasterBrick'),
 		} else if (length(values) == ncol(object)) {
 			stop('setValues no longer supports setting rows of values')
 
-#			if (!validRow(object, rownr)) {
-#				stop(paste("rownumber out of bounds:", rownr))
-#			}
-#			object@data@values <- values
-#			object@data@content <- 'row' 
-#			firstcell <- cellFromRowCol(object, rownr=rownr, colnr=1)
-#			lastcell <- cellFromRowCol(object, rownr=rownr, colnr=ncol(object))
-#			if (object@data@indices != c(firstcell, lastcell)) {
-#				stop('setting values for the wrong row number')
-#			}
 		} else {
 			stop("length(values) is not equal to ncell(object)") 
 		}

@@ -4,23 +4,32 @@
 # Licence GPL v3
 
 
-setMethod('as.logical', signature(x='RasterLayer'), 
+setMethod('as.logical', signature(x='Raster'), 
 function(x, filename='', ...) {
+	
+	if (nlayers(x) > 1) {
+		out <- brick(x, values=FALSE)
+	} else {
+		out <- raster(x)
+	}
+	
 	if (canProcessInMemory(x, 2)){
 		
-		x <- setValues(x, as.logical(getValues(x)))
+		x <- getValues(x)
+		x[] <- as.logical(x)
+		out <- setValues(out, x)
 		if (filename != '') {
-			x <- writeRaster(x, filename, datatype='INT2S', ...)
+			out <- writeRaster(out, filename, datatype='INT2S', ...)
 		}
-		return(x)
+		return(out)
 		
 	} else {
 		if (filename == '') {
 			filename <- rasterTmpFile()					
 		}
-		out <- raster(x)
+		
 		out <- writeStart(out, filename=filename, ...)
-		tr <- blockSize(x, n=2)
+		tr <- blockSize(x)
 		pb <- pbCreate(tr$n, type=.progress(...))	
 		for (i in 1:tr$n) {
 			v <- as.logical ( getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i] ) )

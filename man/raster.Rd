@@ -108,7 +108,7 @@ but does not copy the filename nor the data associated with the original Raster 
 
 5) Create a RasterLayer object from a RasterStack or RasterBrick object.
 
-\code{raster(x, index=0)}
+\code{raster(x, layer=0)}
 
 \tabular{rll}{
  \tab \code{x} \tab a RasterStack, SpatialPixels* or SpatialGrid* object \cr
@@ -118,7 +118,7 @@ but does not copy the filename nor the data associated with the original Raster 
 
 6) Create a RasterLayer object from a SpatialPixels* or SpatialGrid* object. 
 
-\code{raster(x, index=0)}
+\code{raster(x, layer=0)}
 
 \tabular{rll}{
  \tab \code{x} \tab a RasterStack, SpatialPixels* or SpatialGrid* object \cr

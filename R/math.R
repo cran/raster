@@ -6,20 +6,15 @@
 
 setMethod("Math", signature(x='Raster'),
     function(x){ 
-		stop('This function has not been defined for the class of this object')
-	}
-)
-setMethod("Math2", signature(x='Raster'),
-    function(x, digits=0){ 
-		stop('This function has not been defined for the class of this object')
-	}
-)
-
-
-setMethod("Math", signature(x='RasterLayer'),
-    function(x){ 
 		fname <- as.character(sys.call(sys.parent())[[1]])
-		r <- raster(x)
+
+		if (nlayers(x) > 1) {
+			r <- brick(x, values=FALSE)
+		} else {
+			r <- raster(x)
+		}
+
+		
 		if (canProcessInMemory(r, 3)) {
 			r <- setValues(r, callGeneric(getValues(x)))
 		} else {
@@ -46,10 +41,16 @@ setMethod("Math", signature(x='RasterLayer'),
 )
 
 
-setMethod("Math2", signature(x='RasterLayer'), 
+setMethod("Math2", signature(x='Raster'), 
 	function (x, digits=0) {
 		digits <- max(0, digits)
-		r <- raster(x)
+
+		if (nlayers(x) > 1) {
+			r <- brick(x, values=FALSE)
+		} else {
+			r <- raster(x)
+		}
+
 		if (canProcessInMemory(r, 3)) {
 			r <- setValues(r, callGeneric( getValues(x), digits))
 		} else {
@@ -73,4 +74,5 @@ setMethod("Math2", signature(x='RasterLayer'),
 		return(r)
 	}
 )
+
 

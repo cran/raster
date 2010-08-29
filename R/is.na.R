@@ -4,9 +4,14 @@
 # Licence GPL v3
 
 
-setMethod("is.na", signature(x='RasterLayer'),
+setMethod("is.na", signature(x='Raster'),
 	function(x) {
-		r <- raster(x)
+		if (nlayers(x) > 1) {
+			r <- brick(x, values=FALSE)
+		} else {
+			r <- raster(x)
+		}
+		
 		if (canProcessInMemory(r, 3)) {
 			dataType(r) <- 'LOG1S'
 			return( setValues(r, is.na(getValues(x))) )
@@ -16,7 +21,7 @@ setMethod("is.na", signature(x='RasterLayer'),
 			pb <- pbCreate(tr$n, type=.progress())			
 			r <- writeStart(r, filename=rasterTmpFile(), datatype='LOG1S', format=.filetype(), overwrite=TRUE )
 			for (i in 1:tr$n) {
-				v <- is.na( getValuesBlock(x, row=tr$row[i], nrows=tr$size) )
+				v <- is.na( getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i]) )
 				r <- writeValues(r, v, tr$row[i])
 				pbStep(pb, i) 
 			}
@@ -30,9 +35,14 @@ setMethod("is.na", signature(x='RasterLayer'),
 
 
 
-setMethod("is.nan", signature(x='RasterLayer'),
+setMethod("is.nan", signature(x='Raster'),
 	function(x) {
-		r <- raster(x)
+		if (nlayers(x) > 1) {
+			r <- brick(x, values=FALSE)
+		} else {
+			r <- raster(x)
+		}
+
 		if (canProcessInMemory(r, 3)) {
 			dataType(r) <- 'LOG1S'
 			return( setValues(r, is.nan(getValues(x))) )
@@ -57,9 +67,13 @@ setMethod("is.nan", signature(x='RasterLayer'),
 
 
 
-setMethod("is.finite", signature(x='RasterLayer'),
+setMethod("is.finite", signature(x='Raster'),
 	function(x) {
-		r <- raster(x)
+		if (nlayers(x) > 1) {
+			r <- brick(x, values=FALSE)
+		} else {
+			r <- raster(x)
+		}
 		if (canProcessInMemory(r, 3)) {
 			dataType(r) <- 'LOG1S'
 			return( setValues(r, is.finite(getValues(x))) )
@@ -84,9 +98,14 @@ setMethod("is.finite", signature(x='RasterLayer'),
 
 
 
-setMethod("is.infinite", signature(x='RasterLayer'),
+setMethod("is.infinite", signature(x='Raster'),
 	function(x) {
-		r <- raster(x)
+		if (nlayers(x) > 1) {
+			r <- brick(x, values=FALSE)
+		} else {
+			r <- raster(x)
+		}
+
 		if (canProcessInMemory(r, 3)) {
 			dataType(r) <- 'LOG1S'
 			return( setValues(r, is.infinite(getValues(x))) )

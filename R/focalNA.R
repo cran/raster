@@ -103,7 +103,10 @@ focalNA <- function(x, ngb=3, fun=mean, recursive=FALSE, maxrec=0, filename="", 
 	keepGoing <- FALSE
 	
 	pb <- pbCreate(nrow(ngbgrid), type=.progress(...))
-
+	if (filename != '') {
+		ngbgrid <- writeStart(ngbgrid, filename=filename, ...)			
+	}
+	
 	for (r in 1:nrow(ngbgrid)) {		
 		rr <- r + limrow
 		if (rr <= nrow(ngbgrid)) {
@@ -134,8 +137,7 @@ focalNA <- function(x, ngb=3, fun=mean, recursive=FALSE, maxrec=0, filename="", 
 		}
 		
 		if (filename != "") {
-			ngbgrid <- setValues(ngbgrid, vals, r)
-			ngbgrid <- writeRaster(ngbgrid, filename=filename, ...)
+			ngbgrid <- writeValues(ngbgrid, vals, r)
 		} else {
 			v[,r] <- vals
 		}
@@ -143,7 +145,9 @@ focalNA <- function(x, ngb=3, fun=mean, recursive=FALSE, maxrec=0, filename="", 
 	}
 	pbClose(pb)
 
-	if (filename == "") { 
+	if (filename != "") { 
+		ngbgrid <- writeStop(ngbgrid)
+	} else {
 		ngbgrid <- setValues(ngbgrid, as.vector(v)) 
 	}
 	

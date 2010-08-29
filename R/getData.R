@@ -26,7 +26,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 .download <- function(aurl, filename) {
 	fn <- paste(tempfile(), '.download', sep='')
 	res <- download.file(url=aurl, destfile=fn, method="auto", quiet = FALSE, mode = "wb", cacheOK = TRUE)
-	if (res) {
+	if (res == 0) {
 		file.rename(fn, filename)
 	} else {
 		stop('could not download the file' )
@@ -142,7 +142,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 			bilfiles <- paste(var, 1:19, '_', rc, '.bil', sep='')
 			hdrfiles <- paste(var, 1:19, '_', rc, '.hdr', sep='')		
 		}
-		theurl <- paste('http://biogeo.berkeley.edu/worldclim1_4/tiles/cur/', zip, sep='')
+		theurl <- paste('http://biogeo.ucdavis.edu/data/climate/worldclim/1_4/tiles/cur/', zip, sep='')
 	} else {
 		zip <- paste(var, '_', res, 'm_bil.zip', sep='')
 		zipfile <- paste(path, zip, sep='')
@@ -153,7 +153,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 			bilfiles <- paste(var, 1:19, '.bil', sep='')
 			hdrfiles <- paste(var, 1:19, '.hdr', sep='')	
 		}
-		theurl <- paste('http://biogeo.berkeley.edu/worldclim1_4/grid/cur/', zip, sep='')
+		theurl <- paste('http://biogeo.ucdavis.edu/data/climate/worldclim/1_4/grid/cur/', zip, sep='')
 	}
 	files <- c(paste(path, bilfiles, sep=''), paste(path, hdrfiles, sep=''))
 	fc <- sum(file.exists(files))
@@ -176,6 +176,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 		}
 	}
 	st <- stack(paste(path, bilfiles, sep=''))
+	projection(st) <- "+proj=longlat +datum=WGS84"
 	return(st)
 }
 

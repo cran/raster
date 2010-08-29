@@ -6,27 +6,27 @@
 #read data on the raster for cell numbers
 
 
-.readCells <- function(raster, cells) {
+.readCells <- function(x, cells) {
 	cells <- cbind(1:length(cells), cells)
 	cells <- cells[order(cells[,2]), ,drop=FALSE]
 	uniquecells <- sort(na.omit(unique(cells[,2])))
-	uniquecells <- uniquecells[(uniquecells > 0) & (uniquecells <= ncell(raster))]
+	uniquecells <- uniquecells[(uniquecells > 0) & (uniquecells <= ncell(x))]
 
 	if (length(uniquecells) > 0) {
-		if ( inMemory(raster) ) {
-			vals <- getValues(raster)[uniquecells]
-		} else if ( fromDisk(raster) ) {
-			if (length(uniquecells) > 100 & canProcessInMemory(raster, 2)) {
-				vals <- getValues(raster)
+		if ( inMemory(x) ) {
+			vals <- getValues(x)[uniquecells]
+		} else if ( fromDisk(x) ) {
+			if (length(uniquecells) > 100 & canProcessInMemory(x, 2)) {
+				vals <- getValues(x)
 				vals <- vals[uniquecells]
-			} else if (raster@file@driver == 'gdal') {
-				vals <- .readCellsGDAL(raster, uniquecells)
-			} else if (raster@file@driver == 'ascii') {
-				vals <- .readCellsAscii(raster, uniquecells)			
-			} else if (raster@file@driver == 'netcdf') {
-				vals <- .readRasterCellsNetCDF(raster, uniquecells)			
+			} else if (x@file@driver == 'gdal') {
+				vals <- .readCellsGDAL(x, uniquecells)
+			} else if (x@file@driver == 'ascii') {
+				vals <- .readCellsAscii(x, uniquecells)			
+			} else if (x@file@driver == 'netcdf') {
+				vals <- .readRasterCellsNetCDF(x, uniquecells)			
 			} else {
-				vals <- .readCellsRaster(raster, uniquecells)
+				vals <- .readCellsRaster(x, uniquecells)
 			}	
 		} else { 
 			stop('no data on disk or in memory')
@@ -38,83 +38,90 @@
 	vals <- cbind(uniquecells, vals)
 	vals <- merge(x=cells[,2], y=vals, by=1, all=TRUE)
 	vals <- cbind(cells[,1], vals[,2])
-	vals <- vals[order(cells[,1]), ,drop=FALSE]
-	return(vals[,2])
+#	vals <- vals[order(cells[,1]), 2, drop=FALSE]
+	vals <- vals[order(cells[,1]), 2]
+	
+	if (x@data@gain != 1 | x@data@offset != 0) {
+		vals <- vals * x@data@gain + x@data@offset
+	}
+	
+	return(vals)
 }
 
 
-.readCellsGDAL <- function(raster, cells) {
+.readCellsGDAL <- function(x, cells) {
 
 	if (! .requireRgdal() ) { stop('rgdal not available') }
 
 	colrow <- matrix(ncol=3, nrow=length(cells))
-	colrow[,1] <- colFromCell(raster, cells)
-	colrow[,2] <- rowFromCell(raster, cells)
+	colrow[,1] <- colFromCell(x, cells)
+	colrow[,2] <- rowFromCell(x, cells)
 	colrow[,3] <- NA
 	rows <- sort(unique(colrow[,2]))
 
-	nc <- ncol(raster)
-	con <- GDAL.open(raster@file@name, silent=TRUE)
+	nc <- x@ncols
+	con <- GDAL.open(x@file@name, silent=TRUE)
 	for (i in 1:length(rows)) {
 		offs <- c(rows[i]-1, 0) 
-		values <- getRasterData(con, offset=offs, region.dim=c(1, nc), band = raster@data@band)
+		values <- getRasterData(con, offset=offs, region.dim=c(1, nc), band = x@data@band)
 		thisrow <- subset(colrow, colrow[,2] == rows[i])
 		colrow[colrow[,2]==rows[i], 3] <- values[thisrow[,1]]
 	}
 	closeDataset(con)
 
 	# if  NAvalue() has been used.....
-	if (raster@file@nodatavalue < 0) {
-		colrow[colrow[, 3] <= raster@file@nodatavalue, 3] <- NA 			
+	if (x@file@nodatavalue < 0) {
+		colrow[colrow[, 3] <= x@file@nodatavalue, 3] <- NA 			
 	} else {
-		colrow[colrow[, 3] == raster@file@nodatavalue, 3] <- NA 					
+		colrow[colrow[, 3] == x@file@nodatavalue, 3] <- NA 					
 	}		
 	return(colrow[, 3]) 
 }	
 
 
-.readCellsRaster <- function(raster, cells) {
+.readCellsRaster <- function(x, cells) {
 	res <- vector(length=length(cells))
 	res[] <- NA
-	dsize <- dataSize(raster@file@datanotation)
-	if (.shortDataType(raster@file@datanotation) == "FLT") { 
+	dsize <- dataSize(x@file@datanotation)
+	if (.shortDataType(x@file@datanotation) == "FLT") { 
 		dtype <- "numeric"
 	} else { 
 		dtype <- "integer"
 	}
-	signed <- dataSigned(raster@file@datanotation)
+	signed <- dataSigned(x@file@datanotation)
 	
-	if (! raster@file@toptobottom) {
-		rows <- rowFromCell(raster, cells)
-		cols <- colFromCell(raster, cells)
-		rows <- nrow(raster) - rows + 1
-		cells <- cellFromRowCol(raster, rows, cols)
+	if (! x@file@toptobottom) {
+		rows <- rowFromCell(x, cells)
+		cols <- colFromCell(x, cells)
+		rows <- nrow(x) - rows + 1
+		cells <- cellFromRowCol(x, rows, cols)
 	}
-	cells <- cells + raster@file@offset
+	cells <- cells + x@file@offset
 	
-	if (nbands(raster) > 1) {
-		if (.bandOrder(raster) == 'BIL') {
-			cells <- cells + (rowFromCell(raster, cells)-1) * ncol(raster) * (nbands(raster)-1) + (band(raster)-1) * ncol(raster)
-		} else if (.bandOrder(raster) == 'BIP') {
-			cells <- cells + (cells - 1) * (nbands(raster)-1) + (band(raster) - 1)
-		} else if (.bandOrder(raster) == 'BSQ') {	
-			cells <- cells + (band(raster)-1) * ncell(raster)
+	if (nbands(x) > 1) {
+		if (.bandOrder(x) == 'BIL') {
+			cells <- cells + (rowFromCell(x, cells)-1) * x@ncols * (nbands(x)-1) + (band(x)-1) * x@ncols
+		} else if (.bandOrder(x) == 'BIP') {
+			cells <- cells + (cells - 1) * (nbands(x)-1) + (band(x) - 1)
+		} else if (.bandOrder(x) == 'BSQ') {	
+			cells <- cells + (band(x)-1) * ncell(x)
 		}
 	}
 	
-	raster <- openConnection(raster)
+	x <- openConnection(x)
 	for (i in seq(along=cells)) {
-		seek(raster@file@con, (cells[i]-1) * dsize)
-		res[i] <- readBin(raster@file@con, what=dtype, n=1, size=dsize, endian=raster@file@byteorder, signed=signed) 
+		seek(x@file@con, (cells[i]-1) * dsize)
+		res[i] <- readBin(x@file@con, what=dtype, n=1, size=dsize, endian=x@file@byteorder, signed=signed) 
 	}
-	raster <- closeConnection(raster)
+	x <- closeConnection(x)
 	
 	if (dtype == "numeric") {
 		res[is.nan(res)] <- NA
-		res[res <= raster@file@nodatavalue] <- NA
+		res[res <= x@file@nodatavalue] <- NA
 	} else {
-		res[res == raster@file@nodatavalue] <- NA
+		res[res == x@file@nodatavalue] <- NA
 	}
+	
 	return(res)
 }
 

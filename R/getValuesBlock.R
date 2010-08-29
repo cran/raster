@@ -51,14 +51,18 @@ setMethod('getValuesBlock', signature(x='RasterBrick', row='numeric'),
 				res <- x@data@values[cells, ]
 			}
 		} else if ( fromDisk(x) ) {
-			for (i in 1:nlayers(x)) {
-				# to do: need a more efficient function here that only goes to disk once.
-				if (i==1) {
-					v <- .readRasterLayerValues(raster(x, i), row, nrows, col, ncols)
-					res <- matrix(ncol=nlayers(x), nrow=length(v))
-					res[,1] <- v
-				} else {
-					res[,i] <- .readRasterLayerValues(raster(x, i), row, nrows, col, ncols)
+			if (x@file@driver == 'netcdf') {
+				return(.readRowsBrickNetCDF(x, row, nrows, col, ncols))
+			} else {
+				for (i in 1:nlayers(x)) {
+					# to do: need a more efficient function here that only goes to disk once.
+					if (i==1) {
+						v <- .readRasterLayerValues(raster(x, i), row, nrows, col, ncols)
+						res <- matrix(ncol=nlayers(x), nrow=length(v))
+						res[,1] <- v
+					} else {
+						res[,i] <- .readRasterLayerValues(raster(x, i), row, nrows, col, ncols)
+					}
 				}
 			}
 		} else {

@@ -8,13 +8,17 @@
 \alias{plot,RasterLayer,RasterLayer-method}
 \alias{plot,Extent,ANY-method}
 \alias{plot,Extent,missing-method}
+\alias{text}
+\alias{text,RasterLayer-method}
 
 \title{Plot a Raster* object}
 
 \description{
-Plot (that is, make a map of) the values of a RasterLayer or RasterStack, or make a scatterplot of their values.
+Plot (that is, make a map of) the values of a Raster* object, or make a scatterplot of their values.
 
 Points, lines, and polygons can be drawn on top of a map using \code{plot(..., add=TRUE)}, or functions like \code{points, lines, polygons}
+
+\code{text} plots a textual (rather than color) reprentation of values of the cells on top of the cells. 
 }
 
 
@@ -87,7 +91,8 @@ Draws the (rectangular) bounding box of a raster object.
 
 
 \details{
-Most of the code for this function was taken from image.plot (fields package)
+Most of the code for this function was taken from image.plot (fields package). 
+Raster objects with a color-table (e.g. a graphics file) will be plotted according to the color table.
 }
 
 \seealso{
@@ -98,17 +103,22 @@ Most of the code for this function was taken from image.plot (fields package)
 
 \examples{ 
 # RasterLayer
-r <- raster(nrows=36, ncols=18)
-r <- setValues(r, runif(ncell(r)))
+r <- raster(nrows=10, ncols=10)
+r <- setValues(r, 1:ncell(r))
 plot(r)
-plot(extent(r))
+text(r)
+
+e <- extent(r)
+plot(e, add=TRUE, col='red', lwd=4)
+e <- e / 2
+plot(e, add=TRUE, col='red')
 
 
-# 2 RasterLayers
+# Scatterplot of 2 RasterLayers
 r2 <- sqrt(r)
 plot(r, r2)
 
-# RasterStack
+# Multi-layer object (RasterStack / Brick)
 s <- stack(r, r2, r/r)
 plot(s, 2)
 plot(s)

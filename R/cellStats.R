@@ -3,7 +3,8 @@
 # Version 0.9
 # Licence GPL v3
 
-cellStats <- function(raster, stat='mean', ...) {
+cellStats <- function(x, stat='mean', ...) {
+
 	getzmean <- function(raster, ..., zmean) {
 		if (missing(zmean)) { 
 			cellStats(raster, 'mean')
@@ -18,62 +19,88 @@ cellStats <- function(raster, stat='mean', ...) {
 			return(zsd)	
 		}
 	}
+	
+	if (nlayers(x) == 1) {
+		makeMat = TRUE
+	} else {
+		makeMat = FALSE
+	}
+	
+	
 	if (class(stat) != 'character') {
-		if ( inMemory(raster) ) { n <- 1 } else {n <- 2}
-		if (canProcessInMemory(raster, n)) {
-			d <- na.omit(getValues(raster))
-			return( stat(d) )
-		} else {
-			stop("RasterLayer is too large. You can use fun='sum', 'mean', 'min', or 'max', but not a function")
+		if ( ! inMemory(x) ) {
+			if (! canProcessInMemory(x)) {
+				stop("RasterLayer is too large. You can use fun='sum', 'mean', 'min', 'max', 'sd', 'countNA', but not a function")
+			}
 		}
+		x <- getValues(x)
+		if (makeMat) x <- matrix(x, ncol=1)
+		return( apply(x, 2, stat, na.rm=TRUE) )
+		
 	} else {
 
-		st  <- NULL
+		st <- NULL
 		counts <- FALSE
 		if (stat == 'sum') {
 			fun <- sum
+			st <- 0	
 		} else if (stat == 'min') {
 			fun <- min
 		} else if (stat == 'max') {
 			fun <- max
 		} else if (stat == 'countNA') {
-			st <- 0		
-			nc <- ncol(raster)
+			nc <- x@ncols
+			st <- 0	
 		} else if (stat == 'skew') {
-			st <- 0
 			z <- 0
-			zsd <- getzsd(raster, ...)
-			zmean <- getzmean(raster, ...)
+			st <- 0	
+			zsd <- getzsd(x, ...)
+			zmean <- getzmean(x, ...)
 		} else if (stat == 'mean' | stat == 'sd') {
-			# do nothing
+			st <- 0	
+			sumsq <- 0
+			cnt <- 0
 		} else { 
-			stop("invalid 'stat'. Should be 'sum', 'min', 'max', 'sd', 'mean', 'skew' or 'countNA'") 
+			stop("invalid 'stat'. Should be 'sum', 'min', 'max', 'sd', 'mean', or 'countNA'") 
 		}
 
-		cnt <- 0
-		sumsq <- 0
 		
-		pb <- pbCreate(nrow(raster), type=.progress(...))
-		for (r in 1:nrow(raster)) {
-			d <- na.omit(getValues(raster, r))
-			if (length(d) == 0) { next }
+		tr <- blockSize(x)
+		pb <- pbCreate(tr$n, type=.progress())			
+		
+		for (i in 1:tr$n) {
+			d <- getValues(x, row=tr$row[i], nrows=tr$size)
+			if (makeMat) d <- matrix(d, ncol=1)
+
+			nas <- apply(d, 2, function(x)sum(is.na(x) ))
+			if (min(nas) == nrow(d)) { next }
+			cells <- nrow(d) - nas
+			
 			if (stat == 'sd') {
-				st <- sum(d, st)
-				cnt <- cnt + length(d)
-				sumsq <- sum(d^2, sumsq)
+				st <- apply(d, 2, sum, na.rm=TRUE) + st
+				cnt <- cnt + cells
+				sumsq <- apply( d^2 , 2, sum) + sumsq
+			
 			} else if (stat=='mean') {
-				st <- sum(d, st)
-				cnt <- cnt + length(d)
+				st <- apply(d, 2, sum, na.rm=TRUE) + st
+				cnt <- cnt + cells
+				
 			} else if (stat=='countNA') {
-				st <- st + (nc - length(d))
+				st <- st + nas
+				
 			} else if (stat=='skew') {
-				st <- st + sum((d - zmean) ^3)
-				z <- z + length(d)
+				d <- t( t(d) - zmean )^3
+				st <- apply(d , 2, sum, na.rm=TRUE ) + st
+				z <- z + cells
 			} else {
-				st <- fun(c(d, st))
+				#simple additive functions such as sum, min, max
+				st <- apply(rbind(d, st), 2, fun, na.rm=TRUE)
 			}
-			pbStep(pb, r) 
+			
+			pbStep(pb, i) 
 		}
+		
+		
 		if (stat == 'sd') {
 			meansq <- (st/cnt)^2
 			st <- sqrt( (1 / cnt) * sumsq - meansq )

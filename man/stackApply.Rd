@@ -1,27 +1,25 @@
-\name{mask}
+\name{stackApply}
 
 \docType{methods}
 
-\alias{mask}
-\alias{mask,RasterLayer,RasterLayer-method}
-\alias{mask,RasterStackBrick,RasterLayer-method}
-\alias{mask,RasterLayer,RasterStackBrick-method}
-\alias{mask,RasterStackBrick,RasterStackBrick-method}
+\alias{stackApply}
 
-\title{Mask values in a Raster object}
+\title{Apply a function on subsets of a RasterStack or RasterBrick}
 
 \description{
-Create a new Raster* object where all cells that are \code{NA} in a 'mask' object are set to \code{NA}, and that has the same values as \code{x} in the other cells. 
+Apply a function on subsets of a RasterStack or RasterBrick. The layers to be combined are indicated with the vector \code{indices}. 
 }
 
 \usage{
-mask(x, mask, ...) 
+stackApply(x, indices, fun, filename='', na.rm=TRUE, ...) 
 }
-
 
 \arguments{
   \item{x}{A Raster* object}
-  \item{mask}{A Raster* object}
+  \item{indices}{A vector of length \code{nlayers(x)} with values between 1 and \code{nlayers(x)} }
+  \item{fun}{A function that returns a single value, e.g. \code{mean} or \code{sum}, and that takes an 'na.rm' argument}
+  \item{na.rm}{Logical. If \code{TRUE}, NA cells are removed from calculations}
+  \item{filename}{Character. Optional output filename}
   \item{...}{Additional arguments. See below, under Methods}  
 }
 
@@ -29,7 +27,6 @@ mask(x, mask, ...)
 \describe{
 The following additional arguments can be passed, to replace default values for this function
 \tabular{rll}{
-  \tab \code{filename} \tab character. output filename \cr
   \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
   \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
   \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
@@ -38,21 +35,21 @@ The following additional arguments can be passed, to replace default values for 
 }
 }
 
-
-
 \value{
 A new Raster* object, and in some cases the side effect of a new file on disk.
 }
+
+\seealso{\link[raster]{calc}}
 
 \author{Robert J. Hijmans}
 
 \examples{
 r <- raster(ncol=10, nrow=10)
-m <- raster(ncol=10, nrow=10)
-r[] <- runif(ncell(r)) * 10
-m[] <- runif(ncell(r))
-m[m <0.5] <- NA
-mr <- mask(r, m)
+r[]=1:ncell(r)
+s <- stack(r,r,r,r,r,r)
+s <- s * 1:6
+b <- stackApply(s, indices=c(1,1,2,2,3,3), fun=sum)
+b
 }
 
 \keyword{methods}

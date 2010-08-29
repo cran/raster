@@ -15,20 +15,18 @@
 
 #setMethod("gridDistance", signature(object = "RasterLayer"), def =	
 
-gridDistance <- function(object, originValue, omitValue, filename="", ...) 
-{
+gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
+
 	if( !require(igraph)) {
 		stop('you need to install the igraph package to be able to use this function')
 	}
 	
-	if (missing(originValue)) stop("you must supply an 'originValue' argument")
-	if (missing(omitValue)) stop("you must supply an 'omitValue' argument")
+	if (missing(origin)) stop("you must supply an 'origin' argument")
 	
-	
-	if ((! inMemory(object) ) & ( !  fromDisk(object) )) {
+	if ((! inMemory(x) ) & ( !  fromDisk(x) )) {
 			stop('cannot compute distance on a RasterLayer with no data')
 	}
-	lonlat <- .couldBeLonLat(object)
+	lonlat <- .couldBeLonLat(x)
 	filename <- trim(filename)
 	
 	if (filename != ""  & file.exists(filename)) {
@@ -37,16 +35,15 @@ gridDistance <- function(object, originValue, omitValue, filename="", ...)
 		}
 	}
 	
-	if ( inMemory(object) ) nr=4 else nr=5
-	
-	if(canProcessInMemory(object, n=nr)) {
-		outRaster <- raster(object)
-		object <- getValues(object) # to avoid keeping values in memory twice
+	if ( nrow(x) <= 100 ) { #canProcessInMemory(x, n=25) ) {
+		outRaster <- raster(x)
+		x <- getValues(x) # to avoid keeping values in memory twice
 		
-		oC <- which(object %in% originValue) #select cells not surrounded by other origin cells
-		ftC <- which(!(object %in% omitValue))
-		chunkSize <- ncell(outRaster)
-		outRaster <- setValues(outRaster, .calcDist(outRaster, chunkSize, ftC, oC))
+		oC <- which(x %in% origin) #select cells not surrounded by other origin cells
+		ftC <- which(!(x %in% omit))
+		v <- .calcDist(outRaster, ncell(outRaster), ftC, oC, lonlat=lonlat)
+		
+		outRaster <- setValues(outRaster, v)
 		outRaster[is.infinite(outRaster)] <- NA
 		if (filename != "") {
 			outRaster <- writeRaster(outRaster, filename, ...)
@@ -54,35 +51,39 @@ gridDistance <- function(object, originValue, omitValue, filename="", ...)
 		return(outRaster)
 		
 	} else 	{
-		tr <- blockSize(object, n=5)
+	
+		tr <- blockSize(x, n=10, minblocks=nrow(x)/10)
+		
 		pb <- pbCreate(tr$n*2 - 1, type=.progress(...))
 
 		#going up
-		r1 <- writeStart(raster(object), rasterTmpFile(), overwrite=TRUE)
-		for(i in tr$n:1) {
-			chunk <- getValues(object, row=tr$row[i], nrows=tr$nrows[i]) 
-			startCell <- (tr$row[i]-1) * ncol(object)
+		r1 <- writeStart(raster(x), rasterTmpFile(), overwrite=TRUE)
+		for (i in tr$n:1) {
+			chunk <- getValues(x, row=tr$row[i], nrows=tr$nrows[i]) 
+			startCell <- (tr$row[i]-1) * ncol(x)
 			chunkSize <- length(chunk)
-			oC <- which(chunk %in% originValue) 
-			ftC <- which(!(chunk %in% omitValue))
-			if(i < tr$n) {
-				firstRowftC <- which(!(firstRow %in% omitValue)) + chunkSize
-				chunkDist <- .calcDist(object, 
-								chunkSize=chunkSize+ncol(object), 
+			oC <- which(chunk %in% origin) 
+			ftC <- which(!(chunk %in% omit))
+			if (i < tr$n) {
+				firstRowftC <- which(!(firstRow %in% omit)) + chunkSize
+				chunkDist <- .calcDist(x, 
+								chunkSize=chunkSize + ncol(x), 
 								ftC=c(ftC, firstRowftC), 
 								oC=c(oC, firstRowftC), 
 								perCell=c(rep(0,times=length(oC)),firstRowDist), 
-								startCell=startCell)[1:chunkSize]
+								startCell=startCell,
+								lonlat=lonlat)[1:chunkSize]
 			} else {
-				chunkDist <- .calcDist(object, 
+				chunkDist <- .calcDist(x, 
 								chunkSize=chunkSize, 
 								ftC=ftC, 
 								oC=oC, 
 								perCell=0, 
-								startCell=startCell)
+								startCell=startCell,
+								lonlat=lonlat)
 			}
-			firstRow <- chunk[1:nrow(object)]
-			firstRowDist <- chunkDist[1:nrow(object)]
+			firstRow <- chunk[1:nrow(x)]
+			firstRowDist <- chunkDist[1:nrow(x)]
 			chunkDist[is.infinite(chunkDist)] <- NA
 			r1 <- writeValues(r1, chunkDist)
 			pbStep(pb) 
@@ -92,28 +93,29 @@ gridDistance <- function(object, originValue, omitValue, filename="", ...)
 		#going down
 		if (filename == '') {filename <- rasterTmpFile()}
 		
-		outRaster <- writeStart(raster(object), filename=filename, overwrite=TRUE, ...)			
-		for(i in 1:tr$n) {
+		outRaster <- writeStart(raster(x), filename=filename, overwrite=TRUE, ...)			
+		for (i in 1:tr$n) {
 			iM <- tr$n - i + 1
-			chunk <- getValues(object, row=tr$row[i], nrows=tr$nrows[i]) 
+			chunk <- getValues(x, row=tr$row[i], nrows=tr$nrows[i]) 
 			chunkSize <- length(chunk)
-			startCell <- (tr$row[i]-1) * ncol(object)
-			oC <- which(chunk %in% originValue) 
-			ftC <- which(!(chunk %in% omitValue))
+			startCell <- (tr$row[i]-1) * ncol(x)
+			oC <- which(chunk %in% origin) 
+			ftC <- which(!(chunk %in% omit))
 			chunkDist <- getValues(r1, row=tr$row[iM], nrows=tr$nrows[iM])
 			chunkDist[is.na(chunkDist)] <- Inf
 			if (i > 1) {
 				chunkDist <- pmin(chunkDist,
-					.calcDist(object, 
-							chunkSize=chunkSize+ncol(object), 
-							ftC=c(lastRowftC, ftC+ncol(object)), 
-							oC = c(lastRowftC, oC+ncol(object)), 
+					.calcDist(x, 
+							chunkSize=chunkSize+ncol(x), 
+							ftC=c(lastRowftC, ftC+ncol(x)), 
+							oC = c(lastRowftC, oC+ncol(x)), 
 							perCell=c(lastRowDist, rep(0,times=length(oC))), 
-							startCell = startCell - ncol(object))[-(1:length(lastRowftC))])
+							startCell = startCell - ncol(x),
+							lonlat=lonlat)[-(1:length(lastRowftC))])
 				}
-			lastRow <- chunk[(length(chunk)-ncol(object)+1):length(chunk)]
-			lastRowDist <- chunkDist[(length(chunkDist)-ncol(object)+1):length(chunkDist)]
-			lastRowftC <- which(!(lastRow %in% omitValue))
+			lastRow <- chunk[(length(chunk)-ncol(x)+1):length(chunk)]
+			lastRowDist <- chunkDist[(length(chunkDist)-ncol(x)+1):length(chunkDist)]
+			lastRowftC <- which(!(lastRow %in% omit))
 			chunkDist[is.infinite(chunkDist)] <- NA				
 			outRaster <- writeValues(outRaster, chunkDist, tr$row[i])
 			pbStep(pb) 
@@ -125,30 +127,34 @@ gridDistance <- function(object, originValue, omitValue, filename="", ...)
 }
 
 
-.calcDist <- function(object, chunkSize, ftC, oC, perCell=0, startCell=0)
-{
+.calcDist <- function(x, chunkSize, ftC, oC, perCell=0, startCell=0, lonlat) {
 	shortestPaths <- rep(Inf, times=max(ftC))
-	if(length(oC)>0)
-	{
-		lonlat <- .couldBeLonLat(object)
-		adj <- adjacency(object,fromCells=ftC,toCells=ftC,directions=8) #OPTIMIZE: omit oC cells surrounded by other origin cells
+	
+	if(length(oC)>0) {
+	
+		adj <- adjacency(x, fromCells=ftC, toCells=ftC, directions=8) #OPTIMIZE: omit oC cells surrounded by other origin cells
 		distGraph <- graph.edgelist(adj-1, directed=FALSE)
-		if (lonlat) 
-		{
-			coord <- cbind(xyFromCell(object,adj[,1]+startCell),xyFromCell(object,adj[,2]+startCell))
-			distance <- apply(coord,1,function(x){pointDistance(x[1:2],x[3:4], type='GreatCircle')})
+		
+		if (lonlat) {
+			# coord <- cbind(xyFromCell(x,adj[,1]+startCell),xyFromCell(x,adj[,2]+startCell))
+			# distance1 <- apply(coord,1,function(x){pointDistance(x[1:2],x[3:4], type='GreatCircle')})
+			# orders of magnitude faster than apply
+			distance <- pointDistance(xyFromCell(x,adj[,1]+startCell), xyFromCell(x,adj[,2]+startCell), type='GreatCircle') 
 			E(distGraph)$weight <- distance
+		
+		} else {
+			sameRow <- rowFromCell(x, adj[,1]) == rowFromCell(x, adj[,2]) 
+			sameCol <- colFromCell(x, adj[,1]) == colFromCell(x, adj[,2])
+			E(distGraph)$weight[sameRow] <- xres(x)
+			E(distGraph)$weight[sameCol] <- yres(x)
+			E(distGraph)$weight[!sameCol & !sameRow] <- sqrt(xres(x)^2 + yres(x)^2)
 		}
-		else
-		{
-			sameRow <- rowFromCell(object, adj[,1]) == rowFromCell(object, adj[,2]) 
-			sameCol <- colFromCell(object, adj[,1]) == colFromCell(object, adj[,2])
-			E(distGraph)$weight[sameRow] <- xres(object)
-			E(distGraph)$weight[sameCol] <- yres(object)
-			E(distGraph)$weight[!sameCol & !sameRow] <- sqrt(xres(object)^2 + yres(object)^2)
-		}
+		
 		shortestPaths <- pmin(shortestPaths, apply(shortest.paths(distGraph, oC-1) + perCell, 2, min))
-		if(max(ftC) < chunkSize){shortestPaths <- c(shortestPaths,rep(Inf,times=chunkSize-max(ftC)))}
+		
+		if(max(ftC) < chunkSize){ 
+			shortestPaths <- c( shortestPaths, rep(Inf, times=chunkSize-max(ftC)) )
+		}
 	}
 	return(shortestPaths)
 }

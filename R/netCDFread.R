@@ -6,7 +6,9 @@
 
 .readRowsNetCDF <- function(x, row, nrows=1, col=1, ncols=(ncol(x)-col+1)) {
 
-	if ( x@file@toptobottom ) { row <- x@nrows - row - nrows + 2 }
+	if ( x@file@toptobottom ) { 
+		row <- x@nrows - row - nrows + 2 
+		}
 	
 	nc <- open.ncdf(x@file@name)
 	on.exit( close.ncdf(nc) )
@@ -33,42 +35,68 @@
 			d <- d[, ncol(d):1] 	
 		}
 	}
-	return( as.vector(d) )
-	
+	d <- as.vector(d) 
+	d[d == x@file@nodatavalue] <- NA
+	return(d)	
 }
 	
 	
 	
-.readRowsBrickNetCDF <- function(x, row, nrows=1, col=1, ncols=(ncol(x)-col+1), layer=1, nlayers=nlayers(x)-layer+1) {
+.readRowsBrickNetCDF <- function(x, row, nrows=1, col=1, ncols=(ncol(x)-col+1), layer=1, n=nlayers(x)-layer+1) {
 	
 	if ( x@file@toptobottom ) { row <- x@nrows - row - nrows + 2	}
 	
+	navalue <- x@file@nodatavalue
 	layer   =  min( max( round(layer), 1), nlayers(x))
-	nlayers =  min( max( round(nlayers), 1), nlayers(x)-layer+1 )
+	n =  min( max( round(n), 1), nlayers(x)-layer+1 )
 	
 	nc <- open.ncdf(x@file@name)
 	on.exit( close.ncdf(nc) )
 
 	zvar = x@data@zvar
 	start = c(col, row, layer)
-	count = c(ncols, nrows, nlayers)
+	count = c(ncols, nrows, n)
 	d <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
 	
 
 	#if (!is.na(x@file@nodatavalue)) { 	d[d==x@file@nodatavalue] <- NA	}
 	#d <- x@data@add_offset + d * x@data@scale_factor
 	
-	dims = dim(d)
-	if (length(dims) == 3) {
-		if ( x@file@toptobottom ) { 
-			values <- matrix(nrow=nrows*ncols, ncol=nlayers)
-			for (i in 1:nlayers) {
-				x <- d[,,i]
-				values[,i] <- as.vector( x[, ncol(x):1] )
+	if (nlayers(x) > 1) {
+		dims = dim(d)
+		values <- matrix(nrow=nrows*ncols, ncol=n)
+
+		if (length(dims) == 3) {
+			if ( x@file@toptobottom ) { 
+				for (i in 1:n) {
+					x <- d[,,i]
+					values[,i] <- as.vector( x[, ncol(x):1] )
+				}
+			} else {
+				dim(d) = c(dims[1] * dims[2], dims[3])
+				d[d == x@file@nodatavalue] <- NA
+				return(d)
+			}
+		} else if (length(dims) == 2) {
+			if (nrows==1) {
+				values <- d
+			} else if (n==1) {
+				if ( x@file@toptobottom ) { 
+					values[] <- as.vector(d[,ncol(d):1])
+				} else {
+					values[] <- as.vector(d)				
+				}
+			} else if (ncols==1) {
+				if ( x@file@toptobottom ) { 
+					d <- d[nrow(d):1,]
+				}
+				values <- d
 			}
 		} else {
-			dim(d) = c(dims[1] * dims[2], dims[3])
-			return(d)
+			if ( x@file@toptobottom & nrows > 1) {
+				d <- rev(d)
+			}
+			values[] <- d
 		}
 	} else {
 		if ( x@file@toptobottom ) { 
@@ -78,6 +106,8 @@
 		}
 		values = matrix(values, ncol=1)
 	}
+	
+	values[values == navalue] <- NA
 	return(values)
 }
 

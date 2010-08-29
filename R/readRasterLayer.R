@@ -134,25 +134,10 @@
 		
 	} 
 	
+	if (object@data@gain != 1 | object@data@offset != 0) {
+		result <- result * object@data@gain + object@data@offset
+	}
+
 	return(result)
-	
-#	firstcell <- cellFromRowCol(object, startrow, startcol)
-#	lastcell <- cellFromRowCol(object, (startrow+nrows-1), endcol)
-#	object@data@indices <- c(firstcell, lastcell)
-#	if (all(object@data@indices == c(1, ncell(object)))) {
-#		object@data@content <- 'all' 
-#	} else if (startcol==1 & ncols==object@ncols) {
-#		if (nrows==1) {
-#			object@data@content <- 'row' 
-#		} else {	
-#			object@data@content <- 'rows' 
-#		}
-#	} else {
-#		object@data@content <- 'block' 
-#	}
-#	object@data@values <- result
-#	return(object)
 }
-
-
 
