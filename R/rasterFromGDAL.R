@@ -54,7 +54,7 @@
 
 	shortname <- gsub(" ", "_", ext(basename(filename), ""))
 	x <- .enforceGoodLayerNames(x, shortname)
-	filename(x) <- filename
+	x@file@name <- filename
 	
 	x@file@driver <- 'gdal' 
 	projection(x) <- attr(gdalinfo, "projection")

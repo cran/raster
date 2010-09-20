@@ -24,14 +24,21 @@
 	} else {
 		if (is.null(bands)) { bands <- ''}
 		if (bands[1] == '') {
-			bands = 1 : ( as.integer( dim.inq.ncdf(nc, var.inq.ncdf(nc, zvar)$dimids[3])$length ) )
+			bands = 1 : nc$var[[zvar]]$dim[[3]]$len
 		}
-		st = stack( raster(filename, varname=zvar, band=bands[1]) )
+		r <- raster(filename, varname=zvar, band=bands[1])
+		st <- stack( r )
+		st@title <- r@layernames
+
 		if (length(bands) > 1) {
-			for (i in 2:length(bands)) {
-				st <- addLayer(st, raster(filename, varname=zvar, band=bands[i]) )
+			st@zname <- nc$var[[zvar]]$dim[[3]]$units[bands]
+			st@zvalue <- nc$var[[zvar]]$dim[[3]]$vals[bands]
+			if ( nc$var[[zvar]]$dim[[3]]$name == 'time' ) {	
+				st <- .doTime(st, nc, zvar) 
 			}
-		}
+			st@layers = lapply(as.list(bands), function(x){r@data@band <- x; r@layernames <- st@zvalue[x]; return(r)} )
+			st@layernames <- st@zvalue
+		} 
 		return( st )
 	}
 }

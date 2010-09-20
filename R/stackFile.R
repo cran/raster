@@ -12,22 +12,23 @@ stackOpen <- function(stackfile) {
 	} else {
 		rst <- stack(as.vector(st[,1]))
 	}
-	filename(rst) <- stackfile
+	rst@filename <- stackfile
 	return(rst)
 }
 
-stackSave <- function(rstack) {
-	stackfile <- trim(rstack@filename)
-	if (stackfile == "") { stop('RasterStack does not have a filename.') }
-	thefile <- file(stackfile, "w")
-	for (i in 1:length(rstack@layers)) {
-		fname <- trim(filename(rstack@layers[[i]]))
-		if (trim(fname) == "") {
-			stop("cannot save a RasterStack that has Layers without filenames. Use writeStack instead.")
+stackSave <- function(x, filename) {
+	filename <- trim(filename)
+	if (filename == "") { stop('Provide a non empty filename.') }
+	thefile <- file(filename, "w")
+	for (i in 1:length(x@layers)) {
+		fname <- trim(filename(x@layers[[i]]))
+		if (fname == "") {
+			stop("cannot save a RasterStack that has layers that only exist in memory. Use writeStack first/instead.")
 		}	
-		cat(fname, "\t", band(rstack@layers[[i]]),"\n", file=thefile)
+		cat(fname, "\t", band(x@layers[[i]]),"\n", file=thefile)
 	}
 	close(thefile)
-	return(rstack)
+	x@filename <- filename
+	return(x)
 }
 

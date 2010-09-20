@@ -6,9 +6,14 @@
 
 
 .saveAsRaster <- function(x, filename, format, ...) {
-	if ( toupper(x@file@name == toupper(filename) )) {
+	filename <- trim(filename)
+	filetype <- .filetype(format=format, filename=filename)
+	filename <- .getExtension(filename, filetype)
+	if ( toupper(x@file@name) == toupper(filename) ) {
+# not entirely safe because ../this/that.tif could be the same as d:/this/that.tif
 		stop('filenames of source and destination should be different')
 	}
+
 	r <- raster(x)
 	tr <- blockSize(r)
 	pb <- pbCreate(tr$n, type=.progress(...))			
@@ -28,7 +33,7 @@
 
 .saveAsBrick <- function(x, filename, bandorder='BIL', format, ...) {
 
-		if ( toupper(x@file@name == toupper(filename) )) {
+		if ( toupper(x@file@name) == toupper(filename) ) {
 			stop('filenames of source and destination should be different')
 		}
 		

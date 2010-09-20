@@ -17,7 +17,7 @@ stackApply(x, indices, fun, filename='', na.rm=TRUE, ...)
 \arguments{
   \item{x}{A Raster* object}
   \item{indices}{A vector of length \code{nlayers(x)} with values between 1 and \code{nlayers(x)} }
-  \item{fun}{A function that returns a single value, e.g. \code{mean} or \code{sum}, and that takes an 'na.rm' argument}
+  \item{fun}{A function that returns a single value, e.g. \code{mean} or \code{min}, and that takes an 'na.rm' argument}
   \item{na.rm}{Logical. If \code{TRUE}, NA cells are removed from calculations}
   \item{filename}{Character. Optional output filename}
   \item{...}{Additional arguments. See below, under Methods}  
@@ -46,7 +46,7 @@ A new Raster* object, and in some cases the side effect of a new file on disk.
 \examples{
 r <- raster(ncol=10, nrow=10)
 r[]=1:ncell(r)
-s <- stack(r,r,r,r,r,r)
+s <- brick(r,r,r,r,r,r)
 s <- s * 1:6
 b <- stackApply(s, indices=c(1,1,2,2,3,3), fun=sum)
 b

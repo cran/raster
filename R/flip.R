@@ -57,7 +57,7 @@ setMethod('flip', signature(x='RasterLayer', direction='ANY'),
 				}
 			} else {
 				for (i in 1:tr$n) {
-					v = getValues(x, row=tr$row[i], nrows=tr$size)
+					v = getValues(x, row=tr$row[i], nrows=tr$nrows[i])
 					v = matrix(v, ncol=ncol(x), byrow=TRUE)
 					v = as.vector(t(v[, ncol(v):1]))
 					outRaster <- writeValues(outRaster, v, tr$row[i])

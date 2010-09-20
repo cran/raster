@@ -125,7 +125,7 @@ setMethod('area', signature(x='RasterStackBrick'),
 		tr <- blockSize(out)
 		pb <- pbCreate(tr$n, type=.progress(...))
 		
-		rows <- 1
+		#rows <- 1
 		for (i in 1:tr$n) {
 			r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
 			vv <- dx[r] * dy / 1000000
@@ -155,7 +155,7 @@ setMethod('area', signature(x='RasterStackBrick'),
 		
 		if (filename == "") { 
 			if (weights) {
-				total <- apply(v, 2, sum, na.rm=TRUE)
+				total <- colSums(v, na.rm=TRUE)
 				v <- t( t(v) / total )
 			}
 			out <- setValues(out, v)

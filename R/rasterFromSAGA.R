@@ -28,7 +28,7 @@
 		else if (ini[i,2] == "POSITION_YMIN") {yn <- as.numeric(ini[i,3])} 
 		else if (ini[i,2] == "CELLCOUNT_Y") {nr <- as.integer(ini[i,3])} 
 		else if (ini[i,2] == "CELLCOUNT_X") {nc <- as.integer(ini[i,3])} 
-		else if (ini[i,2] == "CELLSIZE") {cellsize <- as.integer(ini[i,3])} 
+		else if (ini[i,2] == "CELLSIZE") { cellsize <- as.numeric(ini[i,3])} 
 		else if (ini[i,2] == "NODATA_VALUE") {nodataval <- as.numeric(ini[i,3])} 
 		else if (ini[i,2] == "DATAFORMAT") {inidatatype <- ini[i,3]} 
 		else if (ini[i,2] == "BYTEORDER_BIG") {byteorder <- as.logical(ini[i,3])} 

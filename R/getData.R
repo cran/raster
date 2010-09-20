@@ -235,8 +235,16 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 	if (!file.exists(tiffilename)) {
 		if (!file.exists(zipfilename)) {
 			if (download) { 
-				theurl <- paste("http://hypersphere.telascience.org/elevation/cgiar_srtm_v4/tiff/zip/", f, ".ZIP", sep="")
-				.download(theurl, zipfilename)
+				theurl <- paste("ftp://xftp.jrc.it/pub/srtmV4/tiff/", f, ".zip", sep="")
+				test <- try (.download(theurl, zipfilename) , silent=TRUE)
+				if (class(test) == 'try-error') {
+					theurl <- paste("http://hypersphere.telascience.org/elevation/cgiar_srtm_v4/tiff/zip/", f, ".ZIP", sep="")
+					test <- try (.download(theurl, zipfilename) , silent=TRUE)
+					if (class(test) == 'try-error') {
+						theurl <- paste("http://srtm.csi.cgiar.org/SRT-ZIP/SRTM_V41/SRTM_Data_GeoTiff/", f, ".ZIP", sep="")
+						.download(theurl, zipfilename)
+					}
+				}
 			} else {cat('file not available locally, use download=TRUE\n') }	
 		}
 		if (file.exists(zipfilename)) { 

@@ -46,8 +46,8 @@ setMethod("Arith", signature(e1='Raster', e2='Raster'),
 			pb <- pbCreate(tr$n, type=.progress())			
 			r <- writeStart(r, filename=rasterTmpFile(), overwrite=TRUE )
 			for (i in 1:tr$n) {
-				v1 <- getValues(e1, row=tr$row[i], nrows=tr$size)
-				v2 <- getValues(e2, row=tr$row[i], nrows=tr$size)
+				v1 <- getValues(e1, row=tr$row[i], nrows=tr$nrows[i])
+				v2 <- getValues(e2, row=tr$row[i], nrows=tr$nrows[i])
 				v <- callGeneric( v1, v2 )
 				r <- writeValues(r, v, tr$row[i])
 				pbStep(pb, i) 	
@@ -72,7 +72,7 @@ setMethod("Arith", signature(e1='RasterLayer', e2='numeric'),
 			pb <- pbCreate(tr$n, type=.progress())			
 			r <- writeStart(r, filename=rasterTmpFile(), format=.filetype(), overwrite=TRUE )
 			for (i in 1:tr$n) {
-				v <- getValues(e1, row=tr$row[i], nrows=tr$size)
+				v <- getValues(e1, row=tr$row[i], nrows=tr$nrows[i])
 				v <- callGeneric( v, e2 )
 				r <- writeValues(r, v, tr$row[i])
 				pbStep(pb, i) 	
@@ -98,7 +98,7 @@ setMethod("Arith", signature(e1='numeric', e2='RasterLayer'),
 			pb <- pbCreate(tr$n, type=.progress())			
 			r <- writeStart(r, filename=rasterTmpFile(), format=.filetype(), overwrite=TRUE )
 			for (i in 1:tr$n) {
-				v <- getValues(e2, row=tr$row[i], nrows=tr$size)
+				v <- getValues(e2, row=tr$row[i], nrows=tr$nrows[i])
 				v <- callGeneric( v, e1 )
 				r <- writeValues(r, v, tr$row[i])
 				pbStep(pb, i) 	
@@ -130,7 +130,7 @@ setMethod("Arith", signature(e1='RasterBrick', e2='numeric'),
 			pb <- pbCreate(tr$n, type=.progress())
 			b <- writeStart(b, filename=filename, bandorder='BIL')
 			for (i in 1:tr$n) {
-				v <- t (callGeneric( t(getValues(e1, row=tr$row[i], nrows=tr$size)), e2) )
+				v <- t (callGeneric( t(getValues(e1, row=tr$row[i], nrows=tr$nrows[i])), e2) )
 				b <- writeValues(b, v, tr$row[i])
 				pbStep(pb, i)
 			}
@@ -150,7 +150,7 @@ setMethod("Arith", signature(e1='RasterBrick', e2='numeric'),
 			pb <- pbCreate(tr$n, type=.progress())
 			b <- writeStart(b, filename=filename, bandorder='BIL')
 			for (i in 1:tr$n) {
-				v <- callGeneric( getValues(e1, row=tr$row[i], nrows=tr$size), e2)
+				v <- callGeneric( getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), e2)
 				b <- writeValues(b, v, tr$row[i])
 				pbStep(pb, i)
 			}

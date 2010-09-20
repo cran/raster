@@ -50,8 +50,8 @@ setReplaceMethod("[", c("RasterLayer", "ANY", "missing"),
 
 		x@data@values[i] <- value
 		x@data@fromdisk <- FALSE
-		
-		filename(x) <- ""
+		x@file@name <- ""
+		x@file@driver <- ""
 		x <- setMinMax(x)
 		return(x)
 	}

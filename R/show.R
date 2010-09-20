@@ -88,16 +88,21 @@ setMethod ('show' , 'RasterBrick',
 	function ( object ) {
 		cat ('class       :' , class ( object ) , '\n')
 		cat ('filename    :' , filename(object), '\n')
-		cat ('nlayers     :' , nlayers(object), '\n')
+		nl <- nlayers(object)
+		cat ('nlayers     :' , nl, '\n')
 		cat ('nrow        :' , nrow(object), '\n')
 		cat ('ncol        :' , ncol(object), '\n')
 		cat ('ncell       :' , ncell(object), '\n')
 		cat ('projection  :' , projection(object, TRUE), '\n')
-		if (nlayers(object) > 0) {
-			minv <- as.character(minValue(object))
-			maxv <- as.character(maxValue(object))
+		if (nl > 0) {
+			minv <- format(minValue(object), digits=2)
+			maxv <- format(maxValue(object), digits=2)
 			minv <- gsub('Inf', '?', minv)
 			maxv <- gsub('-Inf', '?', maxv)
+			if (nl > 10) {
+				minv <- c(minv[1:10], '...')
+				maxv <- c(maxv[1:10], '...')
+			}
 			cat('min value   :', paste(minv, collapse=' '), '\n')
 			cat('max value   :', paste(maxv, collapse=' '), '\n')
 		}
@@ -105,8 +110,8 @@ setMethod ('show' , 'RasterBrick',
 		cat ('xmax        :' , xmax(object), '\n')
 		cat ('ymin        :' , ymin(object), '\n')
 		cat ('ymax        :' , ymax(object), '\n')
-		cat ('xres        :' , xres(object) , '\n')
-		cat ('yres        :' , yres(object) , '\n')
+		cat ('xres        :' , xres(object), '\n')
+		cat ('yres        :' , yres(object), '\n')
 		cat ('\n')
 	}
 )
@@ -117,16 +122,21 @@ setMethod ('show' , 'RasterStack',
 	function ( object ) {
 		cat ('class       :' , class ( object ) , '\n')
 		cat ('filename    :' , filename(object), '\n')
-		cat ('nlayers     :' , nlayers(object), '\n')
-		if (nlayers(object) > 0) {
+		nl <- nlayers(object)
+		cat ('nlayers     :' , nl, '\n')
+		if (nl > 0) {
 			cat ('nrow        :' , nrow(object@layers[[1]]), '\n')
 			cat ('ncol        :' , ncol(object@layers[[1]]), '\n')
 			cat ('ncell       :' , ncell(object@layers[[1]]), '\n')
 			cat ('projection  :' , projection(object@layers[[1]], TRUE), '\n')
-			minv <- as.character(minValue(object))
-			maxv <- as.character(maxValue(object))
+			minv <- format(minValue(object), digits=2)
+			maxv <- format(maxValue(object), digits=2)
 			minv <- gsub('Inf', '?', minv)
 			maxv <- gsub('-Inf', '?', maxv)
+			if (nl > 10) {
+				minv <- c(minv[1:10], '...')
+				maxv <- c(maxv[1:10], '...')
+			}
 			cat('min value   :', paste(minv, collapse=' '), '\n')
 			cat('max value   :', paste(maxv, collapse=' '), '\n')
 		}

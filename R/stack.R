@@ -18,6 +18,11 @@ function(x) {
 
 setMethod("stack", signature(x='Raster'), 
 function(x, ..., bands=NULL) {
+	if (!is.null(bands)) {
+		if (length(list(...)) > 0) {
+			stop("if you supply a 'bands' argument. you can only supply a single Raster object" )
+		}
+	}
 	rlist <- .makeRasterList(x, ..., keepone=FALSE)
 	return(stack(rlist, bands))	
 } )
@@ -26,6 +31,11 @@ function(x, ..., bands=NULL) {
 
 setMethod("stack", signature(x='character'), 
 function(x, ..., bands=NULL, varname='') {
+	if (!is.null(bands)) {
+		if (length(list(...)) > 0) {
+			stop("if you supply a 'bands' argument. you can only supply a single Raster object" )
+		}
+	}
     if ( varname != '') {
 		return(.stackCDF(x, varname, bands))
 	} else {

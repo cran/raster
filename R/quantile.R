@@ -6,12 +6,12 @@
 
 
 setMethod('quantile', signature(x='RasterLayer'), 
-	function(x, na.rm=TRUE, ncells=NULL, ...) {
+	function(x, ..., na.rm=TRUE, ncells=NULL) {
 # TODO sampling if raster is too large
 		if (is.null(ncells)) {
 			v <- try ( getValues(x) )
 			if (class(v) == 'try-error') {
-				stop('raster too large. You can use an arugment "ncells" to use a sample of the cells')
+				stop('raster too large. You can use an argument "ncells" to use a sample of the cells')
 			}
 			if (na.rm) {v <- na.omit(v)}
 		} else {

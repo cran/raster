@@ -24,7 +24,7 @@ setMinMax(x)
 a Raster* object
 }
 
-\seealso{ \code{\link[raster]{values}} }
+\seealso{ \code{\link[raster]{getValues}} }
 
 \author{ Robert J. Hijmans }
 

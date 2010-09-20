@@ -11,15 +11,13 @@
 	compare(x)
 
 	filename <- trim(filename)
-	outraster <- raster(x[[1]])
+	nl <- sapply(x, nlayers)
+	if (nl[1] == 1) {
+		outraster <- raster(x[[1]])
+	} else {
+		outraster <- brick(x[[1]], values=FALSE)
+	}
 	
-	inram <- TRUE
-	for (i in 1:length(x)) {
-		if (! inMemory(x[[i]]) ) {
-			inram <- FALSE
-		} 
-	}	
-	if (!canProcessInMemory(outraster,2)) {inram <- FALSE }
 
 # what kind of function is this... 
 # I must be overlooking a simpler approach here	
@@ -48,25 +46,27 @@
 			} else {
 				stop('cannot use this formula')
 			}
+		} else {
+			applymethod <- TRUE # ? or stop()
 		}
 	}
 
 	vallist <- list()
 
-	if ( inram ) {
+	if ( canProcessInMemory(outraster, sum(nl)) ) {
 		pb <- pbCreate(3, type=.progress(...))			
 		pbStep(pb, 1)
 		if (applymethod) {
 			valmat <- vector()
 			for (i in 1:length(x)) {
-				valmat <- cbind(valmat, x[[i]]@data@values)
+				valmat <- cbind(valmat, getValues(x[[i]]))
 				x[[i]] <- clearValues(x[[i]])
 			}	
 			pbStep(pb, 2)
 			vals <- apply(valmat, 1, fun)
 		} else {
 			for (i in 1:length(x)) {
-				vallist[[i]] <- x[[i]]@data@values 
+				vallist[[i]] <- getValues(x[[i]])
 				x[[i]] <- clearValues(x[[i]])
 			}
 			pbStep(pb, 2)
@@ -81,59 +81,44 @@
 		pbClose(pb)
 		
 	} else {
+	
 		if (filename == "") {
-			if (!canProcessInMemory(outraster, 3)) {
-				filename <- rasterTmpFile()
-			} 
+			filename <- rasterTmpFile()
 		} 
-		if (filename == "") {
-			v <- matrix(ncol=nrow(outraster), nrow=ncol(outraster))
-		} else {
-			outraster <- writeStart(outraster, filename=filename, ...)
-		}
-		
+		outraster <- writeStart(outraster, filename=filename, ...)
 		
 		tr <- blockSize(outraster, n=length(x))
 		pb <- pbCreate(tr$n, type=.progress(...))			
 
-		
-		if (applymethod) { valmat = matrix(nrow=tr$size*ncol(outraster) , ncol=length(x)) }
-		
-		for (i in 1:tr$n) {
-			if (applymethod) {
+		if (applymethod) { 
+			valmat = matrix(nrow=tr$size*ncol(outraster) , ncol=length(x)) 
+			for (i in 1:tr$n) {
 				if (i == tr$n) {
 					valmat = matrix(nrow=tr$nrows[i]*ncol(outraster) , ncol=length(x))
 				}
 				for (j in 1:length(x)) {
-					valmat[,j] <- getValuesBlock(x[[j]], row=tr$row[i], nrows=tr$size)
+					valmat[,j] <- getValues(x[[j]], row=tr$row[i], nrows=tr$size)
 				}	
 				vv <- apply(valmat, 1, fun)
-				
-			} else {
+			}
+			outraster <- writeValues(outraster, vv, tr$row[i])
+			pbStep(pb, i)
 			
+		} else {
+		
+			for (i in 1:tr$n) {
 				for (j in 1:length(x)) {
-					vallist[[j]] <- getValuesBlock(x[[j]], row=tr$row[i], nrows=tr$size)
+					vallist[[j]] <- getValues(x[[j]], row=tr$row[i], nrows=tr$size)
 				}	
 				vv <- do.call(fun, vallist)
 			}
-		
-			if (filename == "") {
-				vv <- matrix(vv, nrow=ncol(outraster))
-				cols <- tr$row[i]:(tr$row[i]+dim(vv)[2]-1)	
-				v[,cols] <- vv
-
-			} else {
-				outraster <- writeValues(outraster, vv, tr$row[i])
-			}	
+			outraster <- writeValues(outraster, vv, tr$row[i])
 			pbStep(pb, i)
 		}
-		pbClose(pb)
 		
-		if (filename == "") { 
-			outraster <- setValues(outraster, as.vector(v)) 
-		} else {
-			outraster <- writeStop(outraster)
-		}
+		pbClose(pb)
+		outraster <- writeStop(outraster)
+		
 	} 
 	return(outraster)
 }

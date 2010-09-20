@@ -35,7 +35,6 @@ setMethod('getValues', signature(x='RasterLayer', row='numeric', nrows='numeric'
 function(x, row, nrows) {
 
 	if (! validRow(x, row)) { stop(row, ' is not a valid rownumber') }
-
 	row <- min(x@nrows, max(1, round(row)))
 	endrow <- max(min(x@nrows, row+round(nrows)-1), row)
 	nrows <- endrow - row + 1
@@ -61,11 +60,12 @@ setMethod('getValues', signature(x='RasterBrick', row='numeric', nrows='missing'
 
 setMethod('getValues', signature(x='RasterBrick', row='numeric', nrows='numeric'), 
 function(x, row, nrows) {
-	if (!is.atomic(row)) { stop() }
-	row <- as.integer(round(row))
-	if (!(validRow(x, row))) {		stop(paste(row, 'is not a valid rownumber')) 	}
-	if (!is.atomic(nrows)) {	stop() }
-	nrows <- as.integer(round(nrows))
+
+	if (! validRow(x, row)) { stop(row, ' is not a valid rownumber') }
+	row <- min(x@nrows, max(1, round(row)))
+	endrow <- max(min(x@nrows, row+round(nrows)-1), row)
+	nrows <- endrow - row + 1
+
 	startcell <- cellFromRowCol(x, row, 1)
 	endcell <- cellFromRowCol(x, row+nrows-1, x@ncols)
 

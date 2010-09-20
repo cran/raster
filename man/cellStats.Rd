@@ -16,7 +16,7 @@ cellStats(x, stat='mean', ...)
 
 \arguments{
  \item{x}{A Raster* object}
- \item{stat}{The function to be applied. Either as character: 'mean', 'min', 'max', 'sum', or 'sd'; or a function (see Details) }
+ \item{stat}{The function to be applied}
  \item{...}{Additional argument. See \code{\link[raster]{rasterOptions}} }  
 }
 
@@ -25,12 +25,8 @@ A numeric value.
 }
 
 \details{
-If \code{stat} is a \code{function} rather than a character string, \code{zonal} will fail (gracefully) for very large RasterLayers. In such cases
-you can use the character string function name if applicable. Otherwise you could use a sample of the RasterLayer that can be held in memory (see 
-\code{\link[raster]{sampleRandom}} and \code{\link[raster]{sampleRegular}} )
-
-\code{stat='sd'} returns slightly different values than \code{stat=sd}, because the former computes the standard deviation of the population (rather than of a sample)
-using this formula: \code{sqrt((1/N) * sum(x^2) - mean(x)^2)}
+\code{cellStats} will fail (gracefully) for very large RasterLayers except for a number of known functions: sum, mean, min, max, sd, 'countNA'. 'countNA must be supplied as a character value (with quotes), the other functions may be supplied with quotes. For other functions you could perhaps use a sample of the RasterLayer that can be held in memory (see \code{\link[raster]{sampleRandom}} and \code{\link[raster]{sampleRegular}} )
+For large files, and when \code{fun='sd'}, this function returns the standard deviation of the population ( \code{sqrt((1/N) * sum(x^2) - mean(x)^2)}), not that of a sample which is normally returned by \code{sd})
 }
 
 \seealso{ \code{\link[raster]{quantile} }, \code{\link[raster]{minValue} }, \code{\link[raster]{maxValue} }, \code{\link[raster]{setMinMax} } }

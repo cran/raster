@@ -1,4 +1,35 @@
+20-Sep-2010,  version 1.5-8
+added functions gain, gain<-, off, and off<- to get or set the gain (scale) and offset parameters of a Raster object
+fixed bug when creating a RasterLayer from a BIL file that has the coordinates in a world file rather than in the hdr file (reported by Steven Mosher)
+
+-------------------------------------------------------------
+
+16-Sep-2010,  version 1.5-7
+fixed bug when creating a RasterLayer from a SAGA grid file with non-integer resolution (reported by Matthew Landis)
+
+-------------------------------------------------------------
+14-Sep-2010,  version 1.5-6
+
+reclass can now also process a multi-layer Raster object
+cover and overlay can now also process mulitple multi-layer Raster objects to return another multi-layer object
+
+-------------------------------------------------------------
+2-Sep-2010,  version 1.5-2
+
+improved speed of gridDistance (JvE)
+rasterToPoints can now take a matrix of values and return a brick with layer for each column (suggested by Steven Mosher)
+writeRaser (internal saveAs function) takes more care as not to overwrite its own source file, even if overwrite=TRUE
+
+-------------------------------------------------------------
+30-Aug-2010, version 1.5-0
+
+calc now uses rowSums and rowMeans where appropriate, and automatically detects whether these functions are appropriate (suggested by Matteo Mattiuzzi). This is also implemented in stackApply, and improved (automatic detection) in aggregate.
+removed functions: 'filename<-', values, copryRasterFile, renameRasterFile, removeRasterFile.
+bug fix: RasterBricks sometimes had a link to the filename of the object it was created from in a computation. 
+
+-------------------------------------------------------------
 27-Aug-2010, version 1.4-8
+
 Minor bug fixes in ncdf/brick handling
 
 Bug fixes in dropLayer for a RasterBrick (reported by Steven Mosher)

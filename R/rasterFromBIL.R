@@ -52,6 +52,17 @@
 		else if (ini[i,2] == "MINVALUE=") {try (minval <- as.numeric(unlist(strsplit(trim(ini[i,3]), ' ')))) } 
 		else if (ini[i,2] == "MAXVALUE=") {try (maxval <- as.numeric(unlist(strsplit(trim(ini[i,3]), ' ')))) } 
     }  
+
+
+	wrldf <- ext(filename, '.blw')
+	if (file.exists(wrldf)) {
+		a <- readLines(wrldf)
+		if (is.null(xn)) xn <- as.numeric(a[5])
+		if (is.null(xd)) xd <- as.numeric(a[1])
+		if (is.null(yx)) yx <- as.numeric(a[6])
+		if (is.null(yd)) yd <- -1 * as.numeric(a[4])
+	}
+
 	
 	if (is.null(xd)) {
 		xd <- (xx - xn) / (nc - 1)
