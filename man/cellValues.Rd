@@ -33,7 +33,7 @@ Multi-layer Raster* objects accept these two additional arguments:
 a vector of cell values for a RasterLayer or or a matrix of values for a RasterStack or RasterBrick
 }
 
-\seealso{ \code{\link[raster]{xyValues}}, \code{\link[raster]{read}} }
+\seealso{ \code{\link[raster]{xyValues}}, \code{\link[raster]{getValues}} }
 
 
 \author{Robert J. Hijmans }

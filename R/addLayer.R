@@ -113,7 +113,7 @@ function(x, ..., keepone=FALSE) {
 			
 			if (x@file@driver != '') {
 				x@file@driver <- ''
-				filename(x) <- ''
+				x@file@name <- ''
 			}
 	
 			if (!compare(c(x, r))) { 

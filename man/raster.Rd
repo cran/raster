@@ -97,11 +97,10 @@ If \code{x} is a character value, it should be a filename of a file that the ras
 4) Create a RasterLayer object from a RasterLayer object. This copies the parameters of a RasterLayer object to a new RasterLayer, 
 but does not copy the filename nor the data associated with the original Raster object. 
 
-\code{raster(x, filename="", values=NULL)}
+\code{raster(x, values=NULL)}
 
 \tabular{rll}{
  \tab \code{x} \tab a Raster* object \cr
- \tab \code{filename} \tab new filename for new RasterLayer \cr
  \tab \code{values} \tab If not \code{NULL} it is used to set values to new object. Either pass a vector of length == ncells(x), or a single number \cr
 }
 
@@ -155,7 +154,7 @@ RasterLayer object
 
 \author{Robert J. Hijmans}
 
-\seealso{ \code{\link[raster]{stack},  \link[raster]{getValues}}  }
+\seealso{ \code{\link[raster]{stack}, \link[raster]{brick}} }
 
 
 \examples{

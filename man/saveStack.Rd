@@ -12,13 +12,15 @@ The values are not saved, only the references to the files.
 
 \usage{
 stackOpen(stackfile)
-stackSave(rstack)
+stackSave(x, filename)
 }
 
 \arguments{
   \item{stackfile}{ Filename for the RasterStack (to save it on disk) }
-  \item{rstack}{ a RasterStack object }
+  \item{x}{ RasterStack object }
+  \item{filename}{File name }
 }
+
 \details{
   When a RasterStack is saved to a file, only pointers (filenames) to raster datasets are saved, not the data. 
   If the name or location of a raster file changes, the RasterStack becomes invalid.
@@ -30,13 +32,12 @@ stackSave(rstack)
 
 \author{Robert J. Hijmans}
 
-\seealso{ \code{\link[raster]{filename}}, \code{\link[raster]{stack}}, \code{\link[raster]{changeStack}}}
+\seealso{ \code{\link[raster]{writeRaster}}, \code{\link[raster]{stack}}, \code{\link[raster]{changeStack}}}
 
 \examples{
 rasterfile <- system.file("external/test.grd", package="raster")
 st <- stack(c(rasterfile, rasterfile))
-filename(st) <- "mystack"
-st <- stackSave(st)
+st <- stackSave(st, "mystack")
 # note that filename adds an extension .stk to a stackfile  
 #st2 <- stackOpen("mystack.stk")
 #st2

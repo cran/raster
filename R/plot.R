@@ -74,7 +74,7 @@ function(x, col=rev(terrain.colors(255)), maxpixels=500000, levelplot=FALSE, new
 
 setMethod("plot", signature(x='RasterLayer', y='RasterLayer'), 
 	function(x, y, maxpixels=100000, cex=0.1, ...)  {
-		comp <- compare(c(x, y), extent=TRUE, rowcol=TRUE, prj=FALSE, tolerance=0.0001, stopiffalse=TRUE) 
+		comp <- compare(c(x, y), extent=TRUE, rowcol=TRUE, prj=FALSE, stopiffalse=TRUE) 
 		nc <- ncell(x)
 		x <- sampleRegular(x, size=maxpixels)
 		y <- sampleRegular(y, size=maxpixels)

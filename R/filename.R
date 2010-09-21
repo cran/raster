@@ -11,7 +11,7 @@ filename <- function(x) {
 }
 
 
-'filename<-' <- function(x, value) {
+'.xfilename<-' <- function(x, value) {
 	filename <- trim(value)
 	if (is.na(filename) | is.null(filename) | !is.character(value)) {
 		filename <- ""

@@ -193,6 +193,7 @@ Maps
     \code{\link{persp}} \tab Perspective plot of a RasterLayer \cr
     \code{\link{contour}} \tab Contour plot of a RasterLayer \cr
     \code{\link{filledContour}} \tab Filled contour plot of a RasterLayer \cr
+    \code{\link{text}} \tab Plot the values of a RasterLayer on top of a map \cr
  }
 
 Interacting with a map (plot of a RasterLayer)
@@ -282,14 +283,7 @@ Advanced writing of entire files or parts thereof
     \code{\link{writeValues}} \tab Write some values  \cr
     \code{\link{writeStop}} \tab Close the file after writing \cr
 	}
-	
-Managing files in the 'native raster format'
-  \tabular{ll}{
-    \code{\link{moveRasterFile}} \tab Open a file for writing \cr
-    \code{\link{copyRasterFile}} \tab Write some values  \cr
-    \code{\link{removeRasterFile}} \tab Close the file after writing \cr
-	}
-}
+}	
 
 
 \section{XIV. Extent objects}{
@@ -355,7 +349,7 @@ It is also possible to use Arithmetic functions with Extent objects (but these w
 
 \section{Acknowledgements}{
 We thank the following persons for suggestions to improve the package: 
-Roger Bivand, Jonathan Greenberg, Herry Herry, Paul Hiemstra, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Agustin Lobo, 
+Roger Bivand, Jonathan Greenberg, Herry Herry, Paul Hiemstra, Mayeul Kauffmann, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Agustin Lobo, 
 Matteo Mattiuzzi, Steven Mosher, Edzer Pebesma, Jon Olav Skoien, and Kevin Ummel.
 }
 

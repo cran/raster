@@ -51,9 +51,10 @@ setMethod('raster', signature(x='character'),
 
 
 setMethod('raster', signature(x='Raster'), 
-	function(x, filename="", values=NULL) {
-		r <- raster(xmn=xmin(x), xmx=xmax(x), ymn=ymin(x), ymx=ymax(x), nrows=nrow(x), ncols=ncol(x), crs=projection(x))
-		filename(r) <- filename
+	function(x, values=NULL) {
+		e <- x@extent
+		r <- raster(xmn=e@xmin, xmx=e@xmax, ymn=e@ymin, ymx=e@ymax, nrows=x@nrows, ncols=x@ncols, crs=projection(x))
+		# filename(r) <- filename
 		if (!is.null(values)) {
 			x <- setValues(x, values)
 		}

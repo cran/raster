@@ -3,9 +3,6 @@
 # Version 0.9
 # Licence GPL v3
 
-
-
-
 if (!isGeneric('setValues')) {
 	setGeneric('setValues', function(object, values, layer=-1)
 		standardGeneric('setValues')) 
@@ -13,11 +10,8 @@ if (!isGeneric('setValues')) {
 
 	
 setMethod('setValues', signature(object='RasterLayer'), 
-function(object, values, layer=-1) {
-  
-  # check, to avoid a row argument which used to be legal
-	if (layer != -1) stop('the layer argument cannot be used on a RasterLayer')
-  
+function(object, values) {
+
 	if (is.matrix(values)) { 
 		if (ncol(values) == object@ncols & nrow(values) == object@nrows) {
 			values <- as.vector(t(values)) 
@@ -38,12 +32,11 @@ function(object, values, layer=-1) {
 	}
 
 	if (length(values) == ncell(object)) { 
-		object@data@values <- values
-
 		object@data@inmemory <- TRUE
 		object@data@fromdisk <- FALSE
+		object@file@name = ""
 
-#		object@data@indices <- c(1, ncell(object))
+		object@data@values <- values
 		object <- setMinMax(object)
 		return(object)
 		
@@ -75,18 +68,16 @@ setMethod('setValues', signature(object='RasterBrick'),
 			values <- matrix(values)
 		}
 		if (nrow(values) == ncell(object)) {
-			object@data@nlayers <- ncol(values)
+
+			object@file@name = ""
 			object@data@inmemory <- TRUE
-			
-#			object@data@indices <- c(1, ncell(object))
+			object@data@fromdisk <- FALSE
+			object@data@nlayers <- ncol(values)
 			object@data@values <- values
 			object <- setMinMax(object)
-			
-		} else if (nrow(values) == ncol(object)) {
-			stop('setValues no longer supports setting rows of values')
-
+			 
 		} else {
-			stop('either set all data or a single row')
+			stop('data size is not correct')
 		}
 	} else {
 		if (nlayers(object)==0) {object@data@nlayers <- 1 }
@@ -100,12 +91,12 @@ setMethod('setValues', signature(object='RasterBrick'),
 					stop("you can only setValues for a single layer if all values are in memory. But values could not be loaded")				
 				}
 			}
+			object@file@name = ""
+			object@data@inmemory <- TRUE
+			object@data@fromdisk <- FALSE
 			object@data@values[,layer] <- values
 			object <- setMinMax(object)
 			
-		} else if (length(values) == ncol(object)) {
-			stop('setValues no longer supports setting rows of values')
-
 		} else {
 			stop("length(values) is not equal to ncell(object)") 
 		}

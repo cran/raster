@@ -1,5 +1,4 @@
 # Author: Robert J. Hijmans, r.hijmans@gmail.com
-# International Rice Research Institute
 # Date :  June 2008
 # Version 0.9
 # Licence GPL v3
@@ -14,31 +13,17 @@ function(x, y, fun=sum, filename="", ...){
 
 setMethod('overlay', signature(x='RasterLayer', y='RasterLayer'), 
 function(x, y, ..., fun, filename="", datatype, format, overwrite, progress){ 
-	if (missing(fun)) {
-		stop('you must provide a function "fun"')
-	}
-	if (missing(datatype)) {
-		datatype <- .datatype(datatype)
-	}
-	if (missing(format)) {
-		format <- .filetype()
-	} 
-	if (missing(overwrite)) {
-		overwrite <- .overwrite()
-	}
-	if (missing(progress)) {
-		progress <- .progress()
-	}
+	if (missing(fun)) { stop('you must provide a function "fun"') }
+	if (missing(datatype)) { datatype <- .datatype(datatype) }
+	if (missing(format)) { format <- .filetype() } 
+	if (missing(overwrite)) { overwrite <- .overwrite() }
+	if (missing(progress)) { progress <- .progress() }
 
-	rasters <- c(x, y)
-	obs <- list(...)
-	if (isTRUE(length(obs) > 0)) {
-		for (i in 1:length(obs)) {
-			if (extends(class(obs[[i]]), "RasterLayer")) {
-				rasters <- c(rasters, obs[[i]])
-			}
-		}
-	}
+	rasters <- .makeRasterList(x, y, ...)
+	nl <- sapply(rasters, nlayers)
+	if (max(nl) > 1) {
+		stop("Only single layer (RasterLayer) objects can be used if 'x' and 'y' have a single layer")
+	} 
 	
 	return(.overlayList(rasters, fun=fun, filename=filename, datatype=datatype, format=format, overwrite=overwrite, progress=progress))
 }

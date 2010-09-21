@@ -6,7 +6,14 @@
 
 
 
-compare <- function(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=FALSE, tolerance=0.05, stopiffalse=TRUE, showwarning=FALSE) {
+compare <- function(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=FALSE, tolerance, stopiffalse=TRUE, showwarning=FALSE) {
+
+	if (missing(tolerance)) {
+		tolerance <- options("rasterTolerance")$rasterTolerance
+		if (is.null(tolerance)) {
+			tolerance <- 0.05
+		}
+	}
 	result <- TRUE
 	firstproj <- NA
 	objects <- c(x, list(...))
@@ -18,19 +25,19 @@ compare <- function(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=
 	for (i in 2:length(objects)) { 
 		if (extent) {
 			if (!(isTRUE(all.equal(extent(objects[[1]]), extent(objects[[i]]), tolerance=tolerance, scale=minres )))) {
-				result <- F
+				result <- FALSE
 				if (stopiffalse) { stop('Different bounding box') }
 				if (showwarning) { warning('Different bounding box') }
 			}	
 		}	
 		if (rowcol) {
 			if ( !(identical(ncol(objects[[1]]), ncol(objects[[i]]))) ) {
-				result <- F
+				result <- FALSE
 				if (stopiffalse) { stop('ncols different') } 
 				if (showwarning) { warning('ncols different') } 
 			}	
 			if ( !(identical(nrow(objects[[1]]), nrow(objects[[i]]))) ) {
-				result <- F
+				result <- FALSE
 				if (stopiffalse) { stop('nrows different') }
 				if (showwarning) { warning('nrows different') }
 			}
@@ -41,7 +48,7 @@ compare <- function(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=
 			} else if (is.na(firstproj)) {
 				firstproj <- projection(objects[[i]])
 			} else if ( !(identical(firstproj, projection(objects[[i]]))))  {
-				result <- F
+				result <- FALSE
 				if (stopiffalse) {stop('different projection')}
 				if (showwarning) { warning('different projection') }
 			}
@@ -49,7 +56,7 @@ compare <- function(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=
 # Can also check res through extent & rowcol
 		if (res) {
 			if (!(isTRUE(all.equal(res(objects[[1]]), res(objects[[i]]), tolerance=tolerance, scale=minres)))) {
-				result <- F
+				result <- FALSE
 				if (stopiffalse)  { stop('different resolution') }
 				if (showwarning) { warning('different resolution') }
 			}	
@@ -61,7 +68,7 @@ compare <- function(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=
 			dif3 <- abs(origin(objects[[i]])) - origin(objects[[1]])
 			dif <- pmin(dif1, dif2, dif3)
 			if (!(isTRUE(all.equal(dif, c(0,0), tolerance=tolerance, scale=minres)))) {
-				result <- F
+				result <- FALSE
 				if (stopiffalse) { stop('different origin') }
 				if (showwarning) { warning('different origin') }
 			}

@@ -3,12 +3,12 @@
 \docType{methods}
 
 \alias{reclass}
-\alias{reclass,RasterLayer-method}
+\alias{reclass,Raster-method}
 
 \title{Reclassify}
 
 \description{
-Reclassify values of a RasterLayer. The function (re)classifies groups of values to other values. E.g. All values between 1 and 10 become 1, and all values between 11 and 15 become 2. 
+Reclassify values of a Raster* object. The function (re)classifies groups of values to other values. E.g. All values between 1 and 10 become 1, and all values between 11 and 15 become 2. 
 Reclassification is done with matrix "rcl".  
 
 Reclassification is applied to  \code{from <= x <= to}. Unless \code{update=TRUE} Reclassification is done in the order of the reclass table. Thus there are overlapping ranges, the last range applies.  
@@ -19,7 +19,7 @@ reclass(x, rcl, ...)
 }
 
 \arguments{
-  \item{x}{A RasterLayer object}
+  \item{x}{A Raster* object}
   \item{rcl}{Matrix (or vector) for reclassifcation. This matrix must have 3 columns. The first two columns are "from" "to" of the input values, and the third column has the new value for that range.
 (You can also supply a vector that can be coecred into a n*3 matrix (by row))}
   \item{...}{additional arguments. See Details.}  
@@ -42,7 +42,7 @@ The following additional arguments can be passed, to replace default values for 
 A new RasterLayer object, and in some cases the side effect of a new file on disk.
 }
 
-\seealso{ \code{ \link[raster]{calc}} } 
+\seealso{ \code{ \link[raster]{subs}, \link[raster]{calc}} } 
 
 
 \author{Robert J. Hijmans}

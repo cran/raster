@@ -10,29 +10,24 @@
 \alias{writeValues}
 \alias{writeValues,RasterLayer-method}
 \alias{writeValues,RasterBrick-method}
-\alias{blockSize}
 
 \title{Write values to a file}
 
 \description{
-Functions for writing blocks (>= 1 row(s)) of values to files. If you want to write all values of a Raster* object at once, you can also use \link[raster]{writeRaster} which is easier to use but more limited. The functions described here allow writing values to file using chunks of different sizes (e.g. 1 or 10 rows). Function \code{blockSize} can be used to suggest chunks of a number of rows that can be much larger than 1 (up to all rows).  
+Functions for writing blocks (>= 1 row(s)) of values to files. If you want to write all values of a Raster* object at once, you can also use \link[raster]{writeRaster} which is easier to use but more limited. The functions described here allow writing values to file using chunks of different sizes (e.g. 1 or 10 rows). Function \code{\link[raster]{blockSize}} can be used to suggest chunk size.  
 }
 
 \usage{
 writeStart(x, filename, ...)
 writeValues(x, v, ...)
 writeStop(x)
-blockSize(x, chunksize, n=nlayers(x), minblocks=2)
 }
 
 \arguments{
   \item{x}{Raster* object}
   \item{filename}{Output filename}
+  \item{v}{vector (RasterLayer) or matrix (RasterBrick) of values}
   \item{...}{Additional arguments. See under Methods}    
-  \item{chunksize}{Integer, normally missing. Can be used to set the block size; unit is number of cells. Block size is then computed in units of number of rows (always >= 1)  }
-  \item{n}{Integer. number of layers to consider. The function divides chunksize by n to determine blocksize }
-  \item{minblocks}{Integer. Minimum number of blocks }
-  \item{v}{vector}
 }
 
 \section{Methods}{
@@ -59,14 +54,12 @@ You cannot overwrite an isolated single row in an existing raster file.
 }
 
 \value{
-The write functions return a Raster* object. 
-
-blockSize returns a list with \code{rows}, the suggested row numbers at which to start the blocks for reading and writing, \code{size}, the block size (number of rows) and \code{n}, the total number of blocks 
+RasterLayer or RasterBrick object. 
 }
 
 \author{Robert J. Hijmans}
 
-\seealso{ \code{\link[raster]{writeRaster}} }  
+\seealso{ \code{\link[raster]{writeRaster}}, \code{\link[raster]{blockSize}} }  
 
 \examples{ 
 

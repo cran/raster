@@ -43,7 +43,7 @@ function(x, filename, format, ...) {
 
 
 setMethod('writeRaster', signature(x='RasterBrick', filename='character'), 
-function(x, filename, format='raster', bandorder='BIL', ...) {
+function(x, filename, bandorder='BIL', format, ...) {
 
 	filename <- trim(filename)
 	filetype <- .filetype(format=format, filename=filename)

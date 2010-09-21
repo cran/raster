@@ -33,6 +33,7 @@ setClass('Extent',
 
 setClass ('BasicRaster',
 	representation (
+		title = 'character',
 		extent = 'Extent',
 		ncols ='integer',
 		nrows ='integer',
@@ -232,7 +233,6 @@ setClass('MultipleRasterData',
 setClass ('RasterBrick',
 	contains = 'Raster',
 	representation (
-		title = 'character',
 		file = 'RasterFile',
 		data = 'MultipleRasterData',
 		legend = 'RasterLegend',

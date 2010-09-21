@@ -49,6 +49,15 @@ function(x, cells, layer=1, n) {
 	layer = min( max( round(layer), 1), nlayers(x))
 	if (missing(n)) { n = nlayers(x) } 
 	n =  min( max( round(n), 1), nlayers(x)-layer+1 )
+	
+		
+	if (inMemory(x)) {
+		cells[cells < 1 | cells > ncell(x)] <- NA
+		if (length(na.omit(cells)) == 0) {
+			return(cells)
+		}
+		return( x@data@values[cells, 1:n] )
+	}
 		
 	if (x@file@driver == 'netcdf') {
 		return( .readBrickCellsNetCDF(x, cells, layer, n) )
@@ -56,6 +65,7 @@ function(x, cells, layer=1, n) {
 
 	result <- matrix(nrow=length(cells), ncol=n)
 	lyrs <- layer:(layer+n-1)
+	# this loop needs to be removed!
 	for (i in 1:n) {
 		j <- lyrs[i]
 		r <- raster(x, j)

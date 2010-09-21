@@ -49,7 +49,7 @@ setMethod("Summary", signature(x='Raster'),
 #	fun = match.fun(fun)
 
 	if (length(rasters)==1 & length(add)==0) {
-		warning('nothing to summarize if you provide a single RasterLayer')
+		warning('Nothing to summarize if you provide a single RasterLayer; see cellStats')
 		return(rasters[[1]])
 	}	
 	

@@ -17,9 +17,8 @@ setMethod('readAll', signature(object='RasterLayer'),
 		if (! object@data@fromdisk)  {
 			stop('cannot read values; there is no file associated with this RasterLayer')
 		}
-		
-		object@data@inmemory <- TRUE
 		object@data@values <- .readRasterLayerValues(object, 1, object@nrows)
+		object@data@inmemory <- TRUE
 		return(object)
 	}
 )
@@ -28,9 +27,11 @@ setMethod('readAll', signature(object='RasterLayer'),
 setMethod('readAll', signature(object='RasterStack'), 
 	function(object){ 
 		for (i in seq(nlayers(object))) {
-			object@layers[[i]] <- readAll(object@layers[[i]])
+			if (! object@layers[[i]]@data@inmemory  ) {
+				object@layers[[i]]@data@values <- .readRasterLayerValues(object@layers[[i]], 1, object@nrows) 
+			}
 		}
-		object
+		return(object)
 	}
 )
 

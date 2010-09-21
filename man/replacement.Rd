@@ -42,7 +42,7 @@ Arguments
 
 }}
 
-\seealso{ \code{\link[raster]{values}} , \code{\link[raster]{setValues}} }
+\seealso{ \code{\link[raster]{getValues}} , \code{\link[raster]{setValues}} }
 
 
 \examples{

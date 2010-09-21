@@ -11,7 +11,7 @@ if (!isGeneric("reclass")) {
 }	
 
 
-setMethod('reclass', signature(x='RasterLayer', rcl='ANY'), 
+setMethod('reclass', signature(x='Raster', rcl='ANY'), 
 
 function(x, rcl, update=FALSE, filename='', ...)  {
 	
@@ -27,23 +27,24 @@ function(x, rcl, update=FALSE, filename='', ...)  {
 	
 	if (getOption('verbose')) { print(rcl)  }
 	
-	out <- raster(x)
+	if (nlayers(x) == 1) { out <- raster(x)
+	} else { out <- brick(x, values=FALSE) }	
 
-	res <- vector(length = ncol(out))
 	
 	if (canProcessInMemory(out, 2)) {
 
 		x <- getValues(x)
-		res <- x
 		if (update) {
 			for (i in 1:nrow(rcl)) {
 				if (is.na(rcl[i,1]) | is.na(rcl[i,2])) {
-					res[ is.na(res) ] <- rcl[i, 3] 
+					x[ is.na(x) ] <- rcl[i, 3] 
 				} else { 
-					res[ (res >= rcl[i,1]) & (res <= rcl[i,2]) ] <- rcl[i , 3] 
+					x[ (x >= rcl[i,1]) & (x <= rcl[i,2]) ] <- rcl[i , 3] 
 				}
 			}
+			out <- ( setValues(out, x) )
 		} else {
+			res <- x
 			for (i in 1:nrow(rcl)) {
 				if (is.na(rcl[i,1]) | is.na(rcl[i,2])) {
 					res[ is.na(x) ] <- rcl[i, 3] 
@@ -51,9 +52,9 @@ function(x, rcl, update=FALSE, filename='', ...)  {
 					res[ (x >= rcl[i,1]) & ( x <= rcl[i,2]) ] <- rcl[i , 3] 
 				}
 			}
+			out <- ( setValues(out, res) )
 		}
-		out <- ( setValues(out, res) )
-		if ( filename != "" ) { out <- writeRaster(out, ...) }
+		if ( filename != "" ) { out <- writeRaster(out, filename=filename, ...) }
 		return(out)
 				
 	} else {
@@ -85,14 +86,14 @@ function(x, rcl, update=FALSE, filename='', ...)  {
 
 		if (onlyNA) {
 			for (i in 1:tr$n) {
-				res <- getValuesBlock( x, row=tr$row[i], nrows=tr$nrows[i] )
+				res <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
 				res[ is.na(res) ] <- naVAL	
 				out <- writeValues(out, res, tr$row[i])
 				pbStep(pb, i)
 			}
 		} else if (update) {
 			for (i in 1:tr$n) {
-				res <- getValuesBlock( x, row=tr$row[i], nrows=tr$nrows[i] )
+				res <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
 				for (i in 1:nrow(rcl)) {
 					res[ (res >= rcl[i,1]) & (res <= rcl[i,2]) ] <- rcl[i,3] 
 				}
@@ -104,7 +105,7 @@ function(x, rcl, update=FALSE, filename='', ...)  {
 			}
 		} else {
 			for (i in 1:tr$n) {
-				res <- getValuesBlock( x, row=tr$row[i], nrows=tr$nrows[i] )
+				res <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
 				vals <- res
 				for (i in 1:nrow(rcl)) {
 					res[ (vals >= rcl[i,1]) & ( vals <= rcl[i,2]) ] <- rcl[i , 3] 

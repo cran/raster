@@ -13,20 +13,16 @@ setMethod('cover', signature(x='RasterLayer', y='RasterLayer'),
 	function(x, y, ..., filename='', format, datatype, overwrite, progress){ 
 
 	rasters <- .makeRasterList(x, y, ...)
-	compare(rasters)
+	nl <- sapply(rasters, nlayers)
+	if (max(nl) > 1) {
+		stop("Only single layer (RasterLayer) objects can be used if 'x' and 'y' have a single layer")
+	} 
 		
 	outRaster <- raster(x)
 
-	if (missing(format)) {
-		format <- .filetype()
-	} 
-	if (missing(overwrite)) {
-		overwrite <- .overwrite()
-	}
-	if (missing(progress)) {
-		progress <- .progress()
-	}
-	
+	if (missing(format)) { format <- .filetype()	} 
+	if (missing(overwrite)) { overwrite <- .overwrite()	}
+	if (missing(progress)) { progress <- .progress() }
 	if (missing(datatype)) {
 # check for boolean data?
 		isInt <- TRUE
@@ -42,47 +38,38 @@ setMethod('cover', signature(x='RasterLayer', y='RasterLayer'),
 			datatype <- 'FLT4S'
 		}
 	}
-	filename <- trim(filename	)
-	if (!canProcessInMemory(x, length(rasters)+2) && filename == '') {
-		filename <- rasterTmpFile()
-								
-	}
+	filename <- trim(filename)
 	
-	if (filename == '') {
-		v <- matrix(ncol=nrow(outRaster), nrow=ncol(outRaster))
-	} else {
-		outRaster <- writeStart(outRaster, filename=filename, format=format, datatype=datatype, overwrite=overwrite, progress=progress )
-	}
+	if (canProcessInMemory(x, length(rasters) + 2)) {
 	
-	tr <- blockSize(outRaster, length(rasters))
-	pb <- pbCreate(tr$n, type=.progress())
-
-	for (i in 1:tr$n) {
-
-		vv <- getValuesBlock( rasters[[1]], row=tr$row[i], nrows=tr$nrows[i] )
-
+		v <- getValues( rasters[[1]] )
 		for (j in 2:length(rasters)) {
-			v2 <- getValuesBlock(rasters[[j]], row=tr$row[i], nrows=tr$nrows[i])
-			vv[is.na(vv)] <- v2[is.na(vv)] 
+			v[is.na(v)] <- getValues(rasters[[j]])[is.na(v)]
 		}	
-
-		if (filename == "") {
-			vv <- matrix(vv, nrow=ncol(outRaster))
-			cols <- tr$row[i]:(tr$row[i]+dim(vv)[2]-1)	
-			v[,cols] <- vv
-		} else {
-			outRaster <- writeValues(outRaster, vv, tr$row[i])
+		outRaster <- setValues(outRaster, v)
+		if (filename != '') {
+			outRaster <- writeRaster(outRaster, filename=filename, format=format, datatype=datatype, overwrite=overwrite, progress=progress )
 		}
-		pbStep(pb, i) 
-	}
-	pbClose(pb)
-
-	if (filename == "") {
-		outRaster <- setValues(outRaster, as.vector(v))
+		
 	} else {
+	
+		if (filename == '') { filename <- rasterTmpFile() }
+		outRaster <- writeStart(outRaster, filename=filename, format=format, datatype=datatype, overwrite=overwrite, progress=progress )
+		tr <- blockSize(outRaster, length(rasters))
+		pb <- pbCreate(tr$n, type=.progress())
+		for (i in 1:tr$n) {
+			v <- getValues( rasters[[1]], row=tr$row[i], nrows=tr$nrows[i] )
+			if (! is.matrix(vv) ) {	vv <- matrix(vv, ncol=1) }		
+			for (j in 2:length(rasters)) {
+				vv <- getValues(rasters[[j]], row=tr$row[i], nrows=tr$nrows[i])
+				v[is.na(v)] <- vv[is.na(v)] 
+			}	
+			outRaster <- writeValues(outRaster, vv, tr$row[i])
+			pbStep(pb, i) 
+		}
+		pbClose(pb)
 		outRaster <- writeStop(outRaster)
 	}
-
 	return(outRaster)
 }
 )

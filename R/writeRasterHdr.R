@@ -5,6 +5,9 @@
 
  
 writeRasterHdr <- function(raster, format) {
+	if (trim(filename(raster)) == '') {
+		stop('Raster object has no filename')
+	}
 	type <- toupper(format)
 	if (type=="RASTER") {
 		.writeHdrRaster(raster)
