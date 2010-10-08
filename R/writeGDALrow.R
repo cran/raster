@@ -5,12 +5,13 @@
 # Version 0.9
 # Licence GPL v3
 
-.startGDALwriting <- function(raster, filename, options, ...) {
+.startGDALwriting <- function(raster, filename, options, NAvalue, ...) {
 	
 	temp <- .getGDALtransient(raster, filename=filename, options=options, ...)
 	
 	attr(raster@file, "transient") <- temp[[1]]
 	raster@file@nodatavalue <- temp[[2]]
+	
 	attr(raster@file, "options") <- temp[[3]]
 	
 	

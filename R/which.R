@@ -29,7 +29,6 @@ function(x, cells=FALSE, ...) {
 			vv <- vector()
 		} else {
 			filename <- rasterTmpFile()
-			
 			out <- writeStart(out, filename=filename, format=.filetype(), datatype='INT1S', overwrite=TRUE)
 		}
 		
@@ -54,8 +53,8 @@ function(x, cells=FALSE, ...) {
 		if (cells) { 
 			return(vv)
 		} else { 
-			x <- writeStop(x)
-			return(x) 
+			out <- writeStop(out)
+			return(out) 
 		}
 	}
 }

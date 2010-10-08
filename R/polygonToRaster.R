@@ -67,7 +67,6 @@ polygonsToRaster <- function(p, raster, field=0, overlap='last', mask=FALSE, upd
 	filename <- trim(filename)
 	if (!canProcessInMemory(raster, 3) && filename == '') {
 		filename <- rasterTmpFile()
-								
 	}
 	
 	if (getCover) {

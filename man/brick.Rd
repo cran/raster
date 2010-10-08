@@ -17,9 +17,9 @@
 \title{ Create a RasterBrick object}
 
 \description{
-A RasterBrick is a multi-layered RasterLayer. They are typically created from a multi-band file; but they can also exist entirely in memory. They are similar to a RasterStack, but processing time should be shorter. Yet they are less flexible as they can only point to a single file.
+A RasterBrick is a multi-layer raster object. They are typically created from a multi-band file; but they can also exist entirely in memory. They are similar to a RasterStack, but processing time should be shorter when using a RasterBrick. Yet they are less flexible as they can only point to a single file.
 
-A RasterBrick can be created from RasterLayer objects, or from a file. The can also be created from SpatialPixels or SpatialGrid objects.
+A RasterBrick can be created from RasterLayer objects, from a RasterStack, or from a file. The can also be created from SpatialPixels and SpatialGrid objects.
 }
 
 \usage{brick(x, ...)}
@@ -31,7 +31,7 @@ A RasterBrick can be created from RasterLayer objects, or from a file. The can a
 
 
 \value{
-  a RasterBrick object
+RasterBrick object
 }
 
 \author{Robert J. Hijmans}

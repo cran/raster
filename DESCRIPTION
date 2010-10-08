@@ -1,18 +1,20 @@
 Package: raster
 Type: Package
 Title: Geographic analysis and modeling with raster data
-Version: 1.5-8
-Date: 20-September-2010
+Version: 1.5-16
+Date: 8-October-2010
 Depends: methods, sp, R (>= 2.8.0)
 Suggests: rgdal (>= 0.5-33), ncdf, igraph, tcltk, lattice, rgl
 Author: Robert J. Hijmans & Jacob van Etten
 Maintainer: Robert J. Hijmans <r.hijmans@gmail.com>
 Description: Reading, writing, manipulating, analyzing and modeling of
         gridded spatial data. The package implements basic and
-        high-level functons, as well as map algebra. Processing of very
-        large files is supported.
+        high-level functions, as well as map algebra. Processing of
+        very large files is supported.
 License: GPL (>= 3)
 URL: http://raster.r-forge.r-project.org/
-Packaged: 2010-09-20 17:24:51 UTC; rhijmans
 Repository: CRAN
-Date/Publication: 2010-09-21 08:15:08
+Repository/R-Forge/Project: raster
+Repository/R-Forge/Revision: 1221
+Date/Publication: 2010-10-11 19:14:09
+Packaged: 2010-10-10 20:45:18 UTC; rforge

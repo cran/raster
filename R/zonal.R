@@ -3,75 +3,87 @@
 # Version 0.9
 # Licence GPL v3
 
-zonal <- function(raster, zones, stat='mean', na.rm=TRUE, progress) {
-	compare(c(raster, zones))
+zonal <- function(x, zones, stat='mean', digits=0, progress) {
+
+	compare(c(x, zones))
 	
-	if (missing(progress)) {progress <- .progress()}
+	layernames <- layerNames(x)
+	
+	if (missing(progress)) { progress <- .progress() }
 
-	if (class(stat) != 'character') {
-		if (canProcessInMemory(raster, 3)) {
-			d <- getValues(raster)
-			rm(raster)
-			d <- cbind(d, round(getValues(zones)))
-			rm(zones)
-			if (na.rm) {d <- na.omit(d)	}
-			alltab  <-  tapply(d[,1], d[,2], stat) 
-			stat <- deparse(substitute(stat))
-		} else {
-			stop("RasterLayers are too large. You can use fun='sum', 'mean', 'min', or 'max', but not a function")
-		}
+	if (inMemory(x) & inMemory(zones)) {
+		inmem <- TRUE
+	} else if (canProcessInMemory(x, 3)) {
+		inmem <- TRUE
 	} else {
+		inmem <- FALSE
+	}
+	
+	if (inmem) {
 
-		counts <- FALSE
-		if (stat == 'sum') {
-			fun <- sum
-		} else if (stat == 'min') {
-			fun <- min
-		} else if (stat == 'max') {
-			fun <- max
-		} else if (stat == 'mean') {
+		fun <- match.fun(stat)
+		d <- getValues(x)
+		rm(x)
+		d <- cbind(d, round(getValues(zones), digits=digits))
+		rm(zones)
+		alltab <- aggregate(d[,1:(ncol(d)-1)], by=list(d[,ncol(d)]), FUN=fun) 
+		stat <- deparse(substitute(stat))
+			
+	} else {
+		
+		if (class(stat) != 'character') {
+			stop("RasterLayers are too large.\n You can use stat='sum', 'mean', 'min', or 'max', but not a function")
+		}
+		if (! stat %in% c('sum', 'mean', 'min', 'max')) {
+			stop("stat can be 'sum', 'mean', 'min', or 'max'")
+		}
+		
+		fun <- match.fun(stat)
+		if (stat == 'mean') {
 			fun <- sum
 			counts <- TRUE
-		} else { 
-			stop("invalid 'stat', should be 'sum', 'min', 'max', or 'mean'") 
+		} else {
+			counts <- FALSE		
 		}
 
 		alltab <- array(dim=0)
 		cnttab <- alltab
 	
-		tr <- blockSize(raster, n=2)
+		tr <- blockSize(x, n=2)
 		pb <- pbCreate(tr$n, type=.progress())			
 		
 		for (i in 1:tr$n) {
-			d <- getValuesBlock(raster, row=tr$row[i], nrows=tr$nrows[i])
-			d <- cbind(d,  getValuesBlock(zones, row=tr$row[i], nrows=tr$nrows[i]))
-			if (na.rm) { d <- na.omit(d)	}
-			if (length(d) == 0) { next }
-			alltab <- c(alltab, tapply(d[,1], d[,2], fun))
+			d <- getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i])
+			d <- cbind(d,  round(getValuesBlock(zones, row=tr$row[i], nrows=tr$nrows[i]), digits=digits))
+			
+			alltab <- rbind(alltab, aggregate(d[,1:(ncol(d)-1)], by=list(d[,ncol(d)]), FUN=fun)) 
 			if (counts) {
-				cnttab <- c(cnttab, tapply(d[,1], d[,2], length))
+				cnttab <- rbind(cnttab, aggregate(d[,1:(ncol(d)-1)], by=list(d[,ncol(d)]), FUN=length)) 
 			}
 			if (length(alltab) > 10000) {
-				groups <- as.integer(names(alltab))
-				alltab <- tapply(as.vector(alltab), groups, fun)
+				alltab <- aggregate(alltab[,2:ncol(alltab)], by=list(alltab[,1]), FUN=fun) 
 				if (counts) {
-					cnttab <- tapply(as.vector(cnttab), groups, sum)
+					cnttab <- aggregate(cnttab[,2:ncol(cnttab)], by=list(cnttab[,1]), FUN=sum) 
 				}
 			}
 			pbStep(pb, i)
 		}
 		pbClose(pb)
 			
-		groups <- as.integer(names(alltab))
-		alltab <- tapply(as.vector(alltab), groups, fun)
+		alltab <- aggregate(alltab[,2:ncol(alltab)], by=list(alltab[,1]), FUN=fun) 	
 		if (counts) {
-			cnttab <- tapply(as.vector(cnttab), groups, sum)
-			alltab <- alltab / cnttab
+			cnttab <- aggregate(cnttab[,2:ncol(cnttab)], by=list(cnttab[,1]), FUN=sum) 
+			alltab[2:ncol(alltab)] <- alltab[2:ncol(alltab)] / cnttab[2:ncol(alltab)]
 		}
 	}
-	zone <- as.integer(names(alltab))
-	alltab <- data.frame(zone, as.numeric(alltab))
-	colnames(alltab) <- c('zone', stat)
+	
+	colnames(alltab)[1] <- 'zone'
+	if (ncol(alltab) > 2) {
+		colnames(alltab)[2:ncol(alltab)] <- layernames
+	} else {
+		colnames(alltab)[2] <- stat
+	}
+	
 	return(alltab)
 }
 

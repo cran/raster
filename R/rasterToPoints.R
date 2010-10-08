@@ -33,7 +33,7 @@ rasterToPoints <- function(x, fun=NULL, spatial=FALSE, ...) {
 		x = NULL
 		if (nl > 1) {
 			notna = apply(xyv[,3:ncol(xyv)], 1, function(x){ sum(is.na(x)) < length(x) })
-			xyv <- xyv[notna,]
+			xyv <- xyv[notna, ,drop=FALSE]
 		} else {
 			xyv <- na.omit(xyv)
 		}
@@ -56,7 +56,7 @@ rasterToPoints <- function(x, fun=NULL, spatial=FALSE, ...) {
 		
 			notna = apply(xyvr[,3:ncol(xyvr), drop=FALSE], 1, function(z){ sum(is.na(z)) < length(z) })
 			
-			xyvr <- xyvr[notna, ]
+			xyvr <- xyvr[notna, ,drop=FALSE]
 			
 			if (!is.null(fun)) {
 				xyvr <- subset(xyvr, fun(xyvr[,3]))

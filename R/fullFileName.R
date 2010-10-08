@@ -10,8 +10,8 @@
 # changes during an R session
 
 .fullFilename <- function(x) {
-	if (x == basename(x)) {
-		x <- paste(getwd(), '/', x, sep='')
+	if (identical(basename(x), x)) {
+		x <- file.path(getwd(), x)
 	}
 	return(x)
 }

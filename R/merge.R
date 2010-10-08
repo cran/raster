@@ -45,8 +45,8 @@ function(x,y,..., tolerance=0.05, filename="", format, overwrite, progress){
 
 	datatype <- 'INT4S'
 	for (i in 1:length(rasters)) {
-		dtype <- .shortDataType(rasters[[i]]@file@datanotation)
-		if (dtype == 'FLT') {
+		dtype <- .shortDataType(dataType(rasters[[i]]))
+		if (any(dtype == 'FLT')) {
 			datatype <- 'FLT4S'
 		}	
 	}

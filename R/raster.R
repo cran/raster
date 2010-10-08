@@ -15,13 +15,45 @@ setMethod('raster', signature(x='missing'),
 	function(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, crs) {
 		e <- extent(xmn, xmx, ymn, ymx)
 		if (missing(crs)) {
-			if (e@xmin > -400 & e@xmax < 400 & e@ymin > -90.1 & e@ymax < 90.1) { 
+			if (e@xmin > -360.1 & e@xmax < 360.1 & e@ymin > -90.1 & e@ymax < 90.1) { 
 				crs ="+proj=longlat +datum=WGS84"
 			} else {
 				crs=NA
 			}
 		}
 		r <- raster(e, nrows=nrows, ncols=ncols, crs=crs)
+		return(r)
+	}
+)
+
+
+setMethod('raster', signature(x='list'), 
+	function(x, crs) {
+	# list should represent an "image"
+		if (is.null(x$x)) { stop('list has no "x"') }
+		if (is.null(x$y)) { stop('list has no "y"') }
+		if (is.null(x$z)) { stop('list has no "z"') }
+		if (! all(dim(x$z) == c(length(x$x), length(x$y)))) { stop('"z" does not have the right dimensions') }
+
+		resx <- ( x$x[length(x$x)] - x$x[1] ) / length(x$x)
+		resy <- ( x$y[length(x$y)] - x$y[1] ) / length(x$y)
+		xmn <- min(x$x) - 0.5 * resx
+		xmx <- max(x$x) + 0.5 * resx
+		ymn <- min(x$y) - 0.5 * resy
+		ymx <- max(x$y) + 0.5 * resy
+
+		if (missing(crs)) {
+			if (xmn > -360.1 & xmx < 360.1 & ymn > -90.1 & ymx < 90.1) { 
+				crs = "+proj=longlat +datum=WGS84"
+			} else {
+				crs = NA
+			}
+		}
+		
+		x <- t(x$z)
+		x <- x[nrow(x):1, ]
+		r <- raster( x, xmn=xmn, xmx=xmx, ymn=ymn, ymx=ymx, crs=crs )
+		
 		return(r)
 	}
 )
@@ -38,6 +70,9 @@ setMethod('raster', signature(x='matrix'),
 
 setMethod('raster', signature(x='character'), 
 	function(x, band=1, values=FALSE, crs=NULL, ...) {
+	
+		x <- .fullFilename(x)
+		
 		r <- .rasterObjectFromFile(x, band=band, objecttype='RasterLayer', ...)
 		if (! is.null(crs)) {
 			projection(r) = crs
@@ -107,21 +142,41 @@ setMethod('raster', signature(x='RasterBrick'),
 			layer <- round(layer)
 		}
 		if (layer > 0) {
-			dindex <- max(1, min(nlayers(x), layer))
+			dindex <- as.integer(max(1, min(nlayers(x), layer)))
 			if ( fromDisk(x) ) {
 				if (dindex != layer) { warning(paste("layer was changed to", dindex))}
-				if (x@file@driver == 'netcdf') {
-					r <- raster(x@file@name, varname=x@data@zvar, band=dindex)				
-				} else {
-					r <- raster(filename(x), band=dindex)
+				
+				r <- raster(extent(x), nrows=nrow(x), ncols=ncol(x), crs=projection(x))	
+				r@file <- x@file
+
+				r@data@offset <- x@data@offset
+				r@data@gain <- x@data@gain
+				r@data@inmemory <- x@data@inmemory
+				r@data@fromdisk <- x@data@fromdisk
+				r@data@isfactor <- x@data@isfactor
+				r@data@haveminmax <- x@data@haveminmax
+
+				r@data@band <- dindex
+				r@data@min <- x@data@min[dindex]
+				r@data@max <- x@data@max[dindex]
+				ln <- x@layernames[dindex]
+				if (! is.na(ln) ) { r@layernames <- ln }
+				zv <- x@zvalue[dindex]
+				if (! is.na(zv) ) { r@zvalue <- zv }
+				if ( x@data@inmemory ) {
+					r@data@values <- x@data@values[,dindex]
 				}
-				layerNames(r) <- layerNames(x)[dindex]
-				extent(r) <- extent(x) # perhaps it was changed by user and different on disk
+				zvar <- try(slot(x@data, 'zvar'), silent=TRUE)
+				if (class(zvar) != 'try-error') {
+					attr(r@data, "zvar") <- zvar
+				}
+				
 			} else {
+			
 				r <- raster(extent(x), nrows=nrow(x), ncols=ncol(x), crs=projection(x))	
 				if ( inMemory(x) ) {
-					if (dindex != layer) { warning(paste("layer was changed to", dindex))}
-					r <- setValues(r, getValues(x)[,dindex])
+					if ( dindex != layer ) { warning(paste("layer was changed to", dindex)) }
+					r <- setValues(r, x@data@values[,dindex])
 				}
 			}
 			r@data@offset <- x@data@offset

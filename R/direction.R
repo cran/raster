@@ -64,7 +64,7 @@ function(x, fun=NULL, from=FALSE, filename='', ...) {
 
 	r = edge(x, classes=FALSE, type='inner', asNA=TRUE, progress=.progress(...)) 
 	
-	pts <- try(  rasterToPoints(r, fun=function(z){z>0})[,1:2, drop=FALSE] )
+	pts <- try(  rasterToPoints(r, fun=function(z){ z>0 })[,1:2, drop=FALSE] )
 	
 	if (class(pts) == "try-error") {
 		stop('This function has not yet been implemented for very large files')
@@ -122,6 +122,7 @@ function(x, fun=NULL, from=FALSE, filename='', ...) {
 	}
 	return(out)
 }
+
 )
 
 

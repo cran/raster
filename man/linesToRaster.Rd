@@ -5,21 +5,21 @@
 \title{Lines to raster}
 
 \description{
-  Lines to raster conversion. Lines are raserized.
+Lines to raster conversion. Lines are rasterized by assining values to cells that are crossed by the lines.
 }
 
 \usage{
-linesToRaster(spLines, raster, field=0, filename="", updateRaster=FALSE, updateValue="NA", ...) 
+linesToRaster(lns, raster, field=0, filename="", updateRaster=FALSE, updateValue="NA", ...) 
 }
 
 \arguments{
-  \item{spLines}{SpatialLines or a SpatialLinesDataFrame object (sp package)}
+  \item{lns}{\code{SpatialLines} or a \code{SpatialLinesDataFrame} object (sp package), or an object inheriting from \code{SpatialLines}}
   \item{raster}{RasterLayer object}
-  \item{field}{The index of the column in the SpatialLinesDataFrame to be transfered to the RasterLayer (or the name of that field)}
+  \item{field}{The index of the column in \code{lns} (if it is a \code{SpatialLinesDataFrame}) to be transfered to the \code{RasterLayer} (or the name of that field)}
   \item{filename}{Character. output filename }
-  \item{updateRaster}{logical. If \code{TRUE} the values of the input RasterLayer are updated where the polygons overlap cells  }
-  \item{updateValue}{character. Select cells to be updated (if \code{updateRaster == TRUE}) by their current values. Either 'all', 'NA', '!NA', or 'zero' } 
-  \item{...}{additional arguments. See Details.}  
+  \item{updateRaster}{Logical. If \code{TRUE} the values of the input RasterLayer are updated where the polygons overlap cells  }
+  \item{updateValue}{Character. Select cells to be updated (if \code{updateRaster == TRUE}) by their current values. Either 'all', 'NA', '!NA', or 'zero' } 
+  \item{...}{Additional arguments. See Details.}  
 }
 
 \details{

@@ -26,7 +26,7 @@
 }
 
 
-.startWriteCDF <- function(x, filename, datatype='FLT4S', overwrite=FALSE) {
+.startWriteCDF <- function(x, filename, datatype='FLT4S', overwrite=FALSE, ...) {
 
 	if (!require(ncdf)) { stop('You need to install the ncdf package') }
 
@@ -107,12 +107,13 @@
 	}	
 	
 	v[is.na(v)] = x@file@nodatavalue
-	v <- matrix(v, ncol=x@nrows)
+	nr <- length(v) / x@ncols
+	v <- matrix(v, ncol=nr)
 
 	nc <- open.ncdf(x@file@name, write=TRUE)
-	try ( put.var.ncdf(nc, 'value', v, start=c(1, start), count=NA) )
-	close.ncdf(nc)
+	try ( put.var.ncdf(nc, 'value', v, start=c(1, start), count=c(x@ncols, nr)) )
 	
+	close.ncdf(nc)
 	return(x)
 }
 

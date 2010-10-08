@@ -134,7 +134,7 @@
 	shortname <- gsub(" ", "_", ext(basename(filename), ""))
 	x <- raster:::.enforceGoodLayerNames(x, shortname)
 	
-	x@file@name <- .fullFilename(filename)
+	x@file@name <- filename
 
 	if (!is.null(SIGNEDINT)) {
 		if(SIGNEDINT) { pixtype <- 'SIGNEDINT' 

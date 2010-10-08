@@ -57,44 +57,33 @@ function(x) {
 
 setMethod('setMinMax', signature(x='RasterBrick'), 
 function(x) {
-	clear <- FALSE
 	inMem <- inMemory(x)
 
 	if ( ! inMem ) {
 		if (! fromDisk(x) ) {
 			stop('no values associated with this RasterBrick')
 		}
-		if (canProcessInMemory(x, (2 + nlayers(x)))) {
-			x <- readAll(x)
-			clear <- TRUE
-		}
+	} else if (canProcessInMemory(x, (2 + nlayers(x)))) {
+		inMem <- TRUE
 	}
 	
 	if ( inMem ) {
-		rge <- apply(x@data@values, 2, FUN=function(x){range(x, na.rm=TRUE)})
-		x@data@min <- rge[1,]
-		x@data@max <- rge[2,]
+	
+		rge <- apply( getValues(x), 2, FUN=function(x){ range(x, na.rm=TRUE) } )
+		x@data@min <- as.vector(rge[1,])
+		x@data@max <- as.vector(rge[2,])
 		
-#		for (i in 1:nlayers(x)) {
-#			vals <- na.omit(values(x)[,i]) # min and max values
-#			if (length(vals) > 0) {
-#				x@data@min[i] <- min(vals)
-#				x@data@max[i] <- max(vals)
-#			} else {
-#				x@data@min[i] <- NA
-#				x@data@max[i] <- NA
-#			}
-#		}
-		if (clear) {x <- clearValues(x)}
 	} else {
+	
 		minv <- rep(Inf, nlayers(x))
 		maxv <- rep(-Inf, nlayers(x))
 		minmax <- rbind(minv, maxv)
 		
 		tr <- blockSize(x)
 		for (i in 1:tr$n) {		
-			rsd <- rbind(getValues(x, row=tr$row[i], nrows=tr$nrows[i]), minmax)
-			minmax <- apply(rsd, 2, range, na.rm=TRUE)
+			rsd <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
+			minmax[1,] <- apply(rbind(rsd, minmax[1,]), 2, min, na.rm=TRUE)
+			minmax[2,] <- apply(rbind(rsd, minmax[2,]), 2, max, na.rm=TRUE)
 		}
 		x@data@min <- minmax[1,]
 		x@data@max <- minmax[2,]

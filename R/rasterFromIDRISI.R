@@ -55,7 +55,7 @@
 	shortname <- gsub(" ", "_", ext(basename(filename), ""))
 	x <- .enforceGoodLayerNames(x, shortname)
 	
-	x@file@name <- .fullFilename(filename)
+	x@file@name <- filename
 	x@data@min <- minval
 	x@data@max <- maxval
 	x@data@haveminmax <- TRUE

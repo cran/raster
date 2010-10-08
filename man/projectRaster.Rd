@@ -13,7 +13,7 @@ be used as \code{'to'} RasterLayer in \code{projectRaster}. \code{projectRaster}
 }
 
 \usage{
-projectRaster(from, to, method="ngb", filename="", ...) 
+projectRaster(from, to, method="bilinear", filename="", ...) 
 projectExtent(object, crs)
 }
 

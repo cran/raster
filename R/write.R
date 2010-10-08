@@ -25,15 +25,18 @@ function(x, filename, options=NULL, format, ...) {
 	filename <- trim(filename)
 	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)
-	
 	if (filetype=='ascii') { 
-		return(.startAsciiWriting(x, filename, ...)) 
+		x <- .startAsciiWriting(x, filename, ...)
 	} else if ( filetype %in% .nativeDrivers() ) { 
-		.startRasterWriting(x, filename, format=filetype, ...)
+		x <- .startRasterWriting(x, filename, format=filetype, ...)
+	} else if ( filetype == 'CDF' ) { 
+		x <- .startWriteCDF(x, filename, ...)
 	} else {
-		.startGDALwriting(x, filename, options=options, format=filetype, ...)
+		x <- .startGDALwriting(x, filename, options=options, format=filetype, ...)
 	}		
+	return(x)
 })
+
 
 setMethod('writeStart', signature(x='RasterBrick', filename='character'), 
 function(x, filename, options=NULL, format, ...) {
@@ -46,6 +49,8 @@ function(x, filename, options=NULL, format, ...) {
 	native <- filetype %in% c(.nativeDrivers(), 'ascii')
 	if (native) { 
 		return( .startRasterWriting(x, filename, format=filetype, ...) )
+	} else if ( filetype == 'CDF' ) { 
+		x <- .startWriteCDF(x, filename, ...)
 	} else {
 		return( .startGDALwriting(x, filename, options=options, format=filetype, ...) )
 	}
@@ -58,6 +63,8 @@ function(x) {
 		return( .stopRasterWriting(x) )
 	} else if ( x@file@driver == 'ascii' ) { 
 		return( .stopAsciiWriting(x) )
+	} else if ( x@file@driver == 'netcdf' ) { 
+		return( .stopWriteCDF(x) )
 	} else {
 		return( .stopGDALwriting(x) )
 	}
@@ -68,6 +75,8 @@ function(x) {
 	native <- x@file@driver %in% c(.nativeDrivers())
 	if (native) { 
 		return( .stopRasterWriting(x) )
+	} else if ( x@file@driver == 'netcdf' ) { 
+		return( .stopWriteCDF(x) )
 	} else {
 		return( .stopGDALwriting(x) )
 	}
@@ -109,6 +118,10 @@ setMethod('writeValues', signature(x='RasterLayer'),
 			write.table(v, x@file@name, append = TRUE, quote = FALSE, sep = " ", eol = "\n", dec = ".", row.names = FALSE, col.names = FALSE)
 			options(scipen=opsci)
 
+		} else if ( x@file@driver == 'netcdf') {
+
+			x <- .writeValuesCDF(x, v, start)
+			
 		} else {
 			off = c(start-1, 0)
 			v[is.na(v)] <- x@file@nodatavalue
@@ -116,7 +129,7 @@ setMethod('writeValues', signature(x='RasterLayer'),
 			gd <- putRasterData(x@file@transient, v, band=1, offset=off) 	
 #			.Call("RGDAL_SetNoDataValue", gd, as.double(x@file@nodatavalue), PACKAGE = "rgdal")
 		}
-		return(invisible(x))
+		return(x)
 	} 		
 )
 
@@ -156,6 +169,10 @@ setMethod('writeValues', signature(x='RasterBrick'),
 				start <- end + 1
 			}
 			
+		} else if ( x@file@driver == 'netcdf') {
+
+			x <- .writeValuesBrickCDF(x, v, start)
+
 		} else {
 			nl <- nlayers(x)
 			off = c(start-1, 0)
@@ -165,7 +182,7 @@ setMethod('writeValues', signature(x='RasterBrick'),
 				gd <- putRasterData(x@file@transient, vv, band=i, offset=off) 	
 			}
 		}
-		return(invisible(x))
+		return(x)
 	}	
 )
 

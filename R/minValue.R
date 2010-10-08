@@ -12,22 +12,34 @@ if (!isGeneric("minValue")) {
 }	
 
 setMethod('minValue', signature(x='RasterLayer'), 
-	function(x, layer=-1) {
+	function(x, layer=-1, warn=TRUE) {
 		if ( x@data@haveminmax ) {
 			return(x@data@min)
 		} else {
+			if (warn) warning('min value not known, use setMinMax')
 			return(NA)
 		}
 	}
 )
 
+
 setMethod('minValue', signature(x='RasterBrick'), 
 	function(x, layer=-1) {
 		layer <- round(layer)
 		if (layer < 1) { 
-			return(x@data@min)
+			if ( x@data@haveminmax ) {
+				return(x@data@min)
+			} else {
+				warning('min value not known, use setMinMax')
+				return(rep(NA, nlayers(x)))
+			}
 		} else {
-			return(x@data@min[layer])
+			if ( x@data@haveminmax ) {
+				return(x@data@min[layer])
+			} else {
+				warning('min value not known, use setMinMax')
+				return(NA)
+			}
 		}
 	}
 )
@@ -39,7 +51,7 @@ setMethod('minValue', signature(x='RasterStack'),
 		if (layer < 1) { 
 			minv <- vector()
 			for (i in 1:nlayers(x)) {
-				minv[i] <- minValue(x@layers[[i]])
+				minv[i] <- minValue(x@layers[[i]], warn=FALSE)
 			}		
 		} else {
 			if (layer > 0 & layer <= nlayers(x)) {
@@ -61,10 +73,11 @@ if (!isGeneric("maxValue")) {
 }	
 
 setMethod('maxValue', signature(x='RasterLayer'), 
-	function(x, layer=-1) {
+	function(x, layer=-1, warn=TRUE) {
 		if ( x@data@haveminmax ) {
 			return(x@data@max)
 		} else {
+			if (warn) warning('max value not known, use setMinMax')
 			return(NA)
 		}
 	}
@@ -74,9 +87,19 @@ setMethod('maxValue', signature(x='RasterBrick'),
 	function(x, layer=-1) {
 		layer <- round(layer)
 		if (layer < 1) { 
-			return(x@data@max)
+			if ( x@data@haveminmax ) {
+				return(x@data@max)
+			} else {
+				warning('max value not known, use setMinMax')
+				return(rep(NA, nlayers(x)))
+			}
 		} else {
-			return(x@data@max[layer])
+			if ( x@data@haveminmax ) {
+				return(x@data@max[layer])
+			} else {
+				warning('max value not known, use setMinMax')
+				return(NA)
+			}
 		}
 	}
 )
@@ -88,7 +111,7 @@ setMethod('maxValue', signature(x='RasterStack'),
 		if (layer < 1) { 
 			maxv <- vector()
 			for (i in 1:nlayers(x)) {
-				maxv[i] <- maxValue(x@layers[[i]])
+				maxv[i] <- maxValue(x@layers[[i]], warn=FALSE)
 			}		
 		} else {
 			if (layer > 0 & layer <= nlayers(x)) {

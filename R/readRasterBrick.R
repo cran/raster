@@ -164,7 +164,7 @@
 		}
 		closeDataset(con)
 		# if  NAvalue() has been used.....
-		result[result == object@file@nodatavalue] <- NA 					
+		result[result == object@file@nodatavalue] <- NA
 	}
 
 	if (object@data@gain != 1 | object@data@offset != 0) {

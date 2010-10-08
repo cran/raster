@@ -6,25 +6,23 @@
 
 \description{
 
-Resample transfers values between non matching Raster* objects (in terms of origin and resolution). Avoid using this function if you can. Use functions like (dis)aggregate, crop and merge instead, because these functions are more accurate.
+Resample transfers values between non matching Raster* objects (in terms of origin and resolution). Use \code{\link[raster]{projectRaster}} if the target has a different projection.
+Before using resample, you may want to consider using these other functions instead: \code{\link[raster]{aggregate}}, \code{\link[raster]{disaggregate}}, \code{\link[raster]{crop}}, \code{\link[raster]{expand}}, \code{\link[raster]{merge}}.
 }
 
 \usage{
-resample(from, to, method="ngb", filename="", ...) 
+resample(from, to, method, filename="", ...) 
 }
 
 \arguments{
   \item{from}{a Raster* object object}
   \item{to}{a Raster* object}
-  \item{method}{method used to compute values for the new RasterLayer}
+  \item{method}{method used to compute values for the new RasterLayer, should be "bilinear" for bilinear interpolation, or "ngb" for nearest neighbor}
   \item{filename}{character. output filename}  
   \item{...}{additional arguments. See Details.}    
  }
 
 \details{
-valid values for \code{method} are \code{'ngb'} (nearest neighbor) and \code{'bilinear'} (bilinear interpolation).
-
-
 The following additional arguments can be passed, to replace default values for this function
 \tabular{rll}{
   \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr

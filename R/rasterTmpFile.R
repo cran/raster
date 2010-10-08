@@ -5,6 +5,15 @@
 
 
 
+.fileDialog <- function(filetypes="{{All files} *}") {
+	if (! require(tcltk) ) {
+		stop('you need to install the tcltk library')
+	}
+	f <- tclvalue(tkgetSaveFile(filetypes=filetypes))
+	return(f)
+}
+
+
 rasterTmpFile <- function()  {
 	f <- getOption('rasterTmpFile')
 	if (!is.null(f)) {
@@ -14,6 +23,7 @@ rasterTmpFile <- function()  {
 			return(f)
 		}
 	}
+	
 	extension <- .defaultExtension(.filetype())
 	d <- .tmpdir()
 	dir.create(d,  showWarnings = FALSE)

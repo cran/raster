@@ -4,6 +4,7 @@
 
 \alias{flip}
 \alias{flip,RasterLayer-method}
+\alias{flip,RasterStackBrick-method}
   
 \title{Flip}
 
