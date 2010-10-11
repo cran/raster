@@ -15,14 +15,11 @@
 		} else {
 			return(x)
 		}
-	} else if (unstack & inherits(r, 'RasterStack')) {
-		if ( compare & length(x) > 0 ) { compare(x[[1]], r)  }
-		return( c(x, unstack(r)) )
-	} else if (unstack & inherits(r, 'RasterBrick')) {
+	} else if (unstack & nlayers(r) > 1) {
 		if ( compare & length(x) > 0 ) { compare(x[[1]], r)  }
 		return( c(x, unstack(r)) )
 	} else {
-		if (compare & length(x)>0) { compare(x[[1]], r)  }
+		if (compare & length(x) > 0) { compare(x[[1]], r)  }
 		return( c(x, r) )	
 	} 
 }

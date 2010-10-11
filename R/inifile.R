@@ -1,5 +1,4 @@
 # Authors: Robert J. Hijmans 
-# International Rice Research Institute
 # contact: r.hijmans@gmail.com
 # Date : October 2008
 # Version 0.9
@@ -18,13 +17,13 @@ readIniFile <- function(filename, token='=', commenttoken=';') {
 		}
 	}
 
-	strsp <- function(s){strSplitOnFirstToken(s, token=token)}
+	strsp <- function(s){ strSplitOnFirstToken(s, token=token) }
 	
 	strSplitComment <- function(s,  token=";") { 
 		# ";" is the start of a comment .
 		strSplitOnFirstToken(s, token=";") 
 	}
-	strspcom <- function(s){strSplitComment(s, token=commenttoken)}
+	strspcom <- function(s){ strSplitComment(s, token=commenttoken) }
 	
 	
     if (!file.exists(filename)) { stop(paste(filename, " does not exist")) }

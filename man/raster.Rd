@@ -3,9 +3,9 @@
 \docType{methods}
 
 \alias{raster}
-\alias{raster,Extent-method}
-\alias{raster,character-method}
 \alias{raster,missing-method}
+\alias{raster,character-method}
+\alias{raster,Extent-method}
 \alias{raster,Raster-method}
 \alias{raster,RasterStack-method}
 \alias{raster,RasterBrick-method}
@@ -13,6 +13,7 @@
 \alias{raster,SpatialGrid-method}
 \alias{raster,SpatialPixels-method}
 \alias{raster,matrix-method}
+\alias{raster,list-method}
 
 \title{Create a RasterLayer object}
 
@@ -21,7 +22,7 @@ Methods to create a RasterLayer object. RasterLayer objects can be created from 
 
 In many cases, e.g. when a RasterLayer is created from a file, it does (initially) not contain any cell (pixel) values, it only has the parameters that describe the RasterLayer.
 
-If you are new to the raster package, first have a look here: \code{\link{raster-package}}.
+For an overview of the functions in the raster package have a look here: \code{\link{raster-package}}.
 }
 
 
@@ -115,13 +116,13 @@ but does not copy the filename nor the data associated with the original Raster 
 }
 
 
-6) Create a RasterLayer object from a SpatialPixels* or SpatialGrid* object. 
+6) Create a RasterLayer object from a RasterStack, RasterBrick, SpatialPixels* or SpatialGrid* object. 
 
 \code{raster(x, layer=0)}
 
 \tabular{rll}{
- \tab \code{x} \tab a RasterStack, SpatialPixels* or SpatialGrid* object \cr
- \tab \code{layer} \tab Integer. the layer from which to copy values to the new RasterLayer, if \code{layer > 0}.\cr
+ \tab \code{x} \tab RasterStack, RasterBrick, SpatialPixels* or SpatialGrid* object \cr
+ \tab \code{layer} \tab Integer. the layer from which to copy values to the new RasterLayer, if \code{layer > 0}\cr
 }
 
 
@@ -130,14 +131,23 @@ but does not copy the filename nor the data associated with the original Raster 
 \code{function(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA)}
 
 \tabular{rll}{
- \tab \code{x} \tab a matrix \cr
+ \tab \code{x} \tab matrix \cr
  \tab \code{xmn} \tab minimum x coordinate (left border) \cr
  \tab \code{xmx} \tab maximum x coordinate (right border) \cr
  \tab \code{ymn} \tab minimum y coordinate (bottom border) \cr
  \tab \code{ymx} \tab maximum y coordinate (top border) \cr
- \tab \code{crs} \tab PROJ4 type description of a map projection \cr
+ \tab \code{crs} \tab PROJ4 type description of a map projection (optional) \cr
 }
 
+
+8) Create a RasterLayer object from a 'image' object (a list with vectors x and y and matrix z). 
+
+\code{raster(img, crs)}
+
+\tabular{rll}{
+ \tab \code{x} \tab RasterStack, SpatialPixels* or SpatialGrid* object \cr
+ \tab \code{crs} \tab PROJ4 type description of a map projection (optional) \cr
+}
 }}
 
 
@@ -147,7 +157,6 @@ If they are created from a file on disk, you can access values with \code{\link[
 You can assign new values with  \code{\link[raster]{setValues}} and with \code{\link[raster]{replacement}}.
 }
 
-
 \value{
 RasterLayer object
 }
@@ -155,7 +164,6 @@ RasterLayer object
 \author{Robert J. Hijmans}
 
 \seealso{ \code{\link[raster]{stack}, \link[raster]{brick}} }
-
 
 \examples{
 #from file

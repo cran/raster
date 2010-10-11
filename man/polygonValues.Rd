@@ -8,16 +8,16 @@
 \title{ Extract values from a RasterLayer by polygons }
 
 \description{
-This method returns the values of the cells of a Raster object that is covered by a polygon. A cell is covered if its center is inside the polygon (but see the \code{weights} option for considering partly covered cells).
+This method returns the values of the cells of a Raster* object that is covered by a polygon. A cell is covered if its center is inside the polygon (but see the \code{weights} option for considering partly covered cells).
 }
 
 \usage{
-polygonValues(p, r, ...)
+polygonValues(p, x, ...)
 }
 
 \arguments{
 \item{p}{SpatialPolygons* object}
-\item{r}{Raster object}
+\item{x}{Raster* object}
 \item{...}{additional arguments. See details}
 }
 

@@ -28,7 +28,7 @@
     if (x == 'Byte') return(-1)
 }
 
-.getGDALtransient <- function(raster, filename, options, ...)  {
+.getGDALtransient <- function(raster, filename, options, NAvalue, ...)  {
 	r = raster(raster)
 	datatype <- .datatype(...)
 	overwrite <- .overwrite(...)
@@ -49,7 +49,10 @@
 	}	
 
 	dataformat <- .getGdalDType(datatype, gdalfiletype)
-	naValue <- .GDALnodatavalue(dataformat)
+	
+	if (missing(NAvalue)) { 
+		NAvalue <- .GDALnodatavalue(dataformat) 
+	}
     nbands = nlayers(raster)
 	
 	if (gdalfiletype=='GTiff') {
@@ -66,7 +69,7 @@
  
 	for (i in 1:nbands) {
 		b <- new("GDALRasterBand", transient, i)
-		.Call("RGDAL_SetNoDataValue", b, as.double(naValue), PACKAGE = "rgdal")
+		.Call("RGDAL_SetNoDataValue", b, as.double(NAvalue), PACKAGE = "rgdal")
 	}
 
  
@@ -76,7 +79,7 @@
     .Call("RGDAL_SetProject", transient, p4s, PACKAGE = "rgdal")
 
 	if (is.null(options)) options <- ''
-	return(list(transient, naValue, options))
+	return(list(transient, NAvalue, options))
 }
 
 

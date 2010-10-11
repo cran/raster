@@ -1,9 +1,42 @@
+6-Oct-2010,  version 1.5-15
+netcdf files writing in chunks. 
+netcdf create a RasterLayer from a RasterBrick no longer goes to disk (copy parameters in memory)
+
+--------------------------------------------
+4-Oct-2010,  version 1.5-14
+raster() now takes an image (list) and coerces it to a RasterLayer
+
+--------------------------------------------
+2-Oct-2010,  version 1.5-13
+bug fixes in .readRowsAscii (reported by Manuel Spínola), setMinMax
+filenames in Raster objects from working directory now get the full path appended (no errors when the workdir changes)
+new functions (under development): morph, morphMerge
+
+--------------------------------------------
+30-Sep-2010,  version 1.5-12
+New function lineValues (extract values from Raster* by lines, like polygonValues)
+bug fixes: 
+projectRaster now works for RasterStack objects
+focalFilter now works with a 'filename' argument (bug reported by Bill McCoy)
+
+--------------------------------------------
+25-Sep-2010,  version 1.5-11
+Added argument NAvalue to writeRaster to allow to manually set the NA value (flag) when writing to file.
+
+--------------------------------------------
+23-Sep-2010,  version 1.5-10
+Added a RasterStackBrick version of 'count'
+
+-------------------------------------------------------------
+21-Sep-2010,  version 1.5-9
+Added a RasterStackBrick version of 'flip'
+
+-------------------------------------------------------------
 20-Sep-2010,  version 1.5-8
-added functions gain, gain<-, off, and off<- to get or set the gain (scale) and offset parameters of a Raster object
+added functions gain, gain<-, offs, and offs<- to get or set the gain (scale) and offset parameters of a Raster object
 fixed bug when creating a RasterLayer from a BIL file that has the coordinates in a world file rather than in the hdr file (reported by Steven Mosher)
 
 -------------------------------------------------------------
-
 16-Sep-2010,  version 1.5-7
 fixed bug when creating a RasterLayer from a SAGA grid file with non-integer resolution (reported by Matthew Landis)
 
@@ -90,7 +123,7 @@ Expanded sampleRandom by adding a 'cells' and 'extent' argument;
 Switched from RNetCDF to ncdf package for netcdf file support
 
 Added three slots to class BasicRaster
-unit='vector' ; to store the unit of the layer(s), e.g. kg m-2 s-1
+unit='vector' ; to store the unit of the layer(s), e.g. "kg m-2 s-1"
 zname='character' ; to store the name of the z (layers) variable, e.g. "time"
 zvalue='vector' ; to store the values of the z variable, e.g. the dates corresponding to each later
 These slots are now filled for values from netcdf files with "CF" type convention (e.g. cmip), with an attempt to covert "days since" to a Date (coverted to string).

@@ -19,7 +19,6 @@ function(x, filename, format, ...) {
 	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)
 	
-
 	if (! inMemory(x) ) {
 		if ( fromDisk(x) ) {
 			return( .saveAsRaster(x, filename, format=filetype, ...) )

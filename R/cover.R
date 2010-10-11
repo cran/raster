@@ -59,12 +59,12 @@ setMethod('cover', signature(x='RasterLayer', y='RasterLayer'),
 		pb <- pbCreate(tr$n, type=.progress())
 		for (i in 1:tr$n) {
 			v <- getValues( rasters[[1]], row=tr$row[i], nrows=tr$nrows[i] )
-			if (! is.matrix(vv) ) {	vv <- matrix(vv, ncol=1) }		
+			if (! is.matrix(v) ) {	v <- matrix(v, ncol=1) }		
 			for (j in 2:length(rasters)) {
 				vv <- getValues(rasters[[j]], row=tr$row[i], nrows=tr$nrows[i])
 				v[is.na(v)] <- vv[is.na(v)] 
 			}	
-			outRaster <- writeValues(outRaster, vv, tr$row[i])
+			outRaster <- writeValues(outRaster, v, tr$row[i])
 			pbStep(pb, i) 
 		}
 		pbClose(pb)

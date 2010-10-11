@@ -11,7 +11,6 @@ if (!isGeneric("edge")) {
 
 
 setMethod('edge', signature(x='RasterLayer'), 
-
 function(x, filename="", classes=TRUE, type='both', asNA=FALSE, asZero=TRUE, ...) {
 	
 	ngb <- c(3,3)
@@ -86,7 +85,7 @@ function(x, filename="", classes=TRUE, type='both', asNA=FALSE, asZero=TRUE, ...
 			ids = matrix(as.vector(ids), ncol=ncol(out))
 			ids = cbind(rep(1:ncol(out), each=nrow(ids)), as.vector(ids))
 			ids = subset(ids, ids[,2]>0)
-			vv = tapply(as.vector(ngbdata)[ids[,2]], ids[,1], fun)
+			vv = as.vector(tapply(as.vector(ngbdata)[ids[,2]], ids[,1], fun))
 			if (type == 'inner') {
 				vv[is.na(ngbdata[1,])] = 0
 			} else if (type == 'outer') {
@@ -110,7 +109,7 @@ function(x, filename="", classes=TRUE, type='both', asNA=FALSE, asZero=TRUE, ...
 				d = round(d)
 			}
 			ngbdata[ngb[1],] <- d
-			vv = tapply(as.vector(ngbdata)[id[,2]], id[,1], fun)
+			vv = as.vector(tapply(as.vector(ngbdata)[id[,2]], id[,1], fun))
 			if (type == 'inner') {
 				vv[is.na(ngbdata[2,])] = 0
 			} else if (type == 'outer') {
@@ -133,7 +132,7 @@ function(x, filename="", classes=TRUE, type='both', asNA=FALSE, asZero=TRUE, ...
 			ids = matrix(as.vector(ids), ncol=ncol(out))
 			ids = cbind(rep(1:ncol(out), each=nrow(ids)), as.vector(ids))
 			ids = subset(ids, ids[,2]>0)
-			vv = tapply(as.vector(ngbdata)[ids[,2]], ids[,1], fun)
+			vv = as.vector(tapply(as.vector(ngbdata)[ids[,2]], ids[,1], fun))
 			if (type == 'inner') {
 				vv[is.na(ngbdata[1,])] = 0
 			} else if (type == 'outer') {
@@ -168,6 +167,5 @@ function(x, filename="", classes=TRUE, type='both', asNA=FALSE, asZero=TRUE, ...
 	}
 	return(out)
 }
-
 )	
 

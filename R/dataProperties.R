@@ -26,31 +26,18 @@ dataSigned <- function(object) {
 
 
 dataType <- function(x) {
-	return(x@file@datanotation)
-}
-
-
-.dataContent <- function(object) {
-#	return(object@data@content)
-	if (object@data@inmemory) {
-		return('all')
+	if (inherits(x, 'RasterStack')) {
+		return(sapply(x@layers, function(x) x@file@datanotation))
 	} else {
-		return('nodata')
+		return(x@file@datanotation)
 	}
 }
+
 
 ..dataIndices <- function(object) {
 #	return(object@data@indices)
 }
 
-.dataSource <- function(object) {
-#	return(object@data@source)
-	if (object@data@fromdisk) {
-		return('disk')
-	} else {
-		return('ram')
-	}
-}
 
 fromDisk <- function(x) {
 	if (inherits( x, 'RasterStack' )) {

@@ -6,6 +6,9 @@
 
 canProcessInMemory <- function(raster, n=4) {
 
+#	setOptions(overwrite=TRUE)
+#	return(FALSE)
+	
 	if (.toDisk()) { return(FALSE) } 
 
 	n <- n + (nlayers(raster) - 1)

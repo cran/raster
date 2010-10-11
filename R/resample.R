@@ -4,8 +4,13 @@
 # Licence GPL v3
 
 
-resample <- function(from, to, method="ngb", filename="", ...)  {
+resample <- function(from, to, method, filename="", ...)  {
 	
+	# to do: compare projections of from and to
+		
+	if (missing(method)) {
+		stop("provide a method: 'bilinear' or 'ngb'")
+	}
 	if (!method %in% c('bilinear', 'ngb')) {
 		stop('invalid method') 
 	}

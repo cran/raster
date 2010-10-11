@@ -18,8 +18,8 @@
 }
 
 
-.readRowsAscii <- function(x, startrow, nrows, startcol, ncols) {
-	if (startcol > 1 | ncols < ncol(x)) {
+.readRowsAscii <- function(x, startrow, nrows, startcol=1, ncols=x@ncols) {
+	if (startcol > 1 | ncols < x@ncols) {
 		v <- matrix(nrow=ncols, ncol=nrows)
 		endcol <- startcol+ncols-1
 		skiprows <- 6 + startrow - 2 
@@ -49,7 +49,7 @@
 	colrow[,4] <- NA
 	rows <- na.omit(unique(colrow[order(colrow[,2]), 2]))
 	for (i in 1:length(rows)) {
-		v <- .readRowsAscii(raster, rows[i], 1)
+		v <- .readRowsAscii(raster, rows[i], 1, 1, raster@ncols)
 		thisrow <- subset(colrow, colrow[,2] == rows[i])
 		colrow[colrow[,2]==rows[i],4] <- v[thisrow[,1]]
 	}

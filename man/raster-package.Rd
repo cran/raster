@@ -47,7 +47,7 @@ Maintainer: Robert J. Hijmans \email{r.hijmans@gmail.com}
 
 \section{I. Creating Raster* objects}{
 
-Raster* objects can be created, from scracth or from raster files, with the following functions:
+Raster* objects can be created, from scracth, files, or from objects of other classes, with the following functions:
   \tabular{ll}{
     \code{\link{raster}}\tab To create a RasterLayer \cr
     \code{\link{stack}} \tab To create a RasterStack (multiple layers)\cr
@@ -143,6 +143,8 @@ RasterLayer, RasterStack, and RasterBrick objects are, as a group, referred to a
     \code{\link{rasterToPoints}} \tab Create points from a RasterLayer \cr
     \code{\link{rasterToPolygons}} \tab Create polygons from a RasterLayer \cr
     \code{\link{rasterToContour}} \tab Contour lines from a RasterLayer \cr
+    \code{\link{rasterFromXYZ}} \tab RasterLayer from regularly spaces points\cr
+    \code{\link{raster}} \tab RasterLayer from SpatialGrid*, image, or matrix objects\cr
   }
   
 You can coerce Raster* objects to Spatial* objects using \code{as}, as in \code{as(object, 'SpatialGridDataFrame')}  
@@ -171,8 +173,9 @@ You can coerce Raster* objects to Spatial* objects using \code{as}, as in \code{
     \code{\link{getValuesBlock}} \tab Get values for a block (a rectangular area defined by start and end row and column \cr
     \code{\link{xyValues}} \tab Use points (optionally with a buffer) to extract cell values \cr
     \code{\link{cellValues}} \tab Use cell numbers to extract cell values \cr
+    \code{\link{lineValues}} \tab Use a SpatialLines* object to extract cell values \cr
     \code{\link{polygonValues}} \tab Use a SpatialPolygons* object to extract cell values \cr
-    \code{\link{focalValues}} \tab Extract values from focal cells\cr
+    \code{\link{focalValues}} \tab Extract values for focal cells\cr
     \code{\link{sampleRandom}} \tab Random sample \cr
     \code{\link{sampleRegular}} \tab Regular sample \cr
     \code{\link{minValue}} \tab The minimum value of the cells of a Raster* object (not always known) \cr

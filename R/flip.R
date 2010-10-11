@@ -29,17 +29,18 @@ setMethod('flip', signature(x='RasterLayer', direction='ANY'),
 		}
 		
 		if ( inmemory ) {
-			v <- getValues(x, format='matrix')
+			x <- getValues(x, format='matrix')
 
 			if (direction == 'y') {
-				v <- v[nrow(v):1,]
+				x <- x[nrow(x):1,]
 			} else {
-				v <- v[,ncol(v):1]
+				x <- x[,ncol(x):1]
 			}
-			outRaster <- setValues(outRaster, as.vector(t(v)))
+			outRaster <- setValues(outRaster, as.vector(t(x)))
 			if (filename != '') {
 				outRaster = writeRaster(outRaster, filename=filename, ...)
 			}
+			
 		} else {
 			tr <- blockSize(outRaster)
 			pb <- pbCreate(tr$n, type=.progress(...))
@@ -64,6 +65,95 @@ setMethod('flip', signature(x='RasterLayer', direction='ANY'),
 					pbStep(pb, i) 
 				}
 			}
+			outRaster <- writeStop(outRaster)
+			pbClose(pb)
+		}
+		return(outRaster)
+	}
+)
+
+
+
+setMethod('flip', signature(x='RasterStackBrick', direction='ANY'), 
+	function(x, direction='y', filename='', ...)  {
+	
+		filename <- trim(filename)
+		outRaster <- brick(x, values=FALSE)
+
+		if (direction[1] == 1) { direction <- 'x'
+		} else if (direction[1] == 2) { direction <- 'y' }
+		if (!(direction %in% c('y', 'x'))) {
+			stop('directions should be y or x')
+		}
+	
+		if (!canProcessInMemory(outRaster, 2) && filename == '') {
+			filename <- rasterTmpFile()
+			inmemory = FALSE
+		} else {
+			inmemory = TRUE
+		}
+
+		nc <- outRaster@ncols
+		
+		if ( inmemory ) {
+			x <- getValues(x)
+			for (i in 1:NCOL(x)) {
+				v <- matrix(x[,i], ncol=nc, byrow=TRUE)
+				if (direction == 'y') {
+					v <- v[nrow(v):1,]
+				} else {
+					v <- v[,ncol(v):1]
+				}
+				x[,i] <- as.vector(t(v))
+			}
+			outRaster <- setValues(outRaster, x)
+			if (filename != '') {
+				outRaster = writeRaster(outRaster, filename=filename, ...)
+			}
+			
+		} else {
+
+			tr <- blockSize(outRaster)
+			pb <- pbCreate(tr$n, type=.progress(...))
+			if (inherits(x, 'RasterStack')) { 
+				dtype <- 'FLT4S'
+			} else {
+				dtype <- dataType(x)
+			}
+			outRaster <- writeStart(outRaster, filename=filename, datatype=dtype, ... )
+
+			if (direction == 'y') {
+				trinv <- tr
+				trinv$row <- rev(trinv$row)
+				trinv$size <- rev(trinv$size)
+				for (i in 1:tr$n) {
+					vv = getValues(x, row=trinv$row[i], nrows=trinv$size)
+
+					for (i in 1:NCOL(vv)) {
+						v <- matrix(vv[,i], ncol=nc, byrow=TRUE)
+						if (direction == 'y') {
+							vv[,i] = as.vector(t(v[nrow(v):1, ]))
+						} else {
+							vv[,i] = as.vector(t(v[nrow(v):1, ]))
+						}
+					}
+		
+					outRaster <- writeValues(outRaster, vv, tr$row[i])
+					pbStep(pb, i) 
+				}
+			} else {
+			
+				for (i in 1:tr$n) {
+					vv = getValues(x, row=tr$row[i], nrows=tr$nrows[i])
+					for (i in 1:NCOL(vv)) {
+						v = matrix(vv[,i], ncol=nc, byrow=TRUE)
+						vv[,i] = as.vector(t(v[, ncol(v):1]))
+					}
+					outRaster <- writeValues(outRaster, vv, tr$row[i])
+					pbStep(pb, i) 
+				}
+			}
+			
 			outRaster <- writeStop(outRaster)
 			pbClose(pb)
 		}

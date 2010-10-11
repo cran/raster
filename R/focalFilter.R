@@ -20,9 +20,9 @@
 
 
 focalFilter <- function(raster, filter, fun=sum, filename="", ...) {
-	if (!is.matrix(filter)) {stop('filter must be a matrix')}
+	if (!is.matrix(filter)) { stop('filter must be a matrix') }
 	ngb <- dim(filter)
-	if (prod(ngb) == 0) {stop('ncol and nrow of filter must be > 0') }
+	if (prod(ngb) == 0) { stop('ncol and nrow of filter must be > 0') }
 
 	ngbgrid <- raster(raster)
 
@@ -34,13 +34,10 @@ focalFilter <- function(raster, filter, fun=sum, filename="", ...) {
 	limrow <- floor(ngb[1] / 2)
 	ngbdata <- matrix(NA, nrow=0, ncol=ncol(ngbgrid))
 # add all rows needed for first ngb, minus 1 that will be read in first loop	
+
 	for (r in 1:limrow) {
-		if (inMemory(raster) ) {
-			rowdata <- getValues(raster, r)
-		} else {	
-			rowdata <- getValues(raster, r)
-		}
-		ngbdata <- rbind(ngbdata, rowdata)
+		ngbdata <- getValues(raster, 1, limrow)
+		ngbdata <- matrix(ngbdata, nrow=limrow)
 	}
 
 	res <- vector(length=ncol(ngbdata))
@@ -55,19 +52,15 @@ focalFilter <- function(raster, filter, fun=sum, filename="", ...) {
 		v <- matrix(NA, ncol=nrow(ngbgrid), nrow=ncol(ngbgrid))
 	} else {
 		v <- vector(length=0)
+		ngbgrid <- writeStart(ngbgrid, filename=filename, ...)
 	}
 
-	
 	pb <- pbCreate(nrow(ngbgrid), type=.progress(...))
 
 	for (r in 1:nrow(ngbgrid)) {		
 		rr <- r + limrow
 		if (rr <= nrow(ngbgrid)) {
-			if (inMemory(raster) ) {
-				rowdata <- getValues(raster, rr)
-			} else {	
-				rowdata <- getValues(raster, rr)
-			}
+			rowdata <- getValues(raster, rr)
 			if (dim(ngbdata)[1] == ngb[1]) {
 				ngbdata <- rbind(ngbdata[2:ngb[1],], rowdata)
 			} else {
@@ -80,8 +73,7 @@ focalFilter <- function(raster, filter, fun=sum, filename="", ...) {
 		
 		ngbvals <- .calcFilter(ngbdata, colnrs, res, filter, fun)
 		if (filename != "") {
-			ngbgrid <- setValues(ngbgrid, ngbvals, r)
-			ngbgrid <- writeRaster(ngbgrid, filename=filename, ...)
+			ngbgrid <- writeValues(ngbgrid, ngbvals, r)
 		} else {
 			v[,r] <- ngbvals
 		}
@@ -91,6 +83,8 @@ focalFilter <- function(raster, filter, fun=sum, filename="", ...) {
 	
 	if (filename == "") { 
 		ngbgrid <- setValues(ngbgrid, as.vector(v)) 
+	} else {
+		ngbgrid <- writeStop(ngbgrid)
 	}
 	return(ngbgrid)
 }

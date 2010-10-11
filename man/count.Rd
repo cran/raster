@@ -1,22 +1,24 @@
 \name{count}
 
+\alias{count,RasterLayer-method}
+\alias{count,RasterStackBrick-method}
 \alias{count}
+
 
 \title{Count}
 
 \description{
-Count the frequency of a single value in a RasterLayer.  
+Count the frequency of a single value in a Raster object.  
 }
 
 \usage{
-count(raster, value, digits=0, progress)
+count(x, value, ...)
 }
 
 \arguments{
-  \item{raster}{A RasterLayer}
-  \item{value}{The value to be counted}  
-  \item{digits}{the number of digits for rounding the values}   
-  \item{progress}{Character. Choose from "text", "window", or "" (the default, no progress bar)}
+  \item{x}{A Raster* object}
+  \item{value}{The value to be counted, can be a number or a logical or NA}  
+  \item{...}{Additional arugments: \code{digits}, the number of digits for rounding the values, default is 0, i.e. numbers are compared as integers. }
 }
 
 \value{

@@ -16,8 +16,8 @@
 	}
 	
 	bb <- extent(object)
-	nc <- round( (bb@xmax - bb@xmin) / xr )
-	nr <- round( (bb@ymax - bb@ymin) / yr )
+	nc <- max(1, round( (bb@xmax - bb@xmin) / xr ))
+	nr <- max(1, round( (bb@ymax - bb@ymin) / yr ))
 	if (nr != object@nrows | nc != object@ncols) {
 		if (extends(class(object), "Raster")) {
 			object <- clearValues(object)

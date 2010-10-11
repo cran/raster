@@ -19,7 +19,7 @@ function(x, fun, filename='', ...) {
 		stop("function 'fun' returns more than one value")
 	}
 
-	if (!( inMemory(x)  |  fromDisk(x) )) {
+	if (!hasValues(x)) {
 		stop('RasterLayer has no data on disk, nor a complete set of values in memory')
 	}
 

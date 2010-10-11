@@ -102,7 +102,7 @@
 }
 
 
-linesToRaster <- function(spLines, raster, field=0, filename="", updateRaster=FALSE, updateValue="NA", ...) {
+linesToRaster <- function(lns, raster, field=0, filename="", updateRaster=FALSE, updateValue="NA", ...) {
 
 	filename <- trim(filename)
 	if (updateRaster) {
@@ -112,35 +112,32 @@ linesToRaster <- function(spLines, raster, field=0, filename="", updateRaster=FA
 		}
 	}
 	raster <- raster(raster)
-	if (projection(spLines) != "NA") {
-		projection(raster) = projection(spLines)
+	if (projection(lns) != "NA") {
+		projection(raster) = projection(lns)
 	}
 	
-	if (class(spLines) == 'SpatialPolygons') {
-		spLines <- as(spLines, "SpatialLines")
+	if (inherits(lns, 'SpatialPolygons')) {
+		lns <- as(lns, "SpatialLines")
 	}
-	if (class(spLines) == 'SpatialPolygonsDataFrame') {
-		spLines <- as(spLines, "SpatialLinesDataFrame")
-	}
-	if (!(class(spLines) == 'SpatialLines' | class(spLines) == 'SpatialLinesDataFrame')) {
-		stop('spLines should be a SpatialLines* object')
+	if (! inherits(lns, 'SpatialLines')) {
+		stop('lns should be, or inherit from, a SpatialLines* object')
 	}
 
-# check if bbox of raster and spLines overlap
-	spbb <- bbox(spLines)
+# check if bbox of raster and lns overlap
+	spbb <- bbox(lns)
 	rsbb <- bbox(raster)
 	if (spbb[1,1] > rsbb[1,2] | spbb[2,1] > rsbb[2,2]) {
 		stop('lines and raster have no overlapping areas')
 	}
-	nline <- length(spLines@lines)
+	nline <- length(lns@lines)
 	info <- matrix(NA, nrow=nline, ncol=3)
 	for (i in 1:nline) {
-		info[i,1] <- length(spLines@lines[[i]]@Lines)
+		info[i,1] <- length(lns@lines[[i]]@Lines)
 		miny <- NULL
 		maxy <- NULL
 		for (j in 1:info[i,1]) {
-			miny <- min(miny, min(spLines@lines[[i]]@Lines[[j]]@coords[,2]))
-			maxy <- max(maxy, max(spLines@lines[[i]]@Lines[[j]]@coords[,2]))
+			miny <- min(miny, min(lns@lines[[i]]@Lines[[j]]@coords[,2]))
+			maxy <- max(maxy, max(lns@lines[[i]]@Lines[[j]]@coords[,2]))
 		}
 		info[i,2] <- miny
 		info[i,3] <- maxy
@@ -148,10 +145,10 @@ linesToRaster <- function(spLines, raster, field=0, filename="", updateRaster=FA
 	lxmin <- min(spbb[1,1], rsbb[1,1]) - 0.5 * xres(raster)
 	lxmax <- max(spbb[1,2], rsbb[1,2]) + 0.5 * xres(raster)
 
-	if (class(spLines) == 'SpatialLines' | field == 0) {
+	if (class(lns) == 'SpatialLines' | field == 0) {
 		putvals <- as.integer(1:nline)
 	} else {
-		putvals <- as.vector(spLines@data[,field])
+		putvals <- as.vector(lns@data[,field])
 		if (class(putvals) == 'character') {
 			stop('selected field is character type')
 			# to do check factors
@@ -179,10 +176,10 @@ linesToRaster <- function(spLines, raster, field=0, filename="", updateRaster=FA
 				#  line object is outside of row,  do nothing
 			} else {
 				for (j in 1:info[i,1]) {
-					if ( max ( spLines@lines[[i]]@Lines[[j]]@coords[,2] ) < lly  |  min( spLines@lines[[i]]@Lines[[j]]@coords[,2] ) > uly ) {
+					if ( max ( lns@lines[[i]]@Lines[[j]]@coords[,2] ) < lly  |  min( lns@lines[[i]]@Lines[[j]]@coords[,2] ) > uly ) {
 						#  line part entirely outside of row. do nothing
 					} else {
-						aline <- spLines@lines[[i]]@Lines[[j]]@coords
+						aline <- lns@lines[[i]]@Lines[[j]]@coords
 						colnrs <- .getCols(raster, r, aline, line1, line2)
 						if ( length(colnrs) > 0 ) {			
 							rv[colnrs] <- putvals[i]

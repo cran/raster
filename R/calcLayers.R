@@ -12,7 +12,7 @@
 	filename <- trim(filename)
 	outraster <- brick(x, values=FALSE)
 
-	if (!canProcessInMemory(x, 2)) {
+	if ( canProcessInMemory(x, 2) ) {
 		v <- t( fun( t( getValues(x) )) )
 		if (filename != '') {
 			outraster <- writeRaster(outraster)

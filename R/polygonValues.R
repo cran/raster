@@ -6,16 +6,16 @@
 
 
 if (!isGeneric("polygonValues")) {
-	setGeneric("polygonValues", function(p, r, ...)
+	setGeneric("polygonValues", function(p, x, ...)
 		standardGeneric("polygonValues"))
 }	
 
 
-setMethod("polygonValues", signature(p='SpatialPolygons', r='Raster'), 
-function(p, r, fun, weights=FALSE, cellnumbers=FALSE, ...) {
+setMethod("polygonValues", signature(p='SpatialPolygons', x='Raster'), 
+function(p, x, fun, weights=FALSE, cellnumbers=FALSE, ...) {
 	spbb <- bbox(p)
-	rsbb <- bbox(r)
-	addres <- max(res(r))
+	rsbb <- bbox(x)
+	addres <- max(res(x))
 	npol <- length(p@polygons)
 	res <- list()
 	res[[npol+1]] = NA
@@ -23,7 +23,7 @@ function(p, r, fun, weights=FALSE, cellnumbers=FALSE, ...) {
 	if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
 		return(res[1:npol])
 	}
-	rr <- raster(r)
+	rr <- raster(x)
 	for (i in 1:npol) {
 		pp <- p[i,]
 		spbb <- bbox(pp)
@@ -45,15 +45,15 @@ function(p, r, fun, weights=FALSE, cellnumbers=FALSE, ...) {
 			
 			if (length(xy) > 0)  {  # catch holes or very small polygons
 				if (weights) {
-					value <- xyValues(r, xy)
+					value <- xyValues(x, xy)
 					if (cellnumbers) {
-						cell <- cellFromXY(r, xy)
+						cell <- cellFromXY(x, xy)
 						res[[i]] <- cbind(cell, value, weight)
 					} else {				
 						res[[i]] <- cbind(value, weight)
 					}
 				} else {
-					res[[i]] <- xyValues(r, xy)
+					res[[i]] <- xyValues(x, xy)
 				}
 			} else {
 				# do nothing; res[[i]] <- NULL
@@ -70,7 +70,11 @@ function(p, r, fun, weights=FALSE, cellnumbers=FALSE, ...) {
 			i <- sapply(res, is.null)
 			j <- vector(length=length(i))
 			j[i] <- NA
-			j[!i] <- sapply(res[!i], fun)
+			if (nlayers(x) > 1) {
+				j[!i] <- sapply(res[!i], function(x) apply(x, 2, fun))
+			} else {
+				j[!i] <- sapply(res[!i], fun)
+			}
 			res <- j
 		}
 	}

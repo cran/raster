@@ -52,7 +52,7 @@ projectExtent <- function(object, crs) {
 }
 
 
-projectRaster <- function(from, to, method="ngb", filename="", ...)  {
+projectRaster <- function(from, to, method="bilinear", filename="", ...)  {
 	if (! .requireRgdal() ) { stop('rgdal not available') }
 	
 	if (! inherits(from, 'RasterStack' )) {
@@ -66,26 +66,32 @@ projectRaster <- function(from, to, method="ngb", filename="", ...)  {
 	validObject(projection(to, asText=FALSE))
 	projfrom <- projection(from)
 	projto <- projection(to)
-	if (projfrom == "NA") {stop("input projection is NA")}
-	if (projto == "NA") {stop("output projection is NA")}
+	if (projfrom == "NA") { stop("input projection is NA") }
+	if (projto == "NA") { stop("output projection is NA") }
+	if (identical(projfrom, projto)) {
+		if ( identical( as(from, 'BasicRaster'), as(to, 'BasicRaster') ) ) {
+			warning('nothing to do; returning "from"')
+			return(from)
+		} else {
+			warning('projections are the same, using resample')
+			return( resample(from, to, method=method, filename=filename, ...  ) ) 
+		}
+	}	
 	
 	pbb <- projectExtent(to, projection(from))
 	bb <- intersectExtent(pbb, from)
 	validObject(bb)
 
 	if (!method %in% c('bilinear', 'ngb')) { stop('invalid method') }
-	if (method=='ngb') {
-		xymethod <- 'simple' 
-	} else {
-		xymethod <- 'bilinear' 	
-	}
+	if (method=='ngb') { method <- 'simple' } # for xyValues
 
 	filename <- trim(filename)
 	
-	if (inherits(from, 'RasterLayer')) {
+	if ( nlayers(from) == 1) {
 		to <- raster(to)
 	} else {
 		to <- brick(to, values=FALSE)
+		to@data@nlayers <- nlayers(from)
 	}
 	
 	if (!canProcessInMemory(to, 1) && filename == "") {
@@ -96,7 +102,7 @@ projectRaster <- function(from, to, method="ngb", filename="", ...)  {
 	if (inMemory) {
 		v <- matrix(NA, nrow=ncell(to), nlayers(from))
 	} else {
-		to <- writeStart(to, filename=filename, ... )
+		to <- writeStart(to, filename=filename, ...)
 	}
 	
 	tr <- blockSize(to)
@@ -108,7 +114,7 @@ projectRaster <- function(from, to, method="ngb", filename="", ...)  {
 		unProjXY <- .Call("transform", projto, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
 		unProjXY <- cbind(unProjXY[[1]], unProjXY[[2]])
 		
-		vals <- xyValues(from, unProjXY, method=xymethod)
+		vals <- xyValues(from, unProjXY, method=method)
 		
 		if (inMemory) {
 			start <- cellFromRowCol(to, tr$row[i], 1)

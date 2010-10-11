@@ -95,13 +95,18 @@ setMethod ('show' , 'RasterBrick',
 		cat ('ncell       :' , ncell(object), '\n')
 		cat ('projection  :' , projection(object, TRUE), '\n')
 		if (nl > 0) {
-			minv <- format(minValue(object), digits=2)
-			maxv <- format(maxValue(object), digits=2)
-			minv <- gsub('Inf', '?', minv)
-			maxv <- gsub('-Inf', '?', maxv)
-			if (nl > 10) {
-				minv <- c(minv[1:10], '...')
-				maxv <- c(maxv[1:10], '...')
+			if (object@data@haveminmax) {
+				minv <- format(minValue(object), digits=2)
+				maxv <- format(maxValue(object), digits=2)
+				minv <- gsub('Inf', '?', minv)
+				maxv <- gsub('-Inf', '?', maxv)
+				if (nl > 10) {
+					minv <- c(minv[1:10], '...')
+					maxv <- c(maxv[1:10], '...')
+				}
+			} else {
+				minv <- rep('?', min(nl, 10))
+				maxv <- rep('?', min(nl, 10))
 			}
 			cat('min value   :', paste(minv, collapse=' '), '\n')
 			cat('max value   :', paste(maxv, collapse=' '), '\n')

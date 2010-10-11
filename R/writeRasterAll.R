@@ -1,10 +1,9 @@
-# raster package
 # Author: Robert J. Hijmans, r.hijmans@gmail.com
 # Date :  June 2008
 # Version 0.9
 # Licence GPL v3
 
-.writeRasterAll <- function(raster, filename, ... ) {
+.writeRasterAll <- function(raster, filename, NAvalue, ... ) {
 
 	filetype <- .filetype(...)
 	raster@file@driver <- filetype
@@ -20,7 +19,7 @@
 	
 	overwrite <- .overwrite(...)
 	if (!overwrite & (file.exists(fnamehdr) | file.exists(fnamevals))) {
-		stop(paste(filename,"exists.","use 'overwrite=TRUE' if you want to overwrite it")) 
+		stop(paste(filename,"exists. Use 'overwrite=TRUE' if you want to overwrite it")) 
 	}
 	
 	raster@data@values[is.nan(raster@data@values)] <- NA
@@ -47,7 +46,11 @@
 		raster@data@values <- as.integer(raster@data@values)
 		raster@data@values[is.na(raster@data@values)] <- as.integer(raster@file@nodatavalue)
 	}
+	
 
+	if (! missing(NAvalue) ) {
+		raster@file@nodatavalue <- NAvalue
+	}
 	dsize <- dataSize(raster@file@datanotation)
 	filecon <- file(fnamevals, "wb")
 	writeBin(raster@data@values , filecon, size = dsize ) 
