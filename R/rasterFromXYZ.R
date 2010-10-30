@@ -4,7 +4,9 @@
 # Licence GPL v3
 
 
-rasterFromXYZ <- function(xyz, res=c(NA, NA), crs=NA, digits=6) {
+rasterFromXYZ <- function(xyz, res=c(NA, NA), crs=NA, digits=5) {
+	if (length(res) == 1) res = c(res, res)
+
 	if (inherits(xyz, 'SpatialPoints')) {
 		if (inherits(xyz, 'SpatialPointsDataFrame')) {
 			xyz <- cbind(coordinates(xyz), xyz@data[,1])
@@ -17,7 +19,7 @@ rasterFromXYZ <- function(xyz, res=c(NA, NA), crs=NA, digits=6) {
 
 	if (is.na(res[1])) {
 		rx <- min(dx)
-		for (i in 1:10) {
+		for (i in 1:5) {
 			rx <- rx / i
 			q <-  sum(round(dx %% rx, digits = digits)) 
 			if ( q == 0 ) {
@@ -35,12 +37,12 @@ rasterFromXYZ <- function(xyz, res=c(NA, NA), crs=NA, digits=6) {
 	}
 	
 	y = sort(unique(xyz[,2]))
-	dy <- y[-1] - y[-length(x)]
-
-	if (length(res) == 1) res = c(res, res)
+	dy <- y[-1] - y[-length(y)]
+	dy <- round(dy, digits)
+	
 	if (is.na(res[2])) {
 		ry <- min(dy)
-		for (i in 1:10) {
+		for (i in 1:5) {
 			ry <- ry / i
 			q <-  sum(round(dy %% ry, digits = digits)) 
 			if ( q == 0 ) {

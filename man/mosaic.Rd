@@ -4,9 +4,10 @@
 
 \alias{mosaic}
 \alias{mosaic,RasterLayer,RasterLayer-method}
+\alias{mosaic,list,missing-method}
 
 \title{ 
-mosaic RasterLayers
+Merge RasterLayers using a function for overlapping areas
 }
 
 \description{
@@ -30,7 +31,7 @@ A full call to mosaic is:
 
 \code{mosaic(x, y, ..., fun, na.rm=TRUE, tolerance=0.05, filename="", overwrite, format, progress ) }
 
-  \item{\code{x}}{RasterLayer object}
+  \item{\code{x}}{RasterLayer object; or a list of RasterLayer objects}
   \item{\code{y}}{RasterLayer object}
   \item{\code{...}}{Additional RasterLayer objects}
   \item{\code{fun}}{Function. E.g. mean, min, or max. Must be a function that accepts a na.rm argument}

@@ -16,12 +16,12 @@ setMethod('getValuesBlock', signature(x='RasterStack', row='numeric'),
 			if (i==1) {
 				v <- getValuesBlock(x@layers[[i]], row, nrows, col, ncols)
 				res <- matrix(ncol=nlayers(x), nrow=length(v))
-				colnames(res) <- layerNames(x)
 				res[,1] <- v
 			} else {
 				res[,i] <- getValuesBlock(x@layers[[i]], row, nrows, col, ncols)
 			}
 		}
+		colnames(res) <- layerNames(x)
 		res
 	}
 )

@@ -9,7 +9,7 @@
 
 \description{
 Reclassify values of a Raster* object. The function (re)classifies groups of values to other values. E.g. All values between 1 and 10 become 1, and all values between 11 and 15 become 2. 
-Reclassification is done with matrix "rcl".  
+Reclassification is done with matrix "rcl". For simple cases, the functions \code{\link{subs}} and \code{\link{cut}} are more efficient.
 
 Reclassification is applied to  \code{from <= x <= to}. Unless \code{update=TRUE} Reclassification is done in the order of the reclass table. Thus there are overlapping ranges, the last range applies.  
 }
@@ -39,10 +39,10 @@ The following additional arguments can be passed, to replace default values for 
 }
 
 \value{
-A new RasterLayer object, and in some cases the side effect of a new file on disk.
+Raster* object
 }
 
-\seealso{ \code{ \link[raster]{subs}, \link[raster]{calc}} } 
+\seealso{ \code{ \link{subs}, \link{cut}, \link{calc}} } 
 
 
 \author{Robert J. Hijmans}

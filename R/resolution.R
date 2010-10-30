@@ -1,5 +1,4 @@
 # Author: Robert J. Hijmans, r.hijmans@gmail.com
-# International Rice Research Institute
 # Date :  January 2009
 # Version 0.9
 # Licence GPL v3
@@ -26,7 +25,7 @@
 	bb@xmax <- bb@xmin + nc * xr
 	bb@ymin <- bb@ymax - nr * yr
 	extent(object) <- bb
-	rowcol(object) <- c(nr, nc)
+	dim(object) <- c(nr, nc)
 	return(object)
 }
 

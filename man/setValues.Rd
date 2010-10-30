@@ -1,25 +1,29 @@
 \name{setValues}
 
+\alias{values<-}
+\alias{values<-,RasterLayer-method}
+\alias{values<-,RasterBrick-method}
+
 \alias{setValues}
 \alias{setValues,RasterLayer-method}
 \alias{setValues,RasterBrick-method}
-\alias{clearValues}
 
-\title{Set values}
+\title{Set values of a Raster object}
 
 \description{
 You can use the setValues function to assign values to a RasterLayer or RasterBrick object. While you can access the 'values' slot of the objects directly, you would do that at your own peril because when setting values, multiple slots need to be changed; which is what these functions do. 
 }
 
 \usage{
-setValues(object, values, layer=-1) 
-clearValues(object)
+setValues(x, values, layer) 
+values(x, layer) <- value
 }
 
 \arguments{
-  \item{object}{A \code{RasterLayer} or \code{RasterBrick} object }
-  \item{values}{Data values to associate with the RasterLayer object. There should be values for all cells or for a single row}
-  \item{layer}{Layer number (only relevant for RasterStack and RasterBrick objects) }
+  \item{x}{A \code{RasterLayer} or \code{RasterBrick} object }
+  \item{values}{Cell values to associate with the RasterLayer object. There should be values for all cells or for a single row}
+  \item{value}{Cell values to associate with the RasterLayer object. There should be values for all cells or for a single row}
+  \item{layer}{Layer number (only relevant for RasterBrick objects). If missing, the values of all layers is set}
 }
 
 

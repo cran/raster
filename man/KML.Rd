@@ -2,10 +2,10 @@
 
 \alias{KML}
 
-\title{KML}
+\title{Write a KML file}
 
 \description{
-Export raster to a KML file
+Export raster data to a KML file
 }
 
 \usage{
@@ -21,10 +21,12 @@ KML(raster, filename, col=rainbow(255), maxpixels=100000)
 
 
 \value{
-None. But two files are written to disk. 
+None. But there is the side-effect of two files written to disk. 
 }
 
-\author{adapted for the raster package by Robert J. Hijmans; based on functions in the maptools package by Duncan Golicher, David Forrest and Roger Bivand }
+\author{
+adapted for the raster package by Robert J. Hijmans; based on functions in the maptools package by Duncan Golicher, David Forrest and Roger Bivand 
+}
 
 
 \keyword{spatial}

@@ -13,7 +13,7 @@ pointsToRaster(raster, xy, values=1, fun=NULL, background=NA, na.rm=TRUE, filena
 }
 
 \arguments{
-  \item{raster}{RasterLayer object}
+  \item{raster}{Raster* object}
   \item{xy}{Matrix of x and y coordinates (in the same map reference system as the raster) or a SpatialPoints* object}
   \item{values}{Vector of length of the number of points (i.e., dim(xy)[1] if xy is a matrix) with the values to be used; alternatively 
   you can supply a single value which is then assigned to each point. You can also supply a matrix if its number of rows matches the number of points. If the matrix has more than one column, a RasterBrick will be returned, with a layer for each column in \code{values}. }
@@ -45,7 +45,7 @@ The following additional arguments can be passed, to replace default values for 
 }
 
 \value{
-  RasterLayer object
+RasterLayer
 }
 
 \author{Robert J. Hijmans, Steven Mosher & Paul Hiemstra}

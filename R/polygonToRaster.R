@@ -80,7 +80,14 @@ polygonsToRaster <- function(p, raster, field=0, overlap='last', mask=FALSE, upd
 		stop('invalid value for overlap')
 	}
 	
-	if (mask) { updateRaster <- TRUE }
+	if (mask & updateRaster) { 
+		stop('use either "mask" OR "updateRaster"')
+	}
+	
+	if (mask) { 
+		oldraster <- raster 
+		#updateRaster <- TRUE 
+	}
 	if (updateRaster) {
 		oldraster <- raster 
 		if (!(updateValue == 'NA' | updateValue == '!NA' | updateValue == 'all' | updateValue == 'zero')) {
@@ -101,28 +108,36 @@ polygonsToRaster <- function(p, raster, field=0, overlap='last', mask=FALSE, upd
 	
 	npol <- length(p@polygons)
 	
+	if (! is.numeric(field) ) {
+		field <- which(colnames(p@data) == field)[1]
+		if (is.na(field)) {
+			stop('field does not exist')
+		}
+	} 
+		
 	if (length(field) > 1) { 
-		stop('field should be a single value') 
-	}
-	if (mask) {
+		if (length(field) == npol) {
+			putvals <- field
+		} else {
+			stop('field should be a single value or equal the number of polygons') 
+		}
+	} else if (mask) {
 		putvals <- rep(1, length=npol)	
-	} else if (is.numeric(field) & field < 0) {
+	} else if (inherits(p, 'SpatialPolygons') & overlap == 'sum') {
+		putvals <- rep(1, npol)
+	} else if (field < 0) {
 		putvals <- rep(1, length=npol)	
-	} else if (class(p) == 'SpatialPolygons' | field == 0) {
+	} else if (field == 0) {
 		putvals <- as.integer(1:npol)
 	} else {
-		if (is.character(field)){ 
-			if (!(field %in% colnames(p@data))) {
-				stop('field does not exist')
-			}
-		} else if (is.numeric(field)){ 
-			if (field > dim(p@data)[2]) {
-				stop('field index too large')
-			}
-		}
 		putvals <- as.vector(p@data[[field]])
+		if (class(putvals) == 'factor') {
+			warning('selected field is factor type')
+			putvals <- as.numeric(as.character(putvals))
+		}
 		if (class(putvals) == 'character') {
-			stop('selected field is character type')
+			warning('selected field is character type')
+			putvals <- as.numeric(putvals)
 		}
 	}
 
@@ -252,6 +267,10 @@ polygonsToRaster <- function(p, raster, field=0, overlap='last', mask=FALSE, upd
 					} else if (overlap=='max') {
 						rv[!is.na(rv) & !is.na(rvtmp)] <- pmax(rv[!is.na(rv) & !is.na(rvtmp)], rvtmp[!is.na(rv) & !is.na(rvtmp)])
 						rv[is.na(rv)] <- rvtmp[is.na(rv)]
+					} else if (overlap=='count') {
+						rvtmp[!is.na(rvtmp)]  <- 1
+						rv[!is.na(rv) & !is.na(rvtmp)] <- rv[!is.na(rv) & !is.na(rvtmp)] + rvtmp[!is.na(rv) & !is.na(rvtmp)] 
+						rv[is.na(rv)] <- rvtmp[is.na(rv)]				
 					}
 				}
 				if (updateHoles) {
@@ -285,7 +304,7 @@ polygonsToRaster <- function(p, raster, field=0, overlap='last', mask=FALSE, upd
 		if (filename == "") {
 			v[,r] <- rv
 		} else {
-			raster <- writeValues(raster, rv)
+			raster <- writeValues(raster, rv, r)
 		}
 		pbStep(pb, r)
 	}
@@ -397,7 +416,7 @@ polygonsToRaster <- function(p, raster, field=0, overlap='last', mask=FALSE, upd
 		if (filename == "") {
 			v[,rr] <- av
 		} else {
-			bigraster <- writeValues(bigraster, av)
+			bigraster <- writeValues(bigraster, av, rr)
 		}
 		pbStep(pb, rr)
 	}

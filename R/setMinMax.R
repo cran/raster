@@ -66,6 +66,9 @@ function(x) {
 	} else if (canProcessInMemory(x, (2 + nlayers(x)))) {
 		inMem <- TRUE
 	}
+
+	on.exit( options('warn'= getOption('warn')) )
+	options('warn'=-1) 
 	
 	if ( inMem ) {
 	

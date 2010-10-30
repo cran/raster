@@ -9,10 +9,10 @@
 		
 	crs = projection(object, FALSE)
 	if (type=='pixel') {
-		values <- rasterToPoints(object, fun=NULL, spatial=FALSE)
-		pts <- SpatialPoints(values[,1:2])
+		v <- rasterToPoints(object, fun=NULL, spatial=FALSE)
+		pts <- SpatialPoints(v[,1:2])
 		if (dataframe) {
-			sp <- SpatialPixelsDataFrame(points=pts, data=data.frame(values=values[,3]), proj4string=crs) 	
+			sp <- SpatialPixelsDataFrame(points=pts, data=data.frame(values=v[,3]), proj4string=crs) 	
 		} else {
 			sp <- SpatialPixels(points=pts, proj4string=crs)
 		}
@@ -31,18 +31,9 @@
 	return(sp)
 }
 
-setAs('Raster', 'SpatialPointsDataFrame', 
-	function(from) { 
-		return(rasterToPoints(from, spatial=TRUE)) 
-	}
-)
 
-setAs('Raster', 'SpatialPoints', 
-	function(from) { 
-		sp <- SpatialPoints(rasterToPoints(from, spatial=FALSE)[,1:2])
-		return(sp)
-	}
-)
+# To sp pixel/grid objects	
+
 
 setAs('Raster', 'SpatialPixels', 
 	function(from) { return(.asSpGrid(from, type='pixel', FALSE)) }
@@ -59,6 +50,30 @@ setAs('Raster', 'SpatialGrid',
 setAs('Raster', 'SpatialGridDataFrame', 
 	function(from) { return(.asSpGrid(from, type='grid', TRUE)) }
 )
+
+
+# To sp vector objects	
+
+setAs('RasterLayer', 'SpatialPolygonsDataFrame', 
+	function(from){ return( rasterToPolygons(from)) }
+)
+
+setAs('Extent', 'SpatialPolygonsDataFrame', 
+	function(from){ return( polygonFromExtent(from)) }
+)
+
+setAs('Raster', 'SpatialPoints', 
+	function(from) { 
+		return( SpatialPoints(rasterToPoints(from, spatial=FALSE)[,1:2]) )
+	}
+)
+
+setAs('Raster', 'SpatialPointsDataFrame', 
+	function(from) { 
+		return( rasterToPoints(from, spatial=TRUE) ) 
+	}
+)
+
 
 # to RasterLayer
 
@@ -122,19 +137,6 @@ setAs('RasterLayer', 'matrix',
 
 
 	
-# Between Raster and sp vector objects	
-setAs('RasterLayer', 'SpatialPointsDataFrame', 
-	function(from){ return( rasterToPoints(from)) }
-)
-
-setAs('RasterLayer', 'SpatialPolygonsDataFrame', 
-	function(from){ return( rasterToPolygons(from)) }
-)
-
-setAs('Extent', 'SpatialPolygonsDataFrame', 
-	function(from){ return( polygonFromExtent(from)) }
-)
-
 
 # spatstat
 setAs('im', 'RasterLayer', 

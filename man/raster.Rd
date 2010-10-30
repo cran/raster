@@ -18,7 +18,7 @@
 \title{Create a RasterLayer object}
 
 \description{
-Methods to create a RasterLayer object. RasterLayer objects can be created from scratch, a filename, a Extent object, a matrix, or a Raster* or Spatial* object.
+Methods to create a RasterLayer object. RasterLayer objects can be created from scratch, a filename, an Extent object, a matrix, or a Raster* or Spatial* object.
 
 In many cases, e.g. when a RasterLayer is created from a file, it does (initially) not contain any cell (pixel) values, it only has the parameters that describe the RasterLayer.
 
@@ -38,7 +38,7 @@ raster(x, ...)
 \section{Methods}{
 \describe{
 
-1) Create a RasterLayer object from a file
+\bold{1) Create a RasterLayer object from a file}
 
 \code{raster(x, values=FALSE, band=1, ...)}
 
@@ -66,7 +66,7 @@ To read netCDF files, the \code{ncdf} package needs to be available. Only files 
 If \code{x} is a character value, it should be a filename of a file that the raster package can read. Supported file types are the 'native' raster package format and those that can be read via rgdal. See \code{\link[rgdal]{readGDAL}} help for supported file types.
 
 
-2) Create a RasterLayer object from scratch
+\bold{2) Create a RasterLayer object from scratch}
 
 \code{raster(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, crs="+proj=longlat +datum=WGS84")}
 
@@ -82,7 +82,7 @@ If \code{x} is a character value, it should be a filename of a file that the ras
 (item \code{x} is 'missing' in this case)
 
  
-3) Create a RasterLayer object from an Extent object
+\bold{3) Create a RasterLayer object from an Extent object}
   
 \code{raster(x, nrows=10, ncols=10, crs=NA)}
 
@@ -94,8 +94,9 @@ If \code{x} is a character value, it should be a filename of a file that the ras
 }
 
 
+\bold{4) Create a RasterLayer object from a RasterLayer object.} 
 
-4) Create a RasterLayer object from a RasterLayer object. This copies the parameters of a RasterLayer object to a new RasterLayer, 
+This copies the parameters of a RasterLayer object to a new RasterLayer, 
 but does not copy the filename nor the data associated with the original Raster object. 
 
 \code{raster(x, values=NULL)}
@@ -106,7 +107,7 @@ but does not copy the filename nor the data associated with the original Raster 
 }
 
 
-5) Create a RasterLayer object from a RasterStack or RasterBrick object.
+\bold{5) Create a RasterLayer object from a RasterStack or RasterBrick object.}
 
 \code{raster(x, layer=0)}
 
@@ -116,7 +117,7 @@ but does not copy the filename nor the data associated with the original Raster 
 }
 
 
-6) Create a RasterLayer object from a RasterStack, RasterBrick, SpatialPixels* or SpatialGrid* object. 
+\bold{6) Create a RasterLayer object from a RasterStack, RasterBrick, SpatialPixels* or SpatialGrid* object.}
 
 \code{raster(x, layer=0)}
 
@@ -126,7 +127,9 @@ but does not copy the filename nor the data associated with the original Raster 
 }
 
 
-7) Create a RasterLayer object from a matrix. The default extent is set to be between 0 and 1 in the x and y direction but can be changed at creation of the RasterLayer object or later. You can also provide a projection.  
+\bold{7) Create a RasterLayer object from a matrix.} 
+
+The default extent is set to be between 0 and 1 in the x and y direction but can be changed at creation of the RasterLayer object or later. You can also provide a projection.  
 
 \code{function(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA)}
 
@@ -140,7 +143,7 @@ but does not copy the filename nor the data associated with the original Raster 
 }
 
 
-8) Create a RasterLayer object from a 'image' object (a list with vectors x and y and matrix z). 
+\bold{8) Create a RasterLayer object from a 'image' object (a list with vectors x and y and matrix z). }
 
 \code{raster(img, crs)}
 
@@ -153,7 +156,7 @@ but does not copy the filename nor the data associated with the original Raster 
 
 \details{
 New RasterLayer objects normally have no values in memory. 
-If they are created from a file on disk, you can access values with \code{\link[raster]{getValues}), \link[raster]{xyValues}} and related functions.
+If they are created from a file on disk, you can access values with \code{\link[raster]{getValues}, \link[raster]{extract}} and related functions.
 You can assign new values with  \code{\link[raster]{setValues}} and with \code{\link[raster]{replacement}}.
 }
 

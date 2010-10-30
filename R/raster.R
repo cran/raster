@@ -118,7 +118,7 @@ setMethod('raster', signature(x='RasterStack'),
 			layerNames(r) <- layerNames(x)[dindex]
 		} else {
 			r <- raster(extent(x))
-			rowcol(r) <- c(nrow(x), ncol(x))
+			dim(r) <- c(nrow(x), ncol(x))
 			projection(r) <- projection(x)
 		}
 		extent(r) <- extent(x) # perhaps it was changed by user and different on disk
@@ -213,8 +213,8 @@ setMethod('raster', signature(x='SpatialGrid'),
 	function(x, layer=1){
 		r <- raster(extent(x))
 		projection(r) <- x@proj4string
-		rowcol(r) <- c(x@grid@cells.dim[2], x@grid@cells.dim[1])	
-		if (class(x) == 'SpatialGridDataFrame') {
+		dim(r) <- c(x@grid@cells.dim[2], x@grid@cells.dim[1])	
+		if (inherits(x, 'SpatialGridDataFrame')) {
 			if (dim(x@data)[2] > 0) {
 				layer = layer[1]
 				if (is.numeric(layer)) {
@@ -250,7 +250,7 @@ setMethod('raster', signature(x='SpatialGrid'),
 
 setMethod('raster', signature(x='SpatialPixels'), 
 	function(x, layer=1){
-		if (class(x) == 'SpatialPixelsDataFrame') {
+		if (inherits(x, 'SpatialPixelsDataFrame')) {
 			x <- as(x[layer], 'SpatialGridDataFrame')
 			return(raster(x, 1))
 		} else {

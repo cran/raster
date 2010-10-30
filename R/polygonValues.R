@@ -4,15 +4,13 @@
 # Licence GPL v3
 
 
+polygonValues <- function(p, x, ...) {	
+	.warnExtract(6)
+	extract(x, p, ...)
+}
 
-if (!isGeneric("polygonValues")) {
-	setGeneric("polygonValues", function(p, x, ...)
-		standardGeneric("polygonValues"))
-}	
 
-
-setMethod("polygonValues", signature(p='SpatialPolygons', x='Raster'), 
-function(p, x, fun, weights=FALSE, cellnumbers=FALSE, ...) {
+.polygonValues <- function(x, p, fun, weights=FALSE, cellnumbers=FALSE, ...) {
 	spbb <- bbox(p)
 	rsbb <- bbox(x)
 	addres <- max(res(x))
@@ -45,7 +43,7 @@ function(p, x, fun, weights=FALSE, cellnumbers=FALSE, ...) {
 			
 			if (length(xy) > 0)  {  # catch holes or very small polygons
 				if (weights) {
-					value <- xyValues(x, xy)
+					value <- .xyValues(x, xy, ...)
 					if (cellnumbers) {
 						cell <- cellFromXY(x, xy)
 						res[[i]] <- cbind(cell, value, weight)
@@ -53,7 +51,7 @@ function(p, x, fun, weights=FALSE, cellnumbers=FALSE, ...) {
 						res[[i]] <- cbind(value, weight)
 					}
 				} else {
-					res[[i]] <- xyValues(x, xy)
+					res[[i]] <- .xyValues(x, xy, ...)
 				}
 			} else {
 				# do nothing; res[[i]] <- NULL
@@ -68,11 +66,13 @@ function(p, x, fun, weights=FALSE, cellnumbers=FALSE, ...) {
 			res <- unlist(lapply(res, function(x) if (!is.null(x)) {sum(apply(x, 1, prod)) / sum(x[,2])} else NA  ))
 		} else {
 			i <- sapply(res, is.null)
-			j <- vector(length=length(i))
-			j[i] <- NA
 			if (nlayers(x) > 1) {
-				j[!i] <- sapply(res[!i], function(x) apply(x, 2, fun))
+				j <- matrix(ncol=nlayers(x), nrow=length(res))
+				j[!i] <- t(sapply(res[!i], function(x) apply(x, 2, fun)))
+				colnames(j) <- layerNames(x)
 			} else {
+				j <- vector(length=length(i))
+				j[i] <- NA
 				j[!i] <- sapply(res[!i], fun)
 			}
 			res <- j
@@ -80,6 +80,6 @@ function(p, x, fun, weights=FALSE, cellnumbers=FALSE, ...) {
 	}
 	res
 }
-)
+
 
 

@@ -16,6 +16,7 @@
 
 	nc <- as.integer(gdalinfo[["columns"]])
 	nr <- as.integer(gdalinfo[["rows"]])
+	
 	xn <- gdalinfo[["ll.x"]]
 	xn <- round(xn, digits=9)
 
@@ -27,6 +28,19 @@
 	yx <- yn + gdalinfo[["res.y"]] * nr
 	yx <- round(yx, digits=9)
 
+	#isPoint <- FALSE
+	#3v <- attr(gdalinfo, 'mdata')
+	#if (! is.null(v) ) {
+	#	for (i in 1:length(v)) {
+	#		if (v[i] == "AREA_OR_POINT=Area") {
+	#			break
+	#		} else if (v[i] == "AREA_OR_POINT=Point") {
+	#			isPoint <- TRUE
+	#			break
+	#		}
+	#	}
+	#}
+	
 	if (type == 'RasterBrick') {
 		x <- brick(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs="")
 		x@data@nlayers <- as.integer(gdalinfo[["bands"]])
@@ -52,6 +66,19 @@
 		
 	}
 
+	
+	#if (isPoint) {
+	#	xx <- x
+	#	nrow(xx) <- nrow(xx) - 1
+	#	ncol(xx) <- ncol(xx) - 1
+	#	rs <- res(xx)
+	#	xmin(x) <- xmin(x) - 0.5 * rs[1]
+	#	xmax(x) <- xmax(x) + 0.5 * rs[1]
+	#	ymin(x) <- ymin(x) - 0.5 * rs[2]
+	#	ymax(x) <- ymax(x) + 0.5 * rs[2]
+	#}
+	
+	
 	shortname <- gsub(" ", "_", ext(basename(filename), ""))
 	x <- .enforceGoodLayerNames(x, shortname)
 	x@file@name <- filename
@@ -86,6 +113,8 @@
 	dataType(x) <- datatype
 	x@data@min <- minv 
 	x@data@max <- maxv
+	
+
 	
 #oblique.x   0  #oblique.y   0 
 	return(x)

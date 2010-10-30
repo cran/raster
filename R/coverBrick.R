@@ -25,12 +25,12 @@ setMethod('cover', signature(x='RasterStackBrick', y='Raster'),
 	
 	outRaster <- brick(x, values=FALSE)
 
-	if (missing(format)) { format <- .filetype() } 
+	filename <- trim(filename)
+	if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
 	if (missing(overwrite)) { overwrite <- .overwrite() }
 	if (missing(progress)) { progress <- .progress() }
 	if (missing(datatype)) { datatype <- 'FLT4S' }
 	
-	filename <- trim(filename )
 
 	if ( canProcessInMemory(x, sum(nl)+nl[1])) {
 

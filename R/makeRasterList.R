@@ -39,13 +39,13 @@
 		}
 	}
 	for (i in rev(seq(along=x))) {
-		if (! inMemory(x[[i]])  &  ! fromDisk(x[[i]]) ) {
+		if (! hasValues(x[[i]]) ) {
 			if (length(x) > 1 ) {
 				x <- x[[-i]] 
-				warning('RasterLayer with no data ignored')
+				warning('layer with no data ignored')
 			} else if (keepone==FALSE ) {
 				x <- list()
-				warning('RasterLayer with no data ignored')
+				warning('layer with no data ignored')
 			}
 		} 
 	}		

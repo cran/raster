@@ -9,7 +9,7 @@
 \alias{layerNames}
 \alias{layerNames<-}
   
-\title{Layers}
+\title{Number of layers}
 
 \description{
 Get or set layer properties of a RasterStack object

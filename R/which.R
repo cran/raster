@@ -29,7 +29,7 @@ function(x, cells=FALSE, ...) {
 			vv <- vector()
 		} else {
 			filename <- rasterTmpFile()
-			out <- writeStart(out, filename=filename, format=.filetype(), datatype='INT1S', overwrite=TRUE)
+			out <- writeStart(out, filename=filename, format=.filetype(), datatype='INT2S', overwrite=TRUE)
 		}
 		
 		tr <- blockSize(out, n=2)
@@ -42,7 +42,7 @@ function(x, cells=FALSE, ...) {
 				vv <- c(vv, which(v==TRUE) + offs)
 			} else {
 				v <- as.logical(v)
-				v[is.na(v)] <- FALSE
+				v[is.na(v)] <- 0
 				out <- writeValues(out, v, tr$row[i])
 			}
 			pbStep(pb, i)

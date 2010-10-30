@@ -37,7 +37,7 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", old=FALSE, .
 
 	bndbox <- extent(xmin(x), xmx, ymn, ymax(x))
 	extent(outRaster) <- bndbox
-	rowcol(outRaster) <- c(rsteps, csteps) 
+	dim(outRaster) <- c(rsteps, csteps) 
 	
 	
 	thefun <- fun

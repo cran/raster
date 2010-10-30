@@ -14,8 +14,12 @@ function(x, y, fun=sum, filename="", ...){
 setMethod('overlay', signature(x='RasterLayer', y='RasterLayer'), 
 function(x, y, ..., fun, filename="", datatype, format, overwrite, progress){ 
 	if (missing(fun)) { stop('you must provide a function "fun"') }
+
+
+	filename <- trim(filename)
+	if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
+
 	if (missing(datatype)) { datatype <- .datatype(datatype) }
-	if (missing(format)) { format <- .filetype() } 
 	if (missing(overwrite)) { overwrite <- .overwrite() }
 	if (missing(progress)) { progress <- .progress() }
 

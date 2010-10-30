@@ -1,79 +1,65 @@
 # Author: Robert J. Hijmans
 # contact: r.hijmans@gmail.com
 # Date : November 2008
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
 
-
-###   cellValues   ###
-
-if (!isGeneric("cellValues")) {
-	setGeneric("cellValues", function(x, cells, ...)
-		standardGeneric("cellValues")
-	)
+cellValues <- function(x, cells, ...) { 
+	.warnExtract()
+	extract(x, cells, ...)
 }
 
 	
-setMethod("cellValues", signature(x='RasterLayer', cells='vector'), 
-	function(x, cells) { 
-		return(.readCells(x, cells))
-	}
-)
+.cellValues <- function(x, cells, layer, nl) { 
 
-
-
-setMethod("cellValues", signature(x='RasterStack', cells='vector'), 
-	function(x, cells, layer=1, n) { 
-	
-		layer = min( max( round(layer), 1), nlayers(x))
-		if (missing(n)) { n = nlayers(x) }
-		n =  min( max( round(n), 1), nlayers(x)-layer+1 )
-
-		result <- matrix(ncol=n, nrow=length(cells))
-		lyrs <- layer:(layer+n-1)
-		for (i in 1:n) {
-			j = lyrs[i]
-			result[,i] <- .readCells( x@layers[[j]], cells )
-		}
-		if (!(is.null(dim(result)))) {
-			colnames(result) <- layerNames(x)[layer:(layer+n-1)]
-		}
-		result
-	}
-)
-
-
-setMethod("cellValues", signature(x='RasterBrick', cells='vector'), 
-function(x, cells, layer=1, n) {
-
-	layer = min( max( round(layer), 1), nlayers(x))
-	if (missing(n)) { n = nlayers(x) } 
-	n =  min( max( round(n), 1), nlayers(x)-layer+1 )
-	
+	if (inherits(x, 'RasterLayer')) {
+		return( .readCells(x, cells) )
 		
-	if (inMemory(x)) {
-		cells[cells < 1 | cells > ncell(x)] <- NA
-		if (length(na.omit(cells)) == 0) {
-			return(cells)
-		}
-		return( x@data@values[cells, 1:n] )
-	}
+	} else {
+	
+		nlyrs <- nlayers(x)
+		if (missing(layer)) { layer <- 1 }
+		layer <- min( max( round(layer), 1), nlyrs)
+		if (missing(nl)) { nl <- nlayers(x) }
+		nl <-  min( max( round(nl), 1), nlyrs-layer+1 )
+		lyrs <- layer:(layer+nl-1)
+	
+		if (inherits(x, 'RasterStack')) {
 		
-	if (x@file@driver == 'netcdf') {
-		return( .readBrickCellsNetCDF(x, cells, layer, n) )
-	} 
+			result <- matrix(ncol=nl, nrow=length(cells))
+		
+			for (i in 1:nl) {
+				j = lyrs[i]
+				result[,i] <- .readCells( x@layers[[j]], cells )
+			}
+			
+		} else if (inherits(x, 'RasterBrick')) {
+		
+			if (inMemory(x)) {
+				cells[cells < 1 | cells > ncell(x)] <- NA
+				if (length(na.omit(cells)) == 0) {
+					return(cells)
+				}
+				return( x@data@values[cells, lyrs] )
+			} 
+		
+			if (x@file@driver == 'netcdf') {
+				return( .readBrickCellsNetCDF(x, cells, layer, nl) )
+			} 
 
-	result <- matrix(nrow=length(cells), ncol=n)
-	lyrs <- layer:(layer+n-1)
+			result <- matrix(nrow=length(cells), ncol=nl)
+			lyrs <- layer:(layer+nl-1)
 	# this loop needs to be removed!
-	for (i in 1:n) {
-		j <- lyrs[i]
-		r <- raster(x, j)
-		result[,i] <- .readCells(r, cells)
-	}
-	colnames(result) <- layerNames(x)[lyrs]
-	return(result)
+			for (i in 1:nl) {
+				j <- lyrs[i]
+				r <- raster(x, j)
+				result[,i] <- .readCells(r, cells)
+			}
+		}
+		
+		colnames(result) <- layerNames(x)[lyrs]
+		return( result )
+		
+	}	
 }
-)
-
 

@@ -10,7 +10,7 @@ If the exact properties of the RasterLayer are known beforehand, it may be prefe
 }
 
 \usage{
-rasterFromXYZ(xyz, res=c(NA,NA), crs=NA, digits = 6)
+rasterFromXYZ(xyz, res=c(NA,NA), crs=NA, digits=5)
 }
 
 \arguments{

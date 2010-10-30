@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-.bilinearValue <- function(raster, xyCoords, na.rm=FALSE) {
+.bilinearValue <- function(raster, xyCoords, na.rm=FALSE, layer, n) {
 
 	fourCellsFromXY <- function(raster, xy) {
 		cells <- cellFromXY(raster, xy)
@@ -38,15 +38,30 @@
 		#return ( (v[,1]/div)*(x2-x)*(y2-y) + (v[,3]/div)*(x-x1)*(y2-y) + (v[,2]/div)*(x2-x)*(y-y1) + (v[,4]/div)*(x-x1)*(y-y1) )
 	}
 	
-	
 	four <- fourCellsFromXY(raster, xyCoords)
 	xy4 <- matrix(xyFromCell(raster, as.vector(four)), ncol=8)
 	x <- apply(xy4[,1:4,drop=FALSE], 1, range)
 	y <- apply(xy4[,5:8,drop=FALSE], 1, range)
 	xy4 <- cbind(c(x[1,], x[1,], x[2,], x[2,]), c(y[1,], y[2,], y[1,], y[2,]))
 	cells <- cellFromXY(raster, xy4)
-	v <- matrix(cellValues(raster, cells), ncol=4)
-	bilinear(xyCoords[,1], xyCoords[,2], x[1,], x[2,], y[1,], y[2,], v)
+	
+	nls <- nlayers(raster)
+	if (nls == 1) {
+		v <- matrix( .cellValues(raster, cells), ncol=4)
+		bilinear(xyCoords[,1], xyCoords[,2], x[1,], x[2,], y[1,], y[2,], v)
+	} else {
+	
+		if (missing(layer)) { layer <- 1 }
+		if (missing(n)) { n <- (nls-layer+1) }
+		lyrs <- layer:(layer+n-1)
+		res <- matrix(ncol=length(lyrs), nrow=nrow(xyCoords))
+		cv <- .cellValues(raster, cells, layer=layer, n=n)
+		for (i in 1:ncol(cv)) {
+			v <- matrix(cv[, i], ncol=4)
+			res[,i] <- bilinear(xyCoords[,1], xyCoords[,2], x[1,], x[2,], y[1,], y[2,], v)
+		}
+		colnames(res) <- layerNames(raster)[lyrs]
+		return(res)
+	}
 }
-
 

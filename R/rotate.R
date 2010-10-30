@@ -19,6 +19,7 @@ setMethod('rotate', signature(x='Raster'),
 		xmax(r2) <- xmax(r2) - xr
 		xmin(r2) <- xmin(r2) - xr
 		m <- merge(r1, r2, ...)	
+		m@layernames <- layerNames(x)
 		return(m)
 	}
 )

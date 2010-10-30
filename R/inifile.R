@@ -4,7 +4,7 @@
 # Version 0.9
 # Licence GPL v3
 
-readIniFile <- function(filename, token='=', commenttoken=';') {
+readIniFile <- function(filename, token='=', commenttoken=';', aslist=FALSE, case) {
 
 	strSplitOnFirstToken <- function(s, token="=") {
 		pos <- which(strsplit(s, '')[[1]]==token)[1]
@@ -56,8 +56,32 @@ readIniFile <- function(filename, token='=', commenttoken=';') {
 		ini <- cbind("", ini)	
 	}
 		
+	if (!missing(case)) {
+		ini <- case(ini)
+	}	
+		
 	colnames(ini) <- c("section", "name", "value")
+	
+	if (aslist) {
+		ini <- .iniToList(ini)
+	}
 	
 	return(ini)
 }
+
+
+.iniToList <- function(ini) {
+	un <- unique(ini[,1])
+	LST <- list()
+	for (i in 1:length(un)) {
+		sel <- ini[ini[,1] == un[i], 2:3]
+		lst <- as.list(sel[,2])
+		names(lst) <- sel[,1]
+		LST[[i]] <- lst
+	}
+	names(LST) <- un
+	return(LST)
+}
+
+
 

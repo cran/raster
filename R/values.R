@@ -1,32 +1,31 @@
 # Author: Robert J. Hijmans, r.hijmans@gmail.com
-# Date :  June 2008
-# Version 0.9
+# Date :  October 2010
+# Version 1.0
 # Licence GPL v3
 	
-#if (!isGeneric("values")) { 
-#	setGeneric("values", function(x, ...)
-#		standardGeneric("values"))
-#}	
+if (!isGeneric("values")) { 
+	setGeneric("values", function(x, ...)
+		standardGeneric("values"))
+}	
 
-
-#setMethod('values', signature(x='RasterLayer'), 
-#function(x, format='vector', names=FALSE, ...) {
-
-#	if (! inMemory(x) ) {
-#		stop("No data in memory. Use getValues()") 
-#	}
-
-#	warning('"values" is depracated; use getValues instead')
+setMethod('values', signature(x='Raster'), 
+function(x, ...) {
+	getValues(x, ...)
+})
 	
-#	if (format=='matrix') { 
-#		x = matrix(x@data@values, nrow=nrow(x), ncol=ncol(x), byrow=TRUE)
-#		if (names) {
-#			colnames(x) <- 1:ncol(x)
-#			rownames(x) <- 1:nrow(x)
-#		}
-#		return(x)
-#	} else {
-#		return(x@data@values) 
-#	}
-#} )
+	
+if (!isGeneric('values<-')) {
+	setGeneric('values<-', function(x, layer, value)
+		standardGeneric('values<-')) 
+	}	
 
+setMethod('values<-', signature(x='RasterLayer'), 
+function(x, layer=-1, value) {
+	setValues(x, value)
+} )
+	
+setMethod('values<-', signature(x='RasterBrick'), 
+function(x, layer=-1, value) {
+	setValues(x, value, layer=layer)
+} )
+	

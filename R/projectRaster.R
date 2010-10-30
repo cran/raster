@@ -12,6 +12,16 @@ projectExtent <- function(object, crs) {
 	projfrom <- projection(object)
 	projto <- projection(crs)
 	
+#	rs <- res(object)
+#	xmn <- object@extent@xmin - 0.5 * rs[1]
+#	xmx <- object@extent@xmax + 0.5 * rs[1]
+#	ymn <- object@extent@ymin - 0.5 * rs[2]
+#	ymx <- object@extent@ymax + 0.5 * rs[2]
+#	xha <- (xmn + xmx) / 2
+#	yha <- (ymn + ymx) / 2
+#	xy <- matrix(c(xmn, ymx, xha, ymx, xmx, ymx, xmn, yha, xha, yha, xmx, yha, xmn, ymn, xha, ymn, xmx, ymn), ncol=2, byrow=T)
+	
+	
 	xy1 <- xyFromCell(object, cellFromCol(object, 1))
 	xy1[,1] <- xy1[,1] - 0.5 * xres(object)
 	xy1[1,2] <- xy1[1,2] + 0.5 * yres(object)
@@ -21,8 +31,18 @@ projectExtent <- function(object, crs) {
 	xy2[,1] <- xy2[,1] + 0.5 * xres(object)
 	xy2[1,2] <- xy2[1,2] + 0.5 * yres(object)
 	xy2[nrow(object),2] <- xy2[nrow(object),2] + 0.5 * yres(object)
+
+	xy3 <- xyFromCell(object, cellFromRow(object, 1))
+	xy3[,2] <- xy3[,2] + 0.5 * yres(object)
+	xy3[1,1] <- xy3[1,1] - 0.5 * xres(object)
+	xy3[ncol(object),1] <- xy3[ncol(object),1] + 0.5 * xres(object)
 	
-	xy <- rbind(xy1, xy2)
+	xy4 <- xyFromCell(object, cellFromRow(object, nrow(object)))
+	xy4[,2] <- xy4[,2] + 0.5 * yres(object)
+	xy4[1,1] <- xy4[1,1] - 0.5 * xres(object)
+	xy4[ncol(object),1] <- xy4[ncol(object),1] + 0.5 * xres(object)
+	
+	xy <- rbind(xy1, xy2, xy3, xy4)
 	
 	res <- .Call("transform", projfrom, projto, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
 	
@@ -52,32 +72,77 @@ projectExtent <- function(object, crs) {
 }
 
 
-projectRaster <- function(from, to, method="bilinear", filename="", ...)  {
+.computeRes <- function(raster, crs) {
+	x <- xmax(raster) - xmin(raster)
+	y <- ymax(raster) - ymin(raster)
+	res <- res(raster)
+	x1 <- x - 0.5 * res[1]
+	x2 <- x + 0.5 * res[1]
+	y1 <- y - 0.5 * res[2]
+	y2 <- y + 0.5 * res[2]
+	xy <- cbind(c(x1, x2, x, x), c(y, y, y1, y2))
+	pXY <- .Call("transform", projection(raster), crs, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
+	pXY <- cbind(pXY[[1]], pXY[[2]])
+	res <- c((pXY[2,1] - pXY[1,1]), (pXY[4,2] - pXY[3,2]))
+	# abs should not be necessary, but who knows what a projection might do?
+	abs( signif(res, digits=3) )
+}
+
+
+projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ...)  {
+
 	if (! .requireRgdal() ) { stop('rgdal not available') }
+
+	validObject(projection(from, asText=FALSE))
+	projfrom <- projection(from)
+	if (projfrom == "NA") { stop("input projection is NA") }
 	
-	if (! inherits(from, 'RasterStack' )) {
-		if ( ! inMemory(from) & ! fromDisk(from) ) {
-			stop('no vales for "from". Nothing to do.')
+	if (missing(to)) {
+		if (missing(crs)) {
+			stop("'res' provided, but 'crs' argument is missing.")
 		}
+		to <- projectExtent(from, crs)
+		if (missing(res)) {
+			res <- .computeRes(from, crs)
+		}
+		res(to) <- res
+		projto <- projection(to)
+
+		# add some cells to capture curvature
+		e <- extent(to)
+		add <- min(5, min(dim(to)[1:2])/10) * max(res)
+		e@ymin <- e@ymin - add
+		e@ymax <- e@ymax + add
+		if (!is.character(projto)) projto <- projto@projargs
+		if (substr(projto, 1, 13) == "+proj=longlat") {
+			e@xmin <- max(-180, e@xmin)
+			e@xmax <- min(180, e@xmax)
+			e@ymin <- max(-90, e@ymin)
+			e@ymax <- min(90, e@ymax)
+		}
+		to <- expand(to, e)
+	} else {
+		projto <- projection(to)
+		if (projto == "NA") { 
+			if (missing(crs) | is.na(crs) | crs == 'NA' ) {
+				stop("output projection is NA") 
+			} else {
+				projection(to) <- crs
+			}
+		} 
 	}
 
 	validObject(to)
-	validObject(projection(from, asText=FALSE))
 	validObject(projection(to, asText=FALSE))
-	projfrom <- projection(from)
-	projto <- projection(to)
-	if (projfrom == "NA") { stop("input projection is NA") }
-	if (projto == "NA") { stop("output projection is NA") }
+
 	if (identical(projfrom, projto)) {
-		if ( identical( as(from, 'BasicRaster'), as(to, 'BasicRaster') ) ) {
-			warning('nothing to do; returning "from"')
-			return(from)
-		} else {
-			warning('projections are the same, using resample')
-			return( resample(from, to, method=method, filename=filename, ...  ) ) 
-		}
+		stop('projections of "from" and "to" are the same')
 	}	
-	
+
+	if ( ! hasValues(from) ) {
+		return(to)
+	}
+
 	pbb <- projectExtent(to, projection(from))
 	bb <- intersectExtent(pbb, from)
 	validObject(bb)
@@ -114,7 +179,7 @@ projectRaster <- function(from, to, method="bilinear", filename="", ...)  {
 		unProjXY <- .Call("transform", projto, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
 		unProjXY <- cbind(unProjXY[[1]], unProjXY[[2]])
 		
-		vals <- xyValues(from, unProjXY, method=method)
+		vals <- .xyValues(from, unProjXY, method=method)
 		
 		if (inMemory) {
 			start <- cellFromRowCol(to, tr$row[i], 1)

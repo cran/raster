@@ -15,12 +15,12 @@ function(x, row, nrows) {
 		if (i==1) {
 			v <- getValues(x@layers[[i]], row, nrows)
 			res <- matrix(ncol=nlayers(x), nrow=length(v))
-			colnames(res) <- layerNames(x)
 			res[,1] <- v
 		} else {
 			res[,i] <- getValues(x@layers[[i]], row, nrows)
 		}
 	}
+	colnames(res) <- layerNames(x)
 	res
 }
 )
@@ -73,9 +73,9 @@ function(x, row, nrows) {
 	if (!  inMemory(x) ) {
 		readrow <- TRUE
 	} else if ( inMemory(x) ){
-		res <- x@data@values[startcell:endcell,]
+		res <- x@data@values[startcell:endcell, ,drop=FALSE]
 	} else {
-		stop('something is wrong with the RasterLayer dataContent')
+		stop('something is wrong with this RasterBrick')
 	}
 	if (readrow) {
 		res <- .readRasterBrickValues(x, row, nrows)

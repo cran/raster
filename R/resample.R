@@ -24,6 +24,11 @@ resample <- function(from, to, method, filename="", ...)  {
 		to <- brick(to, values=FALSE)
 	}
 
+	resdif <- max(res(to) / res(from))
+	if (resdif > 3) {
+		warning('you are resampling to a raster with a much larger cell size, perhaps you should use "aggregate" first')
+	}
+	
 	e = intersectExtent(from, to, validate=TRUE)
 	
 	if (is.null(filename)){filename <- ""}
@@ -49,7 +54,7 @@ resample <- function(from, to, method, filename="", ...)  {
 		r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
 		xy <- xyFromCell(to, cellFromRowCol(to, tr$row[i], 1) : cellFromRowCol(to, tr$row[i]+tr$nrows[i]-1, ncol(to)) ) 
 
-		vals <- xyValues(from, xy, method=method)
+		vals <- .xyValues(from, xy, method=method)
 
 		if (inMemory) {
 			start <- cellFromRowCol(to, tr$row[i], 1)

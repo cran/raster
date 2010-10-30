@@ -15,9 +15,12 @@ Temporary files are automatically removed at the start of each session. During a
 \usage{
 rasterTmpFile()
 showTmpFiles()
-removeTmpFiles()
+removeTmpFiles(h=24)
 }
 
+\arguments{
+  \item{h}{Numeric. The minimum age of the files in number of hours (younger files are not deleted)}
+}
 
 \details{
 The default path where the temporary files are stored is returned by \code{showOptions()}; you can change it (for the current session) with \link[raster]{setOptions}. 

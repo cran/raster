@@ -39,7 +39,8 @@ function(x, y, filename='', value=NA, ...) {
 	} else {
 		outRaster <- brick(x, values=FALSE)
 	}
-	
+	outRaster@layernames <- layerNames(x)
+
 	bndbox <- extent(xmn, xmx, ymn, ymx)
 	outRaster <- setExtent(outRaster, bndbox, keepres=TRUE)
 
