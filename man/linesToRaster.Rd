@@ -9,16 +9,18 @@ Lines to raster conversion. Lines are rasterized by assining values to cells tha
 }
 
 \usage{
-linesToRaster(lns, raster, field=0, filename="", updateRaster=FALSE, updateValue="NA", ...) 
+linesToRaster(lns, raster, field=0, overlap='last', mask=FALSE, updateRaster=FALSE, updateValue="NA", filename="", ...)
 }
 
 \arguments{
   \item{lns}{\code{SpatialLines} or a \code{SpatialLinesDataFrame} object (sp package), or an object inheriting from \code{SpatialLines}}
   \item{raster}{RasterLayer object}
   \item{field}{The index of the column in \code{lns} (if it is a \code{SpatialLinesDataFrame}) to be transfered to the \code{RasterLayer} (or the name of that field)}
-  \item{filename}{Character. output filename }
+  \item{overlap}{Character. Determines what values to assign to cells with overlapping lines. Choose from \code{'first', 'last', 'sum', 'min'}, or \code{'max'}}
+  \item{mask}{Logical. If \code{TRUE} the values of the input RasterLayer are 'masked' by the lines. I.e. cells that are touched by the lines retain their values, the other cells become \code{NA} }
   \item{updateRaster}{Logical. If \code{TRUE} the values of the input RasterLayer are updated where the polygons overlap cells  }
-  \item{updateValue}{Character. Select cells to be updated (if \code{updateRaster == TRUE}) by their current values. Either 'all', 'NA', '!NA', or 'zero' } 
+  \item{updateValue}{Character. Select areas to be updated with the lines values (if \code{updateRaster == TRUE}) by the current cell values. Either 'all', 'NA', '!NA', or 'zero' } 
+  \item{filename}{Character. output filename }
   \item{...}{Additional arguments. See Details.}  
 }
 
@@ -39,16 +41,26 @@ The following additional arguments can be passed, to replace default values for 
 \seealso{ \code{\link[raster]{polygonsToRaster}}, \code{\link[raster]{pointsToRaster}}}
 
 \examples{
-cds1 <- rbind(c(-50,0), c(0,60), c(40,5), c(15,-45), c(-10,-25))
-cds2 <- rbind(c(80,20), c(140,60), c(160,0), c(140,-55))
-cds3 <- rbind(c(-180,-20), c(-140,-60), c(-60,-20), c(-140,55))
+
+cds1 <- rbind(c(-180,-20), c(-140,55), c(10, 0), c(-140,-60))
+cds2 <- rbind(c(-10,0), c(140,60), c(160,0), c(140,-55))
+cds3 <- rbind(c(-125,0), c(0,60), c(40,5), c(15,-45))
 
 lines <- SpatialLines(list(Lines(list(Line(cds1)), "1"), Lines(list(Line(cds2)), "2"), Lines(list(Line(cds3)), "3") ))
 
 r <- raster(ncols=90, nrows=45)
 r <- linesToRaster(lines, r)
-#plot(r)
-#plot(lines, add=TRUE)
+\dontrun{
+plot(r)
+plot(lines, add=TRUE)
+
+r <- linesToRaster(lines, r, overlap='count')
+plot(r)
+
+r[] = 1:ncell(r)
+r <- linesToRaster(lines, r, mask=TRUE)
+plot(r)
+}
 }
 
 \keyword{ spatial }

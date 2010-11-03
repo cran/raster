@@ -43,7 +43,7 @@ b <- brick(system.file("external/rlogo.grd", package="raster"))
 b
 nlayers(b)
 layerNames(b)
-cellValues(b, 870)
+extract(b, 870)
 }
 
 \keyword{methods}

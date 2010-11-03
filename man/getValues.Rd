@@ -1,4 +1,6 @@
 \name{getValues}
+\alias{values}
+\alias{values,Raster-method}
 \alias{getValues}
 \alias{getValues,RasterLayer,missing,missing-method}
 \alias{getValues,RasterStack,missing,missing-method}
@@ -14,11 +16,12 @@
 
 \description{
 getValues returns all values or a row of values for a Raster* object. It will take them from memory if available, else it will read them from disk. 
-This is the prefered function to get either all values, or a subset of rows from a RasterLayer (it is safer then read* functions, which will fail if there is no file).
+This is the prefered function to get either all values, or a subset of rows from a RasterLayer (it is safer then read* functions, which will fail if there is no file). Function values is a shorthand version of getValues that might eventually replace getValues.
 }
 
 \usage{
 getValues(x, row, nrows, ...)
+values(x, ...)
 }
 
 \arguments{

@@ -8,7 +8,7 @@
 \title{Spatial model predictions}
 
 \description{
-Make a RasterLayer with a prediction based on a a fitted model object. Provide a Raster* with the independent variables. The layerNames in the RasterStack should exactely match those expected by the model. This will be the case if the RasterStack was used (via \code{xyValues}) to obtain the values to fit the model (see the example). Any type of model (e.g. glm. gam, randomforest) for which a predict method has been implemented can be used. 
+Make a RasterLayer with a prediction based on a a fitted model object. Provide a Raster* with the independent variables. The layerNames in the RasterStack should exactely match those expected by the model. This will be the case if the RasterStack was used (via \code{extract}) to obtain the values to fit the model (see the example). Any type of model (e.g. glm. gam, randomforest) for which a predict method has been implemented can be used. 
 }
 
 \usage{
@@ -82,7 +82,7 @@ background <- cbind(runif(250)*(xmax(logo)-xmin(logo))+xmin(logo), runif(250)*(y
 
 #extract values for points from stack
 xy <- rbind(cbind(1, presence), cbind(0, background))
-v <- cbind(xy[,1], xyValues(logo, xy[,2:3]))
+v <- cbind(xy[,1], extract(logo, xy[,2:3]))
 colnames(v)[1] <- 'presback'
 
 #build a model, here an example with glm 

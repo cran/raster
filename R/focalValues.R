@@ -8,26 +8,25 @@
 #	if (global) {}
 	
 
-if (!isGeneric("focalValues")) {
-	setGeneric("focalValues", function(x, ...)
-		standardGeneric("focalValues"))
-}	
+focalValues <- function(x, ...) {
+	.warnExtract(6)
+	.focalValues(x, ...)
+}
+	
+	
+.focalValues <- function(x, row, ngb=3, layer, nl, ...) {
 
+	if (missing(row)) stop('You must provide a row number "row=" argument')
 
-setMethod("focalValues", signature(x='RasterLayer'), 
-function(x, r, ngb=3, ...) {
-
-	if (missing(r)) stop('You must provide a row number "r=" argument')
-
-	if (!(validRow(x, r))) {	stop(paste(row, 'is not a valid rownumber')) }
+	if (!(validRow(x, row))) {	stop(paste(row, 'is not a valid rownumber')) }
 
 	ngb <- .checkngb(ngb)
-	r1 = r - floor(ngb[1]/2)
+	
+	r1 = row - floor(ngb[1]/2)
 	r2 = r1 + ngb[1] - 1
 	r1 = max(1, r1)
 	r2 = min(nrow(x), r2)
 	nrows = r2 - r1 + 1
-	ngbdata = matrix(getValuesBlock(x, r1, nrows), ncol=ncol(x))
 	
 	col1 = floor(ngb[2]/2)
 	col2 = ngb[2]-(col1+1)
@@ -48,9 +47,33 @@ function(x, r, ngb=3, ...) {
 	id = cbind(rep(1:cols, each=nrow(idx)), id)
 	id = subset(id, id[,2]>0)
 
-	v = cbind( id[,1], as.vector(ngbdata)[id[,2]])
-	colnames(v) = c('col', 'value')
+	nls <- nlayers(x)
+	
+	if (nls == 1) {
+		ngbdata = matrix(getValuesBlock(x, r1, nrows), ncol=ncol(x))
+		v = cbind( id[,1], as.vector(ngbdata)[id[,2]] )
+		colnames(v) <- c('col', 'value')
+		
+	} else {
+	
+		nlyrs <- nls
+		if (missing(layer)) { layer <- 1 } 
+		if (missing(nl)) { nl <- nlyrs } 
+		layer <- min(max(1, round(layer)), nlyrs)
+		nl <- min( max(1, round(nl)), nlyrs-layer+1 )
+		lyrs <- layer:(layer+nl-1)
+		
+		alldata <- getValuesBlock(x, r1, nrows)
+		v <- matrix(nrow=nrow(id), ncol=nl+1)
+		colnames(v) <- c('col', layerNames(x)[lyrs])
+		v[,1] <- id[,1]
+		for (i in 1:nl) {
+			j <- lyrs[i]
+			ngbdata <- matrix( alldata[,j], ncol=ncol(x) )
+			v[,i+1] <- as.vector(ngbdata)[id[,2]] 
+		}
+	}
 	return(v)
 }
-)
+
 

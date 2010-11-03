@@ -47,7 +47,7 @@ function(x, fact, filename='', ...) {
 		outRaster <- brick(x, values=FALSE)
 	}
 	
-	rowcol(outRaster) <- c(nrow(x) * yfact, ncol(x) * xfact) 
+	dim(outRaster) <- c(nrow(x) * yfact, ncol(x) * xfact) 
 
 	
 	if (! inherits(x, 'RasterStack')) {

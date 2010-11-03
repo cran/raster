@@ -101,8 +101,9 @@ RasterLayer, RasterStack, and RasterBrick objects are, as a group, referred to a
     \code{\link{overlay}} \tab Computations on multiple RasterLayer objects \cr
     \code{\link{cover}} \tab First layer covers second layer except where the first layer is NA \cr
     \code{\link{mask}} \tab Use values from first Raster except where cells of the mask Raster are NA (these become NA)\cr
+    \code{\link{cut}} \tab Reclassify values using ranges \cr
+    \code{\link{subs}} \tab Reclassify values using a 'is-becomes' matrix \cr	
     \code{\link{reclass}} \tab Reclassify using a 'from-to-becomes' matrix \cr
-    \code{\link{subs}} \tab Substitute values using a 'is-becomes' matrix \cr	
     \code{\link{init}} \tab Initialize cells with new values \cr	
   }
 }
@@ -171,11 +172,7 @@ You can coerce Raster* objects to Spatial* objects using \code{as}, as in \code{
   \tabular{ll}{
     \code{\link{getValues}} \tab Get all cell values (will fail with very large rasters and limited computer memory), or a row of values (safer) \cr
     \code{\link{getValuesBlock}} \tab Get values for a block (a rectangular area defined by start and end row and column \cr
-    \code{\link{xyValues}} \tab Use points (optionally with a buffer) to extract cell values \cr
-    \code{\link{cellValues}} \tab Use cell numbers to extract cell values \cr
-    \code{\link{lineValues}} \tab Use a SpatialLines* object to extract cell values \cr
-    \code{\link{polygonValues}} \tab Use a SpatialPolygons* object to extract cell values \cr
-    \code{\link{focalValues}} \tab Extract values for focal cells\cr
+    \code{\link{extract}} \tab Use cell numbers, points, lines, polygons, or an extent, to extract values from a Raster* object, or extract focal values\cr
     \code{\link{sampleRandom}} \tab Random sample \cr
     \code{\link{sampleRegular}} \tab Regular sample \cr
     \code{\link{minValue}} \tab The minimum value of the cells of a Raster* object (not always known) \cr
@@ -216,7 +213,6 @@ Other plots
     \code{\link{pairs}} \tab Pairs plot for layers in a RasterStack or RasterBrick \cr
   }
 }
-
 
 \section{XI. Getting and setting Raster* dimensions }{
 
@@ -322,7 +318,7 @@ It is also possible to use Arithmetic functions with Extent objects (but these w
     \code{\link{getData}} \tab Download and geographic data\cr
     \code{\link{pointDistance}} \tab Distance between points \cr
     \code{\link{readIniFile}} \tab Read a (windows) 'ini' file \cr
-    \code{\link{writeRasterHdr}} \tab Write header file for some raster formats \cr
+    \code{\link{writeHdr}} \tab Write header file for a number of raster formats \cr
     \code{\link{trim}} \tab Remove leading and trainling blanks from a character string \cr
     \code{\link{ext}} \tab Get or set the extentsion of a filename \cr
     \code{\link{cv}} \tab Coefficient of variation  \cr
@@ -351,9 +347,7 @@ It is also possible to use Arithmetic functions with Extent objects (but these w
 }
 
 \section{Acknowledgements}{
-We thank the following persons for suggestions to improve the package: 
-Roger Bivand, Jonathan Greenberg, Herry Herry, Paul Hiemstra, Mayeul Kauffmann, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Agustin Lobo, 
-Matteo Mattiuzzi, Steven Mosher, Edzer Pebesma, Jon Olav Skoien, and Kevin Ummel.
+We are grateful for the extensive suggestions made by Jonathan Greenberg and Steven Mosher. We also thank the following persons for suggestions to improve the package: Roger Bivand, Herry Herry, Paul Hiemstra, Mayeul Kauffmann, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Agustin Lobo, Matteo Mattiuzzi, Edzer Pebesma, Jon Olav Skoien, and Kevin Ummel.
 }
 
 \keyword{package}

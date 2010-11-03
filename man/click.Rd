@@ -4,12 +4,12 @@
 \title{ Click }
 
 \description{
-  Click on a map (plot) to get values of a Raster* object at a location; and optionally the coordinates of the location. 
+  Click on a map (plot) to get values of a Raster* object at a location; and optionally the coordinates and cell number of the location. 
   Multiple locations can be clicked on by specifying \code{n=}. 
 }
 
 \usage{
-click(object, n=1, id=FALSE, xy=FALSE, type = "n", ...)
+click(object, n=1, id=FALSE, xy=FALSE, cell=FALSE, type = "n", ...)
 }
 
 
@@ -18,6 +18,7 @@ click(object, n=1, id=FALSE, xy=FALSE, type = "n", ...)
   \item{n}{number of clicks on the map}
   \item{id}{Logical. If \code{TRUE}, a numeric ID is shown on the map that corresponds to the row number of the output}
   \item{xy}{Logical. If \code{TRUE}, xy coordinates are included in the output}
+  \item{cell}{Logical. If \code{TRUE}, cell numbers are included in the output}
   \item{type}{One of "n", "p", "l" or "o". If "p" or "o" the points are plotted; if "l" or "o" they are joined by lines. See ?locator}
   \item{...}{additional graphics parameters used if type != "n" for plotting the locations. See ?locator}   
  }

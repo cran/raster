@@ -15,8 +15,9 @@
     if (x == 'INT2S') return(-32768)
     if (x == 'INT2U') return(65535)
     if (x == 'INT1U') return(-1)
-    if (x == 'INT1S') return(-129)
+    if (x == 'INT1S') return(-127)
 	if (x == 'INT8S') return(-9223372036854775808)
+	stop('cannot find matching nodata value')
 }
 
 .GDALnodatavalue <- function(x){
@@ -24,8 +25,10 @@
 	if (x == 'Float64') return(-1.7E308)
 	if (x == 'Int32') return(-2147483647)
     if (x == 'Int16') return(-32768)
+    if (x == 'Int8') return(-128)
     if (x == 'UInt16') return(65535)
     if (x == 'Byte') return(-1)
+	stop('cannot find matching nodata value')
 }
 
 .getGDALtransient <- function(raster, filename, options, NAvalue, ...)  {
@@ -34,7 +37,7 @@
 	overwrite <- .overwrite(...)
 	gdalfiletype <- .filetype(...)
 
-	raster:::.isSupportedFormat(gdalfiletype)
+	.isSupportedFormat(gdalfiletype)
 	
 	if (filename == "") {	
 		stop('provide a filename')	

@@ -7,7 +7,7 @@
 
 
 
-click <- function(object, n=1, id=FALSE, xy=FALSE, type="n", ...) {
+click <- function(object, n=1, id=FALSE, xy=FALSE, cell=FALSE, type="n", ...) {
 	loc <- locator(n, type, ...)
 	xyCoords <- cbind(loc$x, loc$y)
 	if (missing(object)) { return(xyCoords) }
@@ -23,7 +23,7 @@ click <- function(object, n=1, id=FALSE, xy=FALSE, type="n", ...) {
 		}
 	}
 
-	value <- cellValues(object, cells)
+	value <- .cellValues(object, cells)
 
 	if (inherits(object, 'RasterStack') | inherits(object, 'RasterBrick')) {
 		value <- t(matrix(value, nrow=n))
@@ -40,7 +40,9 @@ click <- function(object, n=1, id=FALSE, xy=FALSE, type="n", ...) {
 	if (xy) { 
 		value <- rbind(t(xyCoords), value)
 	} 
+	if (cell) {
+		value <- rbind(cells, value)
+	}
 	colnames(value) <- 1:n
 	return(t(value))
-	
 }

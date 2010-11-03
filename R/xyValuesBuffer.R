@@ -5,8 +5,8 @@
 # Licence GPL v3
 
 
-.xyvBuf <- function(object, xy, buffer, fun=NULL, na.rm=TRUE) { 
-	
+.xyvBuf <- function(object, xy, buffer, fun=NULL, na.rm=TRUE, layer, n) { 
+
 	buffer <- abs(buffer)
 	if (length(buffer == 1)) {
 		buffer <- rep(buffer, times=nrow(xy))
@@ -83,6 +83,16 @@
 			}
 		}
 	}
+
+	nls <- nlayers(object)
+	nms <- layerNames(object)
+	if (nls > 1) {
+		if (layer > 1 | n < nls) {
+			lyrs <- layer:(layer+n-1) 
+			nms <- nms[ lyrs ]
+			cv <- lapply(cv, function(x) x[, lyrs ])
+		}
+	}
 	
 	if (! is.null(fun)) {
 		if (na.rm) {
@@ -98,9 +108,10 @@
 		if (inherits(object, 'RasterLayer')) {
 			cv <- unlist(lapply(cv, fun2))
 		} else {
+			np <- length(cv)
 			cv <- lapply(cv, function(x) {apply(x,2,fun2)})
-			cv <- matrix(unlist(cv), ncol=nlayers(object), byrow=TRUE)
-			colnames(cv) <- layerNames(object)
+			cv <- matrix(unlist(cv), nrow=np, byrow=TRUE)
+			colnames(cv) <- nms
 		}
 	}
 	return(cv)

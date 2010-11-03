@@ -55,7 +55,7 @@
 	filecon <- file(fnamevals, "wb")
 	writeBin(raster@data@values , filecon, size = dsize ) 
 	close(filecon)
-	writeRasterHdr(raster, filetype) 
+	writeHdr(raster, filetype) 
 
 	return(raster(filename, native=TRUE))
 }

@@ -11,27 +11,6 @@ if (!isGeneric("crop")) {
 }	
 
 
-setMethod('crop', signature(x='RasterStack', y='ANY'), 
-function(x, y, filename='', ...) {
-	
-	if (nlayers(x) == 0) {
-		return(stack(crop(raster(x), y, filename='')))
-	}
-
-	for (i in 1:nlayers(x)) {
-		x@layers[[i]] <- crop(x@layers[[i]], y=y, filename='', ...)
-	}
-	x@extent <- x@layers[[1]]@extent
-	x@nrows <- x@layers[[1]]@nrows
-	x@ncols <- x@layers[[1]]@ncols
-	x@filename <- ''
-	return(x)
-	
-}
-)
-
-
-
 setMethod('crop', signature(x='Raster', y='ANY'), 
 function(x, y, filename='', datatype=dataType(x), ...) {
 	filename <- trim(filename)
@@ -45,12 +24,13 @@ function(x, y, filename='', datatype=dataType(x), ...) {
 	e <- intersectExtent(x, y)
 	e <- alignExtent(e, x)
 	
-	if (inherits(x, 'RasterBrick')) {
-		outRaster <- brick(x, values=FALSE)	
-	} else {
+	if (inherits(x, 'RasterLayer')) {
 		outRaster <- raster(x)
+	} else {
+		outRaster <- brick(x, values=FALSE)	
 	}
 	outRaster <- setExtent(outRaster, e, keepres=TRUE)
+	outRaster@layernames <- layerNames(x)
 	
 	if (! inMemory(x)  &  ! fromDisk(x) ) {
 		return(outRaster)

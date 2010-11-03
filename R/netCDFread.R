@@ -64,13 +64,13 @@
 	
 	if (nlayers(x) > 1) {
 		dims = dim(d)
-		values <- matrix(nrow=nrows*ncols, ncol=n)
+		v <- matrix(nrow=nrows*ncols, ncol=n)
 
 		if (length(dims) == 3) {
 			if ( x@file@toptobottom ) { 
 				for (i in 1:n) {
 					x <- d[,,i]
-					values[,i] <- as.vector( x[, ncol(x):1] )
+					v[,i] <- as.vector( x[, ncol(x):1] )
 				}
 			} else {
 				dim(d) = c(dims[1] * dims[2], dims[3])
@@ -79,36 +79,36 @@
 			}
 		} else if (length(dims) == 2) {
 			if (nrows==1) {
-				values <- d
+				v <- d
 			} else if (n==1) {
 				if ( x@file@toptobottom ) { 
-					values[] <- as.vector(d[,ncol(d):1])
+					v[] <- as.vector(d[,ncol(d):1])
 				} else {
-					values[] <- as.vector(d)				
+					v[] <- as.vector(d)				
 				}
 			} else if (ncols==1) {
 				if ( x@file@toptobottom ) { 
 					d <- d[nrow(d):1,]
 				}
-				values <- d
+				v <- d
 			}
 		} else {
 			if ( x@file@toptobottom & nrows > 1) {
 				d <- rev(d)
 			}
-			values[] <- d
+			v[] <- d
 		}
 	} else {
 		if ( x@file@toptobottom ) { 
-			values <- as.vector( d[, ncol(d):1] )
+			v <- as.vector( d[, ncol(d):1] )
 		} else {
-			values <- as.vector(d)
+			v <- as.vector(d)
 		}
-		values = matrix(values, ncol=1)
+		v = matrix(v, ncol=1)
 	}
 	
-	values[values == navalue] <- NA
-	return(values)
+	v[v == navalue] <- NA
+	return(v)
 }
 
 

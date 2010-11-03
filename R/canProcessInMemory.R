@@ -7,6 +7,7 @@
 canProcessInMemory <- function(raster, n=4) {
 
 #	setOptions(overwrite=TRUE)
+#	setOptions(format='GTiff')
 #	return(FALSE)
 	
 	if (.toDisk()) { return(FALSE) } 
@@ -17,8 +18,6 @@ canProcessInMemory <- function(raster, n=4) {
 	if ((cells * n) > .maxmemory()) {
 		return(FALSE) 
 	}
-	
-
 	
 	
 #	if (substr( R.Version()$platform, 1, 7) == "i386-pc" ) {

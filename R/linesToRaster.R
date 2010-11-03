@@ -102,15 +102,29 @@
 }
 
 
-linesToRaster <- function(lns, raster, field=0, filename="", updateRaster=FALSE, updateValue="NA", ...) {
+linesToRaster <- function(lns, raster, field=0, overlap='last', mask=FALSE, updateRaster=FALSE, updateValue="NA", filename="", ...) {
 
 	filename <- trim(filename)
+
+	if (mask & updateRaster) { 
+		stop('use either "mask" OR "updateRaster"')
+	}
+	if (mask) { 
+		oldraster <- raster 
+	}
 	if (updateRaster) {
 		oldraster <- raster 
 		if (!(updateValue == 'NA' | updateValue == '!NA' | updateValue == 'all' | updateValue == 'zero')) {
 			stop('updateValue should be either "all", "NA", "!NA", or "zero"')
 		}
 	}
+
+	if (!(overlap %in% c('first', 'last', 'sum', 'min', 'max', 'count'))) {
+		stop('invalid value for overlap')
+	}
+	
+
+
 	raster <- raster(raster)
 	if (projection(lns) != "NA") {
 		projection(raster) = projection(lns)
@@ -145,13 +159,34 @@ linesToRaster <- function(lns, raster, field=0, filename="", updateRaster=FALSE,
 	lxmin <- min(spbb[1,1], rsbb[1,1]) - 0.5 * xres(raster)
 	lxmax <- max(spbb[1,2], rsbb[1,2]) + 0.5 * xres(raster)
 
-	if (class(lns) == 'SpatialLines' | field == 0) {
+	if (! is.numeric(field) ) {
+		field <- which(colnames(lns@data) == field)[1]
+		if (is.na(field)) {
+			stop('field does not exist')
+		}
+	} 
+	
+	if (length(field) > 1) { 
+		if (length(field) == nline) {
+			putvals <- field
+		} else {
+			stop('field should be a single value or equal the number of polygons') 
+		}	
+	} else if (inherits(lns, 'SpatialLines') & overlap == 'sum') {
+		putvals <- rep(1, nline)
+	} else if ( field < 0) {
+		putvals <- rep(1, nline)
+	} else if ( field == 0 | class(lns) == 'SpatialLines') {
 		putvals <- as.integer(1:nline)
 	} else {
 		putvals <- as.vector(lns@data[,field])
+		if (class(putvals) == 'factor') {
+			warning('selected field is factor type')
+			putvals <- as.numeric(as.character(putvals))
+		}
 		if (class(putvals) == 'character') {
-			stop('selected field is character type')
-			# to do check factors
+			warning('selected field is character type')
+			putvals <- as.numeric(putvals)
 		}
 	}
 		
@@ -161,11 +196,10 @@ linesToRaster <- function(lns, raster, field=0, filename="", updateRaster=FALSE,
 	} else {
 		raster <- writeStart(raster, filename=filename, ...)
 	}
-	
+	rv1 <- rep(NA, ncol(raster))
 	pb <- pbCreate(nrow(raster), type=.progress(...))
 	for (r in 1:nrow(raster)) {
-		rv <- rep(NA, ncol(raster))
-		
+		rv <- rv1
 		ly <- yFromRow(raster, r)
 		line1 <- rbind(c(lxmin, ly + 0.5*yres(raster)), c(lxmax,ly + 0.5*yres(raster)))
 		line2 <- rbind(c(lxmin, ly - 0.5*yres(raster)), c(lxmax,ly - 0.5*yres(raster)))
@@ -181,14 +215,43 @@ linesToRaster <- function(lns, raster, field=0, filename="", updateRaster=FALSE,
 					} else {
 						aline <- lns@lines[[i]]@Lines[[j]]@coords
 						colnrs <- .getCols(raster, r, aline, line1, line2)
-						if ( length(colnrs) > 0 ) {			
-							rv[colnrs] <- putvals[i]
+						if ( length(colnrs) > 0 ) {	
+							rvtmp <- rv1
+							rvtmp[colnrs] <- putvals[i]
+							
+							if (mask) {
+								rv[!is.na(rvtmp)] <- rvtmp[!is.na(rvtmp)]
+							} else if (overlap=='last') {
+								rv[!is.na(rvtmp)] <- rvtmp[!is.na(rvtmp)]
+							} else if (overlap=='first') {
+								rv[is.na(rv)] <- rvtmp[is.na(rv)]
+							} else if (overlap=='sum') {
+								rv[!is.na(rv) & !is.na(rvtmp)] <- rv[!is.na(rv) & !is.na(rvtmp)] + rvtmp[!is.na(rv) & !is.na(rvtmp)] 
+								rv[is.na(rv)] <- rvtmp[is.na(rv)]
+							} else if (overlap=='min') {
+								rv[!is.na(rv) & !is.na(rvtmp)] <- pmin(rv[!is.na(rv) & !is.na(rvtmp)], rvtmp[!is.na(rv) & !is.na(rvtmp)])
+								rv[is.na(rv)] <- rvtmp[is.na(rv)]
+							} else if (overlap=='max') {
+								rv[!is.na(rv) & !is.na(rvtmp)] <- pmax(rv[!is.na(rv) & !is.na(rvtmp)], rvtmp[!is.na(rv) & !is.na(rvtmp)])
+								rv[is.na(rv)] <- rvtmp[is.na(rv)]
+							} else if (overlap=='count') {
+								rvtmp[!is.na(rvtmp)]  <- 1
+								rv[!is.na(rv) & !is.na(rvtmp)] <- rv[!is.na(rv) & !is.na(rvtmp)] + rvtmp[!is.na(rv) & !is.na(rvtmp)] 
+								rv[is.na(rv)] <- rvtmp[is.na(rv)]				
+							}							
 						}
 					}
 				}
 			}
 		}
-		if (updateRaster) {
+		
+		
+		if (mask) {
+			oldvals <- getValues(oldraster, r)
+			ind <- which(is.na(rv))
+			oldvals[ind] <- NA
+			rv <- oldvals
+		} else if (updateRaster) {
 			oldvals <- getValues(oldraster, r)
 			if (updateValue == "all") {
 				ind <- which(!is.na(rv))
@@ -207,7 +270,7 @@ linesToRaster <- function(lns, raster, field=0, filename="", updateRaster=FALSE,
 		if (filename == "") {
 			v[,r] <- rv
 		} else {
-			raster <- writeValues(raster, rv)
+			raster <- writeValues(raster, rv, r)
 		}
 		
 		pbStep(pb, r)

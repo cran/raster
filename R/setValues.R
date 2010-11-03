@@ -3,17 +3,18 @@
 # Version 0.9
 # Licence GPL v3
 
+
 if (!isGeneric('setValues')) {
-	setGeneric('setValues', function(object, values, layer=-1)
+	setGeneric('setValues', function(x, values, layer=-1)
 		standardGeneric('setValues')) 
 	}	
 
 	
-setMethod('setValues', signature(object='RasterLayer'), 
-function(object, values) {
+setMethod('setValues', signature(x='RasterLayer'), 
+function(x, values) {
 
 	if (is.matrix(values)) { 
-		if (ncol(values) == object@ncols & nrow(values) == object@nrows) {
+		if (ncol(values) == x@ncols & nrow(values) == x@nrows) {
 			values <- as.vector(t(values)) 
 		} else if (ncol(values)==1 | nrow(values)==1) {
 			values <- as.vector(values)
@@ -28,31 +29,31 @@ function(object, values) {
 	
 
 	if (length(values) == 1) {	
-		values <- rep(values, ncell(object))
+		values <- rep(values, ncell(x))
 	}
 
-	if (length(values) == ncell(object)) { 
-		object@data@inmemory <- TRUE
-		object@data@fromdisk <- FALSE
-		object@file@name = ""
+	if (length(values) == ncell(x)) { 
+		x@data@inmemory <- TRUE
+		x@data@fromdisk <- FALSE
+		x@file@name = ""
 
-		object@data@values <- values
-		object <- setMinMax(object)
-		return(object)
+		x@data@values <- values
+		x <- setMinMax(x)
+		return(x)
 		
-	} else if (length(values) == ncol(object)) {
+	} else if (length(values) == ncol(x)) {
 		stop('setValues no longer supports setting rows of values')
 
 	} else {
-		stop("length(values) is not equal to ncell(object), or to 1") 
+		stop("length(values) is not equal to ncell(x), or to 1") 
 	}
  }
 )
 	
 
 
-setMethod('setValues', signature(object='RasterBrick'), 
-  function(object, values, layer=-1) {
+setMethod('setValues', signature(x='RasterBrick'), 
+  function(x, values, layer=-1) {
   
 	if ( ! (is.vector(values) | is.matrix(values)) ) {
 		stop('values must be a vector or a matrix')
@@ -67,41 +68,41 @@ setMethod('setValues', signature(object='RasterBrick'),
 		if (!is.matrix(values)) {
 			values <- matrix(values)
 		}
-		if (nrow(values) == ncell(object)) {
+		if (nrow(values) == ncell(x)) {
 
-			object@file@name = ""
-			object@data@inmemory <- TRUE
-			object@data@fromdisk <- FALSE
-			object@data@nlayers <- ncol(values)
-			object@data@values <- values
-			object <- setMinMax(object)
+			x@file@name = ""
+			x@data@inmemory <- TRUE
+			x@data@fromdisk <- FALSE
+			x@data@nlayers <- ncol(values)
+			x@data@values <- values
+			x <- setMinMax(x)
 			 
 		} else {
 			stop('data size is not correct')
 		}
 	} else {
-		if (nlayers(object)==0) {object@data@nlayers <- 1 }
+		if (nlayers(x)==0) {x@data@nlayers <- 1 }
 		layer <- round(layer)
-		if (layer > nlayers(object)) {stop('layer number too high')}
+		if (layer > nlayers(x)) {stop('layer number too high')}
 		
-		if (length(values) == ncell(object)) { 
-			if ( ! inMemory(object) ) { 
-				atry <- try(object <- readAll(object), silent=T)
+		if (length(values) == ncell(x)) { 
+			if ( ! inMemory(x) ) { 
+				atry <- try(x <- readAll(x), silent=T)
 				if (class(atry) == "try-error") {
 					stop("you can only setValues for a single layer if all values are in memory. But values could not be loaded")				
 				}
 			}
-			object@file@name = ""
-			object@data@inmemory <- TRUE
-			object@data@fromdisk <- FALSE
-			object@data@values[,layer] <- values
-			object <- setMinMax(object)
+			x@file@name = ""
+			x@data@inmemory <- TRUE
+			x@data@fromdisk <- FALSE
+			x@data@values[,layer] <- values
+			x <- setMinMax(x)
 			
 		} else {
-			stop("length(values) is not equal to ncell(object)") 
+			stop("length(values) is not equal to ncell(x)") 
 		}
 	}
-	return(object)
+	return(x)
 }
 )
 	

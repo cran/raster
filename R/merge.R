@@ -6,10 +6,30 @@
 
 
 
+
+setMethod('merge', signature(x='list', y='missing'), 
+function(x, y, ..., tolerance=0.05, filename="", format, overwrite, progress) { 
+	
+	filename <- trim(filename)
+	if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
+	if (missing(overwrite)) {	overwrite <- .overwrite() }
+	if (missing(progress)) { progress <- .progress() }
+	
+	
+	if (! all(sapply(x, function(x) inherits(x, 'Raster')))) {
+		stop('elements of "x" should all inherit from RasterLayer')
+	}
+	
+	do.call(merge, x, tolerance=tolerance, filename=filename, format=format, overwrite=overwrite, progress=progress)
+} )
+
+
+
 setMethod('merge', signature(x='Raster', y='Raster'), 
 function(x,y,..., tolerance=0.05, filename="", format, overwrite, progress){ 
 
-	if (missing(format)) { format <- .filetype()} 
+	filename <- trim(filename)
+	if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
 	if (missing(overwrite)) { overwrite <- .overwrite()	}
 	if (missing(progress)) { progress <- .progress() }
 
@@ -21,6 +41,7 @@ function(x,y,..., tolerance=0.05, filename="", format, overwrite, progress){
 
 	rasters <- c(x, y)
 	dots <- list(...)
+	dots <- unlist(dots) # make simple list
 	if (length(dots) > 0) {
 		for (i in 1:length(dots)) {
 			if ( inherits( dots[[i]], 'Raster' ) ) {

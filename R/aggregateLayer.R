@@ -43,7 +43,7 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", old=FALSE, .
 	outRaster <- raster(x)	
 	bndbox <- extent(xmin(x), xmx, ymn, ymax(x))
 	extent(outRaster) <- bndbox
-	rowcol(outRaster) <- c(rsteps, csteps) 
+	dim(outRaster) <- c(rsteps, csteps) 
 
 	if (! hasValues(x) ) {	return(outRaster) }	
 
@@ -114,7 +114,7 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", old=FALSE, .
 		
 	pbClose(pb)
 	if (filename == "") { 
-		outRaster <- setValues( outRaster, as.vector(v) )
+		values(outRaster) <- as.vector(v)
 	} else {
 		outRaster <- writeStop(outRaster)
 	}

@@ -107,8 +107,8 @@ function(x, rcl, update=FALSE, filename='', ...)  {
 			for (i in 1:tr$n) {
 				res <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
 				vals <- res
-				for (i in 1:nrow(rcl)) {
-					res[ (vals >= rcl[i,1]) & ( vals <= rcl[i,2]) ] <- rcl[i , 3] 
+				for (j in 1:nrow(rcl)) {
+					res[ (vals >= rcl[j,1]) & ( vals <= rcl[j,2]) ] <- rcl[j , 3] 
 				}
 				if (hasNA) {
 					res[ is.na(vals) ] <- naVAL

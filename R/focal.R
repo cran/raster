@@ -16,7 +16,7 @@
 	} else if (length(ngb) > 2) {
 		stop('ngb should be a single value or two values')
 	}
-	if (min(ngb) < 3) { stop("ngb should be 3 or larger") } 
+	if (min(ngb) < 2) { stop("ngb should be 2 or larger") } 
 	return(ngb)
 }
 	

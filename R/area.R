@@ -73,7 +73,7 @@ setMethod('area', signature(x='RasterLayer'),
 			if (weights) {
 				v <- v / sum(v, na.rm=TRUE)
 			}
-			out <- setValues(out, v)
+			values(out) <- v
 		} else {
 			out <- writeStop(out)	
 			if (weights) {
@@ -158,7 +158,7 @@ setMethod('area', signature(x='RasterStackBrick'),
 				total <- colSums(v, na.rm=TRUE)
 				v <- t( t(v) / total )
 			}
-			out <- setValues(out, v)
+			values(out) <- v
 		} else {
 			out <- writeStop(out)	
 			if (weights) {

@@ -103,7 +103,7 @@ function(x, size, na.rm=TRUE, extent=NULL, cells=FALSE, ...) {
 				rcells <- cellFromXY(x, xy)
 			}
 			
-			x <- cellValues(x, rcells)
+			x <- .cellValues(x, rcells)
 			if (cells) {
 				x <- cbind(cell=rcells, value=x)
 			}

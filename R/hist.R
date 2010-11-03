@@ -60,29 +60,29 @@ setMethod('hist', signature(x='RasterStackBrick'),
 setMethod('hist', signature(x='RasterLayer'), 
 	function(x, layer=1, maxpixels=100000, main=NA,  plot=TRUE, ...){
 		if ( inMemory(x) ) {
-			values <- getValues(x)
+			v <- getValues(x)
 		} else if ( fromDisk(x) ) {
 			
 			if (ncell(x) <= maxpixels) {
-				values <- na.omit(getValues(x))
+				v <- na.omit(getValues(x))
 			} else {
 
 			# TO DO: make a function that does this by block and combines  all data into a single histogram
-				values <- sampleRandom(x, maxpixels)
+				v <- sampleRandom(x, maxpixels)
 				msg <- paste(round(100 * maxpixels / ncell(x)), "% of the raster cells were used", sep="")
-				if (maxpixels > length(values)) {
-					msg <- paste(msg, " (of which ", 100 - round(100 * length(values) / maxpixels ), "% were NA)", sep="")
+				if (maxpixels > length(v)) {
+					msg <- paste(msg, " (of which ", 100 - round(100 * length(v) / maxpixels ), "% were NA)", sep="")
 				}
-				warning( paste(msg, ". ",length(values)," values used.", sep="") )
+				warning( paste(msg, ". ",length(v)," values used.", sep="") )
 			}	
 		} else { 
 			stop('cannot make a histogram; need data on disk or in memory')
 		}		
 		if (.shortDataType(x) == 'LOG') {
-			values <- values * 1
+			v <- v * 1
 		}
-		if (plot) { res = hist(values, main=main, ...)  
-		} else { res = hist(values, plot=FALSE, ...)  }
+		if (plot) { res = hist(v, main=main, ...)  
+		} else { res = hist(v, plot=FALSE, ...)  }
 		
 		if (plot) return(invisible(res))
 		else return(res)

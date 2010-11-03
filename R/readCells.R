@@ -63,9 +63,9 @@
 	con <- GDAL.open(x@file@name, silent=TRUE)
 	for (i in 1:length(rows)) {
 		offs <- c(rows[i]-1, 0) 
-		values <- getRasterData(con, offset=offs, region.dim=c(1, nc), band = x@data@band)
+		v <- getRasterData(con, offset=offs, region.dim=c(1, nc), band = x@data@band)
 		thisrow <- subset(colrow, colrow[,2] == rows[i])
-		colrow[colrow[,2]==rows[i], 3] <- values[thisrow[,1]]
+		colrow[colrow[,2]==rows[i], 3] <- v[thisrow[,1]]
 	}
 	closeDataset(con)
 

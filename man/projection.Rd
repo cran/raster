@@ -3,7 +3,7 @@
 \alias{projection<-}
 \alias{projection}
 
-\title{ projection }
+\title{ Get or set a projection }
 
 \description{
 Get or set the projection of a Raster* object

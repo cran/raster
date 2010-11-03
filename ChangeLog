@@ -1,10 +1,53 @@
+30-Oct-2010,  version 1.6-10
+Improved [ and [<- methods. Removed [[ methods
+
+--------------------------------------------
+29-Oct-2010,  version 1.6-9
+Introduced sub-setting of Raster* objects with Spatial* objects
+
+--------------------------------------------
+27-Oct-2010,  version 1.6-7
+Additional options to linesToRaster (to match polygonsToRaster)
+as.matrix implemented for Raster* objects (suggested by Michael Sumner)
+
+--------------------------------------------
+26-Oct-2010,  version 1.6-6
+writeRaster now takes optional arguments varname, varunit, longname, xname, yname, zname, zunit, for writing netcdf files (requested by Mario Frasca). 
+
+--------------------------------------------
+25-Oct-2010,  version 1.6-5
+Merged 'focalValues' into 'extract' 
+Removed 'getValuesExtent', it was a synonym to 'extract(x=Raster, y=extent)' 
+Temporary files are now only deleted (at startup of raster) if they are at least 24 hrs old
+Generic function 'cut' implemented for Raster objects (suggested by Steven Mosher)
+Bug fix in addLayer with RasterBrick (reported by Steven Mosher)
+
+--------------------------------------------
+23-Oct-2010,  version 1.6-4
+Fixed bug in reading values from a 2-dimensional netcdf file (no 'time') (reported by Steven Mosher)
+
+--------------------------------------------
+22-Oct-2010,  version 1.6-3
+Fixed bug in reading cell values from netcdf file that can not be read into memory (reported by Steven Mosher)
+
+--------------------------------------------
+19-Oct-2010,  version 1.6-2
+New generic function 'extract', to replace xyValues, cellValues, lineValues, polygonValues
+Improvements to rasterFromXYZ (thanks to Thiago Veloso).
+
+--------------------------------------------
+15-Oct-2010,  version 1.6-1
+writeHdr can now write VRT (GDAL virtual raster) header files to accompany .gri files such that these can be viewed in e.g. ArcGIS and QGIS.
+Adjustments to calc to allow it to return any number of layers from a computation on a multiple layer object
+
+--------------------------------------------
 6-Oct-2010,  version 1.5-15
 netcdf files writing in chunks. 
 netcdf create a RasterLayer from a RasterBrick no longer goes to disk (copy parameters in memory)
 
 --------------------------------------------
 4-Oct-2010,  version 1.5-14
-raster() now takes an image (list) and coerces it to a RasterLayer
+raster() now also takes an "image" (a list with x, y and z) argument and coerces it to a RasterLayer
 
 --------------------------------------------
 2-Oct-2010,  version 1.5-13

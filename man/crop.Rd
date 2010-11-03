@@ -2,7 +2,6 @@
 
 \alias{crop}
 \alias{crop,Raster-method}
-\alias{crop,RasterStack-method}
 
 \title{Crop}
 
@@ -35,7 +34,7 @@ The following additional arguments can be passed, to replace default values for 
 }
 
 \value{
-A new Raster* object, and in some cases the side effect of a new file on disk.
+A new Raster* object
 }
 
 \author{Robert J. Hijmans}

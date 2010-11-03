@@ -55,6 +55,9 @@ writeRaster(x, filename, ...)
 \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
 \tab \code{NAvalue} \tab Numeric. To overwrite the default value used to represent NA in a file \cr
 }
+
+NetCDF files have the following additional, optional, arguments: varname, varunit, longname, xname, yname, zname, zunit.
+
 }}
 
 \details{
@@ -89,26 +92,26 @@ This function is used for the side-effect of writing values to a file.
 \seealso{\code{\link[raster]{writeFormats}}, and for faster writing: \code{\link[raster]{writeValues}} }  
 
 \examples{ 
-rst <- raster(system.file("external/test.grd", package="raster"))
+r <- raster(system.file("external/test.grd", package="raster"))
 
 # take a small part
-rst <- crop(rst, extent(179880, 180800, 329880, 330840) )
+r <- crop(r, extent(179880, 180800, 329880, 330840) )
 
 # write to an integer binary file
-r <- writeRaster(rst, filename="allint.grd", datatype='INT4S', overwrite=TRUE)
+rf <- writeRaster(r, filename="allint.grd", datatype='INT4S', overwrite=TRUE)
 
 # write to a new geotiff file (depends on rgdal)
 if (require(rgdal)) {
-  r <- writeRaster(rst, filename="test.tif", format="GTiff", overwrite=TRUE)
+  rf <- writeRaster(r, filename="test.tif", format="GTiff", overwrite=TRUE)
 }
 
 # make a brick and save multi-band file
-b <- brick(rst, sqrt(rst))
+b <- brick(r, sqrt(r))
 b <- writeRaster(b, filename="mutli.grd", bandorder='BIL', overwrite=TRUE)
  
 # write to netcdf 
 if (require(ncdf)) {	
-    rnc <- writeRaster(rst, filename='netCDF.nc', format="CDF", overwrite=TRUE)   
+    rnc <- writeRaster(r, filename='netCDF.nc', format="CDF", overwrite=TRUE)   
 }
 }
 

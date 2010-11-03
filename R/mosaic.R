@@ -10,16 +10,36 @@ if (!isGeneric("mosaic")) {
 		standardGeneric("mosaic"))
 }	
 
+
+setMethod('mosaic', signature(x='list', y='missing'), 
+function(x, y, ..., fun, na.rm=TRUE, tolerance=0.05, filename="", format, overwrite, progress) { 
+	
+	if (missing(fun)) {	stop('you need to supply a function with a fun=   argument') } 
+	if (missing(format)) {	format <- .filetype() } 
+	if (missing(overwrite)) {	overwrite <- .overwrite() }
+	if (missing(progress)) { progress <- .progress() }
+	
+	if (! all(sapply(x, function(x) inherits(x, 'RasterLayer')))) {
+		stop('elements of "x" should all inherit from RasterLayer')
+	}
+
+	do.call(mosaic, x, tolerance=tolerance, filename=filename, format=format, overwrite=overwrite, progress=progress)
+	
+} )
+
+
 setMethod('mosaic', signature(x='RasterLayer', y='RasterLayer'), 
 function(x, y, ..., fun, na.rm=TRUE, tolerance=0.05, filename="", format, overwrite, progress) { 
 	
 	if (missing(fun)) {	stop('you need to supply a function with a fun=   argument') } 
-	
-	if (missing(format)) {	format <- .filetype() } 
+
+	filename <- trim(filename)
+	if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
 	if (missing(overwrite)) {	overwrite <- .overwrite() }
 	if (missing(progress)) { progress <- .progress() }
 
 	dots <- list(...)
+	dots <- unlist(dots) #  make simple list
 	rasters <- c(x, y)
 	if (length(dots) > 0) {
 		for (i in 1:length(dots)) {
@@ -94,24 +114,59 @@ function(x, y, ..., fun, na.rm=TRUE, tolerance=0.05, filename="", format, overwr
 	}
 	emptyrow <- rep(NA, ncol(outraster))
 	
-	for (r in 1:nrow(outraster)) {
-		rdd = rd
-		for (i in 1:length(rasters)) { 
-			if (r >= rowcol[i,1] & r <= rowcol[i,2]) { 
-				rdd[ids[,i], i] <- getValues(rasters[[i]], r+1-rowcol[i,1])
-			}	
-		}
+	fun <- .makeTextFun(fun)
+	if (class(fun) == 'character') { 
+		rowcalc <- TRUE 
+		fun <- .getRowFun(fun)
+	} else { rowcalc <- FALSE }
+	
+	
+	w <- getOption('warn')
+	on.exit( options('warn'= w) )
+	
+	if (rowcalc) {
+		for (r in 1:nrow(outraster)) {
+			rdd <- rd
+			for (i in 1:length(rasters)) { 
+				if (r >= rowcol[i,1] & r <= rowcol[i,2]) { 
+					rdd[ids[,i], i] <- getValues(rasters[[i]], r+1-rowcol[i,1])
+				}	
+			}
 		
-		res <- apply(rdd, 1, FUN=fun, na.rm=na.rm)
+			options('warn'=-1) 
+			res <- fun(rdd, na.rm=na.rm ) 
+			options('warn'=w) 
 		
-		if (todisk) {
-			outraster <- writeValues(outraster, res, r)
-		} else {
-			v[,r] = res
+			if (todisk) {
+				outraster <- writeValues(outraster, res, r)
+			} else {
+				v[,r] = res
+			}
+			pbStep(pb, r)
 		}
-		pbStep(pb, r)
+		pbClose(pb)
+	
+	} else {
+		for (r in 1:nrow(outraster)) {
+			rdd <- rd
+			for (i in 1:length(rasters)) { 
+				if (r >= rowcol[i,1] & r <= rowcol[i,2]) { 
+					rdd[ids[,i], i] <- getValues(rasters[[i]], r+1-rowcol[i,1])
+				}	
+			}
+			options('warn'=-1) 
+			res <- apply(rdd, 1, FUN=fun, na.rm=na.rm)
+			options('warn'=w) 
+		
+			if (todisk) {
+				outraster <- writeValues(outraster, res, r)
+			} else {
+				v[,r] = res
+			}
+			pbStep(pb, r)
+		}
+		pbClose(pb)
 	}
-	pbClose(pb)
 	
 	if (todisk) {
 		outraster <- writeStop(outraster)

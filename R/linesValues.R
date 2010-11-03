@@ -5,22 +5,22 @@
 
 
 
-if (!isGeneric("lineValues")) {
-	setGeneric("lineValues", function(lns, x, ...)
-		standardGeneric("lineValues"))
-}	
+
+lineValues <- function(lns, x, ...) {
+	.warnExtract(6)
+	extract(x, lns, ...)
+}
 
 
-setMethod("lineValues", signature(lns='SpatialLines', x='Raster'), 
-function(lns, x, fun, ...) {
+.lineValues <- function(x, lns, fun, ...) {
 	spbb <- bbox(lns)
 	rsbb <- bbox(x)
-	addres <- max(res(x))
+	addres <- 2 * max(res(x))
 	nlns <- length( lns@lines )
 	res <- list()
 	res[[nlns+1]] = NA
 
-	if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
+	if (spbb[1,1] > rsbb[1,2] | spbb[1,2] < rsbb[1,1] | spbb[2,1] > rsbb[2,2] | spbb[2,2] < rsbb[2,1]) {
 		return(res[1:nlns])
 	}
 	
@@ -29,12 +29,12 @@ function(lns, x, fun, ...) {
 		pp <- lns[i,]
 		spbb <- bbox(pp)
 		
-		if (! (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) ) {
+		if (! (spbb[1,1] > rsbb[1,2] | spbb[1,2] < rsbb[1,1] | spbb[2,1] > rsbb[2,2] | spbb[2,2] < rsbb[2,1]) ) {
 			rc <- crop(rr, extent(pp)+addres)
 			rc <- linesToRaster(pp, rc, silent=TRUE)
-			xy <- rasterToPoints(rc)[,-3]
+			xy <- rasterToPoints(rc)[,-3,drop=FALSE]
 			if (length(xy) > 0) { # always TRUE?
-				res[[i]] <- xyValues(x, xy)
+				res[[i]] <- .xyValues(x, xy)
 			} 
 		}
 	}
@@ -43,17 +43,19 @@ function(lns, x, fun, ...) {
 	
 	if (! missing(fun)) {
 		i <- sapply(res, is.null)
-		j <- vector(length=length(i))
-		j[i] <- NA
 		if (nlayers(x) > 1) {
-			j[!i] <- sapply(res[!i], function(x) apply(x, 2, fun))
+			j <- matrix(ncol=nlayers(x), nrow=length(res))
+			j[!i] <- t(sapply(res[!i], function(x) apply(x, 2, fun)))
+			colnames(j) <- layerNames(x)
 		} else {
+			j <- vector(length=length(i))
+			j[i] <- NA
 			j[!i] <- sapply(res[!i], fun)
 		}
 		res <- j
 	}
 	res
 }
-)
+
 
 

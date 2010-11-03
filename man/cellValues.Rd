@@ -1,52 +1,39 @@
 \name{cellValues}
+
 \docType{methods}
 
 \alias{cellValues}
-\alias{cellValues,RasterLayer,vector-method}
-\alias{cellValues,RasterBrick,vector-method}
-\alias{cellValues,RasterStack,vector-method}
+\alias{xyValues}
 
-\title{ Extract values for one or more cells }
+\title{ Extract values for one or more cells / points }
 
 \description{
-These methods return values of a Raster* object for the cells specified  )
+Obsolete functions. Use \code{\link[raster]{extract}} in stead.
 }
 
-\usage{cellValues(x, cells, ...)}
+\usage{
+cellValues(x, cells, ...)
+xyValues(object, xy, ...)
+}
 
 \arguments{
- \item{x}{RasterLayer or RasterStack object}
+ \item{x}{Raster* object}
+ \item{object}{Raster* object}
+ \item{xy}{Coordinates (e.g. a matrix of two columns or a SpatialPoints* object)}
  \item{cells}{vector of cell numbers, cell numbers should be between 1 and ncells(x)}
  \item{...}{Additional arguments, see Details}
 }
 
 
-\details{
-Multi-layer Raster* objects accept these two additional arguments:
-\tabular{rll}{
-  \tab \code{layer}  \tab Integer. First layer for which you want values \cr
-  \tab \code{n}  \tab Integer. Number of layers for which you want values \cr
-}
-}
-
 \value{
 a vector of cell values for a RasterLayer or or a matrix of values for a RasterStack or RasterBrick
 }
 
-\seealso{ \code{\link[raster]{xyValues}}, \code{\link[raster]{getValues}} }
+\seealso{ \code{\link[raster]{extract}}}
 
 
 \author{Robert J. Hijmans }
 
-
-\examples{
-r <- raster(ncol=10, nrow=10)
-r <- setValues(r, 1:ncell(r))
-cellValues(r, c(1, 10, 100))
-
-s <- stack(r, sqrt(r), r/r)
-cellValues(s, c(1, 10, 100), layer=2, n=2)
-}
 
 
 \keyword{methods}

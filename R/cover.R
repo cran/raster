@@ -20,7 +20,8 @@ setMethod('cover', signature(x='RasterLayer', y='RasterLayer'),
 		
 	outRaster <- raster(x)
 
-	if (missing(format)) { format <- .filetype()	} 
+	filename <- trim(filename)
+	if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
 	if (missing(overwrite)) { overwrite <- .overwrite()	}
 	if (missing(progress)) { progress <- .progress() }
 	if (missing(datatype)) {
@@ -38,7 +39,6 @@ setMethod('cover', signature(x='RasterLayer', y='RasterLayer'),
 			datatype <- 'FLT4S'
 		}
 	}
-	filename <- trim(filename)
 	
 	if (canProcessInMemory(x, length(rasters) + 2)) {
 	

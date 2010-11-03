@@ -78,7 +78,7 @@ In stead of the overlay function you can also use normal aritmethic functions su
 While you can supply functions such as \code{sum} or \code{mean}, it would be more direct to use the Raster* objects are arguments to those functions (e.g. \code{sum(r1,r2,r3)})  
 
 For "overlays" involving Raster objects and polyongs, lines, or points, see, e.g.:
-\code{ \link[raster]{polygonsToRaster}, \link[raster]{linesToRaster}, \link[raster]{pointsToRaster}, \link[raster]{xyValues}, \link[raster]{polygonValues} }
+\code{ \link[raster]{polygonsToRaster}, \link[raster]{linesToRaster}, \link[raster]{pointsToRaster}, \link[raster]{extract}}
 
 }
 

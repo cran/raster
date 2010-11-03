@@ -67,18 +67,20 @@ setMethod ('show' , 'RasterLayer',
 					cat('min value   : ? \n')
 					cat('max value   : ? \n')
 				} else {
-					cat('min value   :  \n')
-					cat('max value   :  \n')		
+					cat('min value   : NA \n')
+					cat('max value   : NA \n')		
 				}
 			}
 		}
 		cat('projection  :' , projection(object, TRUE), '\n')
-		cat('xmin        :' , xmin(object), '\n')
-		cat('xmax        :' , xmax(object), '\n')
-		cat('ymin        :' , ymin(object), '\n')
-		cat('ymax        :' , ymax(object), '\n')
-		cat('xres        :' , xres(object), '\n')
-		cat('yres        :' , yres(object), '\n')
+#		cat('xmin        :' , xmin(object), '\n')
+#		cat('xmax        :' , xmax(object), '\n')
+#		cat('ymin        :' , ymin(object), '\n')
+#		cat('ymax        :' , ymax(object), '\n')
+#		cat('xres        :' , xres(object), '\n')
+#		cat('yres        :' , yres(object), '\n')
+		cat('extent      : ' , object@extent@xmin, ', ', object@extent@xmax, ', ', object@extent@ymin, ', ', object@extent@ymax, '  (xmin, xmax, ymin, ymax)\n', sep="")
+		cat('resolution  : ' , xres(object), ', ', yres(object), '  (x, y)\n', sep="")
 		cat ('\n')
 	}
 )
@@ -111,12 +113,8 @@ setMethod ('show' , 'RasterBrick',
 			cat('min value   :', paste(minv, collapse=' '), '\n')
 			cat('max value   :', paste(maxv, collapse=' '), '\n')
 		}
-		cat ('xmin        :' , xmin(object), '\n')
-		cat ('xmax        :' , xmax(object), '\n')
-		cat ('ymin        :' , ymin(object), '\n')
-		cat ('ymax        :' , ymax(object), '\n')
-		cat ('xres        :' , xres(object), '\n')
-		cat ('yres        :' , yres(object), '\n')
+		cat('extent      : ' , object@extent@xmin, ', ', object@extent@xmax, ', ', object@extent@ymin, ', ', object@extent@ymax, '  (xmin, xmax, ymin, ymax)\n', sep="")
+		cat('resolution  : ' , xres(object), ', ', yres(object), '  (x, y)\n', sep="")
 		cat ('\n')
 	}
 )
@@ -126,7 +124,9 @@ setMethod ('show' , 'RasterBrick',
 setMethod ('show' , 'RasterStack',
 	function ( object ) {
 		cat ('class       :' , class ( object ) , '\n')
-		cat ('filename    :' , filename(object), '\n')
+		if (filename(object) != '') {
+			cat ('filename    :' , filename(object), '\n')
+		}
 		nl <- nlayers(object)
 		cat ('nlayers     :' , nl, '\n')
 		if (nl > 0) {
@@ -145,12 +145,8 @@ setMethod ('show' , 'RasterStack',
 			cat('min value   :', paste(minv, collapse=' '), '\n')
 			cat('max value   :', paste(maxv, collapse=' '), '\n')
 		}
-		cat ('xmin        :' , as.character(xmin(object)), '\n')
-		cat ('xmax        :' , as.character(xmax(object)), '\n')
-		cat ('ymin        :' , as.character(ymin(object)), '\n')
-		cat ('ymax        :' , as.character(ymax(object)), '\n')
-		cat ('xres        :' , as.character(xres(object)), '\n')
-		cat ('yres        :' , as.character(yres(object)), '\n')
+		cat('extent      : ' , object@extent@xmin, ', ', object@extent@xmax, ', ', object@extent@ymin, ', ', object@extent@ymax, '  (xmin, xmax, ymin, ymax)\n', sep="")
+		cat('resolution  : ' , xres(object), ', ', yres(object), '  (x, y)\n', sep="")
 		cat ('\n')
 	}
 )

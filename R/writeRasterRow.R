@@ -56,7 +56,7 @@
 #		raster@data@min <- as.logical(raster@data@min)
 #		raster@data@max <- as.logical(raster@data@max)
 	}
-	writeRasterHdr(raster, .driver(raster)) 
+	writeHdr(raster, .driver(raster)) 
 	filename <- .setFileExtensionValues(filename(raster), raster@file@driver)
 	
 	if (inherits(raster, 'RasterBrick')) {

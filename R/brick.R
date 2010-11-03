@@ -43,9 +43,6 @@ setMethod('brick', signature(x='character'),
 
 setMethod('brick', signature(x='RasterLayer'), 
 	function(x, ...) {
-		if (fromDisk(x) & nbands(x) == 1) {
-			return( brick( filename(x) ) )
-		}
 		b <- new('RasterBrick')
 		return( addLayer(b, x, ..., keepone=TRUE) )
 	}
@@ -124,7 +121,7 @@ setMethod('brick', signature(x='SpatialGrid'),
 		b <- brick()
 		extent(b) <- extent(x)
 		projection(b) <- x@proj4string
-		rowcol(b) <- c(x@grid@cells.dim[2], x@grid@cells.dim[1])	
+		dim(b) <- c(x@grid@cells.dim[2], x@grid@cells.dim[1])	
 		
 		if (class(x) == 'SpatialGridDataFrame') {
 			for (i in 1:ncol(x@data)) {

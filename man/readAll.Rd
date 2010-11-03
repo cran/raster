@@ -23,7 +23,7 @@ readAll(object)
 }
 
 
-\seealso{ \code{\link[raster]{getValues}}, \code{\link[raster]{getValuesBlock}}, \code{\link[raster]{xyValues}}, \code{\link[raster]{cellValues}}}
+\seealso{ \code{\link[raster]{getValues}}, \code{\link[raster]{getValuesBlock}}, \code{\link[raster]{extract}}}
 
 \author{Robert J. Hijmans}
 

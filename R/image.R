@@ -9,7 +9,7 @@ if (!isGeneric("image")) {
 }	
 
 setMethod("image", signature(x='RasterLayer'), 
-	function(x, maxpixels=100000, ...)  {
+	function(x, maxpixels=500000, ...)  {
 		x <- sampleRegular(x, maxpixels, asRaster=TRUE)
 		y <- yFromRow(x, nrow(x):1)
 		value <- t((getValues(x, format='matrix'))[nrow(x):1,])

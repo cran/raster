@@ -90,7 +90,7 @@ pointsToRaster <- function(raster, xy, values=1, fun=NULL, background=NA, na.rm=
 					}
 				}
 			}
-			rs <- writeValues(rs, d) 
+			rs <- writeValues(rs, d, r) 
 			pbStep(pb, r)
 		}
 		rs <- writeStop(rs)
