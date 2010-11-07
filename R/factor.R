@@ -10,7 +10,7 @@ if (!isGeneric("is.factor")) {
 		standardGeneric("is.factor"))
 }	
 
-setMethod('is.factor', signature(x='RasterLayer'), 
+setMethod('is.factor', signature(x='Raster'), 
 	function(x) {
 		return(x@data@isfactor)
 	}
@@ -23,36 +23,50 @@ setMethod('is.factor', signature(x='RasterStack'),
 )
 
 
-if (!isGeneric("levels")) {
-	setGeneric("levels", function(x)
-		standardGeneric("levels"))
-}	
-
-setMethod('levels', signature(x='RasterLayer'), 
-	function(x) {
-		return(x@data@levels)
-	}
-)
-
 if (!isGeneric("labels")) {
 	setGeneric("labels", function(object, ...)
 		standardGeneric("labels"))
 }	
 
-setMethod('labels', signature(object='RasterLayer'), 
+setMethod('labels', signature(object='Raster'), 
 	function(object, ...) {
-		return(object@data@labels)
+		return(object@data@attributes)
+	}
+)
+
+setMethod('labels', signature(object='RasterStack'), 
+	function(object, ...) {
+		sapply(object@layers, function(x) x@data@attributes) 
 	}
 )
 
 
-'labels<-' <- function(object, value) {
-	if (is.factor(object)) {
-		asFactor(object, levels(object), value)
-	} else {
-		stop('x is not a factor')
+if (!isGeneric("labels<-")) {
+	setGeneric("labels<-", function(object, value)
+		standardGeneric("labels<-"))
+}	
+
+
+setMethod('labels<-', signature(object='RasterLayer', value='list'), 
+	function(object, value) {
+		if (length(value) != 1) {
+			stop('lenght(value) != 1')
+		}
+		object@data@attributes <- value
+		return(object)
 	}
-}
+)
+
+setMethod('labels<-', signature(object='RasterBrick', value='list'), 
+	function(object, value) {
+		if (length(value) != nlayers(object)) {
+			stop('lenght(value) != nlayers(object)')
+		}
+		object@data@attributes <- value
+		return(object)
+	}
+)
+
 
 
 if (!isGeneric("asFactor")) {
@@ -67,54 +81,28 @@ setMethod('asFactor', signature(x='ANY'),
 )
 
 setMethod('asFactor', signature(x='RasterLayer'), 
-	function(x, levels=NULL, labels=NULL, ...) {
+	function(x, values=NULL, ...) {
 		x@data@isfactor = TRUE
-		if ( is.null(levels) ) {
-			x@data@levels = unique(round(x))
+		if (is.null(values) ) {
+			x <- round(x)
+			x@data@atttributes <- list(data.frame(VALUE=unique(x)))
 		} else {
-			x@data@levels = levels
-		}
-		if ( is.null(labels) ) {
-			x@data@labels = as.character(x@data@levels)
+			x@data@attributes <- values
+		}			
+		return(x)
+	}
+)
+
+setMethod('asFactor', signature(x='RasterBrick'), 
+	function(x, values=NULL, ...) {
+		x@data@isfactor = TRUE
+		if (is.null(values) ) {
+			x <- round(x)
+			x@data@atttributes <- list(data.frame(VALUE=unique(x)))
 		} else {
-			if (length(labels) != length(x@data@levels)) {
-				stop('number of labels does not match number of levels')
-			}
-			x@data@labels = as.character(labels)
-		}
+			x@data@atttributes <- values
+		}			
 		return(x)
 	}
 )
 
-
-setMethod('asFactor', signature(x='RasterStack'), 
-	function(x, v, ...) {
-		if (missing(v)) v = -1
-		if (v < 1 | v < nlayers(x)) { stop('provide a valid argument "v" to indicate the layer') }
-		x@layers[[v]] = asFactor(x@layers[[v]], ...)
-		return(x)
-	}
-)
-
-#if (!isGeneric("as.numeric")) {
-#	setGeneric("as.numeric", function(x, ...)
-#		standardGeneric("as.numeric"))
-#}
-
-setMethod('as.numeric', signature(x='RasterLayer'), 
-	function(x, ...) {
-		x@data@isfactor = FALSE
-		x@data@levels = vector(mode='numeric')
-		x@data@labels = vector(mode='character')
-		return(x)
-	}
-)
-
-setMethod('as.numeric', signature(x='RasterStack'), 
-	function(x, v, ...) {
-		if (missing(v)) v = -1
-		if (v < 1 | v < nlayers(x)) { stop('provide a valid argument "v" to indicate the layer') }
-		x@layers[[v]] <- as.numeric(x@layers[[v]])
-		return(x)
-	}
-)

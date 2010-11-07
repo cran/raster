@@ -13,7 +13,7 @@ if (!isGeneric("area")) {
 setMethod('area', signature(x='RasterLayer'), 
 	function(x, filename='', na.rm=FALSE, weights=FALSE, ...) {
 
-		out = raster(x)
+		out <- raster(x)
 	
 		if (na.rm) {
 			if (! hasValues(x) ) {

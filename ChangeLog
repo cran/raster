@@ -1,3 +1,16 @@
+5-Nov-2010,  version 1.6-13
+'unique' now also works for multi-layer objects
+Using new features in GDAL 0.6-29: set statistics and capture raster attributes 
+
+--------------------------------------------
+4-Nov-2010,  version 1.6-12
+Replacing pointsToRater, linesToRaster and polygonsToRaster with single generic function 'rasterize'
+
+--------------------------------------------
+3-Nov-2010,  version 1.6-11
+Introduces support for netcdf files with 4 dimensions (lon, lat, level, time), because of a problem reported by Kevin Ummel
+
+--------------------------------------------
 30-Oct-2010,  version 1.6-10
 Improved [ and [<- methods. Removed [[ methods
 

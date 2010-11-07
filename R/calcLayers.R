@@ -13,7 +13,7 @@
 	if ( canProcessInMemory(x, 2) ) {
 		out <- setValues(out, t( fun( t( getValues(x) )) ) )
 		if (filename != '') {
-			out <- writeRaster(out)
+			out <- writeRaster(out, filename=filename, ...)
 		}
 		return(out)
 	}

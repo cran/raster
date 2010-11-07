@@ -169,6 +169,8 @@ setMethod('raster', signature(x='RasterBrick'),
 				zvar <- try(slot(x@data, 'zvar'), silent=TRUE)
 				if (class(zvar) != 'try-error') {
 					attr(r@data, "zvar") <- zvar
+					attr(r@data, "dim3") <- x@data@dim3
+					attr(r@data, "level") <- x@data@level
 				}
 				
 			} else {
@@ -235,7 +237,7 @@ setMethod('raster', signature(x='SpatialGrid'),
 				}
 				if (is.factor( x@data[[layer]]) ) { 
 					r@data@isfactor <- TRUE 
-					r@data@levels <- levels(x@data[[layer]])
+					#r@data@levels <- levels(x@data[[layer]])
 					r <- setValues(r, as.numeric(x@data[[layer]]))
 				} else {
 					r <- setValues(r, x@data[[layer]])

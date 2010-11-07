@@ -105,8 +105,7 @@ setClass('SingleLayerData',
 		fromdisk='logical',
 		
 		isfactor = 'logical',
-		levels = 'vector',
-		labels = 'vector',
+		attributes = 'list',
 		haveminmax = 'logical',
 		min = 'vector',
 		max = 'vector',
@@ -121,8 +120,8 @@ setClass('SingleLayerData',
 		fromdisk=FALSE,
 
 		isfactor = FALSE,
-		levels = vector(mode='numeric'),
-		labels = vector(mode='character'),
+		attributes = list(),
+		
 		haveminmax = FALSE,
 		min = c(Inf),
 		max = c(-Inf),
@@ -201,7 +200,8 @@ setClass('MultipleRasterData',
 		
 		dropped = 'vector',
 		isfactor = 'logical',
-		levels = 'vector',
+		attributes = 'list',
+		
 		haveminmax = 'logical',
 		min = 'vector',
 		max = 'vector'
@@ -219,8 +219,10 @@ setClass('MultipleRasterData',
 		nlayers=as.integer(0),
 		
 		dropped=NULL,
+		
 		isfactor = FALSE,
-		levels = matrix(NA),
+		attributes = list(),
+		
 		haveminmax = FALSE,
 		min = c(Inf),
 		max = c(-Inf)

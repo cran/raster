@@ -24,7 +24,7 @@ rasterFromXYZ(xyz, res=c(NA,NA), crs=NA, digits=5)
 RasterLayer
 }
 
-\seealso{ For random-like point distributions, see \code{\link[raster]{pointsToRaster}} }
+\seealso{ For random-like point distributions, see \code{\link{rasterize}} }
 
 \author{Robert J. Hijmans }
 

@@ -31,7 +31,7 @@ lineValues <- function(lns, x, ...) {
 		
 		if (! (spbb[1,1] > rsbb[1,2] | spbb[1,2] < rsbb[1,1] | spbb[2,1] > rsbb[2,2] | spbb[2,2] < rsbb[2,1]) ) {
 			rc <- crop(rr, extent(pp)+addres)
-			rc <- linesToRaster(pp, rc, silent=TRUE)
+			rc <- .linesToRaster(pp, rc, silent=TRUE)
 			xy <- rasterToPoints(rc)[,-3,drop=FALSE]
 			if (length(xy) > 0) { # always TRUE?
 				res[[i]] <- .xyValues(x, xy)

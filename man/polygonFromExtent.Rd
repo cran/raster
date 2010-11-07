@@ -9,16 +9,16 @@ polygonFromExtent creates a SpatialPolygon object from a Extent object (or a Ras
 }
 
 \usage{
-polygonFromExtent(bndbox, sp=TRUE)
+polygonFromExtent(x, sp=TRUE)
 }
 
 \arguments{
-  \item{bndbox}{An object of class Extent (which you can create with extent() )}  
-  \item{sp}{logical. If \code{TRUE}, the output will be a SpatialPolygons object (sp package). Otherwise a matrix of coordinates is returned}    
+  \item{x}{An object of class Raster*, Extent, or Spatial*}  
+  \item{sp}{logical. If \code{TRUE}, a SpatialPolygons object is returned. Otherwise a matrix of coordinates is returned}    
 }
 
 \value{
-a matrix or a SpatialPolygons object
+Matrix or a SpatialPolygons object
 }  
   
 \author{Robert J. Hijmans}
