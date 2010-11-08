@@ -26,7 +26,7 @@
 	cat("bandorder=",  raster@file@bandorder, "\n", file = thefile)
 
 	cat("categorical=",  raster@data@isfactor, "\n", file = thefile)
-	cat("levels=",  raster@data@levels, "\n", file = thefile)
+#	cat("levels=",  raster@data@levels, "\n", file = thefile)
 
 	cat("minvalue=",  paste(minValue(raster,-1), collapse=':'), "\n", file = thefile)
 	cat("maxvalue=",  paste(maxValue(raster,-1), collapse=':'), "\n", file = thefile)

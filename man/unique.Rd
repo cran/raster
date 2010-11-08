@@ -4,6 +4,7 @@
 
 \alias{unique}
 \alias{unique,RasterLayer,missing-method}
+\alias{unique,RasterStackBrick,missing-method}
 
 \title{Unique values}
 

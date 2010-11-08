@@ -20,8 +20,7 @@ pointDistance(point1, point2, type='Euclidean', ...)
 
 }
 \details{
-  A sphere is an approximation for the earth (a spheroid) and type='Greatcircle' can thus be used with geographic 
-  coordinates (latitude & longitude). 
+  A sphere is an approximation for the earth (a spheroid) and type='Greatcircle' can thus be used with geographic coordinates (latitude & longitude). 
   You can use type='Euclidean' for coordinates of a map projection such as UTM (but note that in some projections distance is distorted). 
 }
 
@@ -29,25 +28,28 @@ pointDistance(point1, point2, type='Euclidean', ...)
   A single value or a vector of values giving the distance in meters (great-circle distance) or map-units (for instance, meters in the case of UTM)
 }
 
+\seealso{\code{\link{distanceFromPoints},  \link{distance},  \link{gridDistance}} }
+
+
 \author{Robert J. Hijmans and Jacob van Etten }
 
 \examples{
-   a <- cbind(c(1,5,55,31),c(3,7,20,22))
-   b <- cbind(c(4,2,8,65),c(50,-90,20,32))   
+a <- cbind(c(1,5,55,31),c(3,7,20,22))
+b <- cbind(c(4,2,8,65),c(50,-90,20,32))   
 
-   pointDistance(c(0, 0), c(1, 1), type='Euclidean')
-   pointDistance(c(0, 0), c(1, 1), type='GreatCircle')
-   pointDistance(c(0, 0), a, type='GreatCircle')
-   pointDistance(a, b, type='GreatCircle')
+pointDistance(c(0, 0), c(1, 1), type='Euclidean')
+pointDistance(c(0, 0), c(1, 1), type='GreatCircle')
+pointDistance(c(0, 0), a, type='GreatCircle')
+pointDistance(a, b, type='GreatCircle')
    
-   #Make a distance matrix (dist object)
-   dst <- matrix(nrow=4,ncol=4)
-   for (i in 1:4){dst[,i] <- pointDistance(a[i,],a, type='GreatCircle')}
-   dst <- as.dist(dst)
+#Make a distance matrix (dist object)
+dst <- matrix(nrow=4,ncol=4)
+for (i in 1:4){dst[,i] <- pointDistance(a[i,],a, type='GreatCircle')}
+dst <- as.dist(dst)
    
-   #Now the same, but avoiding the loop
-   dst <- pointDistance(a[rep(1:4,times=4),],a[rep(1:4,each=4),], type='GreatCircle')
-   dst <- as.dist(matrix(dst,ncol=4))
+#The same as above, but avoiding the loop
+dst <- pointDistance(a[rep(1:4,times=4),],a[rep(1:4,each=4),], type='GreatCircle')
+dst <- as.dist(matrix(dst,ncol=4))
 }
 
 \keyword{ spatial }

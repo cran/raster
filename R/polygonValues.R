@@ -31,13 +31,13 @@ polygonValues <- function(p, x, ...) {
 		} else {
 			rc <- crop(rr, extent(pp)+addres)
 			if (weights) {
-				rc <- polygonsToRaster(pp, rc, getCover=TRUE, silent=TRUE)
+				rc <- .polygonsToRaster(pp, rc, getCover=TRUE, silent=TRUE)
 				rc[rc==0] <- NA
 				xy <- rasterToPoints(rc)
 				weight <- xy[,3] / 100
 				xy <- xy[,-3]
 			} else {
-				rc <- polygonsToRaster(pp, rc, silent=TRUE)
+				rc <- .polygonsToRaster(pp, rc, silent=TRUE)
 				xy <- rasterToPoints(rc)[,-3]
 			}
 			

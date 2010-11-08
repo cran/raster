@@ -138,9 +138,7 @@ RasterLayer, RasterStack, and RasterBrick objects are, as a group, referred to a
 \section{VII. Data type conversion}{
 
   \tabular{ll}{
-    \code{\link{pointsToRaster}} \tab Summarizing points by raster cells \cr
-    \code{\link{linesToRaster}} \tab Rasterizing lines \cr
-    \code{\link{polygonsToRaster}} \tab Rasterizing polygons \cr
+    \code{\link{rasterize}} \tab Rasterizing points, lines or polygons\cr
     \code{\link{rasterToPoints}} \tab Create points from a RasterLayer \cr
     \code{\link{rasterToPolygons}} \tab Create polygons from a RasterLayer \cr
     \code{\link{rasterToContour}} \tab Contour lines from a RasterLayer \cr

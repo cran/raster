@@ -4,14 +4,20 @@
 # Licence GPL v3
 
 
-.rasterFromGDAL <- function(filename, band, type) {	
+.rasterFromGDAL <- function(filename, band, type, fixGeoref=FALSE, silent=TRUE) {	
 	if (! .requireRgdal() ) { stop('package rgdal is not available') }
 
 	# suppressing the geoTransform warning...
 	w <- getOption('warn')
 	on.exit(options('warn'= w))
 	options('warn'=-1) 
-	gdalinfo <- GDALinfo(filename, silent=TRUE)
+	
+	if (packageVersion('rgdal') > '0.6-28') {
+		gdalinfo <- do.call(GDALinfo, list(filename, silent=silent, returnRAT=TRUE))
+	} else {
+		gdalinfo <- do.call(GDALinfo, list(filename, silent=silent))
+	}
+		
 	options('warn'= w) 
 
 	nc <- as.integer(gdalinfo[["columns"]])
@@ -28,14 +34,14 @@
 	yx <- yn + gdalinfo[["res.y"]] * nr
 	yx <- round(yx, digits=9)
 
-	#isPoint <- FALSE
+	#fixGeo <- FALSE
 	#3v <- attr(gdalinfo, 'mdata')
 	#if (! is.null(v) ) {
 	#	for (i in 1:length(v)) {
 	#		if (v[i] == "AREA_OR_POINT=Area") {
 	#			break
 	#		} else if (v[i] == "AREA_OR_POINT=Point") {
-	#			isPoint <- TRUE
+	#			fixGeo <- TRUE
 	#			break
 	#		}
 	#	}
@@ -63,21 +69,19 @@
 		ct <- getColorTable( gd )
 		if (! is.null(ct)) { x@legend@colortable <- ct }
 		GDAL.close(gd)
-		
 	}
 
 	
-	#if (isPoint) {
-	#	xx <- x
-	#	nrow(xx) <- nrow(xx) - 1
-	#	ncol(xx) <- ncol(xx) - 1
-	#	rs <- res(xx)
-	#	xmin(x) <- xmin(x) - 0.5 * rs[1]
-	#	xmax(x) <- xmax(x) + 0.5 * rs[1]
-	#	ymin(x) <- ymin(x) - 0.5 * rs[2]
-	#	ymax(x) <- ymax(x) + 0.5 * rs[2]
-	#}
-	
+	if (fixGeoref) {
+		xx <- x
+		nrow(xx) <- nrow(xx) - 1
+		ncol(xx) <- ncol(xx) - 1
+		rs <- res(xx)
+		xmin(x) <- xmin(x) - 0.5 * rs[1]
+		xmax(x) <- xmax(x) + 0.5 * rs[1]
+		ymin(x) <- ymin(x) - 0.5 * rs[2]
+		ymax(x) <- ymax(x) + 0.5 * rs[2]
+	}
 	
 	shortname <- gsub(" ", "_", ext(basename(filename), ""))
 	x <- .enforceGoodLayerNames(x, shortname)
@@ -97,7 +101,10 @@
 		try ( maxv <- as.numeric( attr(gdalinfo, 'df')[, 3] ) , silent=TRUE ) 
 		minv[minv == -4294967295] <- Inf
 		maxv[maxv == 4294967295] <- -Inf
+		minv <- as.vector(as.matrix(minv))
+		maxv <- as.vector(as.matrix(maxv))
 		if ( is.finite(minv) && is.finite(maxv) ) x@data@haveminmax <- TRUE 
+		
 	} else {
 		try ( datatype <- .getRasterDType ( as.character( attr(gdalinfo, 'df')[band, 1]) ), silent=TRUE )
 		minmax <- c(Inf, -Inf)
@@ -105,16 +112,38 @@
 		if (all( minmax == c(-4294967295, 4294967295))) {
 			minmax <- c(Inf, -Inf)
 		}
-		minv <- minmax[1]
-		maxv <- minmax[2]
+		minv <- as.vector(as.matrix(minmax[1]))
+		maxv <- as.vector(as.matrix(minmax[2]))
 		if ( is.finite(minv) & is.finite(maxv) ) x@data@haveminmax <- TRUE 
+	
 	}
-	
 	dataType(x) <- datatype
-	x@data@min <- minv 
+	x@data@min <- minv
 	x@data@max <- maxv
-	
 
+	RAT <- attr(gdalinfo, 'RATlist')
+	if (! is.null(RAT)) {
+		att <- vector(length=nlayers(x), mode='list')
+		for (i in 1:length(RAT)) {
+			if (! is.null(RAT[[i]])) {
+				att[[i]] <- data.frame(RAT[[i]], stringsAsFactors=FALSE)
+				
+				if (! silent) {
+					usage <- attr(RAT[[i]], 'GFT_usage')
+					if (! isTRUE(usage[1] == "GFU_MinMax")) {
+						warning('usage[1] != GFU_MinMax')
+						# process min/max
+					} else {
+						if (! isTRUE(usage[2] == "GFU_PixelCount")) {
+							warning('usage[2] != GFU_PixelCount')
+						}
+					}
+				}
+				x@data@isfactor[i] <- TRUE 
+			}
+		}
+		x@data@attributes <- att
+	}
 	
 #oblique.x   0  #oblique.y   0 
 	return(x)

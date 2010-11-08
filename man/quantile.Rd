@@ -3,12 +3,12 @@
 \docType{methods}
 
 \alias{quantile}
-\alias{quantile,RasterLayer-method}
+\alias{quantile,Raster-method}
 
-\title{RasterLayer quantiles}
+\title{Raster quantiles}
 
 \description{
-Compute quantiles for the cell values of a RasterLayer 
+Compute quantiles for the cell values of a RasterLayer. If you want to compute quantiles for each cell across a number of layers, you can use \code{\link{calc}(x, fun=quantile)}. 
 }
 
 \usage{
@@ -16,16 +16,14 @@ quantile(x, ...)
 }
 
 \arguments{
-  \item{x}{A RasterLayer object}
+  \item{x}{Raster object}
   \item{...}{Additional arguments: \code{na.rm=TRUE}, \code{ncells=NULL}, and additional arguments to the stats::quantile function, see \code{\link[stats]{quantile}}}  
        ncells can be used to set the number of cells to be sampled, for very large raster datasets.
 }
 
-
 \value{
 A vector of quantiles
 }
-
 
 \seealso{ \code{\link[raster]{density}}, \code{\link[raster]{cellStats}}  }
 

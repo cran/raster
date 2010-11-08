@@ -44,11 +44,13 @@
 	if (.couldBeLonLat(x)) {
 		if (missing(xname)) xname = 'longitude'
 		if (missing(yname)) yname = 'latitude'
-		unit = 'degrees'
+		xunit = 'degrees_north'
+		yunit = 'degrees_east'
 	} else {
 		if (missing(xname)) xname = 'northing'
 		if (missing(yname)) yname = 'easting'	
-		unit = 'meter' # probably
+		xunit = 'meter' # probably
+		yunit = 'meter' # probably
 	}
 	
 	
@@ -61,8 +63,8 @@
 	if (missing(longname))  longname <- varname
 	
 	
-	xdim <- dim.def.ncdf( xname, unit,  xFromCol(x, 1:ncol(x)) )
-	ydim <- dim.def.ncdf( yname, unit, yFromRow(x, 1:nrow(x)) )
+	xdim <- dim.def.ncdf( xname, xunit, xFromCol(x, 1:ncol(x)) )
+	ydim <- dim.def.ncdf( yname, yunit, yFromRow(x, 1:nrow(x)) )
 	if (inherits(x, 'RasterBrick')) {
 		zv <- 1:nlayers(x)
 		zv[] <- as.numeric(x@zvalue)

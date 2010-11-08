@@ -94,7 +94,13 @@ setMethod('writeValues', signature(x='RasterLayer'),
 			x@data@max <- max(x@data@max, rsd)
 		}	
 		
-		if ( x@file@driver %in% .nativeDrivers() ) {
+		if ( x@file@driver == 'gdal' ) {
+			off = c(start-1, 0)
+			v[is.na(v)] <- x@file@nodatavalue
+			v = matrix(v, nrow=x@ncols)
+			gd <- putRasterData(x@file@transient, v, band=1, offset=off) 	
+
+		} else if ( x@file@driver %in% .nativeDrivers() ) {
 			if (x@file@dtype == "INT" ) { 
 				v <- as.integer(round(v))  
 				v[is.na(v)] <- as.integer(x@file@nodatavalue)		
@@ -107,7 +113,12 @@ setMethod('writeValues', signature(x='RasterLayer'),
 			}
 			writeBin(v, x@file@con, size=x@file@dsize )
 			
+		} else if ( x@file@driver == 'netcdf') {
+
+			x <- .writeValuesCDF(x, v, start)
+			
 		} else if ( x@file@driver == 'ascii') {
+		
 			opsci = options('scipen')
 			if (x@file@dtype == 'INT') {
 				options(scipen=10)
@@ -117,17 +128,9 @@ setMethod('writeValues', signature(x='RasterLayer'),
 			v <- matrix(v, ncol=ncol(x), byrow=TRUE)
 			write.table(v, x@file@name, append = TRUE, quote = FALSE, sep = " ", eol = "\n", dec = ".", row.names = FALSE, col.names = FALSE)
 			options(scipen=opsci)
-
-		} else if ( x@file@driver == 'netcdf') {
-
-			x <- .writeValuesCDF(x, v, start)
 			
 		} else {
-			off = c(start-1, 0)
-			v[is.na(v)] <- x@file@nodatavalue
-			v = matrix(v, nrow=ncol(x))
-			gd <- putRasterData(x@file@transient, v, band=1, offset=off) 	
-#			.Call("RGDAL_SetNoDataValue", gd, as.double(x@file@nodatavalue), PACKAGE = "rgdal")
+			stop('huh?')
 		}
 		return(x)
 	} 		

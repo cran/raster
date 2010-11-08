@@ -6,7 +6,7 @@
 \alias{cover,RasterLayer,RasterLayer-method}
 \alias{cover,RasterStackBrick,Raster-method}
 
-\title{ Cover }
+\title{ Replace NA values with values of other layers }
 \description{
  Replace \code{NA} values in the first Raster object (\code{x}) with the values of the second (\code{y}), and so forth for additional Rasters.
  If \code{x} has mutliple layers, the subsequent Raster objects should have the same number of layers, or have a single layer only (which will be recycled).
@@ -19,7 +19,7 @@
   \item{\code{x}}{ Raster* object }
   \item{\code{y}}{ Raster* object }
   \item{\code{...}}{ Additional Raster* objects or other arguments (see Details) }
-  \item{\code{filename}}{ filename for the output RasterLayer}
+  \item{\code{filename}}{ filename (optional) }
 
 Additional arguments for writing the results to a file on disk:
 \tabular{rll}{

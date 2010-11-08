@@ -85,7 +85,9 @@
 		x@data@min <- minval[band]
 		x@data@max <- maxval[band]
 		x@data@isfactor = iscat
-		if (iscat) { x@data@levels = catlevels }
+		if (iscat) { 
+		#	x@data@levels = catlevels 
+		}
 	}
 
 	x@file@nbands <- as.integer(nbands)

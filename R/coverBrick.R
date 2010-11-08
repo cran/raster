@@ -20,7 +20,7 @@ setMethod('cover', signature(x='RasterStackBrick', y='Raster'),
 	} else if (length(un) == 2 & min(un) != 1) {
 		stop('number of layers does not match')
 	} else if (nl[1] != max(un)) {
-		stop('number of layers of the first object must be the highest') # need to remove this constraint
+		stop('number of layers of the first object must be the highest') 
 	}
 	
 	outRaster <- brick(x, values=FALSE)

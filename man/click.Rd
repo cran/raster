@@ -1,7 +1,7 @@
 \name{click}
 \alias{click}
 
-\title{ Click }
+\title{ Click on a map}
 
 \description{
   Click on a map (plot) to get values of a Raster* object at a location; and optionally the coordinates and cell number of the location. 

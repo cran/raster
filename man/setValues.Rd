@@ -16,13 +16,13 @@ You can use the setValues function to assign values to a RasterLayer or RasterBr
 
 \usage{
 setValues(x, values, layer) 
-values(x, layer) <- value
+values(x) <- value
 }
 
 \arguments{
   \item{x}{A \code{RasterLayer} or \code{RasterBrick} object }
-  \item{values}{Cell values to associate with the RasterLayer object. There should be values for all cells or for a single row}
-  \item{value}{Cell values to associate with the RasterLayer object. There should be values for all cells or for a single row}
+  \item{values}{Cell values to associate with the RasterLayer object. There should be values for all cells}
+  \item{value}{Cell values to associate with the RasterLayer object. There should be values for all cells}
   \item{layer}{Layer number (only relevant for RasterBrick objects). If missing, the values of all layers is set}
 }
 

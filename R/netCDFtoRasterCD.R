@@ -4,11 +4,11 @@
 # Licence GPL v3
 
 
-.doTime <- function(x, nc, zvar) {
+.doTime <- function(x, nc, zvar, dim3) {
 	dodays <- TRUE
 	dohours <- FALSE
 	
-	un = nc$var[[zvar]]$dim[[3]]$units	
+	un = nc$var[[zvar]]$dim[[dim3]]$units	
 	if (substr(un, 1, 10) == "days since") { 
 		startDate = as.Date(substr(un, 12, 22))
 	} else {
@@ -28,7 +28,7 @@
 		}
 	}
 	if (dodays) {
-		# cal = nc$var[[zvar]]$dim[[3]]$calendar ?
+		# cal = nc$var[[zvar]]$dim[[dim3]]$calendar ?
 		cal = att.get.ncdf(nc, "time", "calendar")$value
 		if (cal =='gregorian' | cal=='standard') {
 			greg = TRUE
@@ -105,7 +105,7 @@
 }
 
 
-.rasterObjectFromCDF <- function(filename, x='', y='', varname='', band=NA, type='RasterLayer', ...) {
+.rasterObjectFromCDF <- function(filename, varname='', band=NA, type='RasterLayer', lvar=3, level=1, ...) {
 
 	if (!require(ncdf)) { stop('You need to install the ncdf package first') }
 	nc <- open.ncdf(filename)
@@ -124,11 +124,23 @@
 	
 	datatype <- .getRasterDTypeFromCDF( nc$var[[zvar]]$prec )
 	
+	dim3 <- 3
 	dims <- nc$var[[zvar]]$ndims
 	if (dims== 1) { 
-		stop('"varname" only has a single dimension; I cannot make a RasterLayer from this')
-	} else if (dims > 3) { 
-		stop('"varname" has ', length(dims), ' dimensions, I do not know how to process this')
+		stop(zvar, ' only has a single dimension; I cannot make a RasterLayer from this')
+	} else if (dims == 4) { 
+	
+		if (lvar == 4) { 
+			dim3 <- 3 
+			level <- max(1, min(round(level), nc$var[[zvar]]$dim[[4]]$len))
+
+		} else { 
+			dim3 <- 4 
+			level <- max(1, min(round(level), nc$var[[zvar]]$dim[[3]]$len))
+		}
+		
+	} else if (dims > 4) { 
+		warning(zvar, ' has more than 4 dimensions, I do not know what to do')
 	}
 	
 	ncols <- nc$var[[zvar]]$dim[[1]]$len
@@ -199,6 +211,9 @@
 #	attr(r@data, "xvar") <- xvar
 #	attr(r@data, "yvar") <- yvar
 	attr(r@data, "zvar") <- zvar
+	attr(r@data, "dim3") <- dim3
+	attr(r@data, "level") <- level
+	
 #	attr(r@data, "add_offset") <- add_offset
 #	attr(r@data, "scale_factor") <- scale_factor
 	
@@ -214,19 +229,19 @@
 	if (dims == 2) {
 		nbands = 1
 	} else {
-		r@file@nbands <- nc$var[[zvar]]$dim[[3]]$len
-		r@zname <- nc$var[[zvar]]$dim[[3]]$units
-		r@zvalue <- nc$var[[zvar]]$dim[[3]]$vals
+		r@file@nbands <- nc$var[[zvar]]$dim[[dim3]]$len
+		r@zname <- nc$var[[zvar]]$dim[[dim3]]$units
+		r@zvalue <- nc$var[[zvar]]$dim[[dim3]]$vals
 		
-		if ( nc$var[[zvar]]$dim[[3]]$name == 'time' ) {
-			r <- .doTime(r, nc, zvar)
+		if ( nc$var[[zvar]]$dim[[dim3]]$name == 'time' ) {
+			r <- .doTime(r, nc, zvar, dim3)
 		}
 	}
 	
 	if (type == 'RasterLayer') {
 		if (is.na(band) | is.null(band)) {
-			if (dims == 3) { 
-				stop(zvar, 'has three dimensions, provide a "band" value between 1 and ', dims[3])
+			if (dims > 2) { 
+				stop(zvar, 'has mutliple layers, provide a "band" value between 1 and ', dims[dim3])
 			} 
 		} else {
 			if (length(band) > 1) {

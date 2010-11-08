@@ -15,17 +15,17 @@ function(x, ...) {
 	
 	
 if (!isGeneric('values<-')) {
-	setGeneric('values<-', function(x, layer, value)
+	setGeneric('values<-', function(x, value)
 		standardGeneric('values<-')) 
 	}	
 
 setMethod('values<-', signature(x='RasterLayer'), 
-function(x, layer=-1, value) {
+function(x, value) {
 	setValues(x, value)
 } )
 	
 setMethod('values<-', signature(x='RasterBrick'), 
-function(x, layer=-1, value) {
-	setValues(x, value, layer=layer)
+function(x, value) {
+	setValues(x, values=value, layer=-1)
 } )
 	

@@ -102,29 +102,48 @@
 }
 
 
-linesToRaster <- function(lns, raster, field=0, overlap='last', mask=FALSE, updateRaster=FALSE, updateValue="NA", filename="", ...) {
+linesToRaster <- function(lns, raster, field=0, overlap='last', ...) {
+	.warnRasterize()
+	.linesToRaster(lns=lns, raster=raster, field=field, fun=overlap, ...)
+}
 
+
+.linesToRaster <- function(lns, raster, field=0, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue="all", filename="", ...) {
+
+	dots <- list(...)
+	if (!is.null(dots$overlap)) { stop('argument "overlap" is no longer available. Use "fun"') } 
+	if (!is.null(dots$updateRaster)) { stop('argument "updateRaster" is no longer available. Use "update"') } 
+	
+	
 	filename <- trim(filename)
 
-	if (mask & updateRaster) { 
-		stop('use either "mask" OR "updateRaster"')
+	if (mask & update) { 
+		stop('use either "mask=TRUE" OR "update=TRUE" (or neither)')
 	}
 	if (mask) { 
 		oldraster <- raster 
 	}
-	if (updateRaster) {
+	if (update) {
 		oldraster <- raster 
-		if (!(updateValue == 'NA' | updateValue == '!NA' | updateValue == 'all' | updateValue == 'zero')) {
-			stop('updateValue should be either "all", "NA", "!NA", or "zero"')
-		}
+		if (!is.numeric(updateValue)) {
+			if (is.na(updateValue)) {
+				updateValue <- 'NA'
+			} else if (!(updateValue == 'NA' | updateValue == '!NA' | updateValue == 'all')) {
+				stop('updateValue should be either "all", "NA", "!NA"')
+			}
+		} 
 	}
 
-	if (!(overlap %in% c('first', 'last', 'sum', 'min', 'max', 'count'))) {
-		stop('invalid value for overlap')
+	
+	if (is.character(fun)) {
+		if (!(fun %in% c('first', 'last', 'sum', 'min', 'max', 'count'))) {
+			stop('invalid character value for fun')
+		}
+		doFun <- FALSE
+	} else {
+		doFun <- TRUE
 	}
 	
-
-
 	raster <- raster(raster)
 	if (projection(lns) != "NA") {
 		projection(raster) = projection(lns)
@@ -172,8 +191,8 @@ linesToRaster <- function(lns, raster, field=0, overlap='last', mask=FALSE, upda
 		} else {
 			stop('field should be a single value or equal the number of polygons') 
 		}	
-	} else if (inherits(lns, 'SpatialLines') & overlap == 'sum') {
-		putvals <- rep(1, nline)
+#	} else if (inherits(lns, 'SpatialLines') & overlap == 'sum') {
+#		putvals <- rep(1, nline)
 	} else if ( field < 0) {
 		putvals <- rep(1, nline)
 	} else if ( field == 0 | class(lns) == 'SpatialLines') {
@@ -197,9 +216,15 @@ linesToRaster <- function(lns, raster, field=0, overlap='last', mask=FALSE, upda
 		raster <- writeStart(raster, filename=filename, ...)
 	}
 	rv1 <- rep(NA, ncol(raster))
+	lst1 <- vector(length=length(rv1), mode='list')
+	
 	pb <- pbCreate(nrow(raster), type=.progress(...))
 	for (r in 1:nrow(raster)) {
-		rv <- rv1
+		if (doFun) {
+			rv <- lst1
+		} else {
+			rv <- rv1
+		}
 		ly <- yFromRow(raster, r)
 		line1 <- rbind(c(lxmin, ly + 0.5*yres(raster)), c(lxmax,ly + 0.5*yres(raster)))
 		line2 <- rbind(c(lxmin, ly - 0.5*yres(raster)), c(lxmax,ly - 0.5*yres(raster)))
@@ -219,22 +244,28 @@ linesToRaster <- function(lns, raster, field=0, overlap='last', mask=FALSE, upda
 							rvtmp <- rv1
 							rvtmp[colnrs] <- putvals[i]
 							
-							if (mask) {
+							
+							if (doFun) {
+								ind <- which(!is.na(rvtmp))
+								for (ii in ind) {
+									rv[[ii]] <- c(rv[[ii]], rvtmp[ii])
+								}
+							} else if (mask) {
 								rv[!is.na(rvtmp)] <- rvtmp[!is.na(rvtmp)]
-							} else if (overlap=='last') {
+							} else if (fun=='last') {
 								rv[!is.na(rvtmp)] <- rvtmp[!is.na(rvtmp)]
-							} else if (overlap=='first') {
+							} else if (fun=='first') {
 								rv[is.na(rv)] <- rvtmp[is.na(rv)]
-							} else if (overlap=='sum') {
+							} else if (fun=='sum') {
 								rv[!is.na(rv) & !is.na(rvtmp)] <- rv[!is.na(rv) & !is.na(rvtmp)] + rvtmp[!is.na(rv) & !is.na(rvtmp)] 
 								rv[is.na(rv)] <- rvtmp[is.na(rv)]
-							} else if (overlap=='min') {
+							} else if (fun=='min') {
 								rv[!is.na(rv) & !is.na(rvtmp)] <- pmin(rv[!is.na(rv) & !is.na(rvtmp)], rvtmp[!is.na(rv) & !is.na(rvtmp)])
 								rv[is.na(rv)] <- rvtmp[is.na(rv)]
-							} else if (overlap=='max') {
+							} else if (fun=='max') {
 								rv[!is.na(rv) & !is.na(rvtmp)] <- pmax(rv[!is.na(rv) & !is.na(rvtmp)], rvtmp[!is.na(rv) & !is.na(rvtmp)])
 								rv[is.na(rv)] <- rvtmp[is.na(rv)]
-							} else if (overlap=='count') {
+							} else if (fun=='count') {
 								rvtmp[!is.na(rvtmp)]  <- 1
 								rv[!is.na(rv) & !is.na(rvtmp)] <- rv[!is.na(rv) & !is.na(rvtmp)] + rvtmp[!is.na(rv) & !is.na(rvtmp)] 
 								rv[is.na(rv)] <- rvtmp[is.na(rv)]				
@@ -245,18 +276,26 @@ linesToRaster <- function(lns, raster, field=0, overlap='last', mask=FALSE, upda
 			}
 		}
 		
+		if (doFun) {
+			for (i in 1:length(rv)) {
+				if (is.null(rv[[i]])) {
+					rv[[i]] <- NA
+				}
+			}
+			rv <- sapply(rv, fun)
+		}
 		
 		if (mask) {
 			oldvals <- getValues(oldraster, r)
 			ind <- which(is.na(rv))
 			oldvals[ind] <- NA
 			rv <- oldvals
-		} else if (updateRaster) {
+		} else if (update) {
 			oldvals <- getValues(oldraster, r)
-			if (updateValue == "all") {
+			if (is.numeric(updateValue)) {
+				ind <- which(oldvals == updateValue & !is.na(rv))
+			} else if (updateValue == "all") {
 				ind <- which(!is.na(rv))
-			} else if (updateValue == "zero") {
-				ind <- which(oldvals==0 & !is.na(rv))
 			} else if (updateValue == "NA") {
 				ind <- which(is.na(oldvals))
 			} else {
@@ -264,6 +303,8 @@ linesToRaster <- function(lns, raster, field=0, overlap='last', mask=FALSE, upda
 			}
 			oldvals[ind] <- rv[ind]
 			rv <- oldvals
+		} else {
+			rv[is.na(rv)] <- background
 		}
 
 		

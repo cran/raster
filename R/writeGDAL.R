@@ -1,4 +1,3 @@
-# R function for the raster package
 # Author: Robert J. Hijmans
 # contact: r.hijmans@gmail.com
 # Date : January 2009
@@ -31,8 +30,9 @@
 	stop('cannot find matching nodata value')
 }
 
-.getGDALtransient <- function(raster, filename, options, NAvalue, ...)  {
-	r = raster(raster)
+.getGDALtransient <- function(r, filename, options, NAvalue, ...)  {
+    nbands <- nlayers(r)
+	r <- raster(r)
 	datatype <- .datatype(...)
 	overwrite <- .overwrite(...)
 	gdalfiletype <- .filetype(...)
@@ -56,7 +56,6 @@
 	if (missing(NAvalue)) { 
 		NAvalue <- .GDALnodatavalue(dataformat) 
 	}
-    nbands = nlayers(raster)
 	
 	if (gdalfiletype=='GTiff') {
 		bytes <- ncell(r) * dataSize(datatype) * nbands
@@ -75,62 +74,35 @@
 		.Call("RGDAL_SetNoDataValue", b, as.double(NAvalue), PACKAGE = "rgdal")
 	}
 
- 
 	gt <- c(xmin(r), xres(r), 0, ymax(r), 0, -yres(r))
     .Call("RGDAL_SetGeoTransform", transient, gt, PACKAGE = "rgdal")
-    p4s <- projection(r)
-    .Call("RGDAL_SetProject", transient, p4s, PACKAGE = "rgdal")
+    .Call("RGDAL_SetProject", transient, projection(r), PACKAGE = "rgdal")
 
 	if (is.null(options)) options <- ''
 	return(list(transient, NAvalue, options))
 }
 
 
-# ALTERNATIVE; not used
-#.spWriteGDALall <- function(raster, gdalfiletype, overwrite, mvFlag, options) {
-#	spgrid <- asSpGrid(raster)	
-#	writeGDAL(spgrid, filename(raster))
-#}
-
-
 .writeGDALall <- function(raster, filename, options=NULL, ...) {
 
 	if (! .requireRgdal() ) { stop('rgdal not available') }
 
-	temp <- .getGDALtransient(raster, filename=filename, options=options, ...)
-	transient <- temp[[1]]
-	naValue <- temp[[2]]
-	if (temp[[3]][1] == "") {
-		options <- NULL
-	} else {
-		options <- temp[[3]]
-	}
+	raster <- .startGDALwriting(raster, filename, options, NAvalue, ...) 
 	
 	nl <- nlayers(raster)
-
 	if (nl == 1) {
-		v <- getValues(raster, format='matrix')
-		v[is.na(v)] = naValue
-		x <- putRasterData(transient, t(v), band=1, c(0, 0)) 
+		v <- as.matrix(raster)
+		v[is.na(v)] <- raster@file@nodatavalue
+		x <- putRasterData(raster@file@transient, t(v), band=1, c(0, 0)) 
 	} else {
 	    for (i in 1:nl) {
 			v <- getValues(raster)[,i]
-			v[is.na(v)] = naValue
-			v <- matrix(v, nrow=nrow(raster), ncol=ncol(raster), byrow=TRUE)
-			x <- putRasterData(transient, t(v), band=i, c(0, 0))
+			v[is.na(v)] = raster@file@nodatavalue
+			v <- matrix(v, nrow=raster@nrows, ncol=raster@ncols, byrow=TRUE)
+			x <- putRasterData(raster@file@transient, t(v), band=i, c(0, 0))
 		}
 	}	
 	
- 	saveDataset(transient, filename, options=options )
-	GDAL.close(transient) 
-#	.writeStx(raster, filename) 
-
-	if (nl==1) {
-		raster <- raster(filename)
-	} else {
-		raster <- brick(filename)
-	}
-#	raster <- readAll(raster)
-	return(raster)
+	return( .stopGDALwriting(raster) )
 }
 
