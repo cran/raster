@@ -12,7 +12,7 @@
 	on.exit(options('warn'= w))
 	options('warn'=-1) 
 	
-	if (packageVersion('rgdal') > '0.6-28') {
+	if (packageDescription('rgdal')$Version > '0.6-28') {
 		gdalinfo <- do.call(GDALinfo, list(filename, silent=silent, returnRAT=TRUE))
 	} else {
 		gdalinfo <- do.call(GDALinfo, list(filename, silent=silent))

@@ -2,18 +2,20 @@
 
 \docType{class}
 
+\alias{Extent}
 \alias{Extent-class}
 \alias{show,Extent-method}
 
 \title{Class "Extent" }
 
-\description{Object of class Extent are used to define the geographic extent (extremes) of objects of the BasicRaster and Raster* classes}
+\description{
+Objects of class Extent are used to define the spatial extent (extremes) of objects of the BasicRaster and Raster* classes. 
+}
 
 \section{Objects from the Class}{
-
-Objects can be created by with the \code{\link[raster]{extent}} function or via a calls to \code{new("Extent", ...)}.
-
+You can use the \code{\link{extent}} function to create Extent objects, or to extract them from Raster* and Spatial* objects.
 }
+
 \section{Slots}{
 	 \describe{
     \item{\code{xmin}:}{minimum x coordinate}
@@ -32,7 +34,7 @@ Objects can be created by with the \code{\link[raster]{extent}} function or via 
 \author{ Robert J. Hijmans}
 
 
-\seealso{ \code{\link[raster]{extent}}, \code{\link[raster]{setExtent}} }
+\seealso{ \code{\link{extent}}, \code{\link[raster]{setExtent}} }
 
 \examples{
 ext <- extent(-180,180,-90,90)

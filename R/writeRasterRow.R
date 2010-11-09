@@ -3,7 +3,7 @@
 # Version 0.9
 # Licence GPL v3
 
-.startRasterWriting <- function(raster, filename, NAvalue, ...) {
+.startRasterWriting <- function(raster, filename, NAflag, ...) {
  	filename <- trim(filename)
 	if (filename == "") {
 		stop('RasterLayer has no filename; and no filename specified as argument to writeRaster')
@@ -14,8 +14,8 @@
 	fnamevals <- .setFileExtensionValues(filename, filetype)
 	datatype <- .datatype(...)
 	dataType(raster) <- datatype
-	if (!missing(NAvalue)) {
-		raster@file@nodatavalue <- NAvalue
+	if (!missing(NAflag)) {
+		raster@file@nodatavalue <- NAflag
 	}
 	
 	if (filetype %in% c('SAGA')) {

@@ -26,11 +26,11 @@
     if (x == 'Int16') return(-32768)
     if (x == 'Int8') return(-128)
     if (x == 'UInt16') return(65535)
-    if (x == 'Byte') return(-1)
+    if (x == 'Byte') return(255)
 	stop('cannot find matching nodata value')
 }
 
-.getGDALtransient <- function(r, filename, options, NAvalue, ...)  {
+.getGDALtransient <- function(r, filename, options, NAflag, ...)  {
     nbands <- nlayers(r)
 	r <- raster(r)
 	datatype <- .datatype(...)
@@ -53,8 +53,8 @@
 
 	dataformat <- .getGdalDType(datatype, gdalfiletype)
 	
-	if (missing(NAvalue)) { 
-		NAvalue <- .GDALnodatavalue(dataformat) 
+	if (missing(NAflag)) { 
+		NAflag <- .GDALnodatavalue(dataformat) 
 	}
 	
 	if (gdalfiletype=='GTiff') {
@@ -71,7 +71,7 @@
  
 	for (i in 1:nbands) {
 		b <- new("GDALRasterBand", transient, i)
-		.Call("RGDAL_SetNoDataValue", b, as.double(NAvalue), PACKAGE = "rgdal")
+		.Call("RGDAL_SetNoDataValue", b, as.double(NAflag), PACKAGE = "rgdal")
 	}
 
 	gt <- c(xmin(r), xres(r), 0, ymax(r), 0, -yres(r))
@@ -79,7 +79,7 @@
     .Call("RGDAL_SetProject", transient, projection(r), PACKAGE = "rgdal")
 
 	if (is.null(options)) options <- ''
-	return(list(transient, NAvalue, options))
+	return(list(transient, NAflag, options))
 }
 
 
@@ -87,7 +87,7 @@
 
 	if (! .requireRgdal() ) { stop('rgdal not available') }
 
-	raster <- .startGDALwriting(raster, filename, options, NAvalue, ...) 
+	raster <- .startGDALwriting(raster, filename, options, ...) 
 	
 	nl <- nlayers(raster)
 	if (nl == 1) {

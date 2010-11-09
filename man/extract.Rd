@@ -30,7 +30,7 @@ extract(x, y, ...)
 \arguments{
   \item{x}{Raster* object}
   \item{y}{A vector (representing cell numbers); or a SpatialPoints object or a two-column data.frame or matrix (representing points); 
-  or a \code{\link[sp]{SpatialPolygons}}, \code{\link[sp]{SpatialLines}}, or Extent object }
+  or a \code{\link[sp]{SpatialPolygons}}, \code{\link[sp]{SpatialLines}}, or \code{\link{Extent}} object }
   \item{...}{Additional arguments, see under Details}  
 }
 

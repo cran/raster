@@ -5,7 +5,7 @@
 # Version 0.9
 # Licence GPL v3
 
-.startGDALwriting <- function(raster, filename, options, NAvalue, ...) {
+.startGDALwriting <- function(raster, filename, options, ...) {
 	
 	temp <- .getGDALtransient(raster, filename=filename, options=options, ...)
 	attr(raster@file, "transient") <- temp[[1]]
@@ -21,29 +21,33 @@
 
 .stopGDALwriting <- function(raster) {
 
-	nl <- nlayers(raster)
-	if (nl == 1) {
-		if (raster@data@haveminmax) {
-			if (inMemory(raster)) {
-				statistics <- c(raster@data@min, raster@data@max, mean(raster@data@values, na.rm=TRUE), sd(raster@data@values, na.rm=TRUE))
-			} else {
-				statistics <- c(raster@data@min, raster@data@max, 0, 0)
+	if (packageDescription('rgdal')$Version > '0.6-28') {
+	
+		nl <- nlayers(raster)
+		if (nl == 1) {
+			if (raster@data@haveminmax) {
+				if (inMemory(raster)) {
+					statistics <- c(raster@data@min, raster@data@max, mean(raster@data@values, na.rm=TRUE), sd(raster@data@values, na.rm=TRUE))
+				} else {
+					statistics <- c(raster@data@min, raster@data@max, 0, 0)
+				}
+				b <- new("GDALRasterBand", raster@file@transient, 1)
+				try ( .Call("RGDAL_SetStatistics", b, as.double(statistics), PACKAGE = "rgdal"), silent=TRUE )
 			}
-			b <- new("GDALRasterBand", raster@file@transient, 1)
-			try ( .Call("RGDAL_SetStatistics", b, as.double(statistics), PACKAGE = "rgdal"), silent=TRUE )
-		}
-	} else {
-		if (raster@data@haveminmax) {
-			if (inMemory(raster)) {
-				statistics <- cbind(raster@data@min, raster@data@max, apply(raster@data@values, 2, mean, na.rm=TRUE), apply(raster@data@values, 2, sd, na.rm=TRUE))
-			} else {
-				statistics <- cbind(raster@data@min, raster@data@max, 0, 0)
+		} else {
+			if (raster@data@haveminmax) {
+				if (inMemory(raster)) {
+					statistics <- cbind(raster@data@min, raster@data@max, apply(raster@data@values, 2, mean, na.rm=TRUE), apply(raster@data@values, 2, sd, na.rm=TRUE))
+				} else {
+					statistics <- cbind(raster@data@min, raster@data@max, 0, 0)
+				}
+				for (i in 1:nl) {
+					b <- new("GDALRasterBand", raster@file@transient, i)
+					try ( .Call("RGDAL_SetStatistics", b, as.double(statistics[i,]), PACKAGE = "rgdal"), silent=TRUE )
+				}		
 			}
-			for (i in 1:nl) {
-				b <- new("GDALRasterBand", raster@file@transient, i)
-				try ( .Call("RGDAL_SetStatistics", b, as.double(statistics[i,]), PACKAGE = "rgdal"), silent=TRUE )
-			}		
 		}
+		
 	}
 		
 	if (raster@file@options[1] == "") {

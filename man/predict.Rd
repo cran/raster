@@ -34,7 +34,7 @@ predict(object, ...)
   \tab  \code{ext} \tab An Extent object to limit the prediction to a sub-region of \code{x} \cr
   \tab  \code{const}  \tab data.frame. Can be used to add a constant for which there is no Raster object for model predictions. Particulalry useful if the constant is a character-like factor value for which it is currently not possible to make a RasterLayer \cr
   \tab  \code{index}  \tab Integer. To select the column if predict.'model' returns a matrix with multiple columns \cr
-  \tab  \code{se.fit}  \tab Extract the standard error rather then the prediction (works for GLM and perhaps other methods where the prediction and se.fit are returned as a list) \cr
+  \tab  \code{se.fit}  \tab Compute the standard error AND the predicted value (works for GLM and perhaps other methods where the prediction and se.fit are returned as a list) \cr
   \tab  \code{na.rm}  \tab Logical. Remove cells with NA values in the predictors before solving the model (and return a NA value for those cells). This option prevents errors with models that cannot handle NA values. In most other cases this will not affect the output. An exception is when predicting with a boosted regression trees model because these return predicted value even if some (or all!) variables are NA \cr
   \tab  \code{...}  \tab Additional arguments to pass to the predict.'model' function \cr
 }
@@ -56,7 +56,7 @@ Use \code{\link[raster]{interpolate}} if your model has 'x' and 'y' as implicit 
 }
 
 \value{
-a RasterLayer object
+RasterLayer
 }
 
 \author{ Robert J. Hijmans}

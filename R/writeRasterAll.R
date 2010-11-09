@@ -3,7 +3,7 @@
 # Version 0.9
 # Licence GPL v3
 
-.writeRasterAll <- function(raster, filename, NAvalue, ... ) {
+.writeRasterAll <- function(raster, filename, NAflag, ... ) {
 
 	filetype <- .filetype(...)
 	raster@file@driver <- filetype
@@ -48,8 +48,8 @@
 	}
 	
 
-	if (! missing(NAvalue) ) {
-		raster@file@nodatavalue <- NAvalue
+	if (! missing(NAflag) ) {
+		raster@file@nodatavalue <- NAflag
 	}
 	dsize <- dataSize(raster@file@datanotation)
 	filecon <- file(fnamevals, "wb")

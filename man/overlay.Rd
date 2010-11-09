@@ -16,9 +16,9 @@ Create a new Raster* object, based on two or more existing and Raster* objects.
 
 You should supply a function \code{fun} to set the way that the RasterLayers are combined. The number of arguments in the function must match the number of Raster objects. For example, if you combine two RasterLayers you could use multiply: \code{fun=function(x,y){return(x*y)}} percentage: \code{fun=function(x,y){return(100 * x / y)}}. If you combine three layers you could use \code{fun=function(x,y,z){return((x + y) * z)}}
 
-If a single mutli-layer object is provided, its layers are treated as individual RasterLayers. If multiple multi-layer objects are provided, they should have the same number of layers, and a brick with the same number of layers is returned (objects could also have a single layer, which is recycled).
+Note that the function must work for vectors (not only single numbers). That is, it must return the same number of elements as its input vectors. Alternatively, you can also supply a function such as \code{sum}, that takes \code{n} arguments (as \code{'...'}) and \code{na.rm}, like in \code{sum(..., na.rm)}.
 
-You can also supply a function such as \code{sum}, that takes \code{n} arguments. Note that the function must work for vectors (not only single numbers)
+If a single mutli-layer object is provided, its layers are treated as individual RasterLayers. If multiple multi-layer objects are provided, they should have the same number of layers, and a brick with the same number of layers is returned (objects could also have a single layer, which is recycled).
 }
 
 \section{Methods}{
@@ -73,7 +73,7 @@ In all cases you can use these arguments:
 }
 
 \details{
-In stead of the overlay function you can also use normal aritmethic functions such as \code{*, /, +, -} with RasterLayer objects (see examples), but then you cannot specifiy an output filename. However, the overlay function should be more efficient when using large data files that cannot be loaded into memory, as the use of the standard arithmetic functions might cause the creation of many temporary files.
+In stead of the overlay function you can also use normal aritmethic functions such as \code{*, /, +, -} with Raster objects (see examples), but then you cannot specifiy an output filename. However, the overlay function should be more efficient when using large data files that cannot be loaded into memory, as the use of the standard arithmetic functions might cause the creation of many temporary files.
 
 While you can supply functions such as \code{sum} or \code{mean}, it would be more direct to use the Raster* objects are arguments to those functions (e.g. \code{sum(r1,r2,r3)})  
 

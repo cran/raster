@@ -1,3 +1,10 @@
+8-Nov-2010,  version 1.6-16
+fixed bug when using se.fit=TRUE in predict (it did not respond to it). Reported by Eliane Meier. 
+Also changed the above that when se.fit=T, both the prediction AND the s.e. are returned (as a RasterBrick)
+changed NAvalue argument in writeRaster to NAflag to avoid confusion with NAvalue function
+fixed backwards compatability by replacing packageVersion('rgdal') to packageDescription('rgdal')$Version
+
+--------------------------------------------
 5-Nov-2010,  version 1.6-13
 'unique' now also works for multi-layer objects
 Using new features in GDAL 0.6-29: set statistics and capture raster attributes 
