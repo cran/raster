@@ -53,7 +53,7 @@ writeRaster(x, filename, ...)
 \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeFormats}} \cr
 \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
 \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-\tab \code{NAvalue} \tab Numeric. To overwrite the default value used to represent NA in a file \cr
+\tab \code{NAflag} \tab Numeric. To overwrite the default value used to represent \code{NA} in a file \cr
 }
 
 NetCDF files have the following additional, optional, arguments: varname, varunit, longname, xname, yname, zname, zunit.

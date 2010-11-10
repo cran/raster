@@ -16,7 +16,15 @@ setMethod('predict', signature(object='Raster'),
 			return ( predict(model, object, filename=filename, ext=ext, ...) ) 
 		}
 	
-		predrast <- raster(object)
+		if (se.fit) {
+			predrast <- brick(object, values=FALSE)
+			predrast@data@nlayers <- as.integer(2)
+		} else if (length(index) > 1) {	
+			predrast <- brick(object, values=FALSE)
+			predrast@data@nlayers <- length(index)
+		} else {
+			predrast <- raster(object)
+		}
 				
 		if (!is.null(ext)) {
 			predrast <- crop(predrast, extent(ext))
@@ -49,19 +57,18 @@ setMethod('predict', signature(object='Raster'),
 		filename <- trim(filename)
 		if (!canProcessInMemory(predrast) && filename == '') {
 			filename <- rasterTmpFile()
-									
 		} 
 
 		if (filename == '') {
-			v <- matrix(NA, ncol=nrow(predrast), nrow=ncol(predrast))
+			v <- matrix(NA, ncol=nlayers(predrast), nrow=ncell(predrast))
 		} 
 
 		tr <- blockSize(predrast, n=nlayers(object)+3)
 
 		napred <- rep(NA, ncol(predrast)*tr$size )
 
-		if (class(object) == 'RasterStack') {
-				if (nlayers(object)==0) { stop('empty RasterStack') }
+		if (inherits(object, 'RasterStackBrick')) {
+				if (nlayers(object)==0) { stop('empty Raster object') }
 		} else {
 			if ( !  fromDisk(object) ) {
 				if (! inMemory(object) ) {
@@ -98,51 +105,47 @@ setMethod('predict', signature(object='Raster'),
 			if (se.fit) {
 			
 				predv <- predict(model, blockvals, se.fit=TRUE, ...)
-				predv <- as.vector(predv$se.fit)
+				predv <- cbind(as.vector(predv$fit), as.vector(predv$se.fit))
 			
-			} 
+			}  else {
 			
-			bvr <- nrow(blockvals)
-			if (na.rm) {  
-				blockvals <- na.omit(blockvals)		
-			}
-			if (nrow(blockvals) == 0 ) {
-				predv <- napred
-			} else {
-				predv <- fun(model, blockvals, ...)	
-			}
-
-			if (class(predv)[1] == 'list') {
-				predv = unlist(predv)
-				if (length(predv) != nrow(blockvals)) {
-					predv = matrix(predv, nrow=nrow(blockvals))
-				}					
-			}
-			if (isTRUE(dim(predv)[2] > 1)) {
-				predv = predv[,index]
-			}						
-			if (na.rm) {  
-				naind <- as.vector(attr(blockvals, "na.action"))
-				if (!is.null(naind)) {
-					p <- napred
-					p[-naind] <- predv
-					predv <- p
-					rm(p)
+				bvr <- nrow(blockvals)
+				if (na.rm) {  
+					blockvals <- na.omit(blockvals)		
+				}
+				
+				if (nrow(blockvals) == 0 ) {
+					predv <- napred
+				} else {
+					predv <- fun(model, blockvals, ...)	
+					if (class(predv)[1] == 'list') {
+						predv = unlist(predv)
+						if (length(predv) != nrow(blockvals)) {
+							predv = matrix(predv, nrow=nrow(blockvals))
+						}					
+					}
+					if (isTRUE(dim(predv)[2] > 1)) {
+						predv = predv[,index]
+					}
+				}
+						
+				if (na.rm) {  
+					naind <- as.vector(attr(blockvals, "na.action"))
+					if (!is.null(naind)) {
+						p <- napred
+						p[-naind] <- predv
+						predv <- p
+						rm(p)
+					}
 				}
 			}
 				
-				# to change factor to numeric; should keep track of this to return a factor type RasterLayer
-			predv = as.numeric(predv)
-				
+			# to change factor to numeric; should keep track of this to return a factor type RasterLayer
+			predv[] = as.numeric(predv)
 		
 			if (filename == '') {
-				predv = matrix(predv, nrow=ncol(predrast))
-				cols = tr$row[i]:(tr$row[i]+dim(predv)[2]-1)
-				a = try( v[,cols] <- predv )
-				if (class(a) == 'try-error') {
-					print(cols)
-					print(dim(v))
-				}
+				cells = cellFromRowCol(predrast, tr$row[i], 1):cellFromRowCol(predrast, tr$row[i]+tr$nrows[i]-1, ncol(predrast))
+				a = v[cells, ] <- predv 
 			} else {
 				predrast <- writeValues(predrast, predv, tr$row[i])
 			}
@@ -151,7 +154,7 @@ setMethod('predict', signature(object='Raster'),
 		pbClose(pb)
 		
 		if (filename == '') {
-			predrast <- setValues(predrast, as.numeric(v))  # or as.vector
+			predrast <- setValues(predrast, v)  # or as.vector
 		} else {
 			predrast <- writeStop(predrast)
 		}
