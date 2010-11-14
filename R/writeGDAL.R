@@ -52,7 +52,7 @@
 	}	
 
 	dataformat <- .getGdalDType(datatype, gdalfiletype)
-	
+		
 	if (missing(NAflag)) { 
 		NAflag <- .GDALnodatavalue(dataformat) 
 	}
@@ -79,7 +79,7 @@
     .Call("RGDAL_SetProject", transient, projection(r), PACKAGE = "rgdal")
 
 	if (is.null(options)) options <- ''
-	return(list(transient, NAflag, options))
+	return(list(transient, NAflag, options, dataformat))
 }
 
 
@@ -92,11 +92,17 @@
 	nl <- nlayers(raster)
 	if (nl == 1) {
 		v <- as.matrix(raster)
+		if (raster@file@datanotation == 'INT1U') {
+			v[v < 0] <- NA
+		}
 		v[is.na(v)] <- raster@file@nodatavalue
 		x <- putRasterData(raster@file@transient, t(v), band=1, c(0, 0)) 
 	} else {
 	    for (i in 1:nl) {
 			v <- getValues(raster)[,i]
+			if (raster@file@datanotation == 'INT1U') {
+				v[v < 0] <- NA
+			}
 			v[is.na(v)] = raster@file@nodatavalue
 			v <- matrix(v, nrow=raster@nrows, ncol=raster@ncols, byrow=TRUE)
 			x <- putRasterData(raster@file@transient, t(v), band=i, c(0, 0))

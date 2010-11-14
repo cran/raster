@@ -1,24 +1,25 @@
 # Author: Robert J. Hijmans, r.hijmans@gmail.com
-# International Rice Research Institute
 # Date :  April 2009
 # Version 0.9
 # Licence GPL v3
 
 
-rasterFromCells <- function(object, cells) {
-	x <- unique(cells)
-	cols <- colFromCell(object, x)
-	rows <- rowFromCell(object, x)
-	res <- res(object)
-	x1 <- xFromCol(object, min(cols)) - 0.5 * res[1]
-	x2 <- xFromCol(object, max(cols)) + 0.5 * res[1]
-	y1 <- yFromRow(object, max(rows)) - 0.5 * res[2]
-	y2 <- yFromRow(object, min(rows)) + 0.5 * res[2]
-	bb <- extent(x1, x2, y1, y2)
-	object <- clearValues(object)
-	cells2 <- cellsFromExtent(object, bb)
-	r <- crop(object, bb)
-	r[] <- cells2
+rasterFromCells <- function(x, cells, values=TRUE) {
+	x <- raster(x)
+	u <- unique(cells)
+	u <- subset(u, u > 0 & u <= ncell(x))
+	cols <- colFromCell(x, u)
+	rows <- rowFromCell(x, u)
+	res <- res(x)
+	x1 <- xFromCol(x, min(cols)) - 0.5 * res[1]
+	x2 <- xFromCol(x, max(cols)) + 0.5 * res[1]
+	y1 <- yFromRow(x, max(rows)) - 0.5 * res[2]
+	y2 <- yFromRow(x, min(rows)) + 0.5 * res[2]
+	e <- extent(x1, x2, y1, y2)
+	r <- crop(x, e)
+	if (values) {
+		r <- setValues(r, cellsFromExtent(x, e))
+	}
 	return(r)
 }
 

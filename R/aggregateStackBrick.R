@@ -35,12 +35,9 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", old=FALSE, .
 		
 	outRaster <- brick(x, values=FALSE)
 
-	bndbox <- extent(xmin(x), xmx, ymn, ymax(x))
-	extent(outRaster) <- bndbox
+	extent(outRaster) <- extent(xmin(x), xmx, ymn, ymax(x))
 	dim(outRaster) <- c(rsteps, csteps) 
 	
-	
-	thefun <- fun
 
 	if (! inherits(x, 'RasterStack' )) {
 		if ( ! fromDisk(x)  & ! inMemory(x) ) {
@@ -57,7 +54,6 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", old=FALSE, .
 		cells <- cellFromRowCol(xx, rows, cols)
 		
 		x <- as.matrix( aggregate(x, list(cells), fun, na.rm=na.rm ))[,-1]
-#		x <- as.vector( tapply(x, cells, thefun ))
 		rm(cells)
 		
 		x <- setValues(outRaster, x)
@@ -92,7 +88,6 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", old=FALSE, .
 				cells <- cellFromRowCol(x, theserows, cols)
 			}	
 			vals <- getValues(x, startrow, nrows)
-			# vals <- as.vector( tapply(vals, cells, thefun ) )
 			vals <- as.matrix( aggregate(vals, list(cells), fun, na.rm=na.rm ))[,-1]
 		
 			outRaster <- writeValues(outRaster, vals, r)

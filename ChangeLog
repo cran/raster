@@ -1,3 +1,20 @@
+--------------------------------------------
+14-Nov-2010,  version 1.6-19
+Fixed bug in .stopGDALwrting
+Experimental support for multicore in functions projectRaster and distance
+
+--------------------------------------------
+13-Nov-2010,  version 1.6-18
+Started support for multi-core/cluster processing (together with Matteo Mattiuzzi)
+Fixed bug in aggregate with unequal x and y fact (thanks to Kevin Ummel for reporting)
+Added drop=FALSE to "[" methods, to return a Raster*. 
+
+--------------------------------------------
+10-Nov-2010,  version 1.6-17
+[[ method to extract layers from multi-layer objecs
+Writing cdf files now uses the CF standard 'degrees_east' and 'degrees_north' as variable names in lon/lat data (suggested by Kevin Ummel)
+
+--------------------------------------------
 8-Nov-2010,  version 1.6-16
 fixed bug when using se.fit=TRUE in predict (it did not respond to it). Reported by Eliane Meier. 
 Also changed the above that when se.fit=T, both the prediction AND the s.e. are returned (as a RasterBrick)

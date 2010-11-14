@@ -99,11 +99,11 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 	
 	if (missing(to)) {
 		if (missing(crs)) {
-			stop("'res' provided, but 'crs' argument is missing.")
+			stop("'crs' argument is missing.")
 		}
 		to <- projectExtent(from, crs)
 		if (missing(res)) {
-			res <- .computeRes(from, crs)
+			res <- raster:::.computeRes(from, crs)
 		}
 		res(to) <- res
 		projto <- projection(to)
@@ -170,26 +170,84 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 		to <- writeStart(to, filename=filename, ...)
 	}
 	
-	tr <- blockSize(to)
-	pb <- pbCreate(tr$n, type=.progress(...))
-	for (i in 1:tr$n) {
-		r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
-		xy <- xyFromCell(to, cellFromRowCol(to, tr$row[i], 1) : cellFromRowCol(to, tr$row[i]+tr$nrows[i]-1, ncol(to)) ) 
+	
+	if (.doCluster()) {
+		
+		cl <- .makeCluster()
+		nodes <- min(ceiling(to@nrows/10), length(cl)) # at least 10 rows per node
+		
+		cat('Using cluster with', nodes, 'nodes\n')
+		flush.console()
+		
+		tr <- blockSize(to, minblocks=nodes)
+		pb <- pbCreate(tr$n, type=.progress(...))
 
-		unProjXY <- .Call("transform", projto, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
-		unProjXY <- cbind(unProjXY[[1]], unProjXY[[2]])
-		
-		vals <- .xyValues(from, unProjXY, method=method)
-		
-		if (inMemory) {
-			start <- cellFromRowCol(to, tr$row[i], 1)
-			end <- cellFromRowCol(to, tr$row[i]+tr$nrows[i]-1, to@ncols)
-			v[start:end, ] <- vals
-		} else {
-			to <- writeValues(to, vals, tr$row[i])
+		clFun <- function(i) {
+			r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
+			xy <- xyFromCell(to, cellFromRowCol(to, tr$row[i], 1) : cellFromRowCol(to, tr$row[i]+tr$nrows[i]-1, ncol(to)) ) 
+			unProjXY <- .Call("transform", projto, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
+			unProjXY <- cbind(unProjXY[[1]], unProjXY[[2]])
+			raster:::.xyValues(from, unProjXY, method=method)
 		}
-		pbStep(pb)
 		
+		# for debugging
+		# clusterExport(cl,c("tr", "projto", "projfrom", "method", "from", "to"))
+        for (i in 1:nodes) {
+			sendCall(cl[[i]], clFun, i, tag=i)
+		}
+		        
+		if (inMemory) {
+			for (i in 1:tr$n) {
+				d <- recvOneData(cl)
+				if (! d$value$success) {
+					stop('cluster error')
+				}
+				start <- cellFromRowCol(to, tr$row[d$value$tag], 1)
+				end <- cellFromRowCol(to, tr$row[d$value$tag]+tr$nrows[d$value$tag]-1, to@ncols)
+				v[start:end, ] <- d$value$value
+				if ((nodes + i) <= tr$n) {
+					sendCall(cl[[d$node]], clFun, i, tag=i)
+				}
+				pbStep(pb)
+			}
+			
+		} else {
+		
+			for (i in 1:tr$n) {
+				d <- recvOneData(cl)
+				to <- writeValues(to, d$value$value, tr$row[d$value$tag])
+				if ((nodes + i) <= tr$n) {
+					sendCall(cl[[d$node]], clFun, nodes+i, tag=i)
+				}
+				pbStep(pb)
+			}
+		}
+		
+		stopCluster(cl)
+		
+		
+	} else {
+	
+		tr <- blockSize(to)
+		pb <- pbCreate(tr$n, type=.progress(...))
+		for (i in 1:tr$n) {
+			r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
+			xy <- xyFromCell(to, cellFromRowCol(to, tr$row[i], 1) : cellFromRowCol(to, tr$row[i]+tr$nrows[i]-1, ncol(to)) ) 
+
+			unProjXY <- .Call("transform", projto, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
+			unProjXY <- cbind(unProjXY[[1]], unProjXY[[2]])
+		
+			vals <- .xyValues(from, unProjXY, method=method)
+		
+			if (inMemory) {
+				start <- cellFromRowCol(to, tr$row[i], 1)
+				end <- cellFromRowCol(to, tr$row[i]+tr$nrows[i]-1, to@ncols)
+				v[start:end, ] <- vals
+			} else {
+				to <- writeValues(to, vals, tr$row[i])
+			}
+			pbStep(pb)
+		}
 	}
 	pbClose(pb)
 	

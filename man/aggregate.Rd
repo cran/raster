@@ -6,7 +6,7 @@
 \alias{aggregate,RasterLayer-method}
 \alias{aggregate,RasterStackBrick-method}
 
-\title{Aggregate}
+\title{Aggregate cells}
 
 \description{
 Aggregate a Raster* object to create a new RasterLayer or RasterBrick with a lower resolution (larger cells). 
@@ -20,7 +20,7 @@ aggregate(x, ...)
 
 \arguments{
   \item{x}{A RasterLayer object}
-  \item{...}{Additional arguments. See below, under Methods}  
+  \item{...}{Additional arguments. See under Details}  
 }
 
 \details{
@@ -59,12 +59,11 @@ The function \code{fun} should take multiple numbers, and return a single number
 It should also accept a \code{na.rm} argument (or ignore it as one of the 'dots' arguments). 
 }
 
-
 \value{
-A new RasterLayer or RasterBrick object, and in some cases the side effect of a new file on disk.
+RasterLayer or RasterBrick
 }
 
-\seealso{ \code{\link[raster]{disaggregate}} }
+\seealso{ \code{\link{disaggregate}, \link{resample}} }
 
 \author{Robert J. Hijmans and Jacob van Etten}
 
