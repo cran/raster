@@ -44,8 +44,8 @@
 	if (.couldBeLonLat(x)) {
 		if (missing(xname)) xname = 'longitude'
 		if (missing(yname)) yname = 'latitude'
-		xunit = 'degrees_north'
-		yunit = 'degrees_east'
+		xunit = 'degrees_east'
+		yunit = 'degrees_north'
 	} else {
 		if (missing(xname)) xname = 'northing'
 		if (missing(yname)) yname = 'easting'	

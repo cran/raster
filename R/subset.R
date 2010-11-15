@@ -20,11 +20,14 @@ function(x, subset, drop=TRUE, ...) {
 	if (! all(subset %in% 1:nlayers(x))) {
 		stop('not a valid subset')
 	}
+	
 	if (length(subset) == 1 & drop) {
-		x <- raster(x, subset)
+		x <- x@layers[[subset]]
 	} else {
 		x@layers <- x@layers[subset]
+		x@layernames <- x@layernames[subset]
 	}
+	
 	return(x)	
 } )
 

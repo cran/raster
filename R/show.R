@@ -3,22 +3,27 @@
 # Version 0.9
 # Licence GPL v3
 
+
 setMethod ('print' , 'Raster', 
 	function(x, ...) {
-		if (x@file@driver == 'netcdf') {
-			nc <- open.ncdf(x@file@name)
-			print(nc)
-			close.ncdf(nc)
-		} else if (is.factor(x)) {
-			cat('factor levels (value attributes)\n')
-			f <- x@data@attributes[[1]]
-			if (nrow(f) > 15) { 
-				f <- f[1:15,]
-			}
-			print(f)
+		if (inherits(x, 'RasterStack')) {
+			show(x)
+		} else {
+			if (x@file@driver == 'netcdf') {
+				nc <- open.ncdf(x@file@name)
+				print(nc)
+				close.ncdf(nc)
+			} else if (is.factor(x)) {
+				cat('factor levels (value attributes)\n')
+				f <- x@data@attributes[[1]]
+				if (nrow(f) > 15) { 
+					f <- f[1:15,]
+				}
+				print(f)
 			# cat('levels      :' , paste(object@data@levels, collapse=', '), '\n')
 			# cat('labels      :' , paste(object@data@labels, collapse=', '), '\n')
-		} else callNextMethod(x, ...)
+			} else callNextMethod(x, ...)
+		}
 	}
 )
 
@@ -133,10 +138,10 @@ setMethod ('show' , 'RasterStack',
 		nl <- nlayers(object)
 		cat ('nlayers     :' , nl, '\n')
 		if (nl > 0) {
-			cat ('nrow        :' , nrow(object@layers[[1]]), '\n')
-			cat ('ncol        :' , ncol(object@layers[[1]]), '\n')
-			cat ('ncell       :' , ncell(object@layers[[1]]), '\n')
-			cat ('projection  :' , projection(object@layers[[1]], TRUE), '\n')
+			cat ('nrow        :' , nrow(object), '\n')
+			cat ('ncol        :' , ncol(object), '\n')
+			cat ('ncell       :' , ncell(object), '\n')
+			cat ('projection  :' , projection(object, TRUE), '\n')
 			minv <- format(minValue(object), digits=2)
 			maxv <- format(maxValue(object), digits=2)
 			minv <- gsub('Inf', '?', minv)

@@ -32,35 +32,30 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", old=FALSE, .
 	if (expand) {
 		rsteps <- as.integer(ceiling(nrow(x)/yfact))
 		csteps <- as.integer(ceiling(ncol(x)/xfact))
+		lastcol <- x@ncols
+		lastrow <- x@nrows
 	} else 	{
 		rsteps <- as.integer(floor(nrow(x)/yfact))
 		csteps <- as.integer(floor(ncol(x)/xfact))
+		lastcol <- min(csteps * xfact, x@ncols)
+		lastrow <- min(rsteps * yfact, x@nrows)
 	}
 	
 	ymn <- ymax(x) - rsteps * yfact * yres(x)
 	xmx <- xmin(x) + csteps * xfact * xres(x)
 		
 	outRaster <- raster(x)	
-	bndbox <- extent(xmin(x), xmx, ymn, ymax(x))
-	extent(outRaster) <- bndbox
+	extent(outRaster) <- extent(xmin(x), xmx, ymn, ymax(x))
 	dim(outRaster) <- c(rsteps, csteps) 
 
 	if (! hasValues(x) ) {	return(outRaster) }	
 
-	fun <- .makeTextFun(fun)
+	fun <- raster:::.makeTextFun(fun)
 	if (class(fun) == 'character') { 
 		rowcalc <- TRUE 
-		fun <- .getRowFun(fun)
+		fun <- raster:::.getRowFun(fun)
 	} else { rowcalc <- FALSE }
 	
-	
-	if (!expand) {
-		lastcol <- csteps * yfact
-		lastrow <- rsteps * xfact
-	} else {
-		lastcol <- x@ncols
-		lastrow <- x@nrows
-	}
 	
 	if (! canProcessInMemory(x)) {
 		if (filename == '') { filename <- rasterTmpFile() }
@@ -88,14 +83,14 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", old=FALSE, .
 			if (r==rsteps) { 
 				endrow <- min(x@nrows, (startrow + yfact - 1))
 				nrows <- endrow - startrow + 1
-				vals = matrix(vals, nrow=nrows, byrow=TRUE )
+				vals <- matrix(vals, nrow=nrows, byrow=TRUE )
 				vv[] <- NA 
-				vvv = vv[1:(nrows*yfact), ]
+				vvv <- vv[1:(nrows*xfact), ,drop=FALSE]
 				vvv[1:length(vals)] <- vals
 				vv[1:nrow(vvv),] <- vvv
-		
+						
 			} else {
-				vals = matrix(vals, nrow=yfact, byrow=TRUE )
+				vals <- matrix(vals, nrow=yfact, byrow=TRUE )
 				vv[1:length(vals)] = vals
 			}
 			

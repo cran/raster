@@ -15,7 +15,7 @@ function(x, filename='', ...) {
 
 	r = edge(x, classes=FALSE, type='inner', asNA=TRUE, progress=.progress(...)) 
 	
-	pts <- try(  rasterToPoints(r, fun=function(z){z>0})[,1:2, drop=FALSE] )
+	pts <- try(  rasterToPoints(r, fun=function(z){ z>0 } )[,1:2, drop=FALSE] )
 	
 	if (class(pts) == "try-error") {
 		return( .distanceRows(x, filename=filename, ...) )
@@ -44,23 +44,80 @@ function(x, filename='', ...) {
 	}
 	
 	pb <- pbCreate(nrow(out), type=.progress(...))
-	for (r in 1:nrow(out)) {	
-		vals <- getValues(x, r)
-		i = which(is.na(vals))
-		vals[] <- 0
-		if (length(i) > 0) {
-			xy[,2] <- yFromRow(out, r)
-			for (c in i) {
-				vals[c] <- min( pointDistance(xy[c,], pts, type=disttype) )
+	
+	if (.doCluster() ) {
+		cl <- .makeCluster()
+		nodes <- min(nrow(out), length(cl)) # at least 1 row
+		
+		cat('Using cluster with', nodes, 'nodes\n')
+		flush.console()
+		
+		clFun <- function(r) {
+			vals <- getValues(x, r)
+			i = which(is.na(vals))
+			vals[] <- 0
+			if (length(i) > 0) {
+				xy[,2] <- yFromRow(out, r)
+				for (c in i) {
+					vals[c] <- min( pointDistance(xy[c,], pts, type=disttype) )
+				}
+			}
+			return( vals )
+		}
+	
+        for (i in 1:nodes) {
+			sendCall(cl[[i]], clFun, i, tag=i)
+		}
+
+		if (filename=="") {
+			for (r in 1:nrow(out)) {
+				d <- recvOneData(cl)
+				if (! d$value$success) {
+					stop('cluster error')
+				}
+				v[,d$value$tag] <- d$value$value
+
+				if ((nodes + r) <= out@nrows) {
+					sendCall(cl[[d$node]], clFun, nodes+r, tag=nodes+r)
+				}
+				pbStep(pb)
+			}
+		} else {
+			for (r in 1:nrow(out)) {
+				d <- recvOneData(cl)
+				if (! d$value$success) {
+					stop('cluster error')
+				}
+				out <- writeValues(out, as.vector(d$value$value), d$value$tag)
+				if ((nodes + r) <= out@nrows) {
+					sendCall(cl[[d$node]], clFun, nodes+r, tag=nodes+r)
+				}
+				pbStep(pb, r)
 			}
 		}
-		if (filename == "") {
-			v[,r] <- vals
-		} else {
-			out <- writeValues(out, vals, r)
-		}
-		pbStep(pb, r) 	
-	}	
+		stopCluster(cl)
+	
+	} else {	
+	
+		for (r in 1:nrow(out)) {	
+			vals <- getValues(x, r)
+			i = which(is.na(vals))
+			vals[] <- 0
+			if (length(i) > 0) {
+				xy[,2] <- yFromRow(out, r)
+				for (c in i) {
+					vals[c] <- min( pointDistance(xy[c,], pts, type=disttype) )
+				}
+			}
+			if (filename == "") {
+				v[,r] <- vals
+			} else {
+				out <- writeValues(out, vals, r)
+			}
+			pbStep(pb, r) 	
+		}	
+	}
+	
 	pbClose(pb)
 	
 	if (filename == "") { 

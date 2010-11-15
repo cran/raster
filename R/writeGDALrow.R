@@ -11,6 +11,8 @@
 	attr(raster@file, "transient") <- temp[[1]]
 	raster@file@nodatavalue <- temp[[2]]
 	attr(raster@file, "options") <- temp[[3]]
+	
+	raster@file@datanotation <- .getRasterDType(temp[[4]])
 	raster@file@driver <- 'gdal'
 	raster@data@fromdisk <- TRUE
 	raster@file@name <- filename
@@ -21,9 +23,10 @@
 
 .stopGDALwriting <- function(raster) {
 
+	nl <- nlayers(raster)
+
 	if (packageDescription('rgdal')$Version > '0.6-28') {
 	
-		nl <- nlayers(raster)
 		if (nl == 1) {
 			if (raster@data@haveminmax) {
 				if (inMemory(raster)) {

@@ -96,8 +96,12 @@ setMethod('writeValues', signature(x='RasterLayer'),
 		
 		if ( x@file@driver == 'gdal' ) {
 			off = c(start-1, 0)
+			if (x@file@datanotation == 'INT1U') {
+				v[v < 0] <- NA
+			}
 			v[is.na(v)] <- x@file@nodatavalue
 			v = matrix(v, nrow=x@ncols)
+			
 			gd <- putRasterData(x@file@transient, v, band=1, offset=off) 	
 
 		} else if ( x@file@driver %in% .nativeDrivers() ) {
@@ -177,11 +181,13 @@ setMethod('writeValues', signature(x='RasterBrick'),
 			x <- .writeValuesBrickCDF(x, v, start)
 
 		} else {
-			nl <- nlayers(x)
 			off = c(start-1, 0)
-			for (i in 1:nl) {
+			if (x@file@datanotation == 'INT1U') {
+				v[v < 0] <- NA
+			}
+			v[is.na(v)] <- x@file@nodatavalue
+			for (i in 1:nlayers(x)) {
 				vv = matrix(v[,i], nrow=ncol(x))
-				vv[is.na(vv)] <- x@file@nodatavalue
 				gd <- putRasterData(x@file@transient, vv, band=i, offset=off) 	
 			}
 		}
