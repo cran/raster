@@ -1,6 +1,16 @@
 --------------------------------------------
+17-Nov-2010,  version 1.6-22
+NAflag honored when writing ascii file. 
+multicore support for resample
+
+--------------------------------------------
+15-Nov-2010,  version 1.6-20
+Bug fix in pairs (David Ramsey)
+Bug fix in rasterize with lines (Julian Burgos)
+
+--------------------------------------------
 14-Nov-2010,  version 1.6-19
-Fixed bug in .stopGDALwrting
+Fixed bug in .stopGDALwrting (reported by Kevin Ummel and Lyndon Estes)
 Experimental support for multicore in functions projectRaster and distance
 
 --------------------------------------------

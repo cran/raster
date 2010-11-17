@@ -345,7 +345,7 @@ It is also possible to use Arithmetic functions with Extent objects (but these w
 }
 
 \section{Acknowledgements}{
-We are grateful for the extensive suggestions made by Jonathan Greenberg and Steven Mosher. We also thank the following persons for suggestions to improve the package: Roger Bivand, Herry Herry, Paul Hiemstra, Mayeul Kauffmann, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Agustin Lobo, Matteo Mattiuzzi, Edzer Pebesma, Jon Olav Skoien, and Kevin Ummel.
+We are grateful for the extensive suggestions made by Jonathan Greenberg, Matteo Mattiuzzi, and Steven Mosher. We also thank the following persons for suggestions to improve the package: Roger Bivand, Herry Herry, Paul Hiemstra, Mayeul Kauffmann, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Agustin Lobo,  Edzer Pebesma, David Ramsey, Jon Olav Skoien, and Kevin Ummel.
 }
 
 \keyword{package}

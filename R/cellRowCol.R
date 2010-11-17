@@ -69,6 +69,8 @@ cellFromRowCol <- function(object, rownr, colnr) {
 	colnr <- round(colnr)
 	rownr[rownr < 1 | rownr > nrow(object)] <- NA
 	colnr[colnr < 1 | colnr > ncol(object)] <- NA	
-	return((rownr-1) * ncol(object) + colnr)
+	# recycle if length(rownr) != lenght(colnr)
+	x <- cbind(rownr, colnr)
+	return((x[,1]-1) * ncol(object) + x[,2])
 }
 

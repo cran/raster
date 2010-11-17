@@ -38,9 +38,7 @@ cellFromXY(object, xy)
 }
   
 \details{
-  In \code{cellFromRowCol}, \code{rownr} and  \code{colnr} should have the same length.
-  This is not the case for \code{cellFromRowColCombine}. This function returns the cell numbers obtained by 
-  the combination of row and column numbers.
+  \code{cellFromRowCol} returns the cell numbers obtained for each row / col number pair. In contrast, \code{cellFromRowColCombine} returns the cell numbers obtained by the combination of all row and column numbers supplied as arguments.
 }
 
 \value{
@@ -59,7 +57,6 @@ cellFromRow(r, 1)
 colFromX(r, 0.5)
 rowFromY(r, 0.5)
 cellFromXY(r, c(0.5, 0.5))
-
 }
 
 \keyword{spatial}

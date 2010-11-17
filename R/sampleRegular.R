@@ -26,9 +26,9 @@ sampleRegular <- function(x, size, extent=NULL, cells=FALSE, asRaster=FALSE, cor
 		} else {
 			for (i in 1:nlayers(x)) {
 				if (i==1) {
-					x = .sampleRegular(raster(x, i), n=size, extent=extent, cells=cells, asRaster=asRaster, corners=corners)
-					v <- matrix(ncol=nlayers(x), nrow=length(x))
-					v[,1] = x
+					r = .sampleRegular(raster(x, i), n=size, extent=extent, cells=cells, asRaster=asRaster, corners=corners)
+					v <- matrix(ncol=nlayers(x), nrow=length(r))
+					v[,1] = r
 				} else {
 					v[,i] = .sampleRegular(raster(x, i), n=size, extent=extent, cells=cells, asRaster=asRaster, corners=corners)
 				}

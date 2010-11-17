@@ -73,7 +73,7 @@
 	if (! .requireRgdal() ) {
 		stop("Cannot create RasterLayer object from this file; perhaps you need to install rgdal first")
 	}
-	test <- try ( r <- .rasterFromGDAL(x, band=band, objecttype, ...), silent=TRUE )
+	test <- try ( r <- .rasterFromGDAL(x, band=band, objecttype, ...), silent=FALSE )
 	if (class(test) == "try-error") {
 		stop("Cannot create a RasterLayer object from this file.")
 	} else {

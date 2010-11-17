@@ -4,19 +4,25 @@
 # Licence GPL v3
 
 
-.startAsciiWriting <- function(x, filename, ...) {
+.startAsciiWriting <- function(x, filename, NAflag, ...) {
  	filename <- trim(filename)
 	if (filename == '') {
 		stop('provide a filename')
 	}
 	x@file@name <- filename
 	x@file@driver <- 'ascii'
-	
+
 	overwrite <- .overwrite(...)
 	dtype  <- .shortDataType(.datatype(...))
 	x@file@datanotation = .datatype(...)
 	dtype  <- .shortDataType(x@file@datanotation)
 	attr(x@file, "dtype") <- dtype
+
+
+	if (!missing(NAflag)) { 
+		x@file@nodatavalue <- NAflag
+	}
+
 	
 	resdif <- abs((yres(x) - xres(x)) / yres(x) )
 	if (resdif > 0.01) {
@@ -33,7 +39,7 @@
 	cat("XLLCORNER", as.character(xmin(x)), "\n", file = thefile)
 	cat("YLLCORNER", as.character(ymin(x)), "\n", file = thefile)
 	cat("CELLSIZE",  as.character(xres(x)), "\n", file = thefile)
-	cat("NODATA_value", .nodatavalue(x), "\n", file = thefile)
+	cat("NODATA_value", x@file@nodatavalue, "\n", file = thefile)
 	close(thefile) #close connection
 	
 	return(x)
