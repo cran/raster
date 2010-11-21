@@ -3,8 +3,28 @@
 # Version 0.9
 # Licence GPL v3
 
+.gdFixGeoref <- function(gdalinfo) {
+	gdversion = getGDALVersionInfo()
+	gdversion = trim(substr(gdversion, 5, 10))
+	test <- gdversion < '1.8.0'	
+	if (test) {
+		v <- attr(gdalinfo, 'mdata')
+		if (! is.null(v) ) {
+			for (i in 1:length(v)) {
+				if (v[i] == "AREA_OR_POINT=Area") {
+					return(FALSE)
+				} else if (v[i] == "AREA_OR_POINT=Point") {
+					return(TRUE)
+				}
+			}
+		}
+	}
+	return(FALSE)
+}
 
-.rasterFromGDAL <- function(filename, band, type, fixGeoref=FALSE, silent=TRUE) {	
+
+.rasterFromGDAL <- function(filename, band, type, RAT=FALSE, silent=TRUE) {	
+
 	if (! .requireRgdal() ) { stop('package rgdal is not available') }
 
 	# suppressing the geoTransform warning...
@@ -12,7 +32,7 @@
 	on.exit(options('warn'= w))
 	options('warn'=-1) 
 	
-	if (packageDescription('rgdal')$Version > '0.6-28') {
+	if (packageDescription('rgdal')$Version > '0.6-28'  &  RAT) {
 		gdalinfo <- do.call(GDALinfo, list(filename, silent=silent, returnRAT=TRUE))
 	} else {
 		gdalinfo <- do.call(GDALinfo, list(filename, silent=silent))
@@ -34,18 +54,8 @@
 	yx <- yn + gdalinfo[["res.y"]] * nr
 	yx <- round(yx, digits=9)
 
-	#fixGeo <- FALSE
-	#3v <- attr(gdalinfo, 'mdata')
-	#if (! is.null(v) ) {
-	#	for (i in 1:length(v)) {
-	#		if (v[i] == "AREA_OR_POINT=Area") {
-	#			break
-	#		} else if (v[i] == "AREA_OR_POINT=Point") {
-	#			fixGeo <- TRUE
-	#			break
-	#		}
-	#	}
-	#}
+	fixGeoref <- FALSE
+	try( fixGeoref <- .gdFixGeoref(gdalinfo), silent=TRUE )
 	
 	if (type == 'RasterBrick') {
 		x <- brick(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs="")
@@ -73,13 +83,11 @@
 
 	
 	if (fixGeoref) {
-		xx <- x
-		nrow(xx) <- nrow(xx) - 1
-		ncol(xx) <- ncol(xx) - 1
-		rs <- res(xx)
+		cat('Fixing "AREA_OR_POINT=Point" georeference\n')
+		rs <- res(x)
 		xmin(x) <- xmin(x) - 0.5 * rs[1]
-		xmax(x) <- xmax(x) + 0.5 * rs[1]
-		ymin(x) <- ymin(x) - 0.5 * rs[2]
+		xmax(x) <- xmax(x) - 0.5 * rs[1]
+		ymin(x) <- ymin(x) + 0.5 * rs[2]
 		ymax(x) <- ymax(x) + 0.5 * rs[2]
 	}
 	
@@ -90,8 +98,7 @@
 	x@file@driver <- 'gdal' 
 	projection(x) <- attr(gdalinfo, "projection")
 	x@data@fromdisk <- TRUE
-	
-	
+		
 	datatype <- "FLT4S"
 	minv = 	rep(Inf, nlayers(x))
 	maxv = 	rep(-Inf, nlayers(x))

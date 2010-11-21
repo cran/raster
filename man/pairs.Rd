@@ -37,6 +37,11 @@ pairs(x, ...)
 }
 }
 
+\examples{
+r <- raster(system.file("external/test.grd", package="raster") )
+s <- stack(r, 1/r, sqrt(r))
+pairs(s)
+}
 
 \author{
 Robert J. Hijmans

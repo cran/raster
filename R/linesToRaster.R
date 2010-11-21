@@ -58,6 +58,9 @@
 				} else {
 					xy <- .intersectSegments(line2[1,1], line2[1,2], line2[2,1], line2[2,2], xyxy[i,1], xyxy[i,2], xyxy[i,3], xyxy[i,4]  )
 				}
+				if (is.na(xy[1])) { 
+					xy <- xyxy[i,3:4]
+				}
 				xy <- t(as.matrix(xy))
 				outcol = min(.specialColFromX(rs, xy[,1]), ncol(rs))
 				if (outcol < 1) next
