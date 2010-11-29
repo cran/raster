@@ -43,7 +43,7 @@ writeRaster(x, filename, ...)
 \tabular{rll}{
 \tab \code{x} \tab RasterLayer object \cr
 \tab \code{filename} \tab Output filename \cr
-\tab \code{bandorder} \tab Character. 'BIL', 'BIP', or 'BSQ' \cr
+\tab \code{bandorder} \tab Character. 'BIL', 'BIP', or 'BSQ'. For 'native' file formats only. For some other formats you can use the 'options' arugment (see below) \cr
 \tab \code{..} \tab Additional arguments. See below \cr
 }
 
@@ -56,7 +56,7 @@ writeRaster(x, filename, ...)
 \tab \code{NAflag} \tab Numeric. To overwrite the default value used to represent \code{NA} in a file \cr
 }
 
-NetCDF files have the following additional, optional, arguments: varname, varunit, longname, xname, yname, zname, zunit.
+NetCDF files have the following additional, optional, arguments: \code{varname, varunit, longname, xname, yname, zname, zunit}.
 
 }}
 
@@ -100,18 +100,19 @@ r <- crop(r, extent(179880, 180800, 329880, 330840) )
 # write to an integer binary file
 rf <- writeRaster(r, filename="allint.grd", datatype='INT4S', overwrite=TRUE)
 
+# make a brick and save multi-band file
+b <- brick(r, sqrt(r))
+bf <- writeRaster(b, filename="mutli.grd", bandorder='BIL', overwrite=TRUE)
+
 # write to a new geotiff file (depends on rgdal)
 if (require(rgdal)) {
   rf <- writeRaster(r, filename="test.tif", format="GTiff", overwrite=TRUE)
+  bf <- writeRaster(b, filename="mutli.tif", options="INTERLEAVE=BAND", overwrite=TRUE)
 }
-
-# make a brick and save multi-band file
-b <- brick(r, sqrt(r))
-b <- writeRaster(b, filename="mutli.grd", bandorder='BIL', overwrite=TRUE)
  
 # write to netcdf 
 if (require(ncdf)) {	
-    rnc <- writeRaster(r, filename='netCDF.nc', format="CDF", overwrite=TRUE)   
+ rnc <- writeRaster(r, filename='netCDF.nc', format="CDF", overwrite=TRUE)   
 }
 }
 

@@ -17,7 +17,15 @@ setMethod('extent', signature(x='Extent'),
 )
 
 setMethod('extent', signature(x='BasicRaster'), 
-	function(x){ return(x@extent) }
+	function(x, r1, r2, c1, c2){ 
+		e <- x@extent
+		if (! missing(c1) )  { xn <- xFromCol(x, c1) } else { xn <- e@xmin }
+		if (! missing(c2) )  { xx <- xFromCol(x, c2) } else { xx <- e@xmax }
+		if (! missing(r1) )  { yx <- yFromRow(x, r1) } else { yx <- e@ymax }
+		if (! missing(r2) )  { yn <- yFromRow(x, r2) } else { yn <- e@ymin }
+		e <- extent(xn, xx, yn, yx )
+		if (validObject(e)) { return(e) }
+	}
 )
 
 setMethod('extent', signature(x='Spatial'), 

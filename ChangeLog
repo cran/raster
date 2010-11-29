@@ -1,4 +1,36 @@
 --------------------------------------------
+29-Nov-2010,  version 1.7-6
+New function as.array
+improved sampleRegular for multi-layer objects
+
+--------------------------------------------
+28-Nov-2010,  version 1.7-5
+Code simplications for 'raster', 'stack', and 'brick' functions
+raster no longer has the "values" argument (use setValues)
+When adding layers to a RasterBrick, a RasterStack will be returned.
+
+--------------------------------------------
+26-Nov-2010,  version 1.7-4
+Fixed calc for regression functions
+
+--------------------------------------------
+26-Nov-2010,  version 1.7-3
+Fixed data handling error causing full memory in extract(points, buffer) (reported by Steve Mosher)
+Fixed bug in projectRaster when projecting a raster from a regional crs to a global crs that caused the values to duplicate (reported by Bart Kranstauber)
+
+--------------------------------------------
+24-Nov-2010,  version 1.7-2
+crosstab can now return results in 'long' format
+more complete and flexible recycling in overlay and Arith
+Added boxplot function for Raster* objects
+
+--------------------------------------------
+23-Nov-2010,  version 1.7-1
+New version of alignExtent (bug reported by Keven Ummel)
+overlay now allows for RasterStackBrick / RasterLayer combination (bug reported by Keven Ummel)
+cluster object stored as 'option'
+
+--------------------------------------------
 17-Nov-2010,  version 1.6-22
 NAflag honored when writing ascii file. 
 multicore support for resample
@@ -21,7 +53,7 @@ Added drop=FALSE to "[" methods, to return a Raster*.
 
 --------------------------------------------
 10-Nov-2010,  version 1.6-17
-[[ method to extract layers from multi-layer objecs
+[[ method to extract layers from multi-layer Raster objects
 Writing cdf files now uses the CF standard 'degrees_east' and 'degrees_north' as variable names in lon/lat data (suggested by Kevin Ummel)
 
 --------------------------------------------

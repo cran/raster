@@ -41,7 +41,7 @@
 	for (i in rev(seq(along=x))) {
 		if (! hasValues(x[[i]]) ) {
 			if (length(x) > 1 ) {
-				x <- x[[-i]] 
+				x <- x[-i] 
 				warning('layer with no data ignored')
 			} else if (keepone==FALSE ) {
 				x <- list()

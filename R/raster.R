@@ -4,7 +4,7 @@
 # Version 0.9
 # Licence GPL v3
 	
-if (!isGeneric("raster")) {
+if ( !isGeneric("raster") ) {
 	setGeneric("raster", function(x, ...)
 		standardGeneric("raster"))
 }	
@@ -69,7 +69,7 @@ setMethod('raster', signature(x='matrix'),
 
 
 setMethod('raster', signature(x='character'), 
-	function(x, band=1, values=FALSE, crs=NULL, ...) {
+	function(x, band=1, crs=NULL, ...) {
 	
 		x <- .fullFilename(x)
 		
@@ -77,22 +77,15 @@ setMethod('raster', signature(x='character'),
 		if (! is.null(crs)) {
 			projection(r) = crs
 		}
-		if (values) {
-			r <- readAll(r)
-		}
 		return(r)
 	}
 )
 
 
 setMethod('raster', signature(x='Raster'), 
-	function(x, values=NULL) {
+	function(x) {
 		e <- x@extent
 		r <- raster(xmn=e@xmin, xmx=e@xmax, ymn=e@ymin, ymx=e@ymax, nrows=x@nrows, ncols=x@ncols, crs=projection(x))
-		# filename(r) <- filename
-		if (!is.null(values)) {
-			x <- setValues(x, values)
-		}
 		return(r)
 	}
 )

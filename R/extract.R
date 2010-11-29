@@ -96,7 +96,7 @@ function(x, y, ...){
 setMethod('extract', signature(x='Raster', y='Extent'), 
  	function(x, y, layer, nl, ...) {
 		e <- intersectExtent(x, y)
-		e <- alignExtent(x, e)
+		e <- alignExtent(e, x)
 		row = rowFromY(x, e@ymax)
 		lastrow = rowFromY(x, e@ymin)
 		nrows = lastrow-row+1

@@ -20,19 +20,14 @@ function(x, y, filename='', value=NA, ...) {
 
 	filename <- trim(filename)
 	
-	bndbox <- extent(y)
-	res <- res(x)
-# snap points to pixel boundaries
-	xmn <- round(xmin(bndbox) / res[1]) * res[1]
-	xmx <- round(xmax(bndbox) / res[1]) * res[1]
-	ymn <- round(ymin(bndbox) / res[2]) * res[2]
-	ymx <- round(ymax(bndbox) / res[2]) * res[2]
+	y <- alignExtent(y, x)
+	e <- extent(y)
 	
 # only expanding here, not cutting
-	xmn <- min(xmn, xmin(x))
-	xmx <- max(xmx, xmax(x))
-	ymn <- min(ymn, ymin(x))
-	ymx <- max(ymx, ymax(x))
+	xmn <- min(e@xmin, xmin(x))
+	xmx <- max(e@xmax, xmax(x))
+	ymn <- min(e@ymin, ymin(x))
+	ymx <- max(e@ymax, ymax(x))
 	
 	if (inherits(x, 'RasterLayer')) {
 		outRaster <- raster(x)

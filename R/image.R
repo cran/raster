@@ -12,7 +12,7 @@ setMethod("image", signature(x='RasterLayer'),
 	function(x, maxpixels=500000, ...)  {
 		x <- sampleRegular(x, maxpixels, asRaster=TRUE)
 		y <- yFromRow(x, nrow(x):1)
-		value <- t((getValues(x, format='matrix'))[nrow(x):1,])
+		value <- t(as.matrix(x)[nrow(x):1,])
 		x <- xFromCol(x,1:ncol(x))
 		image(x=x, y=y, z=value,  ...)
 	}

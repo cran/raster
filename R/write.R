@@ -22,7 +22,7 @@ if (!isGeneric('writeValues')) {
 setMethod('writeStart', signature(x='RasterLayer', filename='character'), 
 function(x, filename, options=NULL, format, ...) {
 
-	filename <- trim(filename)
+	filename <- .fullFilename(filename)
 	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)
 	if (filetype=='ascii') { 
@@ -41,11 +41,11 @@ function(x, filename, options=NULL, format, ...) {
 setMethod('writeStart', signature(x='RasterBrick', filename='character'), 
 function(x, filename, options=NULL, format, ...) {
 
-	filename <- trim(filename)
+	filename <- .fullFilename(filename)
 	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)
 	
-	if (filetype=='ascii') {stop('ascii files cannot write multi-layer files') }
+	if (filetype=='ascii') { stop('ascii files cannot write multi-layer files') }
 	native <- filetype %in% c(.nativeDrivers(), 'ascii')
 	if (native) { 
 		return( .startRasterWriting(x, filename, format=filetype, ...) )

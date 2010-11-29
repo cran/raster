@@ -12,7 +12,7 @@
 	if( (!overwrite) & file.exists(filename)) {
 		stop('file exists; use overwrite=TRUE to overwrite it')
 	}
-	if (.couldBeLonLat(object)) { disttype <- 'GreatCircle' } else { disttype <- 'Euclidean' }
+	if (.couldBeLonLat(object)) { longlat=TRUE } else { longlat=FALSE }
 
 	e = edge(object, classes=FALSE, type='inner', asNA=TRUE) 
 	
@@ -50,7 +50,7 @@
 			if ( isTRUE(nrow(to) > 0) ) {
 				res <- vector( length=nrow(to) )
 				for (p in 1:nrow(to)) {
-					res[p] <- min( pointDistance(to[p,], from, type=disttype) )
+					res[p] <- min( pointDistance(to[p,], from, longlat=longlat) )
 				}
 				v[is.na(xyv[,3])] <- res
 			}			

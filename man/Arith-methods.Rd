@@ -19,7 +19,7 @@ When using multiple RasterStack or RasterBrick objects, the number of layers of 
 
 \details{
 If the values of the output Raster* cannot be held in memory, they will be saved to a temporary file. 
-You can use \code{\link[raster]{rasterOptions}} to set the default file format, datatype and progress bar.
+You can use \code{\link{options}} to set the default file format, datatype and progress bar.
 }
 
 

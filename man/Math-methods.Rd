@@ -26,7 +26,8 @@
 r1 <- raster(nrow=10, ncol=10)
 r1 <- (setValues(r1, runif(ncell(r1)))) * 10
 r2 <- sqrt(r1)
-b <- abs(stack(r1, r2) )
+s <- stack(r1, r2) - 5
+b <- abs(s)
 }
 
 \keyword{methods}

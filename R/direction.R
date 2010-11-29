@@ -16,7 +16,7 @@ function(x, fun=NULL, from=FALSE, filename='', ...) {
 	out <- raster(x)
 	
 	if (.couldBeLonLat(out)) { 
-		disttype <- 'GreatCircle' 
+		longlat=TRUE
 		if (is.null(fun)) { 
 			direct <- function (p1, p2) {
 				toRad <- pi / 180 
@@ -43,7 +43,7 @@ function(x, fun=NULL, from=FALSE, filename='', ...) {
 			}
 		}
 	} else { 
-		disttype <- 'Euclidean' 
+		longlat=FALSE
 		if (is.null(fun)) { 
 			direct <- function(from, to) {
 				A = to[2] - from[2]
@@ -98,7 +98,7 @@ function(x, fun=NULL, from=FALSE, filename='', ...) {
 		if (length(i) > 0) {
 			xy[,2] <- yFromRow(out, r)
 			for (c in i) {
-				pm <- which.min( pointDistance(xy[c,], pts, type=disttype) )
+				pm <- which.min( pointDistance(xy[c,], pts, longlat=longlat) )
 				if (from) {
 					vals[c] <- direct(pts[pm, ], xy[c,])
 				} else {

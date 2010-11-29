@@ -23,7 +23,7 @@ origin(object)
   A vector of two numbers (x and y coordinates).
 }
 
-\seealso{ \code{\link[raster]{dimensions}}, \code{\link[raster]{coordinates}} }
+\seealso{ \code{\link[raster]{ncell}}, \code{\link[raster]{coordinates}} }
 
 
 \author{Robert J. Hijmans }

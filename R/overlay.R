@@ -4,33 +4,20 @@
 # Licence GPL v3
 
 
-setMethod('overlay', signature(x='RasterLayer', y='missing'), 
-function(x, y, fun=sum, filename="", ...){ 
-	return(calc(x, fun=fun, filename=filename, ...))
-}
-)
-
-
-setMethod('overlay', signature(x='RasterLayer', y='RasterLayer'), 
+setMethod('overlay', signature(x='Raster', y='Raster'), 
 function(x, y, ..., fun, filename="", datatype, format, overwrite, progress){ 
-	if (missing(fun)) { stop('you must provide a function "fun"') }
-
-
+	if (missing(fun)) { 
+		stop("you must supply a function 'fun'.\nE.g., 'fun=function(x,y){return(x+y)} or fun=sum'") 
+	}
 	filename <- trim(filename)
-	if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
-
-	if (missing(datatype)) { datatype <- .datatype(datatype) }
+	if (missing(format)) { format <- .filetype(filename=filename) } 
+	if (missing(datatype)) { datatype <- .datatype() }
 	if (missing(overwrite)) { overwrite <- .overwrite() }
 	if (missing(progress)) { progress <- .progress() }
 
-	rasters <- .makeRasterList(x, y, ...)
-	nl <- sapply(rasters, nlayers)
-	if (max(nl) > 1) {
-		stop("Only single layer (RasterLayer) objects can be used if 'x' and 'y' have a single layer")
-	} 
+	rasters <- .makeRasterList(x, y, ..., unstack=FALSE)
 	
 	return(.overlayList(rasters, fun=fun, filename=filename, datatype=datatype, format=format, overwrite=overwrite, progress=progress))
 }
 )
-
 

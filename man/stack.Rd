@@ -14,41 +14,38 @@
 \title{ Create a RasterStack object}
 
 \description{
-A RasterStack is a collection of RasterLayer objects with the same spatial extent and resolution. 
-A RasterStack can be created from RasterLayer objects, or from raster files, or both. The can also be created from SpatialPixels or SpatialGrid objects.
+A RasterStack is a collection of RasterLayer objects with the same spatial extent and resolution. A RasterStack can be created from RasterLayer objects, or from raster files, or both. The can also be created from SpatialPixels or SpatialGrid objects.
 }
 
 \section{Methods}{
 \describe{
-\code{stack(x, ...)}
+\code{stack(x, ..., bands=NULL)}
 
-  \item{\code{x}}{ filename (character), Raster* object, SpatialGrid*, SpatialPixels*, or list (of filenames and/or Raster* objects) }
-  \item{\code{...}}{additional RasterLayer objects (or filenames) }
-  \item{bands}{ optional argument. a vector or list of bands of raster data files}
-
-\code{x} can be a filename from which a RasterLayer can be created (with \code{raster}, a Raster* object, 
-or a list of filenames and/or Raster* objects.
-
-The argument \code{bands} can be used to pass a vector of band numbers to indicated which band of a file (in a multiband file) should be used. 
-A band numbers < 1 will lead to inclusion of all bands into the RasterStack. 
-
-If \code{x} is a \code{list}, no additional arguments  \code{...} are accepted, except for the optional \code{bands} argument
-
+\item{\code{x}}{ filename (character), Raster* object, SpatialGrid*, SpatialPixels*, or list (of filenames and/or Raster* objects). If \code{x} is a list, additional arguments  \code{...} are ignored.}
+\item{\code{...}}{additional Raster* objects (or filenames) }
+\item{\code{bands}}{Which bands (layers) of the file should be used (default is all layers)}
 }}
 
 \value{
-  a RasterStack object
+RasterStack
 }
 
 \author{Robert J. Hijmans}
 
-\seealso{ \code{\link[raster]{addLayer}}, \code{\link[raster]{dropLayer}}, \code{\link[raster]{raster}} }
+\seealso{ \code{\link[raster]{addLayer}, \link[raster]{dropLayer}, \link[raster]{raster}, \link[raster]{brick}} }
 
 \examples{
-  fn <- system.file("external/test.grd", package="raster")
-  s <- stack(fn, fn)
-  r <- raster(fn)
-  s <- stack(r, fn) 
+# file with one layer
+fn <- system.file("external/test.grd", package="raster")
+s <- stack(fn, fn)
+r <- raster(fn)
+s <- stack(r, fn) 
+nlayers(s)
+
+# file with three layers
+slogo <- stack(system.file("external/rlogo.grd", package="raster")) 
+nlayers(slogo)
+slogo
 }
 
 \keyword{methods}

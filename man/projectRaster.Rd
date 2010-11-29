@@ -87,28 +87,27 @@ pr1 <- projectRaster(r, crs=newproj)
 # alternatively also set the resolution
 pr2 <- projectRaster(r, crs=newproj, res=20000)
 
+# inverse projection, back to the properties of 'r'
+inv <- projectRaster(pr2, r)
+
 # to have more control, provide an existing Raster object, here we create one
 # using projectExtent (no values are transferred)
 pr3 <- projectExtent(r, newproj)
 # Adjust the cell size 
 res(pr3) <- 200000
-
-# project the values of RasterLayer 'r' to the new RasterLayer 'projras'
+# now project
 pr3 <- projectRaster(r, pr3)
 
-# inverse projection, back to the properties of 'r'
-inv <- projectRaster(pr3, r)
-
 \dontrun{
-
 # using a higher resolution
-res(pr) <- 10000
-pr <- projectRaster(r, pr, method='bilinear')
+res(pr1) <- 10000
+pr <- projectRaster(r, pr1, method='bilinear')
 inv <- projectRaster(pr, r, method='bilinear')
 dif <- r - inv
+# small difference
 plot(dif)
 
-# Meuse data to lon/lat
+# Meuse data to long/lat
 meuse <- raster(system.file("external/test.grd", package="raster"))
 meusell <- projectRaster(meuse, res=1/1200, crs="+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
 }

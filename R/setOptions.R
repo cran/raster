@@ -86,6 +86,10 @@ setOptions <- function(format, overwrite, datatype, tmpdir, progress, timer, chu
 		maxmemory = max(10000, round(maxmemory[1]))
 		options(rasterMaxMemory = maxmemory )
 	}
+	
+	setCluster <- function(usecluster) {
+		options(rasterUseCluster = usecluster)
+	}
  	
 	if (!missing(format)) { setFiletype(format) }
 	if (!missing(overwrite)) { setOverwrite(overwrite) }
@@ -97,6 +101,7 @@ setOptions <- function(format, overwrite, datatype, tmpdir, progress, timer, chu
 	if (!missing(setfileext)) { setFileExt(setfileext) }
 	if (!missing(maxmemory)) { setMaxMemorySize(maxmemory) }
 	if (!missing(chunksize)) { setChunksize(chunksize) }
+#	if (!missing(usecluster)) { setCluster(usecluster) }
 }
 
 

@@ -40,12 +40,11 @@ raster(x, ...)
 
 \bold{1) Create a RasterLayer object from a file}
 
-\code{raster(x, values=FALSE, band=1, ...)}
+\code{raster(x, band=1, ...)}
 
 
 \tabular{rll}{
 \tab \code{x} \tab character. Name of raster file  \cr
-\tab \code{values} \tab logical. If \code{TRUE}, RasterLayer values are read into memory with \code{\link[raster]{readAll}} \cr
 \tab \code{band} \tab integer. Band number in case of a file of multiple bands, default = 1 \cr
 \tab \code{...} \tab additional arguments.  \cr
 }
@@ -94,16 +93,15 @@ If \code{x} is a character value, it should be a filename of a file that the ras
 }
 
 
-\bold{4) Create a RasterLayer object from a RasterLayer object.} 
+\bold{4) Create a RasterLayer object from a Raster* object.} 
 
-This copies the parameters of a RasterLayer object to a new RasterLayer, 
-but does not copy the filename nor the data associated with the original Raster object. 
+This copies the parameters of a Raster* object to a new RasterLayer, 
+but does not copy the filename nor the cell values associated with the original Raster* object. 
 
-\code{raster(x, values=NULL)}
+\code{raster(x)}
 
 \tabular{rll}{
  \tab \code{x} \tab a Raster* object \cr
- \tab \code{values} \tab If not \code{NULL} it is used to set values to new object. Either pass a vector of length == ncells(x), or a single number \cr
 }
 
 
@@ -171,7 +169,7 @@ RasterLayer object
 \examples{
 #from file
 r <- raster(system.file("external/test.grd", package="raster"))
-logo <- raster(system.file("external/rlogo.grd", package="raster"), values=TRUE) 
+logo <- raster(system.file("external/rlogo.grd", package="raster")) 
 
 #from scratch
 r1 <- raster(nrows=108, ncols=21, xmn=0, xmx=10)

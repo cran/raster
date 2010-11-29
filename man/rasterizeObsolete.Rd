@@ -4,7 +4,7 @@
 \alias{linesToRaster}
 \alias{polygonsToRaster}
 
-\title{Vector to raster conversion}
+\title{Obsolete}
 
 \description{
 Obsolete, see \link{rasterize}
@@ -28,8 +28,6 @@ polygonsToRaster(p, raster, field=0, overlap='last', ...)
   \item{fun}{Function to be applied }  
   \item{...}{Additional arguments}    
 }
-
-\author{Robert J. Hijmans}
 
 \seealso{ \code{\link{rasterize}} }
 

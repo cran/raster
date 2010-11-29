@@ -35,7 +35,7 @@ xyValues <- function(object, xy, ...) {
 	}
 	
 	if (dim(xy)[2] != 2) {
-		stop('xy has wrong dimensions; there should be 2 columns only' )
+		stop('xy should have 2 columns only.\nFound these dimensions: ', paste(dim(xy), collapse=', ') )
 	}
 		
 	if (! is.null(buffer)) {

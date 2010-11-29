@@ -23,10 +23,10 @@ beginCluster <- function(n, type) {
 		}
 		cl <- makeCluster(n, type) 
 		cl <- .addPackages(cl)
-		assign('raster_Cluster_raster_Cluster', cl, envir = .GlobalEnv)
+		options(rasterClusterObject = cl)
 		options(rasterCluster = TRUE)
 	} else {
-		stop('only 1 core detected. No cluster made')	
+		stop('only 1 core. No cluster made')	
 		options(rasterCluster = FALSE)
 	}
 }
@@ -34,27 +34,26 @@ beginCluster <- function(n, type) {
 
 endCluster <- function() {
 	options(rasterCluster = FALSE)
-	if (exists('raster_Cluster_raster_Cluster', envir=.GlobalEnv)) {
-		stopCluster( get('raster_Cluster_raster_Cluster', envir=.GlobalEnv) )
-		rm('raster_Cluster_raster_Cluster', envir=.GlobalEnv)
+	cl <- options('rasterClusterObject')[[1]]
+	if (! is.null(cl)) {
+		stopCluster( cl )
+		options(rasterClusterObject = NULL)
 	}
 }
 
 
 .doCluster <- function() {
-	if ( isTRUE( options('rasterCluster')[[1]] ) ) {
-		if (exists('raster_Cluster_raster_Cluster', envir=.GlobalEnv)) {
-			return(TRUE)
-		}
+	if ( isTRUE( getOption('rasterCluster')) ) {
+		return(TRUE)
 	} 
 	return(FALSE)
 }
 
 
 .getCluster <- function() {
-	cl <- get('raster_Cluster_raster_Cluster', envir=.GlobalEnv)
+	cl <- getOption('rasterClusterObject')
 	cl <- .addPackages(cl, exclude=c('raster', 'sp'))
-	rm('raster_Cluster_raster_Cluster', envir=.GlobalEnv)
+	options(rasterClusterObject = cl)
 	options( rasterCluster = FALSE )
 	return(cl)
 }
@@ -64,7 +63,6 @@ endCluster <- function() {
 	if (missing(cl)) { 
 		warning('no cluster returned' )
 	} else {
-		assign('raster_Cluster_raster_Cluster', cl, envir = .GlobalEnv)
 		options(rasterCluster = TRUE)
 	}
 }

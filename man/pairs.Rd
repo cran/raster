@@ -6,13 +6,12 @@
 \alias{pairs,RasterStackBrick-method}
 
 \title{
-Pair plots
+Pairs plot (matrix of scatterplots)
 }
 
 \description{
 Pair plots of layers in a RasterStack or RasterBrick
 }
-
 
 \usage{
 pairs(x, ...)
@@ -23,24 +22,33 @@ pairs(x, ...)
 \item{...}{Additional arguments. See Methods}
 }
 
-
-
 \section{Methods}{
 \describe{
-	\code{pairs(x, hist=TRUE, cor=TRUE)}
+\code{pairs(x, hist=TRUE, cor=TRUE, maxpixels=100000)}
 
 \tabular{rll}{
-\tab \code{v} \tab numeric, to select a subset of pairs, e.g. v=1:3 to plot only the first three variables \cr
-\tab \code{hist} \tab logical. If \code{TRUE} a histogram of the values is shown on the diagonal\cr
-\tab \code{cor} \tab logical. If \code{TRUE} the correlation coefficient is shown in the upper panels \cr
+\tab \code{hist} \tab Logical. If \code{TRUE} a histogram of the values is shown on the diagonal\cr
+\tab \code{cor} \tab Logical. If \code{TRUE} the correlation coefficient is shown in the upper panels \cr
+\tab \code{maxpixels} \tab Integer. Number of pixels to sample from each layer of large Raster objects \cr
 }		
 }
+}
+
+\seealso{
+\code{\link{boxplot}, \link{hist}, \link{density}}
 }
 
 \examples{
 r <- raster(system.file("external/test.grd", package="raster") )
 s <- stack(r, 1/r, sqrt(r))
 pairs(s)
+
+\dontrun{
+# to make indvidual histograms:
+hist(r)
+# or scatter plots:
+plot(r, 1/r)
+}
 }
 
 \author{

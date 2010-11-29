@@ -11,7 +11,12 @@ if (!isGeneric("calc")) {
 setMethod('calc', signature(x='RasterLayer', fun='function'), 
 
 function(x, fun, filename='', ...) {
-	test = try(fun(1), silent=TRUE)
+
+	if (!hasValues(x)) {
+		stop('RasterLayer has no cell values in memory or on disk')
+	}
+
+	test = try(fun(x[1]), silent=TRUE)
 	if (class(test) == 'try-error') {
 		stop("function 'fun' is not valid here")
 	}
@@ -19,9 +24,6 @@ function(x, fun, filename='', ...) {
 		stop("function 'fun' returns more than one value")
 	}
 
-	if (!hasValues(x)) {
-		stop('RasterLayer has no data on disk, nor a complete set of values in memory')
-	}
 
 	filename <- trim(filename)
 	outraster <- raster(x)

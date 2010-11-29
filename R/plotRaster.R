@@ -51,7 +51,8 @@
 
 	x <- (0:ncol(object)) * xres(object) + xmin(object) 
 	y <- (0:nrow(object)) * yres(object) + ymin(object) 		
-	z <- t(getValues(object, format='matrix')[object@nrows:1,])
+	z <- t(as.matrix(object)[object@nrows:1,])
+	if (nrow(z) == 1 | ncol(z) == 1) z <- t(z)
 	z[is.infinite(z)] <- NA
 	
 	.imageplot(x, y, z, col=col, axes=axes, xlab=xlab, ylab=ylab, asp=asp, ...)

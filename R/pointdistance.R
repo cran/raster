@@ -1,5 +1,4 @@
 # Author: Robert J. Hijmans  and Jacob van Etten
-# International Rice Research Institute
 # Date :  June 2008
 # Version 0.9
 # Licence GPL v3
@@ -37,10 +36,20 @@
 }
 
 
-pointDistance <- function (point1, point2, type='Euclidean', ...) {
-	if (!(type %in% c('Euclidean', 'GreatCircle'))) {
-		stop('type should be Euclidean or GreatCircle')
-	}	
+pointDistance <- function (point1, point2, longlat=FALSE,  ...) {
+
+	type <- list(...)$type
+	if (!is.null(type)) {
+		if (!(type %in% c('Euclidean', 'GreatCircle'))) {
+			stop('type should be Euclidean or GreatCircle')
+		}
+		if (type == 'Euclidean') { longlat <- FALSE } else { longlat <- TRUE }
+		if (longlat) {
+			# warning("type='Euclidean' is a depracated argument. Use 'longlat=TRUE'")
+		} else {
+			# warning("type='GreatCircle' is a depracated argument. Use 'longlat=FALSE'")
+		}
+	}		
 
 	point1 <- .pointsToMatrix(point1)
 	point2 <- .pointsToMatrix(point2)
@@ -51,10 +60,10 @@ pointDistance <- function (point1, point2, type='Euclidean', ...) {
 		}
 	}
 	
-	if (type == 'Euclidean') {
+	if (! longlat ) {
 		return ( sqrt(( point1[,1] -  point2[,1])^2 + (point1[,2] - point2[,2])^2) )
 	} else { 
-		return(.greatCircleDist(point1[,1], point1[,2], point2[,1], point2[,2], ...) )
+		return(.greatCircleDist(point1[,1], point1[,2], point2[,1], point2[,2], r=6378137) )
 	}
 }
 

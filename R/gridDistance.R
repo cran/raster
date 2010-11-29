@@ -136,7 +136,7 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 		}
 		
 		if (lonlat) {
-			distance <- pointDistance(xyFromCell(x,adj[,1]+startCell), xyFromCell(x,adj[,2]+startCell), type='GreatCircle') 
+			distance <- pointDistance(xyFromCell(x,adj[,1]+startCell), xyFromCell(x,adj[,2]+startCell), longlat=TRUE) 
 			E(distGraph)$weight <- c(distance, perCell)
 		} else {
 			sameRow <- which(rowFromCell(x, adj[,1]) == rowFromCell(x, adj[,2]))
