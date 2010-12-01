@@ -19,18 +19,9 @@ setMethod("unstack", signature(x='RasterBrick'),
 function(x) {
 	rlist <- list()
 	if (nlayers(x) == 0) { return(rlist) }
-	r <- raster(x, 1)
 	for (i in 1:nlayers(x)) {
-		r@data@band <- i
-		rlist <- c(rlist, r)
+		rlist[i] <- raster(x, i)
 	}
-
-	if (! fromDisk(x) ) { 
-		for (i in 1:nlayers(x)) {
-			rlist[i] <- setValues(rlist[[i]], x@data@values[,i])
-		}
-	}
-	
 	return(rlist)
 } )
 

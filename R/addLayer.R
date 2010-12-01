@@ -39,6 +39,7 @@ function(x, ..., keepone=FALSE) {
 		x@crs <- r@crs
 
 		nl <- 1
+		r@layernames <- trim(as.character(r@layernames))
 		if (trim(r@layernames) != "") {
 			cname <- trim(r@layernames)
 		} else {

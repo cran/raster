@@ -3,13 +3,13 @@
 # Version 0.9
 # Licence GPL v3
 
-.startRasterWriting <- function(raster, filename, NAflag, ...) {
+.startRasterWriting <- function(raster, filename, NAflag, bandorder='BIL', ...) {
  	filename <- trim(filename)
 	if (filename == "") {
 		stop('RasterLayer has no filename; and no filename specified as argument to writeRaster')
 	}
 	filetype <- .filetype(...)
-	
+		
 	filename <- .setFileExtensionHeader(filename, filetype)
 	fnamevals <- .setFileExtensionValues(filename, filetype)
 	datatype <- .datatype(...)
@@ -39,7 +39,11 @@
 	raster@data@haveminmax <- FALSE
 	raster@file@driver <- filetype
 	raster@file@name <- filename
-
+	if (! bandorder %in% c('BIL', 'BIP', 'BSQ')) {
+		stop('bandorder must be one of "BIL" or "BIP"')
+	}
+	raster@file@bandorder <- bandorder
+	
 	return(raster)
 }
 

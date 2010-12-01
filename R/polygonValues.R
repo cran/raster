@@ -10,7 +10,7 @@ polygonValues <- function(p, x, ...) {
 }
 
 
-.polygonValues <- function(x, p, fun, weights=FALSE, cellnumbers=FALSE, ...) {
+.polygonValues <- function(x, p, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, ...) {
 	spbb <- bbox(p)
 	rsbb <- bbox(x)
 	addres <- max(res(x))
@@ -68,12 +68,12 @@ polygonValues <- function(p, x, ...) {
 			i <- sapply(res, is.null)
 			if (nlayers(x) > 1) {
 				j <- matrix(ncol=nlayers(x), nrow=length(res))
-				j[!i] <- t(sapply(res[!i], function(x) apply(x, 2, fun)))
+				j[!i] <- t(sapply(res[!i], function(x) apply(x, 2, fun, na.rm)))
 				colnames(j) <- layerNames(x)
 			} else {
 				j <- vector(length=length(i))
 				j[i] <- NA
-				j[!i] <- sapply(res[!i], fun)
+				j[!i] <- sapply(res[!i], fun, na.rm)
 			}
 			res <- j
 		}

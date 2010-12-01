@@ -149,31 +149,44 @@ setMethod('writeValues', signature(x='RasterBrick'),
 		
 		if ( x@file@driver %in% .nativeDrivers() ) {
 			
+			if (!is.matrix(v)) v <- matrix(v, ncol=1)
+
 			if (x@file@dtype == "INT") { 
 				v[is.na(v)] <- x@file@nodatavalue		
-				v[] <- as.integer(round(v))  
+				dm <- dim(v)
+				v <- as.integer(round(v))  
+				dim(v) <- dm
 			} else if ( x@file@dtype =='LOG' ) {
 				v[v != 1] <- 0
 				v[is.na(v)] <- x@file@nodatavalue
-				v[] <- as.integer(v)  
+				dm <- dim(v)
+				v <- as.integer(round(v))  
+				dim(v) <- dm
 			} else { 
 				v[]  <- as.numeric( v ) 
 			}
 
 			w <- getOption('warn')
 			options('warn'=-1) 
-			if (!is.matrix(v)) v <- matrix(v, ncol=1)
 			rng <- apply(v, 2, range, na.rm=TRUE)
 			x@data@min <- pmin(x@data@min, rng[1,])
 			x@data@max <- pmax(x@data@max, rng[2,])
 			options('warn'= w) 
 		
-			loop <- nrow(v) / x@ncols
-			start <- 1
-			for (i in 1:loop) {
-				end <- start + x@ncols - 1
-				writeBin(as.vector(v[start:end,]), x@file@con, size=x@file@dsize )
-				start <- end + 1
+			if (x@file@bandorder=='BIL') {
+				loop <- nrow(v) / x@ncols
+				start <- 1
+				for (i in 1:loop) {
+					end <- start + x@ncols - 1
+					writeBin(as.vector(v[start:end,]), x@file@con, size=x@file@dsize )
+					start <- end + 1
+				}
+			} else if (x@file@bandorder=='BIP') {
+				writeBin(as.vector(t(v)), x@file@con, size=x@file@dsize )
+			} else if (x@file@bandorder=='BSQ') {
+				stop('BSQ not yet implemented for chunk writing of native files')
+			} else {
+				stop('unknown band order')
 			}
 			
 		} else if ( x@file@driver == 'netcdf') {

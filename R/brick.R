@@ -42,16 +42,19 @@ setMethod('brick', signature(x='character'),
 
 
 setMethod('brick', signature(x='RasterLayer'), 
-	function(x, ..., filename='', format,  datatype, overwrite, progress) {
+	function(x, ..., values=TRUE, filename='', format,  datatype, overwrite, progress) {
+		if (!values) {
+			b <- brick(x@extent, nrows=nrow(x), ncols=ncol(x), crs=projection(x))
+			return(b)
+		}	
 		x <- stack(x, ...)
-
 		filename <- trim(filename)
 		if (missing(format)) { format <- .filetype(filename=filename) } 
 		if (missing(datatype)) { datatype <- .datatype() }
 		if (missing(overwrite)) { overwrite <- .overwrite() }
 		if (missing(progress)) { progress <- .progress() }
 
-		brick(x, filename=filename, format=format, datatype=datatype, overwrite=overwrite, progress=progress)
+		brick(x, values=values, filename=filename, format=format, datatype=datatype, overwrite=overwrite, progress=progress)
 	}
 )
 
