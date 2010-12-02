@@ -4,8 +4,6 @@
 # Licence GPL v3
 
 
-
-
 setReplaceMethod("[", "RasterLayer",
 	function(x, i, j, value) {
 
@@ -47,12 +45,12 @@ setReplaceMethod("[", "RasterLayer",
 			if (inherits(i, 'SpatialPolygons')) {
 				v <- 1:length(i@polygons)
 				v[] <- value
-				return( .polygonsToRaster(i, x, field=v, overlap='last', mask=FALSE, updateRaster=TRUE, updateValue="all", silent=TRUE) )
+				return( .polygonsToRaster(i, x, field=v, fun='last', mask=FALSE, update=TRUE, updateValue="all", silent=TRUE) )
 			}
 			if (inherits(i, 'SpatialLines')) {
 				v <- 1:length(i@lines)
 				v[] <- value
-				return( .linesToRaster(i, x, field=v, overlap='last', mask=FALSE, updateRaster=TRUE, updateValue="all", silent=TRUE) )
+				return( .linesToRaster(i, x, field=v, fun='last', mask=FALSE, update=TRUE, updateValue="all", silent=TRUE) )
 			}
 			stop('currently only implemented for SpatialLines* and SpatialPolygons*, not for other Spatial* objects')
 		} else if (inherits(i, "RasterLayer")) {
@@ -86,7 +84,7 @@ setReplaceMethod("[", "RasterLayer",
 			x <- try (setValues(x, rep(NA, times=ncell(x))) )
 		}
 		if (class(x) == 'try-error') {
-			stop('cannot replace values on this raster (it is too large')
+			stop('cannot do in-memory replace values on this raster (it is too large)')
 		}
 	}
 		

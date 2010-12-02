@@ -166,21 +166,19 @@ linesToRaster <- function(lns, raster, field=0, overlap='last', ...) {
 		stop('lines and raster have no overlapping areas')
 	}
 	nline <- length(lns@lines)
-	info <- matrix(NA, nrow=nline, ncol=3)
+	info <- matrix(NA, nrow=nline, ncol=4)
+	info[,4] <- 1:nrow(info)
+	info[,1] <- sapply(lns@lines, function(x) length(x@Lines))
 	for (i in 1:nline) {
-		info[i,1] <- length(lns@lines[[i]]@Lines)
-		miny <- NULL
-		maxy <- NULL
-		for (j in 1:info[i,1]) {
-			miny <- min(miny, min(lns@lines[[i]]@Lines[[j]]@coords[,2]))
-			maxy <- max(maxy, max(lns@lines[[i]]@Lines[[j]]@coords[,2]))
-		}
-		info[i,2] <- miny
-		info[i,3] <- maxy
+		r <- range(sapply( lns@lines[[i]]@Lines, function(x) range(x@coords[,2])))
+		info[i,2] <- r[1]
+		info[i,3] <- r[2]
 	}
+	
+	
 	lxmin <- min(spbb[1,1], rsbb[1,1]) - 0.5 * xres(raster)
 	lxmax <- max(spbb[1,2], rsbb[1,2]) + 0.5 * xres(raster)
-
+	
 	if (! is.numeric(field) ) {
 		field <- which(colnames(lns@data) == field)[1]
 		if (is.na(field)) {
@@ -220,24 +218,30 @@ linesToRaster <- function(lns, raster, field=0, overlap='last', ...) {
 	}
 	rv1 <- rep(NA, ncol(raster))
 	lst1 <- vector(length=length(rv1), mode='list')
+
+	yrs <- yres(raster)
 	
 	pb <- pbCreate(nrow(raster), type=.progress(...))
 	for (r in 1:nrow(raster)) {
-		if (doFun) {
-			rv <- lst1
-		} else {
-			rv <- rv1
-		}
 		ly <- yFromRow(raster, r)
-		line1 <- rbind(c(lxmin, ly + 0.5*yres(raster)), c(lxmax,ly + 0.5*yres(raster)))
-		line2 <- rbind(c(lxmin, ly - 0.5*yres(raster)), c(lxmax,ly - 0.5*yres(raster)))
-		uly <- ly + 0.51 * yres(raster)
-		lly <- ly - 0.51 * yres(raster)
-		for (i in 1:nline) {
-			if (info[i,2] > uly | info[i,3] < lly) {
-				#  line object is outside of row,  do nothing
-			} else {
-				for (j in 1:info[i,1]) {
+		uly <- ly + 0.51 * yrs
+		lly <- ly - 0.51 * yrs
+
+		info1 <- subset(info,     !(info[,2] > uly   | info[,3] < lly ) )
+#		subpol <- subset(polinfo, !(polinfo[,2] > ly | polinfo[,3] < ly), drop=FALSE)
+		if (doFun) { rv <- lst1
+		} else { rv <- rv1	}
+		
+		if (nrow(info1) > 0) { 
+
+			line1 <- rbind(c(lxmin, ly + 0.5*yrs), c(lxmax,ly + 0.5*yrs))
+			line2 <- rbind(c(lxmin, ly - 0.5*yrs), c(lxmax,ly - 0.5*yrs))
+		
+
+
+			for (k in 1:nrow(info1)) {
+				i <- info1[k,4]
+				for (j in 1:info1[k,1]) {
 					if ( max ( lns@lines[[i]]@Lines[[j]]@coords[,2] ) < lly  |  min( lns@lines[[i]]@Lines[[j]]@coords[,2] ) > uly ) {
 						#  line part entirely outside of row. do nothing
 					} else {
@@ -276,6 +280,7 @@ linesToRaster <- function(lns, raster, field=0, overlap='last', ...) {
 						}
 					}
 				}
+			
 			}
 		}
 		

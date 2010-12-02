@@ -10,6 +10,7 @@
 # changes during an R session
 
 .fullFilename <- function(x) {
+	x <- trim(x)
 	if (identical(basename(x), x)) {
 		x <- file.path(getwd(), x)
 	}

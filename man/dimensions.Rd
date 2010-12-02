@@ -1,4 +1,4 @@
-\name{dimensions}
+\name{dim}
 
 \alias{dim,RasterStackBrick-method}
 \alias{dim,BasicRaster-method}
@@ -28,8 +28,6 @@ Get (or set) the number of rows, columns, and layers of a Raster* object. You ca
 \tab \code{x} \tab RasterLayer or RasterBrick) \cr
 \tab \code{value} \tab row number, or row _and_ column number (for a RasterLayer and a RasterBrick); or a row and column number _and_ the number of layers (only for a RasterBrick)  \cr
 }
-
-
 }}
 
 \value{

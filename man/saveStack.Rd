@@ -5,9 +5,8 @@
 \title{ Save or open a RasterStack file }
 
 \description{
-A RasterStack is a collection of rasters with the same spatial extent and resolution. They can be crated from RasterLayer objects,
-or from raster files. These two functions allow you to save the references to raster files and recreate a rasterStack object later.
-The values are not saved, only the references to the files.
+A RasterStack is a collection of RasterLayers with the same spatial extent and resolution. They can be crated from RasterLayer objects,
+or from file names. These two functions allow you to save the references to raster files and recreate a rasterStack object later. They only work if the RasterStack points to layers that have their values on disk. The values are not saved, only the references to the files.
 }
 
 \usage{
@@ -22,25 +21,27 @@ stackSave(x, filename)
 }
 
 \details{
-  When a RasterStack is saved to a file, only pointers (filenames) to raster datasets are saved, not the data. 
-  If the name or location of a raster file changes, the RasterStack becomes invalid.
+When a RasterStack is saved to a file, only pointers (filenames) to raster datasets are saved, not the data. 
+If the name or location of a raster file changes, the RasterStack becomes invalid.
 }
 
 \value{
-  a RasterStack object
+RasterStack object
 }
 
 \author{Robert J. Hijmans}
 
-\seealso{ \code{\link[raster]{writeRaster}}, \code{\link[raster]{stack}}, \code{\link[raster]{changeStack}}}
+\seealso{ \code{\link[raster]{writeRaster}}, \code{\link[raster]{stack}}, \code{\link[raster]{addLayer}}}
 
 \examples{
-rasterfile <- system.file("external/test.grd", package="raster")
-st <- stack(c(rasterfile, rasterfile))
-st <- stackSave(st, "mystack")
+file <- system.file("external/test.grd", package="raster")
+s <- stack(c(file, file))
+s <- stackSave(s, "mystack")
 # note that filename adds an extension .stk to a stackfile  
-#st2 <- stackOpen("mystack.stk")
-#st2
+\dontrun{
+s2 <- stackOpen("mystack.stk")
+s2
+}
 }
 \keyword{ spatial }
 

@@ -16,11 +16,11 @@ cellStats(x, stat='mean', ...)
 \arguments{
  \item{x}{A Raster* object}
  \item{stat}{The function to be applied}
- \item{...}{Additional argument. See \code{\link[raster]{rasterOptions}} }  
+ \item{...}{Additional arguments }  
 }
 
 \value{
-A numeric value.
+Numeric.
 }
 
 \details{

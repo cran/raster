@@ -5,6 +5,8 @@
 # Licence GPL v3
 
 
+
+
 if (!isGeneric("crop")) {
 	setGeneric("crop", function(x, y, ...)
 		standardGeneric("crop"))
@@ -12,9 +14,19 @@ if (!isGeneric("crop")) {
 
 
 setMethod('crop', signature(x='Raster', y='ANY'), 
-function(x, y, filename='', datatype=dataType(x), ...) {
+function(x, y, filename='', ...) {
 	filename <- trim(filename)
 
+	datatype <- list(...)$datatype
+	if (is.null(datatype)) { 
+		datatype <- dataType(x)
+		if (length(unique(datatype)) > 1) {
+			datatype <- 'FLT4S'
+		} else {
+			datatype <- datatype[1]
+		}
+	}
+	
 	y <- try ( extent(y), silent=TRUE )
 	if (class(y) == "try-error") {
 		stop('Cannot get an Extent object from argument y')
@@ -42,9 +54,6 @@ function(x, y, filename='', datatype=dataType(x), ...) {
 	row2 <- rowFromY(x, ymin(outRaster)+0.5*yres(outRaster))
 	nc <- ncol(outRaster)
 	nr <- row2 - row1 + 1
-	
-	datatype=dataType(x)
-
 	
 	if (canProcessInMemory(outRaster, 3)) {
 		x <- getValuesBlock(x, row1, nrows=nr, col=col1, ncols=nc)

@@ -1,15 +1,8 @@
 # Author: Robert J. Hijmans, r.hijmans@gmail.com
-# International Rice Research Institute
 # Date :  October 2008
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
 
-#'nlayers<-' <- function(x, value) {
-#	if (class(x) != 'RasterBrick') {
-#		stop('only for RasterBrick objects')
-#	}
-#	x@data@nlayers <- value
-#}
 
 if (!isGeneric("nlayers")) {
 	setGeneric("nlayers", function(object)
@@ -30,7 +23,7 @@ setMethod('nlayers', signature(object='Raster'),
 
 setMethod('nlayers', signature(object='RasterStack'), 
 	function(object){
-		return(length(object@layers)) 
+		as.integer( sum(unlist( sapply(object@layers, nlayers) ) ) )
     }
 )
 
@@ -42,7 +35,7 @@ setMethod('nlayers', signature(object='RasterBrick'),
 
 setMethod('nlayers', signature(object='Spatial'), 
 	function(object){
-		if ( class(object)=='SpatialPixelsDataFrame' |  class(object)=='SpatialGridDataFrame' ) { 
+		if (! is.null( attr(object, 'data') ) ) {
 			return( dim(object@data)[2] ) 
 		} else {
 			return( 0 )

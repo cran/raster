@@ -13,9 +13,11 @@ Calculate values for a new Raster object from another Raster* object, using a fo
 
 If \code{x} is a RasterLayer, \code{fun} should be a function that can take a single value as input, and returns a single value (e.g. \code{sqrt}). 
 
-If \code{x} is a RasterStack or RasterBrick, and \code{fun} returns the same number of values as the input vector (e.g., \code{function(x){ x * 10}}) it, calc returns a RasterBrick. But calc returns a RasterLayer if \code{fun} takes a vector of values as input, and return a single value (e.g. \code{sum}). 
+If \code{x} is a RasterStack or RasterBrick, fun should operate on a vector of values (one vector for each cell). \code{calc} returns a RasterLayer if \code{fun} returns a single value (e.g. \code{sum}) and it returns a RasterBrick if \code{fun} returns more than one number (e.g., \code{function(x){ x * 10}}).
  
-In many cases, what can be achieved with \code{calc} in a more intuitive 'raster-algebra' notation (see \code{\link[raster]{Arith-methods}}). For example, \code{r <- r * 2} rather than \code{r <- calc(r, fun=function(x){x * 2}}. However, \code{calc} should be faster when using complex formulas on large datasets. With \code{calc} it is also easier to set output file preferences if applicable. 
+In many cases, what can be achieved with \code{calc} in a more intuitive 'raster-algebra' notation (see \code{\link[raster]{Arith-methods}}). For example, \code{r <- r * 2} rather than \code{r <- calc(r, fun=function(x){x * 2}}, or \code{r <- sum(s)} rather than \code{r <- calc(s, fun=sum)}
+
+However, \code{calc} should be faster when using complex formulas on large datasets. With \code{calc} it is possible to set an output filename and file type preferences. 
  
 See (\code{\link[raster]{overlay}}) to use functions that refer to specific layers, like (\code{function(a,b,c){a + sqrt(b) / c}})
 }
@@ -58,27 +60,60 @@ r[] <- 1:ncell(r)
 
 # multiply values with 10
 fun <- function(x) { x * 10 }
-rc <- calc(r, fun)
+rc1 <- calc(r, fun)
 
 # set values below 100 to NA. 
 fun <- function(x) { x[x<100] <- NA; return(x) }
-rc <- calc(r, fun)
+rc2 <- calc(r, fun)
 
 # set NA values to -9999
 fun <- function(x) { x[is.na(x)] <- -9999; return(x)} 
-rc <- calc(rc, fun)
+rc3 <- calc(rc2, fun)
 
 # using a RasterStack as input
 s <- stack(r, r*2, sqrt(r))
 # return a RasterLayer
-rs <- calc(s, sum)
+rs1 <- calc(s, sum)
 
 # return a RasterBrick
-rs <- calc(s, fun=function(x){x * 10})
+rs2 <- calc(s, fun=function(x){x * 10})
 # recycling by layer
-rs <- calc(s, fun=function(x){x * c(1, 5, 10)})
+rs3 <- calc(s, fun=function(x){x * c(1, 5, 10)})
 
+# use overlay when you want to refer to indiviudal layer in the function
+# but it can be done with calc: 
+rs4 <- calc(s, fun=function(x){x[1]+x[2]*x[3]})
+
+## 
+# Some regression examples
+## 
+
+# create data
+r <- raster(nrow=10, ncol=10)
+s1 <- s2<- list()
+for (i in 1:12) {
+	s1[i] <- setValues(r, rnorm(ncell(r), i, 3) )
+	s2[i] <- setValues(r, rnorm(ncell(r), i, 3) )
 }
+s1 <- stack(s1)
+s2 <- stack(s2)
+
+# regression of values in one brick (or stack) with another
+s <- stack(s1, s2)
+# s1 and s2 have 12 layers; coefficients[2] is the slope
+fun <- function(x) { lm(x[1:12] ~ x[13:24])$coefficients[2] }
+x1 <- calc(s, fun)
+
+# regression of values in one brick (or stack) with 'time'
+time <- 1:nlayers(s)
+fun <- function(x) { lm(x ~ time)$coefficients[2] }
+x2 <- calc(s, fun)
+
+# get multiple layers, e.g. the slope _and_ intercept
+fun <- function(x) { lm(x ~ time)$coefficients }
+x3 <- calc(s, fun)
+}
+
 
 \keyword{methods}
 \keyword{spatial}

@@ -36,28 +36,19 @@ function(x, fun, filename='', na.rm, ...) {
 	nl <- nlayers(x)
 	if (nl == 1) { 	makemat <- TRUE	} else { makemat <- FALSE  }
 	
-	tst <- fun(rbind(1:nl, 1:nl, 1:nl))
-	test <- dim(tst)
-	
-	if (! is.null(test)) {
-		if (test[1] == 3 & test[2] == nl) {
-			return( .calcLayers(x, fun, filename, ...) )
+	if (! missing(na.rm)) {
+		test <- try(fun(1:nl, na.rm=na.rm), silent=TRUE)
+		if (class(test) == 'try-error') {
+			stop("cannot use this function. Perhaps add 'na.rm' or '...' to the function arguments?") 
 		}
 	} else {
-		test <- length(tst)
-	}
-		#} else {
-		#	stop("'fun' does not return the correct number of values. It should be 1 or nlayers(x)") 
-		#}
-	
-	if (! missing(na.rm)) {
-		test <- try(fun(1:nl, na.rm=TRUE), silent=TRUE)
+		test <- try(fun(1:nl), silent=TRUE)
 		if (class(test) == 'try-error') {
-			stop("'fun' does take an 'na.rm' arugment. Add 'na.rm' or '...' to the function arguments") 
+			stop("cannot use this function") 
 		}
 	}
-	
-	filename <- trim(filename)
+
+	test <- length(test)
 	if (test == 1) {
 		out <- raster(x)
 	} else {
@@ -69,8 +60,12 @@ function(x, fun, filename='', na.rm, ...) {
 	if (class(fun) == 'character') { 
 		rowcalc <- TRUE 
 		fun <- .getRowFun(fun)
-	} else { rowcalc <- FALSE }
+	} else { 
+		rowcalc <- FALSE 
+	}
 	
+	filename <- trim(filename)
+
 	if (canProcessInMemory(x, 2)) {
 		x <- getValues(x)
 		if (makemat) { x <- matrix(x, ncol=1) }
@@ -96,7 +91,7 @@ function(x, fun, filename='', na.rm, ...) {
 		if (filename != '') {
 			x <- writeRaster(x, filename, ...)
 		}
-		return ( x)		
+		return(x)		
 	}
 
 # else 
@@ -116,6 +111,12 @@ function(x, fun, filename='', na.rm, ...) {
 			} else {
 				v <- apply(v, 1, fun)
 			}
+			if (is.matrix(v)) {
+				if (dim(v)[2] != test) {
+					v <- t(v)
+				}
+			}
+
 			out <- writeValues(out, v, tr$row[i])
 			pbStep(pb) 
 		}
@@ -127,6 +128,11 @@ function(x, fun, filename='', na.rm, ...) {
 				v <- fun(v, na.rm=na.rm)
 			} else {
 				v <- apply(v, 1, fun, na.rm=na.rm)
+			}
+			if (is.matrix(v)) {
+				if (dim(v)[2] != test) {
+					v <- t(v)
+				}
 			}
 			out <- writeValues(out, v, tr$row[i])
 			pbStep(pb) 

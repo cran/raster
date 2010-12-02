@@ -126,6 +126,10 @@ plot(r)
 r[] <- 1:ncell(r)
 r <- rasterize(lines, r, mask=TRUE)
 plot(r)
+
+r[] <- 1
+r[lines] <- 10
+plot(r)
 }
 
 ###############################

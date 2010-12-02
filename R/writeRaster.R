@@ -12,7 +12,7 @@ if (!isGeneric('writeRaster')) {
 setMethod('writeRaster', signature(x='RasterLayer', filename='character'), 
 function(x, filename, format, ...) {
 
-	filename <- trim(filename)
+	filename <- .fullFilename(filename)
 	if (filename == '') {
 		stop('provide a filename')
 	}
@@ -44,7 +44,7 @@ function(x, filename, format, ...) {
 setMethod('writeRaster', signature(x='RasterBrick', filename='character'), 
 function(x, filename, bandorder='BIL', format, ...) {
 
-	filename <- trim(filename)
+	filename <- .fullFilename(filename)
 	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)
 	
@@ -70,7 +70,7 @@ function(x, filename, bandorder='BIL', format, ...) {
 setMethod('writeRaster', signature(x='RasterStack', filename='character'), 
 function(x, filename, bandorder='BIL', format, ...) {
 
-	filename <- trim(filename)
+	filename <- .fullFilename(filename)
 	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)
 	if (filetype=='CDF') {

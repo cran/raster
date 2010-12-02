@@ -27,7 +27,7 @@ function(x, filename='', ...) {
 
 	out <- raster(x)
 	
-	if (.couldBeLonLat(out)) { disttype <- 'GreatCircle' } else { disttype <- 'Euclidean' }
+	if (.couldBeLonLat(out)) { longlat <- TRUE } else { longlat <- FALSE }
 	                                                                        
 	filename <- trim(filename)
 	if (!canProcessInMemory(out, 2) && filename == '') {
@@ -61,7 +61,7 @@ function(x, filename='', ...) {
 			if (length(i) > 0) {
 				xy[,2] <- yFromRow(out, r)
 				for (c in i) {
-					vals[c] <- min( pointDistance(xy[c,], pts, type=disttype) )
+					vals[c] <- min( pointDistance(xy[c,], pts, longlat=longlat) )
 				}
 			}
 			return( vals )
@@ -74,11 +74,8 @@ function(x, filename='', ...) {
 		if (filename=="") {
 			for (r in 1:nrow(out)) {
 				d <- recvOneData(cl)
-				if (! d$value$success) {
-					stop('cluster error')
-				}
+				if (! d$value$success) { stop('cluster error') }
 				v[,d$value$tag] <- d$value$value
-
 				if ((nodes + r) <= out@nrows) {
 					sendCall(cl[[d$node]], clFun, nodes+r, tag=nodes+r)
 				}
@@ -89,9 +86,7 @@ function(x, filename='', ...) {
 		} else {
 			for (r in 1:nrow(out)) {
 				d <- recvOneData(cl)
-				if (! d$value$success) {
-					stop('cluster error')
-				}
+				if (! d$value$success) { stop('cluster error') }
 				out <- writeValues(out, as.vector(d$value$value), d$value$tag)
 				if ((nodes + r) <= out@nrows) {
 					sendCall(cl[[d$node]], clFun, nodes+r, tag=nodes+r)
@@ -111,7 +106,7 @@ function(x, filename='', ...) {
 				if (length(i) > 0) {
 					xy[,2] <- yFromRow(out, r)
 					for (c in i) {
-						vals[c] <- min( pointDistance(xy[c,], pts, type=disttype) )
+						vals[c] <- min( pointDistance(xy[c,], pts, longlat=longlat) )
 					}
 				}
 				v[,r] <- vals
@@ -127,7 +122,7 @@ function(x, filename='', ...) {
 				if (length(i) > 0) {
 					xy[,2] <- yFromRow(out, r)
 					for (c in i) {
-						vals[c] <- min( pointDistance(xy[c,], pts, type=disttype) )
+						vals[c] <- min( pointDistance(xy[c,], pts, longlat=longlat) )
 					}
 				}
 				out <- writeValues(out, vals, r)

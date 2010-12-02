@@ -1,19 +1,49 @@
-# R function for the raster package
 # Author: Robert J. Hijmans
 # contact: r.hijmans@gmail.com
-# Date : January 2009
-# Version 0.9
+# Date : November 2010
+# Version 1.0
 # Licence GPL v3
 
 
 alignExtent <- function(extent, object) {
+
+	extent <- extent(extent)
+	if (!inherits(object, 'BasicRaster')) { stop('object should inherit from BasicRaster') }
+	res <- res(object)
+	orig <- origin(object)
+# snap points to pixel boundaries
+	xmn <- round((extent@xmin-orig[1]) / res[1]) * res[1] + orig[1]
+	xmx <- round((extent@xmax-orig[1]) / res[1]) * res[1] + orig[1]
+	ymn <- round((extent@ymin-orig[2]) / res[2]) * res[2] + orig[2]
+	ymx <- round((extent@ymax-orig[2]) / res[2]) * res[2] + orig[2]
+	if (xmn == xmx) {
+		if (xmn < extent@xmin) {
+			xmx <- xmx + res[1]
+		} else {
+			xmn <- xmn - res[1]		
+		}
+	}
+	if (ymn == ymx) {
+		if (ymn < extent@ymin) {
+			ymx <- ymx + res[2]
+		} else {
+			ymn <- ymn - res[2]		
+		}
+	}
+	extent(xmn, xmx, ymn, ymx)
+}
+
+
+.Old.alignExtent <- function(extent, object) {
 	object <- raster(object)
 	oldext <- extent(object)
 	e <- extent(extent)
-	e@xmin <- max(e@xmin, oldext@xmin)
-	e@xmax <- min(e@xmax, oldext@xmax)
-	e@ymin <- max(e@ymin, oldext@ymin)
-	e@ymax <- min(e@ymax, oldext@ymax)
+	e@xmin <- min(e@xmin, oldext@xmin)
+	e@xmax <- max(e@xmax, oldext@xmax)
+	e@ymin <- min(e@ymin, oldext@ymin)
+	e@ymax <- max(e@ymax, oldext@ymax)
+	
+	
 	col <- colFromX(object, e@xmin)
 	mn <- xFromCol(object, col) - 0.5 * xres(object)
 	mx <- xFromCol(object, col) + 0.5 * xres(object)
@@ -23,6 +53,7 @@ alignExtent <- function(extent, object) {
 		e@xmin <- mn 
 	}
 	col <- colFromX(object, e@xmax)
+	if (is.na(col))
 	mn <- xFromCol(object, col) - 0.5 * xres(object)
 	mx <- xFromCol(object, col) + 0.5 * xres(object)
 	if (abs(e@xmax - mn) > abs(e@xmax - mx)) { 
@@ -30,6 +61,7 @@ alignExtent <- function(extent, object) {
 	} else { 
 		e@xmax <- mn 
 	}
+	
 	row <- rowFromY(object, e@ymin)
 	mn <- yFromRow(object, row) - 0.5 * yres(object)
 	mx <- yFromRow(object, row) + 0.5 * yres(object)

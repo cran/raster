@@ -5,7 +5,7 @@
 
 
 
-addFiles <- function(x, rasterfiles, bands=rep(1, length(rasterfiles))) {
+.addFiles <- function(x, rasterfiles, bands=rep(1, length(rasterfiles))) {
 	if (length(bands) == 1) {
 		bands=rep(bands, length(rasterfiles))
 	} 

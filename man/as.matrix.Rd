@@ -1,37 +1,46 @@
 \name{as.matrix}
 
 \alias{as.matrix}
+\alias{as.array}
+\alias{as.array,Raster-method}
+\alias{as.array,RasterLayer-method}
 \alias{as.matrix,Raster-method}
 \alias{as.matrix,RasterLayer-method}
   
 \title{Get a matrix with raster cell values}
 
 \description{
-Return all values of a Raster* object as a matrix. For RasterLayer objects this is a wrapper around \code{\link{getValues}(x, format='matrix'} and rows and columns in the matrix represent rows and columns in the RasterLayer object. For other Raster* objects a warpper around \code{\link{getValues}(x)}, and each column represents a layer. If there is insufficient memory to load all values, you can use \code{\link{getValues}} or \code{\link{getValuesBlock}} to read chunks of the file.
+\code{as.matrix} returns all values of a Raster* object as a matrix. For RasterLayers, rows and columns in the matrix represent rows and columns in the RasterLayer object. For other Raster* objects, the matrix returned by \code{as.matrix} has columns for each layer and rows for each cell. 
+
+\code{as.array} returns an array of matrices that are like those returned by \code{as.matrix} for a RasterLayer
+
+If there is insufficient memory to load all values, you can use \code{\link{getValues}} or \code{\link{getValuesBlock}} to read chunks of the file.
 
 }
 
 \usage{
 as.matrix(x, ...)
+as.array(x, ...)
 }
 
 \arguments{
- \item{x}{Raster* object}
- \item{...}{Additional arguments. None implemented}
+ \item{x}{ Raster* object }
+ \item{...}{ Additional arguments. \code{maxpixels} to regularly subsample very large objects }
 }
   
 
 \value{
-matrix 
+matrix or array
 }
 
 \author{Robert J. Hijmans}
 
 \examples{
-r <- raster(system.file("external/test.grd", package="raster"))
-m <- as.matrix(r)
-dim(m)
-m[50:60, 25:35]
+r <- raster(ncol=3, nrow=3)
+r[] = 1:ncell(r)
+as.matrix(r)
+s <- stack(r,r)
+as.array(s)
 }
 
 \keyword{spatial}

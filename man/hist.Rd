@@ -40,7 +40,7 @@ This function is principally used for the side-effect of plotting a histogram, b
 }
 
 
-\seealso{ \code{\link[raster]{plot}} and \code{\link[graphics]{hist}} }
+\seealso{ \code{\link{pairs}, \link{boxplot}} }
 
 \examples{ 
 r1 <- raster(nrows=50, ncols=50)

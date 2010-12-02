@@ -9,10 +9,10 @@ Management, analysis and modeling of raster-type geographic data
 }
 
 \description{
-This packages provides classes and functions to manipulate geographic (spatial) data in 'raster' format. Raster data divides the world in cells (rectangles; pixels) of equal size (in units of the coordinate reference system). Such data are also referred to as 'grid' data.
+The raster package provides classes and functions to manipulate geographic (spatial) data in 'raster' format. Raster data divides space into cells (rectangles; pixels) of equal size (in units of the coordinate reference system). Such data are also referred to as 'grid' data.
 
 The package should be particularly useful when using very large datasets that can not be loaded into the computer's memory. Functions will
-work correctly, because they will read, process, and write blocks of data, without loading all values into memory. 
+work correctly, because they they process large files in chunks, i.e., they read, compute, and write blocks of data, without loading all values into memory at once.
 
 Below is a list of functions grouped by theme. See the vignette for more information and some examples: \code{vignette('raster', 'raster')}
 }
@@ -38,13 +38,6 @@ Below is a list of functions grouped by theme. See the vignette for more informa
 
 
 
-\author{
-Robert J. Hijmans and Jacob van Etten
-
-Maintainer: Robert J. Hijmans \email{r.hijmans@gmail.com}
-}
-
-
 \section{I. Creating Raster* objects}{
 
 Raster* objects can be created, from scracth, files, or from objects of other classes, with the following functions:
@@ -52,7 +45,7 @@ Raster* objects can be created, from scracth, files, or from objects of other cl
     \code{\link{raster}}\tab To create a RasterLayer \cr
     \code{\link{stack}} \tab To create a RasterStack (multiple layers)\cr
     \code{\link{brick}} \tab To create a RasterBrick (multiple layers)\cr
-    \code{\link{addLayer}} \tab Add a layer to a RasterStack or RasterBrick \cr
+    \code{\link{addLayer}} \tab Add a layer to a Raster* object\cr
     \code{\link{dropLayer}} \tab Remove a layer from a RasterStack or RasterBrick \cr
     \code{\link{unstack}} \tab Create a list of RasterLayer objects from a RasterStack \cr
 	}
@@ -150,7 +143,6 @@ You can coerce Raster* objects to Spatial* objects using \code{as}, as in \code{
 }
 
 
-
 \section{VIII. Summarizing}{
 
   \tabular{ll}{
@@ -205,10 +197,11 @@ Interacting with a map (plot of a RasterLayer)
 
 Other plots 
   \tabular{ll}{
-    \code{\link{plot}} \tab x-y plot of values of two RasterLayer objects\cr
+    \code{\link{plot}} \tab x-y scatter plot of values of two RasterLayer objects\cr
     \code{\link{hist}} \tab Histogram of Raster* object values \cr
     \code{\link{density}} \tab Density plot of Raster* object values \cr
     \code{\link{pairs}} \tab Pairs plot for layers in a RasterStack or RasterBrick \cr
+    \code{\link{boxplot}} \tab Box plot of the values of one or multiple layers\cr
   }
 }
 
@@ -227,17 +220,17 @@ Basic parameters of existing Raster* objects can be obtained, and in most cases 
     \code{\link{ymin}} \tab The minimum y coordinate (or latitute) \cr
     \code{\link{ymax}} \tab The maximum y coordinate (or latitute) \cr
 	\code{\link{extent}} \tab The extent (minimum and maximum x and y coordinates) \cr
-	\code{\link{origin}} \tab The origin of a Raster* object \cr
+	\code{\link{origin}} \tab The origin of a Raster* object\cr
     \code{\link{projection}} \tab The coordinate reference system (map projection) \cr	
     \code{\link{isLonLat}} \tab Test if an object has a longitude/latitude coordinate reference system \cr
-    \code{\link{filename}} \tab Filename to which RasterLayer or RasterBrick is linked \cr	
+    \code{\link{filename}} \tab Filename to which a RasterLayer or RasterBrick is linked \cr	
     \code{\link{band}} \tab Band (layer) of a multi-band file that this RasterLayer is linked to \cr	
     \code{\link{nbands}} \tab How many bands (layers) does the file have? \cr	
-    \code{\link{compare}} \tab Compare the basic parameters of two Raster* objects \cr		
-    \code{\link{NAvalue}} \tab Get or set the NA value (for reading from file) \cr
+    \code{\link{compare}} \tab Compare for equality the basic parameters of two Raster* objects \cr		
+    \code{\link{NAvalue}} \tab Get or set the \code{NA} value (for reading from file; see \link{writeRaster} for setting it when writing a file) \cr
   }
 
-If there are values associated with a RasterLayer object (either in memory or via a link to a file) these are lost when you change the number of columns or rows or the resolution. This is not the case when the extent is changed (as the number of columns and rows will not be affected). Simlarly, with \bold{projection} you can set the projection, but this does not transform the data (see projectRaster for that).   
+If there are values associated with a RasterLayer object (either in memory or via a link to a file) these are lost when you change the number of columns or rows or the resolution. This is not the case when the extent is changed (as the number of columns and rows will not be affected). Simlarly, with \bold{projection} you can set the projection, but this does not transform the data (see \link{projectRaster} for that).   
 }
 
 
@@ -262,8 +255,6 @@ Cell numbers start at 1 in the upper-left corner. They increase within rows, fro
   }
 }
 
-
-  
 \section{XIII. Writing files}{
 
 Basic writing
@@ -274,12 +265,12 @@ Basic writing
   }
 
 Advanced writing of entire files or parts thereof
-  \tabular{ll}{
-    \code{\link{blockSize}} \tab Get suggested block size for reading and writing \cr
-    \code{\link{writeStart}} \tab Open a file for writing \cr
-    \code{\link{writeValues}} \tab Write some values  \cr
-    \code{\link{writeStop}} \tab Close the file after writing \cr
-	}
+\tabular{ll}{
+   \code{\link{blockSize}} \tab Get suggested block size for reading and writing \cr
+   \code{\link{writeStart}} \tab Open a file for writing \cr
+   \code{\link{writeValues}} \tab Write some values  \cr
+   \code{\link{writeStop}} \tab Close the file after writing \cr
+}
 }	
 
 
@@ -297,7 +288,6 @@ Advanced writing of entire files or parts thereof
   }
 It is also possible to use Arithmetic functions with Extent objects (but these work perhaps unexpectedly!)
 }
-
 
 \section{XV. Options}{
 
@@ -340,12 +330,17 @@ It is also possible to use Arithmetic functions with Extent objects (but these w
   \code{\link{rasterTmpFile}}  \tab Get a name for a temporary file \cr
   \code{\link{inMemory}} \tab Are the cell values in memory? \cr
   \code{\link{fromDisk}} \tab Are the cell values read from a file? \cr	
-
 }
+}
+
+\author{
+Robert J. Hijmans and Jacob van Etten
+
+Maintainer: Robert J. Hijmans \email{r.hijmans@gmail.com}
 }
 
 \section{Acknowledgements}{
-We are grateful for the extensive suggestions made by Jonathan Greenberg, Matteo Mattiuzzi, and Steven Mosher. We also thank the following persons for suggestions to improve the package: Roger Bivand, Herry Herry, Paul Hiemstra, Mayeul Kauffmann, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Agustin Lobo,  Edzer Pebesma, David Ramsey, Jon Olav Skoien, and Kevin Ummel.
+We are grateful for the extensive suggestions made by Jonathan Greenberg, Matteo Mattiuzzi, and Steven Mosher. We also thank the following persons for suggestions to improve the package: Roger Bivand, Herry Herry, Paul Hiemstra, Mayeul Kauffmann, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Agustin Lobo, Edzer Pebesma, David Ramsey, Jon Olav Skoien, and Kevin Ummel.
 }
 
 \keyword{package}

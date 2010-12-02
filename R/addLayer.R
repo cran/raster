@@ -11,12 +11,14 @@ if (!isGeneric("addLayer")) {
 		standardGeneric("addLayer"))
 }	
 
+setMethod('addLayer', signature(x='Raster'), 
+function(x, ..., keepone=FALSE) {
 
-setMethod('addLayer', signature(x='RasterStack'), 
-function(x, ...) {
-#x is a list of r objects
+	if (! inherits(x, 'RasterStack')) {
+		x <- stack(x)
+	}
 
-	rasters <- .makeRasterList(...)
+	rasters <- .makeRasterList(..., keepone=keepone)
 	if (length(rasters)==0) { return(x) }
 
 	vals <- sapply(rasters, hasValues) 
@@ -84,99 +86,4 @@ function(x, ...) {
 )
 
 
-
-
-setMethod('addLayer', signature(x='RasterBrick'), 
-function(x, ..., keepone=FALSE) {
-
-	rasters <- .makeRasterList(..., keepone=keepone)
-	if (length(rasters)==0) { return(x) }
-
-	vals <- sapply(rasters, hasValues) 
-	if (sum(vals) == 0) { vals[1] <- TRUE }
-	rasters <- rasters[vals]
-		
-	# to do makes this method memory safe. For now:
-	
-	if (nlayers(x) == 0) {
-		r <- rasters[[1]]
-		x@nrows <- r@nrows
-		x@ncols <- r@ncols
-		x@extent <- r@extent
-		x@crs <- r@crs
-
-		if (! fromDisk(r)  & ! inMemory(r) ) {
-			# try the next one..
-			rasters <- rasters[-1]
-			if (length(rasters)==0) { return(x) }
-		} else {
-			nl <- 1
-			if (trim(r@layernames) != "") {
-				cname <- trim(r@layernames)
-			} else {
-				cname <- "layer1"
-			}
-			x@layernames <- cname
-			x@data@values <- as.matrix(getValues(r))
-			x@data@nlayers <- as.integer(1)
-			x@data@inmemory <- TRUE
-			
-			x@data@min <- r@data@min
-			x@data@max <- r@data@max			
-		}
-		rasters <- rasters[-1]
-		if (length(rasters)==0) { return(x) }
-	} 	
-	
-
-	nl <- nlayers(x) + length(rasters)
-	if ( ! canProcessInMemory(x, nl) ) {
-		
-		x <- stack(x, rasters)
-		x <- writeRaster(x, filename=rasterTmpFile(), progress='text')
-		
-	} else {
-	
-		if (! inMemory(x) ) {
-			x <- readAll(x)
-		}
-	
-		for (i in 1:length(rasters)) { 
-
-			r <- rasters[[i]]
-
-			if (!compare(x, r)) { 
-				warning("could not add r:", filename(r))
-				next
-			}
-		
-			if (x@file@driver != '') {
-				x@file@driver <- ''
-				x@file@name <- ''
-			}
-	
-			x@data@values <- cbind(x@data@values, getValues(r))
-				
-			nl <- x@data@nlayers + 1 
-			x@data@nlayers <- as.integer(nl)
-			cn <- trim(r@layernames)
-			if (cn == "") {
-				cn <- paste("layer", nl, sep="")
-			}
-			count <- 1
-			for (j in 1:(nl-1)) {
-				if ( cn == layerNames(x)[j] ) { 
-					count <- count + 1 
-					cn <- paste(cn, "_", count, sep="")
-				}
-			}	
-			x@layernames[nl] <- cn
-			x@data@min[nl] <- r@data@min
-			x@data@max[nl] <- r@data@max			
-		}
-		
-	}
-	return(x)
-	}
-)
 

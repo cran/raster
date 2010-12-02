@@ -3,20 +3,19 @@
 # Version 0.9
 # Licence GPL v3
 
-
-	
 setMethod("Arith", signature(e1='Raster', e2='Raster'),
     function(e1, e2){ 
 
+		if (!hasValues(e1)) { stop('first Raster object has no values') }
+		if (!hasValues(e2)) { stop('second Raster object has no values') }
+		
 		nl1 <- nlayers(e1)
 		nl2 <- nlayers(e2)
-		if (nl1 > 1 & nl2 > 1) {
-			if (nl1 != nl2) {
-				stop('RasterStacks/Bricks must have the same number of layers')
-			}
-		}
+		nl <- max(nl1, nl2)
 
-		if (nl1 > 1 | nl2 > 1) {
+		#if ( nl %% min(nl1, nl2) > 0) { stop('number of layers does not match') } 
+		
+		if (nl > 1) {
 			r <- brick(e1, values=FALSE)
 		} else {
 			r <- raster(e1)
@@ -37,20 +36,33 @@ setMethod("Arith", signature(e1='Raster', e2='Raster'),
 		}
 		
 		if (canProcessInMemory(r, 4)) {
-		
-			return( setValues(r, values=callGeneric( getValues(e1), getValues(e2))) )
+			if (nl1 == nl2 ) {
+				return( setValues(r, values=callGeneric( getValues(e1), getValues(e2))) )
+			} else {
+				return( setValues(r, matrix(callGeneric( as.vector(getValues(e1)), as.vector(getValues(e2))), ncol=nl)) )
+			}
 			
 		} else {
 		
 			tr <- blockSize(e1)
 			pb <- pbCreate(tr$n, type=.progress())			
 			r <- writeStart(r, filename=rasterTmpFile(), overwrite=TRUE )
-			for (i in 1:tr$n) {
-				v1 <- getValues(e1, row=tr$row[i], nrows=tr$nrows[i])
-				v2 <- getValues(e2, row=tr$row[i], nrows=tr$nrows[i])
-				v <- callGeneric( v1, v2 )
-				r <- writeValues(r, v, tr$row[i])
-				pbStep(pb, i) 	
+			if (nl1 == nl2 ) {
+				for (i in 1:tr$n) {
+					v1 <- getValues(e1, row=tr$row[i], nrows=tr$nrows[i])
+					v2 <- getValues(e2, row=tr$row[i], nrows=tr$nrows[i])
+					v <- callGeneric( v1, v2 )
+					r <- writeValues(r, v, tr$row[i])
+					pbStep(pb, i) 	
+				}
+			} else {
+				for (i in 1:tr$n) {
+					v1 <- as.vector(getValues(e1, row=tr$row[i], nrows=tr$nrows[i]))
+					v2 <- as.vector(getValues(e2, row=tr$row[i], nrows=tr$nrows[i]))
+					v <- matrix(callGeneric( v1, v2 ), ncol=nl)
+					r <- writeValues(r, v, tr$row[i])
+					pbStep(pb, i) 	
+				}
 			}
 			r <- writeStop(r)
 			pbClose(pb)
@@ -64,6 +76,8 @@ setMethod("Arith", signature(e1='Raster', e2='Raster'),
 
 setMethod("Arith", signature(e1='RasterLayer', e2='numeric'),
     function(e1, e2){ 
+		if (!hasValues(e1)) { stop('RasterLayer has no values') }
+
 		r <- raster(e1)
 		if (canProcessInMemory(e1, 4)) {
 			return ( setValues(r,  callGeneric(as.numeric(getValues(e1)), e2) ) )
@@ -89,6 +103,7 @@ setMethod("Arith", signature(e1='numeric', e2='RasterLayer'),
     function(e1, e2){ 
 # simpler code, but would this make another copy of the objects?
 #		callGeneric(e2, e1) 
+		if (!hasValues(e2)) { stop('RasterLayer has no values') }
 
 		r <- raster(e2)
 		if (canProcessInMemory(e2, 4)) {
@@ -112,7 +127,7 @@ setMethod("Arith", signature(e1='numeric', e2='RasterLayer'),
 
 
 
-setMethod("Arith", signature(e1='RasterBrick', e2='numeric'),
+setMethod("Arith", signature(e1='RasterStackBrick', e2='numeric'),
     function(e1, e2) {
 	
 		if (length(e2) > 1) {
@@ -121,11 +136,12 @@ setMethod("Arith", signature(e1='RasterBrick', e2='numeric'),
 			}
 					
 			if (canProcessInMemory(e1, 3)) {
-				return( setValues(e1, t(callGeneric( t(getValues(e1)), e2))) )
+				b <- brick(e1, values=FALSE)
+				return( setValues(b, t(callGeneric( t(getValues(e1)), e2))) )
 			}
 			
 			filename <- rasterTmpFile()
-			b <- brick(e1)
+			b <- brick(e1, values=FALSE)
 			tr <- blockSize(b)
 			pb <- pbCreate(tr$n, type=.progress())
 			b <- writeStart(b, filename=filename, bandorder='BIL')
@@ -142,7 +158,8 @@ setMethod("Arith", signature(e1='RasterBrick', e2='numeric'),
 		# else:
 		
 		if (canProcessInMemory(e1, 3)) {
-			return ( setValues(e1,  callGeneric(getValues(e1), e2) ) )
+			b <- brick(e1, values=FALSE)
+			return ( setValues(b,  callGeneric(getValues(e1), e2) ) )
 		} else {
 			filename <- rasterTmpFile()
 			b <- brick(e1)
@@ -168,33 +185,6 @@ setMethod("Arith", signature(e1='numeric', e2='RasterBrick'),
 		callGeneric(e2, e1) 
 	}
 )
-
-
-setMethod("Arith", signature(e1='RasterStack', e2='numeric'),
-    function(e1, e2) {
-		if (length(e2) > 1) {
-			if (length(e2) != nlayers(e1)) {
-				stop('length of e2 > 1 but not equal to nlayers(e1)')
-			}
-			for (i in 1:nlayers(e1)) {
-				e1@layers[[i]] <- callGeneric(e1@layers[[i]], e2[i]) 
-			}
-			
-		} else {
-			for (i in 1:nlayers(e1)) {
-				e1@layers[[i]] <- callGeneric(e1@layers[[i]], e2) 
-			}
-		}
-		return(e1)
-	}
-)
-
-setMethod("Arith", signature(e1='numeric', e2='RasterStack'),
-    function(e1, e2){ 
-		callGeneric(e2, e1) 
-	}
-)
-
 
 
 setMethod("Arith", signature(e1='Extent', e2='numeric'),

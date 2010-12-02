@@ -1,5 +1,5 @@
 importFrom("methods", Ops, Math)
-importFrom("graphics", plot, hist, lines, image, contour, persp, pairs, text)
+importFrom("graphics", plot, hist, lines, image, contour, persp, pairs, text, boxplot)
 importFrom("stats", aggregate, predict, density, quantile)
 importFrom("utils", stack, unstack)
 importFrom("sp", overlay, bbox, Spatial, SpatialPixels, SpatialPixelsDataFrame, SpatialGrid, SpatialGridDataFrame)

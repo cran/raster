@@ -218,6 +218,7 @@
 		if (is.null(todisk)) {
 			return(FALSE)  # the default
 		} else {
+			try (todisk <- as.logical(todisk))
 			if (is.logical(todisk)) {
 				return(todisk)
 			} else {
@@ -227,6 +228,29 @@
 	} else { 
 		if (is.logical(todisk)) {
 			return(todisk)
+		} else {
+			return(FALSE)
+		}
+	}
+}
+
+.usecluster <- function(...) {
+	usecluster <- list(...)$usecluster
+	if (is.null(usecluster)) { 
+		usecluster <- getOption('rasterUseCluster')
+		if (is.null(usecluster)) {
+			return(FALSE)  # the default
+		} else {
+			try (usecluster <- as.logical(usecluster), silent=TRUE)
+			if (isTRUE(usecluster)) {
+				return(TRUE)
+			} else {
+				return(FALSE)
+			}
+		}
+	} else { 
+		if (is.logical(usecluster)) {
+			return(usecluster)
 		} else {
 			return(FALSE)
 		}

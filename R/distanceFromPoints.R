@@ -10,7 +10,7 @@ distanceFromPoints <- function(object, xy, filename='', ...) {
 
 	filename <- trim(filename)
 	
-	if (.couldBeLonLat(object)) { disttype <- 'GreatCircle' } else { disttype <- 'Euclidean' }
+	if (.couldBeLonLat(object)) { longlat=TRUE } else { longlat=FALSE }
 	                                                                        
 	rst <- raster(object)
 	if (!canProcessInMemory(rst, 2) && filename == '') {
@@ -34,7 +34,7 @@ distanceFromPoints <- function(object, xy, filename='', ...) {
 		vals <- arow
 		xy[,2] <- yFromRow(rst, r)
 		for (c in 1:length(xy[,1])) {
-			vals[c] <- min( pointDistance(xy[c, ], pts, type=disttype) )
+			vals[c] <- min( pointDistance(xy[c, ], pts, longlat=longlat) )
 		}
 		if (filename == "") {
 			v[,r] <- vals

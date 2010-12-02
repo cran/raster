@@ -5,13 +5,21 @@
 
 
 setMethod('as.matrix', signature(x='RasterLayer'), 
-function(x, ...){ 
+function(x, maxpixels, ...) {
+	if (!hasValues(x)) { stop("'x' has no values") }
+	if (! missing(maxpixels)) {
+		x <- sampleRegular(x, maxpixels, asRaster=TRUE)
+	}
 	return( getValues(x, format='matrix') )
 })
 
 
 setMethod('as.matrix', signature(x='Raster'), 
-function(x, ...){ 
+function(x, maxpixels, ...){ 
+	if (!hasValues(x)) { stop("'x' has no values") }
+	if (! missing(maxpixels)) {
+		x <- sampleRegular(x, maxpixels, asRaster=TRUE)
+	}
 	return( getValues(x) )
 })
 

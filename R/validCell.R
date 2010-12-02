@@ -1,30 +1,26 @@
 # Author: Robert J. Hijmans, r.hijmans@gmail.com
-# International Rice Research Institute
 # Date :  October 2008
 # Version 0.9
 # Licence GPL v3
 
 
 validCell <- function(object, cell) {
-	object <- raster(object)
 	cell <- round(cell)
-	validcell <- vector(length=length(cell))
-	validcell[cell > 0 & cell <= ncell(object)] <- TRUE
-	return(validcell)
+	valid <- rep(FALSE, times=length(cell))
+	valid[cell > 0 & cell <= ncell(object)] <- TRUE
+	return(valid)
 }
 
 validRow <- function(object, rownr) {
-	object <- raster(object)
 	rownr <- round(rownr)
-	validrows <- vector(length=length(rownr))
-	validrows[rownr > 0 & rownr <= nrow(object)] <- TRUE
-	return(validrows)
+	valid <- rep(FALSE, times=length(rownr))
+	valid[rownr > 0 & rownr <= object@nrows] <- TRUE
+	return(valid)
 }
 
 validCol <- function(object, colnr) {
-	object <- raster(object)
 	colnr <- round(colnr)
-	validcols <- vector(length=length(colnr))
-	validcols[colnr > 0 & colnr <= nrow(object)] <- TRUE
-	return(validcols)
+	valid <- rep(FALSE, times=length(colnr))
+	valid[colnr > 0 & colnr <= object@ncols] <- TRUE
+	return(valid)
 }

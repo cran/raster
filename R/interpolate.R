@@ -23,12 +23,14 @@ setMethod('interpolate', signature(object='Raster'),
 			
 		haveFactor <- FALSE
 		dataclasses <- try( attr(model$terms, "dataClasses")[-1], silent=TRUE)
-		if (dataclasses != 'try-error') {
-			if ( length( unique(lyrnames[(lyrnames %in% varnames)] )) != length(lyrnames[(lyrnames %in% varnames)] )) {
-				stop('duplicate names in Raster* object: ', lyrnames)
+		if (!is.null(dataclasses)) {
+			if (dataclasses != 'try-error') {
+				if ( length( unique(lyrnames[(lyrnames %in% varnames)] )) != length(lyrnames[(lyrnames %in% varnames)] )) {
+					stop('duplicate names in Raster* object: ', lyrnames)
+				}
+				f <- names( which(dataclasses == 'factor') )
+				if (length(f) > 0) { haveFactor <- TRUE } 
 			}
-			f <- names( which(dataclasses == 'factor') )
-			if (length(f) > 0) { haveFactor <- TRUE } 
 		}
 			
 		lyrnames <- layerNames(object)

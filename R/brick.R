@@ -42,28 +42,47 @@ setMethod('brick', signature(x='character'),
 
 
 setMethod('brick', signature(x='RasterLayer'), 
-	function(x, ...) {
-		b <- new('RasterBrick')
-		return( addLayer(b, x, ..., keepone=TRUE) )
+	function(x, ..., filename='', format,  datatype, overwrite, progress) {
+		x <- stack(x, ...)
+
+		filename <- trim(filename)
+		if (missing(format)) { format <- .filetype(filename=filename) } 
+		if (missing(datatype)) { datatype <- .datatype() }
+		if (missing(overwrite)) { overwrite <- .overwrite() }
+		if (missing(progress)) { progress <- .progress() }
+
+		brick(x, filename=filename, format=format, datatype=datatype, overwrite=overwrite, progress=progress)
 	}
 )
 
 
 setMethod('brick', signature(x='RasterStack'), 
 	function(x, values=TRUE, nl, filename='', ...){
-
 		e <- x@extent
 		b <- brick(xmn=e@xmin, xmx=e@xmax, ymn=e@ymin, ymx=e@ymax, nrows=x@nrows, ncols=x@ncols, crs=projection(x))
-		
-		if (missing(nl)) { nl <- nlayers(x) }
+		if (! missing(nl)) {
+			values <- FALSE
+		} else {
+			nl <- nlayers(x) 
+			if (nl < 1) {
+				values <- FALSE
+			}
+		}
 		b@data@nlayers <- as.integer(nl)
-		b@layernames <- x@layernames
 		
+		filename <- trim(filename)
 		if (values) {
+			b@layernames <- x@layernames
 			if (canProcessInMemory(b)) {
-				return ( setValues(b, getValues(x)) )
+				x <- setValues( b, getValues(x)) 
+				if (filename != '') {
+					x <- writeRaster(x, filename, ...)
+				}
+				return(x)
 			} else {
-				if ( trim(filename) == '') {	filename <- rasterTmpFile()	} 
+				if ( filename == '') { 
+					filename <- rasterTmpFile() 
+				} 
 				b <- writeStart(b, filename=filename, ...)
 				tr <- blockSize(b)
 				pb <- pbCreate(tr$n, type=.progress(...))			
@@ -78,8 +97,6 @@ setMethod('brick', signature(x='RasterStack'),
 			}
 			
 		} else {
-			b <- brick(raster(x))
-			b@data@nlayers <- nlayers(x)
 			b@data@min <- rep(Inf, b@data@nlayers)
 			b@data@max <- rep(-Inf, b@data@nlayers)
 			return(b)

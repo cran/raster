@@ -44,28 +44,31 @@ setMethod('area', signature(x='RasterLayer'),
 			out <- writeStart(out, filename=filename, ...)
 		}
 
-		dy <- pointDistance(c(0,0),c(0, yres(out) ),'GreatCircle')
+		dy <- pointDistance(c(0,0),c(0, yres(out) ), longlat=TRUE)
 		y <- yFromRow(out, 1:nrow(out))
-		dx <- pointDistance(cbind(0, y), cbind(xres(out), y), 'GreatCircle')
+		dx <- pointDistance(cbind(0, y), cbind(xres(out), y), longlat=TRUE)
 
-		tr <- blockSize(out)
-		pb <- pbCreate(tr$n, type=.progress(...))
+		
 
-		for (i in 1:tr$n) {
-			r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
-			vv <- dx[r] * dy / 1000000
-			vv <- rep(vv, each=out@ncols)
-			if (na.rm) {
-				a <- getValues(x, tr$row[i], tr$nrows[i])
-				vv[is.na(a)] <- NA
+			tr <- blockSize(out)
+			pb <- pbCreate(tr$n, type=.progress(...))
+
+			for (i in 1:tr$n) {
+				r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
+				vv <- dx[r] * dy / 1000000
+				vv <- rep(vv, each=out@ncols)
+				if (na.rm) {
+					a <- getValues(x, tr$row[i], tr$nrows[i])
+					vv[is.na(a)] <- NA
+				}
+				if (filename == "") {
+					v[,r] <- vv
+				} else {
+					out <- writeValues(out, vv, tr$row[i])
+				}
+				pbStep(pb, i)
 			}
-			if (filename == "") {
-				v[,r] <- vv
-			} else {
-				out <- writeValues(out, vv, tr$row[i])
-			}
-			pbStep(pb, i)
-		}
+
 		pbClose(pb)
 		
 		if (filename == "") { 
@@ -118,40 +121,80 @@ setMethod('area', signature(x='RasterStackBrick'),
 			out <- writeStart(out, filename=filename, ...)
 		}
 
-		dy <- pointDistance(c(0,0),c(0, yres(out) ),'GreatCircle')
+		dy <- pointDistance(c(0,0),c(0, yres(out) ), longlat=TRUE)
 		y <- yFromRow(out, 1:nrow(out))
-		dx <- pointDistance(cbind(0, y), cbind(xres(out), y), 'GreatCircle')
+		dx <- pointDistance(cbind(0, y), cbind(xres(out), y), longlat=TRUE)
 
-		tr <- blockSize(out)
-		pb <- pbCreate(tr$n, type=.progress(...))
+		if (.doCluster() ) {
+			cl <- .getCluster()
+			on.exit( .returnCluster(cl) )
+			nodes <- min(nrow(out), length(cl))	
+			cat( 'Using cluster with', nodes, 'nodes\n' )
+			flush.console()		
+				
+			tr <- blockSize(out, minblocks=nodes)
+			pb <- pbCreate(tr$n, type=.progress(...))
+
+			clFun <- function(i) {
+				r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
+				vv <- dx[r] * dy / 1000000
+				vv <- rep(vv, each=out@ncols)
+			
+				vv <- matrix(rep(vv, times=nl), ncol=nl)
+				a <- getValues(x, tr$row[i], tr$nrows[i])
+				vv[is.na(a)] <- NA
+				return(vv)
+			}
+				
+		    for (i in 1:nodes) {
+				sendCall(cl[[i]], clFun, i, tag=i)
+			}
+
+			for (i in 1:tr$n) {
+				d <- recvOneData(cl)
+				if (! d$value$success ) { stop('cluster error') }
+
+				if (filename == "") {
+					r <- tr$row[d$value$tag]:(tr$row[d$value$tag]+tr$nrows[d$value$tag]-1)
+					start <- (r[1]-1) * ncol(out) + 1
+					end <- r[length(r)] * ncol(out) 
+					v[start:end, ] <- d$value$value
+				} else {
+					out <- writeValues(out, d$value$value, tr$row[d$value$tag])
+				}
+
+				if ((nodes + i) <= tr$n) {
+					sendCall(cl[[d$node]], clFun, nodes+i, tag=i)
+				}
+				pbStep(pb, i) 	
+			}		
+			
+		} else {
+
+			tr <- blockSize(out)
+			pb <- pbCreate(tr$n, type=.progress(...))
 		
 		#rows <- 1
-		for (i in 1:tr$n) {
-			r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
-			vv <- dx[r] * dy / 1000000
-			vv <- rep(vv, each=out@ncols)
+			for (i in 1:tr$n) {
+				r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
+				vv <- dx[r] * dy / 1000000
+				vv <- rep(vv, each=out@ncols)
 			
-			vv <- matrix(rep(vv, times=nl), ncol=nl)
-			a <- getValues(x, tr$row[i], tr$nrows[i])
-			vv[is.na(a)] <- NA
+				vv <- matrix(rep(vv, times=nl), ncol=nl)
+				a <- getValues(x, tr$row[i], tr$nrows[i])
+				vv[is.na(a)] <- NA
 
-			if (filename == "") {
-				start <- (r[1]-1) * ncol(out) + 1
-				end <- r[length(r)] * ncol(out) 
-				v[start:end, ] <- vv
-			} else {
-				out <- writeValues(out, vvv, tr$row[i])
-				
-				#for (j in 1:tr$nrows[i]) {
-				#	jj <- 1:ncol(out) + (j-1) * ncol(out)
-				#	vvv <- vv[jj,]
-				#	out <- writeValues(out, vvv, rows)
-				#	rows <- rows + 1
-				#}
+				if (filename == "") {
+					start <- (r[1]-1) * ncol(out) + 1
+					end <- r[length(r)] * ncol(out) 
+					v[start:end, ] <- vv
+				} else {
+					out <- writeValues(out, vv, tr$row[i])
+				}
+				pbStep(pb, i)
 			}
-			pbStep(pb, i)
+			pbClose(pb)
 		}
-		pbClose(pb)
 		
 		if (filename == "") { 
 			if (weights) {
@@ -166,7 +209,6 @@ setMethod('area', signature(x='RasterStackBrick'),
 				out <- calc(out, fun=function(x){x / total}, filename=outfname, ...)
 			}
 		}
-		
 		return(out)
 	}
 )

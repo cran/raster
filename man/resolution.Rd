@@ -29,7 +29,7 @@ res(object) <- value
 A single numeric value or two numeric values.
 }
 
-\seealso{ \code{\link[raster]{extent}}, \code{\link[raster]{dimensions}}  }
+\seealso{ \code{\link[raster]{extent}}, \code{\link[raster]{ncell}}  }
 
 
 \author{Robert J. Hijmans }

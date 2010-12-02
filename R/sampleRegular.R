@@ -4,48 +4,13 @@
 # Licence GPL v3
 
 
-sampleRegular <- function(x, size, extent=NULL, cells=FALSE, asRaster=FALSE, corners=FALSE) {
-	if (inherits(x, 'RasterLayer')) {
-		return(.sampleRegular(x, n=size, extent=extent, cells=cells, asRaster=asRaster, corners=corners))
-	} else {
-	# ugly & inefficient hack :
-		if (asRaster) {
-			for (i in 1:nlayers(x)) {
-				if (i==1) {
-					xx = .sampleRegular(raster(x, i), n=size, extent=extent, cells=cells, asRaster=asRaster, corners=corners)
-					v <- matrix(ncol=nlayers(x), nrow=ncell(xx))
-					v[,1] = xx@data@values
-				} else {
-					v[,i] = .sampleRegular(raster(x, i), n=size, extent=extent, cells=cells, asRaster=asRaster, corners=corners)@data@values
-				}
-			}
-			b = brick(xx)
-			xx <- setValues(xx, v)
-			layerNames(xx) <- layerNames(x)
-			return(xx)
-		} else {
-			for (i in 1:nlayers(x)) {
-				if (i==1) {
-					r = .sampleRegular(raster(x, i), n=size, extent=extent, cells=cells, asRaster=asRaster, corners=corners)
-					v <- matrix(ncol=nlayers(x), nrow=length(r))
-					v[,1] = r
-				} else {
-					v[,i] = .sampleRegular(raster(x, i), n=size, extent=extent, cells=cells, asRaster=asRaster, corners=corners)
-				}
-			}
-			colnames(v) <- layerNames(x)
-			return(v)
-		}
-	}
-}	
-
-
-.sampleRegular <- function(x, n, extent=NULL, cells=FALSE, asRaster=FALSE, corners=FALSE) {
-
-	if (n<1) {stop('n < 1')}
+sampleRegular <- function( x, size, extent=NULL, cells=FALSE, asRaster=FALSE, corners=FALSE ) {
+	
+	size <- round(size)
+	if (size < 1) { stop('size < 1') }
 	
 	if (is.null(extent)) {
-		if (n >= ncell(x)) {
+		if (size >= ncell(x)) {
 			if (asRaster) { 
 				return(x) 
 			} else { 
@@ -61,7 +26,7 @@ sampleRegular <- function(x, size, extent=NULL, cells=FALSE, asRaster=FALSE, cor
 	} else {
 		extent <- alignExtent(extent, x)
 		rcut <- crop(raster(x), extent)
-		if (n >= ncell(rcut)) {
+		if (size >= ncell(rcut)) {
 			x <- crop(x, extent)
 			if (asRaster) { 
 				return(x) 
@@ -76,7 +41,7 @@ sampleRegular <- function(x, size, extent=NULL, cells=FALSE, asRaster=FALSE, cor
 	}
 	
 
-	X <- sqrt(ncell(rcut)/n)
+	X <- sqrt(ncell(rcut)/size)
 	Y <- X
 	nr <- max(1,floor((lastrow - firstrow + 1) / Y))
 	rows <- (lastrow - firstrow + 1)/nr * 1:nr + firstrow - 1
@@ -100,12 +65,6 @@ sampleRegular <- function(x, size, extent=NULL, cells=FALSE, asRaster=FALSE, cor
 	nr <- length(rows)
 	nc <- length(cols)
 	
-#	m <- matrix(ncol=nr, nrow=nc)
-#	for (i in 1:nr) {
-#		v <- getValues(raster, rows[i])
-#		m[,i] <- v[cols]
-#	}	
-#	m <- as.vector(m)
 	cell <- cellFromRowCol(x, rep(rows, each=nc), rep(cols, times=nr))
 	
 	if ( ! inMemory(x) ) { 
@@ -114,7 +73,7 @@ sampleRegular <- function(x, size, extent=NULL, cells=FALSE, asRaster=FALSE, cor
 		}
 	}
 	
-	m <- .readCells(x, cell)
+	m <- .cellValues(x, cell)
 
 	if (asRaster) {
 		if (is.null(extent))  {
@@ -124,16 +83,20 @@ sampleRegular <- function(x, size, extent=NULL, cells=FALSE, asRaster=FALSE, cor
 			nrow(outras) <- nr
 			ncol(outras) <- nc
 		}
-		outras <- setValues(outras, m)
-		return(outras)
-	} else {
-		if (cells) {
-			#cell <- cellFromRowCol(raster, rep(rows, each=nc), rep(cols, times=nr))
-			cell <- cbind(cell, m)
-			colnames(cell)[2] <- 'value'
-			return(cell)
-		} else {
-			return(m)
+		if (nlayers(x) > 1) {
+			outras <- brick(outras, nl=nlayers(x))
 		}
+		outras <- setValues(outras, m)
+		layerNames(outras) <- layerNames(x)
+		return(outras)
+		
+	} else {
+	
+		if (cells) {
+			m <- cbind(cell, m)
+			colnames(m)[2:ncol(m)] <- layerNames(x)
+		} 
+		return(m)
 	}	
 }
+

@@ -16,10 +16,10 @@
 \title{Extract values from Raster objects}
 
 \description{
-Extract data from a Raster object using cell numbers or the locations of other spatial data (i.e. a spatial query). You can use coordinates (points), lines, polygons or an Extent (rectangle) object.
+Extract data from a Raster object using cell numbers or the locations of other spatial data (i.e., a spatial query). You can use coordinates (points), lines, polygons or an Extent (rectangle) object.
 
 
-This function has replaced four other functions in this package (cellValues, xyValues, lineValues, polygonValues, and focalValues)
+This function has replaced five other functions in this package (cellValues, xyValues, lineValues, polygonValues, and focalValues)
 
 }
 
@@ -129,7 +129,9 @@ extract(s, c(1, 10, 100), layer=2, n=2)
 ###############################
 xy <- cbind(-50, seq(-80, 80, by=20))
 extract(r, xy)
-extract(r, xy, method='bilinear')
+
+sp <- SpatialPoints(xy)
+extract(r, sp, method='bilinear')
 
 # examples with a buffer
 extract(r, xy[1:3,], buffer=1000000)

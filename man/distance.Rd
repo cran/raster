@@ -39,9 +39,9 @@ The following additional arguments can be passed, to replace default values for 
 \seealso{
 \code{\link[raster]{distanceFromPoints}},  \code{\link[raster]{gridDistance}},  \code{\link[raster]{pointDistance}}  
 
-For more advanced distances see the \code{gdistance} package.
+For more advanced distances see the \code{gdistance} package (on R-Forge).
 
-For great-circle distances (and more) between (unprojected) points, see the \code{geosphere} package.
+For great-circle distances (and more) between points in longitude/latitude coordinates, see the \code{geosphere} package.
 }
 
 
@@ -50,7 +50,7 @@ r <- raster(ncol=36,nrow=18)
 r[] <- NA
 r[500] <- 1
 dist <- distance(r) 
-#plot(dist)
+#plot(dist / 1000)
 }
 
 \keyword{spatial}
