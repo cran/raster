@@ -14,7 +14,13 @@ focalValues <- function(x, ...) {
 }
 	
 	
-.focalValues <- function(x, row, ngb=3, layer, nl, ...) {
+.focalValues <- function(x, row, ngb=3, fun=NULL, na.rm=FALSE, layer, nl, ...) {
+
+	dots <- list(...)
+	if (! is.null(dots$buffer) ) {
+		warning('argument "buffer" is ignored')
+	}
+
 
 	if (missing(row)) stop('You must provide a row number "row=" argument')
 
@@ -50,9 +56,13 @@ focalValues <- function(x, ...) {
 	nls <- nlayers(x)
 	
 	if (nls == 1) {
-		ngbdata = matrix(getValuesBlock(x, r1, nrows), ncol=ncol(x))
+		ngbdata = matrix(getValuesBlock(x, r1, nrows), ncol=ncol(x), byrow=TRUE)
 		v = cbind( id[,1], as.vector(ngbdata)[id[,2]] )
 		colnames(v) <- c('col', 'value')
+		
+		if (!is.null(fun)) {
+			v <- as.vector( tapply(v[,2], v[,1], FUN=fun, na.rm=na.rm) 	)
+		}
 		
 	} else {
 	
@@ -72,7 +82,14 @@ focalValues <- function(x, ...) {
 			ngbdata <- matrix( alldata[,j], ncol=ncol(x) )
 			v[,i+1] <- as.vector(ngbdata)[id[,2]] 
 		}
+		
+		if (!is.null(fun)) {
+			v <- aggregate(v[,-1,drop=FALSE], list(v[,1]), FUN=fun, na.rm=na.rm)
+			v <- as.matrix(v)[,-1]
+			colnames(v) <- layerNames(x)[lyrs]
+		} 
 	}
+		
 	return(v)
 }
 

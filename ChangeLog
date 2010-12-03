@@ -1,3 +1,7 @@
+2-Dec-2010,  version 1.7-8
+bug fix in extract by focal area (thanks to Matteo Mattiuzzi)
+predict automatic removal (to NA) of factor levels not used to build the model
+
 --------------------------------------------
 29-Nov-2010,  version 1.7-6
 New function as.array

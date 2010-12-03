@@ -136,6 +136,7 @@ setMethod('raster', signature(x='RasterBrick'),
 		}
 		if (layer > 0) {
 			dindex <- as.integer(max(1, min(nlayers(x), layer)))
+			
 			if ( fromDisk(x) ) {
 				if (dindex != layer) { warning(paste("layer was changed to", dindex))}
 				
@@ -172,6 +173,8 @@ setMethod('raster', signature(x='RasterBrick'),
 				if ( inMemory(x) ) {
 					if ( dindex != layer ) { warning(paste("layer was changed to", dindex)) }
 					r <- setValues(r, x@data@values[,dindex])
+					ln <- x@layernames[dindex]
+					if (! is.na(ln) ) { r@layernames <- ln }
 				}
 			}
 			r@data@offset <- x@data@offset

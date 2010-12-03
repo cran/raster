@@ -35,6 +35,17 @@ extract(x, y, ...)
 }
 
 \details{
+Below are additional arguments that can be used, depending on the type of objects used.
+
+\bold{= all objects =}
+
+1) \code{fun}. Function to summarize the values (e.g. \code{mean}). The function should 
+take a single numeric vector as argument and return a single values (e.g. mean, min or max), and have a \code{na.rm} argument.
+If \code{y} represents points supplying a \code{fun} argument is only useful when non-zero buffers are used. 
+
+2) \code{na.rm}. Only useful when \code{fun} is supplied. If \code{na.rm=TRUE} (the default value), NA values are removed before fun is applied. This argument may be ignored if the function used has a \code{...} argument and ignres an additional \code{na.rm} argument. 
+
+
 \bold{= points =}
 
 If \code{y} represents points, \code{extract} returns the values of a Raster* object for the cells in which a set of points fall. 
@@ -47,11 +58,6 @@ alternative is \code{method='bilinear'}, in which case the returned values are i
 It can be a single value, or a vector of the length of the number of points. 
 If the data are not projected (latitude/longitude), the unit should be meters. Otherwise it should be in map-units (typically also meters).
 
-3) \code{fun}. Only useful when non-zero buffers are used. The values of all the cells are summarized with the function. The function should 
-take a single numeric vector as argument and return a single values (e.g. mean, min or max). 
-
-4) \code{na.rm}. Only useful when \code{fun} is supplied. If \code{na.rm=TRUE} (the default value), NA values are removed before fun is applied. 
-
 
 \bold{= polygons =}
 
@@ -62,22 +68,14 @@ if they do not cover any RasterLayer cell centers. In some cases, you could use 
 \code{extract(x, coordinates(y))} or \code{extract(x, coordinates(y), method='bilinear')}. Additional arguments that can be suplied to this function 
 if \code{y} represents polygons are:
 
-1) \code{fun}. Function to summarize the values (e.g. \code{mean})
-
 If no \code{fun} argument is supplied:
 
-2) \code{weights}. If \code{TRUE}, the function returns, for each polygon, a matrix with the cell values and the approximate fraction
+1) \code{weights}. If \code{TRUE}, the function returns, for each polygon, a matrix with the cell values and the approximate fraction
  of each cell that is covered by the polygon(rounded to 1/100). The weights can be used for averaging; see examples. 
  This option can be useful if the polygons are small relative to the cells size of the RasterLayer
 
-3) \code{cellnumbers}. If \code{cellnumbers=TRUE} and \code{weights=TRUE}, cellnumbers will also be returned. 
+2) \code{cellnumbers}. If \code{cellnumbers=TRUE} and \code{weights=TRUE}, cellnumbers will also be returned. 
 
-
-\bold{= lines =}
-
-If \code{y} represents lines, the following additional argument can be suplied to this function:
-
-1) \code{fun}. Function to summarize the values (e.g. \code{mean})
 
 
 \bold{= Focal values =}
@@ -86,10 +84,10 @@ If \code{y} is missing, you can supply two arguments to get 'focal' values (i.e.
 
 1) \code{row}. row number (this is a required argument). 
 
-2) \code{ngb}. The neighborhood to consider. Either a single integer or a vector of two integers. Default is 3. 
+2) \code{ngb}. The neighborhood to consider. Either a single integer or a vector of two integers. Default is 3. See \code{\link{focal}} 
 
 
-\bold{= Multi-layer objects =}
+\bold{= All multi-layer objects =}
 
 If \code{x} is a RasterStack or RasterBrick object, \code{extract} accepts, in addition to the arguments listed above,
 these two additional arguments:

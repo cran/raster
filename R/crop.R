@@ -68,7 +68,6 @@ function(x, y, filename='', ...) {
 		tr <- blockSize(outRaster)
 		pb <- pbCreate(tr$n, type=.progress(...))
 		outRaster <- writeStart(outRaster, filename=filename, datatype=datatype, ... )
-		tr$row <- tr$row
 		for (i in 1:tr$n) {
 			vv <- getValuesBlock(x, row=tr$row[i]+row1-1, nrows=tr$nrows[i], col1, nc)
 			outRaster <- writeValues(outRaster, vv, tr$row[i])

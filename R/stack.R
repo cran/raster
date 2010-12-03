@@ -53,8 +53,7 @@ function(x, bands=NULL, ...) {
 			stop('no valid bands supplied')
 		}
 		for (b in bands) {
-			r[b] <- first
-			r[[b]]@data@band <- b
+			r[b] <- raster(x[[b]])
 		}
 	}
 	
@@ -67,8 +66,7 @@ function(x, bands=NULL, ...) {
 			if (bds > 1) {
 				for (b in 2:bds) {
 					j <- j + 1
-					r[j] <- r[[j-1]]
-					r[[j]]@data@band <- b
+					r[j] <- raster(x[[i]], band=b)
 				}
 			}
 		} else if (extends(class(x[[i]]), "Raster")) {

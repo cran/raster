@@ -12,7 +12,7 @@ lineValues <- function(lns, x, ...) {
 }
 
 
-.lineValues <- function(x, lns, fun, ...) {
+.lineValues <- function(x, lns, fun, na.rm=FALSE, ...) {
 	spbb <- bbox(lns)
 	rsbb <- bbox(x)
 	addres <- 2 * max(res(x))
@@ -45,12 +45,12 @@ lineValues <- function(lns, x, ...) {
 		i <- sapply(res, is.null)
 		if (nlayers(x) > 1) {
 			j <- matrix(ncol=nlayers(x), nrow=length(res))
-			j[!i] <- t(sapply(res[!i], function(x) apply(x, 2, fun)))
+			j[!i] <- t(sapply(res[!i], function(x) apply(x, 2, fun, na.rm)))
 			colnames(j) <- layerNames(x)
 		} else {
 			j <- vector(length=length(i))
 			j[i] <- NA
-			j[!i] <- sapply(res[!i], fun)
+			j[!i] <- sapply(res[!i], fun, na.rm)
 		}
 		res <- j
 	}

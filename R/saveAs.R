@@ -41,7 +41,7 @@
 			return( .writeBrick(object=x, filename=filename, bandorder=bandorder, format=format, ...)) 
 			
 		} else {
-			b <- brick(x)
+			b <- brick(x, values=FALSE)
 			tr <- blockSize(b)
 			pb <- pbCreate(tr$n, type=.progress(...))
 			b <- writeStart(b, filename=filename, bandorder=bandorder, format=format, ...)

@@ -73,11 +73,7 @@ function(x, filename, bandorder='BIL', format, ...) {
 	filename <- .fullFilename(filename)
 	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)
-	if (filetype=='CDF') {
-		# not memory safe
-		x <- brick(x)
-		return( .rasterSaveAsNetCDF(x, filename=filename, ...) )
-	}
+
 	b <- brick(x, values=FALSE)
 	b <- writeStart(b, filename=filename, bandorder=bandorder, format=filetype, ...)
 	tr <- blockSize(b)

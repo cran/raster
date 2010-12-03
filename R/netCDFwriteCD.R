@@ -6,22 +6,12 @@
 
 .rasterSaveAsNetCDF <- function(x, filename, datatype='FLT4S', overwrite=FALSE, convention='CF', ...) {
 
-	if (convention=='RST') {
-		x <- .startWriteCDFrst(x, filename=filename, datatype=datatype, overwrite=overwrite, ...)
-		if (inherits(x, 'RasterBrick')) {
-			x <- .writeValuesBrickCDFrst(x, getValues(x) )	
-		} else {
-			x <- .writeValuesCDFrst(x, getValues(x))
-		}
+	x <- .startWriteCDF(x, filename=filename, datatype=datatype, overwrite=overwrite, ...)
+	if (inherits(x, 'RasterBrick')) {
+		x <- .writeValuesBrickCDF(x, getValues(x) )	
 	} else {
-		x <- .startWriteCDF(x, filename=filename, datatype=datatype, overwrite=overwrite, ...)
-		if (inherits(x, 'RasterBrick')) {
-			x <- .writeValuesBrickCDF(x, getValues(x) )	
-		} else {
-			x <- .writeValuesCDF(x, getValues(x))
-		}
+		x <- .writeValuesCDF(x, getValues(x))
 	}
-
 	return( .stopWriteCDF(x) )
 }
 
@@ -184,4 +174,5 @@
 #a = raster:::.rasterSaveAsNetCDF(r, 'test.nc', overwrite=TRUE)
 #plot(a)
 #print(a)
+
 
