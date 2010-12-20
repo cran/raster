@@ -14,6 +14,7 @@ rowFromCell <- function(object, cell) {
 }
 
 
+
 cellFromRow <- function(object, rownr) {
 	object <- raster(object)
 	rownr <- round(rownr)
@@ -58,9 +59,19 @@ colFromCell <- function(object, cell) {
 	object <- raster(object)
 	cell <- round(cell)
 	cell[cell < 1 | cell > ncell(object)] <- NA	
-	rownr <- as.integer(trunc((cell-1)/ncol(object)) + 1)
-	colnr <- as.integer(cell - ((rownr-1) * ncol(object)))
+	rownr <- as.integer(trunc((cell-1)/object@ncols) + 1)
+	colnr <- as.integer(cell - ((rownr-1) * object@ncols))
     return(colnr)
+}
+
+
+rowColFromCell <- function(object, cell) {
+	object <- raster(object)
+	cell <- round(cell)
+	cell[cell < 1 | cell > ncell(object)] <- NA
+	row <- as.integer(trunc((cell-1)/object@ncols) + 1)
+	col <- as.integer(cell - ((row-1) * object@ncols))
+	return(cbind(row, col))
 }
 
 cellFromRowCol <- function(object, rownr, colnr) {
@@ -69,8 +80,11 @@ cellFromRowCol <- function(object, rownr, colnr) {
 	colnr <- round(colnr)
 	rownr[rownr < 1 | rownr > nrow(object)] <- NA
 	colnr[colnr < 1 | colnr > ncol(object)] <- NA	
-	# recycle if length(rownr) != lenght(colnr)
+	# recycle if length(rownr) != length(colnr)
 	x <- cbind(rownr, colnr)
 	return((x[,1]-1) * ncol(object) + x[,2])
 }
+
+
+
 

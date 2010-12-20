@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-rasterToPolygons <- function(raster, fun=NULL) {
+rasterToPolygons <- function(raster, fun=NULL, digits=12) {
 
 	if (! fromDisk(raster) & ! inMemory(raster)) {
 		xyv <- xyFromCell(raster, 1:ncell(raster))
@@ -46,6 +46,7 @@ rasterToPolygons <- function(raster, fun=NULL) {
 	polys <- list()
 	for (i in 1:nrow(cr)) {
 		p <- matrix( cr[i,], ncol=2 )
+		p <- round(p, digits=digits)
 		p <- rbind(p, p[1,])
 		polys[i] <- Polygons(list(Polygon( p )), i)
 	}

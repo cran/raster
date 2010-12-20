@@ -9,7 +9,7 @@ setMethod('quantile', signature(x='Raster'),
 		if (is.null(ncells)) {
 			v <- try ( getValues(x) )
 			if (class(v) == 'try-error') {
-				stop('raster too large. You can use an argument "ncells" to use a sample of the cells')
+				stop('raster too large. You can sample it with argument "ncells"')
 			}
 		} else {
 			if (ncells >= ncell(x)) {
@@ -24,7 +24,16 @@ setMethod('quantile', signature(x='Raster'),
 		if (na.rm) {
 			v <- na.omit(v)
 		}
-		return(quantile(v, ...))
+		if (nlayers(x)==1) {
+			return(quantile(v, ...))
+		} else {
+			q <- quantile(v[,1], ...)
+			for (i in 2:nlayers(x)) {
+				q <- rbind(q, quantile(v[,i], ...))
+			}
+			rownames(q) <- layerNames(x)
+			return(q)
+		}
 	}
 )
 

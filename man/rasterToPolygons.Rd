@@ -9,17 +9,18 @@ Raster to polygon conversion. Cells with NA are not converted. A function can be
 }
 
 \usage{
-rasterToPolygons(raster, fun=NULL)
+rasterToPolygons(raster, fun=NULL, digits=12)
 }
 
 \arguments{
  \item{raster}{ a RasterLayer object }
  \item{fun}{ function to select a subset of raster values }
+ \item{digits}{ number of digits to round the coordinates to }
 }
 
 \details{
 \code{fun} should be a simple function returning a logical value
-e.g.: \code{fun=function(x){x==1}} or  \code{fun=function(x){x>3}}
+e.g.: \code{fun=function(x){x==1}} or  \code{fun=function(x){x>3 & x<6}}
 }
 
 \value{

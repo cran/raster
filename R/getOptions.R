@@ -127,6 +127,7 @@
 		} else if (ext == '.nc') { return('CDF')
 		} else if (ext == '.ncdf') { return('CDF')
 		} else if (ext == '.sgrd') { return('SAGA')
+		} else if (ext == '.sdat') { return('SAGA')
 		} else if (ext == '.bil') { return('BIL')
 		} else if (ext == '.bsq') { return('BSQ')
 		} else if (ext == '.bip') { return('BIP')
@@ -138,7 +139,6 @@
 		} else if (ext == '.img') { return( 'HFA') 
 		} else if (ext == '.rst') { return('RST') 
 		} else if (ext == '.mpr') { return('ILWIS')
-		} else if (ext == '.sdat') { return('SAGA')
 		} else if (ext == '.rsw') { return('RMF')
 		} else { 
 			warning('extension ', ext, ' is unknown. Using default format.')

@@ -38,7 +38,7 @@ polygonValues <- function(p, x, ...) {
 				xy <- xy[,-3]
 			} else {
 				rc <- .polygonsToRaster(pp, rc, silent=TRUE)
-				xy <- rasterToPoints(rc)[,-3]
+				xy <- rasterToPoints(rc)[,-3,drop=FALSE]
 			}
 			
 			if (length(xy) > 0)  {  # catch holes or very small polygons

@@ -12,7 +12,7 @@ dataSize <- function(object) {
 }
 
 dataSigned <- function(object) {
-	if (class(object) != 'character'){object <- dataType(object)}
+	if (class(object) != 'character') { object <- dataType(object) }
 	ifelse(substr(object, 5, 5) == 'U', FALSE, TRUE )
 }
 

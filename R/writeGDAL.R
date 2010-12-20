@@ -87,28 +87,30 @@
 
 	if (! .requireRgdal() ) { stop('rgdal not available') }
 
-	raster <- .startGDALwriting(raster, filename, options, ...) 
-	
 	nl <- nlayers(raster)
 	if (nl == 1) {
-		v <- as.matrix(raster)
-		if (raster@file@datanotation == 'INT1U') {
-			v[v < 0] <- NA
+		out <- raster(raster)
+		out <- .startGDALwriting(out, filename, options, ...) 
+		raster <- as.matrix(raster)
+		if (out@file@datanotation == 'INT1U') {
+			raster[raster < 0] <- NA
 		}
-		v[is.na(v)] <- raster@file@nodatavalue
-		x <- putRasterData(raster@file@transient, t(v), band=1, c(0, 0)) 
+		raster[is.na(raster)] <- out@file@nodatavalue
+		z <- putRasterData(out@file@transient, t(raster), band=1, c(0, 0)) 
 	} else {
+		out <- brick(raster, values=FALSE)
+		out <- .startGDALwriting(out, filename, options, ...) 
+		raster <- getValues(raster)
+		if (out@file@datanotation == 'INT1U') {
+			raster[raster < 0] <- NA
+		}
+		raster[is.na(raster)] = out@file@nodatavalue
 	    for (i in 1:nl) {
-			v <- getValues(raster)[,i]
-			if (raster@file@datanotation == 'INT1U') {
-				v[v < 0] <- NA
-			}
-			v[is.na(v)] = raster@file@nodatavalue
-			v <- matrix(v, nrow=raster@nrows, ncol=raster@ncols, byrow=TRUE)
-			x <- putRasterData(raster@file@transient, t(v), band=i, c(0, 0))
+			v <- matrix(raster[,i], nrow=out@ncols, ncol=out@nrows)
+			x <- putRasterData(out@file@transient, v, band=i, c(0, 0))
 		}
 	}	
 	
-	return( .stopGDALwriting(raster) )
+	return( .stopGDALwriting(out) )
 }
 

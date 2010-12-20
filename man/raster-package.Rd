@@ -162,6 +162,8 @@ You can coerce Raster* objects to Spatial* objects using \code{as}, as in \code{
   \tabular{ll}{
     \code{\link{getValues}} \tab Get all cell values (will fail with very large rasters and limited computer memory), or a row of values (safer) \cr
     \code{\link{getValuesBlock}} \tab Get values for a block (a rectangular area defined by start and end row and column \cr
+    \code{\link{as.matrix}} \tab Get cell values as a matrix \cr
+    \code{\link{as.array}} \tab Get cell values as an array \cr
     \code{\link{extract}} \tab Use cell numbers, points, lines, polygons, or an extent, to extract values from a Raster* object, or extract focal values\cr
     \code{\link{sampleRandom}} \tab Random sample \cr
     \code{\link{sampleRegular}} \tab Regular sample \cr
@@ -306,7 +308,7 @@ It is also possible to use Arithmetic functions with Extent objects (but these w
     \code{\link{getData}} \tab Download and geographic data\cr
     \code{\link{pointDistance}} \tab Distance between points \cr
     \code{\link{readIniFile}} \tab Read a (windows) 'ini' file \cr
-    \code{\link{writeHdr}} \tab Write header file for a number of raster formats \cr
+    \code{\link{hdr}} \tab Write header file for a number of raster formats \cr
     \code{\link{trim}} \tab Remove leading and trainling blanks from a character string \cr
     \code{\link{ext}} \tab Get or set the extentsion of a filename \cr
     \code{\link{cv}} \tab Coefficient of variation  \cr

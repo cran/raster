@@ -9,7 +9,7 @@
 \title{Flip}
 
 \description{
-Flip a RasterLayer by inverting the order of the rows (direction=y) or the columns direction='x'.
+Flip the values of a Raster* object by inverting the order of the rows (direction=y) or the columns direction='x'.
 }
 
 \usage{
@@ -17,15 +17,14 @@ flip(x, direction, ...)
 }
 
 \arguments{
-  \item{x}{a RasterLayer object}
+  \item{x}{a Raster* object}
   \item{direction}{Character. 'y' or 'x'}
   \item{...}{Additional arguments, see Details}  
 }
 
 \value{
-a RasterLayer
+RasterLayer or RasterBrick
 }
-
 
 \details{
 The following additional arguments can be passed, to replace default values for this function
@@ -40,10 +39,10 @@ The following additional arguments can be passed, to replace default values for 
 \code{direction} can also be indicated with 1 (=x) or 2 (=y)
 }
 
+
+\seealso{ transpose: \code{\link{t}}, \code{\link[raster]{rotate}} }
+
 \author{Robert J. Hijmans }
-
-\seealso{ \code{\link[raster]{rotate}} }
-
 
 \examples{
 r <- raster(nrow=18, ncol=36)

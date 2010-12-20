@@ -37,8 +37,8 @@
 		rx[is.na(rx) &  (xy[,2]-bufy <= ymin(obj) & xy[,2]+bufy >= ymin(obj))] <- nrow(obj)
 
 		if (.doCluster()) {
-			cl <- .getCluster()
-			on.exit( .returnCluster(cl) )
+			cl <- getCluster()
+			on.exit( returnCluster() )
 			nodes <- min(nrow(xy), length(cl))
 			cat('Using cluster with', nodes, 'nodes\n')
 			flush.console()
@@ -71,8 +71,9 @@
 					cv[[i]] <- d$value$value[,-1]
 				}
 				
-				if ((nodes + i) <= nrow(xy)) {
-					sendCall(cl[[d$node]], clFun, i, tag=i)
+				ni <- nodes + i 
+				if (ni <= nrow(xy)) {
+					sendCall(cl[[d$node]], clFun, ni, tag=ni)
 				}
 			}
 		
@@ -109,8 +110,8 @@
 
 
 		if (.doCluster()) {
-			cl <- .getCluster()
-			on.exit( .returnCluster(cl) )
+			cl <- getCluster()
+			on.exit( returnCluster() )
 			nodes <- min(nrow(xy), length(cl))
 			cat('Using cluster with', nodes, 'nodes\n')
 			flush.console()
@@ -141,8 +142,9 @@
 				} else { 
 					cv[[i]] <- d$value$value[,-1]
 				}
-				if ((nodes + i) <= nrow(xy)) {
-					sendCall(cl[[d$node]], clFun, i, tag=i)
+				ni <- nodes + i
+				if (ni <= nrow(xy)) {
+					sendCall(cl[[d$node]], clFun, ni, tag=ni)
 				}
 			}
 		} else {

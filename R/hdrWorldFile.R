@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-worldFile <- function(raster, extension=".wld") {
+.worldFile <- function(raster, extension=".wld") {
 	hdrfile <- filename(raster)
 	ext(hdrfile) <- extension
 	thefile <- file(hdrfile, "w")  

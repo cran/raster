@@ -179,8 +179,8 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 	
 	if (.doCluster()) {
 		
-		cl <- .getCluster()
-		on.exit( .returnCluster(cl) )
+		cl <- getCluster()
+		on.exit( returnCluster() )
 
 		nodes <- min(ceiling(to@nrows/10), length(cl)) # at least 10 rows per node
 		
@@ -225,8 +225,9 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 				start <- cellFromRowCol(to, tr$row[d$value$tag], 1)
 				end <- cellFromRowCol(to, tr$row[d$value$tag] + tr$nrows[d$value$tag]-1, to@ncols)
 				v[start:end, ] <- d$value$value
-				if ((nodes + i) <= tr$n) {
-					sendCall(cl[[d$node]], clFun, i, tag=i)
+				ni <- nodes+i
+				if (ni <= tr$n) {
+					sendCall(cl[[d$node]], clFun, ni, tag=ni)
 				}
 			}
 			

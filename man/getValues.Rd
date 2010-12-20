@@ -16,7 +16,7 @@
 
 \description{
 getValues returns all values or a row of values for a Raster* object. It will take them from memory if available, else it will read them from disk. 
-This is the prefered function to get either all values, or a subset of rows from a RasterLayer (it is safer then read* functions, which will fail if there is no file). Function values is a shorthand version of getValues that might eventually replace getValues.
+Function \code{values} is a shorthand version of getValues.
 }
 
 \usage{
@@ -34,8 +34,8 @@ values(x, ...)
 
 \details{
 Additional arguments when x is a \code{RasterLayer}:
- \code{format} Character. specifiy the output format. Either '' or 'matrix'. The default is '', in which case a vector is returned. 
- The values returned for a RasterStack or RasterBrick are always a matrix.
+ \code{format} Character. specifiy the output format. Either "" or "matrix". The default is "", in which case a vector is returned. 
+ The values returned for a RasterStack or RasterBrick are always a matrix, with the rows representing cells, and the columns representing layers.
 
 }
 

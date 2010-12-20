@@ -25,7 +25,7 @@ The '\verb@raster@' package has a default 'native' file format called 'rasterfil
 
 The rasterfile format is highly similar to many other formats used for raster data. It consists of two files. One file with sequential binary values (filename extention is '.gri'), and one header file (filename extension is '.grd'). The variation between such file formats is in the header file, and the contents of the rasterfile header file are described here.
 
-The purpose is to standardize the format and help others to read and write files of the same format if they wish to do so. Hence, this article is aimed at software developers. The typical user of the '\verb@raster@' package would not need to be familiar with it.
+The purpose is to standardize the format and help others to read and write files of the same format if they wish to do so. This vignette is aimed at software developers. The typical user of the '\verb@raster@' package does not need to be familiar with it.
 
 This is an incomplete first draft.
 

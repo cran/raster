@@ -22,10 +22,10 @@ function(x, format='') {
 	}
 	
 	if (format=='matrix') { 
-		return( matrix(x, ncol=xx[1], nrow=xx[2], byrow=TRUE) ) 
-	} else {
-		return( x ) 
-	}
+		x <- matrix(x, ncol=xx[1], nrow=xx[2], byrow=TRUE) 
+	} 
+	
+	return( x ) 
 }
 )
 
@@ -36,7 +36,7 @@ function(x) {
 		if ( fromDisk(x) ) {
 			x <- readAll(x)
 		} else {
-			stop('no values available')
+			return( matrix(rep(NA, ncell(x) * nlayers(x)), ncol=nlayers(x)) )
 		}
 	}
 	colnames(x@data@values) <- layerNames(x)

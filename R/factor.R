@@ -50,7 +50,7 @@ if (!isGeneric("labels<-")) {
 setMethod('labels<-', signature(object='RasterLayer', value='list'), 
 	function(object, value) {
 		if (length(value) != 1) {
-			stop('lenght(value) != 1')
+			stop('length(value) != 1')
 		}
 		object@data@attributes <- value
 		return(object)
@@ -60,7 +60,7 @@ setMethod('labels<-', signature(object='RasterLayer', value='list'),
 setMethod('labels<-', signature(object='RasterBrick', value='list'), 
 	function(object, value) {
 		if (length(value) != nlayers(object)) {
-			stop('lenght(value) != nlayers(object)')
+			stop('length(value) != nlayers(object)')
 		}
 		object@data@attributes <- value
 		return(object)

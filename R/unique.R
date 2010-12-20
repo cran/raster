@@ -64,7 +64,7 @@ function(x, progress='') {
 
 	if ( inMemory(x) ) {
 	
-		x <- apply(x@data@values, 2, unique)
+		x <- apply(getValues(x), 2, unique)
 		if (is.list(x)) {
 			for (i in 1:length(x)) {
 				x[[i]] <- sort(x[[i]])

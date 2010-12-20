@@ -86,7 +86,7 @@ setClass('RasterFile',
 		bandorder = 'BIL',
 		offset = as.integer(0),
 		toptobottom = TRUE,
-		driver = '' #'raster'
+		driver = '' # raster or gdal
 	),
 	validity = function(object) {
 		c1 <- datanotation %in% c('LOG1S', 'INT1S', 'INT2S', 'INT4S', 'INT8S', 'INT1U', 'INT2U', 'FLT4S', 'FLT8S')

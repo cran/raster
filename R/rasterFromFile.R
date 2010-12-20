@@ -38,10 +38,6 @@
 		}
 	}
 
-	if ( fileext %in% c(".SGRD", ".SDAT") ) {
-# barely tested
-		return ( .rasterFromSAGAFile(x) )
-	}
 	if ( fileext %in% c(".NC", ".NCDF", ".NETCDF")) {
 		return ( .rasterObjectFromCDF(x, type=objecttype, band=band, ...) )
 		# return ( .rasterFromCDF(x, objecttype, ...) )
@@ -69,11 +65,24 @@
 #  not tested much
 			return ( .rasterFromIDRISIFile(x) )
 		}
+		if ( fileext %in% c(".SGRD", ".SDAT") ) {
+# barely tested
+			return ( .rasterFromSAGAFile(x) )
+		}
+		
 	}
+	
+	if ( fileext %in% c(".SGRD", ".SDAT") ) {
+		r <-  .rasterFromSAGAFile(x) 
+		if (r@file@toptobottom | r@data@gain != 1) {
+			return(r)
+		} # else use gdal
+	}
+
 	if (! .requireRgdal() ) {
 		stop("Cannot create RasterLayer object from this file; perhaps you need to install rgdal first")
 	}
-	test <- try ( r <- .rasterFromGDAL(x, band=band, objecttype, ...), silent=FALSE )
+	test <- try( r <- .rasterFromGDAL(x, band=band, objecttype, ...), silent=FALSE )
 	if (class(test) == "try-error") {
 		stop("Cannot create a RasterLayer object from this file.")
 	} else {
