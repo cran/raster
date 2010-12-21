@@ -51,8 +51,8 @@ resample <- function(from, to, method, filename="", ...)  {
 
 	if (.doCluster()) {
 	
-		cl <- .getCluster()
-		on.exit( .returnCluster(cl) )
+		cl <- getCluster()
+		on.exit( returnCluster() )
 		
 		nodes <- min(ceiling(to@nrows/10), length(cl)) # at least 10 rows per node
 		
@@ -65,7 +65,7 @@ resample <- function(from, to, method, filename="", ...)  {
 		clFun <- function(i) {
 			r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
 			xy <- xyFromCell(to, cellFromRowCol(to, tr$row[i], 1) : cellFromRowCol(to, tr$row[i]+tr$nrows[i]-1, ncol(to)) ) 
-			raster:::.xyValues(from, xy, method=method)
+			.xyValues(from, xy, method=method)
 		}
 		
         for (i in 1:nodes) {
@@ -82,8 +82,9 @@ resample <- function(from, to, method, filename="", ...)  {
 				end <- cellFromRowCol(to, tr$row[d$value$tag]+tr$nrows[d$value$tag]-1, to@ncols)
 				v[start:end, ] <- d$value$value
 
-				if ((nodes + i) <= tr$n) {
-					sendCall(cl[[d$node]], clFun, i, tag=i)
+				ni <- nodes + 1
+				if (ni <= tr$n) {
+					sendCall(cl[[d$node]], clFun, ni, tag=ni)
 				}
 				pbStep(pb)
 			}
@@ -94,8 +95,9 @@ resample <- function(from, to, method, filename="", ...)  {
 			for (i in 1:tr$n) {
 				d <- recvOneData(cl)
 				to <- writeValues(to, d$value$value, tr$row[d$value$tag])
-				if ((nodes + i) <= tr$n) {
-					sendCall(cl[[d$node]], clFun, nodes+i, tag=i)
+				ni <- nodes+1
+				if (ni <= tr$n) {
+					sendCall(cl[[d$node]], clFun, ni, tag=ni)
 				}
 				pbStep(pb)
 			}

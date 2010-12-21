@@ -3,10 +3,10 @@
 \alias{beginCluster}
 \alias{endCluster}
 
-\title{Use a cluster or multi-core CPU}
+\title{Use a multi-core (snow) cluster}
 
 \description{
-Create or delete a 'snow' cluster object. This object provides _experimental_ support for cluster or multi-core computing with a few 'raster' functions that support it. 
+Create or delete a 'snow' cluster object. This object provides _experimental_ support for multi-core computing with a few 'raster' functions that support it. 
 
 beginCluster creates the cluster object. It determines the number of nodes (cores) that are available and uses all of them (unless the argument \code{n} is used). 
 
@@ -26,7 +26,9 @@ endCluster()
 }
 
 \details{
-Functions that are 'cluster-enabled' are: \link{projectRaster}, \link{resample}, \link{distance}.
+Functions that are 'cluster-enabled' are: \code{\link{projectRaster}, \link{resample}, \link{distance}}.
+
+For progamming functions see \code{\link{getCluster}, \link{returnCluster}}
 }
 
 \value{

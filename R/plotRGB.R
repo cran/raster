@@ -11,11 +11,8 @@ if (!isGeneric("plotRGB")) {
 }	
 
 
-
-
-
 setMethod("plotRGB", signature(x='RasterStackBrick'), 
-function(x, r=1, g=2, b=3, scale=255, maxpixels=500000, extent=NULL, interpolate=FALSE, axes=TRUE, xlab='', ylab='', asp, ...) { 
+function(x, r=1, g=2, b=3, scale=255, maxpixels=500000, extent=NULL, interpolate=FALSE, axes=TRUE, xlab='', ylab='', asp, alpha, ...) { 
 	
 	# rasterImage is new in R 2.11
 	if (! exists("rasterImage") ) {
@@ -34,7 +31,7 @@ function(x, r=1, g=2, b=3, scale=255, maxpixels=500000, extent=NULL, interpolate
 			asp = NA
 		} else {
 			asp = 1
-		}		
+		}
 	}
 
 	r <- sampleRegular(raster(x,r), maxpixels, extent=extent, asRaster=TRUE, corners=TRUE)
@@ -47,9 +44,9 @@ function(x, r=1, g=2, b=3, scale=255, maxpixels=500000, extent=NULL, interpolate
 	naind <- as.vector( attr(RGB, "na.action") )
 	if (!is.null(naind)) {
 		z <- rep( "#000000", times=ncell(r))
-		z[-naind] <- rgb(RGB[,1], RGB[,2], RGB[,3], max=scale)
+		z[-naind] <- rgb(RGB[,1], RGB[,2], RGB[,3], alpha=alpha, max=scale)
 	} else {
-		z <- rgb(RGB[,1], RGB[,2], RGB[,3], max=scale)
+		z <- rgb(RGB[,1], RGB[,2], RGB[,3], alpha=alpha, max=scale)
 	}
 	
 	z <- matrix(z, nrow=nrow(r), ncol=ncol(r), byrow=T)

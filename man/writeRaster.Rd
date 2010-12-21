@@ -1,8 +1,7 @@
 \name{writeRaster}
 
 \alias{writeRaster,RasterLayer,character-method}
-\alias{writeRaster,RasterStack,character-method}
-\alias{writeRaster,RasterBrick,character-method}
+\alias{writeRaster,RasterStackBrick,character-method}
 
 \alias{writeRaster}
 

@@ -29,3 +29,7 @@ function(x, value) {
 	setValues(x, values=value, layer=-1)
 } )
 	
+setMethod('values<-', signature(x='RasterStack'), 
+function(x, value) {
+	setValues(x, values=value, layer=-1)
+} )

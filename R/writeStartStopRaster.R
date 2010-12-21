@@ -3,10 +3,10 @@
 # Version 0.9
 # Licence GPL v3
 
-.startRasterWriting <- function(raster, filename, NAflag, bandorder='BIL', ...) {
+.startRasterWriting <- function(raster, filename, NAflag, bandorder='BIL', update=FALSE, ...) {
  	filename <- trim(filename)
 	if (filename == "") {
-		stop('RasterLayer has no filename; and no filename specified as argument to writeRaster')
+		stop('missing filename')
 	}
 	filetype <- .filetype(...)
 		
@@ -30,7 +30,11 @@
 		stop(paste(filename,"exists.","use 'overwrite=TRUE' if you want to overwrite it")) 
 	}
 	
-	attr(raster@file, "con") <- file(fnamevals, "wb")
+	if (update) {
+		attr(raster@file, "con") <- file(fnamevals, "r+b")
+	} else {
+		attr(raster@file, "con") <- file(fnamevals, "wb")
+	}
 	attr(raster@file, "dsize") <- dataSize(raster@file@datanotation)
 	attr(raster@file, "dtype") <- .shortDataType(raster@file@datanotation)
 	
@@ -40,7 +44,7 @@
 	raster@file@driver <- filetype
 	raster@file@name <- filename
 	if (! bandorder %in% c('BIL', 'BIP', 'BSQ')) {
-		stop('bandorder must be one of "BIL" or "BIP"')
+		stop('bandorder must be one of "BIL", "BSQ", or "BIP"')
 	}
 	raster@file@bandorder <- bandorder
 	
@@ -60,7 +64,7 @@
 #		raster@data@min <- as.logical(raster@data@min)
 #		raster@data@max <- as.logical(raster@data@max)
 	}
-	writeHdr(raster, .driver(raster)) 
+	hdr(raster, .driver(raster)) 
 	filename <- .setFileExtensionValues(filename(raster), raster@file@driver)
 	
 	if (inherits(raster, 'RasterBrick')) {

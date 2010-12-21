@@ -46,8 +46,8 @@ function(x, filename='', ...) {
 	pb <- pbCreate(nrow(out), type=.progress(...))
 	
 	if (.doCluster() ) {
-		cl <- .getCluster()
-		on.exit( .returnCluster(cl) )
+		cl <- getCluster()
+		on.exit( returnCluster() )
 		
 		nodes <- min(nrow(out), length(cl)) # at least 1 row
 		
@@ -76,8 +76,9 @@ function(x, filename='', ...) {
 				d <- recvOneData(cl)
 				if (! d$value$success) { stop('cluster error') }
 				v[,d$value$tag] <- d$value$value
-				if ((nodes + r) <= out@nrows) {
-					sendCall(cl[[d$node]], clFun, nodes+r, tag=nodes+r)
+				nr <- nodes + r
+				if (nr <= out@nrows) {
+					sendCall(cl[[d$node]], clFun, nr, tag=nr)
 				}
 				pbStep(pb)
 			}
@@ -88,8 +89,9 @@ function(x, filename='', ...) {
 				d <- recvOneData(cl)
 				if (! d$value$success) { stop('cluster error') }
 				out <- writeValues(out, as.vector(d$value$value), d$value$tag)
-				if ((nodes + r) <= out@nrows) {
-					sendCall(cl[[d$node]], clFun, nodes+r, tag=nodes+r)
+				nr <- nodes + r
+				if (nr <= out@nrows) {
+					sendCall(cl[[d$node]], clFun, nr, tag=nr)
 				}
 				pbStep(pb, r)
 			}

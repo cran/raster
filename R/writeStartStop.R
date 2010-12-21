@@ -5,19 +5,19 @@
 
 if (!isGeneric('writeStart')) {
 	setGeneric('writeStart', function(x, filename, ...)
-		standardGeneric('writeStart')) 
-}  
+		standardGeneric('writeStart'))
+}
 
 if (!isGeneric('writeStop')) {
 	setGeneric('writeStop', function(x)
-		standardGeneric('writeStop')) 
-}  
+		standardGeneric('writeStop'))
+}
 	
 if (!isGeneric('writeValues')) {
 	setGeneric('writeValues', function(x, v, ...)
 		standardGeneric('writeValues')) 
-}  
-	
+}
+
 
 setMethod('writeStart', signature(x='RasterLayer', filename='character'), 
 function(x, filename, options=NULL, format, ...) {
@@ -48,12 +48,13 @@ function(x, filename, options=NULL, format, ...) {
 	if (filetype=='ascii') { stop('ascii files cannot write multi-layer files') }
 	native <- filetype %in% c(.nativeDrivers(), 'ascii')
 	if (native) { 
-		return( .startRasterWriting(x, filename, format=filetype, ...) )
+		x <- .startRasterWriting(x, filename, format=filetype, ...) 
 	} else if ( filetype == 'CDF' ) { 
 		x <- .startWriteCDF(x, filename, ...)
 	} else {
-		return( .startGDALwriting(x, filename, options=options, format=filetype, ...) )
+		x <- .startGDALwriting(x, filename, options=options, format=filetype, ...) 
 	}
+	return(x)
 })
 
 
@@ -115,6 +116,8 @@ setMethod('writeValues', signature(x='RasterLayer'),
 			} else { 
 				v  <- as.numeric( v ) 
 			}
+			start <- (start-1) * x@ncols * x@file@dsize
+			seek(x@file@con, start, rw='w')			
 			writeBin(v, x@file@con, size=x@file@dsize )
 			
 		} else if ( x@file@driver == 'netcdf') {
@@ -143,7 +146,7 @@ setMethod('writeValues', signature(x='RasterLayer'),
 
 
 setMethod('writeValues', signature(x='RasterBrick'), 
-	function(x, v, start) {
+	function(x, v, start=1) {
 	
 		v[is.infinite(v)] <- NA
 		
@@ -172,8 +175,13 @@ setMethod('writeValues', signature(x='RasterBrick'),
 			x@data@min <- pmin(x@data@min, rng[1,])
 			x@data@max <- pmax(x@data@max, rng[2,])
 			options('warn'= w) 
-		
+
+			
 			if (x@file@bandorder=='BIL') {
+			
+				start <- (start-1) * x@ncols * x@file@dsize * nlayers(x)
+				seek(x@file@con, start, rw='w')			
+				
 				loop <- nrow(v) / x@ncols
 				start <- 1
 				for (i in 1:loop) {
@@ -181,10 +189,22 @@ setMethod('writeValues', signature(x='RasterBrick'),
 					writeBin(as.vector(v[start:end,]), x@file@con, size=x@file@dsize )
 					start <- end + 1
 				}
+				
 			} else if (x@file@bandorder=='BIP') {
+			
+				start <- (start-1) * x@ncols * x@file@dsize * nlayers(x)
+				seek(x@file@con, start, rw='w')	
 				writeBin(as.vector(t(v)), x@file@con, size=x@file@dsize )
+				
 			} else if (x@file@bandorder=='BSQ') {
-				stop('BSQ not yet implemented for chunk writing of native files')
+			
+				start <- (start-1) * x@ncols * x@file@dsize
+				nc <- ncell(x) * x@file@dsize
+				for (i in 1:ncol(v)) {
+					pos <- start + nc * (i-1)
+					seek(x@file@con, pos, rw='w')
+					writeBin(v[,i], x@file@con, size=x@file@dsize )
+				}
 			} else {
 				stop('unknown band order')
 			}

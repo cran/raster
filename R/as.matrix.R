@@ -14,7 +14,7 @@ function(x, maxpixels, ...) {
 })
 
 
-setMethod('as.matrix', signature(x='Raster'), 
+setMethod('as.matrix', signature(x='RasterStackBrick'), 
 function(x, maxpixels, ...){ 
 	if (!hasValues(x)) { stop("'x' has no values") }
 	if (! missing(maxpixels)) {

@@ -3,10 +3,12 @@
 \alias{values<-}
 \alias{values<-,RasterLayer-method}
 \alias{values<-,RasterBrick-method}
+\alias{values<-,RasterStack-method}
 
 \alias{setValues}
 \alias{setValues,RasterLayer-method}
 \alias{setValues,RasterBrick-method}
+\alias{setValues,RasterStack-method}
 
 \title{Set values of a Raster object}
 

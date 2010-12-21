@@ -16,19 +16,16 @@ beginCluster <- function(n, type) {
 		n <- .detectCores()
 		cat(n, 'cores detected\n')
 	}
-	if (n > 1) {
-		if (missing(type)) {
-			type <- getClusterOption("type")
-			cat('cluster type:', type, '\n')
-		}
-		cl <- makeCluster(n, type) 
-		cl <- .addPackages(cl)
-		options(rasterClusterObject = cl)
-		options(rasterCluster = TRUE)
-	} else {
-		stop('only 1 core. No cluster made')	
-		options(rasterCluster = FALSE)
+
+	if (missing(type)) {
+		type <- getClusterOption("type")
+		cat('cluster type:', type, '\n')
 	}
+
+	cl <- makeCluster(n, type) 
+	cl <- .addPackages(cl)
+	options(rasterClusterObject = cl)
+	options(rasterCluster = TRUE)
 }
 
 
@@ -50,21 +47,20 @@ endCluster <- function() {
 }
 
 
-.getCluster <- function() {
+getCluster <- function() {
 	cl <- getOption('rasterClusterObject')
+	if (is.null(cl)) { stop('no cluster available, first use "beginCluster"') }
 	cl <- .addPackages(cl, exclude=c('raster', 'sp'))
-	options(rasterClusterObject = cl)
+	options( rasterClusterObject = cl )
 	options( rasterCluster = FALSE )
 	return(cl)
 }
 
 
-.returnCluster <- function(cl) {
-	if (missing(cl)) { 
-		warning('no cluster returned' )
-	} else {
-		options(rasterCluster = TRUE)
-	}
+returnCluster <- function() {
+	cl <- getOption('rasterClusterObject')
+	if (is.null(cl)) { stop('no cluster available') }
+	options( rasterCluster = TRUE )
 }
 
 

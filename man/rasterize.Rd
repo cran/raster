@@ -92,17 +92,19 @@ RasterLayer or RasterBrick
 ###############################
 r <- raster(ncols=36, nrows=18)
 n <- 1000
-x <- runif(n)* 360 - 180
-y <- runif(n)* 180 - 90
+x <- runif(n) * 360 - 180
+y <- runif(n) * 180 - 90
 xy <- cbind(x, y)
 vals <- rep(1, n)
-r <- rasterize(xy, r, vals)
+r <- rasterize(xy, r, vals, fun=sum)
 
-# now with an sp SpatialPointsDataFrame object
+# with a SpatialPointsDataFrame
+vals <- 1:n
 p <- as.data.frame(cbind(xy, name=vals))
 coordinates(p) <- ~x+y
-r <- rasterize(p, r, 'name')
-
+r <- rasterize(p, r, 'name', fun=min)
+#r2 <- rasterize(p, r, 'name', fun=max)
+#plot(r, r2, cex=0.5)
 
 ###############################
 # rasterize lines
@@ -145,6 +147,7 @@ pols@polygons[[1]]@Polygons[[2]]@hole <- TRUE
 
 r <- raster(ncol=180, nrow=90)
 r <- rasterize(pols, r, fun='sum')
+
 \dontrun{
 plot(r)
 plot(pols, add=T)

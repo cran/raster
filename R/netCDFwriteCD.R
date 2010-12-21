@@ -4,32 +4,20 @@
 # Licence GPL v3
 
 
-.rasterSaveAsNetCDF <- function(x, filename, datatype='FLT4S', overwrite=FALSE, convention='CF', ...) {
-
-	x <- .startWriteCDF(x, filename=filename, datatype=datatype, overwrite=overwrite, ...)
-	if (inherits(x, 'RasterBrick')) {
-		x <- .writeValuesBrickCDF(x, getValues(x) )	
-	} else {
-		x <- .writeValuesCDF(x, getValues(x))
-	}
-	return( .stopWriteCDF(x) )
-}
-
-
 .startWriteCDF <- function(x, filename, datatype='FLT4S', overwrite=FALSE, varname, varunit, longname, xname, yname, zname, zunit, ...) {
 
 	if (!require(ncdf)) { stop('You need to install the ncdf package') }
 
 	filename = trim(filename)
 	if (filename == '') { stop('provide a filename') }
-	ext(filename) <- raster:::.defaultExtension(format='CDF')
+	ext(filename) <- .defaultExtension(format='CDF')
 	if (file.exists(filename) & !overwrite) {
 		stop('file exists, use overwrite=TRUE to overwrite it')
 	}
 	
 	dataType(x) <- datatype
 	
-	datatype = raster:::.getNetCDFDType(datatype)
+	datatype = .getNetCDFDType(datatype)
 	
 	if (.couldBeLonLat(x)) {
 		if (missing(xname)) xname = 'longitude'
@@ -164,6 +152,18 @@
 	
 	return(x)
 }
+
+
+
+#.rasterSaveAsNetCDF <- function(x, filename, datatype='FLT4S', overwrite=FALSE, ...) {
+#	x <- .startWriteCDF(x, filename=filename, datatype=datatype, overwrite=overwrite, ...)
+#	if (nlayers(x) > 1) {
+#		x <- .writeValuesBrickCDF(x, getValues(x) )	
+#	} else {
+#		x <- .writeValuesCDF(x, getValues(x))
+#	}
+#	return( .stopWriteCDF(x) )
+#}
 
 
 

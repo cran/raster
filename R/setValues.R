@@ -51,13 +51,56 @@ function(x, values) {
 )
 	
 
+setMethod('setValues', signature(x='RasterStack'), 
+	function(x, values, layer=-1) {
+		layer <- layer[1]
 
+		if (layer<1) {
+			b <- brick(x, values=FALSE)
+			return(setValues(b, values))
+		} else {
+			b <- brick(x, values=TRUE)
+			return(setValues(b, values, layer))
+		}
+	}	
+ )
+	
+	
+
+	
 setMethod('setValues', signature(x='RasterBrick'), 
-  function(x, values, layer=-1) {
-  
-	if ( ! (is.vector(values) | is.matrix(values)) ) {
+	function(x, values, layer=-1) {
+	
+	layer <- layer[1]
+	
+	if (is.array(values) & !is.matrix(values)) {	
+		dm <- dim(values)
+		if (length(dm) != 3) {
+			stop('array has wrong number of dimensions (needs to be 3)')
+		}
+		dmb <- dim(x)
+		transpose <- FALSE
+		if (dmb[1] == dm[2] & dmb[2] == dm[1]) {
+			transpose <- TRUE
+		} else if (dmb[1] != dm[1] | dmb[2] != dm[2]) {
+			stop('dimnesions of array do not match the RasterBrick')
+		}
+		
+		values <- matrix(as.vector(values), ncol=dm[3])
+		if (transpose) {
+			for (i in 1:ncol(values)) {
+				values[,i] <- as.vector(matrix(values[,i], ncol=dm[2]))
+			}
+		} else {
+			for (i in 1:ncol(values)) {
+				values[,i] <- as.vector(t(matrix(values[,i], ncol=dm[2])))
+			}
+		}
+		
+	} else if ( ! (is.vector(values) | is.matrix(values)) ) {
 		stop('values must be a vector or a matrix')
 	}
+	
 	if (!(is.numeric(values) | is.integer(values) | is.logical(values))) {
 		stop('values must be numeric, integer or logical.')	
 	}
@@ -81,9 +124,9 @@ setMethod('setValues', signature(x='RasterBrick'),
 			stop('data size is not correct')
 		}
 	} else {
-		if (nlayers(x)==0) {x@data@nlayers <- 1 }
+		if (nlayers(x)==0) { x@data@nlayers <- 1 }
 		layer <- round(layer)
-		if (layer > nlayers(x)) {stop('layer number too high')}
+		if (layer > nlayers(x)) { stop('layer number too high') }
 		
 		if (length(values) == ncell(x)) { 
 			if ( ! inMemory(x) ) { 
@@ -105,6 +148,4 @@ setMethod('setValues', signature(x='RasterBrick'),
 	return(x)
 }
 )
-	
 
-	

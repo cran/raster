@@ -21,7 +21,9 @@
 
 \section{Introduction}
 
-The '\verb@raster@' package has a number of 'low-level' functions (e.g. to read and write files) that allow you to write your own 'high-level' functions. Here I explain how to use these low-level functions in developing 'memory-safe' high-level functions. With 'memory-safe' I refer to function that can process raster files that are too large to be loaded into memory. To understand this article you should be already somewhat familiar with the raster package. It is also helpful to have some general knowledge of S4 classes and methods.
+The '\verb@raster@' package has a number of 'low-level' functions (e.g. to read and write files) that allow you to write your own 'high-level' functions. Here I explain how to use these low-level functions in developing 'memory-safe' high-level functions. With 'memory-safe' I refer to function that can process raster files that are too large to be loaded into memory. To understand the material discussed in this vignette you should be already somewhat familiar with the raster package. It is also helpful to have some general knowledge of S4 classes and methods.
+
+I should also note that if you are not sure, you probably do not need to read this vignette, or use the functions described herein. That is, the high-level functions in the raster package are already based on these techniques, and they are very flexible. It is likely that you can accomplish your goals with the functions already available in 'raster' and that you do not need to write your own. 
 
 \section{How not to do it}
 
@@ -46,7 +48,7 @@ s <- f1(r, 5)
 s
 @
 
-f1 is a really bad example. It looks efficient but it has several problems. First of all, the slot x@data@values may be empty, which is typically the case when a raster object is derived from a file on disk. But even if all values are in memory the returned object will be invalid. This is because the values of a multiple slots may need to be adjusted when chaging values. For example, the returned 'x' may still point to a file (now incorectly, because the values no longer correspond). And the slots with the minimum and maximum values have not been updated. While it is OK (but normally not necessary) to directly read values of slots, you should not set them directly. The raster package has functions set values of slots as shown in the next example.
+f1 is a really bad example. It looks efficient but it has several problems. First of all, the slot x@data@values may be empty, which is typically the case when a raster object is derived from a file on disk. But even if all values are in memory the returned object will be invalid. This is because the values of a multiple slots may need to be adjusted when changing values. For example, the returned 'x' may still point to a file (now incorrectly, because the values no longer correspond). And the slots with the minimum and maximum values have not been updated. While it is OK (but normally not necessary) to directly read values of slots, you should not set them directly. The raster package has functions that set values of slots. This is illustrated in the next example.
 
 <<code-3>>=
 f2 <- function(x, a) {
@@ -61,7 +63,7 @@ s
 
 f2 is much better. Function {\bf getValues} gets the cell values whether they are on disk or in memory (and will return NA values if neither is the case). {\bf setValues} sets the values to the RasterLayer object assuring that other slots are updated as well.
 
-However, this function could fail for very large raster files, depending on the amount of RAM your computer has and R can access, because all values are read into memory at once. Processing data in chuncks circumvents this problem.
+However, this function could fail for very large raster files, depending on the amount of RAM your computer has and R can access, because all values are read into memory at once. Processing data in chunks circumvents this problem.
 
 
 \section{Row by row}
@@ -89,7 +91,7 @@ Note how, in the above example, first a new empty RasterLayer, 'out' is created 
 
 \section{Multiple rows at once}
 
-Row by row processing is easy to do but it can be a bit inefficient. There is some overhead associated with each read and write operation. An alternative is to read, calculate, and write by block; here defined as a number of rows (1 or more). The function {bf blocksize} is a helper function to determine appropriate block size (number of rows). 
+Row by row processing is easy to do but it can be a bit inefficient. There is some overhead associated with each read and write operation. An alternative is to read, calculate, and write by block; here defined as a number of rows (1 or more). The function {bf blockSize} is a helper function to determine appropriate block size (number of rows). 
 
 <<code-5>>=
 f4 <- function(x, a, filename) {
@@ -111,7 +113,7 @@ blockSize(s)
 
 \section{Filename optional}
 
-In the above examples (functions f3 and f4) you must supply a filename. In the raster package that is never the case, it is always optional. If a filename is provided, values are written to disk. If no filename is provided the values are only written to disk if they cannot be stored in RAM. To determine whether the output needs to be written to disk, the function {\bf canProcessInMemory} is used. This function uses the size of the output raster to determine the total memory size needed. However, additional copies of the values are often made when doing computations. And perhaps you are combining values from several RasterLayer objects in which case you need to be able to use much more memory than for the output RasterLayer object alone. To account for this you can supply an additional parameter, indicating the total memory need. In the examples below we use '3', indicating that we would need RAM equivalent to three times the size of the output RasterLayer. That seems reasonably safe in this case.
+In the above examples (functions f3 and f4) you must supply a filename. In the raster package that is never the case, it is always optional. If a filename is provided, values are written to disk. If no filename is provided the values are only written to disk if they cannot be stored in RAM. To determine whether the output needs to be written to disk, the function {\bf canProcessInMemory} is used. This function uses the size of the output raster to determine the total memory size needed. However, additional copies of the values are often made when doing computations. And perhaps you are combining values from several RasterLayer objects in which case you need to be able to use much more memory than for the output RasterLayer object alone. To account for this you can supply an additional parameter, indicating the total memory needed. In the examples below we use '3', indicating that we would need RAM to hold three times the size of the output RasterLayer. That seems reasonably safe in this case.
 
 
 First an example for row by row processing:
@@ -194,7 +196,7 @@ s <- f6(r, 5)
 @
 
 
-The next example is an alternative implementation that you might prefer if you wanted to optimze speed when values can be processed in memory. Optimizing for that situation is generally not that important as it tends to be relatively fast in any case. Moreover, while the below example is fine, this may not be an ideal approach for more complex functions as you would have to implement some parts of your algorithm twice. If you are not careful, your function might then give different results depending on whether the output must be written to disk or not. In other words, debugging and code maintenance can become more difficult. Having said that, there certainly are cases where processing chuck by chunk is inefficient, and where avoiding it can be worth the effort.
+The next example is an alternative implementation that you might prefer if you wanted to optimize speed when values can be processed in memory. Optimizing for that situation is generally not that important as it tends to be relatively fast in any case. Moreover, while the below example is fine, this may not be an ideal approach for more complex functions as you would have to implement some parts of your algorithm twice. If you are not careful, your function might then give different results depending on whether the output must be written to disk or not. In other words, debugging and code maintenance can become more difficult. Having said that, there certainly are cases where processing chuck by chunk is inefficient, and where avoiding it can be worth the effort.
 
 <<code-8>>=
 f7 <- function(x, a, filename='') {
@@ -286,12 +288,12 @@ out <- writeStart(out, filename, ...)
 
 \section{Debugging}
 
-Typically functions are developed and tested with small (RasterLayer) objects. But you also need to test your functions for the case it needs to write values to disk. You can use a very large raster for that, but then you may need to wait a long time each time you run it. Depening on how you desing your function you may be able to test alternate forks in your function by providing a file name. But this would not necessarily work for function f7. You can force functions of that type to treat the input as a very large raster by setting to option 'todisk' to TRUE as in setOptions(todisk=TRUE). If that option is set, 'canProcessInMemory' always returns FALSE. This should only be used in debugging. 
+Typically functions are developed and tested with small (RasterLayer) objects. But you also need to test your functions for the case it needs to write values to disk. You can use a very large raster for that, but then you may need to wait a long time each time you run it. Depending on how you design your function you may be able to test alternate forks in your function by providing a file name. But this would not necessarily work for function f7. You can force functions of that type to treat the input as a very large raster by setting to option 'todisk' to TRUE as in setOptions(todisk=TRUE). If that option is set, 'canProcessInMemory' always returns FALSE. This should only be used in debugging. 
 
 
 \section{Methods}
 
-The raster package is build with S4 classes and methods. If you are developing a package that builds on the raster package I would advise to also use S4 classes and methods. Thus, rater than using plain functions, define generic methods (where necessary) and implement them for a RasterLayer, as in the example below (the function does not do anything; replace 'return(x)' with something meaningful along the pattern explained above. 
+The raster package is build with S4 classes and methods. If you are developing a package that builds on the raster package I would advise to also use S4 classes and methods. Thus, rather than using plain functions, define generic methods (where necessary) and implement them for a RasterLayer, as in the example below (the function does not do anything; replace 'return(x)' with something meaningful along the pattern explained above. 
 
 <<code-10>>=
 if (!isGeneric("f9")) {
@@ -307,6 +309,86 @@ setMethod('f9', signature(x='RasterLayer'),
 )
 
 s <- f9(r)
+@
+
+
+\section{Mutli-core functions}
+
+Below is an example of an implementation of a customized raster function that can use multiple processors (cores), via the snow package. This is still very much under development, but you can try it at your own risk.
+
+First we define a snow cluster enabled function. Below is a simple example:
+
+<<code-clus1>>=
+clusfun <- function(x, filename="", ...) {
+
+	out <- raster(x)
+
+	cl <- getCluster()
+	on.exit( returnCluster() )
+	
+	nodes <- length(cl)
+	
+	bs <- blockSize(x, minblocks=nodes*4)
+	pb <- pbCreate(bs$n, type='')
+
+	# the function to be used (simple example)
+	clFun <- function(i) {
+		v <- getValues(x, bs$row[i], bs$nrows[i])
+		v <- v / 100 
+		return(v)
+	}
+
+	# get all nodes going
+	for (i in 1:nodes) {
+		sendCall(cl[[i]], clFun, i, tag=i)
+    }
+
+	filename <- trim(filename)
+	#if (!canProcessInMemory(out) & filename == "") {
+	#	filename <- rasterTmpFile()
+	#}
+	
+	if (filename != "") {
+		out <- writeStart(out, filename=filename, ... )
+	} else {
+		vv <- matrix(ncol=nrow(out), nrow=ncol(out))
+	}
+	for (i in 1:bs$n) {
+		# receive results from a node
+		d <- recvOneData(cl)
+
+		if (filename != "") {
+			out <- writeValues(out, d$value$value, bs$row[d$value$tag])
+		} else {
+			cols <- bs$row[d$value$tag]:(bs$row[d$value$tag]+bs$nrows[d$value$tag]-1)	
+			vv[,cols] <- matrix(d$value$value, nrow=out@ncols)
+		}
+		
+		# need to send more data?
+		ni <- nodes + i
+		if (ni <= bs$n) {
+			sendCall(cl[[d$node]], clFun, ni, tag=ni)
+		}	
+		pbStep(pb)
+	}
+	if (filename != "") {
+		out <- writeStop(out)
+	} else {
+		out <- setValues(out, as.vector(vv))
+	}
+	pbClose(pb)
+	
+	return(out)
+}	
+@
+
+To use snow with raster, you need to set up a cluster first, with  'beginCluster' (only once during a session). After that we can run the function:
+
+<<code-clus2>>=
+r <- raster()
+# beginCluster()
+r[] <- ncell(r):1
+#x <- clusfun(r)
 @
 
 \end{document}

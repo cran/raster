@@ -18,17 +18,18 @@ getValuesBlock(x, row, ...)
 \arguments{
  \item{x}{Raster* object}
  \item{row}{Numeric. Row number, should be between 1 and nrow(x), or missing in which case all values are returned}
- \item{...}{Additional arguments for getValuesBlock, see Details}
+ \item{...}{Additional arguments, see Details}
 }
   
 
 \details{
-Additional arguments for readValuesBlock:
+Additional arguments:
 
 \tabular{rll}{  
   \tab  \code{nrows} \tab Integer. How many rows? Default is 1 \cr
   \tab  \code{col}  \tab Integer. Start column. Default is 1\cr
   \tab  \code{ncols}  \tab Integer. How many columns? Default is the number of colums left after the start column \cr
+  \tab  \code{lyrs}  \tab Integer (vector). Which layers? Default is all layers (\code{1:nlayers(x)})  \cr
 }
 }
 
@@ -40,9 +41,12 @@ vector \code{(x=RasterLayer)} or matrix
 \examples{
 r <- raster(system.file("external/test.grd", package="raster"))
 b <- getValuesBlock(r, row=100, nrows=3, col=10, ncols=5)
+b 
+b <- matrix(b, nrow=3, ncol=5, byrow=TRUE)
 b
-dim(b) = c(3,5)
-b
+
+logo <- brick(system.file("external/rlogo.grd", package="raster"))
+getValuesBlock(logo, row=35, nrows=3, col=50, ncols=3, lyrs=2:3)
 }
 
 \keyword{spatial}

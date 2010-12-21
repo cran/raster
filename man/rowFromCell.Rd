@@ -2,17 +2,19 @@
 
 \alias{colFromCell}
 \alias{rowFromCell}
+\alias{rowColFromCell}
 
   
 \title{Row or column number from a cell number}
 
 \description{
-These functions get the row or column number from a cell number of a Raster* object)
+These functions get the row and/or column number from a cell number of a Raster* object)
 }
 
 \usage{
 colFromCell(object, cell)
 rowFromCell(object, cell)
+rowColFromCell(object, cell)
 }
 
 \arguments{
@@ -39,6 +41,7 @@ rowFromCell(object, cell)
 r <- raster(ncols=10, nrows=10)
 colFromCell(r, c(5,15))
 rowFromCell(r, c(5,15))
+rowColFromCell(r, c(5,15))
 }
 
 \keyword{spatial}

@@ -4,7 +4,7 @@
 # Licence GPL v3
 
  
-writeHdr <- function(x, format) {
+hdr <- function(x, format, extension='.wld') {
 
 	if (inherits(x, 'RasterStack')) { stop('Only applicable to RasterLayer and RasterBrick classes (and their derivatives)') }
 	if (x@file@name == '') { stop('Object has no filename') }
@@ -12,6 +12,8 @@ writeHdr <- function(x, format) {
 	type <- toupper(format)
 	if (type=="RASTER") {
 		.writeHdrRaster(x)
+	} else if (type=="WORLDFILE") {
+		.worldFile(x, extension)		
 	} else if (type=="VRT") {
 		.writeHdrVRT(x)
 		.writeStx(x)		

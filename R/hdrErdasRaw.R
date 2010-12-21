@@ -37,7 +37,7 @@
 	cat("END_RAW_FILE\n", file = thefile)
 	
 	cat("\n\n", file = thefile)
-	cat("The below is additional metadata, not part of the BIL/HDR format\n", file = thefile)
+	cat("The below is additional metadata, not part of the ERDAS raw format\n", file = thefile)
 	cat("----------------------------------------------------------------\n", file = thefile)
 	cat("CREATOR=R package:raster\n", file = thefile)
 	cat("CREATED=", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), "\n", file = thefile)
@@ -46,6 +46,6 @@
 	cat("MaxValue=",  maxValue(raster), "\n", file = thefile)
 	close(thefile)	
 	
-	worldFile(raster, ".rww")	
+	.worldFile(raster, ".rww")	
  }
  

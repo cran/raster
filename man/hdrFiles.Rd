@@ -1,6 +1,6 @@
-\name{writeHdr}
+\name{hdr}
 
-\alias{writeHdr}
+\alias{hdr}
 
 \title{Header files}
 
@@ -9,12 +9,13 @@ Write header files to use together with raster binary files to read the data in 
 }
 
 \usage{
-writeHdr(x, format) 
+hdr(x, format, extension='.wld') 
 }
 
 \arguments{
-  \item{x}{ RasterLayer or RasterBrick object associated with a binary values file on disk }
-  \item{format}{ Type of header file: 'VRT', 'BIL', 'ENVI', 'ErdasRaw', 'IDRISI', 'SAGA', 'RASTER' }
+  \item{x}{RasterLayer or RasterBrick object associated with a binary values file on disk }
+  \item{format}{Type of header file: 'VRT', 'BIL', 'ENVI', 'ErdasRaw', 'IDRISI', 'SAGA', 'RASTER', 'WORLDFILE' }
+  \item{extension}{File extension, only used with an ESRI worldfile (\code{format='WORLDFILE'})}
 }
 
 \details{
@@ -32,7 +33,7 @@ This (hopefully) allows for reading the binary data (.gri), perhaps after changi
 \examples{ 
 r <- raster(system.file("external/test.grd", package="raster"))
 r <- writeRaster(r, filename='export.grd')
-writeHdr(r, format="ENVI") 
+hdr(r, format="ENVI") 
 }
 
 \keyword{ spatial }

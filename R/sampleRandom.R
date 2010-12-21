@@ -11,18 +11,26 @@ if (!isGeneric("sampleRandom")) {
 
 
 setMethod('sampleRandom', signature(x='Raster'), 
-function(x, size, na.rm=TRUE, extent=NULL, cells=FALSE, ...) {
+function(x, size, na.rm=TRUE, extent=NULL, cells=FALSE, rowcol=FALSE, sp=FALSE, ...) {
 
 	r <- raster(x)
 	layn <- layerNames(x)
+	layn[layn==""] <- "value"
+	
+	if (sp | rowcol) {
+		removeCells <- ! cells
+		cells <- TRUE
+	}
+
+	if (!hasValues(x)) {
+		stop('No values associated with the Raster object')
+	}	
 	
 	if ( inMemory(x) ) {
 		if (is.null(extent)) {
 			x <- getValues(x)
 		} else {
 			x <- crop(x, extent)
-			r1 <- r
-			r <- raster(x)
 			x <- getValues(x)
 		}
 		
@@ -31,7 +39,7 @@ function(x, size, na.rm=TRUE, extent=NULL, cells=FALSE, ...) {
 				x <- cbind(cell=1:ncell(r), value=x)			
 			} else {
 				xy <- xyFromCell(r, 1:ncell(r))
-				cell <- cellFromXY(r1, xy)
+				cell <- cellFromXY(r, xy)
 				x <- cbind(cell, value=x)
 			}
 		}
@@ -55,7 +63,7 @@ function(x, size, na.rm=TRUE, extent=NULL, cells=FALSE, ...) {
 			}
 		}
 		
-	} else if ( fromDisk(x) | inherits(x, 'RasterStack')) {
+	} else {
 		
 		if (! is.null(extent)) {
 			r <- crop(r, extent)
@@ -125,9 +133,7 @@ function(x, size, na.rm=TRUE, extent=NULL, cells=FALSE, ...) {
 			}	
 		}
 		
-	} else {
-		stop('No values associated with the Raster object')
-	}
+	} 
 
 	if (is.matrix(x)) {
 		if (cells) {
@@ -136,6 +142,26 @@ function(x, size, na.rm=TRUE, extent=NULL, cells=FALSE, ...) {
 			colnames(x) <- layn
 		}
 	}
+	
+	if (rowcol) {
+		rc <- rowColFromCell(r, x[,-1])
+		if (sp | !removeCells) {
+			x <- cbind(x[,1], rc, x[,2:ncol(x)])
+			colnames(x) <- c('cell', 'row', 'col', layn)
+		} else {
+			x <- cbind(rc, x[,2:ncol(x)])
+			colnames(x)[3:ncol(x)] <- layn
+		}
+	}
+	
+	if (sp) {
+		xy <- data.frame(xyFromCell(r, x[,1]))
+		if (removeCells) {
+			x <- x[,-1,drop=FALSE]
+		}
+		x <- SpatialPointsDataFrame(xy, data=data.frame(x))
+	}
+	
 	return(x)
 }
 )

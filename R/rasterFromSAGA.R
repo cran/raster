@@ -22,6 +22,7 @@
 	layernames <- ''
 	toptobottom <- FALSE
 	dfoffset <- as.integer(0)
+	zfactor <- 1
 	
 	for (i in 1:length(ini[,1])) {
 		if (ini[i,2] == "POSITION_XMIN") {xn <- as.numeric(ini[i,3])} 
@@ -34,6 +35,7 @@
 		else if (ini[i,2] == "BYTEORDER_BIG") {byteorder <- as.logical(ini[i,3])} 
 #		else if (ini[i,2] == "NCELLVALS") {ncellvals <- ini[i,3]} 
 		else if (ini[i,2] == "NAME") {layernames <- ini[i,3]} 
+		else if (ini[i,2] == "Z_FACTOR") { zfactor <-  as.numeric(ini[i,3])}
 		else if (ini[i,2] == "TOPTOBOTTOM") { toptobottom <-  as.logical(ini[i,3])}
 		else if (ini[i,2] == "DATAFILE_OFFSET") { dfoffset <-  as.integer(ini[i,3])}
     }  
@@ -60,8 +62,24 @@
 	x@data@haveminmax <- FALSE
 	x@file@nodatavalue <- nodataval
 
-	if (inidatatype == 'FLOAT') {
+	if (inidatatype == 'BIT') {
+		stop('cannot process BIT data')
+	} else if (inidatatype == 'BYTE') {
+		dataType(x) <- 'INT1S'
+	} else if (inidatatype == 'BYTE_UNSIGNED') {
+		dataType(x) <- 'INT1U'
+	} else if (inidatatype == 'SHORTINT') {
+		dataType(x) <- 'INT2S'
+	} else if (inidatatype == 'SHORTINT_UNSIGNED') {
+		dataType(x) <- 'INT2U'
+	} else if (inidatatype == 'INTEGER') {
+		dataType(x) <- 'INT4S'
+	} else if (inidatatype == 'INTEGER_UNSIGNED') {
+		dataType(x) <- 'INT4U'
+	} else if (inidatatype == 'FLOAT') {
 		dataType(x) <- 'FLT4S'
+	} else if (inidatatype == 'DOUBLE') {
+		dataType(x) <- 'FLT8S'
 	}
 	
 	if (byteorder) { 
@@ -70,10 +88,10 @@
 		x@file@byteorder <- 'little'
 	}
 	x@data@fromdisk <- TRUE
+	x@data@gain <- zfactor
 	
 	x@file@driver <- 'SAGA'
     return(x)
 }
-
 
 

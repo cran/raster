@@ -5,7 +5,7 @@
 
 
 setMethod('dim', signature(x='BasicRaster'), 
-	function(x){ return(c(nrow(x), ncol(x))) }
+	function(x){ return(c(nrow(x), ncol(x), 1)) }
 )
 
 setMethod('dim', signature(x='RasterStackBrick'), 
@@ -29,7 +29,6 @@ setMethod('dim<-', signature(x='RasterLayer'),
 		if (length(value) == 1) {
 			value <- c(value, ncol(x))
 		} else if (length(value) > 2) {
-			warning('value should have lenght 1 or 2. Additional values ignored')
 			value <- value[1:2]
 		}
 		

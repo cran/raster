@@ -46,11 +46,6 @@ First open a file with \code{writeStart}, then write values to it in chunks. Whe
 
 When writing a file to disk, the file format is determined by the 'format=' argument if supplied, or else by the file extension (if the extension is known). If other cases the default format is used. The 'factory-fresh' default format is 'raster', but this can be changed using \code{\link[raster]{setOptions}}.
 
-Files with a 'native' format must be written in sequence of cell numbers. E.g. when writing by row, you must write all rows, and you must write them in sequence. Start at row=1, and end at row=nrow(raster).
-
-In contrast, the values of files written via rgdal can be written in any order (but you must write 1 or more entire rows, you cannot write part of a row). For files written via rgdal, an argument \code{start} must be provided to \code{writeValues} so that it knows where to write the values. This argument is ignored for the native formats (values are assumed to be in sequence). 
- 
-You cannot overwrite an isolated single row in an existing raster file. 
 }
 
 \value{

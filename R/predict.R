@@ -9,7 +9,7 @@ if (!isGeneric("predict")) {
 }	
 
 setMethod('predict', signature(object='Raster'), 
-	function(object, model, filename="", fun=predict, ext=NULL, const=NULL, index=1, se.fit=FALSE, na.rm=TRUE, ...) {
+	function(object, model, filename="", fun=predict, ext=NULL, const=NULL, index=1, se.fit=FALSE, na.rm=TRUE, progress='', ...) {
 	
 
 		if ( class(model)[1] %in% c('Bioclim', 'Domain', 'Mahalanobis', 'MaxEnt', 'ConvexHull') ) { 
@@ -36,28 +36,25 @@ setMethod('predict', signature(object='Raster'),
 		}
 		ncols <- ncol(predrast)
 			
-		dataclasses <- attr(model$terms, "dataClasses")[-1]	
-			
 		lyrnames <- layerNames(object)
 		
-		varnames <- names(dataclasses)
-
-		if ( length( unique(lyrnames[(lyrnames %in% varnames)] )) != length(lyrnames[(lyrnames %in% varnames)] )) {
-			stop('duplicate names in Raster* object: ', lyrnames)
-		}
-			
-		
-		
-		f <- names( which(dataclasses == 'factor') )
-		if (length(f) > 0) { 
-			haveFactor <- TRUE 
-			factlevels <- list()
-			for (i in 1:length(f)) {
-				factlevels[[i]] <- levels(model$data[f][,1])
+		haveFactor <- FALSE
+		dataclasses <- try (attr(model$terms, "dataClasses")[-1], silent=TRUE)
+		if (class(dataclasses) != "try-error") {
+			varnames <- names(dataclasses)
+			if ( length( unique(lyrnames[(lyrnames %in% varnames)] )) != length(lyrnames[(lyrnames %in% varnames)] )) {
+				stop('duplicate names in Raster* object: ', lyrnames)
 			}
-		} else {
-			haveFactor <- FALSE
-		}
+
+			f <- names( which(dataclasses == 'factor') )
+			if (length(f) > 0) { 
+				haveFactor <- TRUE 
+				factlevels <- list()
+				for (i in 1:length(f)) {
+					factlevels[[i]] <- levels( model$data[f][,1] )
+				}
+			}
+		}	
 		
 		filename <- trim(filename)
 		if (!canProcessInMemory(predrast) && filename == '') {
@@ -73,7 +70,7 @@ setMethod('predict', signature(object='Raster'),
 		napred <- rep(NA, ncol(predrast)*tr$size )
 
 		if (inherits(object, 'RasterStackBrick')) {
-				if (nlayers(object)==0) { stop('empty Raster object') }
+			if (nlayers(object)==0) { stop('empty Raster object') }
 		} else {
 			if ( !  fromDisk(object) ) {
 				if (! inMemory(object) ) {
@@ -83,7 +80,7 @@ setMethod('predict', signature(object='Raster'),
 		}
 		
 		
-		pb <- pbCreate(tr$n,  type=.progress(...) )			
+		pb <- pbCreate(tr$n,  type=progress )			
 		
 		if (filename != '') {
 			predrast <- writeStart(predrast, filename=filename, ... )
@@ -96,17 +93,22 @@ setMethod('predict', signature(object='Raster'),
 			}
 
 			rr <- firstrow + tr$row[i] - 1
-		
+
 			blockvals <- as.data.frame(getValuesBlock(object, row=rr, nrows=tr$nrows[i], firstcol, ncols))
 			colnames(blockvals) <- lyrnames
 			if (haveFactor) {
 				for (j in 1:length(f)) {
+					fl <- NULL
+					try(fl <- factlevels[[j]], silent=TRUE)
 					fv <- blockvals[,f[j]]
-					fv[! fv %in% factlevels[[j]] ] <- NA
+					if (!is.null(fl)) {
+						fv[! fv %in% factlevels[[j]] ] <- NA 
+					}
 					blockvals[,f[j]] <- as.factor(fv)
-					na.rm <- TRUE
+					#na.rm <- TRUE
 				}
 			}
+			
 			if (! is.null(const)) {
 				blockvals = cbind(blockvals, const)
 			} 
@@ -122,11 +124,12 @@ setMethod('predict', signature(object='Raster'),
 				if (na.rm) {  
 					blockvals <- na.omit(blockvals)		
 				}
-				
+
 				if (nrow(blockvals) == 0 ) {
 					predv <- napred
+
 				} else {
-					predv <- fun(model, blockvals, ...)	
+					predv <- fun(model, blockvals, ...)
 					if (class(predv)[1] == 'list') {
 						predv = unlist(predv)
 						if (length(predv) != nrow(blockvals)) {
@@ -136,7 +139,7 @@ setMethod('predict', signature(object='Raster'),
 					if (isTRUE(dim(predv)[2] > 1)) {
 						predv = predv[,index]
 					}
-										
+
 					if (na.rm) {  
 						naind <- as.vector(attr(blockvals, "na.action"))
 						if (!is.null(naind)) {
@@ -148,9 +151,14 @@ setMethod('predict', signature(object='Raster'),
 					}
 				}
 			}
-				
-			# to change factor to numeric; should keep track of this to return a factor type RasterLayer
-			predv[] = as.numeric(predv)
+
+			if (is.list(predv)) {
+				predv <- unlist(predv)
+			}
+			if (is.factor(predv)) {
+				# should keep track of this to return a factor type RasterLayer
+				predv <- as.integer(as.character(predv))
+			}
 		
 			if (filename == '') {
 				cells = cellFromRowCol(predrast, tr$row[i], 1):cellFromRowCol(predrast, tr$row[i]+tr$nrows[i]-1, ncol(predrast))

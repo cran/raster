@@ -19,18 +19,18 @@ aggregate(x, ...)
 }
 
 \arguments{
-  \item{x}{A RasterLayer object}
+  \item{x}{A Raster* object}
   \item{...}{Additional arguments. See under Details}  
 }
 
 \details{
- A full call to the aggregate method for a RasterLayer is:
+ A full call to the aggregate method for a Raster* object is:
 
 \code{aggregate(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", ... ) }
 
 \tabular{rll}{
 \tab \code{x} \tab a RasterLayer object \cr
-\tab \code{fact} \tab Integer. Aggregation factor expressed as number of cells in each direction (horizontally and vertically). Or two integers (horizontal and vertial aggregation factor). Default is 2. See below \cr
+\tab \code{fact} \tab Integer. Aggregation factor expressed as number of cells in each direction (horizontally and vertically). Or two integers (horizontal and vertical aggregation factor). Default is 2. See below \cr
 \tab \code{fun} \tab Function used to aggregate values (default=mean)\cr
 \tab \code{expand} \tab logical. If \code{TRUE} the output RasterLayer will be larger then the input RasterLayer if a division of the number of columns or rows with \code{factor} is not an integer \cr
 \tab \code{na.rm} \tab logical. If \code{TRUE}, NA cells are removed from calculations \cr

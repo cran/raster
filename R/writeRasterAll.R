@@ -39,7 +39,8 @@
 		raster@data@values[is.na(raster@data@values)] <- as.integer(raster@file@nodatavalue)				
 	} else if ( dtype =='FLT') {
 		raster@data@values <- as.numeric(raster@data@values)
-		if (mn < -3.4E38 | mx > 3.4E38) { dataType(raster) <- 'FLT8S'
+		if (is.na(mn)) { dataType(raster) <- 'FLT8S'
+		} else if (mn < -3.4E38 | mx > 3.4E38) { dataType(raster) <- 'FLT8S'
 		} else { dataType(raster) <- 'FLT4S'
 		}	
 	} else if ( dtype =='LOG') {
@@ -55,7 +56,7 @@
 	filecon <- file(fnamevals, "wb")
 	writeBin(raster@data@values , filecon, size = dsize ) 
 	close(filecon)
-	writeHdr(raster, filetype) 
+	hdr(raster, filetype) 
 
 	return(raster(filename, native=TRUE))
 }

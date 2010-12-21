@@ -2,9 +2,9 @@
 
 \alias{as.matrix}
 \alias{as.array}
-\alias{as.array,Raster-method}
+\alias{as.array,RasterStackBrick-method}
 \alias{as.array,RasterLayer-method}
-\alias{as.matrix,Raster-method}
+\alias{as.matrix,RasterStackBrick-method}
 \alias{as.matrix,RasterLayer-method}
   
 \title{Get a matrix with raster cell values}
@@ -25,7 +25,12 @@ as.array(x, ...)
 
 \arguments{
  \item{x}{ Raster* object }
- \item{...}{ Additional arguments. \code{maxpixels} to regularly subsample very large objects }
+ \item{...}{ Additional arguments. 
+ 
+	\code{maxpixels} Integer. To regularly subsample very large objects }
+	
+   \code{transpose} Logical. Transpose the data? (for as.array only)
+
 }
   
 

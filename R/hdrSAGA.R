@@ -13,17 +13,22 @@
 	cat("UNIT\t= \n", file = thefile)
 	
 	dtype <- .shortDataType(raster@file@datanotation)
-	dsize <- dataSize(raster)
-	# assuming SAGA supports BYTE, INTEGER (32), FLOAT
+	dsize <- dataSize(raster@file@datanotation)
 	if (dtype == 'INT' ) { 
 		if (dsize == 1) {
 			pixtype <- "BYTE"
-		} else {
+		} else if (dsize == 2) {
+			pixtype <- "SHORTINT"
+		} else if (dsize == 4) {
 			pixtype <- "INTEGER"
+		}
+		if (! dataSigned(raster@file@datanotation)) {
+			pixtype <- paste(pixtype, "_UNSIGNED", sep="")
 		}
 	} else { 
 		pixtype <- "FLOAT" 
 	}
+	
 	cat("DATAFORMAT\t=", pixtype, "\n", file = thefile)
 	
 	cat("DATAFILE_OFFSET\t= 0\n", file = thefile)
