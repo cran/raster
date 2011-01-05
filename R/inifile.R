@@ -4,12 +4,28 @@
 # Version 0.9
 # Licence GPL v3
 
+
+
 readIniFile <- function(filename, token='=', commenttoken=';', aslist=FALSE, case) {
 
 	strSplitOnFirstToken <- function(s, token="=") {
 		pos <- which(strsplit(s, '')[[1]]==token)[1]
 		if (is.na(pos)) {
 			return(c(trim(s), NA)) 
+		} else {
+			first <- substr(s, 1, (pos-1))
+			second <- substr(s, (pos+1), nchar(s))
+			return(trim(c(first, second)))
+		}
+	}
+
+	
+	strSplitOnLastToken <- function(s, token="=") {
+	# not used here
+		pos <- unlist(strsplit(s, ''))
+		pos <- max(which(pos==token))
+		if (!is.finite(pos)) {
+			return(c(s, NA)) 
 		} else {
 			first <- substr(s, 1, (pos-1))
 			second <- substr(s, (pos+1), nchar(s))
@@ -63,24 +79,24 @@ readIniFile <- function(filename, token='=', commenttoken=';', aslist=FALSE, cas
 	colnames(ini) <- c("section", "name", "value")
 	
 	if (aslist) {
-		ini <- .iniToList(ini)
+
+		iniToList <- function(ini) {
+			un <- unique(ini[,1])
+			LST <- list()
+			for (i in 1:length(un)) {
+				sel <- ini[ini[,1] == un[i], 2:3]
+				lst <- as.list(sel[,2])
+				names(lst) <- sel[,1]
+				LST[[i]] <- lst
+			}
+			names(LST) <- un
+			return(LST)
+		}
+
+		ini <- iniToList(ini)
 	}
 	
 	return(ini)
-}
-
-
-.iniToList <- function(ini) {
-	un <- unique(ini[,1])
-	LST <- list()
-	for (i in 1:length(un)) {
-		sel <- ini[ini[,1] == un[i], 2:3]
-		lst <- as.list(sel[,2])
-		names(lst) <- sel[,1]
-		LST[[i]] <- lst
-	}
-	names(LST) <- un
-	return(LST)
 }
 
 

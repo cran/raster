@@ -3,25 +3,30 @@
 \alias{xres}
 \alias{yres}
 \alias{res}
+\alias{xres,BasicRaster-method}
+\alias{yres,BasicRaster-method}
+\alias{res,BasicRaster-method}
+
+
 \alias{res<-}
 
 
 \title{Resolution}
 
 \description{
-  Get resolution properties of a Raster* object
+Get (or set) the x and/or y resolution of a Raster* object
 }
 
 \usage{
-xres(object)
-yres(object)
-res(object)
-res(object) <- value
+xres(x)
+yres(x)
+res(x)
+res(x) <- value
 }
 
 \arguments{
-  \item{object}{Raster* object}
-  \item{value}{depends on context. Can be row or column number or resolution }  
+  \item{x}{Raster* object}
+  \item{value}{Resolution (single number or vector of two numbers) }  
 }
 
 

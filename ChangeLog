@@ -1,3 +1,14 @@
+--- 4-Jan-2011,  version 1.7-21
+Bug fix in reading values from Bricks from ncdf files (reported by Martin Brandt)
+
+--- 30-Dec-2010,  version 1.7-20
+added "cellnumbers" argument for extract with points and buffer
+
+--- 22-Dec-2010,  version 1.7-19
+set factor levels in predict (bug fix suggested by Isabelle Boulangeat)
+refinements to overlay allowing for different number of output layers than input layers
+attempt to speed up stack()
+
 --- 19-Dec-2010,  version 1.7-17
 brick method can now take an array as argument (suggested by Agustin Lobo)
 fixed as.array (values were not in right order, and added argument 'transpose'
@@ -22,7 +33,7 @@ new function 'update' to change values of a file linked to a RasterLayer object
 bug fixes in read/write SAGA format (and uses rgdal now for reading, when possible, but not yet for writing).
 improvements in writing RasterBrick objects to native format files.
 bug fixes in 'predict' with models that have factor variables.
-bug fixes in 'predict' for (some) model objects that are not standard (S3) models.
+bug fixes in 'predict' for (some) model objects that are not standard (S3) models (suggested by Isabelle Boulangeat).
 
 --- 2-Dec-2010,  version 1.7-8
 bug fix in extract by focal area (thanks to Matteo Mattiuzzi)

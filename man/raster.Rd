@@ -6,7 +6,7 @@
 \alias{raster,missing-method}
 \alias{raster,character-method}
 \alias{raster,Extent-method}
-\alias{raster,Raster-method}
+\alias{raster,BasicRaster-method}
 \alias{raster,RasterStack-method}
 \alias{raster,RasterBrick-method}
 \alias{raster,Spatial-method}
@@ -27,8 +27,8 @@ For an overview of the functions in the raster package have a look here: \code{\
 
 
 \arguments{
-  \item{x}{a filename, Extent, Raster*, SpatialPixels*, SpatialGrid* object, matrix, or missing}
-  \item{...}{ additional argumens, see below }  
+  \item{x}{Filename (character), Extent, Raster*, SpatialPixels*, SpatialGrid* object, matrix, or missing}
+  \item{...}{Additional arguments, see below }  
 }
 
 \usage{
@@ -51,7 +51,7 @@ raster(x, ...)
 
 Additional arguments:
 \tabular{rll}{
-\tab \code{native} \tab Logical.  Default is \code{FALSE} except when package rgdal is missing. If \code{TRUE}, reading and writing of IDRISI, BIL, BSQ, BIP, SAGA, and ArcAscii files is done with native (raster package) drivers, rather then via rgdal. 'raster' and netcdf format files are always read with native drivers. 
+\tab \code{native} \tab Logical.  Default is \code{FALSE} except when package rgdal is missing. If \code{TRUE}, reading and writing of IDRISI, BIL, BSQ, BIP, SAGA, and Arc ASCII files is done with native (raster package) drivers, rather then via rgdal. 'raster' and netcdf format files are always read with native drivers. 
 }
 
 For netCDF files (CF convention):

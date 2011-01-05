@@ -51,10 +51,17 @@ setMethod('predict', signature(object='Raster'),
 				haveFactor <- TRUE 
 				factlevels <- list()
 				for (i in 1:length(f)) {
-					factlevels[[i]] <- levels( model$data[f][,1] )
+					if (inherits(model, "randomForest")) {
+						factlevels[[i]] <- model$forest$xlevels[[f]]
+					} else {
+						factlevels[[i]] <- levels( model$data[f][,1] )
+					}
 				}
 			}
 		}	
+		
+		
+
 		
 		filename <- trim(filename)
 		if (!canProcessInMemory(predrast) && filename == '') {
@@ -103,9 +110,10 @@ setMethod('predict', signature(object='Raster'),
 					fv <- blockvals[,f[j]]
 					if (!is.null(fl)) {
 						fv[! fv %in% factlevels[[j]] ] <- NA 
+						blockvals[,f[j]] <- factor(fv, levels=fl)
+					} else {					
+						blockvals[,f[j]] <- factor(fv)
 					}
-					blockvals[,f[j]] <- as.factor(fv)
-					#na.rm <- TRUE
 				}
 			}
 			

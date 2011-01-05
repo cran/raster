@@ -5,26 +5,26 @@
 \title{Distance between points}
 
 \description{
-Calculate the geographic distance between two points on a sphere (\code{latlong=TRUE}) or on a plane (\code{latlong=FALSE}).
+Calculate the geographic distance between two (sets of) points on a sphere (\code{latlong=TRUE}) or on a plane (\code{latlong=FALSE}).
 }
 
 \usage{
-pointDistance(point1, point2, longlat=FALSE, ...)
+pointDistance(p1, p2, longlat=FALSE, ...)
 }
 
 \arguments{
-\item{point1}{x and y coordinate of first (set of) point(s), either as c(x, y) or as matrix(ncol=2) in degrees for great-circle distance, in meters (or similar) for Euclidean }
-\item{point2}{x and y coordinate of second (set of) second point(s). Like point1. If point1 and point2 are both matrices they should have the same number of rows }
-\item{longlat}{Logical. If \code{TRUE}, coordinates should be in degrees; else they should represent 'euclidean' space (e.g. units of meters) }
+\item{p1}{x and y coordinate of first (set of) point(s), either as c(x, y), matrix(ncol=2), or SpatialPoints*. }
+\item{p2}{x and y coordinate of second (set of) second point(s). Like \code{p1}. If \code{p1} and \code{p2} are both matrices they should have the same number of rows. If this argument is missing, a distance matrix is computed for \code{p1} }
+\item{longlat}{Logical. If \code{TRUE}, coordinates should be in degrees; else they should represent planar ('Euclidean') space (e.g. units of meters) }
 \item{...}{Additional arguments. Can be used to set the radius, \code{r}, of the world (modeled as a sphere), when \code{longlat=TRUE} Default is \code{r=6378137} }
-
 }
 
 \value{
 A single value or a vector of values giving the distance in meters (longlat=TRUE) or map-units (for instance, meters in the case of UTM)
+If \code{p2} is missing, a distance matrix is returned
 }
 
-\seealso{\code{\link{distanceFromPoints},  \link{distance},  \link{gridDistance}} }
+\seealso{\code{\link{distanceFromPoints},  \link{distance},  \link{gridDistance}, \link[sp]{spDistsN1}} }
 
 
 \author{Robert J. Hijmans and Jacob van Etten }
@@ -38,14 +38,10 @@ pointDistance(c(0, 0), c(1, 1), longlat=TRUE)
 pointDistance(c(0, 0), a, longlat=TRUE)
 pointDistance(a, b, longlat=TRUE)
    
-#Make a distance matrix (dist object)
-dst <- matrix(nrow=4,ncol=4)
-for (i in 1:4){dst[,i] <- pointDistance(a[i,],a, longlat=TRUE)}
+#Make a distance matrix 
+dst <- pointDistance(a, longlat=TRUE)
+# coerce to dist object
 dst <- as.dist(dst)
-   
-#The same as above, but avoiding the loop
-dst <- pointDistance(a[rep(1:4,times=4),],a[rep(1:4,each=4),], longlat=TRUE)
-dst <- as.dist(matrix(dst,ncol=4))
 }
 
 \keyword{ spatial }

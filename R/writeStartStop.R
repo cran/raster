@@ -14,7 +14,7 @@ if (!isGeneric('writeStop')) {
 }
 	
 if (!isGeneric('writeValues')) {
-	setGeneric('writeValues', function(x, v, ...)
+	setGeneric('writeValues', function(x, v, start)
 		standardGeneric('writeValues')) 
 }
 
@@ -146,7 +146,7 @@ setMethod('writeValues', signature(x='RasterLayer'),
 
 
 setMethod('writeValues', signature(x='RasterBrick'), 
-	function(x, v, start=1) {
+	function(x, v, start) {
 	
 		v[is.infinite(v)] <- NA
 		

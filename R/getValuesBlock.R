@@ -41,21 +41,24 @@ setMethod('getValuesBlock', signature(x='RasterStack', row='numeric'),
 setMethod('getValuesBlock', signature(x='RasterBrick', row='numeric'), 
 	function(x, row, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs) {
 
-		nl <- nlayers(x)
-		if (missing(lyrs)) {
-			lyrs <- 1:nl
-		} else {
-			lyrs <- lyrs[lyrs %in% 1:nl]
-			if (length(lyrs) == 0) {
-				stop("no valid layers selected")
-			}
-		}
-		nlyrs <- length(lyrs)
 		nrows <- min(round(nrows), x@nrows-row+1)
 		ncols <- min((x@ncols-col+1), ncols)
 		stopifnot(nrows > 0)
 		stopifnot(ncols > 0)
 
+		
+		nlyrs <- nlayers(x)
+		if (missing(lyrs)) {
+			lyrs <- 1:nlyrs
+		} else {
+			lyrs <- lyrs[lyrs %in% 1:nlyrs]
+			if (length(lyrs) == 0) {
+				stop("no valid layers")
+			}
+			nlyrs <- length(lyrs)
+		}
+		
+		
 		if ( inMemory(x) ){
 			row <- max(1, as.integer(round(row)))
 			nrows <- round(nrows)
@@ -79,7 +82,7 @@ setMethod('getValuesBlock', signature(x='RasterBrick', row='numeric'),
 			
 		} else if ( fromDisk(x) ) {
 			if (x@file@driver == 'netcdf') {
-				return(.readRowsBrickNetCDF(x, row, nrows, col, ncols, nlyrs=nlyrs))
+				return( .readRowsBrickNetCDF(x, row, nrows, col, ncols, lyrs=lyrs) )
 			} else {
 				res <- matrix(ncol=nlyrs, nrow=nrows*ncols)
 				for (i in 1:nlyrs) {

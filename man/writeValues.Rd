@@ -14,38 +14,33 @@
 \title{Write values to a file}
 
 \description{
-Functions for writing blocks (>= 1 row(s)) of values to files. If you want to write all values of a Raster* object at once, you can also use \link[raster]{writeRaster} which is easier to use but more limited. The functions described here allow writing values to file using chunks of different sizes (e.g. 1 or 10 rows). Function \code{\link[raster]{blockSize}} can be used to suggest chunk size.  
+Functions for writing blocks (>= 1 row(s)) of values to files. If you want to write all values of a Raster* object at once, you can also use \link[raster]{writeRaster} which is easier to use but more limited. The functions described here allow writing values to file using chunks of different sizes (e.g. 1 or 10 rows). Function \code{\link[raster]{blockSize}} can be used to suggest a chunk size to use.
+
+Begin by opening a file with \code{writeStart}, then write values to it in chunks. When writing is done close the file with \code{writeStop}. 
 }
 
 \usage{
 writeStart(x, filename, ...)
-writeValues(x, v, ...)
+writeValues(x, v, start)
 writeStop(x)
 }
 
 \arguments{
   \item{x}{Raster* object}
   \item{filename}{Output filename}
+  \item{...}{Additional arguments for writeStart. See under Details}    
   \item{v}{vector (RasterLayer) or matrix (RasterBrick) of values}
-  \item{...}{Additional arguments. See under Methods}    
+  \item{start}{Integer. Cell number (counting starts at 1) from where to start writing}
+
 }
 
-\section{Methods}{
-\describe{
-\bold{Additional arguments for writeStart}
+\details{
+Additional arguments for writeStart:
 \tabular{rll}{
-\tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeFormats}} \cr
+\tab \code{format} \tab Character. Output file type. When writing a file to disk, the file format is determined by the 'format=' argument if supplied, or else by the file extension (if the extension is known). If other cases the default format is used. The 'factory-fresh' default format is 'raster', but this can be changed using \code{\link[raster]{setOptions}}. Also see \code{\link[raster]{writeFormats}} \cr
 \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
 \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
 }
-
-}}
-
-\details{
-First open a file with \code{writeStart}, then write values to it in chunks. When writing is done close the file with \code{writeStop}. \code{blockSize} can help set the number of rows of each chunk and it returns the row-numbers from where to start reading.
-
-When writing a file to disk, the file format is determined by the 'format=' argument if supplied, or else by the file extension (if the extension is known). If other cases the default format is used. The 'factory-fresh' default format is 'raster', but this can be changed using \code{\link[raster]{setOptions}}.
-
 }
 
 \value{

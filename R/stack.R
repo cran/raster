@@ -16,7 +16,7 @@ function(x) {
 
 setMethod("stack", signature(x='Raster'), 
 function(x, ...) {
-	rlist <- .makeRasterList(x, ..., keepone=TRUE)
+	rlist <- .makeRasterList(x, ...)
 	return( stack(rlist) )
 } )
 
@@ -69,7 +69,7 @@ function(x, bands=NULL, ...) {
 		}
 		
 	} else {
-		
+	
 		for (i in seq(along=x)) {
 			j <- j + 1
 			if (is.character(x[[i]])) {

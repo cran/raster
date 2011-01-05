@@ -58,6 +58,8 @@ alternative is \code{method='bilinear'}, in which case the returned values are i
 It can be a single value, or a vector of the length of the number of points. 
 If the data are not projected (latitude/longitude), the unit should be meters. Otherwise it should be in map-units (typically also meters).
 
+3) \code{cellnumbers}. Logical. If \code{cellnumbers=TRUE} and \code{buffer} is not \code{NULL}, cellnumbers will also be returned. \code{cellnumbers} is set to \code{FALSE} when an argument \code{fun} is used.
+
 
 \bold{= polygons =}
 
@@ -94,7 +96,7 @@ these two additional arguments:
 
 1)\code{layer}. Integer. First layer for which you want values 
 
-2 \code{nl}. Integer. Number of layers for which you want values
+2) \code{nl}. Integer. Number of layers for which you want values
 }
 
 

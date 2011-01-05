@@ -53,15 +53,8 @@ function(x, values) {
 
 setMethod('setValues', signature(x='RasterStack'), 
 	function(x, values, layer=-1) {
-		layer <- layer[1]
-
-		if (layer<1) {
-			b <- brick(x, values=FALSE)
-			return(setValues(b, values))
-		} else {
-			b <- brick(x, values=TRUE)
-			return(setValues(b, values, layer))
-		}
+		b <- brick(x, values=TRUE)
+		return(setValues(b, values, layer))
 	}	
  )
 	
@@ -117,6 +110,10 @@ setMethod('setValues', signature(x='RasterBrick'),
 			x@data@inmemory <- TRUE
 			x@data@fromdisk <- FALSE
 			x@data@nlayers <- ncol(values)
+			cn <- colnames(values)
+			if (!is.null(cn)) {
+				x@layernames <- cn
+			}
 			x@data@values <- values
 			x <- setMinMax(x)
 			 

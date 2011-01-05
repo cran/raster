@@ -21,7 +21,7 @@ xyValues <- function(object, xy, ...) {
 }
 
 	
-.xyValues <- function(object, xy, method='simple', buffer=NULL, fun=NULL, na.rm=TRUE, layer, nl, ...) { 
+.xyValues <- function(object, xy, method='simple', buffer=NULL, fun=NULL, na.rm=TRUE, layer, nl, cellnumbers=FALSE, ...) { 
 
 	nlyrs <- nlayers(object)
 	if (nlyrs > 1) {
@@ -40,7 +40,7 @@ xyValues <- function(object, xy, ...) {
 		
 	if (! is.null(buffer)) {
 	if (method != 'simple') { warning('method argument is ignored when a buffer is used') }
-		return( .xyvBuf(object, xy, buffer, fun, na.rm, layer=layer, n=nl) )
+		return( .xyvBuf(object, xy, buffer, fun, na.rm, layer=layer, nl=nl, cellnumbers=cellnumbers) )
 	}
 
 	if (method == 'bilinear') {

@@ -85,6 +85,30 @@ setAs('SpatialPixels', 'RasterLayer',
 	function(from){ return(raster (from)) }
 )
 
+
+setAs('SpatialGrid', 'BasicRaster', 
+	function(from){ 
+		to <- new('BasicRaster')
+		to@extent <- extent(from)
+		projection(to) <- from@proj4string
+		dim(to) <- c(from@grid@cells.dim[2], from@grid@cells.dim[1])	
+		return(to)
+	}
+)
+
+
+setAs('SpatialPixels', 'BasicRaster', 
+	function(from){ 
+		to <- new('BasicRaster')
+		to@extent <- extent(from)
+		projection(to) <- from@proj4string
+		dim(to) <- c(from@grid@cells.dim[2], from@grid@cells.dim[1])	
+		return(to)
+	}
+)
+
+
+
 # to RasterStack
 setAs('SpatialGrid', 'RasterStack',
 	function(from){ return(stack(from)) }

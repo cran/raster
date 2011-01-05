@@ -126,7 +126,7 @@ function(x, filename, bandorder='BIL', format, ...) {
 	out <- writeStart(out, filename, bandorder=bandorder, ...)
 	
 	if (inMemory(object)) {
-		out <- writeValues(out, getValues(object))
+		out <- writeValues(out, getValues(object), 1)
 	} else {
 		tr <- blockSize(object)
 		pb <- pbCreate(tr$n, type=.progress(...))

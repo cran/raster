@@ -1,58 +1,32 @@
 # Author: Robert J. Hijmans, r.hijmans@gmail.com
-# International Rice Research Institute
 # Date:  October 2008
 # Version 0.9
 # Licence GPL v3
 
 
-.uniqueLayerNames <- function(x) {
-	return(length(layerNames(x)) == length(unique(layerNames(x))))
+.makeUniqueNames <- function(x, prefix='layer') {
+
+	x[is.na(x)] <- prefix
+	x[x==""] <- prefix
+
+	tln <- table(x)
+	cnt <- which(tln > 1)
+	tln <- tln[cnt]
+	if (length(tln) > 0) {
+		for (i in 1:length(tln)) {
+			j <- which(x == names(tln[i]))
+			x[j] <- paste(x[j], '_', 1:tln[i], sep='')
+		}
+	}
+	return(x)
 }
 
-.enforceGoodLayerNames <- function(x, prefix='', returnNames=FALSE) {
-	if (prefix == '') { prefix <- 'layer'}
-	ln <- x@layernames
-	ln <- ln[1:nlayers(x)]
-	ln[is.na(ln)] <- ""
+
+.enforceGoodLayerNames <- function(x, prefix='layer', returnNames=FALSE) {
+	ln <- x@layernames[1:nlayers(x)]
 	
-	if (nlayers(x) == 1) {
-		if (ln=="") { 
-			ln <- prefix
-		} 
-		if (returnNames) {
-			return(ln)
-		} else {
-			x@layernames <- ln
-			return(x)
-		}
-	}
+	ln <- .makeUniqueNames(ln, prefix)
 	
-	loops <- seq(along=ln)
-	
-	for (i in rev(loops)) {
-		if (ln[i] %in% ln[-i]) {
-			ln[i] <- ''
-		}
-	}
-	
-	if (substr(prefix, nchar(prefix), nchar(prefix)) != "_") {
-		prefix <- paste(prefix, '_', sep="")
-	}
-	
-	for (i in loops) {
-		if (ln[i] == '') {
-			cont <- TRUE
-			j <- i
-			while(cont==TRUE) {
-				n <- paste(prefix, j, sep='')
-				if (!(n %in% ln)) {
-					ln[i] <- n
-					cont <- FALSE
-				}
-				j <- j + i
-			}
-		}
-	}
 	if (returnNames) {
 		return(ln)
 	} else {

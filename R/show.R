@@ -43,38 +43,45 @@ setMethod ('show' , 'Extent',
 setMethod ('show' , 'BasicRaster', 
 	function(object) {
 		cat('class       :' , class(object), '\n')
-		cat('nrow        :' , nrow(object), '\n')
-		cat('ncol        :' , ncol(object), '\n')
+		cat('dimensions  : ', nrow(object), ', ', ncol(object), ', (nrow, ncol)\n', sep="" ) 
 		cat('ncell       :' , ncell(object), '\n')
+		cat('resolution  : ' , xres(object), ', ', yres(object), '  (x, y)\n', sep="")
 		cat('projection  :' , projection(object, TRUE), '\n')
 		cat('extent      : ' , object@extent@xmin, ', ', object@extent@xmax, ', ', object@extent@ymin, ', ', object@extent@ymax, '  (xmin, xmax, ymin, ymax)\n', sep="")
-		cat('resolution  : ' , xres(object), ', ', yres(object), '  (x, y)\n', sep="")
 	}
 )	
 	
 setMethod ('show' , 'RasterLayer', 
 	function(object) {
 		cat('class       :' , class(object), '\n')
-		cat('filename    :' , filename(object), '\n')
+#		cat('filename    :' , filename(object), '\n')
 		if (nbands(object) > 1) { cat('band        :' , band(object), '\n')	}	
 		cat('dimensions  : ', nrow(object), ', ', ncol(object), ', 1  (nrow, ncol, nlayers)\n', sep="" ) 
 		cat('ncell       :' , ncell(object), '\n')
-
-		if (object@data@haveminmax) {
-			cat('min value   :' , minValue(object), '\n')
-			cat('max value   :' , maxValue(object), '\n')
-		} else { 
-			if (object@data@fromdisk) {
-				cat('min value   : ? \n')
-				cat('max value   : ? \n')
-			} else {
-				cat('min value   : NA \n')
-				cat('max value   : NA \n')		
-			}
-		}
+		cat('resolution  : ' , xres(object), ', ', yres(object), '  (x, y)\n', sep="")
 		cat('projection  :' , projection(object, TRUE), '\n')
 		cat('extent      : ' , object@extent@xmin, ', ', object@extent@xmax, ', ', object@extent@ymin, ', ', object@extent@ymax, '  (xmin, xmax, ymin, ymax)\n', sep="")
-		cat('resolution  : ' , xres(object), ', ', yres(object), '  (x, y)\n', sep="")
+
+		if (hasValues(object)) {
+			fd <- object@data@fromdisk
+			if (fd) {
+				cat('values      :', filename(object), '\n')
+			} else {
+				cat('values      : from memory\n')			
+			}
+			
+			if (object@data@haveminmax) {
+				cat('min value   :' , minValue(object), '\n')
+				cat('max value   :' , maxValue(object), '\n')
+			} else { 
+				if (fd) {
+					cat('min         : ? \n')
+					cat('max         : ? \n')
+				} 
+			}
+		} else {
+			cat('values      : none\n')			
+		}
 		cat ('\n')
 	}
 )
@@ -83,12 +90,19 @@ setMethod ('show' , 'RasterLayer',
 setMethod ('show' , 'RasterBrick',
 	function ( object ) {
 		cat ('class       :' , class ( object ) , '\n')
-		cat ('filename    :' , filename(object), '\n')
 		nl <- nlayers(object)
 		cat ('dimensions  : ', nrow(object), ', ', ncol(object), ', ', nl, '  (nrow, ncol, nlayers)\n', sep="" ) 
 		cat ('ncell       :' , ncell(object), '\n')
+		cat ('resolution  : ' , xres(object), ', ', yres(object), '  (x, y)\n', sep="")
 		cat ('projection  :' , projection(object, TRUE), '\n')
-		if (nl > 0) {
+		cat ('extent      : ' , object@extent@xmin, ', ', object@extent@xmax, ', ', object@extent@ymin, ', ', object@extent@ymax, '  (xmin, xmax, ymin, ymax)\n', sep="")
+		if (hasValues(object)) {
+			fd <- object@data@fromdisk
+			if (fd) {
+				cat('values      :', filename(object), '\n')
+			} else {
+				cat('values      : from memory\n')			
+			}
 			if (object@data@haveminmax) {
 				minv <- format(minValue(object), digits=2)
 				maxv <- format(maxValue(object), digits=2)
@@ -99,17 +113,18 @@ setMethod ('show' , 'RasterBrick',
 					maxv <- c(maxv[1:10], '...')
 				}
 			} else {
-				minv <- rep('NA', min(nl, 10))
-				maxv <- rep('NA', min(nl, 10))
+				minv <- rep('?', min(nl, 10))
+				maxv <- rep('?', min(nl, 10))
 			}
 			cat('min values  :', paste(minv, collapse=' '), '\n')
 			cat('max values  :', paste(maxv, collapse=' '), '\n')
+		} else {
+			cat('values      : none\n')			
 		}
-		cat('extent      : ' , object@extent@xmin, ', ', object@extent@xmax, ', ', object@extent@ymin, ', ', object@extent@ymax, '  (xmin, xmax, ymin, ymax)\n', sep="")
-		cat('resolution  : ' , xres(object), ', ', yres(object), '  (x, y)\n', sep="")
 		cat ('\n')
 	}
 )
+
 
 
 
@@ -125,7 +140,10 @@ setMethod ('show' , 'RasterStack',
 		} else {
 			cat ('dimensions  : ', nrow(object), ', ', ncol(object), ', ', nl, '  (nrow, ncol, nlayers)\n', sep="" ) 
 			cat ('ncell       :' , ncell(object), '\n')
+			cat ('resolution  : ' , xres(object), ', ', yres(object), '  (x, y)\n', sep="")
 			cat ('projection  :' , projection(object, TRUE), '\n')
+			cat ('extent      : ' , object@extent@xmin, ', ', object@extent@xmax, ', ', object@extent@ymin, ', ', object@extent@ymax, '  (xmin, xmax, ymin, ymax)\n', sep="")
+			
 			minv <- format(minValue(object), digits=2)
 			maxv <- format(maxValue(object), digits=2)
 			minv <- gsub('Inf', '?', minv)
@@ -137,8 +155,6 @@ setMethod ('show' , 'RasterStack',
 			cat('min values  :', paste(minv, collapse=' '), '\n')
 			cat('max values  :', paste(maxv, collapse=' '), '\n')
 		}
-		cat('extent      : ' , object@extent@xmin, ', ', object@extent@xmax, ', ', object@extent@ymin, ', ', object@extent@ymax, '  (xmin, xmax, ymin, ymax)\n', sep="")
-		cat('resolution  : ' , xres(object), ', ', yres(object), '  (x, y)\n', sep="")
 		cat ('\n')
 	}
 )

@@ -5,7 +5,7 @@
 \docType{package}
 
 \title{ 
-Management, analysis and modeling of raster-type geographic data
+An overview of the functions in this package
 }
 
 \description{
@@ -14,7 +14,7 @@ The raster package provides classes and functions to manipulate geographic (spat
 The package should be particularly useful when using very large datasets that can not be loaded into the computer's memory. Functions will
 work correctly, because they they process large files in chunks, i.e., they read, compute, and write blocks of data, without loading all values into memory at once.
 
-Below is a list of functions grouped by theme. See the vignette for more information and some examples: \code{vignette('raster', 'raster')}
+Below is a list of functions grouped by theme. See the vignette for more information and some examples (you can open it by running this command: \code{vignette('Raster')})
 }
 
 
@@ -65,17 +65,17 @@ RasterLayer, RasterStack, and RasterBrick objects are, as a group, referred to a
     \code{\link{trim}} \tab Trim a Raster* object by removing exterior rows and/or columns that only have NA values \cr
     \code{\link{aggregate}} \tab Combine cells of a Raster* object to create larger cells \cr
     \code{\link{disaggregate}} \tab Subdivide cells \cr
-    \code{\link{shift}} \tab Move the location of Raster \cr
-    \code{\link{flip}} \tab  Flip values horizontally or vertically \cr
-    \code{\link{rotate}} \tab Rotate values (for lon/lat data) \cr
     \code{\link{resample}} \tab Warp values to a Raster* object with a different origin or resolution \cr	
     \code{\link{projectRaster}} \tab Warp values to a Raster* object with a different coordinate reference system  \cr	
+    \code{\link{shift}} \tab Move the location of Raster \cr
+    \code{\link{flip}} \tab  Flip values horizontally or vertically \cr
+    \code{\link{rotate}} \tab Rotate values around the date-line (for lon/lat data) \cr
+    \code{\link{t}} \tab Transpose a Raster* object\cr
   }
 }
 
 
 \section{III. Raster algebra}{
-
 	\tabular{ll}{
     \code{\link{Arith-methods}} \tab Arith functions (\code{+, -, *, ^, \%\%, \%/\%, /}) \cr
 	\code{\link{Math-methods}} \tab Math functions (\code{abs, sqrt, trunc, log, log10, exp, cos, sin, gamma, round} among others)	\cr	
@@ -136,6 +136,7 @@ RasterLayer, RasterStack, and RasterBrick objects are, as a group, referred to a
     \code{\link{rasterToPolygons}} \tab Create polygons from a RasterLayer \cr
     \code{\link{rasterToContour}} \tab Contour lines from a RasterLayer \cr
     \code{\link{rasterFromXYZ}} \tab RasterLayer from regularly spaces points\cr
+    \code{\link{rasterFromCells}} \tab RasterLayer from a Raster object and cell numbers\cr
     \code{\link{raster}} \tab RasterLayer from SpatialGrid*, image, or matrix objects\cr
   }
   
@@ -151,8 +152,8 @@ You can coerce Raster* objects to Spatial* objects using \code{as}, as in \code{
     \code{\link{freq}} \tab Frequency table of Raster cell values \cr
     \code{\link{count}} \tab Count the frequency of a single (range of) value(s) \cr
     \code{\link{crosstab}} \tab Cross-tabulate two RasterLayer objects \cr
-    \code{\link{unique}} \tab Get the unique values in a RasterLayer \cr
-    \code{\link{zonal}} \tab Summarize a RasterLayer by zones in another RasterLayer \cr
+    \code{\link{unique}} \tab Get the unique values in a Raster* object \cr
+    \code{\link{zonal}} \tab Summarize a Raster* object by zones in a RasterLayer \cr
   }
 }
 
@@ -167,8 +168,8 @@ You can coerce Raster* objects to Spatial* objects using \code{as}, as in \code{
     \code{\link{extract}} \tab Use cell numbers, points, lines, polygons, or an extent, to extract values from a Raster* object, or extract focal values\cr
     \code{\link{sampleRandom}} \tab Random sample \cr
     \code{\link{sampleRegular}} \tab Regular sample \cr
-    \code{\link{minValue}} \tab The minimum value of the cells of a Raster* object (not always known) \cr
-    \code{\link{maxValue}} \tab The maximum value of the cells of a Raster* object (not always known) \cr
+    \code{\link{minValue}} \tab Get the minimum value of the cells of a Raster* object (not always known) \cr
+    \code{\link{maxValue}} \tab Get the maximum value of the cells of a Raster* object (not always known) \cr
     \code{\link{setMinMax}} \tab Compute the minimum and maximum value of a Raster* object if these are not known \cr
   }
 You can also use indexing with \code{[} for cell numbers, and \code{[[} for row / column number combinations \cr
@@ -272,6 +273,7 @@ Advanced writing of entire files or parts thereof
    \code{\link{writeStart}} \tab Open a file for writing \cr
    \code{\link{writeValues}} \tab Write some values  \cr
    \code{\link{writeStop}} \tab Close the file after writing \cr
+   \code{\link{update}} \tab Change the values of an existing file \cr	
 }
 }	
 
@@ -342,7 +344,7 @@ Maintainer: Robert J. Hijmans \email{r.hijmans@gmail.com}
 }
 
 \section{Acknowledgements}{
-We are grateful for the extensive suggestions made by Jonathan Greenberg, Matteo Mattiuzzi, and Steven Mosher. We also thank the following persons for suggestions to improve the package: Roger Bivand, Herry Herry, Paul Hiemstra, Mayeul Kauffmann, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Agustin Lobo, Edzer Pebesma, David Ramsey, Jon Olav Skoien, and Kevin Ummel.
+Extensive suggestions were made by Jonathan Greenberg, Matteo Mattiuzzi, and Steven Mosher. Additional contributions were also made by Roger Bivand, Isabelle Boulangeat, Herry Herry, Paul Hiemstra, Mayeul Kauffmann, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Agustin Lobo, Edzer Pebesma, David Ramsey, Jon Olav Skoien, Kevin Ummel, and others.
 }
 
 \keyword{package}
