@@ -29,7 +29,7 @@ function(x, y, ..., fun, na.rm=TRUE, tolerance=0.05, filename="", format, overwr
 
 
 setMethod('mosaic', signature(x='RasterLayer', y='RasterLayer'), 
-function(x, y, ..., fun, na.rm=TRUE, tolerance=0.05, filename="", format, overwrite, progress) { 
+function(x, y, ..., fun, na.rm=TRUE, tolerance=0.05, filename="", format, datatype, overwrite, progress) { 
 	
 	if (missing(fun)) {	stop('you need to supply a function with a fun=   argument') } 
 
@@ -70,8 +70,12 @@ function(x, y, ..., fun, na.rm=TRUE, tolerance=0.05, filename="", format, overwr
 			isInt <- FALSE
 		}
 	}
-	if (isInt) { datatype <- 'INT4S'
-	} else { datatype <- 'FLT4S'
+	if (missing(datatype)) {
+		if (isInt) { 
+			datatype <- 'INT4S'
+		} else { 
+			datatype <- 'FLT4S'
+		}
 	}
 
 	rowcol <- matrix(0, ncol=3, nrow=length(rasters))

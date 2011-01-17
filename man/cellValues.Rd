@@ -8,7 +8,7 @@
 \title{ Obsolete functions }
 
 \description{
-Obsolete functions. Use \code{\link[raster]{extract}} in stead.
+Obsolete functions. Use \code{\link[raster]{extract}} instead.
 }
 
 \usage{

@@ -14,7 +14,9 @@
     bigplot = NULL, smallplot = NULL, legend.only = FALSE, col = heat.colors(nlevel), 
     lab.breaks = NULL, axis.args = NULL, legend.args = NULL, midpoint = FALSE, box=TRUE) {
 
- 
+	
+	args <- list(...)
+	if (!is.null(args$box)) { box <- args$box }
 	
 	imageplotinfo <- function (...) {
 		temp <- list(...)

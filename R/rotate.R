@@ -13,15 +13,19 @@ if (!isGeneric("rotate")) {
 setMethod('rotate', signature(x='Raster'), 
 	function(x, ...) {
 		e <- extent(x)
-		xr <- xmax(e) - xmin(e)
-		hx <- xr / 2
-		r1 <- crop(x, extent(xmin(e), hx, ymin(e), ymax(e)))
-		r2 <- crop(x, extent(hx, xmax(e), ymin(e), ymax(e)))
-		r2@extent@xmin <- r2@extent@xmin - xr
-		r2@extent@xmax <- r2@extent@xmax - xr
-		m <- merge(r1, r2, ...)	
-		m@layernames <- layerNames(x)
-		return(m)
+		xrange <- e@xmax - e@xmin
+		if (xrange < 350 | xrange > 370 | e@xmin < -10 | e@xmax > 370) {
+			warning('this does not look like an appropriate object for this function')
+		}
+		hx <- e@xmin + xrange / 2
+		r1 <- crop(x, extent(e@xmin, hx, e@ymin, e@ymax))
+		r2 <- crop(x, extent(hx, e@xmax, e@ymin, e@ymax))
+		r2@extent@xmin <- r2@extent@xmin - xrange
+		r2@extent@xmax <- r2@extent@xmax - xrange
+		ln <- layerNames(x)
+		x <- merge(r1, r2, ...)	
+		x@layernames <- ln
+		return(x)
 	}
 )
 

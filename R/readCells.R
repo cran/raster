@@ -115,6 +115,10 @@
 	}
 	x <- closeConnection(x)
 	
+	if (x@file@datanotation == 'INT4U') {
+		res[res < 0] <- 2147483647 - res[res < 0] 
+	}
+	
 	if (dtype == "numeric") {
 		res[is.nan(res)] <- NA
 		res[res <= x@file@nodatavalue] <- NA

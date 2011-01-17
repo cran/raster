@@ -49,7 +49,7 @@ xyValues <- function(object, xy, ...) {
 	} else if (method=='simple') {
 		
 		cells <- cellFromXY(object, xy)
-		return( .cellValues(object, cells, layer=layer, n=nl) )
+		return( .cellValues(object, cells, layer=layer, nl=nl) )
 			
 	} else {
 		stop('invalid "method" argument. Should be simple or bilinear.')

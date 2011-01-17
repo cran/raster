@@ -29,7 +29,7 @@ setMethod('cover', signature(x='RasterStackBrick', y='Raster'),
 	if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
 	if (missing(overwrite)) { overwrite <- .overwrite() }
 	if (missing(progress)) { progress <- .progress() }
-	if (missing(datatype)) { datatype <- 'FLT4S' }
+	if (missing(datatype)) { datatype <- .datatype() }
 	
 
 	if ( canProcessInMemory(x, sum(nl)+nl[1])) {

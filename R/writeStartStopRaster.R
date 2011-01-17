@@ -13,6 +13,7 @@
 	filename <- .setFileExtensionHeader(filename, filetype)
 	fnamevals <- .setFileExtensionValues(filename, filetype)
 	datatype <- .datatype(...)
+	
 	dataType(raster) <- datatype
 	if (!missing(NAflag)) {
 		raster@file@nodatavalue <- NAflag

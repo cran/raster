@@ -25,6 +25,7 @@ beginCluster <- function(n, type) {
 	cl <- makeCluster(n, type) 
 	cl <- .addPackages(cl)
 	options(rasterClusterObject = cl)
+	options(rasterClusterCores = length(cl))
 	options(rasterCluster = TRUE)
 }
 
@@ -100,7 +101,9 @@ returnCluster <- function() {
 		return(1)
 	}
 	
+
 	if (.Platform$OS.type == 'windows') {
+		if (!exists('readRegistry')) { readRegistry <- function(...)(1) } #This is a hack to stop the check NOTE: .detectCores: no visible global function definition for ‘readRegistry’
 		nn <- length(readRegistry("HARDWARE\\DESCRIPTION\\System\\CentralProcessor", maxdepth=1))
 	} else {
 		nn <- multicoreDetectCores(all.tests)

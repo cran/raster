@@ -22,7 +22,7 @@ options(keep.source = TRUE, width = 60)
 foo <- packageDescription("raster")
 @
 
-\title{Introduction to 'raster' (version \Sexpr{foo$Version})}
+\title{Introduction to the 'raster' package\\(version \Sexpr{foo$Version})}
 
 \author{Robert J. Hijmans}
 \maketitle

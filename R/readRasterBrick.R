@@ -138,6 +138,11 @@
 			
 
 #		result[is.nan(result)] <- NA
+
+		if (object@file@datanotation == 'INT4U') {
+			result[result < 0] <- 2147483647 - result[result < 0]
+		}
+
 		if (dtype == 'numeric') {
 			result[result <= (0.999999 * object@file@nodatavalue)] <- NA 	
 			result[is.nan(result)] <- NA

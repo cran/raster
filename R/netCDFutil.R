@@ -28,7 +28,7 @@
 
 
 .getNetCDFDType <- function(dtype) {
-	if (!(dtype %in% c('LOG1S', 'INT1S', 'INT2S', 'INT4S', 'INT8S', 'INT1U', 'INT2U', 'FLT4S', 'FLT8S'))) {
+	if (!(dtype %in% c('LOG1S', 'INT1S', 'INT2S', 'INT4S', 'INT1U', 'INT2U', 'FLT4S', 'FLT8S'))) {
 		stop('not a valid data type')
 	}
 	type <- .shortDataType(dtype)
@@ -45,11 +45,19 @@
 		if (!signed) {
 			warning('netcdf only stores signed integers')
 		}
-		if (size == 16) { return( "short" ) 
-		} else { return( "int" ) }
+		if (size == 16) { 
+			return( "short" ) 
+		} else if (size == 32 ) { 
+			return( "int" ) 
+		} else {
+			return ( "double" )		
+		}
 	} else {
-		if (size == 32) { return( "float" ) 
-		} else {  return ( "double" )  }
+		if (size == 32) { 
+			return( "float" ) 
+		} else {  
+			return ( "double" )  
+		}
 	}
 }
 

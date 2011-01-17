@@ -158,11 +158,12 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 
 	filename <- trim(filename)
 	
-	if ( nlayers(from) == 1) {
+	nl <- nlayers(from)
+	if ( nl == 1) {
 		to <- raster(to)
 	} else {
 		to <- brick(to, values=FALSE)
-		to@data@nlayers <- nlayers(from)
+		to@data@nlayers <- nl
 	}
 	
 	if (!canProcessInMemory(to, 1) && filename == "") {
@@ -202,9 +203,10 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 				xy <- xyFromCell(to, cellFromRowColCombine(to, srow:erow, startcol:endcol) ) 
 				unProjXY <- .Call("transform", projto, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
 				unProjXY <- cbind(unProjXY[[1]], unProjXY[[2]])
-				vals <- matrix(NA, nrow=tr$nrows[i], ncol=to@ncols)
-				vals[(srow:erow)-tr$row[i]+1, startcol:endcol] <- matrix(.xyValues(from, unProjXY, method=method), nrow=nrows, byrow=TRUE)
-				vals <- as.vector(t(vals))
+				iv <- matrix(FALSE, nrow=tr$nrows[i], ncol=to@ncols)
+				iv[(srow:erow)-tr$row[i]+1, startcol:endcol] <- TRUE
+				vals <- matrix(NA, nrow=tr$nrows[i] * to@ncols, ncol=nl)
+				vals[iv,] <- .xyValues(from, unProjXY, method=method)
 			}
 			return(vals)
 		}
@@ -259,9 +261,11 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 				xy <- xyFromCell(to, cellFromRowColCombine(to, srow:erow, startcol:endcol) ) 
 				unProjXY <- .Call("transform", projto, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
 				unProjXY <- cbind(unProjXY[[1]], unProjXY[[2]])
-				vals <- matrix(NA, nrow=tr$nrows[i], ncol=to@ncols)
-				vals[(srow:erow)-tr$row[i]+1, startcol:endcol] <- matrix(.xyValues(from, unProjXY, method=method), nrow=nrows, byrow=TRUE)
-				vals <- as.vector(t(vals))
+				iv <- matrix(FALSE, nrow=tr$nrows[i], ncol=to@ncols)
+				iv[(srow:erow)-tr$row[i]+1, startcol:endcol] <- TRUE
+				vals <- matrix(NA, nrow=tr$nrows[i] * to@ncols, ncol=nl)
+				vals[iv,] <- .xyValues(from, unProjXY, method=method)
+				#vals <- as.vector(t(vals))
 			}
 			if (inMemory) {
 				start <- cellFromRowCol(to, tr$row[i], 1)

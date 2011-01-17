@@ -48,7 +48,7 @@ setMethod('raster', signature(x='list'),
 			} else {
 				crs = NA
 			}
-		}
+		} 
 		
 		x <- t(x$z)
 		x <- x[nrow(x):1, ]
@@ -258,6 +258,59 @@ setMethod('raster', signature(x='SpatialPixels'),
 			return(raster(x))		
 		}
 		return(r)
+	}
+)
+
+
+
+setMethod('raster', signature(x='kasc'), 
+	function(x, crs) {
+		x <- as(x, 'RasterLayer')
+		if (missing(crs)) {
+			e <- x@extent
+			if (e@xmin > -360.1 & e@xmax < 360.1 & e@ymin > -90.1 & e@ymax < 90.1) { 
+				crs = "+proj=longlat +datum=WGS84"
+			} else {
+				crs = NA
+			}
+		}
+		projection(x) <- crs
+		return(x)
+	}
+)
+
+
+
+setMethod('raster', signature(x='asc'), 
+	function(x, crs) {
+		x <- as(x, 'RasterLayer')
+		if (missing(crs)) {
+			e <- x@extent
+			if (e@xmin > -360.1 & e@xmax < 360.1 & e@ymin > -90.1 & e@ymax < 90.1) { 
+				crs = "+proj=longlat +datum=WGS84"
+			} else {
+				crs = NA
+			}
+		}
+		projection(x) <- crs
+		return(x)
+	}
+)
+
+	
+setMethod('raster', signature(x='kde'), 
+	function(x, crs) {
+		x <- as(x, 'RasterLayer')
+		if (missing(crs)) {
+			e <- x@extent
+			if (e@xmin > -360.1 & e@xmax < 360.1 & e@ymin > -90.1 & e@ymax < 90.1) { 
+				crs = "+proj=longlat +datum=WGS84"
+			} else {
+				crs = NA
+			}
+		}
+		projection(x) <- crs
+		return(x)
 	}
 )
 

@@ -145,3 +145,10 @@ setMethod("stack", signature(x='SpatialPixelsDataFrame'),
 		return(stack(x))
 	}
 )
+
+
+setMethod('stack', signature(x='kasc'), 
+	function(x) {
+		as(x, 'RasterStack')
+	}
+)

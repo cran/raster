@@ -36,30 +36,42 @@
 
 
 setAs('Raster', 'SpatialPixels', 
-	function(from) { return(.asSpGrid(from, type='pixel', FALSE)) }
+	function(from) {
+		.asSpGrid(from, type='pixel', FALSE)
+	}
 )
 
 setAs('Raster', 'SpatialPixelsDataFrame', 
-	function(from) { return(.asSpGrid(from, type='pixel', TRUE)) }
+	function(from) { 
+		.asSpGrid(from, type='pixel', TRUE)
+	}
 )
 
 setAs('Raster', 'SpatialGrid', 
-	function(from) { return(.asSpGrid(from, type='grid', FALSE)) }
+	function(from) { 
+		.asSpGrid(from, type='grid', FALSE)
+	}
 )
 
 setAs('Raster', 'SpatialGridDataFrame', 
-	function(from) { return(.asSpGrid(from, type='grid', TRUE)) }
+	function(from) { 
+		.asSpGrid(from, type='grid', TRUE)
+	}
 )
 
 
 # To sp vector objects	
 
 setAs('RasterLayer', 'SpatialPolygonsDataFrame', 
-	function(from){ return( rasterToPolygons(from)) }
+	function(from){ 
+		return( rasterToPolygons(from)) 
+	}
 )
 
 setAs('Extent', 'SpatialPolygonsDataFrame', 
-	function(from){ return( polygonFromExtent(from)) }
+	function(from){ 
+		return( polygonFromExtent(from)) 
+	}
 )
 
 setAs('Raster', 'SpatialPoints', 
@@ -111,11 +123,15 @@ setAs('SpatialPixels', 'BasicRaster',
 
 # to RasterStack
 setAs('SpatialGrid', 'RasterStack',
-	function(from){ return(stack(from)) }
+	function(from){ 
+		stack(from)
+	}
 )
 
 setAs('SpatialPixels', 'RasterStack', 
-	function(from){ return(stack(from)) }
+	function(from){
+		stack(from)
+	}
 )
 
 
@@ -207,6 +223,7 @@ setAs('RasterLayer', 'asc',
 )
 
 
+
 setAs('kasc', 'RasterBrick', 
 	function(from) {
 		names <- colnames(from)
@@ -229,7 +246,6 @@ setAs('kasc', 'RasterBrick',
 		return(b)
 	}
 )
-
 
 
 setAs('kasc', 'RasterStack', 
@@ -257,4 +273,17 @@ setAs('kasc', 'RasterStack',
 		return(s)
 	}
 )
+
+
+# kernel density estimate (kde) from package ks
+
+setAs('kde', 'RasterLayer', 
+	function(from) {
+		x <- t(from$estimate)
+		x <- x[nrow(x):1,]
+		raster(x, xmn=min(from$eval.points[[1]]), xmx=max(from$eval.points[[1]]), 
+					ymn=min(from$eval.points[[2]]), ymx=max(from$eval.points[[2]]) ) 
+	}
+)
+
 

@@ -55,7 +55,7 @@
 		if (missing(n)) { n <- (nls-layer+1) }
 		lyrs <- layer:(layer+n-1)
 		res <- matrix(ncol=length(lyrs), nrow=nrow(xyCoords))
-		cv <- .cellValues(raster, cells, layer=layer, n=n)
+		cv <- .cellValues(raster, cells, layer=layer, nl=n)
 		for (i in 1:ncol(cv)) {
 			v <- matrix(cv[, i], ncol=4)
 			res[,i] <- bilinear(xyCoords[,1], xyCoords[,2], x[1,], x[2,], y[1,], y[2,], v)

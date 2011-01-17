@@ -173,9 +173,9 @@
 					cells <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
 					coords <- xyFromCell(obj, cells)
 					if (cellnumbers) {
-						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), cells, vals)
+						pd <- cbind(pointDistance(xy[i,], coords, longlat=FALSE), cells, vals)
 					} else {
-						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), vals)
+						pd <- cbind(pointDistance(xy[i,], coords, longlat=FALSE), vals)
 					}
 					if (nrow(pd) > 1) {
 						cv[[i]] <- pd[pd[,1] <= buffer[i], -1]

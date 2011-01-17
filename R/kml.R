@@ -16,7 +16,7 @@ KML <- function (raster, filename, col=rainbow(255), maxpixels=100000) {
 	kmlfile <- filename
 	ext(kmlfile) <- '.kml'
 
-	png(file = imagefile, width=ncol(raster), height=nrow(raster), bg="transparent")
+	png(filename = imagefile, width=ncol(raster), height=nrow(raster), bg="transparent")
 	par(mar=c(0,0,0,0), xaxs="i", yaxs="i")
 	image(raster, col=col)
 	dev.off()

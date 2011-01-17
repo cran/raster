@@ -9,12 +9,14 @@ pbCreate <- function(nsteps, type='text', style=3) {
 		pb <- txtProgressBar(min=0, max=nsteps, style=style)
 	} else if (type %in% c('window', 'tcltk', 'windows')) {
 		tit <- paste(' Progress (', nsteps, ' steps)', sep='')
-		if (.Platform$OS.type == "windows" ) {
-			pb <- winProgressBar(title=tit, min=0 , max=nsteps, width = 300, label='starting')
-		} else {
-			require(tcltk)
-			pb <- tkProgressBar(title=tit, min=0, max=nsteps, width = 300, label='starting')
-		}
+		#if (.Platform$OS.type == "windows" ) {
+		#	pb <- winProgressBar(title=tit, min=0 , max=nsteps, width = 300, label='starting')
+		#} else {
+		
+		require(tcltk)
+		pb <- tkProgressBar(title=tit, min=0, max=nsteps, width = 300, label='starting')
+		
+		#}
 	} else {
 		pb <- 'none'
 	}
@@ -24,7 +26,7 @@ pbCreate <- function(nsteps, type='text', style=3) {
 
 
 
-pbStep <- function(pb, step=NULL, label='step') {
+pbStep <- function(pb, step=NULL, label='') {
 	pbclass <- class(pb)
 	if (pbclass=="txtProgressBar") {
 		if (is.null(step)) { step = pb$getVal() + 1 }
@@ -32,9 +34,9 @@ pbStep <- function(pb, step=NULL, label='step') {
 	} else if (pbclass=="tkProgressBar") {
 		if (is.null(step)) { step = pb$getVal() + 1 }
 		setTkProgressBar(pb, step, label=paste(label, step))	
-	} else if (pbclass=="winProgressBar") {
-		if (is.null(step)) { step <- getWinProgressBar(pb)+1  }
-		setWinProgressBar(pb, step, label=paste(label, step))	
+	#} else if (pbclass=="winProgressBar") {
+	#	if (is.null(step)) { step <- getWinProgressBar(pb)+1  }
+	#	setWinProgressBar(pb, step, label=paste(label, step))	
 	} 
 }
 

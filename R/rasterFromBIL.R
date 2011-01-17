@@ -161,12 +161,11 @@
 		} else {
 			dataType(x) <- 'INT4S'
 		}
-	} else if (nbits == 64) {
-		if (pixtype == 'FLOAT') {
-			dataType(x) <- 'FLT8S'
-		} else {
-			dataType(x) <- 'INT8S'
-		}
+	} else if (nbits == 64 & pixtype == 'FLOAT') {
+		dataType(x) <- 'FLT8S'
+#		} else {
+#			dataType(x) <- 'INT8S'
+#		}
 	} else {
 		stop(paste('unexpected nbits in BIL:', nbits))
 	}

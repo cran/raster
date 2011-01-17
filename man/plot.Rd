@@ -18,7 +18,7 @@ Plot (that is, make a map of) the values of a Raster* object, or make a scatterp
 
 Points, lines, and polygons can be drawn on top of a map using \code{plot(..., add=TRUE)}, or functions like \code{points, lines, polygons}
 
-\code{text} plots a textual (rather than color) reprentation of values of the cells on top of the cells. 
+\code{text} plots a textual (rather than color) representation of values of the cells on top of the cells. 
 }
 
 

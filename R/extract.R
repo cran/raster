@@ -50,7 +50,7 @@ setMethod('extract', signature(x='Raster', y='vector'),
 function(x, y, ...){ 
 	y <- round(y)
 	if (length(y) == 2) {
-		warning("returning values at CELL NUMBERS (not coordiantes) : ", y[1], " and ", y[2])
+		warning("returning values at CELL NUMBERS (not coordinates) : ", y[1], " and ", y[2])
 	}
 	return( .cellValues(x, y, ...) )
 })
@@ -94,34 +94,38 @@ function(x, y, ...){
 
 
 setMethod('extract', signature(x='Raster', y='Extent'), 
- 	function(x, y, layer, nl, ...) {
+ 	function(x, y, fun, na.rm=FALSE, lyrs, ...) {
+
 		e <- intersectExtent(x, y)
 		e <- alignExtent(e, x)
+		
 		row = rowFromY(x, e@ymax)
 		lastrow = rowFromY(x, e@ymin)
 		nrows = lastrow-row+1
 		col = colFromX(x, e@xmin)
 		lastcol = colFromX(x, e@xmax)
 		ncols = lastcol-col+1
+		
 		v <- getValuesBlock(x, row, nrows, col, ncols)  
 		
-		nlyrs <- nlayers(x)
-		if (nlyrs > 1) {
-			if (missing(layer)) { layer <- 1 } 
-			if (missing(nl)) { nl <- nlyrs } 
-			layer <- min(max(1, round(layer)), nlyrs)
-			nl <- min(max(1, round(nl)), nlyrs-layer+1)
-			v <- v[ , layer:(layer+nl-1)] 
+		if (! missing(lyrs) ) {
+			nl <- nlayers(x)
+			lyrs <- lyrs[lyrs %in% 1:nl]
+			if (length(lyrs) > 1) {
+				v <- v[ , lyrs, drop=FALSE] 
+			}
 		}
-
+		
+		if (! missing(fun)) {
+			if (is.matrix(v)) {
+				ln <- colnames(v)
+				v <- apply(v, 2, FUN=fun, na.rm=na.rm)
+				names(v) <- ln
+			} else {
+				v <- fun(v, na.rm=na.rm)
+			}
+		}
 		return(v)
 	}
 )
-
-
-
-#setMethod('extract', signature(x='Spatial', y='Spatial'), 
-#function(x, y, ...){ 
-#	return( overlay(x, y, ...) )
-#})
 

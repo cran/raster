@@ -27,7 +27,11 @@ function(x, filename='', ...) {
 
 	out <- raster(x)
 	
-	if (.couldBeLonLat(out)) { longlat <- TRUE } else { longlat <- FALSE }
+	if (.couldBeLonLat(out)) { 
+		distfun <- .haversine
+	} else { 
+		distfun <- .planedist
+	}
 	                                                                        
 	filename <- trim(filename)
 	if (!canProcessInMemory(out, 2) && filename == '') {
@@ -61,7 +65,7 @@ function(x, filename='', ...) {
 			if (length(i) > 0) {
 				xy[,2] <- yFromRow(out, r)
 				for (c in i) {
-					vals[c] <- min( pointDistance(xy[c,], pts, longlat=longlat) )
+					vals[c] <- min( distfun(xy[c,1], xy[c,2], pts[,1], pts[,2]) ) 
 				}
 			}
 			return( vals )
@@ -108,7 +112,8 @@ function(x, filename='', ...) {
 				if (length(i) > 0) {
 					xy[,2] <- yFromRow(out, r)
 					for (c in i) {
-						vals[c] <- min( pointDistance(xy[c,], pts, longlat=longlat) )
+						#vals[c] <- min( pointDistance(xy[c,], pts, longlat=longlat) )
+						vals[c] <- min( distfun(xy[c,1], xy[c,2], pts[,1], pts[,2]) )
 					}
 				}
 				v[,r] <- vals
@@ -124,7 +129,8 @@ function(x, filename='', ...) {
 				if (length(i) > 0) {
 					xy[,2] <- yFromRow(out, r)
 					for (c in i) {
-						vals[c] <- min( pointDistance(xy[c,], pts, longlat=longlat) )
+#						vals[c] <- min( pointDistance(xy[c,], pts, longlat=longlat) )
+						vals[c] <- min( distfun(xy[c,1], xy[c,2], pts[,1], pts[,2]) )
 					}
 				}
 				out <- writeValues(out, vals, r)

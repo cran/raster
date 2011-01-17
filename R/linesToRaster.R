@@ -246,7 +246,7 @@ linesToRaster <- function(lns, raster, field=0, overlap='last', ...) {
 						#  line part entirely outside of row. do nothing
 					} else {
 						aline <- lns@lines[[i]]@Lines[[j]]@coords
-						cat(i, "\n"); flush.console();
+						#cat(i, "\n"); flush.console();
 						colnrs <- .getCols(raster, r, aline, line1, line2)
 						if ( length(colnrs) > 0 ) {	
 							rvtmp <- rv1

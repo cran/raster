@@ -14,14 +14,8 @@ if (!isGeneric('setMinMax')) {
 setMethod('setMinMax', signature(x='RasterLayer'), 
 function(x) {
 	clear <- FALSE
-	inMem <- inMemory(x)
-	if (! inMem ) {
-		if (! fromDisk(x)) {
-			stop('no, or not enough, values associated with this Layer')
-		}
-	}
 	
-	if ( inMem ) {
+	if ( inMemory(x) ) {
 		vals <- na.omit(x@data@values) 
 		if (length(vals) > 0) {
 			x@data@min <- min(vals)
@@ -31,6 +25,9 @@ function(x) {
 			x@data@max <- NA
 		}
 	} else {
+		if (! fromDisk(x)) {
+			stop('no values associated with this RasterLayer')
+		}
 		x@data@min <- Inf
 		x@data@max <- -Inf
 		tr <- blockSize(x)
