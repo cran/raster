@@ -64,7 +64,7 @@
 
 
 .maxmemory <- function() {
-	default <- 100000000
+	default <- 1000000000
 	d <- getOption('rasterMaxMemory')
 	if (is.null(d)) {
 		return( default )
@@ -76,7 +76,7 @@
 	if (d < 1) {
 		d <- default
 	} 
-	d <- max(d, 10000)
+	d <- max(d, 10000, na.rm=TRUE)
 	return(d)
 }
 

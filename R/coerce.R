@@ -68,11 +68,13 @@ setAs('RasterLayer', 'SpatialPolygonsDataFrame',
 	}
 )
 
-setAs('Extent', 'SpatialPolygonsDataFrame', 
+setAs('Extent', 'SpatialPolygons', 
 	function(from){ 
 		return( polygonFromExtent(from)) 
 	}
 )
+
+
 
 setAs('Raster', 'SpatialPoints', 
 	function(from) { 

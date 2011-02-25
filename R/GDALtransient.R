@@ -17,6 +17,7 @@
 		if (x == 'Int32') return(-2147483647)
 		if (x == 'Int16') return(-32768)
 		if (x == 'Int8') return(-128)
+		if (x == 'Byte') return(255)
 		if (x == 'UInt16') return(65535)
 		if (x == 'UInt32') return(2147483647) #(4294967295) <- not supported as integer in R
 		stop('cannot find matching nodata value')

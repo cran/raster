@@ -50,9 +50,11 @@
 			zv <- 1:nlayers(x)
 		}
 		zdim <- dim.def.ncdf( zname, zunit, zv, unlim=TRUE )
-		vardef <- var.def.ncdf( varname, varunit, list(xdim,ydim,zdim), -3.4e+38 )
+		vardef <- var.def.ncdf( varname, varunit, list(xdim,ydim,zdim), NAvalue(x), prec = datatype )
+		#vardef <- var.def.ncdf( varname, varunit, list(xdim,ydim,zdim), -3.4e+38 )
 	} else {
-		vardef <- var.def.ncdf( varname, varunit, list(xdim,ydim), -3.4e+38 )
+		#vardef <- var.def.ncdf( varname, varunit, list(xdim,ydim), -3.4e+38 )
+		vardef <- var.def.ncdf( varname, varunit, list(xdim,ydim), NAvalue(x), prec = datatype )
 	}
 	nc <- create.ncdf(filename, vardef)
 	

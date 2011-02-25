@@ -50,10 +50,10 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", old=FALSE, .
 
 	if (! hasValues(x) ) {	return(outRaster) }	
 
-	fun <- raster:::.makeTextFun(fun)
+	fun <- .makeTextFun(fun)
 	if (class(fun) == 'character') { 
 		rowcalc <- TRUE 
-		fun <- raster:::.getRowFun(fun)
+		fun <- .getRowFun(fun)
 	} else { rowcalc <- FALSE }
 	
 	

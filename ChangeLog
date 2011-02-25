@@ -1,5 +1,27 @@
+--- 22-Feb-2011,  version 1.7-43
+resample no longer looses layer names (reported by Brian Anacker)
+
+--- 21-Feb-2011,  version 1.7-42
+A number of buglets fixed. Thanks to Jon Olav Skoien, Kevin Ummel & Matteo Mattiuzzi
+
+--- 4-Feb-2011,  version 1.7-35
+Changes to reclass such that a function like sum returns an object with the (highest) number of layers of the input objects (suggested by Neil Best)
+
+--- 2-Feb-2011,  version 1.7-34
+Bug fix in zonal; it did not ignore NA values. (reported by Kevin Ummel)
+Changes to reclass and calc (suggested by Neil Best)
+
+--- 31-Jan-2011,  version 1.7-33
+Fixed bug in projectRaster (reported by Bart Kranstauber) that was created with bug fix on 7-Jan-2011 
+
+--- 26-Jan-2011,  version 1.7-32
+ncdf write now honours the datatype argument. Code changes as suggested by Stefan Schlaffer
+
+--- 22-Jan-2011,  version 1.7-31
+new functions cellFromLines, cellFromPolygons (suggested by Brian Oney)
+
 --- 17-Jan-2011,  version 1.7-28
-bug fix in update (reported by Matteo Mattiuzi) 
+bug fix in update (reported by Matteo Mattiuzzi) 
 calc can now return multiple layers when the input is a RasterLayer (Neil Best)
 bug fix in extract with buffer for non-long/lat rasters (reported by Richard Plant)
 

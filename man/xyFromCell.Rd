@@ -42,7 +42,7 @@ yFromCell(object, cell)
 \author{Robert J. Hijmans }
 
 \seealso{
-	\code{\link{raster}[cellsFromExtent]}
+\code{\link{cellFromXY}}
 }
 
 \examples{

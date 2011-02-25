@@ -19,9 +19,10 @@ xFromCol <- function(object, colnr) {
 
 
 cellFromXY <- function(object, xy) {
-	if (inherits(xy, 'Spatial')) {
-		x <- xy@coords[,1]
-		y <- xy@coords[,2]
+	if (inherits(xy, 'SpatialPoints')) {
+		xy <- coordinates(xy)
+		x <- xy[,1]
+		y <- xy[,2]
 	} else if (is.null(dim(xy))) { 
 		x <- xy[1]
 		y <- xy[2] 

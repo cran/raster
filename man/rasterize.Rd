@@ -54,16 +54,20 @@ rasterize(x, y, ...)
 
 \bold{= points =}
 
-If \code{x} represents points, each point is assinged to a grid cell. The value of a grid cell is determined by the values associated with the points and function \code{fun}. If you want to know the number of points in each grid cell, use the (default) \code{length} function. I.e., for each cell it computes the length of the vector of points. For the sum of the values, use \code{sum}, for a yes/no result, you can use \code{fun=function(x){length(x)>0}}. For the number of unique values use \code{fun=function(x){length(unique(x))}}
+The value of a grid cell is determined by the values associated with the points and function \code{fun}.
 
-Note that the function must take an \code{na.rm} argument, either explicitly or through 'dots'. This means that \code{fun=lenght} fails, but \code{fun=function(x,...)lenght(x)} works (but ignores the \code{na.rm} argument. To use the \code{na.rm} argument you can use a function like this \code{fun=function(x,na.rm){if (na.rm) length(na.omit(x)) else (length(x)}}, or use a function that removes NA values in all cases, like this function to compute the number of unique values "richness": \code{fun=function(x, ...){length(unique(na.omit(x)))}}. You can also pass multiple functions using a statement like \code{fun=function(x)c(lenght(x),mean(x))}, in which case the returned object is a RasterBrick (multiple layers).
+If \code{x} represents points, each point is assinged to a grid cell. The default result is 1/NA. That is, cells with one or more points get value 1 and the other cells get the background value (default is \code{NA}.
 
+If you want to know the number of points in each grid cell, use \code{fun=function(x,...){length(x)}}. I.e., for each cell it computes the length of the vector of points. You can also use \code{fun=sum}, because the default 'field' value of a point is 1. For the number of unique values use \code{fun=function(x){length(unique(x))}}
 
 There is one additional argument:
 
 \tabular{rll}{
 \tab \code{na.rm}   .\tab Remove \code{NA} values? Default is \code{TRUE} \cr
 }
+
+Because of this, all functions \code{fun} must accept an \code{na.rm} argument, either explicitly or through 'dots'. This means that \code{fun=lenght} fails, but \code{fun=function(x,...)lenght(x)} works (but ignores the \code{na.rm} argument. To use the \code{na.rm} argument you can use a function like this \code{fun=function(x,na.rm){if (na.rm) length(na.omit(x)) else (length(x)}}, or use a function that removes NA values in all cases, like this function to compute the number of unique values "richness": \code{fun=function(x, ...){length(unique(na.omit(x)))}}. You can also pass multiple functions using a statement like \code{fun=function(x)c(lenght(x),mean(x))}, in which case the returned object is a RasterBrick (multiple layers).
+
 
 
 \bold{= polygons and Extent =}

@@ -5,6 +5,8 @@
 
 cellStats <- function(x, stat='mean', ...) {
 
+	stopifnot(hasValues(x))
+
 	getzmean <- function(raster, ..., zmean) {
 		if (missing(zmean)) { 
 			cellStats(raster, 'mean')
@@ -31,8 +33,15 @@ cellStats <- function(x, stat='mean', ...) {
 		}
 	}
 
+
+
 	if (tryinmem) {
-		if (canProcessInMemory(x)) {
+		if (!inMemory(x)) {
+			if (canProcessInMemory(x)) {
+				x <- readAll(x)
+			}
+		}
+		if (inMemory(x) ) {
 			x <- getValues(x)
 			if (makeMat) {
 				x <- matrix(x, ncol=1)

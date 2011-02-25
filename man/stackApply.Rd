@@ -9,9 +9,7 @@
 \description{
 Apply a function on subsets of a RasterStack or RasterBrick. The layers to be combined are indicated with the vector \code{indices}. 
 The function used should return a single value, and the number of layers in the output Raster* equals the number of unique values in \code{indices}.
-For example, if you have a RasterStack with 6 layers, you can use \code{indices=c(1,1,1,2,2,2)} and \code{fun=sum}. This will return a RasterBrick with two layers. The first layer is the sum of the first three layers in the input RasterStack, and the second layer is the sum of the last three layers in the input RasterStack. 
-
-If you want to use a function that returns multiple layers, use \code{\link{calc}}
+For example, if you have a RasterStack with 6 layers, you can use \code{indices=c(1,1,1,2,2,2)} and \code{fun=sum}. This will return a RasterBrick with two layers. The first layer is the sum of the first three layers in the input RasterStack, and the second layer is the sum of the last three layers in the input RasterStack. See \code{\link{calc}} if you want to use a function that returns multiple layers based on _all_ layers in the Raster* object.
 }
 
 \usage{

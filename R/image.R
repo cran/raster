@@ -10,11 +10,17 @@ if (!isGeneric("image")) {
 
 setMethod("image", signature(x='RasterLayer'), 
 	function(x, maxpixels=500000, ...)  {
+		coltab <- x@legend@colortable
 		x <- sampleRegular(x, maxpixels, asRaster=TRUE)
 		y <- yFromRow(x, nrow(x):1)
 		value <- t(as.matrix(x)[nrow(x):1,])
 		x <- xFromCol(x,1:ncol(x))
-		image(x=x, y=y, z=value,  ...)
+		
+		if (! is.null(coltab) & is.null(list(...)$col)) {
+			image(x=x, y=y, z=value, col=coltab, ...)
+		} else {
+			image(x=x, y=y, z=value,  ...)
+		}
 	}
 )
 

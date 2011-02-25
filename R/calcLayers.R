@@ -10,7 +10,7 @@
 	filename <- trim(filename)
 	out <- brick(x, values=FALSE)
 	
-	if ( canProcessInMemory(x, 2) ) {
+	if ( canProcessInMemory(x) ) {
 		out <- setValues(out, t( fun( t( getValues(x) )) ) )
 		if (filename != '') {
 			out <- writeRaster(out, filename=filename, ...)

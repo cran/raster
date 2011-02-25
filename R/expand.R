@@ -38,7 +38,11 @@ function(x, y, filename='', value=NA, ...) {
 
 	bndbox <- extent(xmn, xmx, ymn, ymx)
 	outRaster <- setExtent(outRaster, bndbox, keepres=TRUE)
-
+	
+	if (! hasValues(x) ) {
+		return(outRaster)
+	}
+	
 	datatype <- list(...)$datatype
 	if (is.null(datatype)) {
 		if (inherits(x, 'RasterStack')) {
@@ -48,7 +52,7 @@ function(x, y, filename='', value=NA, ...) {
 		}
 	} 
 	
-	if (canProcessInMemory(outRaster, 2)) {
+	if (canProcessInMemory(outRaster)) {
 		d <- matrix(nrow=ncell(outRaster), ncol=nlayers(x))
 		d[] <- value
 		cells <- cellsFromExtent(outRaster, extent(x))

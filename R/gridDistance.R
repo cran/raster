@@ -79,7 +79,7 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 			firstRow <- chunk[1:nrow(x)]
 			firstRowDist <- chunkDist[1:nrow(x)]
 			chunkDist[is.infinite(chunkDist)] <- NA
-			r1 <- writeValues(r1, chunkDist)
+			r1 <- writeValues(r1, chunkDist, tr$row[i])
 			pbStep(pb) 
 		}
 		r1 <- writeStop(r1)

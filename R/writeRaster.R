@@ -13,11 +13,9 @@ setMethod('writeRaster', signature(x='RasterLayer', filename='character'),
 function(x, filename, format, ...) {
 
 	stopifnot(hasValues(x))
-
+	filename <- trim(filename)
+	if (filename == '') {	stop('provide a filename')	}
 	filename <- .fullFilename(filename)
-	if (filename == '') {
-		stop('provide a filename')
-	}
 	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)
 	
@@ -65,7 +63,8 @@ setMethod('writeRaster', signature(x='RasterStackBrick', filename='character'),
 function(x, filename, bandorder='BIL', format, ...) {
 
 	stopifnot(hasValues(x))
-	
+	filename <- trim(filename)
+	if (filename == '') {	stop('provide a filename')	}
 	filename <- .fullFilename(filename)
 	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)
@@ -75,14 +74,13 @@ function(x, filename, bandorder='BIL', format, ...) {
 			stop('file format not supported for multi-band files')
 		}
 		if ( filetype %in% c("BIL", "BSQ", "BIP") ) { 
-			bandorder <- format 
+			bandorder <- filetype
 		}
 		if (!bandorder %in% c('BIL', 'BSQ', 'BIP')) { 
 			stop("invalid bandorder, should be 'BIL', 'BSQ' or 'BIP'") 
 		}
-		out <- brick(x, values=FALSE)
-		nl <- out@data@nlayers
 
+		out <- brick(x, values=FALSE)
 		out <- writeStart(out, filename, bandorder=bandorder, ...)
 	
 		if (inMemory(x)) {
@@ -96,7 +94,7 @@ function(x, filename, bandorder='BIL', format, ...) {
 			}
 			pbClose(pb)
 		}
-		out <- writeStop(out)
+		out <- .stopRasterWriting(out)
 		return( out )
 	}  
 	
@@ -114,7 +112,7 @@ function(x, filename, bandorder='BIL', format, ...) {
 		
 	} else {
 			
-		if ( toupper(x@file@name) == toupper(filename) ) {
+		if ( toupper(filename(x)) == toupper(filename) ) {
 			stop('filenames of source and destination should be different')
 		}
 		

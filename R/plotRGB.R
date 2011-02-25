@@ -93,7 +93,7 @@ function(x, r=1, g=2, b=3, scale=255, maxpixels=500000, extent=NULL, interpolate
 	naind <- as.vector(attr(RGB, "na.action"))
 	if (!is.null(naind)) {
 		z = vector(length=ncell(r))
-		z[-naind] <- rgb(RGB[,1], RGB[,2], RGB[,3], max=scale)
+		z[-naind] <- rgb(RGB[,1], RGB[,2], RGB[,3], maxColorValue=scale)
 	} else {
 		z <- rgb(RGB[,1], RGB[,2], RGB[,3], maxColorValue=scale)
 	}

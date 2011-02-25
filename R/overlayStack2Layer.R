@@ -7,14 +7,19 @@
 setMethod('overlay', signature(x='Raster', y='missing'), 
 function(x, y, fun, filename="", ...){ 
 
-	if (nlayers(x) == 1) {
-		return(calc(x, fun=fun, filename=filename, ...))
-	}
+#	if (nlayers(x) == 1) {
+#		return(calc(x, fun=fun, filename=filename, ...))
+#	}
 	
 	rasters <- list()
-	for (i in 1:nlayers(x)) {
-		rasters[i] <- raster(x, i)
+	if (nlayers(x) > 1) {
+		for (i in 1:nlayers(x)) {
+			rasters[i] <- raster(x, i)
+		}
+	} else {
+		rasters[1] <- x
 	}
+		
 	rm(x)
 	
 	if (missing(fun)) { 

@@ -110,6 +110,8 @@ plot(dif)
 # Meuse data to long/lat
 meuse <- raster(system.file("external/test.grd", package="raster"))
 meusell <- projectRaster(meuse, res=1/1200, crs="+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
+
+
 }
 }
 }

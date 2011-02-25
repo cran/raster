@@ -9,9 +9,9 @@
 \title{Overlay Raster objects}
 
 \description{
-Create a new Raster* object, based on two or more existing and Raster* objects. 
+Create a new Raster* object, based on two or more Raster* objects. (You can also use a single object, but perhaps \code{\link{calc}} is what you are looking for in that case).
 
-You should supply a function \code{fun} to set the way that the RasterLayers are combined. The number of arguments in the function must match the number of Raster objects. For example, if you combine two RasterLayers you could use multiply: \code{fun=function(x,y){return(x*y)}} percentage: \code{fun=function(x,y){return(100 * x / y)}}. If you combine three layers you could use \code{fun=function(x,y,z){return((x + y) * z)}}
+You should supply a function \code{fun} to set the way that the RasterLayers are combined. The number of arguments in the function must match the number of Raster objects (or take any number). For example, if you combine two RasterLayers you could use multiply: \code{fun=function(x,y){return(x*y)}} percentage: \code{fun=function(x,y){return(100 * x / y)}}. If you combine three layers you could use \code{fun=function(x,y,z){return((x + y) * z)}}
 
 Note that the function must work for vectors (not only single numbers). That is, it must return the same number of elements as its input vectors. Alternatively, you can also supply a function such as \code{sum}, that takes \code{n} arguments (as \code{'...'}) and \code{na.rm}, like in \code{sum(..., na.rm)}.
 
@@ -96,6 +96,15 @@ r6 <- overlay(r1, fun=function(x){return(sqrt(x))} )
 r7 <- overlay(r1, r2, r3, r4, fun=function(a,b,c,d){return(a*b+c*d)} )  
 # equivalent function, efficient if values can be loaded in memory
 r8 <- r1 * r2 + r3 * r4
+
+# Also works with multi-layer objects. 
+s1 <- stack(r1, r2, r3)
+overlay(s1, s1, fun=function(x,y)x+y+5)
+
+# n thic case the first layer of the shorter object is recycled.
+# i.e., s2 is treated as stack(r1, r3, r1)
+s2 <- stack(r1, r3)
+overlay(s1, s2, fun=sum)
 }
  
 \keyword{methods}

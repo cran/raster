@@ -10,12 +10,15 @@ distanceFromPoints <- function(object, xy, filename='', ...) {
 
 	filename <- trim(filename)
 	
-	if (.couldBeLonLat(object)) { longlat=TRUE } else { longlat=FALSE }
+	if (.couldBeLonLat(object)) { 
+		longlat=TRUE 
+	} else { 
+		longlat=FALSE 
+	}
 	                                                                        
 	rst <- raster(object)
 	if (!canProcessInMemory(rst, 2) && filename == '') {
-		filename <- rasterTmpFile()
-								
+		filename <- rasterTmpFile()			
 	}
 
 	xy <- xFromCol(rst, 1:ncol(rst))
@@ -25,10 +28,11 @@ distanceFromPoints <- function(object, xy, filename='', ...) {
 	
 	if (filename == '') {
 		v <- matrix(ncol=nrow(rst), nrow=ncol(rst))
-	} 
+	} else {
+		rst <- writeStart(rst, filename=filename, ...)
+	}
 	
 	pb <- pbCreate(nrow(rst), type=.progress(...))
-	rst <- writeStart(rst, filename=filename, ...)
 
 	for (r in 1:nrow(rst)) {	
 		vals <- arow

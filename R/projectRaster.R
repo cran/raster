@@ -73,8 +73,8 @@ projectExtent <- function(object, crs) {
 
 
 .computeRes <- function(raster, crs) {
-	x <- xmax(raster) - xmin(raster)
-	y <- ymax(raster) - ymin(raster)
+	x <- xmin(raster) + 0.5 * (xmax(raster) - xmin(raster))
+	y <- ymin(raster) + 0.5 * (ymax(raster) - ymin(raster))
 	res <- res(raster)
 	x1 <- x - 0.5 * res[1]
 	x2 <- x + 0.5 * res[1]
@@ -96,14 +96,16 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 	validObject(projection(from, asText=FALSE))
 	projfrom <- projection(from)
 	if (projfrom == "NA") { stop("input projection is NA") }
+	lonlat <- isLonLat(projfrom)
 	
 	if (missing(to)) {
 		if (missing(crs)) {
 			stop("'crs' argument is missing.")
 		}
-		to <- projectExtent(from, crs)
+		crs2 <- paste(crs, "+over")
+		to <- projectExtent(from, crs2)
 		if (missing(res)) {
-			res <- .computeRes(from, crs)
+			res <- .computeRes(from, crs2)
 		}
 		res(to) <- res
 		projto <- projection(to)
@@ -113,6 +115,8 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 		add <- min(5, min(dim(to)[1:2])/10) * max(res)
 		e@ymin <- e@ymin - add
 		e@ymax <- e@ymax + add
+		e@xmin <- e@xmin - add
+		e@xmax <- e@xmax + add
 		if (!is.character(projto)) projto <- projto@projargs
 		if (substr(projto, 1, 13) == "+proj=longlat") {
 			e@xmin <- max(-180, e@xmin)
@@ -127,7 +131,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 			if (missing(crs) | is.na(crs) | crs == 'NA' ) {
 				stop("output projection is NA") 
 			} else {
-				projection(to) <- crs
+				projto <- projection(to) <- crs
 			}
 		} 
 	}
@@ -165,8 +169,8 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 		to <- brick(to, values=FALSE)
 		to@data@nlayers <- nl
 	}
-	
-	if (!canProcessInMemory(to, 1) && filename == "") {
+
+	if (!canProcessInMemory(to, n=nl*2) && filename == "") {
 		filename <- rasterTmpFile()
 	}
 
@@ -200,13 +204,13 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 				srow <- max(startrow, tr$row[i])
 				erow <- min(endrow, (tr$row[i]+tr$nrows[i]-1))
 				nrows <- erow-srow+1
-				xy <- xyFromCell(to, cellFromRowColCombine(to, srow:erow, startcol:endcol) ) 
-				unProjXY <- .Call("transform", projto, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
-				unProjXY <- cbind(unProjXY[[1]], unProjXY[[2]])
-				iv <- matrix(FALSE, nrow=tr$nrows[i], ncol=to@ncols)
-				iv[(srow:erow)-tr$row[i]+1, startcol:endcol] <- TRUE
+				cells <- cellFromRowColCombine(to, srow:erow, startcol:endcol)
+				xy <- xyFromCell(to, cells ) 
+				xy <- .Call("transform", projto, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
+				xy <- cbind(xy[[1]], xy[[2]])
+				cells <- cells - (tr$row[i] - 1) * to@ncols
 				vals <- matrix(NA, nrow=tr$nrows[i] * to@ncols, ncol=nl)
-				vals[iv,] <- .xyValues(from, unProjXY, method=method)
+				vals[cells,] <- .xyValues(from, xy, method=method)
 			}
 			return(vals)
 		}
@@ -247,8 +251,10 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 		}	
 		
 	} else {
-	
+		# this seems to need smaller chunks
+		#cz <- max(5, 0.1 * .chunksize() / nlayers(to))
 		tr <- blockSize(to)
+		
 		pb <- pbCreate(tr$n, type=.progress(...))
 		for (i in 1:tr$n) {
 			r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
@@ -257,15 +263,13 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 			} else {
 				srow <- max(startrow, tr$row[i])
 				erow <- min(endrow, (tr$row[i]+tr$nrows[i]-1))
-				nrows <- erow-srow+1
-				xy <- xyFromCell(to, cellFromRowColCombine(to, srow:erow, startcol:endcol) ) 
-				unProjXY <- .Call("transform", projto, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
-				unProjXY <- cbind(unProjXY[[1]], unProjXY[[2]])
-				iv <- matrix(FALSE, nrow=tr$nrows[i], ncol=to@ncols)
-				iv[(srow:erow)-tr$row[i]+1, startcol:endcol] <- TRUE
+				cells <- cellFromRowColCombine(to, srow:erow, startcol:endcol)
+				xy <- xyFromCell(to, cells ) 
+				xy <- .Call("transform", projto, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
+				xy <- cbind(xy[[1]], xy[[2]])
+				cells <- cells - (tr$row[i] - 1) * to@ncols
 				vals <- matrix(NA, nrow=tr$nrows[i] * to@ncols, ncol=nl)
-				vals[iv,] <- .xyValues(from, unProjXY, method=method)
-				#vals <- as.vector(t(vals))
+				vals[cells,] <- .xyValues(from, xy, method=method)
 			}
 			if (inMemory) {
 				start <- cellFromRowCol(to, tr$row[i], 1)

@@ -68,7 +68,7 @@ setMethod('isLonLat', signature(x='CRS'),
 # ...
 	function(x){
 		if (is.na(x@projargs)) { 
-			p4str <- "NA"
+			return(NA)
 		} else {
 			p4str <- trim(x@projargs)
 		}	

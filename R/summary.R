@@ -12,7 +12,7 @@ if (!isGeneric("summary")) {
 
 
 setMethod('summary', signature(object='Raster'), 
-	function(object, maxsamp=5000, ...) {
+	function(object, maxsamp=100000, ...) {
 		sumobj <- new("RasterSummary")
 		sumobj@ncell <- ncell(object)
 		sumobj@inmemory <- inMemory(object) 
@@ -39,7 +39,7 @@ setMethod('summary', signature(object='Raster'),
 
 
 setMethod('summary', signature(object='RasterStack'), 
-	function(object, maxsamp=5000, ...) {
+	function(object, maxsamp=100000, ...) {
 		if (nlayers(object) == 0) {	stop('no layers in this RasterStack') }
 		
 		sumobj <- new("RasterSummary")
@@ -72,7 +72,7 @@ setMethod('summary', signature(object='RasterStack'),
 
 
 setMethod('summary', signature(object='RasterBrick'), 
-	function(object, maxsamp=5000, ...) {
+	function(object, maxsamp=100000, ...) {
 		sumobj <- new("RasterSummary")
 		sumobj@ncell <- ncell(object)
 		sumobj@inmemory <- inMemory(object)

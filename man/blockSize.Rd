@@ -10,7 +10,7 @@ This function can be used to suggest a chunk size, and corresponding row numbers
 }
 
 \usage{
-blockSize(x, chunksize, n=nlayers(x), minblocks=2)
+blockSize(x, chunksize, n=nlayers(x), minblocks=4)
 }
 
 \arguments{
