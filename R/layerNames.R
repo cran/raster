@@ -40,7 +40,7 @@ layerNames <- function(object) {
 	ln <- object@layernames
 	ln <- ln[1:nlayers(object)]
 	ln[is.na(ln)] <- ""
-	return(ln)
+	return(as.vector(ln))
 }
 
 
@@ -48,6 +48,7 @@ layerNames <- function(object) {
 	if (length(value) != nlayers(object)) {
 		stop('value has wrong length')
 	}
+	value <- as.vector(value)
 	if (inherits(object, "RasterLayer")) {
 		object@layernames <- value
 		return(object)

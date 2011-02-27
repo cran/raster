@@ -75,6 +75,7 @@ setMethod('extent', signature(x='numeric'),
 		if (length(x) > 4) {
 			warning('more elements than expected (should be 4)')
 		}
+		names(x) <- NULL
 		e <- new('Extent')
 		e@xmin <- x[1]
 		e@xmax <- x[2]

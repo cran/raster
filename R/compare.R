@@ -5,6 +5,25 @@
 # Licence GPL v3
 
 
+.splitProj <- function(x) {
+	x <- trim(unlist(strsplit(x, '\\+')))
+	x <- x[x!=""]
+#	x <- gsub('  ', ' ', x)
+#	x <- strsplit(x, ' ')
+#	x <- unlist(lapply(x, function(x)strsplit(x, '=')))
+#	x <- matrix(x, ncol=2, byrow=T)
+}
+
+.compareProj <- function(x, y) {
+# needs work, parse out elements and compare these
+# "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0" is the same as 
+# "+proj=longlat +ellps=WGS84 +datum=WGS84"
+
+	x <- substr(x, 1, 10)
+	y <- substr(y, 1, 10)
+	return(identical(x, y))
+}
+
 
 compare <- function(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=FALSE, tolerance, stopiffalse=TRUE, showwarning=FALSE) {
 
@@ -26,8 +45,8 @@ compare <- function(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=
 		if (extent) {
 			if (!(isTRUE(all.equal(extent(objects[[1]]), extent(objects[[i]]), tolerance=tolerance, scale=minres )))) {
 				result <- FALSE
-				if (stopiffalse) { stop('Different bounding box') }
-				if (showwarning) { warning('Different bounding box') }
+				if (stopiffalse) { stop('Different extent') }
+				if (showwarning) { warning('Different extent') }
 			}	
 		}	
 		if (rowcol) {
@@ -46,10 +65,10 @@ compare <- function(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=
 			if ( is.na( projection(objects[[i]] )) ) {
 				# skip
 			} else if (is.na(firstproj)) {
-				firstproj <- projection(objects[[i]])
-			} else if ( !(identical(firstproj, projection(objects[[i]]))))  {
+				firstproj <- substr(projection(objects[[i]]), 1, 10)
+			} else if ( ! identical(firstproj, substr(projection(objects[[i]]), 1, 10)))  {
 				result <- FALSE
-				if (stopiffalse) {stop('different projection')}
+				if (stopiffalse) { stop('different projection') }
 				if (showwarning) { warning('different projection') }
 			}
 		}

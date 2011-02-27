@@ -36,7 +36,7 @@
 			st@zname <- nc$var[[zvar]]$dim[[dim3]]$units[bands]
 			st@zvalue <- nc$var[[zvar]]$dim[[dim3]]$vals[bands]
 			if ( nc$var[[zvar]]$dim[[dim3]]$name == 'time' ) {	
-				st <- .doTime(st, nc, zvar, dim3) 
+				st <- try( .doTime(st, nc, zvar, dim3)  )
 			}
 			st@layers = lapply(as.list(bands), function(x){r@data@band <- x; r@layernames <- st@zvalue[x]; return(r)} )
 			st@layernames <- st@zvalue

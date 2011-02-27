@@ -43,12 +43,12 @@ pbStep <- function(pb, step=NULL, label='') {
 pbClose <- function(pb, timer) {
 	pbclass <- class(pb)
 	if (pbclass=="txtProgressBar") {
-		cat("\n")
 		close(pb)
+		cat("\n")
 	} else if (pbclass=="tkProgressBar") {
 		close(pb)
-	} else if (pbclass=="winProgressBar") {
-		close(pb)
+#	} else if (pbclass=="winProgressBar") {
+#		close(pb)
 	} 
 	if (missing(timer)) {
 		timer <- .timer()		

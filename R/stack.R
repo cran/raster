@@ -53,14 +53,18 @@ function(x, bands=NULL, ...) {
 		namesFromList <- TRUE
 	}
 
-	if (is.character(x) & length(x) == 1 & !is.null(bands)) {
+	if (is.character(x[[1]]) & length(x) == 1 & !is.null(bands)) {
 		first <- raster(x[[1]])
+		lb <- length(bands)
 		bands <- bands[bands %in% 1:nbands(first)]
 		if (length(bands) == 0) {
 			stop('no valid bands supplied')
 		}
+		if (length(bands) < lb) {
+			warning('invalid band numbers ignored')
+		}
 		for (b in bands) {
-			r[b] <- raster(x[[b]])
+			r[b] <- raster(x[[1]], band=b)
 			if (namesFromList) {
 				if (lstnames != "") {
 					layerNames(r[[b]]) <- lstnames

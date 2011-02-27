@@ -23,7 +23,7 @@ function(x, y, ..., fun, na.rm=TRUE, tolerance=0.05, filename="", format, overwr
 		stop('elements of "x" should all inherit from RasterLayer')
 	}
 
-	do.call(mosaic, x, tolerance=tolerance, filename=filename, format=format, overwrite=overwrite, progress=progress)
+	do.call(mosaic, c(x, fun=fun, na.rm=na.rm, tolerance=tolerance, filename=filename, format=format, overwrite=overwrite, progress=progress))
 	
 } )
 

@@ -344,7 +344,7 @@ Maintainer: Robert J. Hijmans \email{r.hijmans@gmail.com}
 }
 
 \section{Acknowledgements}{
-Extensive suggestions were made by Jonathan Greenberg, Matteo Mattiuzzi, and Steven Mosher. Contributions were also made by Neil Best, Roger Bivand, Isabelle Boulangeat, Herry Herry, Paul Hiemstra, Mayeul Kauffmann, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Agustin Lobo, Edzer Pebesma, David Ramsey, Jon Olav Skoien, Kevin Ummel, and others.
+Extensive suggestions were made by Jonathan Greenberg, Matteo Mattiuzzi, and Steven Mosher. Contributions were also made by Neil Best, Roger Bivand, Isabelle Boulangeat, Herry Herry, Paul Hiemstra, Mayeul Kauffmann, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Agustin Lobo, Edzer Pebesma, David Ramsey, Stefan Schlaffer, Jon Olav Skoien, Kevin Ummel, Shaun Walbridge, and others.
 }
 
 \keyword{package}

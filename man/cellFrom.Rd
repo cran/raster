@@ -7,6 +7,8 @@
 \alias{colFromX}
 \alias{rowFromY}
 \alias{cellFromXY}
+\alias{cellFromLine}
+\alias{cellFromPolygon}
 
   
 \title{Get cell, row, or column number}
@@ -25,6 +27,8 @@ cellFromCol(object, colnr)
 colFromX(object, x)
 rowFromY(object, y)
 cellFromXY(object, xy)
+cellFromLine(object, lns)
+cellFromPolygon(object, p, weights=FALSE)
 }
 
 \arguments{
@@ -34,7 +38,9 @@ cellFromXY(object, xy)
   \item{x}{x coordinate(s)}
   \item{y}{y coordinate(s)}
   \item{xy}{matrix of x and y coordinates, or a SpatialPoints or SpatialPointsDataFrame object}
-
+  \item{lns}{SpatialLines object}
+  \item{p}{SpatialPolygons object}
+  \item{weights}{Logical. If \code{TRUE}, the fraction of each cell that is covered is also returned}
 }
   
 \details{
@@ -42,7 +48,11 @@ cellFromXY(object, xy)
 }
 
 \value{
-row, column or cell number(s) 
+row, column or cell number(s). cellFromLine and cellFromPolygon return a list. 
+}
+
+\seealso{
+\code{\link{xyFromCell}}
 }
 
 \author{Robert J. Hijmans }
@@ -57,6 +67,12 @@ cellFromRow(r, 1)
 colFromX(r, 0.5)
 rowFromY(r, 0.5)
 cellFromXY(r, c(0.5, 0.5))
+
+cds1 <- rbind(c(-180,-20), c(-160,5), c(-60, 0), c(-160,-60), c(-180,-20))
+cds2 <- rbind(c(80,0), c(100,60), c(120,0), c(120,-55), c(80,0))
+pols <- SpatialPolygons(list(Polygons(list(Polygon(cds1)), 1), Polygons(list(Polygon(cds2)), 2)))
+cellFromPolygon(r, pols)
+
 }
 
 \keyword{spatial}

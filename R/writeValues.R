@@ -70,7 +70,7 @@ setMethod('writeValues', signature(x='RasterLayer'),
 			options(scipen=opsci)
 			
 		} else {
-			stop('huh?')
+			stop('huh? Was writeStart used?')
 		}
 		return(x)
 	} 		

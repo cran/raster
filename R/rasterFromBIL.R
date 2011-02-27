@@ -8,6 +8,11 @@
 	hdrfname <- .setFileExtensionHeader(filename, "BIL")
 	
 	ini <- readIniFile(hdrfname, token=' ')
+	
+	if (ini[1,1] == "ENVI") {
+		stop("This file has an ENVI header; I cannot read that natively, only via rgdal")
+	}
+
 	ini[,2] = toupper(ini[,2]) 
 
 	byteorder <- ''

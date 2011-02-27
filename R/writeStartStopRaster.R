@@ -3,7 +3,7 @@
 # Version 0.9
 # Licence GPL v3
 
-.startRasterWriting <- function(raster, filename, NAflag, bandorder='BIL', update=FALSE, ...) {
+.startRasterWriting <- function(x, filename, NAflag, bandorder='BIL', update=FALSE, ...) {
  	filename <- trim(filename)
 	if (filename == "") {
 		stop('missing filename')
@@ -14,15 +14,15 @@
 	fnamevals <- .setFileExtensionValues(filename, filetype)
 	datatype <- .datatype(...)
 	
-	dataType(raster) <- datatype
+	dataType(x) <- datatype
 	if (!missing(NAflag)) {
-		raster@file@nodatavalue <- NAflag
+		x@file@nodatavalue <- NAflag
 	}
 	
 	if (filetype %in% c('SAGA')) {
-		resdif <- abs((yres(raster) - xres(raster)) / yres(raster) )
+		resdif <- abs((yres(x) - xres(x)) / yres(x) )
 		if (resdif > 0.01) {
-			stop(paste("raster has unequal horizontal and vertical resolutions. Such data cannot be stored in SAGA format"))
+			stop(paste("x has unequal horizontal and vertical resolutions. Such data cannot be stored in SAGA format"))
 		}
 	}
 
@@ -32,51 +32,51 @@
 	}
 	
 	if (update) {
-		attr(raster@file, "con") <- file(fnamevals, "r+b")
+		attr(x@file, "con") <- file(fnamevals, "r+b")
 	} else {
-		attr(raster@file, "con") <- file(fnamevals, "wb")
+		attr(x@file, "con") <- file(fnamevals, "wb")
 	}
-	attr(raster@file, "dsize") <- dataSize(raster@file@datanotation)
-	attr(raster@file, "dtype") <- .shortDataType(raster@file@datanotation)
+	attr(x@file, "dsize") <- dataSize(x@file@datanotation)
+	attr(x@file, "dtype") <- .shortDataType(x@file@datanotation)
 	
-	raster@data@min <- rep(Inf, nlayers(raster))
-	raster@data@max <- rep(-Inf, nlayers(raster))
-	raster@data@haveminmax <- FALSE
-	raster@file@driver <- filetype
-	raster@file@name <- filename
+	x@data@min <- rep(Inf, nlayers(x))
+	x@data@max <- rep(-Inf, nlayers(x))
+	x@data@haveminmax <- FALSE
+	x@file@driver <- filetype
+	x@file@name <- filename
 	if (! bandorder %in% c('BIL', 'BIP', 'BSQ')) {
 		stop('bandorder must be one of "BIL", "BSQ", or "BIP"')
 	}
-	raster@file@bandorder <- bandorder
+	x@file@bandorder <- bandorder
 	
-	return(raster)
+	return(x)
 }
 
 
-.stopRasterWriting <- function(raster) {
-	close(raster@file@con)
-#	fnamevals <- .setFileExtensionValues(raster@file@name)
-#	attr(raster@file, "con") <- file(fnamevals, "rb")
-	raster@data@haveminmax <- TRUE
-	if (raster@file@dtype == "INT") {
-		raster@data@min <- round(raster@data@min)
-		raster@data@max <- round(raster@data@max)
-	} else if ( raster@file@dtype =='LOG' ) { 
-#		raster@data@min <- as.logical(raster@data@min)
-#		raster@data@max <- as.logical(raster@data@max)
+.stopRasterWriting <- function(x) {
+	close(x@file@con)
+#	fnamevals <- .setFileExtensionValues(x@file@name)
+#	attr(x@file, "con") <- file(fnamevals, "rb")
+	x@data@haveminmax <- TRUE
+	if (x@file@dtype == "INT") {
+		x@data@min <- round(x@data@min)
+		x@data@max <- round(x@data@max)
+	} else if ( x@file@dtype =='LOG' ) { 
+#		x@data@min <- as.logical(x@data@min)
+#		x@data@max <- as.logical(x@data@max)
 	}
-	hdr(raster, .driver(raster)) 
-	filename <- .setFileExtensionValues(filename(raster), raster@file@driver)
+	hdr(x, .driver(x)) 
+	filename <- .setFileExtensionValues(filename(x), x@file@driver)
 	
-	if (inherits(raster, 'RasterBrick')) {
+	if (inherits(x, 'RasterBrick')) {
 		r <- brick(filename, native=TRUE)
 	} else {
 		r <- raster(filename, native=TRUE)
 	}
 	
 	if (! r@data@haveminmax) {
-		r@data@min <- raster@data@min
-		r@data@max <- raster@data@max
+		r@data@min <- x@data@min
+		r@data@max <- x@data@max
 		r@data@haveminmax <- TRUE
 	}
 	return(r)

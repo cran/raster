@@ -9,7 +9,7 @@ Compute zonal statistics. That is, cross-tabulate the values of a Raster* object
 }
 
 \usage{
-zonal(x, zones, stat='mean', digits=0, progress) 
+zonal(x, zones, stat='mean', digits=0, na.rm=TRUE, progress) 
 }
 
 \arguments{
@@ -17,11 +17,13 @@ zonal(x, zones, stat='mean', digits=0, progress)
   \item{zones}{RasterLayer object with codes representing zones}
   \item{stat}{The function to be applied. Either as character: 'mean', 'min', 'max', 'sum'; or a function (see Details) }
   \item{digits}{Integer. Number of digits to maintain in 'zones'. By default averaged to an integer (zero digits)}
+  \item{na.rm}{Logical. If \code{TRUE}, \code{NA} values in \code{x} are ignored}
   \item{progress}{Character. "text", "window", or "" (the default, no progress bar) }   
 }
 
 \details{
-If \code{stat} is a \code{function}, \code{zonal} will fail (gracefully) for very large RasterLayers
+If \code{stat} is a \code{function}, \code{zonal} will fail (gracefully) for very large RasterLayers.
+The function should accept a \code{na.rm} argument. For example, \code{fun=length} will fail, but \code{fun(x, ...)=length(x)} will work (the '...' arguments catches the na.rm argument, but it is ignored in this case). 
 }
 
 \value{

@@ -120,9 +120,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 		stop('resolution should be one of: 0.5, 2.5, 5, 10')
 	}
 	if (res==2.5) { res <- '2-5' }
-	if (!var %in% c('tmin', 'tmax', 'prec', 'bio')) {
-		stop('var should be one of: tmin, tmax, prec, bio')
-	}
+	stopifnot(var %in% c('tmin', 'tmax', 'prec', 'bio', 'alt'))
 	path <- paste(path, 'wc', res, '/', sep='')
 	dir.create(path, showWarnings=FALSE)
 
@@ -135,7 +133,10 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 		rc <- paste(row, col, sep='') 
 		zip <- paste(var, '_', rc, '.zip', sep='')
 		zipfile <- paste(path, zip, sep='')
-		if (var  != 'bio') {
+		if (var  == 'alt') {
+			bilfiles <- paste(var, '_', rc, '.bil', sep='')
+			hdrfiles <- paste(var, '_', rc, '.hdr', sep='')			
+		} else if (var  != 'bio') {
 			bilfiles <- paste(var, 1:12, '_', rc, '.bil', sep='')
 			hdrfiles <- paste(var, 1:12, '_', rc, '.hdr', sep='')
 		} else {
@@ -146,7 +147,10 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 	} else {
 		zip <- paste(var, '_', res, 'm_bil.zip', sep='')
 		zipfile <- paste(path, zip, sep='')
-		if (var  != 'bio') {
+		if (var  == 'alt') {
+			bilfiles <- paste(var, '.bil', sep='')
+			hdrfiles <- paste(var, '.hdr', sep='')			
+		} else if (var  != 'bio') {
 			bilfiles <- paste(var, 1:12, '.bil', sep='')
 			hdrfiles <- paste(var, 1:12, '.hdr', sep='')
 		} else {
@@ -175,7 +179,11 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 			writeLines(x, h)
 		}
 	}
-	st <- stack(paste(path, bilfiles, sep=''))
+	if (var  == 'alt') {
+		st <- raster(paste(path, bilfiles, sep=''))
+	} else {
+		st <- stack(paste(path, bilfiles, sep=''))
+	}
 	projection(st) <- "+proj=longlat +datum=WGS84"
 	return(st)
 }
@@ -183,8 +191,8 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 
 .raster <- function(country, name, mask=TRUE, path, download, ...) {
 
-	country <- .getCountry(country)
-	path <- .getDataPath(path)
+	country <- raster:::.getCountry(country)
+	path <- raster:::.getDataPath(path)
 	if (mask) {
 		mskname <- '_msk_'
 		mskpath <- 'msk_'
@@ -193,9 +201,9 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 		mskpath <- ''		
 	}
 	filename <- paste(path, country, mskname, name, ".grd", sep="")
-#	theurl <- paste("http://www.r-gis.org/rgis/data/adm/", country, '_adm', level, ".RData", sep="")
+	# theurl <- paste("http://www.r-gis.org/rgis/data/adm/", country, '_adm', level, ".RData", sep="")
 
-	#http://diva-gis.org/data/msk_alt/MEX_msk_alt.zip
+	# http://diva-gis.org/data/msk_alt/MEX_msk_alt.zip
 	if (!file.exists(filename)) {
 		zipfilename <- filename
 		ext(zipfilename) <- '.zip'
@@ -203,7 +211,9 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 			if (download) {
 				theurl <- paste("http://diva-gis.org/data/", mskpath, name, "/", country, mskname, name, ".zip", sep="")
 				.download(theurl, zipfilename)
-				if (!file.exists(zipfilename))	{ cat("\nCould not download file -- perhaps it does not exist \n") }
+				if (!file.exists(zipfilename))	{ 
+					cat("\nCould not download file -- perhaps it does not exist \n") 
+				}
 			} else {
 				cat("\nFile not available locally. Use 'download = TRUE'\n")
 			}

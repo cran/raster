@@ -66,7 +66,7 @@ function(x, fun, filename='', na.rm, ...) {
 	
 	filename <- trim(filename)
 
-	if (canProcessInMemory(x, 2)) {
+	if (canProcessInMemory(x, nlayers(x) + 2)) {
 		x <- getValues(x)
 		if (makemat) { x <- matrix(x, ncol=1) }
 		if (missing(na.rm)) {

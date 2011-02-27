@@ -37,21 +37,26 @@ stackApply <- function(x, indices, fun, filename='', na.rm=TRUE, ...) {
 		a <- getValues(x)
 		if (makemat) { a < - matrix(a, ncol=1) }
 
+		pb <- pbCreate(length(uin), type=.progress(...))
+
 		if (rowcalc) {
 			for (j in uin) {
 				k <- which(ind == j)
 				v[, j] <- fun(a[ , k, drop=FALSE], na.rm=na.rm)
+				pbStep(pb)
 			}
 		} else {
 			for (j in uin) {
 				k <- which(ind == j)
 				v[, j] <- apply(a[ , k, drop=FALSE], 1, fun, na.rm=na.rm)
+				pbStep(pb)
 			}
 		}
 		out <- setValues(out, v)
 		if (filename != "") {
 			out <- writeRaster(out, filename=filename, ...)
 		}
+		pbClose(pb)
 		return(out)
 	}
 	

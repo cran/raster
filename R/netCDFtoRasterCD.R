@@ -46,7 +46,7 @@
 			a <- as.numeric(time)/365
 			year <- trunc(a)
 			doy <- (time - (year * 365))
-			time <- as.Date(doy, origin=paste(year-1, "-12-31", sep=''))
+			time <- as.Date(doy, origin=paste(year, "-1-1", sep='')) - 1
 		}
 		x@zvalue <- as.character(time)
 		x@zname <- as.character('Date')
@@ -114,9 +114,9 @@
 	conv <- att.get.ncdf(nc, 0, "Conventions")
 	# assuming "CF-1.0"
 	
-	zvar <- .varName(nc, varname)
+	zvar <- raster:::.varName(nc, varname)
 	
-	datatype <- .getRasterDTypeFromCDF( nc$var[[zvar]]$prec )
+	datatype <- raster:::.getRasterDTypeFromCDF( nc$var[[zvar]]$prec )
 	
 	dim3 <- 3
 	dims <- nc$var[[zvar]]$ndims
@@ -216,7 +216,12 @@
 	
 	natest <- att.get.ncdf(nc, zvar, "_FillValue")
 	if (natest$hasatt) { 
-		r@file@nodatavalue <- natest$value
+		r@file@nodatavalue <- as.numeric(natest$value)
+	} else {
+		natest <- att.get.ncdf(nc, zvar, "missing_value")
+		if (natest$hasatt) { 
+			r@file@nodatavalue <- as.numeric(natest$value)
+		}
 	}
 	r@data@fromdisk <- TRUE
 	
@@ -228,7 +233,7 @@
 		r@zvalue <- nc$var[[zvar]]$dim[[dim3]]$vals
 		
 		if ( nc$var[[zvar]]$dim[[dim3]]$name == 'time' ) {
-			r <- .doTime(r, nc, zvar, dim3)
+			r <- try( .doTime(r, nc, zvar, dim3)  )
 		}
 	}
 	

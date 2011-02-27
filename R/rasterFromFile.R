@@ -59,7 +59,7 @@
 			return ( .rasterFromASCIIFile(x) )
 		}
 		if ( fileext %in% c(".BIL", ".BIP", ".BSQ")) {
-			return ( .rasterFromGenericFile(x, ...) )
+			return ( .rasterFromGenericFile(x, type=objecttype, ...) )
 		}
 		if ( fileext %in% c(".RST", ".RDC") ) {
 #  not tested much

@@ -179,7 +179,7 @@ setMethod("Compare", signature(e1='numeric', e2='Raster'),
 setMethod("Compare", signature(e1='Raster', e2='Raster'),
 	function(e1,e2){
 		
-		compare(c(e1, e2), extent=TRUE, rowcol=TRUE, prj=TRUE, tolerance=0.0001, stopiffalse=TRUE) 
+		compare(c(e1, e2), extent=TRUE, rowcol=TRUE, prj=TRUE, tolerance=0.05, stopiffalse=TRUE) 
 		
 		if (nlayers(e1) > 1) {
 			if (nlayers(e2) > 1 & nlayers(e2) != nlayers(e1)) {
@@ -227,7 +227,7 @@ setMethod("Logic", signature(e1='Raster', e2='Raster'),
 			r <- raster(e1)
 		}
 	
-		cond <- compare(c(r, e2), extent=TRUE, rowcol=TRUE, prj=TRUE, tolerance=0.0001, stopiffalse=FALSE) 
+		cond <- compare(c(r, e2), extent=TRUE, rowcol=TRUE, prj=TRUE, tolerance=0.05, stopiffalse=FALSE) 
 		if (!cond) {
 			stop("Cannot compare Rasters that have different BasicRaster attributes. See compare()")
 		}	

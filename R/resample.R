@@ -4,18 +4,29 @@
 # Licence GPL v3
 
 
-resample <- function(from, to, method, filename="", ...)  {
 	
-	# to do: compare projections of from and to
+if (!isGeneric("resample")) {
+	setGeneric("resample", function(x, y, ...)
+		standardGeneric("resample"))
+}
+
+
+setMethod('resample', signature(x='Raster', y='Raster'), 
+function(x, y, method="bilinear", filename="", ...)  {
+	
+	# y do: compare projections of x and y
 		
-	if (nlayers(from) == 1) {
-		to <- raster(to)
+	ln <- layerNames(x)
+	nl <- nlayers(x)
+	if (nl == 1) {
+		y <- raster(y)
 	} else {
-		to <- brick(to, values=FALSE)
+		y <- brick(y, values=FALSE)
+		y@data@nlayers <- nl
 	}
 	
-	if (!hasValues(from)) {
-		return(to)
+	if (!hasValues(x)) {
+		return(y)
 	}	
 
 	if (missing(method)) {
@@ -28,24 +39,24 @@ resample <- function(from, to, method, filename="", ...)  {
 	
 	filename <- trim(filename)
 
-	resdif <- max(res(to) / res(from))
+	resdif <- max(res(y) / res(x))
 	if (resdif > 3) {
-		warning('you are resampling to a raster with a much larger cell size, perhaps you should use "aggregate" first')
+		warning('you are resampling y a raster with a much larger cell size, perhaps you should use "aggregate" first')
 	}
 	
-	e = intersectExtent(from, to, validate=TRUE)
+	e = intersectExtent(x, y, validate=TRUE)
 	
 	if (is.null(filename)){ filename <- "" }
 	
-	if (!canProcessInMemory(to, 3) && filename == '') {
+	if (!canProcessInMemory(y, 3) && filename == '') {
 		filename <- rasterTmpFile()	
 	}
 	
 	inMemory <- filename == ""
 	if (inMemory) {
-		v <- matrix(NA, nrow=ncell(to), nlayers(from))
+		v <- matrix(NA, nrow=ncell(y), ncol=nlayers(x))
 	} else {
-		to <- writeStart(to, filename=filename, ... )
+		y <- writeStart(y, filename=filename, ... )
 	}
 
 
@@ -54,18 +65,18 @@ resample <- function(from, to, method, filename="", ...)  {
 		cl <- getCluster()
 		on.exit( returnCluster() )
 		
-		nodes <- min(ceiling(to@nrows/10), length(cl)) # at least 10 rows per node
+		nodes <- min(ceiling(y@nrows/10), length(cl)) # at least 10 rows per node
 		
 		cat('Using cluster with', nodes, 'nodes\n')
 		flush.console()
 		
-		tr <- blockSize(to, minblocks=nodes)
+		tr <- blockSize(y, minblocks=nodes)
 		pb <- pbCreate(tr$n, type=.progress(...))
 
 		clFun <- function(i) {
 			r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
-			xy <- xyFromCell(to, cellFromRowCol(to, tr$row[i], 1) : cellFromRowCol(to, tr$row[i]+tr$nrows[i]-1, ncol(to)) ) 
-			.xyValues(from, xy, method=method)
+			xy <- xyFromCell(y, cellFromRowCol(y, tr$row[i], 1) : cellFromRowCol(y, tr$row[i]+tr$nrows[i]-1, ncol(y)) ) 
+			.xyValues(x, xy, method=method)
 		}
 		
         for (i in 1:nodes) {
@@ -78,8 +89,8 @@ resample <- function(from, to, method, filename="", ...)  {
 				if (! d$value$success) {
 					stop('cluster error')
 				}
-				start <- cellFromRowCol(to, tr$row[d$value$tag], 1)
-				end <- cellFromRowCol(to, tr$row[d$value$tag]+tr$nrows[d$value$tag]-1, to@ncols)
+				start <- cellFromRowCol(y, tr$row[d$value$tag], 1)
+				end <- cellFromRowCol(y, tr$row[d$value$tag]+tr$nrows[d$value$tag]-1, y@ncols)
 				v[start:end, ] <- d$value$value
 
 				ni <- nodes + 1
@@ -88,55 +99,56 @@ resample <- function(from, to, method, filename="", ...)  {
 				}
 				pbStep(pb)
 			}
-			to <- setValues(to, v)
+			y <- setValues(y, v)
 			
 		} else {
 		
 			for (i in 1:tr$n) {
 				d <- recvOneData(cl)
-				to <- writeValues(to, d$value$value, tr$row[d$value$tag])
+				y <- writeValues(y, d$value$value, tr$row[d$value$tag])
 				ni <- nodes+1
 				if (ni <= tr$n) {
 					sendCall(cl[[d$node]], clFun, ni, tag=ni)
 				}
 				pbStep(pb)
 			}
-			to <- writeStop(to)	
+			y <- writeStop(y)	
 		}	
 		
 	} else {
-		tr <- blockSize(to)
+		tr <- blockSize(y)
 		pb <- pbCreate(tr$n, type=.progress(...))
 		
 		if (inMemory) {
 			for (i in 1:tr$n) {
 				r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
-				xy <- xyFromCell(to, cellFromRowCol(to, tr$row[i], 1) : cellFromRowCol(to, tr$row[i]+tr$nrows[i]-1, ncol(to)) ) 
-				vals <- .xyValues(from, xy, method=method)
+				xy <- xyFromCell(y, cellFromRowCol(y, tr$row[i], 1) : cellFromRowCol(y, tr$row[i]+tr$nrows[i]-1, ncol(y)) ) 
+				vals <- .xyValues(x, xy, method=method)
 
-				start <- cellFromRowCol(to, tr$row[i], 1)
-				end <- cellFromRowCol(to, tr$row[i]+tr$nrows[i]-1, to@ncols)
+				start <- cellFromRowCol(y, tr$row[i], 1)
+				end <- cellFromRowCol(y, tr$row[i]+tr$nrows[i]-1, y@ncols)
 				v[start:end, ] <- vals
 
 				pbStep(pb, i)
 			}
-			to <- setValues(to, v)
+			y <- setValues(y, v)
 		} else {
 			for (i in 1:tr$n) {
 				r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
-				xy <- xyFromCell(to, cellFromRowCol(to, tr$row[i], 1) : cellFromRowCol(to, tr$row[i]+tr$nrows[i]-1, ncol(to)) ) 
-				vals <- .xyValues(from, xy, method=method)
+				xy <- xyFromCell(y, cellFromRowCol(y, tr$row[i], 1) : cellFromRowCol(y, tr$row[i]+tr$nrows[i]-1, ncol(y)) ) 
+				vals <- .xyValues(x, xy, method=method)
 	
-				to <- writeValues(to, vals, tr$row[i])
+				y <- writeValues(y, vals, tr$row[i])
 
 				pbStep(pb, i)
 			}
-			to <- writeStop(to)	
+			y <- writeStop(y)	
 		}
 	}
 
 	pbClose(pb)
-	return(to)
+	layerNames(y) <- ln
+	return(y)
 	
 }
-
+)

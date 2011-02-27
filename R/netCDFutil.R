@@ -31,7 +31,7 @@
 	if (!(dtype %in% c('LOG1S', 'INT1S', 'INT2S', 'INT4S', 'INT1U', 'INT2U', 'FLT4S', 'FLT8S'))) {
 		stop('not a valid data type')
 	}
-	type <- .shortDataType(dtype)
+	type <- tolower(.shortDataType(dtype))
 	size <- dataSize(dtype) * 8
 	signed <- dataSigned(dtype)
 	

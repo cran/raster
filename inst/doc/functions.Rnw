@@ -359,6 +359,11 @@ clusfun <- function(x, filename="", ...) {
 		# receive results from a node
 		d <- recvOneData(cl)
 		
+		# error?
+		if (! d$value$success) { 
+			stop('cluster error')
+		}
+		
 		# which block is this?
 		b <- d$value$tag
 		cat('received block: ',b,'\n'); flush.console();
