@@ -1,7 +1,7 @@
 # R classes for raster (grid) type spatial data
 # Robert J. Hijmans, r.hijmans@gmail.com
 # November 2008
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
 
 
@@ -65,7 +65,7 @@ setClass ('BasicRaster',
 setClass ('Raster', contains = c('BasicRaster', 'VIRTUAL') )
 
 	
-setClass('RasterFile', 
+setClass('.RasterFile', 
 	representation (
 		name ='character',
 		datanotation='character',
@@ -95,7 +95,7 @@ setClass('RasterFile',
 )
 
 
-setClass('SingleLayerData', 
+setClass('.SingleLayerData', 
 	representation (
 		values='vector', 
 		offset='numeric',
@@ -133,8 +133,8 @@ setClass('SingleLayerData',
 
 
 
-setClass('SingleLayerDataSparse', 
-	contains = 'SingleLayerData',
+setClass('.SingleLayerDataSparse', 
+	contains = '.SingleLayerData',
 	representation (
 		indices = 'vector'
 	),
@@ -145,7 +145,7 @@ setClass('SingleLayerDataSparse',
 
 
 
-setClass ('RasterLegend',
+setClass ('.RasterLegend',
 	representation (
 		type = 'character',
 		values = 'vector',
@@ -161,9 +161,9 @@ setClass ('RasterLegend',
 setClass ('RasterLayer',
 	contains = 'Raster',
 	representation (
-		file = 'RasterFile',
-		data = 'SingleLayerData',
-		legend = 'RasterLegend',
+		file = '.RasterFile',
+		data = '.SingleLayerData',
+		legend = '.RasterLegend',
 		history = 'vector'
 		),
 	prototype (
@@ -172,12 +172,12 @@ setClass ('RasterLayer',
 	)
 
 
-setClass ('RasterLayerSparse',
+setClass ('.RasterLayerSparse',
 	contains = 'Raster',
 	representation (
-		file = 'RasterFile',
-		data = 'SingleLayerData',
-		legend = 'RasterLegend',
+		file = '.RasterFile',
+		data = '.SingleLayerData',
+		legend = '.RasterLegend',
 		history = 'vector'
 		),
 	prototype (
@@ -186,7 +186,7 @@ setClass ('RasterLayerSparse',
 	)
 	
 
-setClass('MultipleRasterData', 
+setClass('.MultipleRasterData', 
 	representation (
 		values='matrix', 
 
@@ -235,9 +235,9 @@ setClass('MultipleRasterData',
 setClass ('RasterBrick',
 	contains = 'Raster',
 	representation (
-		file = 'RasterFile',
-		data = 'MultipleRasterData',
-		legend = 'RasterLegend',
+		file = '.RasterFile',
+		data = '.MultipleRasterData',
+		legend = '.RasterLegend',
 		history = 'vector'
 		),
 	prototype (
@@ -275,7 +275,7 @@ setClassUnion("RasterStackBrick", c("RasterStack", "RasterBrick"))
 
 
 
-setClass ('RasterList',
+setClass ('.RasterList',
 	representation (
 	    filename ='character',
 		layers ='list'

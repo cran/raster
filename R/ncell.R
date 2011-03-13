@@ -9,7 +9,7 @@ if (!isGeneric("ncell")) {
 		standardGeneric("ncell"))
 }	
 
-setMethod('ncell', signature(x='Raster'), 
+setMethod('ncell', signature(x='BasicRaster'), 
 	function(x) {
 		return(as.numeric(x@ncols) * x@nrows)
 	}

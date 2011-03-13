@@ -56,7 +56,23 @@
 }
 
 
-pointDistance <- function (p1, p2, longlat=FALSE,  ...) {
+.distm2 <- function (x, y, longlat) {
+	if (longlat) { 
+		fun <- .haversine 
+	} else { 
+		fun <- .planedist
+	}
+	n = nrow(x)
+	m = nrow(y)
+	dm = matrix(ncol=m, nrow=n)
+	for (i in 1:n) {
+		dm[i,] = fun(x[i, 1], x[i, 2], y[, 1], y[, 2])
+	}
+	return(dm)
+}
+
+
+pointDistance <- function (p1, p2, longlat,  ...) {
 
 	type <- list(...)$type
 	if (!is.null(type)) {
@@ -71,7 +87,14 @@ pointDistance <- function (p1, p2, longlat=FALSE,  ...) {
 			warning("type='GreatCircle' is a depracated argument. Use 'longlat=FALSE'")
 		}
 	}		
+	if (missing(longlat)) {
+		stop('you must provide a "longlat" argument (TRUE/FALSE)')
+	}
+	
+	if (longlat == 'GreatCircle') longlat <- TRUE
+	if (longlat == 'Euclidean') longlat <- FALSE
 
+	
 	p1 <- .pointsToMatrix(p1)
 	if (missing(p2)) {
 		return(.distm(p1, longlat))
@@ -81,7 +104,7 @@ pointDistance <- function (p1, p2, longlat=FALSE,  ...) {
 	
 	if(length(p1[,1]) != length(p2[,1])) {
 		if(length(p1[,1]) > 1 & length(p2[,1]) > 1) {
-			stop('p1 and p2 do not have the same number of rows; and neither has only a single row')
+			return(.distm2(p1, p2, longlat))
 		}
 	}
 	

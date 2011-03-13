@@ -23,15 +23,17 @@ setMethod('crosstab', signature(x='RasterLayer', y='RasterLayer'),
 			tr <- blockSize(x, n=2)
 			pb <- pbCreate(tr$n, type=progress)	
 			for (i in 1:tr$n) {
-				d <- table( round(getValuesBlock(x, row=tr$row[i], nrows=tr$size), digits=digits), round(getValuesBlock(y, row=tr$row[i], nrows=tr$size), digits=digits))
+			
+				d <- table( round(getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i]), digits=digits), round(getValuesBlock(y, row=tr$row[i], nrows=tr$nrows[i]), digits=digits))
 				if (length(dim(d))==1) {
 					first = as.numeric(names(d))
 					second = first
+					d <- matrix(d)
 				} else {
 					first = as.numeric(rep(rownames(d), each=ncol(d)))
 					second = as.numeric(rep(colnames(d), times=nrow(d)))
 				}
-				count = as.vector(matrix(d))
+				count = as.vector(t(d))
 				res = rbind(res, cbind(first, second, count))
 				pbStep(pb, i)
 			}

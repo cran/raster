@@ -33,14 +33,12 @@ Make an interactive 3D plot (map) of a RasterLayer. This is a wrapper around \co
 
 \examples{
 if (require(rgl)) {
-r <- raster(system.file("external/test.grd", package="raster"))
-x = r
-x[] = 1:ncell(x)
-x <- mask(x, r)
-plot3D(r, drape=x)
+data(volcano)
+r <- raster(volcano)
+x = cut(r, 5)
+plot3D(r, drape=x, zfac=4)
 decorate3d(xlab = "x", ylab = "y", zlab = "z", axes=TRUE)
 }
-
 }
 
 \keyword{methods}

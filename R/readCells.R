@@ -7,6 +7,12 @@
 
 
 .readCells <- function(x, cells) {
+	
+	if (length(cells) < 1) {
+#		cat(cells,"\n")
+#		flush.console()
+		return(NULL)
+	}
 	cells <- cbind(1:length(cells), cells)
 	cells <- cells[order(cells[,2]), ,drop=FALSE]
 	uniquecells <- sort(na.omit(unique(cells[,2])))

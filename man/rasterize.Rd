@@ -12,9 +12,9 @@
 \title{Rasterize points, lines, or polygons}
 
 \description{
-Transfer values associate with 'vector' type spatial data (points, lines, polygons) to the spatially overlapping raster cells. 
+Transfer values associated with 'vector' type spatial data (points, lines, polygons) to the spatially overlapping raster cells. 
 
-This function has replaced the obsolete functions pointsToRaster, linesToRaster, and polygonsToRaster.
+For polygons, 'spatially overlapping' means that the polygon must cover the center of a raster cell. All cells that are touched by a line are considered to be overlapping. Points that fall on a border between cells are placed in the cell to the right and/or in the cell below.
 }
 
 \usage{
@@ -38,7 +38,7 @@ rasterize(x, y, ...)
 
 \tab \code{background} \tab  Value to put in the cells that are not covered by any of the features of \code{x}. Default is \code{NA} \cr
 
-\tab \code{mask} \tab  Logical. If \code{TRUE} the values of the input Raster object are 'masked' by the spatial features of \code{x}. That is, cells that spatially overlap with the spatial features retain their values, the other cells become \code{NA}. Default is \code{FALSE}. Cannot be used when \code{update=TRUE} \cr
+\tab \code{mask} \tab  Logical. If \code{TRUE} the values of the input Raster object are 'masked' by the spatial features of \code{x}. That is, cells that spatially overlap with the spatial features retain their values, the other cells become \code{NA}. Default is \code{FALSE}. This option cannot be used when \code{update=TRUE} \cr
 
 \tab \code{update} \tab  Logical. If \code{TRUE}, the values of the Raster* object are updated for the cells that overlap the spatial features of \code{x}. Default is \code{FALSE}. Cannot be used when \code{mask=TRUE} \cr
 
@@ -56,18 +56,19 @@ rasterize(x, y, ...)
 
 The value of a grid cell is determined by the values associated with the points and function \code{fun}.
 
-If \code{x} represents points, each point is assinged to a grid cell. The default result is 1/NA. That is, cells with one or more points get value 1 and the other cells get the background value (default is \code{NA}.
+If \code{x} represents points, each point is assinged to a grid cell. The default result is that cells with one or more points get value 1 and the other cells get the background value (default is \code{NA}).
 
-If you want to know the number of points in each grid cell, use \code{fun=function(x,...){length(x)}}. I.e., for each cell it computes the length of the vector of points. You can also use \code{fun=sum}, because the default 'field' value of a point is 1. For the number of unique values use \code{fun=function(x){length(unique(x))}}
+If you want to know the number of points in each grid cell, use \code{fun=sumfunction(x,...){length(x)}}. I.e., for each cell it computes the length of the vector of points. You can also use \code{fun=sum}, because the default 'field' value of a point is 1. For the number of unique values use \code{fun=function(x, ...){ length(unique(na.rm(x)))}}
 
 There is one additional argument:
 
 \tabular{rll}{
-\tab \code{na.rm}   .\tab Remove \code{NA} values? Default is \code{TRUE} \cr
+\tab \code{na.rm} \tab If \code{TRUE}, \code{NA} values are removed if \code{fun} honors the \code{na.rm} argument \cr
 }
 
-Because of this, all functions \code{fun} must accept an \code{na.rm} argument, either explicitly or through 'dots'. This means that \code{fun=lenght} fails, but \code{fun=function(x,...)lenght(x)} works (but ignores the \code{na.rm} argument. To use the \code{na.rm} argument you can use a function like this \code{fun=function(x,na.rm){if (na.rm) length(na.omit(x)) else (length(x)}}, or use a function that removes NA values in all cases, like this function to compute the number of unique values "richness": \code{fun=function(x, ...){length(unique(na.omit(x)))}}. You can also pass multiple functions using a statement like \code{fun=function(x)c(lenght(x),mean(x))}, in which case the returned object is a RasterBrick (multiple layers).
+Because of this argument, all functions \code{fun} must accept an \code{na.rm} argument, either explicitly or through 'dots'. This means that \code{fun=length} fails, but \code{fun=function(x,...)length(x)} works, although it ignores the \code{na.rm} argument. To use the \code{na.rm} argument you can use a function like this \code{fun=function(x,na.rm){if (na.rm) length(na.omit(x)) else (length(x)}}, or use a function that removes NA values in all cases, like this function to compute the number of unique values "richness": \code{fun=function(x, ...){length(unique(na.omit(x)))}}. 
 
+You can also pass multiple functions using a statement like \code{fun=function(x)c(lenght(x),mean(x))}, in which case the returned object is a RasterBrick (multiple layers).
 
 
 \bold{= polygons and Extent =}
@@ -99,8 +100,13 @@ n <- 1000
 x <- runif(n) * 360 - 180
 y <- runif(n) * 180 - 90
 xy <- cbind(x, y)
-vals <- rep(1, n)
-r <- rasterize(xy, r, vals, fun=sum)
+# point or not?
+r1 <- rasterize(xy, r)
+# how many points?
+r2 <- rasterize(xy, r, fun=sum)
+vals <- runif(n)
+# sum of the values associated with the points
+r3 <- rasterize(xy, r, vals, fun=sum)
 
 # with a SpatialPointsDataFrame
 vals <- 1:n

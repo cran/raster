@@ -83,7 +83,7 @@ pointsToRaster <- function(raster, xy, values=1, fun, ...) {
 			field <- rep(field, dim(xy)[1])
 		}
 		if (dim(xy)[1] != length(field)) {
-			stop('number of points does not match the number of field')
+			stop('number of points does not match the number of fields')
 		}
 	}
 	

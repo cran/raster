@@ -90,7 +90,6 @@ RasterLayer, RasterStack, and RasterBrick objects are, as a group, referred to a
 
   \tabular{ll}{
     \code{\link{calc}} \tab Computations on a single Raster* object \cr
-    \code{\link{stackApply}} \tab Computations on groups of layers in Raster* object \cr
     \code{\link{overlay}} \tab Computations on multiple RasterLayer objects \cr
     \code{\link{cover}} \tab First layer covers second layer except where the first layer is NA \cr
     \code{\link{mask}} \tab Use values from first Raster except where cells of the mask Raster are NA (these become NA)\cr
@@ -98,6 +97,8 @@ RasterLayer, RasterStack, and RasterBrick objects are, as a group, referred to a
     \code{\link{subs}} \tab Reclassify values using a 'is-becomes' matrix \cr	
     \code{\link{reclass}} \tab Reclassify using a 'from-to-becomes' matrix \cr
     \code{\link{init}} \tab Initialize cells with new values \cr	
+    \code{\link{stackApply}} \tab Computations on groups of layers in Raster* object \cr
+    \code{\link{stackSelect}} \tab Select cell values from different layers using an index RasterLayer\cr
   }
 }
 

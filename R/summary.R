@@ -13,7 +13,7 @@ if (!isGeneric("summary")) {
 
 setMethod('summary', signature(object='Raster'), 
 	function(object, maxsamp=100000, ...) {
-		sumobj <- new("RasterSummary")
+		sumobj <- new(".RasterSummary")
 		sumobj@ncell <- ncell(object)
 		sumobj@inmemory <- inMemory(object) 
 		if ( sumobj@inmemory ) {
@@ -42,7 +42,7 @@ setMethod('summary', signature(object='RasterStack'),
 	function(object, maxsamp=100000, ...) {
 		if (nlayers(object) == 0) {	stop('no layers in this RasterStack') }
 		
-		sumobj <- new("RasterSummary")
+		sumobj <- new(".RasterSummary")
 		sumobj@ncell <- ncell(object)
 		for (n in 1:nlayers(object)) {
 			sumobj@inmemory <- c(sumobj@inmemory, inMemory(object@layers[[n]]) )
@@ -73,7 +73,7 @@ setMethod('summary', signature(object='RasterStack'),
 
 setMethod('summary', signature(object='RasterBrick'), 
 	function(object, maxsamp=100000, ...) {
-		sumobj <- new("RasterSummary")
+		sumobj <- new(".RasterSummary")
 		sumobj@ncell <- ncell(object)
 		sumobj@inmemory <- inMemory(object)
 
@@ -112,7 +112,7 @@ setMethod('summary', signature(object='RasterBrick'),
 )	
 
 
-setClass('RasterSummary',
+setClass('.RasterSummary',
 	representation (
 		ncell = 'numeric',
 		inmemory = 'logical',
@@ -129,7 +129,7 @@ setClass('RasterSummary',
 )
 	
 
-setMethod('show', signature(object='RasterSummary'), 	
+setMethod('show', signature(object='.RasterSummary'), 	
 	function(object) {
 		cat ("Cells: " , object@ncell, "\n")
 		cat("NAs  : ", object@NAs, "\n")

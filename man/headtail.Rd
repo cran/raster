@@ -9,7 +9,7 @@
 \alias{tail,RasterLayer-method}
 \alias{tail,RasterStackBrick-method}
 
-\title{Show the head or tail of the values of a RasterLaayer}
+\title{Show the head or tail of a Raster* object}
 
 \description{
 Show the head (first rows/columns) or tail (last rows/columns) of the cell values of a Raster* object. 
