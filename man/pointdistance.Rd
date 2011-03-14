@@ -9,7 +9,7 @@ Calculate the geographic distance between two (sets of) points on a sphere (\cod
 }
 
 \usage{
-pointDistance(p1, p2, longlat=FALSE, ...)
+pointDistance(p1, p2, longlat, ...)
 }
 
 \arguments{

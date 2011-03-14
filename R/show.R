@@ -43,8 +43,7 @@ setMethod ('show' , 'Extent',
 setMethod ('show' , 'BasicRaster', 
 	function(object) {
 		cat('class       :' , class(object), '\n')
-		cat('dimensions  : ', nrow(object), ', ', ncol(object), ', (nrow, ncol)\n', sep="" ) 
-		#cat('ncell       :' , ncell(object), '\n')
+		cat('dimensions  : ', nrow(object), ', ', ncol(object), ', ', ncell(object),'  (nrow, ncol, ncell)\n', sep="" ) 
 		cat('resolution  : ' , xres(object), ', ', yres(object), '  (x, y)\n', sep="")
 		cat('extent      : ' , object@extent@xmin, ', ', object@extent@xmax, ', ', object@extent@ymin, ', ', object@extent@ymax, '  (xmin, xmax, ymin, ymax)\n', sep="")
 		cat('projection  :' , projection(object, TRUE), '\n')
@@ -54,10 +53,8 @@ setMethod ('show' , 'BasicRaster',
 setMethod ('show' , 'RasterLayer', 
 	function(object) {
 		cat('class       :' , class(object), '\n')
-#		cat('filename    :' , filename(object), '\n')
 		if (nbands(object) > 1) { cat('band        :' , band(object), '\n')	}	
-		cat('dimensions  : ', nrow(object), ', ', ncol(object), ', 1  (nrow, ncol, nlayers)\n', sep="" ) 
-		#cat('ncell       :' , ncell(object), '\n')
+		cat('dimensions  : ', nrow(object), ', ', ncol(object), ', ', ncell(object),'  (nrow, ncol, ncell)\n', sep="" ) 
 		cat('resolution  : ' , xres(object), ', ', yres(object), '  (x, y)\n', sep="")
 		cat('extent      : ' , object@extent@xmin, ', ', object@extent@xmax, ', ', object@extent@ymin, ', ', object@extent@ymax, '  (xmin, xmax, ymin, ymax)\n', sep="")
 		cat('projection  :' , projection(object, TRUE), '\n')

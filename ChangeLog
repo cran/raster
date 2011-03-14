@@ -1,3 +1,19 @@
+--- 13-Mar-2011, version 1.8-2
+new function 'slopeAspect' that computes slope and/or aspect
+
+--- 10-Mar-2011, version 1.8-1
+Fixed errir that occured in extract (.polygonValues) when a polygon smaller than the cell size and weights=T (reproted by Xin Lin)
+
+--- 9-Mar-2011, version 1.8-0
+new function 'stackSelect' to select cell values from a single layer of a stack, using a RasterLayer to provide the indices.
+bug fix in cross-tab for large files
+
+--- 28-Feb-2011,  version 1.7-48
+colortable no longer lost after using 'crop' (reported by Don MacQueen)
+
+--- 26-Feb-2011,  version 1.7-46
+Improvments to projectRaster based on comments by George Riner
+
 --- 22-Feb-2011,  version 1.7-43
 resample no longer looses layer names (reported by Brian Anacker)
 

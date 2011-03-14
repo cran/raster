@@ -29,16 +29,18 @@ function(x, i, j, ... ,drop=TRUE) {
 	
 	if (! hasValues(i) ) {
 		i <- extent(i)
-		callNextMethod(x, i=i, j=j, ..., drop=drop)
+		callNextMethod(x, i=i, ..., drop=drop)
 	
 	} else if (compare(x, i, stopiffalse=FALSE, showwarning=FALSE)) {
 		i <- as.logical( getValues(i) )
-		callNextMethod(x, i=i, j=j, ..., drop=drop)
-		
+		i[is.na(i)] <- FALSE
+		i <- (1:ncell(x))[i]
+		.doExtract(x, i, drop=drop)
+
 	} else {
 
 		i <- intersectExtent(x, i)
-		callNextMethod(x, i=i, j=j, ..., drop=drop)
+		callNextMethod(x, i=i, ..., drop=drop)
 	}
 })
 
@@ -87,14 +89,14 @@ function(x, i, j, ... ,drop=TRUE) {
 
 
 setMethod("[", c("Raster", "logical", "missing"),
-function(x, i, j, ... ,drop=TRUE) {
+function(x, i, j, ... , drop=TRUE) {
 	theCall <- sys.call(-1)
 	narg <- length(theCall) - length(match.call(call=sys.call(-1)))
 	if (narg > 0) {
 		stop('logical indices are only accepted if only the first index is used')
 	}
 	i[is.na(i)] <- FALSE
-	i <- 1:ncell(x)[i]
+	i <- (1:ncell(x))[i]
 	.doExtract(x, i, drop=drop)
 })
 
@@ -103,7 +105,8 @@ function(x, i, j, ... ,drop=TRUE) {
 	if (! hasValues(x) ) {
 		stop('no data associated with this Raster object')
 	}
-
+	if (length(i) < 1) return(NULL) 
+	
 	nacount <- sum(is.na(i))
 	if (nacount > 0) {
 		warning('some indices are invalid (NA returned)')

@@ -35,7 +35,7 @@ polygonValues <- function(p, x, ...) {
 				rc[rc==0] <- NA
 				xy <- rasterToPoints(rc)
 				weight <- xy[,3] / 100
-				xy <- xy[,-3]
+				xy <- xy[,-3,drop=FALSE]
 			} else {
 				rc <- .polygonsToRaster(pp, rc, silent=TRUE)
 				xy <- rasterToPoints(rc)[,-3,drop=FALSE]

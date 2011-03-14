@@ -6,7 +6,7 @@
 \alias{ncol,BasicRaster-method}
 \alias{ncell}
 \alias{ncell,ANY-method}
-\alias{ncell,Raster-method}
+\alias{ncell,BasicRaster-method}
 \alias{nrow<-}
 \alias{ncol<-}
 

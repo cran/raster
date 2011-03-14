@@ -16,6 +16,7 @@ if (!isGeneric("crop")) {
 setMethod('crop', signature(x='Raster', y='ANY'), 
 function(x, y, filename='', ...) {
 	filename <- trim(filename)
+	leg <- x@legend
 
 	datatype <- list(...)$datatype
 	if (is.null(datatype)) { 
@@ -76,6 +77,7 @@ function(x, y, filename='', ...) {
 		outRaster <- writeStop(outRaster)
 		pbClose(pb)
 	}
+	outRaster@legend <- leg
 	return(outRaster)
 }
 )

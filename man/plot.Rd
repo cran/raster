@@ -30,7 +30,7 @@ Points, lines, and polygons can be drawn on top of a map using \code{plot(..., a
 
 \tabular{rll}{
 \tab \code{x} \tab a RasterLayer object \cr
-\tab \code{col}  \tab  A color palette, i.e. a vector of n contiguous colors such as \code{rainbow}, \code{heat.colors}, and \code{topo.colors}, on one or your own making \cr
+\tab \code{col}  \tab  A color palette, i.e. a vector of n contiguous colors such as \code{rainbow}, \code{heat.colors}, and \code{topo.colors}, or one or your own making \cr
 \tab \code{maxpixels}  \tab  Maximum number of pixels used for the map  \cr
 \tab \code{...}  \tab  Any argument that can be passed to \code{\link[fields]{image.plot}} and to \code{\link[graphics]{plot}}  \cr
 }
@@ -57,7 +57,7 @@ If \code{x} has a 'Color table', the default all to \code{plot} is:
 \tabular{rll}{
 \tab \code{x} \tab a RasterStack or RasterBrick object \cr
 \tab \code{y} \tab The index of a RasterLayer in a RasterStack to be plotted. Either a single number between 1 and nlayers(rstack), a vector of numbers, or missing. If y is missing, all RasterLayers in the RasterStack will be plotted.\cr
-\tab \code{col}  \tab  A color palette, i.e. a vector of n contiguous colors such as \code{rainbow}, \code{heat.colors}, and \code{topo.colors}, on one or your own making \cr
+\tab \code{col}  \tab  A color palette, i.e. a vector of n contiguous colors such as \code{rainbow}, \code{heat.colors}, and \code{topo.colors}, or one or your own making \cr
 \tab \code{maxpixels}  \tab  Maximum number of pixels used for the map  \cr
 \tab \code{axes}  \tab  see \code{?image} \cr
 \tab \code{xlab}  \tab  see \code{?image} \cr
