@@ -14,18 +14,22 @@ setMethod('subs', signature(x='RasterLayer', y='data.frame'),
 function(x, y, by=1, which=2, subsWithNA=TRUE, filename='', ...) { 
 	
 		localmerge <- function(x, y, subNA) {
-			x <- cbind( x, 1:length(x) )
-			if (! subNA) {
-				y <- merge(x, y, by=1)
-				x[y[,2], 1] <- y[,3]
-				return(x[,1])
+			x <- cbind(1:length(x), x)
+			if (! subNA ) {
+				y <- merge(x, y, by.x=2, by.y=1)
+				x[y[,2], 2] <- y[,3]
+				return(x[,2])
 			} else {
-				x <- merge(x, y, by=1, all.x=TRUE)
-				x <- x[order(x[,2]), 3]
+				x <- as.matrix(merge(x, y, by.x=2, by.y=1, all.x=TRUE))
+				x <- x[order(x[,2]), -c(1:2)]
 				return(x)
 			}
 		}
 
+		if (!subsWithNA & length(which) > 1) {
+			stop('you cannot use subsWithNA=FALSE if length(which) > 1')
+		}
+		
 		y <- y[ , c(by, which)]
 
 		tt <- table(y[,1])
@@ -35,11 +39,15 @@ function(x, y, by=1, which=2, subsWithNA=TRUE, filename='', ...) {
 		}
 
 		r <- raster(x)
+		if (length(which) > 1) {
+			r <- brick(r)
+		}
 		
 		filename <- trim(filename)
 		
 		if (canProcessInMemory(x, 3)) {
-			r <- setValues(r, localmerge( getValues(x), y, subsWithNA))
+			v <- localmerge( getValues(x), y, subsWithNA )
+			r <- setValues(r, v)
 			if (filename != '') {
 				r <- writeRaster(r, filename=filename, ...)
 			}

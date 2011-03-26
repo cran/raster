@@ -14,7 +14,7 @@
 }
 
 
-.rasterObjectFromFile <- function(x, band=1, objecttype='RasterLayer', native=FALSE, ...) {
+.rasterObjectFromFile <- function(x, band=1, objecttype='RasterLayer', native=FALSE, silent=TRUE, ...) {
 	x <- trim(x)
 	if (x=='' | x=='.') { # etc? 
 		stop('provide a valid filename')
@@ -34,7 +34,7 @@
 		if ( file.exists( grdfile) & file.exists( grifile)) {
 			return ( .rasterFromRasterFile(grdfile, band=band, objecttype) )
 		} else {
-			stop('file: ', x, ' does not exist')
+			# stop('file: ', x, ' does not exist')
 		}
 	}
 
@@ -82,8 +82,11 @@
 	if (! .requireRgdal() ) {
 		stop("Cannot create RasterLayer object from this file; perhaps you need to install rgdal first")
 	}
-	test <- try( r <- .rasterFromGDAL(x, band=band, objecttype, ...), silent=FALSE )
+	test <- try( r <- .rasterFromGDAL(x, band=band, objecttype, ...), silent=silent )
 	if (class(test) == "try-error") {
+		if (!file.exists(x)) {
+			stop("Cannot create a RasterLayer object from this file. (file does not exist)")
+		}
 		stop("Cannot create a RasterLayer object from this file.")
 	} else {
 		return(r)

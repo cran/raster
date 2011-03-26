@@ -11,7 +11,16 @@ if (!isGeneric("plot")) {
 
 
 setMethod("plot", signature(x='RasterStackBrick', y='ANY'), 
-	function(x, y, col=rev(terrain.colors(255)), maxpixels=100000, ...)  {
+	function(x, y, col=rev(terrain.colors(255)), maxpixels=100000, alpha=1, ...)  {
+	
+		if (alpha < 1) {
+			alpha <- max(alpha, 0) * 255 + 1
+			a <- c(0:9, LETTERS[1:6])
+			alpha <- paste(rep(a, each=16), rep(a, times=16), sep='')[alpha]
+			col <- paste(substr(col, 1, 7), alpha, sep="")
+		}
+
+	
 		if (missing(y)) {
 			y <- 1:nlayers(x)
 			if (length(y) > 16) {
@@ -57,7 +66,14 @@ setMethod("plot", signature(x='RasterStackBrick', y='ANY'),
 
 setMethod("plot", signature(x='RasterLayer', y='missing'), 
 
-function(x, col=rev(terrain.colors(255)), maxpixels=500000, levelplot=FALSE, newstyle=FALSE, ...)  {
+function(x, col=rev(terrain.colors(255)), maxpixels=500000, levelplot=FALSE, newstyle=FALSE, alpha=1, ...)  {
+
+		if (alpha < 1) {
+			alpha <- max(alpha, 0) * 255 + 1
+			a <- c(0:9, LETTERS[1:6])
+			alpha <- paste(rep(a, each=16), rep(a, times=16), sep='')[alpha]
+			col <- paste(substr(col, 1, 7), alpha, sep="")
+		}
 
 		if (levelplot) {
 			.levelplotraster(x, col=col, maxpixels=maxpixels, ...) 

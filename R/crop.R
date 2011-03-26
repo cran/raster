@@ -16,8 +16,7 @@ if (!isGeneric("crop")) {
 setMethod('crop', signature(x='Raster', y='ANY'), 
 function(x, y, filename='', ...) {
 	filename <- trim(filename)
-	leg <- x@legend
-
+	
 	datatype <- list(...)$datatype
 	if (is.null(datatype)) { 
 		datatype <- dataType(x)
@@ -39,8 +38,10 @@ function(x, y, filename='', ...) {
 	
 	if (inherits(x, 'RasterLayer')) {
 		outRaster <- raster(x)
+		leg <- x@legend
 	} else {
 		outRaster <- brick(x, values=FALSE)	
+		leg <- new('.RasterLegend')
 	}
 	outRaster <- setExtent(outRaster, e, keepres=TRUE)
 	outRaster@layernames <- layerNames(x)
@@ -77,6 +78,7 @@ function(x, y, filename='', ...) {
 		outRaster <- writeStop(outRaster)
 		pbClose(pb)
 	}
+
 	outRaster@legend <- leg
 	return(outRaster)
 }

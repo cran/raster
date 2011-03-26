@@ -12,19 +12,29 @@ lineValues <- function(lns, x, ...) {
 }
 
 
-.lineValues <- function(x, lns, fun, na.rm=FALSE, ...) {
+.lineValues <- function(x, lns, fun, na.rm=FALSE, cellnumbers=FALSE, ...) {
 	spbb <- bbox(lns)
 	rsbb <- bbox(x)
 	addres <- 2 * max(res(x))
 	nlns <- length( lns@lines )
 	res <- list()
 	res[[nlns+1]] = NA
+	
 
+	if (cellnumbers) {
+		if (!missing(fun)) {
+			cellnumbers <- FALSE
+			warning("'cellnumbers=TRUE' ignored when argument 'fun' is used")
+		}
+	}
+	
 	if (spbb[1,1] > rsbb[1,2] | spbb[1,2] < rsbb[1,1] | spbb[2,1] > rsbb[2,2] | spbb[2,2] < rsbb[2,1]) {
 		return(res[1:nlns])
 	}
 	
 	rr <- raster(x)
+	cn <- layerNames(x)
+	if (cn == "") { cn <- paste('v', 1:nlayers(x), sep='') }
 	for (i in 1:nlns) {
 		pp <- lns[i,]
 		spbb <- bbox(pp)
@@ -33,8 +43,16 @@ lineValues <- function(lns, x, ...) {
 			rc <- crop(rr, extent(pp)+addres)
 			rc <- .linesToRaster(pp, rc, silent=TRUE)
 			xy <- rasterToPoints(rc)[,-3,drop=FALSE]
-			if (length(xy) > 0) { # always TRUE?
-				res[[i]] <- .xyValues(x, xy)
+			if (cellnumbers) {
+				if (length(xy) > 0) { # always TRUE?
+					v <- cbind(cellFromXY(rr, xy), .xyValues(x, xy))
+					colnames(v) <- c('cell', cn)
+					res[[i]] <- v
+				}
+			} else {
+				if (length(xy) > 0) { # always TRUE?
+					res[[i]] <- .xyValues(x, xy)
+				}
 			} 
 		}
 	}

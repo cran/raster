@@ -20,10 +20,8 @@ crop(x, y, ...)
 }
 
 \details{
-Objects that have a Extent object include RasterLayer, RasterStack and RasterBrick. They can also be extracted from objects descending from the Spatial class in the sp package. You can check this with the \code{\link[raster]{extent}} function. New Extent objects can be also be created with \code{link[raster]{extent}} and with \code{\link[raster]{drawExtent}} by clicking twice on a plot.
+Objects that have a Extent object include RasterLayer, RasterStack and RasterBrick. They can also be extracted from objects descending from the Spatial class from the sp package. You can check this with the \code{\link[raster]{extent}} function. New Extent objects can be also be created with \code{\link{extent}} and with \code{\link{drawExtent}} by clicking twice on a plot.
  
- If no filename is specified, and the resulting RasterLayer is too large to hold in memory, it is saved to a temporary file.  
-
 The following additional arguments can be passed, to replace default values for this function
 \tabular{rll}{
  \tab \code{filename}  \tab Output filename (can be absent for RasterLayers that can be stored in memory) \cr

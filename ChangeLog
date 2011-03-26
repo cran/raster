@@ -1,8 +1,25 @@
+--- 26-Mar-2011, version 1.8-9
+Bug fix in gridDistance with some large rasters that cannot be processed in memory (reported by Kevin Ummel)
+
+--- 25-Mar-2011, version 1.8-8
+Bug fix in crop with RasterStack introduced in version 1.7-48 to keep the colortable when doing crop (reported by Kevin Ummel)
+
+--- 24-Mar-2011, version 1.8-7
+Fixed error in asFactor
+
+--- 20-Mar-2011, version 1.8-6
+added "alpha" (transparancy) argument to plot
+
+--- 18-Mar-2011, version 1.8-5
+new function 'hillshade'
+new cellvalues argument to extract with lines
+
 --- 13-Mar-2011, version 1.8-2
 new function 'slopeAspect' that computes slope and/or aspect
+non-exported classes prefixed with a '.' (to pass check in R 2.13.0)
 
 --- 10-Mar-2011, version 1.8-1
-Fixed errir that occured in extract (.polygonValues) when a polygon smaller than the cell size and weights=T (reproted by Xin Lin)
+Fixed error that occured in extract (.polygonValues) when a polygon smaller than the cell size and weights=T (reported by Xin Lin)
 
 --- 9-Mar-2011, version 1.8-0
 new function 'stackSelect' to select cell values from a single layer of a stack, using a RasterLayer to provide the indices.

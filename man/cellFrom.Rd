@@ -52,7 +52,7 @@ row, column or cell number(s). cellFromLine and cellFromPolygon return a list.
 }
 
 \seealso{
-\code{\link{xyFromCell}}
+\code{\link{xyFromCell}, \link{cellsFromExtent}}
 }
 
 \author{Robert J. Hijmans }

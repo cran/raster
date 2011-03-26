@@ -26,12 +26,13 @@ Points, lines, and polygons can be drawn on top of a map using \code{plot(..., a
 \describe{
 \bold{x=RasterLayer}
 
-\code{plot(x, col=rev(terrain.colors(25)), maxpixels=100000, axes = TRUE, xlab="", ylab="", ...)}
+\code{plot(x, col=rev(terrain.colors(25)), maxpixels=100000, axes = TRUE, xlab="", ylab="", alpha=1, ...)}
 
 \tabular{rll}{
 \tab \code{x} \tab a RasterLayer object \cr
 \tab \code{col}  \tab  A color palette, i.e. a vector of n contiguous colors such as \code{rainbow}, \code{heat.colors}, and \code{topo.colors}, or one or your own making \cr
 \tab \code{maxpixels}  \tab  Maximum number of pixels used for the map  \cr
+\tab \code{alpha}  \tab  Number between 0 and 1 to set transparancy. 0 is entirely transparant, 1 is not transparant  \cr
 \tab \code{...}  \tab  Any argument that can be passed to \code{\link[fields]{image.plot}} and to \code{\link[graphics]{plot}}  \cr
 }
 
@@ -52,13 +53,14 @@ If \code{x} has a 'Color table', the default all to \code{plot} is:
 
 \bold{x=RasterStack or RasterBrick, y=numeric or missing}
 
-\code{plot(x, col=rev(terrain.colors(25)), subsample=TRUE, maxpixels=100000, axes=TRUE, xlab="", ylab="", ...)}
+\code{plot(x, col=rev(terrain.colors(25)), subsample=TRUE, maxpixels=100000, alpha=1, axes=TRUE, xlab="", ylab="", ...)}
 
 \tabular{rll}{
 \tab \code{x} \tab a RasterStack or RasterBrick object \cr
 \tab \code{y} \tab The index of a RasterLayer in a RasterStack to be plotted. Either a single number between 1 and nlayers(rstack), a vector of numbers, or missing. If y is missing, all RasterLayers in the RasterStack will be plotted.\cr
 \tab \code{col}  \tab  A color palette, i.e. a vector of n contiguous colors such as \code{rainbow}, \code{heat.colors}, and \code{topo.colors}, or one or your own making \cr
 \tab \code{maxpixels}  \tab  Maximum number of pixels used for the map  \cr
+\tab \code{alpha}  \tab  Number between 0 and 1 to set transparancy. 0 is entirely transparant, 1 is not transparant  \cr
 \tab \code{axes}  \tab  see \code{?image} \cr
 \tab \code{xlab}  \tab  see \code{?image} \cr
 \tab \code{ylab}  \tab  see \code{?image} \cr

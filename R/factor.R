@@ -81,26 +81,31 @@ setMethod('asFactor', signature(x='ANY'),
 )
 
 setMethod('asFactor', signature(x='RasterLayer'), 
-	function(x, values=NULL, ...) {
-		x@data@isfactor = TRUE
-		if (is.null(values) ) {
-			x <- round(x)
-			x@data@atttributes <- list(data.frame(VALUE=unique(x)))
+	function(x, value=NULL, ...) {
+		x@data@isfactor <- TRUE
+		if (is.null(value) ) {
+			#x <- round(x) #this makes slot isfactor FALSE again
+			x@data@attributes <- list(data.frame(VALUE=unique(x)))
 		} else {
-			x@data@attributes <- values
-		}			
+			x@data@attributes <- value
+		}	
 		return(x)
 	}
 )
 
+.asFactor <- function(x, value){
+
+		return(x)
+}		
+
 setMethod('asFactor', signature(x='RasterBrick'), 
-	function(x, values=NULL, ...) {
-		x@data@isfactor = TRUE
-		if (is.null(values) ) {
-			x <- round(x)
-			x@data@atttributes <- list(data.frame(VALUE=unique(x)))
+	function(x, value=NULL, ...) {
+		x@data@isfactor <- TRUE
+		if (is.null(value) ) {
+			#x <- round(x) #this makes slot isfactor FALSE again
+			x@data@attributes <- list(data.frame(VALUE=unique(x)))
 		} else {
-			x@data@atttributes <- values
+			x@data@attributes <- value
 		}			
 		return(x)
 	}

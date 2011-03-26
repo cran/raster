@@ -132,7 +132,9 @@ setClass('.RasterSummary',
 setMethod('show', signature(object='.RasterSummary'), 	
 	function(object) {
 		cat ("Cells: " , object@ncell, "\n")
-		cat("NAs  : ", object@NAs, "\n")
+		if (object@inmemory) {
+			cat("NAs  : ", object@NAs, "\n")
+		}	
 		cat("\n")
 		print(object@values) 
 		if (object@warning != '') {

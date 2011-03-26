@@ -11,7 +11,9 @@ if (!isGeneric("atan2")) {
 
 setMethod("atan2", signature(y='RasterLayer', x='RasterLayer'),
 	function(y, x) { 
+	
 		r <- raster(x)
+		compare(r, y)
  
 		if (canProcessInMemory(r, 3)) {
 			r <- setValues(r, atan2(getValues(y), getValues(x)))

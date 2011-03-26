@@ -28,8 +28,8 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 		}
 	}
 	
-#	if ( canProcessInMemory(x, n=25) ) { 
-	if ( nrow(x) <= 100 ) { # need to test more to see how much igraph can deal with
+	# keep  canProcessInMemory for debugging
+	if ( canProcessInMemory(x, n=5) & ncell(x) <= 100000 ) { # need to test more to see how much igraph can deal with
 		outRaster <- raster(x)
 		x <- getValues(x) # to avoid keeping values in memory twice
 		
@@ -59,7 +59,7 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 			oC <- which(chunk %in% origin) 
 			ftC <- which(!(chunk %in% omit))
 			if (i < tr$n) {
-				firstRowftC <- which(!(firstRow %in% omit)) + chunkSize
+				firstRowftC <- firstRowftC + chunkSize 
 				chunkDist <- .calcDist(x, 
 								chunkSize=chunkSize + ncol(x), 
 								ftC=c(ftC, firstRowftC), 
@@ -76,8 +76,10 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 								startCell=startCell,
 								lonlat=lonlat)
 			}
-			firstRow <- chunk[1:nrow(x)]
-			firstRowDist <- chunkDist[1:nrow(x)]
+			firstRow <- chunk[1:ncol(x)]
+			firstRowDist <- chunkDist[1:ncol(x)]
+			firstRowftC <- which(!(firstRow %in% omit))
+			firstRowDist <- firstRowDist[firstRowftC]
 			chunkDist[is.infinite(chunkDist)] <- NA
 			r1 <- writeValues(r1, chunkDist, tr$row[i])
 			pbStep(pb) 
@@ -89,27 +91,42 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 		
 		outRaster <- writeStart(raster(x), filename=filename, overwrite=TRUE, ...)			
 		for (i in 1:tr$n) {
-			iM <- tr$n - i + 1
 			chunk <- getValues(x, row=tr$row[i], nrows=tr$nrows[i]) 
 			chunkSize <- length(chunk)
 			startCell <- (tr$row[i]-1) * ncol(x)
 			oC <- which(chunk %in% origin) 
 			ftC <- which(!(chunk %in% omit))
-			chunkDist <- getValues(r1, row=tr$row[iM], nrows=tr$nrows[iM])
-			chunkDist[is.na(chunkDist)] <- Inf
+
 			if (i > 1) {
+				chunkDist <- getValues(r1, row=tr$row[i], nrows=tr$nrows[i]) 
+				chunkDist[is.na(chunkDist)] <- Inf 
+				
 				chunkDist <- pmin(chunkDist,
 					.calcDist(x, 
 							chunkSize=chunkSize+ncol(x), 
-							ftC=c(lastRowftC, ftC+ncol(x)), 
+							ftC = c(lastRowftC, ftC+ncol(x)), 
 							oC = c(lastRowftC, oC+ncol(x)), 
 							perCell=c(lastRowDist, rep(0,times=length(oC))), 
 							startCell = startCell - ncol(x),
-							lonlat=lonlat)[-(1:length(lastRowftC))])
-				}
+							lonlat=lonlat)[-(1:ncol(r1))])
+			} else {
+				chunkDist <- getValues(r1, row=tr$row[i], nrows=tr$nrows[i])
+				chunkDist[is.na(chunkDist)] <- Inf
+			
+				chunkDist <- pmin(chunkDist,
+					.calcDist(x, 
+							chunkSize=chunkSize, 
+							ftC=ftC, 
+							oC=oC, 
+							perCell=0, 
+							startCell=startCell,
+							lonlat=lonlat))
+			}
+			
 			lastRow <- chunk[(length(chunk)-ncol(x)+1):length(chunk)]
 			lastRowDist <- chunkDist[(length(chunkDist)-ncol(x)+1):length(chunkDist)]
 			lastRowftC <- which(!(lastRow %in% omit))
+			lastRowDist <- lastRowDist[lastRowftC]
 			chunkDist[is.infinite(chunkDist)] <- NA				
 			outRaster <- writeValues(outRaster, chunkDist, tr$row[i])
 			pbStep(pb) 
@@ -129,7 +146,7 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 		adj <- adjacency(x, fromCells=ftC, toCells=ftC, directions=8)
 		startNode <- max(adj)+1 #extra node to serve as origin
 		adjP <- rbind(adj, cbind(rep(startNode, times=length(oC)), oC))
-		distGraph <- graph.edgelist(adjP-1, directed=FALSE)
+		distGraph <- graph.edgelist(adjP-1, directed=TRUE)
 		if(length(perCell) == 1) 
 		{
 			if(perCell == 0) {perCell <- rep(0, times=length(oC))}
@@ -137,7 +154,9 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 		
 		if (lonlat) {
 			distance <- pointDistance(xyFromCell(x,adj[,1]+startCell), xyFromCell(x,adj[,2]+startCell), longlat=TRUE) 
+			
 			E(distGraph)$weight <- c(distance, perCell)
+			
 		} else {
 			sameRow <- which(rowFromCell(x, adj[,1]) == rowFromCell(x, adj[,2]))
 			sameCol <- which(colFromCell(x, adj[,1]) == colFromCell(x, adj[,2]))
@@ -151,6 +170,7 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 		shortestPaths <- shortestPaths[-(length(shortestPaths))]
 		
 		if(max(ftC) < chunkSize){ 
+			
 			shortestPaths <- c(shortestPaths, rep(Inf, times=chunkSize-max(ftC)))
 		}
 	}
