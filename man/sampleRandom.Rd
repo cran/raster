@@ -19,7 +19,7 @@ sampleRandom(x, size, ...)
   \item{size}{positive integer giving the number of items to choose.}  
   \item{...}{Additional arguments: 
   
-	\code{na.rm}  Logical. If \code{TRUE}. NA values are removed from random sample
+	\code{na.rm}  Logical. If \code{TRUE} (the default), \code{NA} values are removed from random sample
 	
 	\code{extent}  Extent. To limit regular sampling to the area within the extent  
 	
@@ -36,7 +36,7 @@ With \code{na.rm=TRUE}, the returned sample may be smaller than requested
 }
 
 \value{
-A vector, matrix (if cells=TRUE; or for a multi-layered object), or a SpatialPointsDataFrame (if sp=TRUE)
+A vector, matrix (if \code{cells=TRUE}; or for a multi-layered object), or a SpatialPointsDataFrame (if \code{sp=TRUE} )
 }
 
 \seealso{\code{\link{sampleRegular}}}

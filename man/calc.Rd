@@ -3,21 +3,17 @@
 \docType{methods}
 
 \alias{calc}
-\alias{calc,RasterLayer,function-method}
-\alias{calc,RasterStackBrick,function-method}
+\alias{calc,Raster,function-method}
 
 \title{Calculate}
 
 \description{ 
-Calculate values for a new Raster object from another Raster* object, using a formula. 
+Calculate values for a new Raster* object from another Raster* object, using a formula. 
 
-If \code{x} is a RasterLayer, \code{fun} should be a function that can take a single value as input, and returns a single value (e.g. \code{sqrt}). 
 
-If \code{x} is a RasterStack or RasterBrick, fun should operate on a vector of values (one vector for each cell). \code{calc} returns a RasterLayer if \code{fun} returns a single value (e.g. \code{sum}) and it returns a RasterBrick if \code{fun} returns more than one number (e.g., \code{function(x){ x * 10}}).
+If \code{x} is a RasterLayer, \code{fun} is typically a function that can take a single vector as input, and return a vector of values of the same lenght (e.g. \code{sqrt}). If \code{x} is a RasterStack or RasterBrick, fun should operate on a vector of values (one vector for each cell). \code{calc} returns a RasterLayer if \code{fun} returns a single value (e.g. \code{sum}) and it returns a RasterBrick if \code{fun} returns more than one number, e.g., \code{fun=quantile}.
  
-In many cases, what can be achieved with \code{calc} in a more intuitive 'raster-algebra' notation (see \code{\link[raster]{Arith-methods}}). For example, \code{r <- r * 2} rather than \code{r <- calc(r, fun=function(x){x * 2}}, or \code{r <- sum(s)} rather than \code{r <- calc(s, fun=sum)}
-
-However, \code{calc} should be faster when using complex formulas on large datasets. With \code{calc} it is possible to set an output filename and file type preferences. 
+In many cases, what can be achieved with \code{calc} in a more intuitive 'raster-algebra' notation (see \code{\link[raster]{Arith-methods}}). For example, \code{r <- r * 2} rather than \code{r <- calc(r, fun=function(x){x * 2}}, or \code{r <- sum(s)} rather than \code{r <- calc(s, fun=sum)}. However, \code{calc} should be faster when using complex formulas on large datasets. With \code{calc} it is possible to set an output filename and file type preferences. 
  
 See (\code{\link[raster]{overlay}}) to use functions that refer to specific layers, like (\code{function(a,b,c){a + sqrt(b) / c}})
 }

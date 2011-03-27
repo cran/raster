@@ -4,12 +4,12 @@
 \alias{atan2,RasterLayer,RasterLayer-method}
 \alias{atan2}
 
-\title{Two argument arctangent function}
+\title{Two argument arc-tangent}
 
 \description{
 For RasterLayer arguments x and y, atan2(y, x) returns the angle in radians for the tangent y/x, handling the case when x is zero. See \code{link[base]{Trig}}
 
-See \code{\link[raster]{Math-methods}} for other trigonometric and mathematical functions that can be used with a Raster* objects.
+See \code{\link[raster]{Math-methods}} for other trigonometric and mathematical functions that can be used with Raster* objects.
 }
 
 \usage{

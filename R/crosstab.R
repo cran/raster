@@ -17,14 +17,14 @@ setMethod('crosstab', signature(x='RasterLayer', y='RasterLayer'),
 		if (missing(progress)) { progress <- .progress() }
 
 		if (canProcessInMemory(x, 3) | ( inMemory(x) & inMemory(y) )) {
-			res <- table(first=round(getValues(x), digits=digits), second=round(getValues(y), digits=digits)) 
+			res <- table(first=round(getValues(x), digits=digits), second=round(getValues(y), digits=digits), ...) 
 		} else {
 			res=NULL
 			tr <- blockSize(x, n=2)
 			pb <- pbCreate(tr$n, type=progress)	
 			for (i in 1:tr$n) {
 			
-				d <- table( round(getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i]), digits=digits), round(getValuesBlock(y, row=tr$row[i], nrows=tr$nrows[i]), digits=digits))
+				d <- table( round(getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i]), digits=digits), round(getValuesBlock(y, row=tr$row[i], nrows=tr$nrows[i]), digits=digits), ...)
 				if (length(dim(d))==1) {
 					first = as.numeric(names(d))
 					second = first
@@ -42,15 +42,16 @@ setMethod('crosstab', signature(x='RasterLayer', y='RasterLayer'),
 		}
 		
 		if (long) {
-			aa = as.numeric(rownames(res))
-			bb = as.numeric(colnames(res))
-			cc = rep(aa, length(bb))
-			dd = rep(bb, each=length(aa))
-			res = cbind(cc, dd, as.vector(res))
-			colnames(res) <- c('first', 'second', 'value')
+			#aa = as.numeric(rownames(res))
+			#bb = as.numeric(colnames(res))
+			#cc = rep(aa, length(bb))
+			#dd = rep(bb, each=length(aa))
+			#res = cbind(cc, dd, as.vector(res))
+			#colnames(res) <- c('first', 'second', 'value')
+			return( as.data.frame(res) )
+		} else {
+			return(res)
 		}
-		
-		return(res)
 	}
 )
 

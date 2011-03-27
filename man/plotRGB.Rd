@@ -24,11 +24,11 @@ Make a Red-Green-Blue plot based on three layers (in a RasterBrick or RasterStac
 \tab \code{scale}  \tab Integer. Maximum (possible) value in the three channels \cr 
 \tab \code{maxpixels}  \tab  Maximum number of pixels to use  \cr
 \tab \code{extent}  \tab  An extent object to zoom in a region \cr
-\tab \code{...} \tab Any argument that can be passed to \code{\link[graphics]{image}} (graphics package) \cr
+\tab \code{...} \tab graphical parameters as in \code{\link{rasterImage}} \cr
 }
 }}
 
-\author{ Robert J. Hijmans; based on functions in the pixmap package by Friedrich Leisch }
+\author{ Robert J. Hijmans }
 
 \seealso{ \code{\link[raster]{plot}} }
 

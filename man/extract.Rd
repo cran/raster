@@ -61,6 +61,13 @@ If the data are not projected (latitude/longitude), the unit should be meters. O
 3) \code{cellnumbers}. Logical. If \code{cellnumbers=TRUE} and \code{buffer} is not \code{NULL}, cellnumbers will also be returned. \code{cellnumbers} is set to \code{FALSE} when an argument \code{fun} is used.
 
 
+\bold{= lines =}
+
+If no \code{fun} argument is supplied:
+
+\code{cellnumbers}. Logical. If \code{cellnumbers=TRUE} is used, cell-numbers will also be returned. 
+
+
 \bold{= polygons =}
 
 If \code{y} represents polygons, the \code{extract} method returns the values of the cells of a Raster* object that is covered by a polygon.
@@ -76,11 +83,11 @@ If no \code{fun} argument is supplied:
  of each cell that is covered by the polygon(rounded to 1/100). The weights can be used for averaging; see examples. 
  This option can be useful if the polygons are small relative to the cells size of the RasterLayer
 
-2) \code{cellnumbers}. If \code{cellnumbers=TRUE} and \code{weights=TRUE}, cellnumbers will also be returned. 
+2) \code{cellnumbers}. Logical. If \code{cellnumbers=TRUE} and \code{weights=TRUE}, cellnumbers will also be returned. 
 
 
 
-\bold{= Focal values =}
+\bold{= focal values =}
 
 If \code{y} is missing, you can supply two arguments to get 'focal' values (i.e. the values in a neighborhood around each cell)
 
@@ -89,7 +96,7 @@ If \code{y} is missing, you can supply two arguments to get 'focal' values (i.e.
 2) \code{ngb}. The neighborhood to consider. Either a single integer or a vector of two integers. Default is 3. See \code{\link{focal}} 
 
 
-\bold{= All multi-layer objects =}
+\bold{= all multi-layer objects =}
 
 If \code{x} is a RasterStack or RasterBrick object, \code{extract} accepts, in addition to the arguments listed above,
 these two additional arguments:
