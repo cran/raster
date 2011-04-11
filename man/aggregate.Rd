@@ -30,9 +30,11 @@ aggregate(x, ...)
 
 \tabular{rll}{
 \tab \code{x} \tab a RasterLayer object \cr
-\tab \code{fact} \tab Integer. Aggregation factor expressed as number of cells in each direction (horizontally and vertically). Or two integers (horizontal and vertical aggregation factor). Default is 2. See below \cr
+\tab \code{fact} \tab Integer. Aggregation factor expressed as number of cells in each direction (horizontally and vertically). 
+Or two integers (horizontal and vertical aggregation factor). Default is 2. See below \cr
 \tab \code{fun} \tab Function used to aggregate values (default=mean)\cr
-\tab \code{expand} \tab logical. If \code{TRUE} the output RasterLayer will be larger then the input RasterLayer if a division of the number of columns or rows with \code{factor} is not an integer \cr
+\tab \code{expand} \tab logical. If \code{TRUE} the output RasterLayer will be larger then the input RasterLayer if a division
+ of the number of columns or rows with \code{factor} is not an integer \cr
 \tab \code{na.rm} \tab logical. If \code{TRUE}, NA cells are removed from calculations \cr
 \tab \code{filename} \tab Character. Output filename \cr
 \tab \code{...} \tab Additional arguments, see below \cr

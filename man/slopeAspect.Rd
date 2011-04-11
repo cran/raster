@@ -17,13 +17,13 @@ slopeAspect(dem, filename='', type='', unit='', neighbors=8, flatAspect, ...)
   \item{filename}{Character. Filename. optional}
   \item{type}{Character. 'slope', 'aspect', or 'both' (=default, slope and aspect)}
   \item{unit}{Character. 'degrees' or '' (=default, radians for aspect, and fraction for slope) }
-  \item{neighbors}{Integer. Indicating how many neighboring cells to use to compute slope for any cell. Either 8 (queen case) or 4 (rook case), see Details.}
+  \item{neighbors}{Integer. Indicating how many neighboring cells to use to compute slope for any cell. Either 8 (queen case) or 4 (rook case), see Details}
   \item{flatAspect}{Numeric or NA. What value to use for aspect when slope is zero (and hence the aspect is undefined)? The default value is 90 degrees (or 0.5*pi radians) }
   \item{...}{Standard additional arguments for writing RasterLayer files}
 }
 
 \details{
-When neighbors==4, slope and aspect are computed according to Fleming and Hoffer (1979) and Ritter (1987). When neigbors==8, slope and aspect are computed according to Horn (1981). The Horn algorithm may be best for rough surfaces, and the Fleming and Hoffer algorithm may be better for smoother surfaces (Jones, 1997; Burrough and McDonnell, 1998). 
+When \code{neighbors=4}, slope and aspect are computed according to Fleming and Hoffer (1979) and Ritter (1987). When \code{neigbors=8}, slope and aspect are computed according to Horn (1981). The Horn algorithm may be best for rough surfaces, and the Fleming and Hoffer algorithm may be better for smoother surfaces (Jones, 1997; Burrough and McDonnell, 1998). 
 }
 
 \seealso{ \code{\link{hillShade}} }

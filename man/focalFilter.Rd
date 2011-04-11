@@ -9,11 +9,11 @@ Calculate values for the neighborhood of focal cells using a matrix of weights
 }
 
 \usage{
-focalFilter(raster, filter, fun=sum, filename="", ...) 
+focalFilter(x, filter, fun=sum, filename="", ...) 
 }
 
 \arguments{
-  \item{raster}{A RasterLayer object}
+  \item{x}{A RasterLayer object}
   \item{filter}{a matrix of weights. See Details}    
   \item{fun}{a function to apply to the product of the matrix of weights and the values}
   \item{filename}{Output filename for a new raster}

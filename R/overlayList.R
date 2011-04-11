@@ -7,8 +7,9 @@
 
 .overlayList <- function(x, fun, filename="", ...){ 
 	
-	if (length(x) < 1) { stop('no Rasters') }
-	compare(x)
+	ln <- length(x)
+	if (ln < 1) { stop('no Rasters') }
+	if (ln > 2) { compare(x) }
 	
 	nl <- sapply(x, nlayers)
 	maxnl <- max(nl)
@@ -17,11 +18,14 @@
 
 	testmat <- NULL
 	testlst <- vector(length=length(x), mode='list')
+	w <- getOption('warn')
+	options('warn'=-1) 
 	for (i in 1:length(testlst)) {
 		v <- as.vector(extract(x[[i]], 1:5))
 		testmat <- cbind(testmat, v)
-		testlst[[i]] <- as.vector(v)
+		testlst[[i]] <- v
 	}
+	options('warn'= w) 
 
 	test1 <- try ( apply(testmat, 1, fun) , silent=TRUE )
 	if (class(test1) != "try-error") {
@@ -45,6 +49,7 @@
 		outraster <- raster(x[[1]])
 	} else {
 		outraster <- brick(raster(x[[1]]))
+		outraster@data@nlayers  <- as.integer(nlout)
 	}
 	
 	if ( canProcessInMemory(outraster, sum(nl)) ) {
@@ -91,8 +96,12 @@
 		outraster <- writeStart(outraster, filename=filename, ...)
 		
 		tr <- blockSize(outraster, n=length(x))
-		pb <- pbCreate(tr$n, type=.progress(...))			
+		pb <- pbCreate(tr$n, type=.progress(...))
 
+		outraster <- writeStart(outraster, filename=filename)
+		tr <- blockSize(outraster, n=length(x))
+		pb <- pbCreate(tr$n, type="")
+		
 		if (doapply) { 
 			valmat = matrix(nrow=tr$nrows[1]*ncol(outraster)*maxnl, ncol=length(x)) 
 			for (i in 1:tr$n) {
@@ -100,10 +109,13 @@
 					valmat = matrix(nrow=tr$nrows[i]*ncol(outraster)*maxnl , ncol=length(x))
 				}
 				for (j in 1:length(x)) {
-					if (ncell(x[[i]]) < nrow(valmat)) {
-						valmat[,j] <- as.vector(getValues(x[[j]], row=tr$row[i], nrows=tr$size)) * rep(1, nrow(valmat))
+					v <- as.vector(getValues(x[[j]], row=tr$row[i], nrows=tr$size))
+					if (length(v) < nrow(valmat)) {
+						options('warn'=-1) 
+						valmat[,j] <- v * rep(1, nrow(valmat))
+						options('warn'=w) 
 					} else {
-						valmat[,j] <- as.vector(getValues(x[[j]], row=tr$row[i], nrows=tr$size))
+						valmat[,j] <- v
 					}
 				}	
 				
