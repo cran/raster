@@ -47,7 +47,7 @@ r3[] <- rnorm(ncell(r1), 120, 30)
 s <- stack(r1, r2, r3)
 layerNames(s) <- c('A', 'B', 'C')
 
-boxplot(s, notch=TRUE, col=c('red', 'blue', 'orange'), main='Box plot', ylab='random  numbers' )
+boxplot(s, notch=TRUE, col=c('red', 'blue', 'orange'), main='Box plot', ylab='random' )
 
 }
 

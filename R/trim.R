@@ -39,6 +39,16 @@ setMethod('trim', signature(x='matrix'),
 	function(x, ...) {
 		if (is.character(x)) {
 			x[] = trim(as.vector(x))
+		} else {
+			rows <- apply(x, 1, function(x)sum(is.na(x)))
+			cols <- apply(x, 2, function(x)sum(is.na(x)))
+			rows <- which(rows != ncol(x))
+			cols <- which(cols != nrow(x))
+			if (length(rows)==0) {
+				x <- matrix(ncol=0, nrow=0)
+			} else {
+				x <- x[min(rows):max(rows), min(cols):max(cols), drop=FALSE]
+			}
 		}
 		return(x)
 	}

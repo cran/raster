@@ -19,12 +19,12 @@
 }
 
 
-focalFilter <- function(raster, filter, fun=sum, filename="", ...) {
+focalFilter <- function(x, filter, fun=sum, filename="", ...) {
 	if (!is.matrix(filter)) { stop('filter must be a matrix') }
 	ngb <- dim(filter)
 	if (prod(ngb) == 0) { stop('ncol and nrow of filter must be > 0') }
 
-	ngbgrid <- raster(raster)
+	ngbgrid <- raster(x)
 
 	limcol <- floor(ngb[2] / 2)
 	colnrs <- (-limcol+1):(ncol(ngbgrid)+limcol)
@@ -34,18 +34,14 @@ focalFilter <- function(raster, filter, fun=sum, filename="", ...) {
 	limrow <- floor(ngb[1] / 2)
 	ngbdata <- matrix(NA, nrow=0, ncol=ncol(ngbgrid))
 # add all rows needed for first ngb, minus 1 that will be read in first loop	
-
-	for (r in 1:limrow) {
-		ngbdata <- getValues(raster, 1, limrow)
-		ngbdata <- matrix(ngbdata, nrow=limrow)
-	}
+	ngbdata <- getValues(x, 1, limrow)
+	ngbdata <- matrix(ngbdata, nrow=limrow, byrow=TRUE)
 
 	res <- vector(length=ncol(ngbdata))
 
 	filename <- trim(filename)
 	if (!canProcessInMemory(ngbgrid, 2) && filename == '') {
-		filename <- rasterTmpFile()
-								
+		filename <- rasterTmpFile()			
 	}
 	
 	if (filename == '') {
@@ -60,7 +56,7 @@ focalFilter <- function(raster, filter, fun=sum, filename="", ...) {
 	for (r in 1:nrow(ngbgrid)) {		
 		rr <- r + limrow
 		if (rr <= nrow(ngbgrid)) {
-			rowdata <- getValues(raster, rr)
+			rowdata <- getValues(x, rr)
 			if (dim(ngbdata)[1] == ngb[1]) {
 				ngbdata <- rbind(ngbdata[2:ngb[1],], rowdata)
 			} else {

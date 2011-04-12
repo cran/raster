@@ -1,5 +1,12 @@
+--- 11-Apr-2011, version 1.8-12
+Major bug fix in focalFilter. In previous versoins results were wrong for filters larger than 3x3 !
+Thanks to Nick Hamm, Andy Wilson for reporting
+
+--- 7-Apr-2011, version 1.8-10
+Bug fix in cellStats with 'sd' and large files (reported by John Donoghue)
+
 --- 26-Mar-2011, version 1.8-9
-Bug fix in gridDistance with some large rasters that cannot be processed in memory (reported by Kevin Ummel)
+Major bug fix in gridDistance with some large rasters that cannot be processed in memory (reported by Kevin Ummel)
 
 --- 25-Mar-2011, version 1.8-8
 Bug fix in crop with RasterStack introduced in version 1.7-48 to keep the colortable when doing crop (reported by Kevin Ummel)

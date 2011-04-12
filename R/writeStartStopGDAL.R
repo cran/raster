@@ -5,18 +5,23 @@
 # Version 0.9
 # Licence GPL v3
 
-.startGDALwriting <- function(raster, filename, options, ...) {
+.startGDALwriting <- function(x, filename, options, ...) {
 	
-	temp <- .getGDALtransient(raster, filename=filename, options=options, ...)
-	attr(raster@file, "transient") <- temp[[1]]
-	raster@file@nodatavalue <- temp[[2]]
-	attr(raster@file, "options") <- temp[[3]]
+	temp <- .getGDALtransient(x, filename=filename, options=options, ...)
+	attr(x@file, "transient") <- temp[[1]]
+	x@file@nodatavalue <- temp[[2]]
+	attr(x@file, "options") <- temp[[3]]
 	
-	raster@file@datanotation <- .getRasterDType(temp[[4]])
-	raster@file@driver <- 'gdal'
-	raster@data@fromdisk <- TRUE
-	raster@file@name <- filename
-	return(raster)
+	x@data@min <- rep(Inf, nlayers(x))
+	x@data@max <- rep(-Inf, nlayers(x))
+	x@data@haveminmax <- FALSE
+
+	
+	x@file@datanotation <- .getRasterDType(temp[[4]])
+	x@file@driver <- 'gdal'
+	x@data@fromdisk <- TRUE
+	x@file@name <- filename
+	return(x)
 }
 
 

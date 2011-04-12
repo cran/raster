@@ -9,7 +9,7 @@
 \title{Trim}
 
 \description{
-Trim (shrink) a RasterLayer by removing outer rows and columns that have no data.
+Trim (shrink) a Raster* object by removing outer rows and columns that have no data.
 
 Or remove the whitespace before or after a string of characters.
 }
@@ -19,12 +19,12 @@ trim(x, ...)
 }
 
 \arguments{
-  \item{x}{A RasterLayer object or a character string}
+  \item{x}{A Raster* object or a character string}
   \item{...}{additional arguments. See Details.}  
 }
 
 \details{
-If \code{x} is a RasterLayer, the following additional arguments can be passed, to replace default values for this function
+If \code{x} is a Raster* object, the following additional arguments can be passed, to replace default values for this function
 \tabular{rll}{
   \tab \code{padding}  \tab Integer. Number of outer rows/columns with NA values to keep; default=0\cr
   \tab \code{filename}  \tab Output filename. Default = '' \cr
@@ -36,7 +36,7 @@ If \code{x} is a RasterLayer, the following additional arguments can be passed, 
 }
 
 \value{
-If \code{x} is a RasterLayer, a new RasterLayer object (in the R environment), and in some cases the side effect of a new file on disk.
+A RasterLayer or RasterBrick object (if \code{x} is a Raster* object).
 
 A character string If \code{x} is a character string.
 }

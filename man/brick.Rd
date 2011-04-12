@@ -40,20 +40,26 @@ A RasterBrick can be created from RasterLayer objects, from a RasterStack, or fr
 \code{brick(x, ...)}
 
 \tabular{rll}{
-\tab \code{x} \tab character. A filename of a file that the raster package can read. Supported file types are the 'native' raster package format and those that can be read via rgdal. See \code{\link[rgdal]{readGDAL}} help for supported file types. \cr
-\tab \code{...} \tab additional arguments.  \cr
+\tab \code{x} \tab character. A filename of a file that the raster package can read. Supported file types are the 'native' raster 
+package format and those that can be read via rgdal. See \code{\link[rgdal]{readGDAL}} help for supported file types.\cr
+\tab \code{...} \tab additional arguments.\cr
 }
 
 Additional arguments:
 \tabular{rll}{
-\tab \code{native} \tab Logical.  Default is \code{FALSE} except when package rgdal is missing. If \code{TRUE}, reading and writing of IDRISI, BIL, BSQ, BIP, and Arc ASCII files is done with native (raster package) drivers, rather then via rgdal. 'raster', RSAGA, and netcdf format files are always read with native drivers.
+\tab \code{native} \tab Logical.  Default is \code{FALSE} except when package rgdal is missing. If \code{TRUE}, reading and writing
+of IDRISI, BIL, BSQ, BIP, and Arc ASCII files is done with native (raster package) drivers, rather then via rgdal. 'raster', RSAGA,
+and netcdf format files are always read with native drivers.
 }
 
 For netCDF files (CF convention):
 \tabular{rll}{
-\tab \code{varname} \tab character. The variable name (e.g. 'altitude' or 'precipitation'. If not supplied and the file has multiple variables are a guess will be made (and reported))\cr
+\tab \code{varname} \tab character. The variable name (e.g. 'altitude' or 'precipitation'. If not supplied and the file has multiple
+variables are a guess will be made (and reported))\cr
 \tab \code{band} \tab integer > 0. The 'band' (layer) number of the file. E.g., the 'time' variable (if there are any) (default=NA)\cr
+\tab \code{level} \tab integer > 0. To select the 'level' (4th dimension variable) to use, if the data has 4 dimensions (default=1) \cr
 }
+
 To read netCDF files, the \code{ncdf} package needs to be available. 
 
 
@@ -102,13 +108,14 @@ To read netCDF files, the \code{ncdf} package needs to be available.
 This copies the parameters of a RasterStack object to a new RasterBrick. The values of the RasterStack are transferred to the RasterBrick, unless \code{values=FALSE}.  
 
 \tabular{rll}{
- \tab \code{x} \tab a Raster* object \cr
+\tab \code{x} \tab a Raster* object \cr
 }
 
 
 \bold{6) Create a RasterBrick from a SpatialPixels* or SpatialGrid*}
 
 \code{brick(x, layer=0)}
+
 
 
 \bold{7) Create a RasterBrick from an array } 

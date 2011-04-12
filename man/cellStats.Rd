@@ -25,7 +25,7 @@ Numeric.
 
 \details{
 \code{cellStats} will fail (gracefully) for very large Raster objects except for a number of known functions: sum, mean, min, max, sd, 'countNA'. 'countNA' must be supplied as a character value (with quotes), the other known functions may be supplied with or without quotes. For other functions you could perhaps use a sample of the RasterLayer that can be held in memory (see \code{\link[raster]{sampleRandom}} and \code{\link[raster]{sampleRegular}} )
-For large files, and when \code{fun='sd'}, this function returns the standard deviation of the population ( \code{sqrt((1/N) * sum(x^2) - mean(x)^2)}), not that of a sample which is normally returned by \code{sd})
+
 }
 
 \seealso{ \code{\link[raster]{quantile} }, \code{\link[raster]{minValue} }, \code{\link[raster]{maxValue} }, \code{\link[raster]{setMinMax} } }

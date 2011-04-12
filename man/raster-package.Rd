@@ -59,7 +59,7 @@ RasterLayer, RasterStack, and RasterBrick objects are, as a group, referred to a
 
   \tabular{ll}{
     \code{\link{merge}} \tab Combine Raster* objects with different extents (but same origin and resolution) \cr
-    \code{\link{mosaic}} \tab Combine RasterLayer objects with different extents; using a function to set values for overlapping areas \cr
+    \code{\link{mosaic}} \tab Combine RasterLayers with different extents and a function to set values in overlap areas \cr
     \code{\link{crop}} \tab Select a geographic subset of a Raster* object \cr
     \code{\link{expand}} \tab Enlarge a Raster* object \cr
     \code{\link{trim}} \tab Trim a Raster* object by removing exterior rows and/or columns that only have NA values \cr
@@ -78,7 +78,7 @@ RasterLayer, RasterStack, and RasterBrick objects are, as a group, referred to a
 \section{III. Raster algebra}{
 	\tabular{ll}{
     \code{\link{Arith-methods}} \tab Arith functions (\code{+, -, *, ^, \%\%, \%/\%, /}) \cr
-	\code{\link{Math-methods}} \tab Math functions (\code{abs, sqrt, trunc, log, log10, exp, cos, sin, gamma, round} among others)	\cr	
+	\code{\link{Math-methods}} \tab Math functions (\code{abs, sqrt, trunc, log, log10, exp, sin, round} among others)	\cr	
     \code{\link{Logic-methods}} \tab Logic functions (\code{!, &, |}) \cr
     \code{\link{Summary-methods}} \tab Summary functions (\code{mean, Median, max, min, range, prod, sum, any, all}) \cr
     \code{\link{Compare-methods}} \tab Compare functions (\code{==, !=, >, <, <=, >=}) \cr
@@ -162,11 +162,11 @@ You can coerce Raster* objects to Spatial* objects using \code{as}, as in \code{
 \section{IX. Accessing values of Raster* object cells}{
 
   \tabular{ll}{
-    \code{\link{getValues}} \tab Get all cell values (will fail with very large rasters and limited computer memory), or a row of values (safer) \cr
+    \code{\link{getValues}} \tab Get all cell values (fails with very large rasters), or a row of values (safer) \cr
     \code{\link{getValuesBlock}} \tab Get values for a block (a rectangular area defined by start and end row and column \cr
     \code{\link{as.matrix}} \tab Get cell values as a matrix \cr
     \code{\link{as.array}} \tab Get cell values as an array \cr
-    \code{\link{extract}} \tab Use cell numbers, points, lines, polygons, or an extent, to extract values from a Raster* object, or extract focal values\cr
+    \code{\link{extract}} \tab Extract cell values from a Raster* object (e.g., by cell, coordinates, polygon)\cr
     \code{\link{sampleRandom}} \tab Random sample \cr
     \code{\link{sampleRegular}} \tab Regular sample \cr
     \code{\link{minValue}} \tab Get the minimum value of the cells of a Raster* object (not always known) \cr

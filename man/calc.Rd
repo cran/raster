@@ -31,7 +31,8 @@ calc(x, fun, ...)
 \details{
 The following additional arguments can be passed, to replace default values for this function
 \tabular{rll}{
-  \tab \code{na.rm}  \tab Remove \code{NA} values, if supported by 'fun' (only relevant when summarizing a mutilayer Raster object into a RasterLayer) \cr
+  \tab \code{na.rm}  \tab Remove \code{NA} values, if supported by 'fun' (only relevant when summarizing a
+  multilayer Raster object into a RasterLayer) \cr
   \tab \code{filename}  \tab Output filename (optional) \cr
   \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
   \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr

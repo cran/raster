@@ -151,6 +151,14 @@ setMethod('writeValues', signature(x='RasterBrick'),
 			if (x@file@datanotation == 'INT1U') {
 				v[v < 0] <- NA
 			}
+
+			w <- getOption('warn')
+			options('warn'=-1) 
+			rng <- apply(v, 2, range, na.rm=TRUE)
+			x@data@min <- pmin(x@data@min, rng[1,])
+			x@data@max <- pmax(x@data@max, rng[2,])
+			options('warn'= w) 
+
 			v[is.na(v)] <- x@file@nodatavalue
 			for (i in 1:nlayers(x)) {
 				vv = matrix(v[,i], nrow=ncol(x))
