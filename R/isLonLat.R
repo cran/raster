@@ -4,6 +4,21 @@
 # Licence GPL v3
 
 
+
+.isGlobalLonLat <- function(x) {
+	res <- FALSE
+	tolerance <- 0.1
+	scale <- xres(x)
+	if (isTRUE(all.equal(xmin(x), -180, tolerance=tolerance, scale=scale)) & 
+		isTRUE(all.equal(xmax(x),  180, tolerance=tolerance, scale=scale))) {
+		if (.couldBeLonLat(x)) {
+ 			res <- TRUE
+		}
+	}
+	res
+}
+
+
 .couldBeLonLat <- function(x, warnings=TRUE) {
 	crsLL <- isLonLat(x)
 	if (class(x) == 'character') { return(crsLL) }

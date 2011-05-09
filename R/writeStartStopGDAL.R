@@ -6,7 +6,7 @@
 # Licence GPL v3
 
 .startGDALwriting <- function(x, filename, options, ...) {
-	
+
 	temp <- .getGDALtransient(x, filename=filename, options=options, ...)
 	attr(x@file, "transient") <- temp[[1]]
 	x@file@nodatavalue <- temp[[2]]

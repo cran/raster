@@ -9,7 +9,7 @@ Evaluate whether a two or more rasters have the same extent, number of rows and 
 }
 
 \usage{
-compare(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=FALSE, tolerance, stopiffalse=TRUE, showwarning=FALSE) 
+compare(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=FALSE, rotation=TRUE, tolerance, stopiffalse=TRUE, showwarning=FALSE) 
 }
 
 \arguments{
@@ -20,7 +20,8 @@ compare(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=FALSE, toler
   \item{prj}{Logical. If \code{TRUE} projections are compared.}
   \item{res}{Logical. If \code{TRUE}, resolutions are compared (redundant when checking extent and rowcol)}
   \item{orig}{Logical. If \code{TRUE}, origins are compared}
-  \item{tolerance}{Numeric, if not supplied, the default value of 0.05 is used. It sets difference (relative to the cell resolution) that is permissable for objects to be considered 'equal', if they have a non-integer origin or resolution. See \link{all.equal}. }
+  \item{rotation}{Logical. If \code{TRUE}, rotations are compared}  
+  \item{tolerance}{Numeric value between 0 and 0.5. If not supplied, the default value is used (see \code{\link{showOptions}}. It sets difference (relative to the cell resolution) that is permissable for objects to be considered 'equal', if they have a non-integer origin or resolution. See \link{all.equal}. }
   \item{stopiffalse}{Logical. If \code{TRUE}, an error will occur if the objects are not the same}
   \item{showwarning}{Logical. If \code{TRUE}, an warning will be given if objects are not the same. Only relevant when \code{stopiffalse} is \code{TRUE}}
  }

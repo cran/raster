@@ -5,7 +5,7 @@
 
 
 .writeHdrBOV <- function(raster) {
-	hdrfile <- basename(filename(raster))
+	hdrfile <- filename(raster)
 	ext(hdrfile) <- '.bov'
 	thefile <- file(hdrfile, "w")  # open an txt file connectionis
 	cat("TIME: 1.23456", "\n", file = thefile)

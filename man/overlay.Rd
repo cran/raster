@@ -13,14 +13,14 @@ Create a new Raster* object, based on two or more Raster* objects. (You can also
 
 You should supply a function \code{fun} to set the way that the RasterLayers are combined. The number of arguments in the function must match the number of Raster objects (or take any number). For example, if you combine two RasterLayers you could use multiply: \code{fun=function(x,y){return(x*y)}} percentage: \code{fun=function(x,y){return(100 * x / y)}}. If you combine three layers you could use \code{fun=function(x,y,z){return((x + y) * z)}}
 
-Note that the function must work for vectors (not only single numbers). That is, it must return the same number of elements as its input vectors. Alternatively, you can also supply a function such as \code{sum}, that takes \code{n} arguments (as \code{'...'}) and \code{na.rm}, like in \code{sum(..., na.rm)}.
+Note that the function must work for vectors (not only for single numbers). That is, it must return the same number of elements as its input vectors. Alternatively, you can also supply a function such as \code{sum}, that takes \code{n} arguments (as \code{'...'}), and perhaps also has a \code{na.rm} argument, like in \code{sum(..., na.rm)}.
 
-If a single mutli-layer object is provided, its layers are treated as individual RasterLayers. If multiple objects are provided, they should have the same number of layers, or it should be possible to recycle them (e.g., 1, 3, and 9 layers, which would return a RasterBrick with 9 layers).
+If a single mutli-layer object is provided, its layers are treated as individual RasterLayer objects if the argument "unstack=TRUE" is used. If multiple objects are provided, they should have the same number of layers, or it should be possible to recycle them (e.g., 1, 3, and 9 layers, which would return a RasterBrick with 9 layers).
 }
 
 \section{Methods}{
 \describe{
-\code{overlay(x, y, ..., fun, datatype, format, overwrite, progress)}
+\code{overlay(x, y, ..., fun)}
 
 \bold{1) \code{x} and \code{y} are Raster* objects}
 
@@ -33,16 +33,19 @@ If a single mutli-layer object is provided, its layers are treated as individual
   
 \bold{2) \code{x} is a Raster object, \code{y} is missing}
 
+\code{overlay(x, fun, unstack=TRUE)}
+
 In this case, the function returns a RasterLayer based on computations that combine the individual layers of the Raster* object. If \code{x} is a RasterLayer, this is equivalent to using the \code{\link[raster]{calc}} function.
 
 \code{overlay(x, fun, overwrite, format, datatype, progress)}
 \tabular{rll}{
 \tab \code{x}  \tab RasterStack or RasterBrick object \cr
 \tab \code{fun} \tab Function to be applied. The number of arguments of the function should match the number of layers of the RasterStack/Brick object  \cr
+\tab \code{unstack}  \tab Logical. Unstack object \code{x} into individual layers? \cr
 }
 
 
-In all cases you can use these arguments:
+In all cases you can also use these arguments:
 
 \tabular{rll}{
 \tab \code{filename} \tab  filename for the output raster. A valid filename must be provided when the data of the input rasters are on disk \cr
@@ -79,11 +82,14 @@ r2 <- init(r, fun=runif)
 r3 <- overlay(r1, r2, fun=function(x,y){return(x+y)})
 
 # long version for multiplication
-r4 <- overlay(r1, r2, fun=function(x,y){return(x*y)} )
+r4 <- overlay(r1, r2, fun=function(x,y){(x*y)} )
 
 #use the individual layers of a RasterStack to get a RasterLayer
 s <- stack(r1, r2)
-r5 <- overlay(s, fun=function(x,y){return(x*y)} )
+r5 <- overlay(s, fun=function(x,y) x*y )
+# equivalent to
+r5c <- calc(s, fun=function(x) x[1]*x[2] )
+
 
 #Combine RasterStack and RasterLayer objects (s2 has four layers. r1 (one layer) and s (two layers) are recycled) 
 s2 <- stack(r1, r2, r3, r4)

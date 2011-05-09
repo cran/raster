@@ -25,14 +25,12 @@
 }
 
 
-compare <- function(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=FALSE, tolerance, stopiffalse=TRUE, showwarning=FALSE) {
+compare <- function(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=FALSE, rotation=TRUE, tolerance, stopiffalse=TRUE, showwarning=FALSE) {
 
 	if (missing(tolerance)) {
-		tolerance <- options("rasterTolerance")$rasterTolerance
-		if (is.null(tolerance)) {
-			tolerance <- 0.05
-		}
+		tolerance <- .tolerance()
 	}
+	
 	result <- TRUE
 	firstproj <- NA
 	objects <- c(x, list(...))
@@ -87,6 +85,25 @@ compare <- function(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=
 				result <- FALSE
 				if (stopiffalse) { stop('different origin') }
 				if (showwarning) { warning('different origin') }
+			}
+		}
+		
+		if (rotation) {
+			rot1 <- objects[[i]]@rotated
+			rot2 <- objects[[1]]@rotated
+			if (rot1 | rot2) {
+				if (rot1 != rot2) {
+					if (stopiffalse) { stop('not all objects are rotated') }
+					if (showwarning) { warning('not all objects are rotated') }
+					result <- FALSE
+				} else {
+					test <- all(objects[[i]]@rotation@geotrans == objects[[1]]@rotation@geotrans)
+					if (! test) {
+						if (stopiffalse) { stop('rotations are different') }
+						if (showwarning) { warning('rotations are different') }
+						result <- FALSE
+					}
+				}
 			}
 		}
 	}

@@ -36,7 +36,7 @@ data at longitudes -180 and 180 degrees.
 \examples{
 r <- raster(nrows=10, ncols=10)
 adj <- adjacency(raster=r, fromCells = c(1,30,55,72,100), 
-				toCells = c(1:ncell(r)), directions=4) 
+				toCells = 1:ncell(r), directions=4) 
 	
 #put the result in a RasterLayer
 v <- vector(length=ncell(r))

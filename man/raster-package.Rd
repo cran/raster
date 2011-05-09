@@ -116,6 +116,8 @@ RasterLayer, RasterStack, and RasterBrick objects are, as a group, referred to a
     \code{\link{clump}} \tab Find clumps (patches) \cr
     \code{\link{adjacency}} \tab Identify cells that are adjacent to a set of cells on a raster \cr
     \code{\link{area}} \tab Compute area of cells (for longitude/latitude data) \cr
+    \code{\link{slopeAspect}} \tab Compute slope and/or aspect from elevation data \cr	
+    \code{\link{Moran}} \tab Compute global or local Moran or Geary indices of spatial autocorrelation  \cr	
   }
 }
 

@@ -48,7 +48,7 @@ function(x, y, method="bilinear", filename="", ...)  {
 	
 	if (is.null(filename)){ filename <- "" }
 	
-	if (!canProcessInMemory(y, 3) && filename == '') {
+	if (!canProcessInMemory(y, 3*nl) && filename == '') {
 		filename <- rasterTmpFile()	
 	}
 	
@@ -74,13 +74,13 @@ function(x, y, method="bilinear", filename="", ...)  {
 		pb <- pbCreate(tr$n, type=.progress(...))
 
 		clFun <- function(i) {
-			r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
+			#r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
 			xy <- xyFromCell(y, cellFromRowCol(y, tr$row[i], 1) : cellFromRowCol(y, tr$row[i]+tr$nrows[i]-1, ncol(y)) ) 
 			.xyValues(x, xy, method=method)
 		}
 		
-        for (i in 1:nodes) {
-			sendCall(cl[[i]], clFun, i, tag=i)
+        for (ni in 1:nodes) {
+			sendCall(cl[[ni]], clFun, ni, tag=ni)
 		}
 
 		if (inMemory) {
@@ -93,7 +93,7 @@ function(x, y, method="bilinear", filename="", ...)  {
 				end <- cellFromRowCol(y, tr$row[d$value$tag]+tr$nrows[d$value$tag]-1, y@ncols)
 				v[start:end, ] <- d$value$value
 
-				ni <- nodes + 1
+				ni <- ni + 1
 				if (ni <= tr$n) {
 					sendCall(cl[[d$node]], clFun, ni, tag=ni)
 				}
@@ -106,7 +106,7 @@ function(x, y, method="bilinear", filename="", ...)  {
 			for (i in 1:tr$n) {
 				d <- recvOneData(cl)
 				y <- writeValues(y, d$value$value, tr$row[d$value$tag])
-				ni <- nodes+1
+				ni <- ni + 1
 				if (ni <= tr$n) {
 					sendCall(cl[[d$node]], clFun, ni, tag=ni)
 				}
@@ -121,7 +121,7 @@ function(x, y, method="bilinear", filename="", ...)  {
 		
 		if (inMemory) {
 			for (i in 1:tr$n) {
-				r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
+				#r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
 				xy <- xyFromCell(y, cellFromRowCol(y, tr$row[i], 1) : cellFromRowCol(y, tr$row[i]+tr$nrows[i]-1, ncol(y)) ) 
 				vals <- .xyValues(x, xy, method=method)
 
@@ -134,7 +134,7 @@ function(x, y, method="bilinear", filename="", ...)  {
 			y <- setValues(y, v)
 		} else {
 			for (i in 1:tr$n) {
-				r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
+				#r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
 				xy <- xyFromCell(y, cellFromRowCol(y, tr$row[i], 1) : cellFromRowCol(y, tr$row[i]+tr$nrows[i]-1, ncol(y)) ) 
 				vals <- .xyValues(x, xy, method=method)
 	

@@ -31,10 +31,30 @@ setClass('Extent',
 )
 
 
+setClass('.Rotation',
+	representation (
+		geotrans = 'numeric',
+		transfun = 'function',
+		upperleft = 'numeric',
+		lowerleft = 'numeric',
+		upperright = 'numeric',
+		lowerright = 'numeric'
+	),	
+	prototype (	
+		upperleft = c(0, 1),
+		lowerleft = c(0, 0),
+		upperright = c(1, 1),
+		lowerright = c(1, 0)
+	)
+)
+
+
 setClass ('BasicRaster',
 	representation (
 		title = 'character',
 		extent = 'Extent',
+		rotated = 'logical',
+		rotation = '.Rotation',
 		ncols ='integer',
 		nrows ='integer',
 		crs = 'CRS',
@@ -44,6 +64,7 @@ setClass ('BasicRaster',
 		unit = 'vector'
 	),
 	prototype (	
+		rotated = FALSE,
 		ncols= as.integer(1),
 		nrows= as.integer(1),
 		layernames=c(""),
@@ -79,9 +100,9 @@ setClass('.RasterFile',
 		),
 	prototype (	
 	    name = '',
-		datanotation='FLT8S',
+		datanotation='FLT4S',
 		byteorder = .Platform$endian,
-		nodatavalue = -3.4E38,
+		nodatavalue = -Inf,
 		nbands = as.integer(1),
 		bandorder = 'BIL',
 		offset = as.integer(0),
@@ -150,6 +171,7 @@ setClass ('.RasterLegend',
 		type = 'character',
 		values = 'vector',
 		color = 'vector',
+		names = 'vector',
 		colortable = 'vector'
 		),
 	prototype (

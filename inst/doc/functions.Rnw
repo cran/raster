@@ -127,6 +127,8 @@ f5 <- function(x, a, filename='') {
 	if (small & filename == '') {
 		filename <- rasterTmpFile()
 	}
+	
+	todisk <- FALSE
 	if (filename != '') {
 		out <- writeStart(out, filename, overwrite=TRUE)
 		todisk <- TRUE

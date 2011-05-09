@@ -14,14 +14,14 @@ Make a Red-Green-Blue plot based on three layers (in a RasterBrick or RasterStac
 \section{Methods}{
 \describe{
 
-\code{plotRGB(x, r=1, g=2, b=3, scale=255, maxpixels=500000, extent=NULL, ...)}
+\code{plotRGB(x, r=1, g=2, b=3, scale, maxpixels=500000, extent=NULL, ...)}
 
 \tabular{rll}{
 \tab \code{x} \tab a RasterBrick or RasterStack object \cr
 \tab \code{r}  \tab  Integer. Index of the Red channel, between 1 and nlayers(x) \cr
 \tab \code{g}  \tab  Integer. Index of the Green channel, between 1 and nlayers(x) \cr
 \tab \code{b}  \tab  Integer. Index of the Blue channel, between 1 and nlayers(x)\cr
-\tab \code{scale}  \tab Integer. Maximum (possible) value in the three channels \cr 
+\tab \code{scale}  \tab Integer. Maximum (possible) value in the three channels. Defaults to 255 or to the maximum value of \code{x} if that is known and larger than 255 \cr 
 \tab \code{maxpixels}  \tab  Maximum number of pixels to use  \cr
 \tab \code{extent}  \tab  An extent object to zoom in a region \cr
 \tab \code{...} \tab graphical parameters as in \code{\link{rasterImage}} \cr

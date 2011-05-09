@@ -3,14 +3,8 @@
 # Version 0.9
 # Licence GPL v3
 
-# to do: if proj is latlon & between -180 to 180, then use cells from other side..
-#	global <- .isGlobalLatLon(raster)
-#	if (global) {}
-	
-
 focalValues <- function(x, ...) {
-	.warnExtract(6)
-	.focalValues(x, ...)
+	stop('function has been removed. Use "extract" instead')
 }
 	
 	
@@ -20,7 +14,6 @@ focalValues <- function(x, ...) {
 	if (! is.null(dots$buffer) ) {
 		warning('argument "buffer" is ignored')
 	}
-
 
 	if (missing(row)) stop('You must provide a row number "row=" argument')
 
@@ -34,14 +27,21 @@ focalValues <- function(x, ...) {
 	r2 = min(nrow(x), r2)
 	nrows = r2 - r1 + 1
 	
-	col1 = floor(ngb[2]/2)
-	col2 = ngb[2]-(col1+1)
-	add1 = matrix(0, ncol=col1, nrow=nrows)
-	add2 = matrix(0, ncol=col2, nrow=nrows)
+	col1 = max(1, floor(ngb[2]/2))
+	col2 = max(1, ngb[2]-(col1+1))
 
 	cols=x@ncols
 	nrs = matrix(ncol=cols, nrow=nrows)
 	nrs[] = 1:length(nrs)
+
+	if (.isGlobalLonLat(x)) {
+		add1 <- nrs[,(ncol(nrs)-col1+1):ncol(nrs),drop=FALSE]
+		add2 <- nrs[,1:col2,drop=FALSE]
+	} else {
+		add1 = matrix(0, ncol=col1, nrow=nrows)
+		add2 = matrix(0, ncol=col2, nrow=nrows)
+	}
+
 	nrs = cbind(add1, nrs, add2)
 	
 	idx = matrix(ncol=cols, nrow=ngb[2]*nrows)

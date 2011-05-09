@@ -1,87 +1,130 @@
 # Author: Robert J. Hijmans, r.hijmans@gmail.com
 # Date : March 2009
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
+#
+# new version April 2011
+# padding, wrapping of global lon/lat data
 
+focalFilter <- function(x, filter, fun=sum, filename="", na.rm=FALSE, pad=TRUE, padValue=NA, ...) {
 
-
-.calcFilter <- function(rows, colnrs, res, filter, fun) {
-	res[] <- NA
-    for (i in 1:dim(rows)[2]) {
-		d <- rows[, colnrs[i, ]]
-		if (!all(dim(d) == dim(filter))) {
-			res[i] <- NA
-		} else {
-			res[i] <- fun(d * filter)
-		}
-	}	
-	return(res)
-}
-
-
-focalFilter <- function(x, filter, fun=sum, filename="", ...) {
-	if (!is.matrix(filter)) { stop('filter must be a matrix') }
+	stopifnot(nlayers(x) == 1)
+	stopifnot(is.matrix(filter))
+	
 	ngb <- dim(filter)
 	if (prod(ngb) == 0) { stop('ncol and nrow of filter must be > 0') }
+	if (min(ngb%%2) == 0) { stop('filter must have uneven sides') }	
 
-	ngbgrid <- raster(x)
-
+	out <- raster(x)
+	
 	limcol <- floor(ngb[2] / 2)
-	colnrs <- (-limcol+1):(ncol(ngbgrid)+limcol)
-	colnrs <- .embed(colnrs, ngb[2])
-	colnrs[colnrs > ncol(ngbgrid) | colnrs < 0] <- 0
+	colnrs <- (-limcol+1):(ncol(out)+limcol)
+	colnrs <- .embed(colnrs, ngb[2]) + limcol 
 
-	limrow <- floor(ngb[1] / 2)
-	ngbdata <- matrix(NA, nrow=0, ncol=ncol(ngbgrid))
-# add all rows needed for first ngb, minus 1 that will be read in first loop	
-	ngbdata <- getValues(x, 1, limrow)
-	ngbdata <- matrix(ngbdata, nrow=limrow, byrow=TRUE)
+	glob <- .isGlobalLonLat(x)
+	notGlobPad <- !glob & !pad & na.rm
+	notPad <- !pad & na.rm
+	if (notGlobPad) {
+		padNA <- c(1:limcol, (ncol(out)-limcol+1):ncol(out))
+	}
 
-	res <- vector(length=ncol(ngbdata))
-
-	filename <- trim(filename)
-	if (!canProcessInMemory(ngbgrid, 2) && filename == '') {
-		filename <- rasterTmpFile()			
+	if (glob) {
+		padfc <- 1:limcol
+		fc <- padfc + limcol
+		lc <- (ncol(out)+1):(ncol(out)+limcol)
+		padlc <- lc + limcol
+		padfclc <- c(padfc, padlc)
+		lcfc <- c(lc, fc)
 	}
 	
-	if (filename == '') {
-		v <- matrix(NA, ncol=nrow(ngbgrid), nrow=ncol(ngbgrid))
-	} else {
-		v <- vector(length=0)
-		ngbgrid <- writeStart(ngbgrid, filename=filename, ...)
+	limrow <- floor(ngb[1] / 2)
+	rdata <- matrix(padValue, ncol=ncol(x)+2*limcol, nrow=nrow(filter), byrow=TRUE) 
+	colrange <- (limcol+1):(ncol(rdata)-limcol)
+
+	fr <- (nrow(rdata)-limrow+1):nrow(rdata)
+	rdata[fr, colrange] <- matrix(getValues(x, 1, limrow), nrow=limrow, byrow=TRUE)
+
+
+	if (glob) {
+		rdata[fr, padfc] <- rdata[fr, lc]
+		rdata[fr, padlc] <- rdata[fr, fc]				
 	}
+	
+	res <- rep(NA, ncol(out))
+	
+	filename <- trim(filename)
+	if ( canProcessInMemory(out, 4) ) {
+		inMem <- TRUE
+		if (!inMemory(x)) {
+			x <- readAll(x)
+		}
+		v <- matrix(NA, ncol=nrow(out), nrow=ncol(out))
+	} else {
+		inMem <- FALSE
+		if (filename == '') {
+			filename <- rasterTmpFile()			
+		}
+		out <- writeStart(out, filename=filename, ...)
+	}
+	
+	pb <- pbCreate(nrow(out), type=.progress(...))
 
-	pb <- pbCreate(nrow(ngbgrid), type=.progress(...))
-
-	for (r in 1:nrow(ngbgrid)) {		
+	lastrow <- nrow(filter)
+	rrows <- 1:(lastrow-1)
+	
+	for (r in 1:nrow(out)) {
 		rr <- r + limrow
-		if (rr <= nrow(ngbgrid)) {
-			rowdata <- getValues(x, rr)
-			if (dim(ngbdata)[1] == ngb[1]) {
-				ngbdata <- rbind(ngbdata[2:ngb[1],], rowdata)
-			} else {
-				ngbdata <- rbind(ngbdata, rowdata)			
+		if (rr <= nrow(out)) {
+			rdata[rrows,] <- rdata[rrows+1,]
+			rdata[lastrow, colrange] <- getValues(x, rr)
+			if (glob) {
+				rdata[lastrow, padfclc] <- rdata[lastrow, lcfc]
+#				rdata[lastrow, padfc] <- rdata[lastrow, lc]
+#				rdata[lastrow, padlc] <- rdata[lastrow, fc]				
 			}
 		} else {
-			ngbdata <- ngbdata[-1, ,drop=FALSE]
+			rdata[rrows,] <- rdata[rrows+1,]
+			rdata[lastrow, ] <- padValue
 		}
-
 		
-		ngbvals <- .calcFilter(ngbdata, colnrs, res, filter, fun)
-		if (filename != "") {
-			ngbgrid <- writeValues(ngbgrid, ngbvals, r)
+		d <- matrix(as.vector(rdata[, t(colnrs)]), nrow=length(filter)) * as.vector(filter)
+		vals <- apply(d, 2, FUN=fun, na.rm=na.rm)
+
+		if (inMem) {
+			v[,r] <- vals		
 		} else {
-			v[,r] <- ngbvals
+			if (notGlobPad) {
+				vals[padNA] <- NA
+			}
+			out <- writeValues(out, vals, r)
 		}
 		pbStep(pb, r)
 	}
-	pbClose(pb)
+  	pbClose(pb)
 	
-	if (filename == "") { 
-		ngbgrid <- setValues(ngbgrid, as.vector(v)) 
+	if (inMem) { 
+		if( notPad ) {
+			v[ , c(1:limrow, (nrow(out)-limrow+1):nrow(out)) ] <- NA
+			if (!glob) {
+				v[padNA, ] <- NA
+			}
+		}
+		out <- setValues(out, as.vector(v)) 
+		if (filename != "") {
+			out <- writeRaster(out, filename, ...)
+		}
 	} else {
-		ngbgrid <- writeStop(ngbgrid)
+		if( notPad ) {
+			out <- writeValues(out, rep(NA, ncol(out)*limrow), 1)
+			out <- writeValues(out, rep(NA, ncol(out)*limrow), nrow(out)-limrow)
+		}
+		out <- writeStop(out)
 	}
-	return(ngbgrid)
+	return(out)
 }
-	
+
+#q = focalFilter1(x, f)
+#plot(q)
+#qq = focalFilter1(x, f, na.rm=T, pad=F)
+#plot(qq)
+

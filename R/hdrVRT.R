@@ -9,7 +9,9 @@
 	fn <- fname <- x@file@name
 
 	ext(fname) <- 'vrt'
-	ext(fn) <- '.gri'	
+	if (tolower(ext(fn)) == '.grd') {
+		ext(fn) <- '.gri'	
+	}
 	pixsize <- dataSize(x@file@datanotation)
 	nbands <- nlayers(x)
 	
@@ -44,7 +46,11 @@
 
 	f <- file(fname, "w") 
 	cat('<VRTDataset rasterXSize="', x@ncols, '" rasterYSize="', x@nrows, '">\n' , sep = "", file = f)
-	cat('<GeoTransform>', e@xmin, ', ', r[1], ', ', rotation, ', ', e@ymax, ', ', 0.0, ', ', -1*r[2], '</GeoTransform>\n', sep = "", file = f)
+	if (x@rotated) {
+		cat('<GeoTransform>', paste(x@rotation@geotrans, collapse=', '), '</GeoTransform>\n', sep = "", file = f)
+	} else {
+		cat('<GeoTransform>', e@xmin, ', ', r[1], ', ', rotation, ', ', e@ymax, ', ', 0.0, ', ', -1*r[2], '</GeoTransform>\n', sep = "", file = f)
+	}
 	if (prj != "NA") {
 		cat('<SRS>', prj ,'</SRS>\n', sep = "", file = f)
 	}

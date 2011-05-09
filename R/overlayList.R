@@ -21,8 +21,8 @@
 	w <- getOption('warn')
 	options('warn'=-1) 
 	for (i in 1:length(testlst)) {
-		v <- as.vector(extract(x[[i]], 1:5))
-		testmat <- cbind(testmat, v)
+		v <- extract(x[[i]], 1:5)
+		testmat <- cbind(testmat, as.vector(v))
 		testlst[[i]] <- v
 	}
 	options('warn'= w) 
@@ -38,28 +38,37 @@
 		nlout <- NCOL(test1)
 	} else {
 		doapply <- FALSE
+		dovec <- FALSE
 		test2 <- try ( do.call(fun, testlst), silent=TRUE )
 		nlout <- length(test2)/5
 		if (class(test2) == "try-error" | length(test2) < 5) {
-			stop('cannot use this formula, it is not vectorized')
+			dovec <- TRUE
+			testlst <- lapply(testlst, as.vector)
+			test3 <- try ( do.call(fun, testlst), silent=TRUE )
+			nlout <- length(test3)/5
+			if (class(test3) == "try-error" | length(test3) < 5) {
+				stop('cannot use this formula, it is not vectorized')
+			}
 		} 
 	}
 
 	if (nlout == 1) {
-		outraster <- raster(x[[1]])
+		out <- raster(x[[1]])
 	} else {
-		outraster <- brick(raster(x[[1]]))
-		outraster@data@nlayers  <- as.integer(nlout)
+		out <- brick(raster(x[[1]]))
+		out@data@nlayers  <- as.integer(nlout)
 	}
 	
-	if ( canProcessInMemory(outraster, sum(nl)) ) {
+	if ( canProcessInMemory(out, sum(nl)) ) {
 		pb <- pbCreate(3, type=.progress(...))			
 		pbStep(pb, 1)
 		if (doapply) {
-			valmat <- matrix(nrow=ncell(outraster)*maxnl, ncol=length(x)) 
+			valmat <- matrix(nrow=ncell(out)*maxnl, ncol=length(x)) 
 			for (i in 1:length(x)) {
 				if (ncell(x[[i]]) < nrow(valmat)) {
+					options('warn'=-1) 
 					valmat[,i] <- as.vector(getValues(x[[i]])) * rep(1, nrow(valmat))
+					options('warn'= w) 
 				} else {
 					valmat[,i] <- as.vector(getValues(x[[i]]))
 				}
@@ -70,43 +79,42 @@
 			if (! is.null(dim(vals))) {
 				vals <- t(vals)
 			}
-			vals <- matrix(vals, nrow=ncell(outraster))
+			vals <- matrix(vals, nrow=ncell(out))
 			
 		} else {
 			for (i in 1:length(x)) {
-				x[[i]] <- as.vector(getValues(x[[i]]))
+                x[[i]] <- getValues(x[[i]])
+            }
+			if (dovec) {
+				x <- lapply(x, as.vector)
 			}
 			pbStep(pb, 2)
 			vals <- do.call(fun, x)
-			vals <- matrix(vals, nrow=ncell(outraster))
+			vals <- matrix(vals, nrow=ncell(out))
 		}
 		pbStep(pb, 3)
-		outraster <- setValues(outraster, vals)
+		out <- setValues(out, vals)
 		if (filename != "") { 
-			outraster <- writeRaster(outraster, filename=filename, ...) 
+			out <- writeRaster(out, filename=filename, ...) 
 		}
 		pbClose(pb)
-		return(outraster)
+		return(out)
 		
 	} else {
 	
 		if (filename == "") {
 			filename <- rasterTmpFile()
 		} 
-		outraster <- writeStart(outraster, filename=filename, ...)
+		out <- writeStart(out, filename=filename, ...)
 		
-		tr <- blockSize(outraster, n=length(x))
+		tr <- blockSize(out, n=length(x))
 		pb <- pbCreate(tr$n, type=.progress(...))
-
-		outraster <- writeStart(outraster, filename=filename)
-		tr <- blockSize(outraster, n=length(x))
-		pb <- pbCreate(tr$n, type="")
 		
 		if (doapply) { 
-			valmat = matrix(nrow=tr$nrows[1]*ncol(outraster)*maxnl, ncol=length(x)) 
+			valmat = matrix(nrow=tr$nrows[1]*ncol(out)*maxnl, ncol=length(x)) 
 			for (i in 1:tr$n) {
 				if (i == tr$n) {
-					valmat = matrix(nrow=tr$nrows[i]*ncol(outraster)*maxnl , ncol=length(x))
+					valmat = matrix(nrow=tr$nrows[i]*ncol(out)*maxnl , ncol=length(x))
 				}
 				for (j in 1:length(x)) {
 					v <- as.vector(getValues(x[[j]], row=tr$row[i], nrows=tr$size))
@@ -124,25 +132,32 @@
 					vals <- t(vv)
 				}
 				vv <- matrix(vv, ncol=nlout)
-				outraster <- writeValues(outraster, vv, tr$row[i])
+				out <- writeValues(out, vv, tr$row[i])
 				pbStep(pb, i)
 			}
 			
 		} else {
 			vallist <- list()
 			for (i in 1:tr$n) {
-				for (j in 1:length(x)) {
-					vallist[[j]] <- as.vector( getValues(x[[j]], row=tr$row[i], nrows=tr$size) )
+				if (dovec) {
+					for (j in 1:length(x)) {
+						vallist[[j]] <- as.vector( getValues(x[[j]], row=tr$row[i], nrows=tr$size) )
+					}	
+				} else {
+					for (j in 1:length(x)) {
+						vallist[[j]] <- getValues(x[[j]], row=tr$row[i], nrows=tr$size)
+					}
 				}	
+
 				vv <- do.call(fun, vallist)
 				vv <- matrix(vv, ncol=nlout)
-				outraster <- writeValues(outraster, vv, tr$row[i])
+				out <- writeValues(out, vv, tr$row[i])
 				pbStep(pb, i)
 			}
 		}
 		pbClose(pb)
-		outraster <- writeStop(outraster)
+		out <- writeStop(out)
 	} 
-	return(outraster)
+	return(out)
 }
 

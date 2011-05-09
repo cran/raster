@@ -5,6 +5,9 @@
 
 
 yFromRow <- function(object, rownr) {
+	if (object@rotated) {
+		stop('this function is not supported for rotated rasters')
+	}
 	rownr <- round(rownr)
 	rownr[rownr < 1 | rownr > object@nrows] <- NA
 	y <- ymax(object) - ((rownr-0.5) * yres(object))
@@ -12,6 +15,9 @@ yFromRow <- function(object, rownr) {
 	
 	
 xFromCol <- function(object, colnr) {
+	if (object@rotated) {
+		stop('this function is not supported for rotated rasters')
+	}
 	colnr <- round(colnr)
 	colnr[colnr < 1 | colnr > object@ncols] <- NA
 	x <- xmin(object) + (colnr - 0.5) * xres(object) 
@@ -30,9 +36,15 @@ cellFromXY <- function(object, xy) {
 		x <- xy[,1]
 		y <- xy[,2] 
 	}
-	rownr <- rowFromY(object, y) - 1
-	colnr <- colFromX(object, x)
-	cell <- rownr * object@ncols + colnr
+
+	if (object@rotated) {
+		cr <- object@rotation@transfun(xy, inv=TRUE)
+		cell <- (cr[,2]-1) * object@ncols + cr[,1]
+	} else {
+		rownr <- rowFromY(object, y) - 1
+		colnr <- colFromX(object, x)
+		cell <- rownr * object@ncols + colnr
+	}
 	return(cell)
 }
 
@@ -40,6 +52,9 @@ cellFromXY <- function(object, xy) {
 colFromX <- function ( object, x )	{
 	if (inherits(x, 'Spatial')) { 
 		x <- x@coords[,1] 
+	}
+	if (object@rotated) {
+		stop('this function is not supported for rotated rasters')
 	}
 	colnr <- trunc((x - xmin(object)) / xres(object)) + 1 
 	colnr[ x == xmax(object) ] <- object@ncols
@@ -52,20 +67,26 @@ rowFromY <- function ( object, y )	{
 	if (inherits(y, 'Spatial')) {
 		y <- y@coords[,2] 
 	}
+	if (object@rotated) {
+		stop('this function is not supported for rotated rasters')
+	}
 	rownr <- 1 + (trunc((ymax(object) - y) / yres(object)))
 	rownr[y == ymin(object) ] <- object@nrows 
 	rownr[y > ymax(object) | y < ymin(object)] <- NA
+
 	return(rownr)
 }	
 	
 
 xyFromCell <- function(object, cell, spatial=FALSE) {
-	xy <- matrix(data = NA, ncol=2, nrow=length(cell))
-	xy[,1] <- colFromCell(object, cell)
-	xy[,2] <- rowFromCell(object, cell)
-	xy[,1] <- xFromCol(object, xy[,1])
-	xy[,2] <- yFromRow(object, xy[,2]) 		
-	colnames(xy) <- c("x", "y")
+	if (object@rotated) {
+		xy <- object@rotation@transfun( cbind(colFromCell(object, cell), rowFromCell(object, cell)) )
+	} else {
+		xy <- matrix(data = NA, ncol=2, nrow=length(cell))
+		xy[,1] <- xFromCol(object, colFromCell(object, cell))
+		xy[,2] <- yFromRow(object, rowFromCell(object, cell))
+	}
+	colnames(xy) <- c("x", "y")	
 	if (spatial) {
 		xy <- SpatialPoints(xy, projection(object, asText=FALSE))
 	}
@@ -74,12 +95,22 @@ xyFromCell <- function(object, cell, spatial=FALSE) {
 	
 
 yFromCell <- function(object, cell) {
-	cell <- rowFromCell(object, cell)
-	return( yFromRow(object, cell) )
+	if (object@rotated) {
+		xy <- object@rotation@transfun(xy)
+		return(xy[,2])
+	} else {
+		cell <- rowFromCell(object, cell)
+		return( yFromRow(object, cell) )
+	}
 }  
 	
 xFromCell <- function(object, cell) {
-	cell <- colFromCell(object, cell)
-	return( xFromCol(object, cell) )
+	if (object@rotated) {
+		xy <- object@rotation@transfun(xy)
+		return(xy[,1])
+	} else {
+		cell <- colFromCell(object, cell)
+		return( xFromCol(object, cell) )
+	}
 }  
 

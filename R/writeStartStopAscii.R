@@ -22,7 +22,6 @@
 	if (!missing(NAflag)) { 
 		x@file@nodatavalue <- NAflag
 	}
-
 	
 	resdif <- abs((yres(x) - xres(x)) / yres(x) )
 	if (resdif > 0.01) {
@@ -43,6 +42,7 @@
 	close(thefile) #close connection
 	
 	return(x)
+	
 }
 
 

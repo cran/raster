@@ -5,18 +5,18 @@
 \title{Slope and aspect}
 
 \description{
-Compute slope and/or aspect from elevation data. Elevation data should be in map units (typically meter for projected raster data), or in meters when the coordinate reference system (CRS) is longitude/latitude. 
+Compute slope and/or aspect from elevation data. Elevation data should be in map units (typically meter) for projected (planar) raster data. They should be in meters when the coordinate reference system (CRS) is longitude/latitude. 
 }
 
 \usage{
-slopeAspect(dem, filename='', type='', unit='', neighbors=8, flatAspect, ...)  
+slopeAspect(dem, filename='', out=c('slope', 'aspect'), unit='radians', neighbors=8, flatAspect, ...)  
 }
 
 \arguments{
   \item{dem}{RasterLayer object with elevation values in map units, or in meters when the crs is longitude/latitude}
   \item{filename}{Character. Filename. optional}
-  \item{type}{Character. 'slope', 'aspect', or 'both' (=default, slope and aspect)}
-  \item{unit}{Character. 'degrees' or '' (=default, radians for aspect, and fraction for slope) }
+  \item{out}{Character vector containing one or more of these options: 'slope', 'aspect'}
+  \item{unit}{Character. 'degrees' or 'radians' }
   \item{neighbors}{Integer. Indicating how many neighboring cells to use to compute slope for any cell. Either 8 (queen case) or 4 (rook case), see Details}
   \item{flatAspect}{Numeric or NA. What value to use for aspect when slope is zero (and hence the aspect is undefined)? The default value is 90 degrees (or 0.5*pi radians) }
   \item{...}{Standard additional arguments for writing RasterLayer files}

@@ -25,6 +25,8 @@ showOptions <- function() {
 	cat('maxmemory :', .maxmemory(), '\n')
 	cat('tmpdir    :', .tmpdir(), '\n')
 	cat('setfileext:', .setfileext(), '\n')
+	cat('tolerance :', .tolerance(), '\n')
+	
 #	cat('usecluster:', .usecluster(), '\n')
 	if (.toDisk()) {
 		cat('toDisk    : TRUE\n')
@@ -33,15 +35,15 @@ showOptions <- function() {
 
 clearOptions <- function() {
 	options(rasterFiletype = 'raster')
-	options(rasterDatatype = 'FLT8S')
+	options(rasterDatatype = 'FLT4S')
 	options(rasterOverwrite = FALSE)
 	options(rasterProgress = 'none')
 	options(rasterTimer = FALSE)
 	options(rasterChunkSize = 1000000)
-	options(rasterMaxMemory = 100000000)
+	options(rasterMaxMemory = 10000000)
 	options(setfileext = TRUE)
 	options(rasterTmpDir = .tmpdir())
-#	options(rasterUseCluster = FALSE)
+	options(rasterTolerance = 0.1)
 		
 	fn <- paste(R.home(component="etc"), '/', 'Rprofile.site', sep='')
 	lst <- readLines(fn)
@@ -67,7 +69,7 @@ saveOptions <- function() {
 	lst <- c(lst, paste("options(rasterMaxMemory=", .maxmemory(), ")", sep=''))
 	lst <- c(lst, paste("options(rasterSetFileExt=", .setfileext(), ')', sep=''))
 	lst <- c(lst, paste("options(rasterTmpDir='", .tmpdir(), "')", sep=''))
-	lst <- c(lst, paste("options(rasterUseCluster=", .usecluster(), ')', sep=''))
+	lst <- c(lst, paste("options(rasterTolerance=", .tolerance(), ')', sep=''))
 
 	r <- try( write(unlist(lst), fn), silent = TRUE )
 #	if (class(r) == "try-error") { cat('Cannot save options. No write access to: ', fn, '\n')	}

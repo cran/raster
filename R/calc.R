@@ -41,20 +41,42 @@ function(x, fun, filename='', na.rm, ...) {
 
 	nl <- nlayers(x)
 	if (nl == 1) { 	makemat <- TRUE	} else { makemat <- FALSE  }
-	
+	tstdat <- x[1:5]
+
+	trans <- FALSE
+	doapply <- TRUE
 	if (! missing(na.rm)) {
-		test <- try(fun(1:nl, na.rm=na.rm), silent=TRUE)
+		test <- try( apply(tstdat, 1, fun, na.rm=na.rm), silent=TRUE)
 		if (class(test) == 'try-error') {
-			stop("cannot use this function. Perhaps add 'na.rm' or '...' to the function arguments?") 
+			doapply <- FALSE
+			test <- try(fun(tstdat, na.rm=na.rm), silent=TRUE)
+			if (class(test) == 'try-error') {
+				stop("cannot use this function. Perhaps add '...' or 'na.rm' to the function arguments?") 
+			}
+			
+		} else if (is.matrix(test)) {
+			trans <- TRUE
 		}
 	} else {
-		test <- try(fun(1:nl), silent=TRUE)
+		test <- try( apply(tstdat, 1, fun), silent=TRUE)
 		if (class(test) == 'try-error') {
-			stop("cannot use this function") 
+			doapply <- FALSE
+			test <- try(fun(tstdat), silent=TRUE)
+			if (class(test) == 'try-error') {
+				stop("cannot use this function") 
+			}
+		} else if (is.matrix(test)) {
+			trans <- TRUE
 		}
 	}
 
-	test <- length(test)
+	if (trans) {
+		test <- t(test)
+		test <- ncol(test)
+	} else {
+		test <- length(test) / 5
+	}
+	test <- as.integer(test)
 	if (test == 1) {
 		out <- raster(x)
 	} else {
@@ -64,11 +86,9 @@ function(x, fun, filename='', na.rm, ...) {
 
 	fun <- .makeTextFun(fun)
 	if (class(fun) == 'character') { 
-		rowcalc <- TRUE 
+		doapply <- FALSE
 		fun <- .getRowFun(fun)
-	} else { 
-		rowcalc <- FALSE 
-	}
+	} 
 	
 	filename <- trim(filename)
 
@@ -76,22 +96,20 @@ function(x, fun, filename='', na.rm, ...) {
 		x <- getValues(x)
 		if (makemat) { x <- matrix(x, ncol=1) }
 		if (missing(na.rm)) {
-			if (rowcalc) { 
+			if (! doapply ) { 
 				x <- fun(x ) 
 			} else {
 				x <- apply(x, 1, fun )
 			}
 		} else {
-			if (rowcalc) { 
+			if ( ! doapply ) { 
 				x <- fun(x, na.rm=na.rm ) 
 			} else {
 				x <- apply(x, 1, fun, na.rm=na.rm)
 			}
 		}
-		if (is.matrix(x)) {
-			if (dim(x)[2] != test) {
-				x <- t(x)
-			}
+		if (trans) {
+			x <- t(x)
 		}
 		x <- setValues(out, x)
 		if (filename != '') {
@@ -112,15 +130,13 @@ function(x, fun, filename='', na.rm, ...) {
 		for (i in 1:tr$n) {
 			v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
 			if (makemat) { v <- matrix(v, ncol=1) }
-			if (rowcalc) {
+			if ( ! doapply ) {
 				v <- fun(v)
 			} else {
 				v <- apply(v, 1, fun)
 			}
-			if (is.matrix(v)) {
-				if (dim(v)[2] != test) {
-					v <- t(v)
-				}
+			if (trans) {
+				v <- t(v)
 			}
 
 			out <- writeValues(out, v, tr$row[i])
@@ -130,15 +146,13 @@ function(x, fun, filename='', na.rm, ...) {
 		for (i in 1:tr$n) {
 			v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
 			if (makemat) { v <- matrix(v, ncol=1) }
-			if (rowcalc) {
+			if ( ! doapply ) {
 				v <- fun(v, na.rm=na.rm)
 			} else {
 				v <- apply(v, 1, fun, na.rm=na.rm)
 			}
-			if (is.matrix(v)) {
-				if (dim(v)[2] != test) {
-					v <- t(v)
-				}
+			if (trans) {
+				v <- t(v)
 			}
 			out <- writeValues(out, v, tr$row[i])
 			pbStep(pb) 
