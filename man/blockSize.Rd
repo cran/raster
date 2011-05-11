@@ -10,7 +10,7 @@ This function can be used to suggest a chunk size, and corresponding row numbers
 }
 
 \usage{
-blockSize(x, chunksize, n=nlayers(x), minblocks=4)
+blockSize(x, chunksize, n=nlayers(x), minblocks=4, minrows=1)
 }
 
 \arguments{
@@ -18,6 +18,7 @@ blockSize(x, chunksize, n=nlayers(x), minblocks=4)
   \item{chunksize}{Integer, normally missing. Can be used to set the block size; unit is number of cells. Block size is then computed in units of number of rows (always >= 1)  }
   \item{n}{Integer. number of layers to consider. The function divides chunksize by n to determine blocksize }
   \item{minblocks}{Integer. Minimum number of blocks }
+  \item{minrows}{Integer. Minimum number of rows in each block }
 }
 
 

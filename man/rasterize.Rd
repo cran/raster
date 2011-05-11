@@ -58,7 +58,7 @@ The value of a grid cell is determined by the values associated with the points 
 
 If \code{x} represents points, each point is assinged to a grid cell. The default result is that cells with one or more points get value 1 and the other cells get the background value (default is \code{NA}).
 
-If you want to know the number of points in each grid cell, use \code{fun=sumfunction(x,...){length(x)}}. I.e., for each cell it computes the length of the vector of points. You can also use \code{fun=sum}, because the default 'field' value of a point is 1. For the number of unique values use \code{fun=function(x, ...){ length(unique(na.rm(x)))}}
+If you want to know the number of points in each grid cell, use \code{fun=function(x,...){length(x)}}. I.e., for each cell it computes the length of the vector of points. You can also use \code{fun=sum}, because the default 'field' value of a point is 1. For the number of unique values use \code{fun=function(x, ...){ length(unique(na.rm(x)))}}
 
 There is one additional argument:
 

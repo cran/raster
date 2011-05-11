@@ -74,7 +74,8 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", old=FALSE, .
 		cells <- cellFromRowCol(x, rows, cols)
 		nrows = yfact
 
-		on.exit( options('warn'= getOption('warn')) )
+		w <- getOption('warn')
+		on.exit(options('warn' = w))
 		options('warn'=-1) 
 		
 		pb <- pbCreate(rsteps, type=.progress(...))

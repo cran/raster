@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-setOptions <- function(format, overwrite, datatype, tmpdir, progress, timer, chunksize, maxmemory, todisk, setfileext) {
+setOptions <- function(format, overwrite, datatype, tmpdir, progress, timer, chunksize, maxmemory, todisk, setfileext, tolerance) {
 	
 	setFiletype <- function(format) {
 		if (.isSupportedFormat(format)) {	options(rasterFiletype = format)	
@@ -90,9 +90,11 @@ setOptions <- function(format, overwrite, datatype, tmpdir, progress, timer, chu
 		options(rasterMaxMemory = maxmemory )
 	}
 	
-	setCluster <- function(usecluster) {
-		options(rasterUseCluster = usecluster)
+	setTolerance <- function(x) {
+		x <- max(0.000000001, min(x, 0.5))
+		options(rasterTolerance = x)
 	}
+	
  	
 	if (!missing(format)) { setFiletype(format) }
 	if (!missing(overwrite)) { setOverwrite(overwrite) }
@@ -104,19 +106,6 @@ setOptions <- function(format, overwrite, datatype, tmpdir, progress, timer, chu
 	if (!missing(setfileext)) { setFileExt(setfileext) }
 	if (!missing(maxmemory)) { setMaxMemorySize(maxmemory) }
 	if (!missing(chunksize)) { setChunksize(chunksize) }
-#	if (!missing(usecluster)) { setCluster(usecluster) }
+	if (!missing(tolerance)) { setTolerance(tolerance) }
 }
 
-
-
-#file <- function(filename) {
-#	if (is.character(filename)) {
-#		if (length(filename) == 1) {
-#			options(rasterFilename = filename)
-#		} else {
-#			warning(paste('Could not set filename. It should not be a vector with length > 1'))	
-#		}
-#	} else {
-#		warning(paste('Could not set filename. It should a character type variable'))	
-#	}
-#}

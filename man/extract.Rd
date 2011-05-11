@@ -40,7 +40,9 @@ Below are additional arguments that can be used, depending on the type of object
 \bold{= all objects =}
 
 1) \code{fun}. Function to summarize the values (e.g. \code{mean}). The function should 
-take a single numeric vector as argument and return a single values (e.g. mean, min or max), and have a \code{na.rm} argument.
+take a single numeric vector as argument and return a single values (e.g. mean, min or max), and accept a \code{na.rm} argument.
+Thus, standard R functions not including an na.rm argument must be wrapped as in this example: fun=function(x,...)length(x)
+
 If \code{y} represents points supplying a \code{fun} argument is only useful when non-zero buffers are used. 
 
 2) \code{na.rm}. Only useful when \code{fun} is supplied. If \code{na.rm=TRUE} (the default value), NA values are removed before fun is applied. This argument may be ignored if the function used has a \code{...} argument and ignres an additional \code{na.rm} argument. 

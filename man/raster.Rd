@@ -171,8 +171,13 @@ RasterLayer object
 
 \examples{
 #from file
-r <- raster(system.file("external/test.grd", package="raster"))
+#   For your own files, omit the 'system.file' and 'package="raster"' bits
+#   these are just to get the path to files installed with the package
+f <- system.file("external/test.grd", package="raster")
+f
+r <- raster(f)
 logo <- raster(system.file("external/rlogo.grd", package="raster")) 
+
 
 #from scratch
 r1 <- raster(nrows=108, ncols=21, xmn=0, xmx=10)

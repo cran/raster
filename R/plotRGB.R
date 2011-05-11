@@ -12,10 +12,18 @@ if (!isGeneric("plotRGB")) {
 
 
 setMethod("plotRGB", signature(x='RasterStackBrick'), 
-function(x, r=1, g=2, b=3, scale=255, maxpixels=500000, extent=NULL, interpolate=FALSE, axes=TRUE, xlab='', ylab='', asp, alpha, ...) { 
+function(x, r=1, g=2, b=3, scale, maxpixels=500000, extent=NULL, interpolate=FALSE, axes=TRUE, xlab='', ylab='', asp, alpha, ...) { 
 	
 	if (!axes) par(plt=c(0,1,0,1))
 
+	if (missing(scale)) {
+		if ( x@data@haveminmax ) {
+			scale <- max(max(x@data@max), 255)
+		} else {
+			scale <- 255
+		}
+	}
+	
  	if (missing(asp)) {
 		if (.couldBeLonLat(x)) {
 			ym <- mean(x@extent@ymax + x@extent@ymin)

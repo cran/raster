@@ -67,7 +67,12 @@
 		.Call("RGDAL_SetNoDataValue", b, as.double(NAflag), PACKAGE = "rgdal")
 	}
 
-	gt <- c(xmin(r), xres(r), 0, ymax(r), 0, -yres(r))
+	if (r@rotated) {
+		gt <- r@rotation@geotrans
+	} else {
+		gt <- c(xmin(r), xres(r), 0, ymax(r), 0, -yres(r))
+	}
+	
     .Call("RGDAL_SetGeoTransform", transient, gt, PACKAGE = "rgdal")
     .Call("RGDAL_SetProject", transient, projection(r), PACKAGE = "rgdal")
 

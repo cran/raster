@@ -45,6 +45,10 @@ setMethod('brick', signature(x='RasterLayer'),
 	function(x, ..., values=TRUE, filename='', format,  datatype, overwrite, progress) {
 		if (!values) {
 			b <- brick(x@extent, nrows=nrow(x), ncols=ncol(x), crs=projection(x))
+			if (x@rotated) {
+				b@rotated <- TRUE
+				b@rotation <- x@rotation
+			}
 			return(b)
 		}	
 		x <- stack(x, ...)
@@ -63,6 +67,11 @@ setMethod('brick', signature(x='RasterStack'),
 	function(x, values=TRUE, nl, filename='', ...){
 		e <- x@extent
 		b <- brick(xmn=e@xmin, xmx=e@xmax, ymn=e@ymin, ymx=e@ymax, nrows=x@nrows, ncols=x@ncols, crs=projection(x))
+		if (x@rotated) {
+			b@rotated <- TRUE
+			b@rotation <- x@rotation
+		}
+
 		if (! missing(nl)) {
 			values <- FALSE
 		} else {
@@ -111,11 +120,15 @@ setMethod('brick', signature(x='RasterBrick'),
 	function(x, nl, ...){
 		if (missing(nl)) { nl <- nlayers(x) }
 		e <- x@extent
-		x <- brick(xmn=e@xmin, xmx=e@xmax, ymn=e@ymin, ymx=e@ymax, nrows=x@nrows, ncols=x@ncols, crs=projection(x))
-		x@data@nlayers <- as.integer(nl)
-		x@data@min <- rep(Inf, nl)
-		x@data@max <- rep(-Inf, nl)
-		return(x)
+		b <- brick(xmn=e@xmin, xmx=e@xmax, ymn=e@ymin, ymx=e@ymax, nrows=x@nrows, ncols=x@ncols, crs=projection(x))
+		b@data@nlayers <- as.integer(nl)
+		b@data@min <- rep(Inf, nl)
+		b@data@max <- rep(-Inf, nl)
+		if (x@rotated) {
+			b@rotated <- TRUE
+			b@rotation <- x@rotation
+		}
+		return(b)
 	}
 )
 
@@ -171,7 +184,7 @@ setMethod('brick', signature(x='SpatialPixels'),
 	}
 )
 
-
+	
 setMethod('brick', signature(x='array'), 
 	function(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA, transpose=FALSE) {
 		dm <- dim(x)
@@ -182,21 +195,23 @@ setMethod('brick', signature(x='array'),
 			stop('array has wrong number of dimensions (needs to be 3)')
 		}
 		b <- brick(xmn=xmn, xmx=xmx, ymn=ymn, ymx=ymx, crs=crs)
-		v <- matrix(as.vector(x), ncol=dm[3])
 		if (transpose) {
 			dim(b) <- c(dm[2], dm[1], dm[3])
-			for (i in 1:ncol(v)) {
-				v[,i] <- as.vector(matrix(v[,i], ncol=dm[2]))
-			}
 		} else {
 			dim(b) <- dm
-			for (i in 1:ncol(v)) {
-				v[,i] <- as.vector(t(matrix(v[,i], ncol=dm[2])))
-			}
+			# aperm etc suggested by Justin McGrath
+			# https://r-forge.r-project.org/forum/message.php?msg_id=4312
+			x = aperm(x, perm=c(2,1,3))
 		}
-		setValues(b, v)
+		attributes(x) <- NULL
+		dim(x) <- c(dm[1] * dm[2], dm[3])
+		setValues(b, x)
 	}
 )
+
+
+	
+
 
 setMethod('brick', signature(x='kasc'), 
 	function(x) {

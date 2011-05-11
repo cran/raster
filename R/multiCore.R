@@ -3,7 +3,7 @@
 # Version 1.0
 # Licence GPL v3
 
-beginCluster <- function(n, type) {
+beginCluster <- function(n, type, nice) {
 	if (! require(snow) ) {
 		stop('you need to install the "snow" package')
 	}
@@ -21,12 +21,23 @@ beginCluster <- function(n, type) {
 		type <- getClusterOption("type")
 		cat('cluster type:', type, '\n')
 	}
+	
 
 	cl <- makeCluster(n, type) 
 	cl <- .addPackages(cl)
 	options(rasterClusterObject = cl)
 	options(rasterClusterCores = length(cl))
 	options(rasterCluster = TRUE)
+	
+	if (!missing(nice)){
+		if (.Platform$OS.type == 'unix') {
+			invisible(clusterExport(cl, "nice"))
+			clusterEvalQ(cl,system(paste("renice",nice,"-p", Sys.getpid())))	
+		} else {
+			warning("argument 'nice' only supported on UNIX like operating systems")
+		}
+	}
+	
 }
 
 

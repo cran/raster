@@ -6,7 +6,7 @@
 \alias{t,RasterLayer-method}
 \alias{t,RasterStackBrick-method}
   
-\title{transpose}
+\title{Transpose}
 
 \description{
 Transpose a Raster* object

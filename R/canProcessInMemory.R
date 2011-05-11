@@ -33,9 +33,9 @@ canProcessInMemory <- function(raster, n=4) {
 
 	g <- gc()
 	w <- getOption('warn')
+	on.exit(options('warn'= w))
 	options('warn'=-1) 
 	r <- try( matrix(0.1, ncol=n, nrow=cells), silent=TRUE )
-	options('warn'= w) 
 
 	if (class(r) == "try-error") {
 		return( FALSE )

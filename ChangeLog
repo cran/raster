@@ -1,6 +1,36 @@
+--- 9-May-2011, version 1.8-20
+A warning is given when a rotated image is used (suggested by Agustin Lobo)
+New function 'rectify' to unrotate rasters
+Very limited initial support for rotated rasters (typically sat images). Many of the existing functions will work with these images, but results can be wrong. Should work OK for simple raster algebra etc. but probably not when joining data spatially.  Although basic extract with coordinates should work OK now. 
+
+--- 5-May-2011, version 1.8-18
+Changes to calc and overlay to allow for more complex functions
+Changes to stackSelect to allow (optionally recycled) layer selection with a multi-layer object 
+
+--- 2-May-2011, version 1.8-17
+Faster setvalues with an array and 'brick' and 'setValues' (code changes provided by Justin McGrath)
+Fixed a problem with a few functions set warnings to -1 and did not reset it (reported by Justin McGrath)
+New option in 'hdr' to write ESRI .prj files. 
+New global option "tolerance" that is used to assess whether Raster* objects have the same origin/resolution
+Improvements to hillShade thanks to Oscar Perpiñán Lamigueiro
+
+--- 27-Apr-2011, version 1.8-16
+default NA value for reading files via gdal is now -Inf such that values are not inadvertedly classified as NA (thanks to bug report by Agustin Lobo) when using e.g. INT2U datatype.
+further adjustments needed for writing.
+
+--- 25-Apr-2011, version 1.8-15
+focal now correct for global lon/lat data (first & last columns touch)
+
+--- 17-Apr-2011, version 1.8-14
+focalFilter now using the correct "padding" for global lon/lat data (first & last columns touch)
+
+--- 14-Apr-2011, version 1.8-13
+Added new functions Geary, Moran (global) and MoranLocal
+New option to focalFilter: "pad" to better deal with edge effects
+
 --- 11-Apr-2011, version 1.8-12
 Major bug fix in focalFilter. In previous versoins results were wrong for filters larger than 3x3 !
-Thanks to Nick Hamm, Andy Wilson for reporting
+Thanks to Nick Hamm & Andy Wilson for reporting
 
 --- 7-Apr-2011, version 1.8-10
 Bug fix in cellStats with 'sd' and large files (reported by John Donoghue)

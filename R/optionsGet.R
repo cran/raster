@@ -64,7 +64,7 @@
 
 
 .maxmemory <- function() {
-	default <- 1000000000
+	default <- 100000000
 	d <- getOption('rasterMaxMemory')
 	if (is.null(d)) {
 		return( default )
@@ -77,6 +77,17 @@
 		d <- default
 	} 
 	d <- max(d, 10000, na.rm=TRUE)
+	return(d)
+}
+
+
+.tolerance <- function() {
+	d <- getOption('rasterTolerance')
+	if (is.null(d)) {
+		d <- 0.1
+	} else {
+		d <- max(0.000000001, min(d, 0.5))
+	}
 	return(d)
 }
 
@@ -107,7 +118,7 @@
 	if (missing(datatype)) { 
 		datatype <- getOption('rasterDatatype')
 		if (is.null(datatype)) {
-			return('FLT8S') 
+			return('FLT4S') 
 		} 
 	} 
 	if (! datatype %in% c('LOG1S', 'INT1S', 'INT2S', 'INT4S', 'INT1U', 'INT2U', 'INT4U', 'FLT4S', 'FLT8S')) {

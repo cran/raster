@@ -36,6 +36,8 @@ hdr <- function(x, format, extension='.wld') {
 		.writeHdrSAGA(x)
 	} else 	if (type=="IDRISI") {
 		.writeHdrIDRISI(x)
+	} else 	if (type=="PRJ") {
+		.writeHdrPRJ(x, ESRI=TRUE)
 	} else {
 		stop("This file format is not supported")
 	}

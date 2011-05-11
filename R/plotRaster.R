@@ -47,16 +47,27 @@
 		}
 	}
 	
+	leg <- object@legend
 	object <- sampleRegular(object, size=maxpixels, extent=extent, asRaster=TRUE, corners=TRUE)
-
 	x <- (0:ncol(object)) * xres(object) + xmin(object) 
 	y <- (0:nrow(object)) * yres(object) + ymin(object) 		
+
+	if (length(leg@color) > 0) {
+		breaks <- leg@values
+		object <- cut(object, breaks)
+		col <- leg@color
+		lab.breaks <- as.character(breaks)
+	} 
+	
 	z <- t(as.matrix(object)[object@nrows:1,])
 	if (nrow(z) == 1 | ncol(z) == 1) z <- t(z)
 	z[is.infinite(z)] <- NA
-	
-	.imageplot(x, y, z, col=col, axes=axes, xlab=xlab, ylab=ylab, asp=asp, ...)
-}	
 
+	if (length(leg@color) > 0) {
+		.imageplot(x, y, z, col=col, axes=axes, xlab=xlab, ylab=ylab, asp=asp, breaks=breaks, lab.breaks=lab.breaks, ...)
+	} else {
+		.imageplot(x, y, z, col=col, axes=axes, xlab=xlab, ylab=ylab, asp=asp, ...)	
+	}
+}
 
 

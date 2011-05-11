@@ -64,7 +64,8 @@ function(x) {
 		inMem <- TRUE
 	}
 
-	on.exit( options('warn'= getOption('warn')) )
+	w <- getOption('warn')
+	on.exit(options('warn' = w))
 	options('warn'=-1) 
 	
 	if ( inMem ) {

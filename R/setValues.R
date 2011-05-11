@@ -74,21 +74,19 @@ setMethod('setValues', signature(x='RasterBrick'),
 		dmb <- dim(x)
 		transpose <- FALSE
 		if (dmb[1] == dm[2] & dmb[2] == dm[1]) {
+			#if (dm[1] == dm[2]) { warning('assuming values should be transposed') }
 			transpose <- TRUE
 		} else if (dmb[1] != dm[1] | dmb[2] != dm[2]) {
 			stop('dimnesions of array do not match the RasterBrick')
 		}
-		
-		values <- matrix(as.vector(values), ncol=dm[3])
-		if (transpose) {
-			for (i in 1:ncol(values)) {
-				values[,i] <- as.vector(matrix(values[,i], ncol=dm[2]))
-			}
-		} else {
-			for (i in 1:ncol(values)) {
-				values[,i] <- as.vector(t(matrix(values[,i], ncol=dm[2])))
-			}
+# speed imrovements suggested by Justin  McGrath
+# http://pastebin.com/uuLvsrYc
+		if (!transpose) {
+			values <- aperm(values, c(2, 1, 3))
 		}
+		attributes(values) <- NULL
+		dim(values) <- c(dm[1] * dm[2], dm[3])
+###		
 		
 	} else if ( ! (is.vector(values) | is.matrix(values)) ) {
 		stop('values must be a vector or a matrix')
@@ -120,7 +118,9 @@ setMethod('setValues', signature(x='RasterBrick'),
 		} else {
 			stop('data size is not correct')
 		}
+		
 	} else {
+	
 		if (nlayers(x)==0) { x@data@nlayers <- 1 }
 		layer <- round(layer)
 		if (layer > nlayers(x)) { stop('layer number too high') }

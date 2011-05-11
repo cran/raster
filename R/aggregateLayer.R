@@ -72,7 +72,8 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", old=FALSE, .
 		#vv <- matrix(ncol= csteps * yfact, nrow=rsteps * xfact)
 	vv <- matrix(nrow= yfact * xfact, ncol=csteps)
 
-	on.exit( options('warn'= getOption('warn')) )
+	w <- getOption('warn')
+	on.exit(options('warn' = w))
 	options('warn'=-1) 
 
 	for (r in 1:rsteps) {

@@ -23,6 +23,7 @@
 }
 
 
+
 .rasterFromGDAL <- function(filename, band, type, RAT=FALSE, silent=TRUE) {	
 
 	if (! .requireRgdal() ) { stop('package rgdal is not available') }
@@ -42,18 +43,69 @@
 
 	nc <- as.integer(gdalinfo[["columns"]])
 	nr <- as.integer(gdalinfo[["rows"]])
-	
+
 	xn <- gdalinfo[["ll.x"]]
 	xn <- round(xn, digits=9)
 
 	xx <- xn + gdalinfo[["res.x"]] * nc
 	xx <- round(xx, digits=9)
-	
+
 	yn <- gdalinfo[["ll.y"]]
 	yn <- round(yn, digits=9)
 	yx <- yn + gdalinfo[["res.y"]] * nr
 	yx <- round(yx, digits=9)
 
+
+	rotated <- FALSE
+	obx <- gdalinfo[["oblique.x"]]
+	oby <- gdalinfo[["oblique.y"]]
+	if (obx != 0 | oby != 0) {
+		warning('\n\n This file has a rotation\n raster has very limited support such files and results of data processing could be wrong.\n Continue at your own risk!\n')
+
+		gd <- GDAL.open(filename)
+		geoTrans <- .Call("RGDAL_GetGeoTransform", gd, PACKAGE = "rgdal")
+		GDAL.close(gd)
+
+		## adapted from rgdal::getGeoTransFunc
+		if (attr(geoTrans, "CE_Failure")) {
+			stop("Rotated values in file, but GeoTransform values not available")
+		}
+		rotMat <- matrix(geoTrans[c(2, 3, 5, 6)], 2)
+		invMat <- solve(rotMat)
+		
+		offset <- geoTrans[c(1, 4)]
+		gt <- function(x, inv=FALSE) {
+			if (inv) {
+				x <- t(t(x) - c(offset[1], offset[2]))
+				x <- round( x %*% invMat  + 0.5 )
+				x[x < 1] <- NA
+				x[x[,1] > nc  | x[,2] > nr, ] <- NA
+			} else {
+				x <- (x - 0.5) %*% rotMat
+				x <- t(t(x) + c(offset[1], offset[2])) 
+			}
+			return(x)
+		}
+		## end adpated from rgdal::getGeoTransFunc
+		
+		crd <- gt(cbind(c(0, 0, nc, nc), c(0, nr, 0, nr))+0.5)
+		rot <- new(".Rotation")
+		rot@geotrans <- as.vector(geoTrans)
+		rot@transfun <- gt
+		rot@upperleft <- crd[1,]
+		rot@lowerleft <- crd[2,]
+		rot@upperright <- crd[3,]
+		rot@lowerright <- crd[4,]
+		rotated <- TRUE
+
+		xn  <- min(crd[,1])
+		xx  <- max(crd[,1])
+		yn  <- min(crd[,2])
+		yx  <- max(crd[,2])
+		
+	} 
+	
+	
 	fixGeoref <- FALSE
 	try( fixGeoref <- .gdFixGeoref(gdalinfo), silent=TRUE )
 	
@@ -90,6 +142,10 @@
 		ymin(x) <- ymin(x) + 0.5 * rs[2]
 		ymax(x) <- ymax(x) + 0.5 * rs[2]
 	}
+	if (rotated) {
+		x@rotated <- TRUE
+		x@rotation <- rot
+	}
 	
 	shortname <- gsub(" ", "_", ext(basename(filename), ""))
 	x <- .enforceGoodLayerNames(x, shortname)
@@ -124,7 +180,7 @@
 		if ( is.finite(minv) & is.finite(maxv) ) x@data@haveminmax <- TRUE 
 	
 	}
-	dataType(x) <- datatype
+	x@file@datanotation <- datatype
 	x@data@min <- minv
 	x@data@max <- maxv
 

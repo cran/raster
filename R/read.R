@@ -19,7 +19,8 @@ setMethod('readAll', signature(object='RasterLayer'),
 		}
 		object@data@values <- .readRasterLayerValues(object, 1, object@nrows)
 		object@data@inmemory <- TRUE
-		on.exit( options('warn'= getOption('warn')) )
+		w <- getOption('warn')
+		on.exit(options('warn' = w))
 		options('warn'=-1) 
 		object@data@min <- as.vector( min(object@data@values, na.rm=TRUE ) )
 		object@data@max <- as.vector( max(object@data@values, na.rm=TRUE ) )

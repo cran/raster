@@ -61,7 +61,7 @@ function(x, filename='', directions=8, gaps=TRUE, datatype='INT2U', ...) {
 
 	outRaster <- writeStart(outRaster, filename=rasterTmpFile(), datatype='INT2U')
 
-	tr <- blockSize(outRaster)
+	tr <- blockSize(outRaster, minrows=3)
 	pb <- pbCreate(tr$n, type=.progress(...))
 	
 	ext <- c(xmin(outRaster), xmax(outRaster), ymax(outRaster), NA)
@@ -85,7 +85,10 @@ function(x, filename='', directions=8, gaps=TRUE, datatype='INT2U', ...) {
 		}
 		lastrow <- getValues(xc, nrow(xc))
 		
-		maxval <- maxValue(xc)
+		mv <- maxValue(xc)
+		if (!is.na(mv)) {
+			maxval <- mv
+		}
 		outRaster <- writeValues(outRaster, getValues(xc, 1, tr$nrows[i]), tr$row[i])
 		pbStep(pb)
 	}
