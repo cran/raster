@@ -123,7 +123,7 @@ setMethod('predict', signature(object='Raster'),
 
 			if (se.fit) {
 			
-				predv <- fun(model, blockvals, se.fit=TRUE, ...)
+				predv <- fun(model, blockvals, se.fit=TRUE)
 				predv <- cbind(as.vector(predv$fit), as.vector(predv$se.fit))
 			
 			}  else {
@@ -137,7 +137,7 @@ setMethod('predict', signature(object='Raster'),
 					predv <- napred
 
 				} else {
-					predv <- fun(model, blockvals, ...)
+					predv <- fun(model, blockvals)
 					if (class(predv)[1] == 'list') {
 						predv = unlist(predv)
 						if (length(predv) != nrow(blockvals)) {
@@ -166,6 +166,9 @@ setMethod('predict', signature(object='Raster'),
 			if (is.factor(predv)) {
 				# should keep track of this to return a factor type RasterLayer
 				predv <- as.integer(as.character(predv))
+			}
+			if (is.array(predv)) {
+				predv <- as.matrix(predv)
 			}
 		
 			if (filename == '') {

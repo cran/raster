@@ -7,7 +7,10 @@
 
 .asSpGrid <- function(object, type='grid', dataframe)  {
 		
-	crs = projection(object, FALSE)
+	if (object@rotated) {
+		stop('\n Cannot coerce because object is rotated.\n Either coerce to SpatialPoints* object\n or first use the "rectify" function')
+	}	
+	crs <- projection(object, FALSE)
 	if (type=='pixel') {
 		v <- rasterToPoints(object, fun=NULL, spatial=FALSE)
 		pts <- SpatialPoints(v[,1:2])

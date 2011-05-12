@@ -75,6 +75,7 @@ To read netCDF files, the \code{ncdf} package needs to be available.
  \tab \code{ymn} \tab minimum y coordinate (bottom border) \cr
  \tab \code{ymx} \tab maximum y coordinate (top border) \cr
  \tab \code{crs} \tab Character or object of class CRS. PROJ4 type description of a Coordinate Reference System (map projection) \cr
+ \tab \code{nl} \tab the desired number of layers \cr
 }
 (item \code{x} is 'missing' in this case)
 
@@ -87,7 +88,8 @@ To read netCDF files, the \code{ncdf} package needs to be available.
  \tab \code{x} \tab \link{Extent} object \cr
  \tab \code{nrows} \tab number of rows  \cr
  \tab \code{ncols} \tab number of columns \cr
-  \tab \code{crs} \tab Character or object of class CRS. PROJ4 type description of a Coordinate Reference System (map projection) \cr
+ \tab \code{crs} \tab Character or object of class CRS. PROJ4 type description of a Coordinate Reference System (map projection) \cr
+ \tab \code{nl} \tab the desired number of layers \cr
 }
 
 
@@ -98,6 +100,7 @@ To read netCDF files, the \code{ncdf} package needs to be available.
 \tabular{rll}{
  \tab \code{x} \tab a RasterStack object \cr
  \tab \code{values} \tab Logical. If \code{TRUE}, the values of the RasterStack are transferred to the RasterBrick \cr
+ \tab \code{nl} \tab the desired number of layers (optional. If set, \code{values} becomes FALSE \cr
 }
 
 
@@ -109,6 +112,7 @@ This copies the parameters of a RasterStack object to a new RasterBrick. The val
 
 \tabular{rll}{
 \tab \code{x} \tab a Raster* object \cr
+\tab \code{nl} \tab the desired number of layers \cr
 }
 
 

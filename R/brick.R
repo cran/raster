@@ -11,7 +11,7 @@ if (!isGeneric("brick")) {
 
 
 setMethod('brick', signature(x='missing'), 
-	function(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, nlayers=1, crs) {
+	function(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, nl=1, crs) {
 		e <- extent(xmn, xmx, ymn, ymx)
 		if (missing(crs)) {
 			if (e@xmin > -400 & e@xmax < 400 & e@ymin > -90.1 & e@ymax < 90.1) { 
@@ -20,7 +20,7 @@ setMethod('brick', signature(x='missing'),
 				crs=NA
 			}
 		}
-		b <- brick(e, nrows=nrows, ncols=ncols, crs=crs, nlayers=nlayers)
+		b <- brick(e, nrows=nrows, ncols=ncols, crs=crs, nl=nl)
 		return(b)
 	}
 )
@@ -42,9 +42,13 @@ setMethod('brick', signature(x='character'),
 
 
 setMethod('brick', signature(x='RasterLayer'), 
-	function(x, ..., values=TRUE, filename='', format,  datatype, overwrite, progress) {
+	function(x, ..., values=TRUE, filename='', format,  datatype, overwrite, progress, nl=1) {
+		nl <- max(round(nl), 0)
+		if (nl != 1) {
+			values <- FALSE
+		}
 		if (!values) {
-			b <- brick(x@extent, nrows=nrow(x), ncols=ncol(x), crs=projection(x))
+			b <- brick(x@extent, nrows=nrow(x), ncols=ncol(x), crs=projection(x), nl=nl)
 			if (x@rotated) {
 				b@rotated <- TRUE
 				b@rotation <- x@rotation
@@ -73,6 +77,7 @@ setMethod('brick', signature(x='RasterStack'),
 		}
 
 		if (! missing(nl)) {
+			nl <- max(round(nl), 0)
 			values <- FALSE
 		} else {
 			nl <- nlayers(x) 
@@ -135,7 +140,7 @@ setMethod('brick', signature(x='RasterBrick'),
 
 
 setMethod('brick', signature(x='Extent'), 
-	function(x, nrows=10, ncols=10, crs=NA, nlayers=1) {
+	function(x, nrows=10, ncols=10, crs=NA, nl=1) {
 		bb <- extent(x)
 		nr = as.integer(round(nrows))
 		nc = as.integer(round(ncols))
@@ -143,7 +148,8 @@ setMethod('brick', signature(x='Extent'),
 		if (nr < 1) { stop("nrows should be > 0") }
 		b <- new("RasterBrick", extent=bb, ncols=nc, nrows=nr)
 		projection(b) <- crs
-		b@data@nlayers <- as.integer(nlayers)
+		nl <- max(round(nl), 0)
+		b@data@nlayers <- as.integer(nl)
 		return(b) 
 	}
 )

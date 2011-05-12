@@ -46,7 +46,7 @@
 
 	f <- file(fname, "w") 
 	cat('<VRTDataset rasterXSize="', x@ncols, '" rasterYSize="', x@nrows, '">\n' , sep = "", file = f)
-	if (x@rotated) {
+	if (rotated(r)) {
 		cat('<GeoTransform>', paste(x@rotation@geotrans, collapse=', '), '</GeoTransform>\n', sep = "", file = f)
 	} else {
 		cat('<GeoTransform>', e@xmin, ', ', r[1], ', ', rotation, ', ', e@ymax, ', ', 0.0, ', ', -1*r[2], '</GeoTransform>\n', sep = "", file = f)

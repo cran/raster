@@ -5,7 +5,7 @@
 
 
 yFromRow <- function(object, rownr) {
-	if (object@rotated) {
+	if (rotated(object)) {
 		stop('this function is not supported for rotated rasters')
 	}
 	rownr <- round(rownr)
@@ -15,7 +15,7 @@ yFromRow <- function(object, rownr) {
 	
 	
 xFromCol <- function(object, colnr) {
-	if (object@rotated) {
+	if (rotated(object)) {
 		stop('this function is not supported for rotated rasters')
 	}
 	colnr <- round(colnr)
@@ -37,7 +37,7 @@ cellFromXY <- function(object, xy) {
 		y <- xy[,2] 
 	}
 
-	if (object@rotated) {
+	if (rotated(object)) {
 		cr <- object@rotation@transfun(xy, inv=TRUE)
 		cell <- (cr[,2]-1) * object@ncols + cr[,1]
 	} else {
@@ -53,7 +53,7 @@ colFromX <- function ( object, x )	{
 	if (inherits(x, 'Spatial')) { 
 		x <- x@coords[,1] 
 	}
-	if (object@rotated) {
+	if (rotated(object)) {
 		stop('this function is not supported for rotated rasters')
 	}
 	colnr <- trunc((x - xmin(object)) / xres(object)) + 1 
@@ -67,7 +67,7 @@ rowFromY <- function ( object, y )	{
 	if (inherits(y, 'Spatial')) {
 		y <- y@coords[,2] 
 	}
-	if (object@rotated) {
+	if (rotated(object)) {
 		stop('this function is not supported for rotated rasters')
 	}
 	rownr <- 1 + (trunc((ymax(object) - y) / yres(object)))
@@ -79,7 +79,7 @@ rowFromY <- function ( object, y )	{
 	
 
 xyFromCell <- function(object, cell, spatial=FALSE) {
-	if (object@rotated) {
+	if (rotated(object)) {
 		xy <- object@rotation@transfun( cbind(colFromCell(object, cell), rowFromCell(object, cell)) )
 	} else {
 		xy <- matrix(data = NA, ncol=2, nrow=length(cell))
@@ -95,7 +95,7 @@ xyFromCell <- function(object, cell, spatial=FALSE) {
 	
 
 yFromCell <- function(object, cell) {
-	if (object@rotated) {
+	if (rotated(object)) {
 		xy <- object@rotation@transfun(xy)
 		return(xy[,2])
 	} else {
@@ -105,7 +105,7 @@ yFromCell <- function(object, cell) {
 }  
 	
 xFromCell <- function(object, cell) {
-	if (object@rotated) {
+	if (rotated(object)) {
 		xy <- object@rotation@transfun(xy)
 		return(xy[,1])
 	} else {

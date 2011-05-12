@@ -1,3 +1,7 @@
+--- 12-May-2011, version 1.8-22
+Minor bug fix for predict when using a mgcv gam model & filename & na.rm=FALSE, file writing failed (reported by Tim Häring)
+Safer handling of the new 'rotated' slot in BasicRaster such that older raster objects do not fail. 
+
 --- 9-May-2011, version 1.8-20
 A warning is given when a rotated image is used (suggested by Agustin Lobo)
 New function 'rectify' to unrotate rasters
