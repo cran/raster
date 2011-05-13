@@ -60,8 +60,6 @@
 	obx <- gdalinfo[["oblique.x"]]
 	oby <- gdalinfo[["oblique.y"]]
 	if (obx != 0 | oby != 0) {
-		warning('\n\n This file has a rotation\n raster has very limited support such files and results of data processing could be wrong.\n Continue at your own risk!\n')
-
 		gd <- GDAL.open(filename)
 		geoTrans <- .Call("RGDAL_GetGeoTransform", gd, PACKAGE = "rgdal")
 		GDAL.close(gd)
@@ -70,6 +68,8 @@
 		if (attr(geoTrans, "CE_Failure")) {
 			stop("Rotated values in file, but GeoTransform values not available")
 		}
+		warning('\n\n This file has a rotation\n Support such files is limited and results of data processing might be wrong.\n Proceed with caution & consider using the "rectify" function\n')
+
 		rotMat <- matrix(geoTrans[c(2, 3, 5, 6)], 2)
 		invMat <- solve(rotMat)
 		
@@ -92,10 +92,10 @@
 		rot <- new(".Rotation")
 		rot@geotrans <- as.vector(geoTrans)
 		rot@transfun <- gt
-		rot@upperleft <- crd[1,]
-		rot@lowerleft <- crd[2,]
-		rot@upperright <- crd[3,]
-		rot@lowerright <- crd[4,]
+		#rot@upperleft <- crd[1,]
+		#rot@lowerleft <- crd[2,]
+		#rot@upperright <- crd[3,]
+		#rot@lowerright <- crd[4,]
 		rotated <- TRUE
 
 		xn  <- min(crd[,1])

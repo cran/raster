@@ -86,7 +86,7 @@ setMethod('raster', signature(x='BasicRaster'),
 	function(x) {
 		e <- x@extent
 		r <- raster(xmn=e@xmin, xmx=e@xmax, ymn=e@ymin, ymx=e@ymax, nrows=x@nrows, ncols=x@ncols, crs=x@crs)
-		if (x@rotated) {
+		if (rotated(r)) {
 			r@rotated <- TRUE
 			r@rotation <- x@rotation
 		}
@@ -194,7 +194,7 @@ setMethod('raster', signature(x='RasterBrick'),
 			r <- raster(extent(x), nrows=nrow(x), ncols=ncol(x), crs=projection(x))	
 		}
 
-		if (x@rotated) {
+		if (rotated(x)) {
 			r@rotated <- TRUE
 			r@rotation <- x@rotation
 		}

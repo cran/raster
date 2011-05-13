@@ -89,8 +89,8 @@ compare <- function(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=
 		}
 		
 		if (rotation) {
-			rot1 <- objects[[i]]@rotated
-			rot2 <- objects[[1]]@rotated
+			rot1 <- rotated(objects[[i]])
+			rot2 <- rotated(objects[[1]])
 			if (rot1 | rot2) {
 				if (rot1 != rot2) {
 					if (stopiffalse) { stop('not all objects are rotated') }

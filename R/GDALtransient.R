@@ -67,7 +67,7 @@
 		.Call("RGDAL_SetNoDataValue", b, as.double(NAflag), PACKAGE = "rgdal")
 	}
 
-	if (r@rotated) {
+	if (rotated(r)) {
 		gt <- r@rotation@geotrans
 	} else {
 		gt <- c(xmin(r), xres(r), 0, ymax(r), 0, -yres(r))

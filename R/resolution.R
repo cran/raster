@@ -6,6 +6,10 @@
 
 
 'res<-' <- function(x, value) {
+	if (rotated(x)) {
+		stop('cannot set the resolution of a rotated raster')
+	}
+
 	if (length(value) == 1) {
 		xr=value
 		yr=value

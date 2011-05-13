@@ -9,10 +9,14 @@ sampleRegular <- function( x, size, extent=NULL, cells=FALSE, asRaster=FALSE, co
 	size <- round(size)
 	if (size < 1) { stop('size < 1') }
 	
+	rotated <- rotated(x)
+	
 	if (is.null(extent)) {
 		if (size >= ncell(x)) {
 			if (asRaster) { 
-				return(x) 
+				if (!rotated) {
+					return(x) 
+				}
 			} else { 
 				return(getValues(x)) 
 			}
@@ -73,15 +77,29 @@ sampleRegular <- function( x, size, extent=NULL, cells=FALSE, asRaster=FALSE, co
 		}
 	}
 	
-	m <- .cellValues(x, cell)
-
 	if (asRaster) {
-		if (is.null(extent))  {
-			outras <- raster(nrow=nr, ncol=nc, xmn=xmin(x), xmx=xFromCol(x, cols[length(cols)])+0.5*xres(x), ymn=yFromRow(x, rows[length(rows)])-0.5*yres(x), ymx=ymax(x), crs=projection(x)) 
-		} else {
-			outras <- raster(extent) 
-			nrow(outras) <- nr
+		if (rotated) {
+			if (is.null(extent)) {
+				outras <- raster(raster::extent(x))
+			} else {
+				outras <- raster(extent)
+			}
 			ncol(outras) <- nc
+			nrow(outras) <- nr
+			xy <- xyFromCell(outras, 1:ncell(outras))
+			m <- .xyValues(x, xy)
+			
+		} else {
+			m <- .cellValues(x, cell)
+
+			if (is.null(extent))  {
+				outras <- raster(nrow=nr, ncol=nc, xmn=xmin(x), xmx=xFromCol(x, cols[length(cols)])+0.5*xres(x), ymn=yFromRow(x, rows[length(rows)])-0.5*yres(x), ymx=ymax(x), crs=projection(x)) 
+			} else {
+				outras <- raster(extent) 
+				nrow(outras) <- nr
+				ncol(outras) <- nc
+			}
+			
 		}
 		if (nlayers(x) > 1) {
 			outras <- brick(outras, nl=nlayers(x))
@@ -92,6 +110,7 @@ sampleRegular <- function( x, size, extent=NULL, cells=FALSE, asRaster=FALSE, co
 		
 	} else {
 	
+		m <- .cellValues(x, cell)
 		if (cells) {
 			m <- cbind(cell, m)
 			colnames(m)[2:ncol(m)] <- layerNames(x)

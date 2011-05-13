@@ -122,6 +122,10 @@ function(x, bands=NULL, ...) {
 			x@ncols <- r@ncols
 			x@extent <- r@extent
 			x@crs <- r@crs
+			if(rotated(x)) {
+				x@rotated = r@rotated
+				x@rotation = r@rotation
+			}
 			return(x)
 		}
 	} else {

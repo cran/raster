@@ -5,7 +5,7 @@
 # Version 0.9
 # Licence GPL v3
 
-KML <- function (raster, filename, col=rainbow(255), maxpixels=100000) {
+KML <- function (raster, filename, col=rainbow(255), maxpixels=100000, zip='') {
     if (! .couldBeLonLat(raster)) { 
         stop("raster must be in geographical coordinates")
 	}
@@ -46,16 +46,18 @@ KML <- function (raster, filename, col=rainbow(255), maxpixels=100000) {
     x <- append(x, footer)
     cat(paste(x, sep = "", collapse = "\n"), file = kmlfile, sep = "")
 	
-	kmz <- kmlfile
-	ext(kmz) <- '.kmz'
-	rzipcmd <- Sys.getenv('R_ZIPCMD')
-	if (rzipcmd != "") {
-		com1 <- paste(rzipcmd, '-a', kmz, kmlfile, imagefile)
-	} else {
-		com1 <- paste("7za a -tzip", kmz, kmlfile, imagefile)
-		try(	sss <- system(com1, intern=TRUE) , silent = TRUE)
+	kmzfile <- kmlfile
+	ext(kmzfile) <- '.kmz'
+	if (zip == "") {
+		zip <- Sys.getenv('R_ZIPCMD', 'zip')
 	}
-	
+	if (zip!= "") {
+		cmd <- paste(zip, kmzfile, kmlfile, imagefile, collapse=" ")
+		sss <- try( system(cmd, intern=TRUE) , silent = TRUE )
+		if (file.exists(kmzfile)) {
+			x <- file.remove(kmlfile, imagefile)
+		}
+	} 
 }
 
 

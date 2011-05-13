@@ -34,17 +34,17 @@ setClass('Extent',
 setClass('.Rotation',
 	representation (
 		geotrans = 'numeric',
-		transfun = 'function',
-		upperleft = 'numeric',
-		lowerleft = 'numeric',
-		upperright = 'numeric',
-		lowerright = 'numeric'
+		transfun = 'function'
+		#upperleft = 'numeric',
+		#lowerleft = 'numeric',
+		#upperright = 'numeric',
+		#lowerright = 'numeric'
 	),	
 	prototype (	
-		upperleft = c(0, 1),
-		lowerleft = c(0, 0),
-		upperright = c(1, 1),
-		lowerright = c(1, 0)
+		#upperleft = c(0, 1),
+		#lowerleft = c(0, 0),
+		#upperright = c(1, 1),
+		#lowerright = c(1, 0)
 	)
 )
 
