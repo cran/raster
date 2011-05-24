@@ -43,8 +43,10 @@ function(x, ...) {
 		x@ncols <- r@ncols
 		x@extent <- r@extent
 		x@crs <- r@crs
-		x@rotated = r@rotated
-		x@rotation = r@rotation
+		if (rotated(r)) {
+			x@rotated = r@rotated
+			x@rotation = r@rotation
+		}
 
 		nl <- 1
 		r@layernames <- trim(as.character(r@layernames))

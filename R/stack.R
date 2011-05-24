@@ -122,7 +122,7 @@ function(x, bands=NULL, ...) {
 			x@ncols <- r@ncols
 			x@extent <- r@extent
 			x@crs <- r@crs
-			if(rotated(x)) {
+			if(rotated(r)) {
 				x@rotated = r@rotated
 				x@rotation = r@rotation
 			}

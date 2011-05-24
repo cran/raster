@@ -86,7 +86,7 @@ setMethod('raster', signature(x='BasicRaster'),
 	function(x) {
 		e <- x@extent
 		r <- raster(xmn=e@xmin, xmx=e@xmax, ymn=e@ymin, ymx=e@ymax, nrows=x@nrows, ncols=x@ncols, crs=x@crs)
-		if (rotated(r)) {
+		if (rotated(x)) {
 			r@rotated <- TRUE
 			r@rotation <- x@rotation
 		}
@@ -119,7 +119,7 @@ setMethod('raster', signature(x='RasterStack'),
 			projection(r) <- projection(x)
 		}
 		extent(r) <- extent(x) # perhaps it was changed by user and different on disk
-		if (x@layers[[1]]@rotated) {
+		if (rotated(x@layers[[1]])) {
 			r@rotated <- TRUE
 			r@rotation <- x@layers[[1]]@rotation
 		}

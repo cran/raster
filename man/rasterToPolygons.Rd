@@ -9,12 +9,12 @@ Raster to polygon conversion. Cells with NA are not converted. A function can be
 }
 
 \usage{
-rasterToPolygons(raster, fun=NULL, digits=12)
+rasterToPolygons(x, fun=NULL, digits=12)
 }
 
 \arguments{
- \item{raster}{ a RasterLayer object }
- \item{fun}{ function to select a subset of raster values }
+ \item{x}{ a Raster* object }
+ \item{fun}{ function to select a subset of raster values (only allowed if \code{x} has a single layer}
  \item{digits}{ number of digits to round the coordinates to }
 }
 

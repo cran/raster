@@ -6,35 +6,57 @@
 
 setMethod("Math", signature(x='Raster'),
     function(x){ 
-		fname <- as.character(sys.call(sys.parent())[[1]])
-
-		if (nlayers(x) > 1) {
+		funname <- as.character(sys.call(sys.parent())[[1]])
+		
+		nl <- nlayers(x)
+		if (nl > 1) {
 			r <- brick(x, values=FALSE)
 		} else {
 			r <- raster(x)
 		}
 
-		
-		if (canProcessInMemory(r, 3)) {
-			r <- setValues(r, callGeneric(getValues(x)))
-		} else {
-			if (fname %in% c('floor', 'ceiling', 'trunc')) {
-				datatype <- 'INT4S'
+		if (substr(funname, 1, 3) == 'cum' ) { 
+			if (nl <= 1) {
+				return(x)
+			} 
+			if (canProcessInMemory(r, 3)) {
+				r <- setValues(r, t( apply(getValues(x), 1, funname)) )
 			} else {
-				datatype <- .datatype()
+			
+				tr <- blockSize(x)
+				pb <- pbCreate(tr$n, type=.progress())			
+				r <- writeStart(r, filename=rasterTmpFile(), overwrite=TRUE )
+				for (i in 1:tr$n) {
+					v <- t( apply(getValuesBlock(x, row=tr$row[i], nrows=tr$size), 1, funname) )
+					r <- writeValues(r, v, tr$row[i])
+					pbStep(pb, i) 
+				}
+				r <- writeStop(r)
+				pbClose(pb)
 			}
 			
-			tr <- blockSize(x)
-			pb <- pbCreate(tr$n, type=.progress())			
-			r <- writeStart(r, filename=rasterTmpFile(), datatype=datatype, format=.filetype(), overwrite=TRUE )
-			for (i in 1:tr$n) {
-				v <- callGeneric( getValuesBlock(x, row=tr$row[i], nrows=tr$size) )
-				r <- writeValues(r, v, tr$row[i])
-				pbStep(pb, i) 
-			}
-			r <- writeStop(r)
-			pbClose(pb)
+		} else {
+		
+			if (canProcessInMemory(r, 3)) {
+				r <- setValues(r, callGeneric(getValues(x)))
+			} else {
+				if (funname %in% c('floor', 'ceiling', 'trunc')) {
+					datatype <- 'INT4S'
+				} else {
+					datatype <- .datatype()
+				}
 			
+				tr <- blockSize(x)
+				pb <- pbCreate(tr$n, type=.progress())			
+				r <- writeStart(r, filename=rasterTmpFile(), datatype=datatype, overwrite=TRUE )
+				for (i in 1:tr$n) {
+					v <- callGeneric( getValuesBlock(x, row=tr$row[i], nrows=tr$size) )
+					r <- writeValues(r, v, tr$row[i])
+					pbStep(pb, i) 
+				}
+				r <- writeStop(r)
+				pbClose(pb)
+			}
 		}
 		return(r)
 	}
