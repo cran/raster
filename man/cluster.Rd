@@ -10,6 +10,8 @@ Create or delete a 'snow' cluster object. This object provides _experimental_ su
 
 beginCluster creates the cluster object. It determines the number of nodes (cores) that are available and uses all of them (unless the argument \code{n} is used). 
 
+NOTE: beginCluster may fail when the package 'nws' is installed. You can fix that by removing the 'nws' package, or by setting the cluster type manually, e.g. beginCluster(type="SOCK")
+
 endCluster closes the cluster and removes the object.
 
 The use of the cluster by functions is automatic, but has only been implemented in a few functions.  
@@ -27,9 +29,9 @@ endCluster()
 }
 
 \details{
-Functions that are 'cluster-enabled' are: \code{\link{projectRaster}, \link{resample}, \link{distance}}.
+Functions that are 'cluster-enabled' are: \code{\link{projectRaster}, \link{resample}, \link{distance},  \link{extract} (when using polygons)}.
 
-For progamming functions see \code{\link{getCluster}, \link{returnCluster}}
+If you want to write your own cluster-enabled functions see \code{\link{getCluster}, \link{returnCluster}, and the vignette about writing functions}
 }
 
 \value{

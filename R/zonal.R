@@ -79,6 +79,7 @@ zonal <- function(x, zones, stat='mean', digits=0, na.rm=TRUE, progress) {
 		}
 	}
 	
+	alltab = as.matrix(alltab)
 	colnames(alltab)[1] <- 'zone'
 	if (ncol(alltab) > 2) {
 		colnames(alltab)[2:ncol(alltab)] <- layernames

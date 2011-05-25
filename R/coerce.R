@@ -7,7 +7,7 @@
 
 .asSpGrid <- function(object, type='grid', dataframe)  {
 		
-	if (object@rotated) {
+	if (rotated(object)) {
 		stop('\n Cannot coerce because object is rotated.\n Either coerce to SpatialPoints* object\n or first use the "rectify" function')
 	}	
 	crs <- projection(object, FALSE)

@@ -17,8 +17,8 @@ KML <- function (raster, filename, col=rainbow(255), maxpixels=100000, zip='') {
 	ext(kmlfile) <- '.kml'
 
 	png(filename = imagefile, width=ncol(raster), height=nrow(raster), bg="transparent")
-	par(mar=c(0,0,0,0), xaxs="i", yaxs="i")
-	image(raster, col=col)
+	par(mar=c(0,0,0,0))
+	image(raster, col=col, axes=FALSE)
 	dev.off()
 
 	name <- layerNames(raster)[1]

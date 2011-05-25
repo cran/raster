@@ -43,7 +43,7 @@ Below are additional arguments that can be used, depending on the type of object
 take a single numeric vector as argument and return a single values (e.g. mean, min or max), and accept a \code{na.rm} argument.
 Thus, standard R functions not including an na.rm argument must be wrapped as in this example: fun=function(x,...)length(x)
 
-If \code{y} represents points supplying a \code{fun} argument is only useful when non-zero buffers are used. 
+If \code{y} represents points supplying a \code{fun} argument is only useful when a buffer is used (see below). 
 
 2) \code{na.rm}. Only useful when \code{fun} is supplied. If \code{na.rm=TRUE} (the default value), NA values are removed before fun is applied. This argument may be ignored if the function used has a \code{...} argument and ignres an additional \code{na.rm} argument. 
 
@@ -73,19 +73,21 @@ If no \code{fun} argument is supplied:
 \bold{= polygons =}
 
 If \code{y} represents polygons, the \code{extract} method returns the values of the cells of a Raster* object that is covered by a polygon.
-A cell is covered if its center is inside the polygon (but see the \code{weights} option for considering partly covered cells).
-Relatively small polygons (e.g. those smaller than a single cell of the RasterLayer), or polygons with an odd shape, may not return any values 
-if they do not cover any RasterLayer cell centers. In some cases, you could use the centroids of such polygons, for example using
-\code{extract(x, coordinates(y))} or \code{extract(x, coordinates(y), method='bilinear')}. Additional arguments that can be suplied to this function 
+A cell is covered if its center is inside the polygon (but see the \code{weights} option for considering partly covered cells; and argument \code{small} for getting values for small polygons anyway).
+
 if \code{y} represents polygons are:
 
-If no \code{fun} argument is supplied:
+1) \code{small}. Logical. Default is \code{FALSE}. If \code{TRUE} a value is also returned for relatively small polygons (e.g. those smaller than a single cell of the Raster* object), 
+or polygons with an odd shape, for which otherwise no values are returned because they do not cover any Raster* object's cell centers. In some cases, you could use alternatively 
+use the centroids of such polygons, for example using \code{extract(x, coordinates(y))} or \code{extract(x, coordinates(y), method='bilinear')}. 
 
-1) \code{weights}. If \code{TRUE}, the function returns, for each polygon, a matrix with the cell values and the approximate fraction
+Additional arguments that can be suplied to this function, if no \code{fun} argument is supplied:
+
+2) \code{weights}. If \code{TRUE}, the function returns, for each polygon, a matrix with the cell values and the approximate fraction
  of each cell that is covered by the polygon(rounded to 1/100). The weights can be used for averaging; see examples. 
- This option can be useful if the polygons are small relative to the cells size of the RasterLayer
+ This option can be useful if the polygons are small relative to the cells size of the Raster* object.
 
-2) \code{cellnumbers}. Logical. If \code{cellnumbers=TRUE} and \code{weights=TRUE}, cellnumbers will also be returned. 
+3) \code{cellnumbers}. Logical. If \code{cellnumbers=TRUE}, cell-numbers will also be returned. 
 
 
 
@@ -96,6 +98,7 @@ If \code{y} is missing, you can supply two arguments to get 'focal' values (i.e.
 1) \code{row}. row number (this is a required argument). 
 
 2) \code{ngb}. The neighborhood to consider. Either a single integer or a vector of two integers. Default is 3. See \code{\link{focal}} 
+
 
 
 \bold{= all multi-layer objects =}
@@ -184,10 +187,14 @@ v
 # mean for each polygon
 unlist(lapply(v, function(x) if (!is.null(x)) mean(x, na.rm=TRUE) else NA ))
 
+# v <- extract(r, polys, cellnumbers=TRUE)
+
+# weighted mean
+# v <- extract(r, polys, weights=TRUE, fun=mean)
+# equivalent to:
 # v <- extract(r, polys, weights=TRUE)
-# v
-## weighted mean for each polygon
-# unlist(lapply(v, function(x) if (!is.null(x)) {sum(apply(x, 1, prod)) / sum(x[,2])} else NA  ))
+# sapply(v, function(x) if (!is.null(x)) {sum(apply(x, 1, prod)) / sum(x[,2])} else NA  )
+
 
 
 ###############################

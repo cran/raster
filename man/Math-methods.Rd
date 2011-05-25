@@ -8,9 +8,10 @@
 
 \description{
 Generic mathematical functions that can be used with a Raster* object as argument:   
-\code{"abs", "sign", "sqrt", "ceiling", "floor", "trunc", "log", "log10", "log2", "log1p", "acos", "acosh", "asin",
-"asinh", "atan", "atanh", "exp", "expm1", "cos", "cosh", "sin", "sinh", "tan", "tanh"}. 
+\code{"abs", "sign", "sqrt", "ceiling", "floor", "trunc",  "cummax", "cummin", "cumprod", "cumsum", "log", "log10", "log2", "log1p", 
+"acos", "acosh", "asin", "asinh", "atan", "atanh", "exp", "expm1", "cos", "cosh", "sin", "sinh", "tan", "tanh"}. 
 }
+
 
 \section{Note}{
 If the values of the output Raster* object cannot be held in memory, they will be saved to a temporary file. 

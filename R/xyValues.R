@@ -5,7 +5,7 @@
 # Licence GPL v3
 
 
-.warnExtract <- function(n=4) {
+.warnExtract <- function(n=25) {
 	d <- getOption('rasterExtractWarningGiven')
 	if (is.null(d)) { d <- 1 } else { d <- as.numeric(d) + 1 }
 	if (d < n) {
