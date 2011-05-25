@@ -1,6 +1,12 @@
---- 25-May-2011, version 1.8-25
+--- 25-May-2011, version 1.8-27
+Arith functions now work with logical arguments (including NA). Problem reported by Agustin Lobo 
+
+--- 25-May-2011, version 1.8-26
+restored "..." argument in predict (got lost while improving it in version 1.8-22)
+
+--- 24-May-2011, version 1.8-25
 (More) safer handling of the new 'rotated' slot in BasicRaster such that older raster objects do not fail. 
-extract with polygons now can also return a value for very small polygons ("small=TRUE") 
+extract with polygons now can also return a value for very small polygons ("small=TRUE"). Requested by  
 Somewhat faster rasterToPolygons
 
 --- 17-May-2011, version 1.8-23

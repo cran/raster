@@ -9,17 +9,13 @@ if (!isGeneric("predict")) {
 }	
 
 setMethod('predict', signature(object='Raster'), 
-	function(object, model, filename="", fun=predict, ext=NULL, const=NULL, index=1, se.fit=FALSE, na.rm=TRUE, progress='', ...) {
+	function(object, model, filename="", fun=predict, ext=NULL, const=NULL, index=1, na.rm=TRUE, progress='', ...) {
 	
-		if (inherits(model, 'DistModel')) {
-			# models defined in package 'dismo'
+		if (inherits(model, 'DistModel')) {	# models defined in package 'dismo'
 			return ( predict(model, object, filename=filename, ext=ext, progress=progress, ...) ) 
 		}
 
-		if (se.fit) {
-			predrast <- brick(object, values=FALSE)
-			predrast@data@nlayers <- as.integer(2)
-		} else if (length(index) > 1) {	
+		if (length(index) > 1) {
 			predrast <- brick(object, values=FALSE)
 			predrast@data@nlayers <- length(index)
 		} else {
@@ -60,9 +56,6 @@ setMethod('predict', signature(object='Raster'),
 			}
 		}	
 		
-		
-
-		
 		filename <- trim(filename)
 		if (!canProcessInMemory(predrast) && filename == '') {
 			filename <- rasterTmpFile()
@@ -85,8 +78,7 @@ setMethod('predict', signature(object='Raster'),
 				}
 			}				
 		}
-		
-		
+	
 		pb <- pbCreate(tr$n,  type=progress )			
 		
 		if (filename != '') {
@@ -94,7 +86,8 @@ setMethod('predict', signature(object='Raster'),
 		}
 
 		for (i in 1:tr$n) {
-			if (i==tr$n) { 
+		
+			if (i==tr$n) {
 				ablock <- 1:(ncol(object) * tr$nrows[i])
 				napred <- rep(NA, ncol(predrast) * tr$nrows[i])
 			}
@@ -121,54 +114,44 @@ setMethod('predict', signature(object='Raster'),
 				blockvals = cbind(blockvals, const)
 			} 
 
-			if (se.fit) {
-			
-				predv <- fun(model, blockvals, se.fit=TRUE)
-				predv <- cbind(as.vector(predv$fit), as.vector(predv$se.fit))
-			
-			}  else {
-			
-				bvr <- nrow(blockvals)
-				if (na.rm) {  
-					blockvals <- na.omit(blockvals)		
+			if (na.rm) {  
+				blockvals <- na.omit(blockvals)		
+			}
+
+			if (nrow(blockvals) == 0 ) {
+				predv <- napred
+			} else {
+				predv <- fun(model, blockvals, ...)
+				if (class(predv)[1] == 'list') {
+					predv = unlist(predv)
+					if (length(predv) != nrow(blockvals)) {
+						predv = matrix(predv, nrow=nrow(blockvals))
+					}					
+				}
+				if (isTRUE(dim(predv)[2] > 1)) {
+					predv = predv[,index]
 				}
 
-				if (nrow(blockvals) == 0 ) {
-					predv <- napred
-
-				} else {
-					predv <- fun(model, blockvals)
-					if (class(predv)[1] == 'list') {
-						predv = unlist(predv)
-						if (length(predv) != nrow(blockvals)) {
-							predv = matrix(predv, nrow=nrow(blockvals))
-						}					
-					}
-					if (isTRUE(dim(predv)[2] > 1)) {
-						predv = predv[,index]
-					}
-
-					if (na.rm) {  
-						naind <- as.vector(attr(blockvals, "na.action"))
-						if (!is.null(naind)) {
-							p <- napred
-							p[-naind] <- predv
-							predv <- p
-							rm(p)
-						}
+				if (na.rm) {  
+					naind <- as.vector(attr(blockvals, "na.action"))
+					if (!is.null(naind)) {
+						p <- napred
+						p[-naind] <- predv
+						predv <- p
+						rm(p)
 					}
 				}
 			}
 
 			if (is.list(predv)) {
 				predv <- unlist(predv)
+			} else if (is.array(predv)) {
+				predv <- as.matrix(predv)
 			}
+
 			if (is.factor(predv)) {
 				# should keep track of this to return a factor type RasterLayer
 				predv <- as.integer(as.character(predv))
-			}
-			if (is.array(predv)) {
-				predv <- as.matrix(predv)
 			}
 		
 			if (filename == '') {
@@ -180,13 +163,17 @@ setMethod('predict', signature(object='Raster'),
 			pbStep(pb, i) 
 		}
 		pbClose(pb)
+
+		if (length(index) > 1) {
+			try(layerNames(predrast) <- colnames(predv), silent=TRUE)
+		}
+
 		
 		if (filename == '') {
 			predrast <- setValues(predrast, v)  # or as.vector
 		} else {
 			predrast <- writeStop(predrast)
 		}
-		
 		return(predrast)
 	}
 )

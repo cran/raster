@@ -80,20 +80,15 @@ pointDistance <- function (p1, p2, longlat,  ...) {
 			stop('type should be Euclidean or GreatCircle')
 		}
 		if (type == 'Euclidean') { 
-			longlat <- FALSE 
-			warning("type='Euclidean' is a depracated argument. Use 'longlat=TRUE'")
+			stop("type='Euclidean' is a depracated argument. Use 'longlat=TRUE'")
 		} else { 
-			longlat <- TRUE 
-			warning("type='GreatCircle' is a depracated argument. Use 'longlat=FALSE'")
+			stop("type='GreatCircle' is a depracated argument. Use 'longlat=FALSE'")
 		}
 	}		
 	if (missing(longlat)) {
 		stop('you must provide a "longlat" argument (TRUE/FALSE)')
 	}
-	
-	if (longlat == 'GreatCircle') longlat <- TRUE
-	if (longlat == 'Euclidean') longlat <- FALSE
-
+	stopifnot(is.logical(longlat)) 
 	
 	p1 <- .pointsToMatrix(p1)
 	if (missing(p2)) {

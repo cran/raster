@@ -8,7 +8,6 @@
 
 lineValues <- function(lns, x, ...) {
 	stop('function no longer available. Please use "extract"')
-	extract(x, lns, ...)
 }
 
 

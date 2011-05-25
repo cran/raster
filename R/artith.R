@@ -13,7 +13,6 @@ setMethod("Arith", signature(e1='Raster', e2='Raster'),
 		nl2 <- nlayers(e2)
 		nl <- max(nl1, nl2)
 
-		#if ( nl %% min(nl1, nl2) > 0) { stop('number of layers does not match') } 
 		
 		if (nl > 1) {
 			r <- brick(e1, values=FALSE)
@@ -27,7 +26,7 @@ setMethod("Arith", signature(e1='Raster', e2='Raster'),
 				if (is.null(ie)) {
 					stop('Layers have non-overlapping extents')
 				}
-				warning('RasterLayer objects have different extents. Result for their intersection is returned')
+				warning('Raster objects have different extents. Result for their intersection is returned')
 				e1 <- crop(e1, ie)
 				e2 <- crop(e2, ie)
 			} else {
@@ -71,6 +70,7 @@ setMethod("Arith", signature(e1='Raster', e2='Raster'),
 		}
 	}	
 )
+
 
 
 
@@ -122,6 +122,21 @@ setMethod("Arith", signature(e1='numeric', e2='RasterLayer'),
 			pbClose(pb)
 			return(r)
 		}		
+	}
+)
+
+
+setMethod("Arith", signature(e1='RasterLayer', e2='logical'),
+    function(e1, e2){ 
+		e2 <- as.integer(e2)
+		callGeneric(e1, e2)
+	}
+)
+
+setMethod("Arith", signature(e1='logical', e2='RasterLayer'),
+    function(e1, e2){ 
+		e1 <- as.integer(e1)
+		callGeneric(e1, e2)
 	}
 )
 
@@ -180,9 +195,24 @@ setMethod("Arith", signature(e1='RasterStackBrick', e2='numeric'),
 
 
 
-setMethod("Arith", signature(e1='numeric', e2='RasterBrick'),
+setMethod("Arith", signature(e1='numeric', e2='RasterStackBrick'),
     function(e1, e2){ 
 		callGeneric(e2, e1) 
+	}
+)
+
+
+setMethod("Arith", signature(e1='RasterStackBrick', e2='logical'),
+    function(e1, e2){ 
+		e2 <- as.integer(e2)
+		callGeneric(e1, e2)
+	}
+)
+
+setMethod("Arith", signature(e1='logical', e2='RasterStackBrick'),
+    function(e1, e2){ 
+		e1 <- as.integer(e1)
+		callGeneric(e1, e2)
 	}
 )
 
