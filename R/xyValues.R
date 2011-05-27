@@ -5,19 +5,8 @@
 # Licence GPL v3
 
 
-.warnExtract <- function(n=25) {
-	d <- getOption('rasterExtractWarningGiven')
-	if (is.null(d)) { d <- 1 } else { d <- as.numeric(d) + 1 }
-	if (d < n) {
-		warning('this is an obsolete function. Use "extract"')
-		options('rasterExtractWarningGiven' = d)
-	}
-}
-
-
 xyValues <- function(object, xy, ...) {
-	.warnExtract()
-	.xyValues(object, xy, ...)
+	stop('function no longer available. Please use "extract"')
 }
 
 	
@@ -47,7 +36,6 @@ xyValues <- function(object, xy, ...) {
 		return ( .bilinearValue(object, xy, layer=layer, n=nl) )
 
 	} else if (method=='simple') {
-		
 		cells <- cellFromXY(object, xy)
 		return( .cellValues(object, cells, layer=layer, nl=nl) )
 			

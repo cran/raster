@@ -5,16 +5,18 @@
 \title{ Raster to polygons conversion}
 
 \description{
-Raster to polygon conversion. Cells with NA are not converted. A function can be used to select a subset of the raster cells (by their values).
+Raster to polygons conversion. Cells with NA are not converted. A function can be used to select a subset of the raster cells (by their values).
 }
 
 \usage{
-rasterToPolygons(x, fun=NULL, digits=12)
+rasterToPolygons(x, fun=NULL, n=4, na.rm=TRUE, digits=12)
 }
 
 \arguments{
  \item{x}{ a Raster* object }
  \item{fun}{ function to select a subset of raster values (only allowed if \code{x} has a single layer}
+ \item{n}{ The number of nodes for each polygon. Only 4, 8, and 16 are allowed }
+ \item{na.rm}{ If \code{TRUE}, cells with \code{NA} values in all layers are ignored }
  \item{digits}{ number of digits to round the coordinates to }
 }
 
@@ -24,7 +26,7 @@ e.g.: \code{fun=function(x){x==1}} or  \code{fun=function(x){x>3 & x<6}}
 }
 
 \value{
-A SpatialPolygonsDataFrame object
+SpatialPolygonsDataFrame
 }
 
 \author{Robert J. Hijmans}

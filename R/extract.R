@@ -14,25 +14,18 @@ setMethod('extract', signature(x='Raster', y='missing'),
 function(x, y, ...){ 
 
 	dots <- list(...)
-	# backwards compatability
+	# backwards in-compatability
 	if (! is.null(dots$cells)) {
-		warning("the 'cells' argument is depracated")
-		return( .cellValues(x, ...) )
+		stop("the 'cells' argument is depracated")
 	}
 	if (! is.null(dots$xy)) {
-		warning("the 'xy' argument is depracated")
-		if (! is.matrix(dots$xy) ) {
-			stop('xy must be a matrix')
-		}
-		return( .xyValues(x, ...) )
+		stop("the 'xy' argument is depracated")
 	}
 	if (! is.null(dots$p)) {
-		warning("the 'p' argument is depracated")
-		return( .polygonValues(x, ...) )
+		stop("the 'p' argument is depracated")
 	}
 	if (! is.null(dots$lns)) {
-		warning("the 'lns' argument is depracated")
-		return( .lineValues(x, ...) )
+		stop("the 'lns' argument is depracated")
 	}
 	
 	# focal values

@@ -5,8 +5,7 @@
 # Licence GPL v3
 
 cellValues <- function(x, cells, ...) { 
-	.warnExtract()
-	extract(x, cells, ...)
+	stop('function no longer available. Please use "extract"')
 }
 
 	
