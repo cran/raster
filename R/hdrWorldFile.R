@@ -6,7 +6,7 @@
 
 .worldFile <- function(raster, extension=".wld") {
 	hdrfile <- filename(raster)
-	ext(hdrfile) <- extension
+	extension(hdrfile) <- extension
 	thefile <- file(hdrfile, "w")  
 	cat(as.character(xres(raster)), "\n", file = thefile)
 	cat("0\n", file = thefile)

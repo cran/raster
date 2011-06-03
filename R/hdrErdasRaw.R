@@ -6,7 +6,7 @@
 
 .writeHdrErdasRaw <- function(raster) {
 	hdrfile <- filename(raster)
-	ext(hdrfile) <- ".raw"
+	extension(hdrfile) <- ".raw"
 	thefile <- file(hdrfile, "w")  # open an txt file connectionis
 	cat("IMAGINE_RAW_FILE\n", file = thefile)
 	cat("PIXEL_FILES ", .setFileExtensionValues(raster@file@name), "\n", file = thefile)

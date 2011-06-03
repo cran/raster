@@ -147,7 +147,7 @@
 		x@rotation <- rot
 	}
 	
-	shortname <- gsub(" ", "_", ext(basename(filename), ""))
+	shortname <- gsub(" ", "_", extension(basename(filename), ""))
 	x <- .enforceGoodLayerNames(x, shortname)
 	x@file@name <- filename
 	

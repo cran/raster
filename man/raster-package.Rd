@@ -315,7 +315,7 @@ It is also possible to use Arithmetic functions with Extent objects (but these w
     \code{\link{readIniFile}} \tab Read a (windows) 'ini' file \cr
     \code{\link{hdr}} \tab Write header file for a number of raster formats \cr
     \code{\link{trim}} \tab Remove leading and trainling blanks from a character string \cr
-    \code{\link{ext}} \tab Get or set the extentsion of a filename \cr
+    \code{\link{extension}} \tab Get or set the extentsion of a filename \cr
     \code{\link{cv}} \tab Coefficient of variation  \cr
     \code{\link{modal}} \tab Modal value  \cr
     \code{\link{Median}} \tab Median value \cr

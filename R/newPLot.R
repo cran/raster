@@ -132,7 +132,7 @@ bp
 
 	plotArea <- .plotSpace(asp)
 
-	x <- sampleRegular(x, maxpixels, asRaster=TRUE, corners=TRUE)
+	x <- sampleRegular(x, maxpixels, asRaster=TRUE)
 
 	xticks <- axTicks(1, c(xmin(x), xmax(x), 4))
 	yticks <- axTicks(2, c(ymin(x), ymax(x), 4))

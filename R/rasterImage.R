@@ -1,6 +1,6 @@
 
 
-.img <- function(x, maxpixels=500000, col=rainbow(25), interpolate=FALSE, axes=TRUE, xlab='', ylab='', extent=NULL, alpha=1, classes=FALSE, add=FALSE, box=TRUE, asp, ticks=c(4,4), ...) {
+.img <- function(x, maxpixels=500000, col=rainbow(25), interpolate=FALSE, axes=TRUE, xlab='', ylab='', ext=NULL, alpha=1, classes=FALSE, add=FALSE, box=TRUE, asp, ticks=c(4,4), ...) {
 
 	if (!add) {
 	#	if (!axes) par(plt=c(0,1,0,1))
@@ -23,7 +23,7 @@
 		col <- paste(substr(col, 1, 7), alpha, sep="")
 	}
 
-	x <- sampleRegular(x, maxpixels, extent=extent, asRaster=TRUE, corners=TRUE)
+	x <- sampleRegular(x, maxpixels, ext=ext, asRaster=TRUE)
 	bb <- as.vector(t(bbox(x)))
 	dm <- dim(x)[1:2]
 	x <- as.matrix(x)

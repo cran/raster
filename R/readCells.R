@@ -106,11 +106,11 @@
 	
 	if (nbands(x) > 1) {
 		if (.bandOrder(x) == 'BIL') {
-			cells <- cells + (rowFromCell(x, cells)-1) * x@ncols * (nbands(x)-1) + (band(x)-1) * x@ncols
+			cells <- cells + (rowFromCell(x, cells)-1) * x@ncols * (nbands(x)-1) + (bandnr(x)-1) * x@ncols
 		} else if (.bandOrder(x) == 'BIP') {
-			cells <- (cells - 1) * nbands(x) + band(x) - 1
+			cells <- (cells - 1) * nbands(x) + bandnr(x) - 1
 		} else if (.bandOrder(x) == 'BSQ') {	
-			cells <- cells + (band(x)-1) * ncell(x)
+			cells <- cells + (bandnr(x)-1) * ncell(x)
 		}
 	}
 	

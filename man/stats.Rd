@@ -1,4 +1,4 @@
-\name{stats}
+\name{misc stats}
 
 \alias{modal}
 \alias{modal,ANY-method}

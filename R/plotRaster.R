@@ -5,7 +5,7 @@
 
 
 
-.plotraster <- function(object, col=rev(terrain.colors(25)), maxpixels=100000, axes=TRUE, xlab='', ylab='', extent=NULL, asp, xlim, ylim, ...) {
+.plotraster <- function(object, col=rev(terrain.colors(25)), maxpixels=100000, axes=TRUE, xlab='', ylab='', ext=NULL, asp, xlim, ylim, ...) {
 #TODO if xlim and/or ylim are used, only read (and sample) for those areas.
 
  
@@ -28,8 +28,14 @@
 
 	maxpixels <- max(1, maxpixels)
 
-	if (! missing(xlim) | ! missing(ylim )) {
+	if (is.null(ext)) {
 		ext <- extent(object)
+	} else  { 
+		ext <- intersectExtent(extent(object), ext) 
+	}
+	
+	
+	if (! missing(xlim) | ! missing(ylim )) {
 		if (!missing(xlim)) { 
 			if (xlim[1] >= xlim[2]) stop('invalid xlim')
 			if (xlim[1] < ext@xmax) ext@xmin <- xlim[1]
@@ -40,15 +46,10 @@
 			if (ylim[1] < ext@ymax) ext@ymin <- ylim[1]
 			if (ylim[2] > ext@ymin) ext@ymax <- ylim[2]
 		}
-		if (is.null(extent)) {
-			extent <- ext
-		} else  { 
-			extent <- intersectExtent(extent, ext) 
-		}
 	}
 	
 	leg <- object@legend
-	object <- sampleRegular(object, size=maxpixels, extent=extent, asRaster=TRUE, corners=TRUE)
+	object <- sampleRegular(object, size=maxpixels, ext=ext, asRaster=TRUE)
 	x <- (0:ncol(object)) * xres(object) + xmin(object) 
 	y <- (0:nrow(object)) * yres(object) + ymin(object) 		
 

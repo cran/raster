@@ -10,7 +10,7 @@
 
 	filename = trim(filename)
 	if (filename == '') { stop('provide a filename') }
-	ext(filename) <- .defaultExtension(format='CDF')
+	extension(filename) <- .defaultExtension(format='CDF')
 	if (file.exists(filename) & !overwrite) {
 		stop('file exists, use overwrite=TRUE to overwrite it')
 	}

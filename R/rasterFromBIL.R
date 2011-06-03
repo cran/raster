@@ -59,7 +59,7 @@
     }  
 
 
-	wrldf <- ext(filename, '.blw')
+	wrldf <- extension(filename, '.blw')
 	if (file.exists(wrldf)) {
 		a <- readLines(wrldf)
 		if (is.null(xn)) xn <- as.numeric(a[5])
@@ -136,7 +136,7 @@
 		x@file@bandorder <- bandorder 
 	}
 
-	shortname <- gsub(" ", "_", ext(basename(filename), ""))
+	shortname <- gsub(" ", "_", extension(basename(filename), ""))
 	x <- raster:::.enforceGoodLayerNames(x, shortname)
 	
 	x@file@name <- filename

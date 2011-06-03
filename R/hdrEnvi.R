@@ -6,7 +6,7 @@
  
 .writeHdrENVI <- function(raster) {
 	hdrfile <- filename(raster)
-	ext(hdrfile) <- ".hdr"
+	extension(hdrfile) <- ".hdr"
 	thefile <- file(hdrfile, "w") 
 	cat("ENVI\n", file = thefile)
 	cat("description = {", raster@layernames, "}", "\n", file = thefile)

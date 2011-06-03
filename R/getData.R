@@ -16,7 +16,9 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 	} else if (name=='worldclim') {
 		.worldclim(..., download=download, path=path)
 	} else if (name=='ISO3') {
-		.countries()[,c(2,1)]
+		.ISO()[,c(2,1)]
+	} else if (name=='countries') {
+		.countries(download=download, path=path, ...)
 	} else {
 		stop(name, 'not recognized as a valid name')
 	}
@@ -33,7 +35,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 	}
 }
 
-.countries <- function() {
+.ISO <- function() {
 	path <- paste(system.file(package="raster"), "/external", sep='')
 	d <- read.csv(paste(path, "/countries.csv", sep=""), header=T, quote = "!@!")
 	return(as.matrix(d))
@@ -89,14 +91,11 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 #	if (!file.exists(path)) {  dir.create(path, recursive=T)  }
 
 	country <- .getCountry(country)
-	
 	if (missing(level)) {
 		stop('provide a "level=" argument; levels can be 0, 1, or 2 for most countries, and higer for some')
 	}
-
 	
 	filename <- paste(path, country, '_adm', level, ".RData", sep="")
-#	theurl <- paste("http://www.r-gis.org/rgis/data/adm/", country, '_adm', level, ".RData", sep="")
 	if (!file.exists(filename)) {
 		if (download) {
 			theurl <- paste("http://gadm.org/data/rda/", country, '_adm', level, ".RData", sep="")
@@ -113,6 +112,40 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 		return(data)
 	} 
 }
+
+
+
+
+.countries <- function(download, path, old=FALSE) {
+#	if (!file.exists(path)) {  dir.create(path, recursive=T)  }
+
+	if (old) {
+		filename <- paste(path, 'countries_old.RData', sep="")
+	} else {
+		filename <- paste(path, 'countries.RData', sep="")
+	}
+#	theurl <- paste("http://www.r-gis.org/rgis/data/adm/", country, '_adm', level, ".RData", sep="")
+	if (!file.exists(filename)) {
+		if (download) {
+			if (old) {
+				theurl <- paste("http://diva-gis.org/data/misc/countries_old.RData", sep="")
+			} else {
+				theurl <- paste("http://diva-gis.org/data/misc/countries.RData", sep="")			
+			}
+			.download(theurl, filename)
+			if (!file.exists(filename))
+				{ cat("\nCould not download file -- perhaps it does not exist \n") }
+		} else {
+			cat("\nFile not available locally. Use 'download = TRUE'\n")
+		}
+	}	
+	if (file.exists(filename)) {
+		thisenvir = new.env()
+		data <- get(load(filename, thisenvir), thisenvir)
+		return(data)
+	} 
+}
+
 
 
 .worldclim <- function(var, res, lon, lat, path, download=TRUE) {
@@ -206,7 +239,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 	# http://diva-gis.org/data/msk_alt/MEX_msk_alt.zip
 	if (!file.exists(filename)) {
 		zipfilename <- filename
-		ext(zipfilename) <- '.zip'
+		extension(zipfilename) <- '.zip'
 		if (!file.exists(zipfilename)) {
 			if (download) {
 				theurl <- paste("http://diva-gis.org/data/", mskpath, name, "/", country, mskname, name, ".zip", sep="")

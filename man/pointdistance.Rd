@@ -5,7 +5,7 @@
 \title{Distance between points}
 
 \description{
-Calculate the geographic distance between two (sets of) points on a sphere (\code{latlong=TRUE}) or on a plane (\code{latlong=FALSE}).
+Calculate the geographic distance between two (sets of) points on a sphere (\code{longlat=TRUE}) or on a plane (\code{longlat=FALSE}).
 }
 
 \usage{

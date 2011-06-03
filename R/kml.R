@@ -9,12 +9,12 @@ KML <- function (raster, filename, col=rainbow(255), maxpixels=100000, zip='') {
     if (! .couldBeLonLat(raster)) { 
         stop("raster must be in geographical coordinates")
 	}
-	raster <- sampleRegular(raster, size=maxpixels, asRaster = TRUE, corners=TRUE)
+	raster <- sampleRegular(raster, size=maxpixels, asRaster = TRUE)
 
 	imagefile <- filename
-	ext(imagefile) <- '.png'
+	extension(imagefile) <- '.png'
 	kmlfile <- filename
-	ext(kmlfile) <- '.kml'
+	extension(kmlfile) <- '.kml'
 
 	png(filename = imagefile, width=ncol(raster), height=nrow(raster), bg="transparent")
 	par(mar=c(0,0,0,0))
@@ -47,7 +47,7 @@ KML <- function (raster, filename, col=rainbow(255), maxpixels=100000, zip='') {
     cat(paste(x, sep = "", collapse = "\n"), file = kmlfile, sep = "")
 	
 	kmzfile <- kmlfile
-	ext(kmzfile) <- '.kmz'
+	extension(kmzfile) <- '.kmz'
 	if (zip == "") {
 		zip <- Sys.getenv('R_ZIPCMD', 'zip')
 	}

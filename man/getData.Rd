@@ -12,7 +12,7 @@ getData(name, download=TRUE, path='', ...)
 }
 
 \arguments{
-  \item{name}{Data set name, currently supported are 'GADM', 'SRTM', 'alt', and 'worldclim'}
+  \item{name}{Data set name, currently supported are 'GADM', 'countries', 'SRTM', 'alt', and 'worldclim'. See Details for more info}
   \item{download}{Logical. If \code{TRUE} data will be downloaded if not locally available}
   \item{path}{Character. Path name indicating where to store the data. Default is the current working directory }
   \item{...}{ Additional required (!) parameters. These are data set specific. See Details}   
@@ -23,7 +23,7 @@ A spatial object (Raster* or Spatial*)
 } 
 
 \details{  
-'alt' stands for altitude (elevation); the data were aggregated from SRTM 90 m resolution data between -60 and 60 latitude. GADM is a database of global administrative boundaries. Worldclim is a database of global interpolated climate data. SRTM refers to the hole-filled CGIAR-SRTM (90 m resolution). 
+'alt' stands for altitude (elevation); the data were aggregated from SRTM 90 m resolution data between -60 and 60 latitude. 'GADM' is a database of global administrative boundaries. 'worldclim' is a database of global interpolated climate data. 'SRTM' refers to the hole-filled CGIAR-SRTM (90 m resolution). 'countries' has polygons for all countries at a higher resolution than the 'wrld_simpl' data in the maptools pacakge . 
 
 If \code{name} is 'alt' or 'GADM' you must provide a 'country=' argument. Countries are specified by their 3 letter ISO codes. Use getData('ISO3') to see these codes. In the case of GADM you must also provide the level of administrative subdivision (0=country, 1=first level subdivision). In the case of alt you can set 'mask' to FALSE. If it is TRUE values for neighbouring countries are set to NA. For example:
 

@@ -15,7 +15,7 @@ function(object, v, cell) {
 		stop('object is not associated with a file on disk.')
 	}
 
-	band <- band(object)
+	band <- bandnr(object)
 	cell <- na.omit(round(cell))
 
 	driver <- object@file@driver
@@ -24,8 +24,8 @@ function(object, v, cell) {
 
 		if (nbands(object) > 1) {
 			b <- brick(filename(object), native=TRUE)
-			b <- update(b, v, cell, band=band(object))
-			r <- raster(filename(object), band=band(object))
+			b <- update(b, v, cell, band=bandnr(object))
+			r <- raster(filename(object), band=bandnr(object))
 			return(r)
 		}
 	}

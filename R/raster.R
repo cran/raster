@@ -331,3 +331,21 @@ setMethod('raster', signature(x='kde'),
 	}
 )
 
+
+
+
+setMethod('raster', signature(x='grf'), 
+	function(x, i=1) {
+		i <- max(1, i[1])
+		if (i != 1) {
+			nc <- NCOL(x$data)
+			if (i <= nc) {
+				x$data <- x$data[,i]
+			} else {
+				stop('i is higher than the number of simulations in x')
+			}
+		}
+		as(x, 'RasterLayer')
+	}
+)
+

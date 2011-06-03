@@ -12,7 +12,7 @@ if (!isGeneric("plotRGB")) {
 
 
 setMethod("plotRGB", signature(x='RasterStackBrick'), 
-function(x, r=1, g=2, b=3, scale, maxpixels=500000, extent=NULL, interpolate=FALSE, axes=TRUE, xlab='', ylab='', asp, alpha, ...) { 
+function(x, r=1, g=2, b=3, scale, maxpixels=500000, ext=NULL, interpolate=FALSE, axes=TRUE, xlab='', ylab='', asp, alpha, ...) { 
 	
 	if (!axes) par(plt=c(0,1,0,1))
 
@@ -35,9 +35,9 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, extent=NULL, interpolate=FAL
 		}
 	}
 
-	r <- sampleRegular(raster(x,r), maxpixels, extent=extent, asRaster=TRUE, corners=TRUE)
-	g <- sampleRegular(raster(x,g), maxpixels, extent=extent, asRaster=TRUE, corners=TRUE)
-	b <- sampleRegular(raster(x,b), maxpixels, extent=extent, asRaster=TRUE, corners=TRUE)
+	r <- sampleRegular(raster(x,r), maxpixels, ext=ext, asRaster=TRUE)
+	g <- sampleRegular(raster(x,g), maxpixels, ext=ext, asRaster=TRUE)
+	b <- sampleRegular(raster(x,b), maxpixels, ext=ext, asRaster=TRUE)
 	scale = as.vector(scale)[1]
 	
 	RGB <- na.omit(cbind(getValues(r), getValues(g), getValues(b)))
@@ -72,7 +72,7 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, extent=NULL, interpolate=FAL
 
 
 
-.oldPlotRGB <- function(x, r=1, g=2, b=3, scale=255, maxpixels=100000, extent=NULL, axes=TRUE, xlab='', ylab='', asp, ...) { 
+.oldPlotRGB <- function(x, r=1, g=2, b=3, scale=255, maxpixels=100000, ext=NULL, axes=TRUE, xlab='', ylab='', asp, ...) { 
 	
  	if (missing(asp)) {
 		if (.couldBeLonLat(x)) {
@@ -84,9 +84,9 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, extent=NULL, interpolate=FAL
 		}		
 	}
 
-	r <- sampleRegular(raster(x,r), maxpixels, extent=extent, asRaster=TRUE, corners=TRUE)
-	g <- sampleRegular(raster(x,g), maxpixels, extent=extent, asRaster=TRUE, corners=TRUE)
-	b <- sampleRegular(raster(x,b), maxpixels, extent=extent, asRaster=TRUE, corners=TRUE)
+	r <- sampleRegular(raster(x,r), maxpixels, ext=ext, asRaster=TRUE)
+	g <- sampleRegular(raster(x,g), maxpixels, ext=ext, asRaster=TRUE)
+	b <- sampleRegular(raster(x,b), maxpixels, ext=ext, asRaster=TRUE)
 	scale = as.vector(scale)[1]
 	
 	RGB <- na.omit(cbind(getValues(r), getValues(g), getValues(b)))

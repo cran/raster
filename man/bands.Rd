@@ -1,7 +1,7 @@
 \name{bands}
 
-\alias{band}
-\alias{band,RasterLayer-method}
+\alias{bandnr}
+\alias{bandnr,RasterLayer-method}
 \alias{nbands}
   
 \title{Number of bands}
@@ -16,7 +16,7 @@ A 'band' refers to a single layer for a possibly multi-layer file. Most RasterLa
 
 \usage{
 nbands(x)
-band(x, ...)
+bandnr(x, ...)
 }
 
 \arguments{
@@ -34,7 +34,7 @@ a numeric value >= 1
 \examples{
 r <- raster()
 nbands(r)
-band(r)
+bandnr(r)
 }
 
 \keyword{spatial}

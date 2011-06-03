@@ -52,7 +52,7 @@
 		layernames <- unlist(strsplit(layernames, ':'))
 	}
 	x@layernames <- layernames
-	shortname <- gsub(" ", "_", ext(basename(filename), ""))
+	shortname <- gsub(" ", "_", extension(basename(filename), ""))
 	x <- .enforceGoodLayerNames(x, shortname)
 	
 	x@file@name <- filename

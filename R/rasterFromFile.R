@@ -19,7 +19,7 @@
 	if (x=='' | x=='.') { # etc? 
 		stop('provide a valid filename')
 	}
-	fileext <- toupper(ext(x)) 
+	fileext <- toupper(extension(x)) 
 
 	if (fileext %in% c(".GRD", ".GRI")) {
 		grifile <- .setFileExtensionValues(x, 'raster')

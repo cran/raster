@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-.plotCT <- function(x, maxpixels=500000, extent=NULL, interpolate=FALSE, axes, xlab='', ylab='', asp, ...) { 
+.plotCT <- function(x, maxpixels=500000, ext=NULL, interpolate=FALSE, axes, xlab='', ylab='', asp, ...) { 
 # plotting with a color table
 	
 	if (missing(axes)) {
@@ -22,7 +22,7 @@
 	}
 
 	coltab <- x@legend@colortable
-	x <- sampleRegular(x, maxpixels, extent=extent, asRaster=TRUE, corners=TRUE)
+	x <- sampleRegular(x, maxpixels, ext=ext, asRaster=TRUE)
 	z <- getValues(x)
 	
 	if (NCOL(coltab) == 2) {

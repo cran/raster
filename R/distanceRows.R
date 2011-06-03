@@ -19,7 +19,9 @@
 	r <- raster(object)
 	tr <- blockSize(r, n=3)
 	tmp = rasterTmpFile()
-	ext(tmp) = '.tif'
+	extension(tmp) = '.tif'
+	
+	if (! .requireRgdal() ) { stop('rgdal not available') }
 	r <- writeStart(r, filename=tmp, format='GTiff')
 	
 	pb <- pbCreate(tr$n, type=progress)			

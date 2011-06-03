@@ -52,7 +52,7 @@ hdr <- function(x, format, extension='.wld') {
 			filename <- filename(x)
 		} 
 		if (filename!='') {
-			ext(filename) <- ".stx"
+			extension(filename) <- ".stx"
 			thefile <- file(filename, "w")  # open a txt file connectionis
 			cat(1, " ", minValue(x), " ", maxValue(x), "\n", file = thefile)
 			close(thefile)

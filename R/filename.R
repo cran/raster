@@ -26,16 +26,16 @@ filename <- function(x) {
 	
 # could also throw in normalizePath(utils) 
 	if (inherits(x, 'RasterStack')) {
-		ext(filename) <- ".stk"
+		extension(filename) <- ".stk"
 		x@filename <- filename
 	} else {
 		x@file@name <- filename
 		if (inherits(x, 'RasterLayer')) {	
 			shortname <- basename(filename)
-			ext(shortname) <- ""
+			extension(shortname) <- ""
 			shortname <- gsub(" ", "_", shortname)
 			if (nbands(x) > 1) { 
-				shortname <- paste(shortname, "_", band(x), sep="") 
+				shortname <- paste(shortname, "_", bandnr(x), sep="") 
 			} 
 			x@layernames <- shortname
 		}

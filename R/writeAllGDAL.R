@@ -5,12 +5,14 @@
 # Licence GPL v3
 
 
-
 .writeGDALall <- function(x, filename, options=NULL, ...) {
-	
-	x <- .startGDALwriting(x, filename, options, ...)
-	x <- writeValues(x, values(x), start=1)
-	.stopGDALwriting(x)
-
+	if (nlayers(x) > 1) {
+		y <- brick(x, values=FALSE)
+	} else {
+		y <- raster(x)
+	}
+	y <- .startGDALwriting(y, filename, options, ...)
+	y <- writeValues(y, values(x), start=1)
+	.stopGDALwriting(y)
 }
 	
