@@ -1,3 +1,12 @@
+--- 3-June-2011, version 1.8-31
+Added functions to coerce to RasterLayer/Brick from gre objects (geoR package), as suggested by Agustin Lobo; using generic functions as(), raster(), brick()
+
+--- 27-May-2011, version 1.8-28
+Plot and other functions now use the argument "ext" in stead of "extent" to avoid confusion with extent()
+renamed the 'ext' function to 'extension'
+sampleRegular of gdal files now uses rgdal for quicker sub-sampling (leading to faster plotting)
+Further improvements to predict.
+
 --- 25-May-2011, version 1.8-27
 Arith functions now work with logical arguments (including NA). Problem reported by Agustin Lobo 
 

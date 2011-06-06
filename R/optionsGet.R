@@ -64,7 +64,7 @@
 
 
 .maxmemory <- function() {
-	default <- 100000000
+	default <- 10000000
 	d <- getOption('rasterMaxMemory')
 	if (is.null(d)) {
 		return( default )
@@ -128,7 +128,7 @@
 }
 
 .getFormat <- function(filename) {
-	ext <- tolower(ext(filename, maxchar=5))
+	ext <- tolower(extension(filename, maxchar=5))
 	if (nchar(ext) < 3) {
 		return('')
 	} else {
@@ -244,6 +244,7 @@
 		}
 	}
 }
+
 
 .usecluster <- function(...) {
 	usecluster <- list(...)$usecluster

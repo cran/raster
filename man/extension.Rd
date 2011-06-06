@@ -1,7 +1,7 @@
 \name{extension}
 
-\alias{ext}
-\alias{ext<-}
+\alias{extension}
+\alias{extension<-}
 
 \title{Filename extensions}
 
@@ -10,8 +10,8 @@ Get or change a filename extension
 }
 
 \usage{
-ext(filename, value=NULL, maxchar=10)
-ext(filename) <- value
+extension(filename, value=NULL, maxchar=10)
+extension(filename) <- value
 }
 
 \arguments{
@@ -31,12 +31,12 @@ If \code{ext(filename)} is used without a \code{value} argument, it returns the 
 
 \examples{
 fn <- "c:/temp folder/filename.exten sion"
-ext(fn)
-ext(fn) <- ".txt"
-ext(fn)
-fn <- ext(fn, '.document')
-ext(fn)
-ext(fn, maxchar=4)
+extension(fn)
+extension(fn) <- ".txt"
+extension(fn)
+fn <- extension(fn, '.document')
+extension(fn)
+extension(fn, maxchar=4)
 }
 
 \keyword{file}

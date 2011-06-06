@@ -292,3 +292,39 @@ setAs('kde', 'RasterLayer',
 )
 
 
+setAs('grf', 'RasterBrick', 
+	function(from) {
+		x <- from$data
+		if (!is.matrix(x)) {
+			x <- matrix(x)
+		}
+		ncell <- nrow(x)
+		nl <- ncol(x)
+		nc <- nr <- as.integer(sqrt(ncell))
+		dim(x) <- c(nr, nc, nl)
+		
+		x = aperm(x, perm=c(2,1,3))
+		b <- brick(x)
+		b <- flip(b, 'y')
+		extent(b) <- extent(as.vector(apply(from$coords, 2, range)))
+		b
+	}
+)
+
+
+setAs('grf', 'RasterLayer', 
+	function(from) {
+		x <- from$data
+		if (is.matrix(x)) {
+			x <- x[,1]
+		}
+		ncell <- length(x)
+		nc <- nr <- as.integer(sqrt(ncell))
+		dim(x) <- c(nr, nc)
+		x <- t(x)[nrow(x):1,]
+		r <- raster(x)
+		extent(r) <- extent(as.vector(apply(from$coords, 2, range)))
+		r
+	}
+)
+

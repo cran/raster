@@ -9,16 +9,15 @@ Take a systematic sample from a Raster* object.
 }
 
 \usage{
-sampleRegular(x, size, extent=NULL, cells=FALSE, asRaster=FALSE, corners=FALSE)
+sampleRegular(x, size, ext=NULL, cells=FALSE, asRaster=FALSE)
 }
 
 \arguments{
   \item{x}{a Raster object}
   \item{size}{positive integer giving the number of items to choose.}  
-  \item{extent}{Extent. To limit regular sampling to the area within that box}  
+  \item{ext}{Extent. To limit regular sampling to the area within that box}  
   \item{cells}{Logical. Also return sampled cell numbers (if asRaster=FALSE) }  
-  \item{asRaster}{Logical. If \code{TRUE}, a rasterLayer is returned, rather then the sampled values}  
-  \item{corners}{Logical. If \code{TRUE}, the extreme corner cells are always included. This makes for rather irregular sampling when n is small; but it can be useful when asRaster=TRUE, to maintain the same extent as the input RasterLayer}
+  \item{asRaster}{Logical. If \code{TRUE}, a RasterLayer or RasterBrick is returned, rather then the sampled values}  
 }
 
 \value{

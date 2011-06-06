@@ -76,19 +76,21 @@ setMethod('brick', signature(x='RasterStack'),
 			b@rotation <- x@rotation
 		}
 
-		if (! missing(nl)) {
-			nl <- max(round(nl), 0)
-			values <- FALSE
-		} else {
+		if (missing(nl)) {
 			nl <- nlayers(x) 
 			if (nl < 1) {
 				values <- FALSE
 			}
+		} else {
+			nl <- max(round(nl), 0)
+			values <- FALSE
 		}
+		
 		b@data@nlayers <- as.integer(nl)
 		
 		filename <- trim(filename)
 		if (values) {
+			
 			b@layernames <- x@layernames
 			if (canProcessInMemory(b)) {
 				x <- setValues( b, getValues(x)) 
@@ -224,6 +226,16 @@ setMethod('brick', signature(x='kasc'),
 		as(x, 'RasterBrick')
 	}
 )
+
+
+
+
+setMethod('brick', signature(x='grf'), 
+	function(x) {
+		as(x, 'RasterBrick')
+	}
+)
+
 
 
 

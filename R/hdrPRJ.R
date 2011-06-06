@@ -13,7 +13,7 @@
 	p4s <- try(	showWKT(projection(x), file = NULL, morphToESRI = ESRI) )
 	if (class(p4s) != 'try-error') {
 		prjfile <- filename(x)
-		ext(prjfile) <- '.prj'
+		extension(prjfile) <- '.prj'
 		cat(p4s, file=filename)
 	} else {
 		return(FALSE)

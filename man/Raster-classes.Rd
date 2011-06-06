@@ -60,14 +60,14 @@ Objects can be created by calls of the form \code{new("RasterLayer", ...)}, or w
 Slots for Raster* objects
 	\describe{
     \item{\code{title}:}{Character} 
-    \item{\code{file}:}{Object of class \code{"RasterFile"} }
-    \item{\code{data}:}{Object of class \code{"SingleLayerData"} or \code{"MulitpleLayerData"}. Not in \code{RasterStack} objects}
+    \item{\code{file}:}{Object of class \code{".RasterFile"} }
+    \item{\code{data}:}{Object of class \code{".SingleLayerData"} or \code{".MulitpleLayerData"}. Not in \code{RasterStack} objects}
     \item{\code{history}:}{To record processing history, not yet in use }
-    \item{\code{legend}:}{Default legend. Should store preferences for plotting. Not yet implemented except that it stores the color table of images, if available}
-    \item{\code{extent}:}{Object of class \code{"Extent"} }
+    \item{\code{legend}:}{Object of class \code{.RasterLegend}, Default legend. Should store preferences for plotting. Not yet implemented except that it stores the color table of images, if available}
+    \item{\code{extent}:}{Object of \code{\link{Extent-class}} }
     \item{\code{ncols}:}{Integer} 
     \item{\code{nrows}:}{Integer} 
-    \item{\code{crs}:}{Object of class \code{"CRS"}, i.e. the coordinate reference system }
+    \item{\code{crs}:}{Object of class \code{"CRS"}, i.e. the coordinate reference system. In Spatial* objects this slot is called 'proj4string' }
   }
 }
 

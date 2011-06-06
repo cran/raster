@@ -6,7 +6,7 @@
  
 .writeHdrBIL <- function(x, layout='BIL') {
 	hdrfile <- x@file@name
-	ext(hdrfile) <- '.hdr'
+	extension(hdrfile) <- '.hdr'
 	thefile <- file(hdrfile, "w")  # open an txt file connectionis
 	cat("NROWS          ",  x@nrows, "\n", file = thefile)
 	cat("NCOLS          ",  x@ncols, "\n", file = thefile)

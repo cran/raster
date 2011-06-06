@@ -71,7 +71,7 @@ showTmpFiles <- function() {
 		if (length(f) == 0) {
 			cat('--- none ---\n')
 		} else {
-			ext(f) <- ''
+			extension(f) <- ''
 			f <- unique(f)
 			cat(f, "\n")
 		}

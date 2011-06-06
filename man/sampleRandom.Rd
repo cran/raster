@@ -21,7 +21,7 @@ sampleRandom(x, size, ...)
   
 	\code{na.rm}  Logical. If \code{TRUE} (the default), \code{NA} values are removed from random sample
 	
-	\code{extent}  Extent. To limit regular sampling to the area within the extent  
+	\code{ext}  Extent. To limit regular sampling to the area within the extent  
 	
 	\code{cells}  Logical. If \code{TRUE}, sampled cell numbers are also returned
 	

@@ -39,11 +39,11 @@ Points, lines, and polygons can be drawn on top of a map using \code{plot(..., a
 
 If \code{x} has a 'Color table', the default all to \code{plot} is:
 
-\code{plot(x, maxpixels=500000, extent=NULL, interpolate=FALSE,  axes=FALSE, xlab="", ylab="", ...)}
+\code{plot(x, maxpixels=500000, ext=NULL, interpolate=FALSE,  axes=FALSE, xlab="", ylab="", ...)}
 
 
 \tabular{rll}{
-\tab \code{extent}  \tab  An extent object to zoom in a region \cr
+\tab \code{ext}  \tab  An extent object to zoom in a region \cr
 \tab \code{interpolate} \tab Logical. Should the image be interpolated?  \cr 
 \tab \code{axes} \tab Logical. Should axes be drawn?  \cr 
 \tab \code{...} \tab Graphical parameters \cr

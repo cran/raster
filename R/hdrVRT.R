@@ -8,9 +8,9 @@
 	
 	fn <- fname <- x@file@name
 
-	ext(fname) <- 'vrt'
-	if (tolower(ext(fn)) == '.grd') {
-		ext(fn) <- '.gri'	
+	extension(fname) <- 'vrt'
+	if (tolower(extension(fn)) == '.grd') {
+		extension(fn) <- '.gri'	
 	}
 	pixsize <- dataSize(x@file@datanotation)
 	nbands <- nlayers(x)

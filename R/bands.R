@@ -5,13 +5,13 @@
 
 
 
-if (!isGeneric("band")) {
-	setGeneric("band", function(x, ...)
-		standardGeneric("band"))
+if (!isGeneric("bandnr")) {
+	setGeneric("bandnr", function(x, ...)
+		standardGeneric("bandnr"))
 }	
 
 
-setMethod('band', signature(x='RasterLayer'), 
+setMethod('bandnr', signature(x='RasterLayer'), 
 function(x) {
 	return(x@data@band)
 }

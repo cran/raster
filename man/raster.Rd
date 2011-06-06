@@ -17,11 +17,12 @@
 \alias{raster,asc-method}
 \alias{raster,kasc-method}
 \alias{raster,kde-method}
+\alias{raster,grf-method}
 
 \title{Create a RasterLayer object}
 
 \description{
-Methods to create a RasterLayer object. RasterLayer objects can be created from scratch, a filename, an Extent object, a matrix, an 'image' object, or from a Raster*, Spatial*, asc, kasc, or kde object.
+Methods to create a RasterLayer object. RasterLayer objects can be created from scratch, a filename, an Extent object, a matrix, an 'image' object, or from a Raster*, Spatial*, asc, kasc (adehabitat*), grf (geoR) or kde object.
 
 In many cases, e.g. when a RasterLayer is created from a file, it does (initially) not contain any cell (pixel) values, it only has the parameters that describe the RasterLayer.
 

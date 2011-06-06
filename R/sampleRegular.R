@@ -4,14 +4,14 @@
 # Licence GPL v3
 
 
-sampleRegular <- function( x, size, extent=NULL, cells=FALSE, asRaster=FALSE, corners=FALSE ) {
+sampleRegular <- function( x, size, ext=NULL, cells=FALSE, asRaster=FALSE) {
 	
 	size <- round(size)
-	if (size < 1) { stop('size < 1') }
-	
+	stopifnot(size > 0)
+	nl <- nlayers(x) 
 	rotated <- rotated(x)
 	
-	if (is.null(extent)) {
+	if (is.null(ext)) {
 		if (size >= ncell(x)) {
 			if (asRaster) { 
 				if (!rotated) {
@@ -28,10 +28,11 @@ sampleRegular <- function( x, size, extent=NULL, cells=FALSE, asRaster=FALSE, co
 		lastcol <- ncol(rcut)
 		
 	} else {
-		extent <- alignExtent(extent, x)
-		rcut <- crop(raster(x), extent)
+	
+		ext <- alignExtent(ext, x)
+		rcut <- crop(raster(x), ext)
 		if (size >= ncell(rcut)) {
-			x <- crop(x, extent)
+			x <- crop(x, ext)
 			if (asRaster) { 
 				return(x) 
 			} else { 
@@ -45,23 +46,15 @@ sampleRegular <- function( x, size, extent=NULL, cells=FALSE, asRaster=FALSE, co
 	}
 	
 
-	X <- sqrt(ncell(rcut)/size)
-	Y <- X
-	nr <- max(1,floor((lastrow - firstrow + 1) / Y))
-	rows <- (lastrow - firstrow + 1)/nr * 1:nr + firstrow - 1
-	if (corners) {
-		rows <- c(firstrow, rows, lastrow)	
-	} else {
-		rows <- rows - (0.5 * (lastrow - firstrow + 1)/nr)
-	}
-		
+	Y <- X <- sqrt(ncell(rcut)/size)
+	nr <- max(1, floor((lastrow - firstrow + 1) / Y))
 	nc <- max(1, floor((lastcol - firstcol + 1) / X))
+
+	rows <- (lastrow - firstrow + 1)/nr * 1:nr + firstrow - 1
+	rows <- rows - (0.5 * (lastrow - firstrow + 1)/nr)
 	cols <- (lastcol - firstcol + 1)/nc * 1:nc  + firstcol - 1
-	if (corners) {
-		cols <- c(firstcol, cols, lastcol)
-	} else {
-		cols <- cols - (0.5 * (lastcol - firstcol + 1)/nc)
-	}
+	cols <- cols - (0.5 * (lastcol - firstcol + 1)/nc)
+
 	cols <- unique(round(cols))
 	rows <- unique(round(rows))
 	cols = cols[cols>0]
@@ -69,6 +62,45 @@ sampleRegular <- function( x, size, extent=NULL, cells=FALSE, asRaster=FALSE, co
 	nr <- length(rows)
 	nc <- length(cols)
 	
+
+	driver <- .driver(x, FALSE)
+	if (driver=='gdal' & !rotated) {
+	
+		offs <- c(firstrow,firstcol)-1
+		reg <- c(nrow(rcut), ncol(rcut))-1
+		if (nl == 1) {
+			band <- bandnr(x)
+		} else {
+			band <- NULL
+		}
+		con <- GDAL.open(x@file@name, silent=TRUE)
+		v <- getRasterData(con, band=band, offset=offs, region.dim=reg, output.dim=c(nr, nc)) 
+		closeDataset(con)
+		if (x@data@gain != 1 | x@data@offset != 0) {
+			v <- v * x@data@gain + x@data@offset
+		}
+	
+	
+		if (asRaster) {
+			if (is.null(ext))  {
+				outras <- raster(x)
+			} else {
+				outras <- raster(ext) 
+			}
+			nrow(outras) <- nr
+			ncol(outras) <- nc
+			if (nl > 1) {
+				outras <- brick(outras, nl=nl)
+				return( setValues(outras, v))
+			} else {
+				return( setValues(outras, as.vector(v)))
+			}
+		} else {
+		
+			return(v@data)
+		}
+	}
+
 	cell <- cellFromRowCol(x, rep(rows, each=nc), rep(cols, times=nr))
 	
 	if ( ! inMemory(x) ) { 
@@ -79,10 +111,10 @@ sampleRegular <- function( x, size, extent=NULL, cells=FALSE, asRaster=FALSE, co
 	
 	if (asRaster) {
 		if (rotated) {
-			if (is.null(extent)) {
-				outras <- raster(raster::extent(x))
+			if (is.null(ext)) {
+				outras <- raster(extent(x))
 			} else {
-				outras <- raster(extent)
+				outras <- raster(ext)
 			}
 			ncol(outras) <- nc
 			nrow(outras) <- nr
@@ -92,17 +124,17 @@ sampleRegular <- function( x, size, extent=NULL, cells=FALSE, asRaster=FALSE, co
 		} else {
 			m <- .cellValues(x, cell)
 
-			if (is.null(extent))  {
-				outras <- raster(nrow=nr, ncol=nc, xmn=xmin(x), xmx=xFromCol(x, cols[length(cols)])+0.5*xres(x), ymn=yFromRow(x, rows[length(rows)])-0.5*yres(x), ymx=ymax(x), crs=projection(x)) 
+			if (is.null(ext))  {
+				outras <- raster(x)
 			} else {
-				outras <- raster(extent) 
-				nrow(outras) <- nr
-				ncol(outras) <- nc
+				outras <- raster(ext) 
 			}
+			nrow(outras) <- nr
+			ncol(outras) <- nc
 			
 		}
-		if (nlayers(x) > 1) {
-			outras <- brick(outras, nl=nlayers(x))
+		if (nl > 1) {
+			outras <- brick(outras, nl=nl)
 		}
 		outras <- setValues(outras, m)
 		layerNames(outras) <- layerNames(x)

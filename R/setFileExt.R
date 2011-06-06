@@ -7,17 +7,17 @@
 
 .setFileExtensionValues <- function(fname, type='raster') {
 	if (type == 'raster') {
-		ext(fname) <- ".gri"
+		extension(fname) <- ".gri"
 	} else if (type == 'SAGA') {
-		ext(fname) <- ".sdat"
+		extension(fname) <- ".sdat"
 	} else if (type == 'IDRISI') {
-		ext(fname) <- ".rst"
+		extension(fname) <- ".rst"
 	} else if (type == 'BIL') {
-		ext(fname) <- ".bil"
+		extension(fname) <- ".bil"
 	} else if (type == 'BIP') {
-		ext(fname) <- ".bip"
+		extension(fname) <- ".bip"
 	} else if (type == 'BSQ') {
-		ext(fname) <- ".bsq"
+		extension(fname) <- ".bsq"
 	} else {
 		stop('unknown file format')
 	}
@@ -26,13 +26,13 @@
  
 .setFileExtensionHeader <- function(fname, type='raster') {
 	if (type == 'raster') {
-		ext(fname) <- ".grd"
+		extension(fname) <- ".grd"
 	} else if (type == 'SAGA') {
-		ext(fname) <- "sgrd"
+		extension(fname) <- "sgrd"
 	} else if (type == 'IDRISI') {
-		ext(fname) <- ".rdc"
+		extension(fname) <- ".rdc"
 	} else if (type %in% c('BIL', 'BSQ', 'BIP')) {
-		ext(fname) <- ".hdr"
+		extension(fname) <- ".hdr"
 	} else {
 		stop('unknown file format')
 	}

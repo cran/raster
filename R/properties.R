@@ -4,13 +4,18 @@
 # Licence GPL v3
 
 
-.driver <- function(object) {
-	fn <- filename(object)
-	if (fn == '') {
-		stop('no file asociated with this object')
-	} else {
-		return(object@file@driver)
+.driver <- function(object, warn=TRUE) {
+	if (inherits(object, 'RasterStack')) {
+		if (warn) {
+			warning('There is no driver associated with a RasterStack')
+		}
+		return('')
 	}
+	d <- object@file@driver
+	if (d == '' & warn) {
+		warning('no file/driver associated with this object')
+	} 
+	return(d)
 }
 
 
@@ -24,7 +29,7 @@
 
 
 	
-#	fileext <- toupper(ext(fn)) 
+#	fileext <- toupper(extension(fn)) 
 #	if ( fileext == ".GRD" | fileext == ".GRI" ) {
 #		return('raster')
 #	} else {

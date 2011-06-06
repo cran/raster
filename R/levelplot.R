@@ -5,7 +5,7 @@
 
 
 
-.levelplotraster <- function(object, maxpixels=100000, xlab='', ylab='', extent=NULL, ticks=c(6,6), ...) {
+.levelplotraster <- function(object, maxpixels=100000, xlab='', ylab='', ext=NULL, ticks=c(6,6), ...) {
 	if (! require(lattice) ) { stop('cannot find the lattice package') }
 	if ( ! inMemory(object) ) { 
 		if (  !  fromDisk(object) ) {
@@ -17,7 +17,7 @@
 	}
 
 	maxpixels <- max(1, maxpixels)
-	object <- sampleRegular(object, size=maxpixels, extent=extent, asRaster=TRUE, corners=TRUE)
+	object <- sampleRegular(object, size=maxpixels, ext=extent, asRaster=TRUE)
 
 	xint <- ticks[2]
 	xr <- xmax(object) - xmin(object)

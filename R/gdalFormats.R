@@ -93,11 +93,11 @@
 	} else if  (dtype == 'Int32' | dtype == 'CInt32') {
 		return('INT4S')
 	} else if  (dtype == 'Float32' | dtype == 'CFloat32' ) {
-		return('FLT4')
+		return('FLT4S')
 	} else if  (dtype == 'Float64' | dtype == 'CFloat64' )  {
 		return('FLT8')
 	} else {
-		return('FLT4')	
+		return('FLT4S')	
 	}
 }
 	
