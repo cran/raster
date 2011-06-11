@@ -13,16 +13,16 @@ if (!isGeneric("zoom")) {
 
 
 setMethod('zoom', signature(x='Raster'), 
-function(x, extent=drawExtent(), maxpixels=100000, layer=1, new=TRUE, ...) {
+function(x, ext=drawExtent(), maxpixels=100000, layer=1, new=TRUE, ...) {
 	if (missing(x)) {
 		stop('You must provide a Raster* object as first argument to this function')
 	}
-	extent <- extent  # force to start with drawing before creating a new graphics device
+	ext <- ext  # force to start with drawing before creating a new graphics device
 	if (new) { dev.new() }
 	if (nlayers(x) > 1) { 
 		x <- raster(x, layer) 
 	}
-	.plotraster(x, maxpixels=maxpixels, extent=extent, ...) 	
-	return(invisible(extent))
+	.plotraster(x, maxpixels=maxpixels, ext=ext, ...) 	
+	return(invisible(ext))
 }
 )

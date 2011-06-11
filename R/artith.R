@@ -80,20 +80,32 @@ setMethod("Arith", signature(e1='RasterLayer', e2='numeric'),
 
 		r <- raster(e1)
 		if (canProcessInMemory(e1, 4)) {
+			if (length(e2) > ncell(r)) {
+				e2 <- e2[1:ncell(r)]
+			}
 			return ( setValues(r,  callGeneric(as.numeric(getValues(e1)), e2) ) )
+			
 		} else {
 			tr <- blockSize(e1)
 			pb <- pbCreate(tr$n, type=.progress())			
 			r <- writeStart(r, filename=rasterTmpFile(), format=.filetype(), overwrite=TRUE )
-			for (i in 1:tr$n) {
-				v <- getValues(e1, row=tr$row[i], nrows=tr$nrows[i])
-				v <- callGeneric( v, e2 )
-				r <- writeValues(r, v, tr$row[i])
-				pbStep(pb, i) 	
+
+			if (length(e2) > 0) {
+				for (i in 1:tr$n) {
+					e <- .getAdjustedE(r, tr, i, e2)
+					v <- callGeneric(getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), e)
+					r <- writeValues(r, v, tr$row[i])
+					pbStep(pb, i) 	
+				}
+			} else {
+				for (i in 1:tr$n) {
+					v <- callGeneric( getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), e2 )
+					r <- writeValues(r, v, tr$row[i])
+					pbStep(pb, i)
+				}
 			}
 			r <- writeStop(r)
 			pbClose(pb)
-
 			return(r)
 		}		
 	}
@@ -101,27 +113,7 @@ setMethod("Arith", signature(e1='RasterLayer', e2='numeric'),
 
 setMethod("Arith", signature(e1='numeric', e2='RasterLayer'),
     function(e1, e2){ 
-# simpler code, but would this make another copy of the objects?
-#		callGeneric(e2, e1) 
-		if (!hasValues(e2)) { stop('RasterLayer has no values') }
-
-		r <- raster(e2)
-		if (canProcessInMemory(e2, 4)) {
-			return( setValues(r, callGeneric(as.numeric(e1), getValues(e2))) )
-		} else {
-			tr <- blockSize(e2)
-			pb <- pbCreate(tr$n, type=.progress())			
-			r <- writeStart(r, filename=rasterTmpFile(), format=.filetype(), overwrite=TRUE )
-			for (i in 1:tr$n) {
-				v <- getValues(e2, row=tr$row[i], nrows=tr$nrows[i])
-				v <- callGeneric( v, e1 )
-				r <- writeValues(r, v, tr$row[i])
-				pbStep(pb, i) 	
-			}
-			r <- writeStop(r)
-			pbClose(pb)
-			return(r)
-		}		
+		callGeneric(e2, e1) 
 	}
 )
 
@@ -146,8 +138,11 @@ setMethod("Arith", signature(e1='RasterStackBrick', e2='numeric'),
     function(e1, e2) {
 	
 		if (length(e2) > 1) {
-			if (length(e2) != nlayers(e1)) {
-				stop('length of e2 > 1 but not equal to nlayers(e1)')
+			nl <- nlayers(e1)
+			if (length(e2) != nl) {
+				a <- rep(NA, nl)
+				a[] <- e2
+				e2 <- a
 			}
 					
 			if (canProcessInMemory(e1, 3)) {
@@ -202,7 +197,7 @@ setMethod("Arith", signature(e1='numeric', e2='RasterStackBrick'),
 )
 
 
-setMethod("Arith", signature(e1='RasterStackBrick', e2='logical'),
+setMethod("Arith", signature(e1='RasterStackBrick', e2='logical'),  # for Arith with NA
     function(e1, e2){ 
 		e2 <- as.integer(e2)
 		callGeneric(e1, e2)

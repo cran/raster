@@ -41,7 +41,7 @@ A new RasterLayer object (in the R environment), and in some cases the side effe
 \author{Robert J. Hijmans and Jacob van Etten}
 
 \examples{
-r <- raster(ncols=10, nrows=10)
+r <- raster(ncols=12, nrows=12)
 r[] <- round(runif(ncell(r))*0.6 )
 rc <- clump(r) 
 freq(rc)

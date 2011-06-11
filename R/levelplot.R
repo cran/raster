@@ -17,7 +17,7 @@
 	}
 
 	maxpixels <- max(1, maxpixels)
-	object <- sampleRegular(object, size=maxpixels, ext=extent, asRaster=TRUE)
+	object <- sampleRegular(object, size=maxpixels, ext=ext, asRaster=TRUE)
 
 	xint <- ticks[2]
 	xr <- xmax(object) - xmin(object)
