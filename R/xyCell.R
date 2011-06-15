@@ -94,6 +94,20 @@ xyFromCell <- function(object, cell, spatial=FALSE) {
 }  
 	
 
+	
+if (!isGeneric("coordinates")) {
+	setGeneric("coordinates", function(obj, ...)
+		standardGeneric("coordinates"))
+}	
+
+		   
+setMethod('coordinates', signature(obj='Raster'), 
+    function(obj, ...){
+		xyFromCell(obj, cell=1:ncell(obj), ...)
+	}
+)
+
+
 yFromCell <- function(object, cell) {
 	if (rotated(object)) {
 		xy <- object@rotation@transfun(xy)

@@ -1,4 +1,4 @@
-\name{predict}
+ \name{predict}
 
 \docType{methods}
 
@@ -114,16 +114,17 @@ r2 <- predict(logo, model, fun=predfun, index=1:2)
 
 \dontrun{
 require(randomForest)
-model <- randomForest(pa ~., data=v)
+rfmod <- randomForest(pa ~., data=v)
 
 ## note the additional argument "type='response'" that is passed to predict.randomForest
-r3 <- predict(logo, model, type='response', progress='window')
+r3 <- predict(logo, rfmod, type='response', progress='window')
 
 ## get a RasterBrick with class membership probabilities
 v$pa <- as.factor(v$pa)
-model <- randomForest(pa ~., data=v)
-r4 <- predict(logo, model, type='prob', index=1:2)
-plot(r4)
+rfmod2 <- randomForest(pa ~., data=v)
+r4 <- predict(logo, rfmod2, type='prob', index=1:2)
+spplot(r4)
+
 }
 
 }

@@ -47,7 +47,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 	if (country == '') {
 		stop('provide a 3 letter ISO country code')
 	}
-	cs <- .countries()
+	cs <- .ISO()
 	try (cs <- toupper(cs))
 	if (! country %in% cs[,2]) {
 		if (country %in% cs[,3]) {
@@ -224,8 +224,8 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 
 .raster <- function(country, name, mask=TRUE, path, download, ...) {
 
-	country <- raster:::.getCountry(country)
-	path <- raster:::.getDataPath(path)
+	country <- .getCountry(country)
+	path <- .getDataPath(path)
 	if (mask) {
 		mskname <- '_msk_'
 		mskpath <- 'msk_'

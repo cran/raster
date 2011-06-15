@@ -82,6 +82,15 @@ setMethod ('show' , 'RasterLayer',
 		} else {
 			cat('values      : none\n')			
 		}
+
+		z <- getZ(object)
+		if (length(z) > 0) {
+			name <- object@zname
+			if (name == '') name <- 'z-value'
+			name <- paste(sprintf("%-12s", name), ':', sep='')
+			cat(name, z[1], '\n')
+		}
+		
 		cat ('\n')
 	}
 )
@@ -125,6 +134,19 @@ setMethod ('show' , 'RasterBrick',
 		} else {
 			cat('values      : none\n')			
 		}
+		z <- getZ(object)
+		if (length(z) > 0) {
+			name <- object@zname
+			if (name == '') name <- 'z-value'
+			name <- paste(sprintf("%-12s", name), ':', sep='')
+			if (length(z) < 10) {
+				cat(name, paste(z, collapse=', '), '\n')
+			} else {
+				z <- summary(z)
+				cat(name, paste(z, collapse=', ..., '), '(summary)\n')
+			}
+		}
+		
 		cat ('\n')
 	}
 )
@@ -163,6 +185,20 @@ setMethod ('show' , 'RasterStack',
 			cat('min values  :', paste(minv, collapse=' '), '\n')
 			cat('max values  :', paste(maxv, collapse=' '), '\n')
 		}
+		
+		z <- getZ(object)
+		if (length(z) > 0) {
+			name <- object@zname
+			if (name == '') name <- 'z-value'
+			name <- paste(sprintf("%-12s", name), ':', sep='')
+			if (length(z) < 10) {
+				cat(name, paste(z, collapse=', '), '\n')
+			} else {
+				z <- summary(z)
+				cat(name, paste(z, collapse=' ... '), '(summary)\n')
+			}
+		}
+		
 		cat ('\n')
 	}
 )

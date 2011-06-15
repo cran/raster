@@ -1,8 +1,15 @@
+--- 11-June-2011, version 1.8-34
+new helper functions spplot for plotting Raster* objects with spplot (sp package) 
+new helper functions gplot for plotting Raster* objects with ggplot (ggplot2 package), based on an example by Paul Hiemstra
+new slot 'z' in Raster* objects to (somewhat) formalize management of time series. Is to replace the 'zvalue' slot
+new function zApply (by Oscar Perpiñan Lamigueiro); a stackApply for time series using the z slot. 
+implemented generic function 'coordinates' for Raster* objects
+
 --- 3-June-2011, version 1.8-31
 Added functions to coerce to RasterLayer/Brick from gre objects (geoR package), as suggested by Agustin Lobo; using generic functions as(), raster(), brick()
 
 --- 27-May-2011, version 1.8-28
-Plot and other functions now use the argument "ext" in stead of "extent" to avoid confusion with extent()
+Plot and other related functions now use the argument "ext" in stead of "extent" to avoid confusion with extent()
 renamed the 'ext' function to 'extension'
 sampleRegular of gdal files now uses rgdal for quicker sub-sampling (leading to faster plotting)
 Further improvements to predict.

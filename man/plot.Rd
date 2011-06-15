@@ -98,7 +98,7 @@ Raster objects with a color-table (e.g. a graphics file) will be plotted accordi
 }
 
 \seealso{
-  \code{ \link[raster]{plotRGB}, \link[raster]{plot3D}, \link[raster]{persp}, \link[raster]{contour}, \link[raster]{pairs}, \link[raster]{hist}}  
+  \code{ \link[raster]{spplot}, \link[raster]{gplot}, \link[raster]{plotRGB}, \link[raster]{plot3D}, \link[raster]{persp}, \link[raster]{contour}, \link[raster]{pairs}, \link[raster]{hist}}  
 }
 
 \author{ Robert J. Hijmans }
@@ -124,6 +124,17 @@ plot(r, r2)
 s <- stack(r, r2, r/r)
 plot(s, 2)
 plot(s)
+
+
+# two objects, different range, one scale:
+r[] <- runif(ncell(r))
+r2 <- r/2
+brks <- seq(0, 1, by=0.1) 
+nb <- length(brks)-1 
+par(mfrow=c(1,2))
+plot(r, breaks=brks, col=rev(terrain.colors(nb)), lab.breaks=brks, zlim=c(0,1)) 
+plot(r2, breaks=brks, col=rev(terrain.colors(nb)), lab.breaks=brks, zlim=c(0,1)) 
+
 }
 
 \keyword{methods}

@@ -185,7 +185,9 @@ Maps
     \code{\link{plot}} \tab Plot a Raster* object. The main method to create a map \cr
     \code{\link{plotRGB}} \tab Combine three layers (red, green, blue channels) into a single 'real color' image \cr
     \code{\link{plot3D}} \tab 3-dimensional plot of a RasterLayer \cr
-    \code{\link{image}} \tab Plot a Raster* using the image function \cr
+    \code{\link{spplot}} \tab Plot a Raster* with the spplot function (sp package) \cr
+    \code{\link{gplot}} \tab Plot a Raster* with the ggplot function (ggplot2 package) \cr
+    \code{\link{image}} \tab Plot a Raster* with the image function \cr
     \code{\link{persp}} \tab Perspective plot of a RasterLayer \cr
     \code{\link{contour}} \tab Contour plot of a RasterLayer \cr
     \code{\link{filledContour}} \tab Filled contour plot of a RasterLayer \cr
@@ -255,6 +257,7 @@ Cell numbers start at 1 in the upper-left corner. They increase within rows, fro
     \code{\link{cellFromXY}} \tab Cell numbers from x and y coordinates \cr
     \code{\link{cellFromRowCol}} \tab Cell numbers from row and column numbers \cr
     \code{\link{cellsFromExtent}} \tab Cell numbers from extent object \cr
+    \code{\link{coordinates}} \tab x and y coordinates for all cells \cr
     \code{\link{validCell}} \tab Is this a valid cell number? \cr
     \code{\link{validCol}} \tab Is this a valid column number? \cr
     \code{\link{validRow}} \tab Is this a valid row number? \cr
@@ -347,7 +350,7 @@ Maintainer: Robert J. Hijmans \email{r.hijmans@gmail.com}
 }
 
 \section{Acknowledgements}{
-Extensive suggestions were made by Jonathan Greenberg, Matteo Mattiuzzi, Steven Mosher, and Kevin Ummel. Contributions were also made by Neil Best, Andrew Bevan, Roger Bivand, Isabelle Boulangeat, Herry Herry, Paul Hiemstra, Mayeul Kauffmann, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Agustin Lobo, Edzer Pebesma, David Ramsey, Stefan Schlaffer, Jon Olav Skoien, Shaun Walbridge, and others.
+Extensive suggestions were made by Jonathan Greenberg, Matteo Mattiuzzi, Steven Mosher, and Kevin Ummel. Contributions were also made by Neil Best, Andrew Bevan, Roger Bivand, Isabelle Boulangeat, Tim Haering, Herry Herry, Paul Hiemstra, Mayeul Kauffmann, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Agustin Lobo, Edzer Pebesma, Oscar Perpinan Lamigueiro, David Ramsey, Stefan Schlaffer, Jon Olav Skoien, Shaun Walbridge, and others.
 }
 
 \keyword{package}
