@@ -58,29 +58,38 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 			chunkSize <- length(chunk)
 			oC <- which(chunk %in% origin) 
 			ftC <- which(!(chunk %in% omit))
-			if (i < tr$n) {
-				firstRowftC <- firstRowftC + chunkSize 
-				chunkDist <- .calcDist(x, 
+			if (length(ftC) != 0) {
+
+				if (i < tr$n) {
+					firstRowftC <- firstRowftC + chunkSize 
+					chunkDist <- .calcDist(x, 
 								chunkSize=chunkSize + ncol(x), 
 								ftC=c(ftC, firstRowftC), 
 								oC=c(oC, firstRowftC), 
 								perCell=c(rep(0,times=length(oC)),firstRowDist), 
 								startCell=startCell,
 								lonlat=lonlat)[1:chunkSize]
-			} else {
-				chunkDist <- .calcDist(x, 
+				} else {
+					chunkDist <- .calcDist(x, 
 								chunkSize=chunkSize, 
 								ftC=ftC, 
 								oC=oC, 
 								perCell=0, 
 								startCell=startCell,
 								lonlat=lonlat)
+				}
+			} else {
+				if (i < tr$n) {
+					firstRowftC <- firstRowftC + chunkSize 
+				}
+				chunkDist <- rep(NA, tr$nrows[i] * ncol(r1))
 			}
 			firstRow <- chunk[1:ncol(x)]
 			firstRowDist <- chunkDist[1:ncol(x)]
 			firstRowftC <- which(!(firstRow %in% omit))
 			firstRowDist <- firstRowDist[firstRowftC]
 			chunkDist[is.infinite(chunkDist)] <- NA
+
 			r1 <- writeValues(r1, chunkDist, tr$row[i])
 			pbStep(pb) 
 		}
@@ -96,38 +105,49 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 			startCell <- (tr$row[i]-1) * ncol(x)
 			oC <- which(chunk %in% origin) 
 			ftC <- which(!(chunk %in% omit))
-
-			if (i > 1) {
-				chunkDist <- getValues(r1, row=tr$row[i], nrows=tr$nrows[i]) 
-				chunkDist[is.na(chunkDist)] <- Inf 
+			
+			if (length(ftC) != 0) {
+			
+				if (i > 1) {
+					chunkDist <- getValues(r1, row=tr$row[i], nrows=tr$nrows[i]) 
+					chunkDist[is.na(chunkDist)] <- Inf 
 				
-				chunkDist <- pmin(chunkDist,
-					.calcDist(x, 
+					chunkDist <- pmin(chunkDist,
+						.calcDist(x, 
 							chunkSize=chunkSize+ncol(x), 
 							ftC = c(lastRowftC, ftC+ncol(x)), 
 							oC = c(lastRowftC, oC+ncol(x)), 
 							perCell=c(lastRowDist, rep(0,times=length(oC))), 
 							startCell = startCell - ncol(x),
 							lonlat=lonlat)[-(1:ncol(r1))])
-			} else {
-				chunkDist <- getValues(r1, row=tr$row[i], nrows=tr$nrows[i])
-				chunkDist[is.na(chunkDist)] <- Inf
+							
+				} else {
+				
+					chunkDist <- getValues(r1, row=tr$row[i], nrows=tr$nrows[i])
+					chunkDist[is.na(chunkDist)] <- Inf
 			
-				chunkDist <- pmin(chunkDist,
-					.calcDist(x, 
+					chunkDist <- pmin(chunkDist,
+						.calcDist(x, 
 							chunkSize=chunkSize, 
 							ftC=ftC, 
 							oC=oC, 
 							perCell=0, 
 							startCell=startCell,
 							lonlat=lonlat))
-			}
+				}
 			
+				
+			} else {
+				chunkDist <- rep(NA, tr$nrows[i] * ncol(outRaster))		
+				
+			}
+
 			lastRow <- chunk[(length(chunk)-ncol(x)+1):length(chunk)]
 			lastRowDist <- chunkDist[(length(chunkDist)-ncol(x)+1):length(chunkDist)]
 			lastRowftC <- which(!(lastRow %in% omit))
 			lastRowDist <- lastRowDist[lastRowftC]
-			chunkDist[is.infinite(chunkDist)] <- NA				
+			chunkDist[is.infinite(chunkDist)] <- NA
+
 			outRaster <- writeValues(outRaster, chunkDist, tr$row[i])
 			pbStep(pb) 
 		}
@@ -147,8 +167,7 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 		startNode <- max(adj)+1 #extra node to serve as origin
 		adjP <- rbind(adj, cbind(rep(startNode, times=length(oC)), oC))
 		distGraph <- graph.edgelist(adjP-1, directed=TRUE)
-		if(length(perCell) == 1) 
-		{
+		if(length(perCell) == 1) {
 			if(perCell == 0) {perCell <- rep(0, times=length(oC))}
 		}
 		

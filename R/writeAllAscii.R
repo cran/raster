@@ -7,12 +7,19 @@
 .writeAscii <- function(x, filename, ...) {
 
 	v <- getValues(x)
+
+	if (!is.finite( x@file@nodatavalue) ) {
+		x@file@nodatavalue <- min(-9999, min(v, na.rm=TRUE)-1)
+	}
+
 	x <- .startAsciiWriting(x, filename, ...)
+	
 	if (x@file@dtype == 'INT') {
 		on.exit(options(scipen=options('scipen')))
 		options(scipen=10)
 		v <- round(v)
 	}
+
 	
 	v[is.na(v)] <- x@file@nodatavalue
 	v <- matrix(v, ncol=ncol(x), byrow=TRUE)

@@ -71,7 +71,7 @@ If \code{x} is a character value, it should be a filename of a file that the ras
 
 \bold{2) Create a RasterLayer object from scratch}
 
-\code{raster(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, crs="+proj=longlat +datum=WGS84")}
+\code{raster(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, crs, ext)}
 
 \tabular{rll}{
  \tab \code{nrows} \tab number of rows \cr
@@ -80,12 +80,13 @@ If \code{x} is a character value, it should be a filename of a file that the ras
  \tab \code{xmx} \tab maximum x coordinate (right border) \cr
  \tab \code{ymn} \tab minimum y coordinate (bottom border) \cr
  \tab \code{ymx} \tab maximum y coordinate (top border) \cr
- \tab \code{crs} \tab Character or object of class CRS. PROJ4 type description of a Coordinate Reference System (map projection) \cr
+ \tab \code{crs} \tab Character or object of class CRS. PROJ4 type description of a Coordinate Reference System (map projection). If this argument is missing, and the x coordinates are withing -360 .. 360 and the y coordinates are within -90 .. 90, "+proj=longlat +datum=WGS84" is used. \cr
+ \tab \code{ext} \tab object of \code{\link[raster]{Extent-class}}. If present, the arguments \code{xmn}, \code{xmx}, \code{ymn} and \code{ynx} are ignored\cr
 }
 (item \code{x} is 'missing' in this case)
 
  
-\bold{3) Create a RasterLayer object from an Extent object}
+\bold{3) Create a RasterLayer object from an \code{\link[raster]{Extent-class}} object}
   
 \code{raster(x, nrows=10, ncols=10, crs=NA)}
 
@@ -145,7 +146,7 @@ The default extent is set to be between 0 and 1 in the x and y direction but can
 }
 
 
-\bold{8) Create a RasterLayer object from a 'image' object (a list with vectors x and y and matrix z), or from an asc, kasc, or kde object }
+\bold{8) Create a RasterLayer object from an 'image' object (a list with vectors x and y and matrix z), or from an asc, kasc, or kde object }
 
 \code{raster(img, crs)}
 
@@ -157,8 +158,8 @@ The default extent is set to be between 0 and 1 in the x and y direction but can
 
 
 \details{
-New RasterLayer objects normally have no values in memory. 
-If they are created from a file on disk, you can access values with \code{\link[raster]{getValues}, \link[raster]{extract}} and related functions.
+A new RasterLayer object normally has no cell-values in memory. 
+If it is created from a file on disk, you can access cell-values with \code{\link[raster]{getValues}, \link[raster]{extract}} and related functions.
 You can assign new values with  \code{\link[raster]{setValues}} and with \code{\link[raster]{replacement}}.
 }
 
@@ -171,12 +172,14 @@ RasterLayer object
 \seealso{ \code{\link[raster]{stack}, \link[raster]{brick}} }
 
 \examples{
-#from file
-#   For your own files, omit the 'system.file' and 'package="raster"' bits
+# Create a RasterLayer object from a file
+#   N.B.: For your own files, omit the 'system.file' and 'package="raster"' bits
 #   these are just to get the path to files installed with the package
+
 f <- system.file("external/test.grd", package="raster")
 f
 r <- raster(f)
+
 logo <- raster(system.file("external/rlogo.grd", package="raster")) 
 
 
@@ -189,8 +192,9 @@ r2 <- raster(e)
 
 #from another Raster* object
 r3 <- raster(r)
-s <- stack(r, r)
-r3 <- raster(s)
+s <- stack(r, r, r)
+r4 <- raster(s)
+r5 <- raster(s, 3)
 }
 
 \keyword{methods}

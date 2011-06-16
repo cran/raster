@@ -21,7 +21,10 @@
 
 	if (!missing(NAflag)) { 
 		x@file@nodatavalue <- NAflag
+	} else if (!is.finite( x@file@nodatavalue) ) {
+		x@file@nodatavalue <- -3.4e+38
 	}
+
 	
 	resdif <- abs((yres(x) - xres(x)) / yres(x) )
 	if (resdif > 0.01) {
