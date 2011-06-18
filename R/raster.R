@@ -1,31 +1,32 @@
 # R raster package
 # Author: Robert J. Hijmans, r.hijmans@gmail.com
 # Date : September 2008
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
 	
 if ( !isGeneric("raster") ) {
 	setGeneric("raster", function(x, ...)
 		standardGeneric("raster"))
-}	
-
+}
 
 
 setMethod('raster', signature(x='missing'), 
-	function(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, crs) {
-		e <- extent(xmn, xmx, ymn, ymx)
+	function(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, crs, ext) {
+		if (missing(ext)) {
+			ext <- extent(xmn, xmx, ymn, ymx)
+		}
 		if (missing(crs)) {
-			if (e@xmin > -360.1 & e@xmax < 360.1 & e@ymin > -90.1 & e@ymax < 90.1) { 
+			if (ext@xmin > -360.01 & ext@xmax < 360.01 & ext@ymin > -90.000001 & ext@ymax < 90.000001) { 
 				crs ="+proj=longlat +datum=WGS84"
 			} else {
 				crs=NA
 			}
 		}
-		r <- raster(e, nrows=nrows, ncols=ncols, crs=crs)
+		r <- raster(ext, nrows=nrows, ncols=ncols, crs=crs)
 		return(r)
 	}
 )
-
+  
 
 setMethod('raster', signature(x='list'), 
 	function(x, crs) {

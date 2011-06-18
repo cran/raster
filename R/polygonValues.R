@@ -22,9 +22,13 @@ polygonValues <- function(p, x, ...) {
 	}
 	if (missing(layer)) {
 		layer <- 1
+	} else {
+		layer <- max(min(nlayers(x), layer), 1)
 	}
 	if (missing(nl)) {
 		nl <- nlayers(x)
+	} else {
+		nl <- max(min(nlayers(x)-layer+1, nl), 1)
 	}
 	
 	
@@ -188,9 +192,9 @@ polygonValues <- function(p, x, ...) {
 				warning('the fun argument was changed to "mean", as other functions cannot be used with weights' )
 			}
 			if (nlayers(x) > 1) {
-				nc <- ncol(res[[1]])
+				nc <- nl + 1
 				res <- lapply(res, function(x) if (!is.null(x)) { x[,1:(nc-1)] * x[,nc]  / sum(x[,nc], na.rm=TRUE)} else NULL  )
-				res <- sapply(res, function(x) if (!is.null(x)) { apply(x, 2, sum)}  else NA )		
+				res <- sapply(res, function(x) if (!is.null(x)) { apply(x, 2, sum)}  else rep(NA, nl) )		
 				res <- t(res)
 			} else {
 				res <- sapply(res, function(x) if (!is.null(x)){ sum(apply(x, 1, prod)) / sum(x[,2])} else NA  )

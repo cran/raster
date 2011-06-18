@@ -11,9 +11,11 @@ if (!isGeneric("spplot")) {
 
 
 setMethod("spplot", signature(obj='Raster'), 
-	function(obj, maxpixels=50000, ...)  {
+	function(obj, ..., maxpixels=50000, as.table=TRUE)  {
 		obj <- sampleRegular(obj, maxpixels, asRaster=T)
-		spplot(as(obj, 'SpatialGridDataFrame'), ...)
+		obj <- as(obj, 'SpatialGridDataFrame')
+		#obj@data <- obj@data[, ncol(obj@data):1]
+		spplot(obj, ..., as.table=as.table)
 	}
 )
 
