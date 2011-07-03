@@ -5,25 +5,30 @@
 # Version 0.9
 # Licence GPL v3
 
-KML <- function (raster, filename, col=rainbow(255), maxpixels=100000, zip='') {
-    if (! .couldBeLonLat(raster)) { 
-        stop("raster must be in geographical coordinates")
+KML <- function (x, filename, col=rainbow(255), maxpixels=100000, zip='') {
+    if (! .couldBeLonLat(x)) { 
+        stop("CRS of x must be longitude / latitude")
 	}
-	raster <- sampleRegular(raster, size=maxpixels, asRaster = TRUE)
+	
+	if (nlayers(x) > 1) {
+		x <- x[[1]]
+	}
+	
+	x <- sampleRegular(x, size=maxpixels, asRaster = TRUE)
 
 	imagefile <- filename
 	extension(imagefile) <- '.png'
 	kmlfile <- filename
 	extension(kmlfile) <- '.kml'
 
-	png(filename = imagefile, width=ncol(raster), height=nrow(raster), bg="transparent")
+	png(filename = imagefile, width=max(480, ncol(x)), height=max(480, nrow(x)), bg="transparent")
 	par(mar=c(0,0,0,0))
-	image(raster, col=col, axes=FALSE)
+	image(x, col=col, axes=FALSE)
 	dev.off()
 
-	name <- layerNames(raster)[1]
-	if (name == "") { name <- 'raster' }
-    bb <- extent(raster)
+	name <- layerNames(x)[1]
+	if (name == "") { name <- 'x' }
+    bb <- extent(x)
     W <- xmin(bb)
     E <- xmax(bb)
     S <- ymin(bb)

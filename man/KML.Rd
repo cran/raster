@@ -9,11 +9,11 @@ Export raster data to a KML file and an accompanying PNG image file, or to a sin
 }
 
 \usage{
-KML(raster, filename, col=rainbow(255), maxpixels=100000, zip='') 
+KML(x, filename, col=rainbow(255), maxpixels=100000, zip='') 
 }
 
 \arguments{
-\item{raster}{RasterLayer}
+\item{x}{RasterLayer}
 \item{filename}{output filename}
 \item{col}{color scheme to be used}
 \item{maxpixels}{maximum number of pixels. If ncell(raster) > maxpixels, sampleRegular is used to reduce the number of pixels}

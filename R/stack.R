@@ -18,22 +18,23 @@ setMethod("stack", signature(x='Raster'),
 function(x, ...) {
 	rlist <- .makeRasterList(x, ...)
 	return( stack(rlist) )
-} )
+	}
+)
 
 
 
 setMethod("stack", signature(x='character'), 
-function(x, ..., bands=NULL, varname='') {
+function(x, ..., bands=NULL, varname="") {
 	if (!is.null(bands)) {
 		if (length(list(...)) > 0) {
 			stop("if you supply a 'bands' argument, you can only supply a single filename")
 		}
 	}
-    if ( varname != '') {
-		return(.stackCDF(x, varname, bands))
+    if ( varname != "") {
+		return(.stackCDF(x, varname=varname, bands=bands))
 	} else {
 		rlist <- c(x, list(...))
-		return(stack(rlist, bands))
+		return(stack(rlist, bands=bands))
 	}
 } )
 
