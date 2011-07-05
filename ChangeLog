@@ -1,3 +1,7 @@
+--- 3-July-2011, version 1.8-39
+Bug fix, cover failed with RasterBricks (reported by Steven Mosher)
+Quicker subset with RasterBricks (suggested by Christian Kamenik)
+
 --- 16-June-2011, version 1.8-37
 Bug fix in gridDistance. Function crashed with large files and many rows with NA (reported by Corné Vreugdenhil)
 Bug fix in ascii file writing. In some cases NA was written as -Inf, which was not understood by gdal. gdal returned both -Inf and 0 values as NA. reprted by Enric Batllori Presas (problem probably introduced in version 1.8-16).

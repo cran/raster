@@ -30,12 +30,32 @@ function(x, subset, drop=TRUE, ...) {
 } )
 
 
-
-
-setMethod('subset', signature(x='Raster'), 
+setMethod('subset', signature(x='Raster'),
 function(x, subset, drop=TRUE, ...) {
-	x <- stack(x)	
-	subset(x, subset=subset, drop=drop, ...)
+	if (is.character(subset)) {
+		subset = .nameToIndex(subset, layerNames(x))
+	}
+	if (! all(subset %in% 1:nlayers(x))) {
+		stop('not a valid subset')
+	}
+	subset <- as.integer(subset)
+	varname <- attr(x@data, "zvar")
+	if (is.null(varname)) { varname <- "" }
+	
+	if (fromDisk(x)) {
+		if (drop & length(subset)==1) {
+			return( raster(filename(x), bands=subset, varname=varname) )
+		} else {
+			return( stack(filename(x), bands=subset, varname=varname) )
+		}
+	} else {
+		if (hasValues(x)) {
+			x@data@values <- x@data@values[,subset]
+			x@layernames <- x@layernames[subset]
+		} 
+		x@data@nlayers <- as.integer(length(subset))
+		return(x)
+	}
 } )
 
 

@@ -22,7 +22,7 @@
 		col <- c(col[na], col[-na])
 	}
 	notrgb <- which(substr(col, 1, 1) != '#')
-	col[notrgb] <-  rgb(t(col2rgb(col[notrgb])), max=255)
+	col[notrgb] <-  rgb(t(col2rgb(col[notrgb])), maxColorValue=255)
 	x@legend@values <- v
 	x@legend@color <- col
 	x	
