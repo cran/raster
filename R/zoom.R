@@ -22,7 +22,7 @@ function(x, ext=drawExtent(), maxpixels=100000, layer=1, new=TRUE, ...) {
 	if (nlayers(x) > 1) { 
 		x <- raster(x, layer) 
 	}
-	.plotraster(x, maxpixels=maxpixels, ext=ext, ...) 	
+	.plotraster2(x, maxpixels=maxpixels, ext=ext, ...) 	
 	return(invisible(ext))
 }
 )

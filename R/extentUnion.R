@@ -35,7 +35,7 @@ intersectExtent <- function(x, ..., validate=TRUE) {
 	}
 	if ((e@xmax <= e@xmin) | (e@ymax <= e@ymin) ) {
 		if (validate) {
-			stop('Invalid extent')
+			stop('Objects do not intersect')
 		} else {
 			return(NULL)
 		}

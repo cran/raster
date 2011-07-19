@@ -35,7 +35,11 @@ contour(x, ...)
 }
 }}
 
-\seealso{ \code{\link[raster]{plot3D}}, \code{\link[raster]{persp}}, \code{\link[raster]{filledContour}} }
+\seealso{ 
+\code{\link{persp}}, \code{\link{filledContour} }
+
+The rasterVis package has more advanced plotting methods for Raster* objects.
+}
 
 \author{ Robert J. Hijmans }
 

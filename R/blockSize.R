@@ -30,6 +30,7 @@ blockSize <- function(x, chunksize, n=nlayers(x), minblocks=4, minrows=1) {
 	dif = nb * size - nr
 	nrows[length(nrows)] = nrows[length(nrows)] - dif
 	
-	return(list(size=size, row=row, nrows=nrows, n=nb))
+#	return(list(size=size, row=row, nrows=nrows, n=nb))	
+	return(list(row=row, nrows=nrows, n=nb))
 }
 

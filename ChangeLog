@@ -1,3 +1,17 @@
+--- 19-July-2011, version 1.9-1
+MAJOR bug fix in arith.  If x is a Raster* object, a-x returned x-a, and a/x returned x/a. Reported by Steven Mosher. 
+plot now uses rasterImage instead of image
+Replacement functions implemented for RasterStack/Brick objects (e.g., x[x<1] <- NA )
+
+--- 10-July-2011, version 1.8-42
+removed '$size' from list returned by 'blockSize' function (because size can be different for last block). Use $nrows[i] instead.
+bug fix in flip(x, 'y') for x is RasterStackBrick when writing to disk
+
+--- 8-July-2011, version 1.8-41
+removed gplot and plot3D functions. These are now in the rasterVis package
+added linear and histogram stretch options to plotRGB; based on Josh Gray' code in http://spatiallyexplicit.wordpress.com/2011/06/07/crop-circles/
+added a scalebar function, partly based on a function by Josh Gray
+
 --- 3-July-2011, version 1.8-39
 Bug fix, cover failed with RasterBricks (reported by Steven Mosher)
 Quicker subset with RasterBricks (suggested by Christian Kamenik)

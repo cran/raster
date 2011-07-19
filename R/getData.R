@@ -20,7 +20,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 	} else if (name=='countries') {
 		.countries(download=download, path=path, ...)
 	} else {
-		stop(name, 'not recognized as a valid name')
+		stop(name, ' not recognized as a valid name.')
 	}
 }
 
@@ -266,12 +266,12 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 	lon <- min(180, max(-180, lon))
 	lat <- min(60, max(-60, lat))
 	rs <- raster(nrows=24, ncols=72, xmn=-180, xmx=180, ymn=-60, ymx=60 )
-	row <- rowFromY(rs, lat)
-	col <- colFromX(rs, lon)
-	if (row < 10) { row <- paste('0', row, sep='') }
-	if (col < 10) { col <- paste('0', col, sep='') }
+	rowTile <- rowFromY(rs, lat)
+	colTile <- colFromX(rs, lon)
+	if (rowTile < 10) { rowTile <- paste('0', rowTile, sep='') }
+	if (colTile < 10) { colTile <- paste('0', colTile, sep='') }
 	
-	f <- paste('srtm_', col, '_', row, sep="")
+	f <- paste('srtm_', colTile, '_', rowTile, sep="")
 	zipfilename <- paste(path, "/", f, ".ZIP", sep="")
 	tiffilename <- paste(path, "/", f, ".TIF", sep="")
 	

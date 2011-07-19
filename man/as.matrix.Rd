@@ -27,11 +27,11 @@ as.array(x, ...)
  \item{x}{ Raster* object }
  \item{...}{ Additional arguments. 
  
-	\code{maxpixels} Integer. To regularly subsample very large objects }
+	\code{maxpixels} Integer. To regularly subsample very large objects 
 	
    \code{transpose} Logical. Transpose the data? (for as.array only)
 
-}
+}}
   
 
 \value{

@@ -5,74 +5,18 @@
 # University Corporation for Atmospheric Research
 # Licensed under the GPL -- www.gpl.org/licenses/gpl.html
 
-.imageplot <- function (..., add=FALSE, legend=TRUE, nlevel = 64, horizontal = FALSE, 
+.imageplot <- function (x, y, z, add=FALSE, legend=TRUE, nlevel = 64, horizontal = FALSE, 
 # fields, Tools for spatial data
 # Copyright 2004-2007, Institute for Mathematics Applied Geosciences
 # University Corporation for Atmospheric Research
 # Licensed under the GPL -- www.gpl.org/licenses/gpl.html
     legend.shrink = 0.5, legend.width = 0.6, legend.mar = ifelse(horizontal, 3.1, 5.1), legend.lab = NULL, graphics.reset = FALSE, 
     bigplot = NULL, smallplot = NULL, legend.only = FALSE, col = heat.colors(nlevel), 
-    lab.breaks = NULL, axis.args = NULL, legend.args = NULL, midpoint = FALSE, box=TRUE) {
+    lab.breaks = NULL, axis.args = NULL, legend.args = NULL, midpoint = FALSE, box=TRUE, ...) {
 
-	
-	args <- list(...)
-	if (!is.null(args$box)) { box <- args$box }
-	
-	imageplotinfo <- function (...) {
-		temp <- list(...)
-		xlim <- NA
-		ylim <- NA
-		zlim <- NA
-		poly.grid <- FALSE
-		if (is.list(temp[[1]])) {
-			xlim <- range(temp[[1]]$x, na.rm = TRUE)
-			ylim <- range(temp[[1]]$y, na.rm = TRUE)
-			zlim <- range(temp[[1]]$z, na.rm = TRUE)
-			if (is.matrix(temp[[1]]$x) & is.matrix(temp[[1]]$y) & 
-				is.matrix(temp[[1]]$z)) {
-				poly.grid <- TRUE
-			}
-		}
-		if (length(temp) >= 3) {
-			if (is.matrix(temp[[1]]) & is.matrix(temp[[2]]) & is.matrix(temp[[3]])) {
-				poly.grid <- TRUE
-			}
-		}
-		if (is.matrix(temp[[1]]) & !poly.grid) {
-			xlim <- c(0, 1)
-			ylim <- c(0, 1)
-			zlim <- range(temp[[1]], na.rm = TRUE)
-		}
-		if (length(temp) >= 3) {
-			if (is.matrix(temp[[3]])) {
-				xlim <- range(temp[[1]], na.rm = TRUE)
-				ylim <- range(temp[[2]], na.rm = TRUE)
-				zlim <- range(temp[[3]], na.rm = TRUE)
-			}
-		}
-		if (is.matrix(temp$x) & is.matrix(temp$y) & is.matrix(temp$z)) {
-			poly.grid <- TRUE
-		}
-		xthere <- match("x", names(temp))
-		ythere <- match("y", names(temp))
-		zthere <- match("z", names(temp))
-		if (!is.na(zthere)) 
-			zlim <- range(temp$z, na.rm = TRUE)
-		if (!is.na(xthere)) 
-			xlim <- range(temp$x, na.rm = TRUE)
-		if (!is.na(ythere)) 
-			ylim <- range(temp$y, na.rm = TRUE)
-		if (!is.null(temp$zlim)) 
-			zlim <- temp$zlim
-		if (!is.null(temp$xlim)) 
-			xlim <- temp$xlim
-		if (!is.null(temp$ylim)) 
-			ylim <- temp$ylim
-		list(xlim = xlim, ylim = ylim, zlim = zlim, poly.grid = poly.grid)
-	}
+	zlim <- range(z, na.rm = TRUE)
 
     old.par <- par(no.readonly = TRUE)
-    info <- imageplotinfo(...)
     if (add) {
         big.plot <- old.par$plt
     }
@@ -82,41 +26,46 @@
     if (is.null(legend.mar)) {
         legend.mar <- ifelse(horizontal, 3.1, 5.1)
     }
+	
     temp <- .imageplotplt(add = add, legend.shrink = legend.shrink, legend.width = legend.width, legend.mar = legend.mar, 
 									horizontal = horizontal, bigplot = bigplot, smallplot = smallplot)
 		
     smallplot <- temp$smallplot
     bigplot <- temp$bigplot
+	
     if (!legend.only) {
         if (!add) {
             par(plt = bigplot)
         }
-        if (!info$poly.grid) {
-            image(..., add=add, col=col)
-        }
-        else {
-            .polyimage(..., add = add, col = col, midpoint = midpoint)
-        }
+		if (R.Version()$minor >= 13) {
+			image(x, y, z, add = add, col = col, useRaster=TRUE, ...)
+		} else {
+			image(x, y, z, add = add, col = col, ...)
+		}
         big.par <- par(no.readonly = TRUE)
-    }
-	
+    } else {
+		box <- FALSE
+	}
+
 	
 	if (legend) {
-	
 		if ((smallplot[2] < smallplot[1]) | (smallplot[4] < smallplot[3])) {
 			par(old.par)
 			stop("plot region too small to add legend\n")
 		}
 		ix <- 1
-		minz <- info$zlim[1]
-		maxz <- info$zlim[2]
+		minz <- zlim[1]
+		maxz <- zlim[2]
 		binwidth <- (maxz - minz)/nlevel
 		midpoints <- seq(minz + binwidth/2, maxz - binwidth/2, by = binwidth)
 		iy <- midpoints
 		iz <- matrix(iy, nrow = 1, ncol = length(iy))
 		breaks <- list(...)$breaks
 		par(new=TRUE, pty = "m", plt=smallplot, err = -1)
-		if (!is.null(breaks) & !is.null(lab.breaks)) {
+		if (!is.null(breaks)) {
+			if (is.null(lab.breaks)) {
+				lab.breaks <- as.character(breaks)
+			}
 			axis.args <- c(list(side = ifelse(horizontal, 1, 4), mgp = c(3, 1, 0), las = ifelse(horizontal, 0, 2), 
 				at = breaks, labels = lab.breaks), axis.args)
 		} else {
@@ -124,15 +73,31 @@
 		}
 		if (!horizontal) {
 			if (is.null(breaks)) {
-				image(ix, iy, iz, xaxt="n", yaxt="n", xlab = "", ylab = "", col = col)
+				if (R.Version()$minor >= 13) {
+					image(ix, iy, iz, xaxt="n", yaxt="n", xlab="", ylab="", col=col, useRaster=TRUE)
+				} else {
+					image(ix, iy, iz, xaxt="n", yaxt="n", xlab="", ylab="", col=col)				
+				}
 			} else {
-				image(ix, iy, iz, xaxt="n", yaxt="n", xlab = "", ylab = "", col = col, breaks = breaks)
+				if (R.Version()$minor >= 13) {
+					image(ix, iy, iz, xaxt="n", yaxt="n", xlab = "", ylab = "", col=col, breaks=breaks, useRaster=TRUE)
+				} else {
+					image(ix, iy, iz, xaxt="n", yaxt="n", xlab = "", ylab = "", col=col, breaks=breaks)				
+				}
 			}
 		} else {
 			if (is.null(breaks)) {
-				image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col)
+				if (R.Version()$minor >= 13) {
+					image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col, useRaster=TRUE)
+				} else {
+					image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col)				
+				}
 			} else {
-				image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col, breaks = breaks)
+				if (R.Version()$minor >= 13) {
+					image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col, breaks = breaks, useRaster=TRUE)
+				} else {
+					image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col, breaks = breaks)
+				}
 			}
 		}
 		do.call("axis", axis.args)
@@ -149,16 +114,14 @@
     if (graphics.reset | add) {
         par(old.par)
         par(mfg = mfg.save, new = FALSE)
-        invisible()
     } else {
         par(big.par)
         par(plt = big.par$plt, xpd = FALSE)
         par(mfg = mfg.save, new = FALSE)
-        invisible()
     }
 	
 	if (!add & box ) box()
-	
+    invisible()
 }
 
 

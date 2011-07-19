@@ -62,7 +62,7 @@ tr <- blockSize(r)
 tr
 s <- writeStart(s, filename='test.grd',  overwrite=TRUE)
 for (i in 1:tr$n) {
-	v <- getValuesBlock(r, row=tr$row[i], nrows=tr$size)
+	v <- getValuesBlock(r, row=tr$row[i], nrows=tr$nrows[i])
 	s <- writeValues(s, v, tr$row[i])
 }
 s <- writeStop(s)
@@ -71,7 +71,7 @@ if(require(rgdal)){
 s2 <- writeStart(s, filename='test2.tif', format='GTiff', overwrite=TRUE)
 # writing last row first
 for (i in tr$n:1) {
-	v <- getValuesBlock(r, row=tr$row[i], nrows=tr$size)
+	v <- getValuesBlock(r, row=tr$row[i], nrows=tr$nrows[i])
 	s2 <- writeValues(s2, v, tr$row[i])
 }
 # row number 5 once more
@@ -87,7 +87,7 @@ b <- brick(s, values=FALSE)
 b <- writeStart(b, filename="test.grd", format="raster",overwrite=TRUE)
 tr <- blockSize(b)
 for (i in 1:tr$n) {
-	v <- getValuesBlock(s, row=tr$row[i], nrows=tr$size)
+	v <- getValuesBlock(s, row=tr$row[i], nrows=tr$nrows[i])
 	b <- writeValues(b, v, tr$row[i])
 }
 b <- writeStop(b)

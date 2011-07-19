@@ -22,7 +22,7 @@ setMethod("atan2", signature(y='RasterLayer', x='RasterLayer'),
 			pb <- pbCreate(tr$n, type=.progress())
 			r <- writeStart(r, filename=rasterTmpFile())
 			for (i in 1:tr$n) {
-				v <- atan2(getValuesBlock(y, row=tr$row[i], nrows=tr$size), getValuesBlock(x, row=tr$row[i], nrows=tr$size) ) 
+				v <- atan2(getValuesBlock(y, row=tr$row[i], nrows=tr$nrows[i]), getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i]) ) 
 				r <- writeValues(r, v, tr$row[i])
 				pbStep(pb, i) 
 			}

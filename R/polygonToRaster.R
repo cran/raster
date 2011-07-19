@@ -26,8 +26,8 @@
     if (denom == 0) {
 		return(c(NA, NA))
 	}
- 	ua <- ua_num / denom
-    ub <- ub_num / denom
+ 	ua <- round(ua_num / denom, 12)
+    ub <- round(ub_num / denom, 12)
 	if ((ua >= 0 & ua <= 1) & (ub >= 0 & ub <= 1) ) {
         x <- x1 + ua * (x2 - x1)
         y <- y1 + ua * (y2 - y1) 

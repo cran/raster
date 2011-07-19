@@ -63,7 +63,7 @@ setMethod("Summary", signature(x='Raster'),
 		v <- matrix(ncol=nrow(r), nrow=ncol(r))
 	}
 
-	m <- matrix(NA, nrow=tr$size * ncol(r), ncol=length(rasters))
+	m <- matrix(NA, nrow=tr$nrows[1] * ncol(r), ncol=length(rasters))
 	if (length(add) > 0) {
 		m <- cbind(m, add) 
 	}
@@ -73,15 +73,15 @@ setMethod("Summary", signature(x='Raster'),
 	}
 	pb <- pbCreate(tr$n, type=.progress())			
 	for (i in 1:tr$n) {
-		if (i==tr$n & i > 1) {  # the last one could be smaller
+		if (i==tr$n) {  # the last one could be smaller
 			m = NULL
 			for (j in 1:length(rasters)) {
-				m <- cbind(m, getValuesBlock(rasters[[j]], row=tr$row[i], nrows=tr$size))
+				m <- cbind(m, getValuesBlock(rasters[[j]], row=tr$row[i], nrows=tr$nrows[i]))
 			}				
 			m <- cbind(m, add)
 		} else {
 			for (j in 1:length(rasters)) {
-				m[,j] <- getValuesBlock(rasters[[j]], row=tr$row[i], nrows=tr$size)
+				m[,j] <- getValuesBlock(rasters[[j]], row=tr$row[i], nrows=tr$nrows[i])
 			}
 		}
 		if (na.rm) {

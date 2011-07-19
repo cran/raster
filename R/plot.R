@@ -35,7 +35,7 @@ setMethod("plot", signature(x='RasterStackBrick', y='ANY'),
 			y = na.omit(y)
 		}
 		if (length(y) == 1) {
-			.plotraster(raster(x, y), col=col, maxpixels=maxpixels, main=layerNames(x)[y], ...) 
+			.plotraster2(raster(x, y), col=col, maxpixels=maxpixels, main=layerNames(x)[y], ...) 
 		} else {
 
 			nl <- length(y)
@@ -57,7 +57,7 @@ setMethod("plot", signature(x='RasterStackBrick', y='ANY'),
 				}
 				if (rown==nr) xa='s'
 				if (coln==1) ya='s' else ya='n'
-				.plotraster(raster(x, y[i]), col=col, maxpixels=maxpixels, xaxt=xa, yaxt=ya, main=layerNames(x)[y[i]], ...) 
+				.plotraster2(raster(x, y[i]), col=col, maxpixels=maxpixels, xaxt=xa, yaxt=ya, main=layerNames(x)[y[i]], ...) 
 			}		
 		}
 	}
@@ -66,7 +66,7 @@ setMethod("plot", signature(x='RasterStackBrick', y='ANY'),
 
 setMethod("plot", signature(x='RasterLayer', y='missing'), 
 
-function(x, col=rev(terrain.colors(255)), maxpixels=500000, newstyle=FALSE, alpha=1, ...)  {
+function(x, col=rev(terrain.colors(255)), maxpixels=500000, oldstyle=FALSE, alpha=1, ...)  {
 
 		if (alpha < 1) {
 			alpha <- max(alpha, 0) * 255 + 1
@@ -77,18 +77,25 @@ function(x, col=rev(terrain.colors(255)), maxpixels=500000, newstyle=FALSE, alph
 
 		if (length(x@legend@colortable) > 0) {
 			.plotCT(x, maxpixels=maxpixels, ...)
-		} else if (newstyle) {
-			.plot2(x, col=col, maxpixels=maxpixels, ...)
-		} else {
+		} else if (oldstyle) {
 			.plotraster(x, col=col, maxpixels=maxpixels, ...) 
+		} else {
+			.plotraster2(x, col=col, maxpixels=maxpixels, ...) 
+			#.plot2(x, col=col, maxpixels=maxpixels, ...)
 		}
 	}
 )	
 
 
+setMethod("plot", signature(x='RasterStackBrick', y='RasterStackBrick'), 
+	function(x, y, maxpixels=100000, cex=0.1, ...)  {
+		plot(x[[1]], y[[1]], maxpixels=maxpixels, cex=cex, ...)
+	}
+)
+
 setMethod("plot", signature(x='RasterLayer', y='RasterLayer'), 
 	function(x, y, maxpixels=100000, cex=0.1, ...)  {
-		comp <- compare(c(x, y), extent=TRUE, rowcol=TRUE, prj=FALSE, stopiffalse=TRUE) 
+		compare(c(x, y), extent=TRUE, rowcol=TRUE, prj=FALSE, stopiffalse=TRUE) 
 		nc <- ncell(x)
 		x <- sampleRegular(x, size=maxpixels)
 		y <- sampleRegular(y, size=maxpixels)

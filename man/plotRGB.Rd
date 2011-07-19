@@ -14,7 +14,7 @@ Make a Red-Green-Blue plot based on three layers (in a RasterBrick or RasterStac
 \section{Methods}{
 \describe{
 
-\code{plotRGB(x, r=1, g=2, b=3, scale, maxpixels=500000, ext=NULL, ...)}
+\code{plotRGB(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, ...)}
 
 \tabular{rll}{
 \tab \code{x} \tab a RasterBrick or RasterStack object \cr
@@ -23,12 +23,13 @@ Make a Red-Green-Blue plot based on three layers (in a RasterBrick or RasterStac
 \tab \code{b}  \tab  Integer. Index of the Blue channel, between 1 and nlayers(x)\cr
 \tab \code{scale}  \tab Integer. Maximum (possible) value in the three channels. Defaults to 255 or to the maximum value of \code{x} if that is known and larger than 255 \cr 
 \tab \code{maxpixels}  \tab  Maximum number of pixels to use  \cr
+\tab \code{stretch}  \tab Option to stretch the values to increase the contrast of the image: "lin" or "hist"\cr
 \tab \code{ext}  \tab  An extent object to zoom in a region \cr
 \tab \code{...} \tab graphical parameters as in \code{\link{rasterImage}} \cr
 }
 }}
 
-\author{ Robert J. Hijmans }
+\author{ Robert J. Hijmans; stretch option based on functions by Josh Gray }
 
 \seealso{ \code{\link[raster]{plot}} }
 
@@ -36,6 +37,7 @@ Make a Red-Green-Blue plot based on three layers (in a RasterBrick or RasterStac
 b <- brick(system.file("external/rlogo.grd", package="raster"))
 plotRGB(b)
 plotRGB(b, 3, 2, 1)
+plotRGB(b, 3, 2, 1, stretch='hist')
 }
 
 \keyword{methods}

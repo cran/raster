@@ -85,3 +85,13 @@ setMethod('extent', signature(x='numeric'),
 	}	
 )
 
+
+# contributed by Etienne Racine
+setMethod('extent', signature(x='list'),
+	function(x, ...) {
+		stopifnot(c("x", "y") %in% names(x))
+		stopifnot(lapply(x[c("x", "y")], length) >= 2)
+		lim <- c(range(x$x), (range(x$y)))
+		return(extent(lim,...))
+	}
+)
