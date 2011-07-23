@@ -23,7 +23,7 @@ setMethod('freq', signature(x='RasterLayer'),
 			pb <- pbCreate(tr$n, type=.progress(...))	
 			z <- vector(length=0)
 			for (i in 1:tr$n) {
-				d <- round(getValuesBlock(x, row=tr$row[i], nrows=tr$size), digits=digits)
+				d <- round(getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i]), digits=digits)
 				res <- table(d, useNA="ifany" )
 				res <- cbind(as.numeric(unlist(as.vector(dimnames(res)))), as.vector(res))
 				z <- rbind(z, res)

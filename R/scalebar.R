@@ -1,3 +1,9 @@
+# Author: Robert J. Hijmans
+# scalebar partly based on Josh Gray' code in http://spatiallyexplicit.wordpress.com/2011/06/07/crop-circles/
+# Date : July 2011
+# Version 1.0
+# Licence GPL v3
+
 
 .destPoint <- function (p, d, b=90, r=6378137) {
     toRad <- pi/180
@@ -11,7 +17,7 @@
 }
 
 
-.scalebar <- function(object, xy=click(), length=100000, label='100 km', offset=0.3, lwd=4, ... ) {
+.oldscalebar <- function(object, xy=click(), length=100000, label='100 km', offset=0.3, lwd=4, ... ) {
 	object <- raster(object)
 	if (.couldBeLonLat(object)) {
 		midy <- object@extent@ymax - 0.5 * (object@extent@ymax - object@extent@ymin)
@@ -29,10 +35,77 @@
 
 
 
-.arrow <- function(object, xy=click(), length=50000, headlength=0.1, ...) {
-	arrows(xy[1], xy[2], xy[1], xy[2]+length, length=headlength, ...)
-	lines(rbind(xy, rbind(cbind(xy[1], xy[2]-length))), ...)
-	text(xy[1,1], xy[1,2]-(0.25*length), 'N')
+.arrow <- function(d, xy=click(), head=0.1, ...) {
+	arrows(xy[1], xy[2], xy[1], xy[2]+d, length=head, ...)
+	lines(rbind(xy, rbind(cbind(xy[1], xy[2]-d))), ...)
+	text(xy[1,1], xy[1,2]-(0.25*d), 'N')
 }
 
 
+scalebar <- function(d, xy=NULL, type='line', divs=2, below='', lonlat=NULL, labels, adj=c(0.5, -0.5), lwd=2, ...){
+	if (!is.null(lonlat)) {
+		p <- cbind(0, lonlat)
+		dd <- .destPoint(p, d)
+		dd <- dd[1,1]
+	} else {
+		dd <- d
+	}
+	
+    if(is.null(xy)) {
+		padding=c(5,5) / 100
+		#defaults to a lower left hand position
+		parrange <- c(par()$usr[2] - par()$usr[1], par()$usr[4] - par()$usr[3])
+		xy <- c(par()$usr[1]+(padding[1]*parrange[1]),par()$usr[3]+(padding[2]*parrange[2]))
+	}
+
+	if (type == 'line') {
+		lines(matrix(c(xy[1], xy[2], xy[1]+dd, xy[2]), byrow=T, nrow=2), lwd=lwd, ...)
+		if (missing(labels)) {
+			labels <- paste(d)
+		}
+		if (missing(adj)) {
+			adj <- c(0.5, -0.2-lwd/20 )
+		}
+		text(xy[1]+(0.5*dd), xy[2],labels=labels, adj=adj,...)
+		
+		
+	} else if (type == 'bar') {
+		
+		if (missing(adj)) {
+			adj <- c(0.5, -1 )
+		}
+		lwd <- dd / 20
+		
+		if (divs==2) {
+			half <- xy[1] + dd / 2
+			polygon(c(xy[1], xy[1], half, half), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='white')
+			polygon(c(half, half, xy[1]+dd, xy[1]+dd ), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='black')
+			if (missing(labels)) {
+				labels <- c('0', '', d)
+			}
+			text(xy[1], xy[2],labels=labels[1], adj=adj,...)
+			text(xy[1]+0.5*dd, xy[2],labels=labels[2], adj=adj,...)
+			text(xy[1]+dd, xy[2],labels=labels[3], adj=adj,...)
+		} else {
+			q1 <- xy[1] + dd / 4
+			half <- xy[1] + dd / 2
+			q3 <- xy[1] + 3 * dd / 4
+			end <- xy[1] + dd 
+			polygon(c(xy[1], xy[1], q1, q1), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='white')
+			polygon(c(q1, q1, half, half), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='black')
+			polygon(c(half, half, q3, q3 ), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='white')
+			polygon(c(q3, q3, end, end), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='black')
+			if (missing(labels)) {
+				labels <- c('0', round(0.5*d), d)
+			}
+			text(xy[1], xy[2], labels=labels[1], adj=adj,...)
+			text(half, xy[2], labels=labels[2], adj=adj,...)
+			text(end, xy[2],labels=labels[3], adj=adj,...)
+		}
+			
+		if (below != "") {
+			adj[2] <- -adj[2]
+			text(xy[1]+(0.5*dd), xy[2], labels=below, adj=adj,...)
+		}
+	}
+}

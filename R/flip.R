@@ -18,7 +18,7 @@ setMethod('flip', signature(x='RasterLayer', direction='ANY'),
 		if (direction[1] == 1) { direction <- 'x'
 		} else if (direction[1] == 2) { direction <- 'y' }
 		if (!(direction %in% c('y', 'x'))) {
-			stop('directions should be y or x')
+			stop('direction should be "y" or "x"')
 		}
 	
 		if (!canProcessInMemory(outRaster, 2) && filename == '') {
@@ -46,7 +46,6 @@ setMethod('flip', signature(x='RasterLayer', direction='ANY'),
 			pb <- pbCreate(tr$n, type=.progress(...))
 			outRaster <- writeStart(outRaster, filename=filename, datatype=dataType(x), ... )
 
-			outRaster <- writeStart(outRaster, filename=filename, datatype=dataType(x))
 			if (direction == 'y') {
 				nr <- nrow(outRaster)
 				for (i in 1:tr$n) {
@@ -59,9 +58,9 @@ setMethod('flip', signature(x='RasterLayer', direction='ANY'),
 				}
 			} else {
 				for (i in 1:tr$n) {
-					v = getValues(x, row=tr$row[i], nrows=tr$nrows[i])
-					v = matrix(v, ncol=ncol(x), byrow=TRUE)
-					v = as.vector(t(v[, ncol(v):1]))
+					v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
+					v <- matrix(v, ncol=ncol(x), byrow=TRUE)
+					v <- as.vector(t(v[, ncol(v):1]))
 					outRaster <- writeValues(outRaster, v, tr$row[i])
 					pbStep(pb, i) 
 				}
@@ -126,33 +125,29 @@ setMethod('flip', signature(x='RasterStackBrick', direction='ANY'),
 			if (direction == 'y') {
 				trinv <- tr
 				trinv$row <- rev(trinv$row)
-				trinv$size <- rev(trinv$size)
+				trinv$nrows <- rev(trinv$nrows)
+				trinv$newrows <- cumsum(c(1,trinv$nrows))[1:length(trinv$nrows)]
 				for (i in 1:tr$n) {
-					vv = getValues(x, row=trinv$row[i], nrows=trinv$size)
-
-					for (i in 1:NCOL(vv)) {
-						v <- matrix(vv[,i], ncol=nc, byrow=TRUE)
-						if (direction == 'y') {
-							vv[,i] = as.vector(t(v[nrow(v):1, ]))
-						} else {
-							vv[,i] = as.vector(t(v[nrow(v):1, ]))
-						}
+					vv <- getValues(x, row=trinv$row[i], nrows=trinv$nrows[i])
+					for (j in 1:NCOL(vv)) {
+						v <- matrix(vv[,j], nrow=nc)
+						vv[,j] <- as.vector(v[, ncol(v):1])
 					}
-		
-					outRaster <- writeValues(outRaster, vv, tr$row[i])
+					outRaster <- writeValues(outRaster, vv, trinv$newrows[i])
 					pbStep(pb, i) 
 				}
+				
 			} else {
 			
 				for (i in 1:tr$n) {
 					vv = getValues(x, row=tr$row[i], nrows=tr$nrows[i])
-					for (i in 1:NCOL(vv)) {
-						v = matrix(vv[,i], ncol=nc, byrow=TRUE)
-						vv[,i] = as.vector(t(v[, ncol(v):1]))
+					for (j in 1:NCOL(vv)) {
+						v <- matrix(vv[,j], nrow=nc)
+						vv[,j] <- as.vector(v[nrow(v):1, ])
 					}
 					outRaster <- writeValues(outRaster, vv, tr$row[i])
 					pbStep(pb, i) 
-				}
+				}  
 			}
 			
 			outRaster <- writeStop(outRaster)

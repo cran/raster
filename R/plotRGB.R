@@ -12,7 +12,7 @@ if (!isGeneric("plotRGB")) {
 
 
 setMethod("plotRGB", signature(x='RasterStackBrick'), 
-function(x, r=1, g=2, b=3, scale, maxpixels=500000, ext=NULL, interpolate=FALSE, axes=TRUE, xlab='', ylab='', asp, alpha, ...) { 
+function(x, r=1, g=2, b=3, scale,  maxpixels=500000, stretch=NULL, ext=NULL, interpolate=FALSE, axes=TRUE, xlab='', ylab='', asp, alpha, ...) { 
 	
 	if (!axes) par(plt=c(0,1,0,1))
 
@@ -38,6 +38,22 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, ext=NULL, interpolate=FALSE,
 	r <- sampleRegular(raster(x,r), maxpixels, ext=ext, asRaster=TRUE)
 	g <- sampleRegular(raster(x,g), maxpixels, ext=ext, asRaster=TRUE)
 	b <- sampleRegular(raster(x,b), maxpixels, ext=ext, asRaster=TRUE)
+	
+	if (!is.null(stretch)) {
+		stretch = tolower(stretch)
+		if (stretch == 'lin') {
+			r <- .linStretch(r)
+			g <- .linStretch(g)
+			b <- .linStretch(b)
+		} else if (stretch == 'hist') {
+			r <- .eqStretch(r)
+			g <- .eqStretch(g)
+			b <- .eqStretch(b)
+		} else if (stretch != '') {
+			warning('invalid stretch value')
+		}
+	}
+	
 	scale = as.vector(scale)[1]
 	
 	RGB <- na.omit(cbind(getValues(r), getValues(g), getValues(b)))
@@ -54,7 +70,8 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, ext=NULL, interpolate=FALSE,
 
 	require(grDevices)
 	bb <- as.vector(t(bbox(r)))
-	plot(c(bb[1], bb[2]), c(bb[3], bb[4]), type = "n", xlab=xlab, ylab=ylab, asp=asp, axes=FALSE, ...)
+
+	plot(NA, NA, xlim=c(bb[1], bb[2]), ylim=c(bb[3], bb[4]), type = "n", xaxs='i', yaxs='i', xlab=xlab, ylab=ylab, asp=asp, axes=FALSE, ...)
 	rasterImage(z, bb[1], bb[3], bb[2], bb[4], interpolate=interpolate, ...)
 	
 	if (axes) {
@@ -113,7 +130,12 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, ext=NULL, interpolate=FALSE,
 	if (xres(r) %% 1 == 0) xticks = round(xticks)
 	if (yres(r) %% 1 == 0) yticks = round(yticks)
 	
-	image(x=x, y=y, z=z,  col=col, axes=FALSE, xlab=xlab, ylab=ylab, asp=asp, ...)
+	if (R.Version()$minor >= 13) { 
+		image(x=x, y=y, z=z,  col=col, axes=FALSE, xlab=xlab, ylab=ylab, asp=asp, useRaster=TRUE, ...)
+	} else {
+		image(x=x, y=y, z=z,  col=col, axes=FALSE, xlab=xlab, ylab=ylab, asp=asp, ...)	
+	}
+	
 	axis(1, at=xticks)
 	axis(2, at=yticks, las = 1)
 	axis(3, at=xticks, labels=FALSE, lwd.ticks=0)

@@ -4,7 +4,6 @@
 # Licence GPL v3
 
 
-
 'res<-' <- function(x, value) {
 	if (rotated(x)) {
 		stop('cannot set the resolution of a rotated raster')

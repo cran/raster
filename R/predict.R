@@ -75,7 +75,7 @@ setMethod('predict', signature(object='Raster'),
 		
 		tr <- blockSize(predrast, n=nlayers(object)+3)
 
-		napred <- matrix(rep(NA, ncol(predrast) * tr$size * nlayers(predrast)), ncol=nlayers(predrast))
+		napred <- matrix(rep(NA, ncol(predrast) * tr$nrows[1] * nlayers(predrast)), ncol=nlayers(predrast))
 		factres	<- FALSE
 		pb <- pbCreate(tr$n,  type=progress )			
 

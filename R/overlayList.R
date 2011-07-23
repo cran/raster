@@ -117,7 +117,7 @@
 					valmat = matrix(nrow=tr$nrows[i]*ncol(out)*maxnl , ncol=length(x))
 				}
 				for (j in 1:length(x)) {
-					v <- as.vector(getValues(x[[j]], row=tr$row[i], nrows=tr$size))
+					v <- as.vector(getValues(x[[j]], row=tr$row[i], nrows=tr$nrows[i]))
 					if (length(v) < nrow(valmat)) {
 						options('warn'=-1) 
 						valmat[,j] <- v * rep(1, nrow(valmat))
@@ -141,11 +141,11 @@
 			for (i in 1:tr$n) {
 				if (dovec) {
 					for (j in 1:length(x)) {
-						vallist[[j]] <- as.vector( getValues(x[[j]], row=tr$row[i], nrows=tr$size) )
+						vallist[[j]] <- as.vector( getValues(x[[j]], row=tr$row[i], nrows=tr$nrows[i]) )
 					}	
 				} else {
 					for (j in 1:length(x)) {
-						vallist[[j]] <- getValues(x[[j]], row=tr$row[i], nrows=tr$size)
+						vallist[[j]] <- getValues(x[[j]], row=tr$row[i], nrows=tr$nrows[i])
 					}
 				}	
 

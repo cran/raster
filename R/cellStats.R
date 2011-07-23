@@ -114,7 +114,7 @@ cellStats <- function(x, stat='mean', ...) {
 	pb <- pbCreate(tr$n, type=.progress())			
 	
 	for (i in 1:tr$n) {
-		d <- getValues(x, row=tr$row[i], nrows=tr$size)
+		d <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
 		if (makeMat) {
 			d <- matrix(d, ncol=1)
 		}

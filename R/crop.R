@@ -5,8 +5,6 @@
 # Licence GPL v3
 
 
-
-
 if (!isGeneric("crop")) {
 	setGeneric("crop", function(x, y, ...)
 		standardGeneric("crop"))
@@ -54,8 +52,13 @@ function(x, y, filename='', ...) {
 	col2 <- colFromX(x, xmax(outRaster)-0.5*xres(outRaster))
 	row1 <- rowFromY(x, ymax(outRaster)-0.5*yres(outRaster))
 	row2 <- rowFromY(x, ymin(outRaster)+0.5*yres(outRaster))
+	if (row1==1 & row2==nrow(x) & col1==1 & col2==ncol(x)) {
+		return(x)
+	}
+
 	nc <- ncol(outRaster)
 	nr <- row2 - row1 + 1
+	
 	
 	if (canProcessInMemory(outRaster, 3)) {
 		x <- getValuesBlock(x, row1, nrows=nr, col=col1, ncols=nc)

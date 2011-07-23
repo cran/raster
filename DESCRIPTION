@@ -1,10 +1,10 @@
 Package: raster
 Type: Package
 Title: Geographic analysis and modeling with raster data
-Version: 1.8-39
-Date: 3-July-2011
+Version: 1.9-1
+Date: 19-July-2011
 Depends: methods, sp, R (>= 2.11.0)
-Suggests: rgdal (>= 0.5-33), ncdf, igraph, snow, tcltk, rgl, ggplot2
+Suggests: rgdal (>= 0.5-33), ncdf, igraph, snow, tcltk
 Author: Robert J. Hijmans & Jacob van Etten
 Maintainer: Robert J. Hijmans <r.hijmans@gmail.com>
 Description: Reading, writing, manipulating, analyzing and modeling of
@@ -15,6 +15,6 @@ License: GPL (>= 3)
 URL: http://raster.r-forge.r-project.org/
 Repository: CRAN
 Repository/R-Forge/Project: raster
-Repository/R-Forge/Revision: 1756
-Date/Publication: 2011-07-05 08:44:08
-Packaged: 2011-07-04 21:38:56 UTC; rforge
+Repository/R-Forge/Revision: 1795
+Date/Publication: 2011-07-23 14:41:43
+Packaged: 2011-07-20 21:15:30 UTC; rforge

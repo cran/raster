@@ -12,8 +12,7 @@ setReplaceMethod("[", c("RasterLayer", "RasterLayer", "missing"),
 			
 		} else if (compare(x, i, stopiffalse=FALSE, showwarning=FALSE)) {
 			i <- as.logical( getValues(i) )
-			i[is.na(i)] <- FALSE
-			
+		
 		} else {
 			i <- cellsFromExtent(x, i)
 		}		
@@ -22,34 +21,6 @@ setReplaceMethod("[", c("RasterLayer", "RasterLayer", "missing"),
 	}
 )
 
-
-setReplaceMethod("[", c("RasterLayer", "Extent", "missing"),
-	function(x, i, j, value) {
-	
-		i <- cellsFromExtent(x, i)
-		.replace(x, i, value=value)
-	}
-)
-
-setReplaceMethod("[", c("RasterLayer", "Spatial", "missing"),
-	function(x, i, j, value) {
-
-		if (inherits(i, 'SpatialPolygons')) {
-			v <- 1:length(i@polygons)
-			v[] <- value
-			return( .polygonsToRaster(i, x, field=v, fun='last', mask=FALSE, update=TRUE, updateValue="all", silent=TRUE) )
-			
-		} else if (inherits(i, 'SpatialLines')) {
-			v <- 1:length(i@lines)
-			v[] <- value
-			return( .linesToRaster(i, x, field=v, fun='last', mask=FALSE, update=TRUE, updateValue="all", silent=TRUE) )
-			
-		} else { # if (inherits(i, 'SpatialPoints')) {
-			i <- cellsFromXY(x, coordinates(i))
-			return( .replace(x, i, value=value) )
-		}
-	}
-)
 
 
 setReplaceMethod("[", c("RasterLayer","missing","missing"),
@@ -74,43 +45,13 @@ setReplaceMethod("[", c("RasterLayer","missing","missing"),
 	}
 )
 
-setReplaceMethod("[", c("RasterLayer", "numeric", "numeric"),
-	function(x, i, j, value) {
-		i <- cellFromRowColCombine(x, i, j)
-		.replace(x, i, value)
-	}
-)	
-
-setReplaceMethod("[", c("RasterLayer","missing", "numeric"),
-	function(x, i, j, value) {
-		j <- cellFromCol(x, j)
-		.replace(x, j, value=value)
-	}
-)
-
-
-setReplaceMethod("[", c("RasterLayer","numeric", "missing"),
-	function(x, i, j, value) {
-		theCall <- sys.call(-1)
-		narg <- length(theCall)-length(match.call(call=sys.call(-1)))
-		if (narg > 0) {
-			i <- cellFromRow(x, i)
-		}
-		.replace(x, i=i, value=value)
-	}
-)
-
-
-
-
-setReplaceMethod("[", c("RasterLayer", "logical", "missing"),
-	function(x, i, j, value) {
-		.replace(x, i, value)
-	}
-)	
-
 
 .replace <- function(x, i, value) {
+
+	if (inherits(x, 'RasterStack')) {
+		x <- brick(x, values=TRUE)
+	}
+
 
 	if (! is.numeric(value) & !is.logical(value)) { 
 		value <- as.numeric(value) 
@@ -120,7 +61,7 @@ setReplaceMethod("[", c("RasterLayer", "logical", "missing"),
 		i[is.na(i)] <- FALSE
 	} else {
 		i <- na.omit(i)
-		i <- subset(i, i >= 1 & i <= ncell(x))
+		i <- subset(i, i >= 1 & i <= (ncell(x)*nlayers(x)) )
 	}
 	
 	if (! inMemory(x) ) {
@@ -130,14 +71,14 @@ setReplaceMethod("[", c("RasterLayer", "logical", "missing"),
 			x <- try (setValues(x, rep(NA, times=ncell(x))) )
 		}
 		if (class(x) == 'try-error') {
-			stop('cannot do in-memory replace values on this raster (it is too large)')
+			stop('cannot do in-memory replace values on this raster (it is too large).\nYou can use the "calc" function instead.')
 		}
 	}
 		
 		
 	x@data@values[i] <- value
 	x <- setMinMax(x)
-	x <- .clearFile(x)
+	x <- raster:::.clearFile(x)
 	return(x)
 }
 

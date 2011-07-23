@@ -35,15 +35,12 @@ function(x, values) {
 	if (length(values) == ncell(x)) { 
 		x@data@inmemory <- TRUE
 		x@data@fromdisk <- FALSE
-		x@file@name = ""
-
+		x@file@name <- ""
+		x@file@driver <- ""
 		x@data@values <- values
 		x <- setMinMax(x)
 		return(x)
 		
-	} else if (length(values) == ncol(x)) {
-		stop('setValues no longer supports setting rows of values')
-
 	} else {
 		stop("length(values) is not equal to ncell(x), or to 1") 
 	}
@@ -104,7 +101,8 @@ setMethod('setValues', signature(x='RasterBrick'),
 		}
 		if (nrow(values) == ncell(x)) {
 
-			x@file@name = ""
+			x@file@name <- ""
+			x@file@driver <- ""
 			x@data@inmemory <- TRUE
 			x@data@fromdisk <- FALSE
 			x@data@nlayers <- ncol(values)
@@ -132,7 +130,8 @@ setMethod('setValues', signature(x='RasterBrick'),
 					stop("you can only setValues for a single layer if all values are in memory. But values could not be loaded")				
 				}
 			}
-			x@file@name = ""
+			x@file@name <- ""
+			x@file@driver <- ""
 			x@data@inmemory <- TRUE
 			x@data@fromdisk <- FALSE
 			x@data@values[,layer] <- values

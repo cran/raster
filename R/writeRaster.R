@@ -121,7 +121,7 @@ function(x, filename, bandorder='BIL', format, ...) {
 		pb <- pbCreate(tr$n, type=.progress(...))
 		b <- writeStart(b, filename=filename, bandorder=bandorder, format=filetype, ...)
 		for (i in 1:tr$n) {
-			v <- getValues(x, row=tr$row[i], nrows=tr$size)
+			v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
 			b <- writeValues(b, v, tr$row[i])
 			pbStep(pb, i)
 		}

@@ -10,6 +10,7 @@ setMethod('interpolate', signature(object='Raster'),
 	function(object, model, filename="", fun=predict, xyOnly=TRUE, ext=NULL, const=NULL, index=1, na.rm=TRUE, debug.level=1, ...) {
 		
 		predrast <- raster(object)
+		filename <- trim(filename)
 				
 		if (!is.null(ext)) {
 			predrast <- crop(predrast, extent(ext))
@@ -21,10 +22,14 @@ setMethod('interpolate', signature(object='Raster'),
 		}
 		ncols <- ncol(predrast)
 			
+		lyrnames <- layerNames(object)
+		xylyrnames <- c('x', 'y', lyrnames)
+
 		haveFactor <- FALSE
 		dataclasses <- try( attr(model$terms, "dataClasses")[-1], silent=TRUE)
 		if (!is.null(dataclasses)) {
-			if (dataclasses != 'try-error') {
+			varnames <- names(dataclasses)
+			if (class(dataclasses) != 'try-error') {
 				if ( length( unique(lyrnames[(lyrnames %in% varnames)] )) != length(lyrnames[(lyrnames %in% varnames)] )) {
 					stop('duplicate names in Raster* object: ', lyrnames)
 				}
@@ -33,10 +38,6 @@ setMethod('interpolate', signature(object='Raster'),
 			}
 		}
 			
-		lyrnames <- layerNames(object)
-		xylyrnames <- c('x', 'y', lyrnames)
-		varnames <- names(dataclasses)
-		filename <- trim(filename)
 		
 		if (!canProcessInMemory(predrast) && filename == '') {
 			filename <- rasterTmpFile()	
@@ -78,8 +79,8 @@ setMethod('interpolate', signature(object='Raster'),
 		
 
 		tr <- blockSize(predrast, n=nlayers(object)+3)
-		ablock <- 1:(ncol(object) * tr$size)
-		napred <- rep(NA, ncol(predrast)*tr$size )
+		ablock <- 1:(ncol(object) * tr$nrows[1])
+		napred <- rep(NA, ncol(predrast)*tr$nrows[1])
 				
 		pb <- pbCreate(tr$n,  type=.progress(...) )			
 		
