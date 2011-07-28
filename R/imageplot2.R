@@ -10,7 +10,7 @@
 .rasterImagePlot <- function(x, add=FALSE, legend=TRUE, nlevel = 64, horizontal = FALSE, 
     legend.shrink = 0.5, legend.width = 0.6, legend.mar = ifelse(horizontal, 3.1, 5.1), legend.lab = NULL, graphics.reset = FALSE, 
     bigplot = NULL, smallplot = NULL, legend.only = FALSE, col = heat.colors(nlevel), 
-    lab.breaks = NULL, axis.args = NULL, legend.args = NULL, interpolate=FALSE, box=TRUE, breaks=NULL, ...) {
+    lab.breaks = NULL, axis.args = NULL, legend.args = NULL, interpolate=FALSE, box=TRUE, breaks=NULL, zlim=NULL, ...) {
 
 	
 	asRaster <- function(x, col, breaks=NULL) {
@@ -27,9 +27,12 @@
 
 	e <- as.vector(t(bbox(extent(x))))
 	x <- as.matrix(x)
+	x[is.infinite(x)] <- NA
+	if (!is.null(zlim)) {
+		x[x<zlim[1] & x>zlim[2]] <- NA
+	}
 	zrange <- range(x, na.rm=TRUE)
 	x <- asRaster(x, col, breaks)
-	
 	
     old.par <- par(no.readonly = TRUE)
     if (add) {
@@ -54,9 +57,8 @@
 	} else {
         if (!add) {
             par(plt = bigplot)
+			plot(NA, NA, xlim=e[1:2], ylim=e[3:4], type = "n", , xaxs ='i', yaxs = 'i', ...)
         }
-		plot(NA, NA, xlim=e[1:2], ylim=e[3:4], type = "n", , xaxs ='i', yaxs = 'i', ...)
-
 		rasterImage(x, e[1], e[3], e[2], e[4], interpolate=interpolate)
         big.par <- par(no.readonly = TRUE)
     } 
@@ -78,11 +80,14 @@
 		}
 
 		if (!is.null(breaks)) {
-			if (is.null(lab.breaks) ) {
-				lab.breaks=as.character(breaks)
+			axis.args <- c(list(side=ifelse(horizontal,1,4), mgp=c(3,1,0), las=ifelse(horizontal,0,2)), axis.args)
+			if (is.null(axis.args$at)) {
+				axis.args$at <- breaks
 			}
-			axis.args <- c(list(side = ifelse(horizontal, 1, 4), mgp = c(3, 1, 0), las = ifelse(horizontal, 0, 2), 
-								at = breaks, labels = lab.breaks), axis.args)
+			if (is.null(axis.args$labels) ) {
+				axis.args$labels=lab.breaks
+			}
+							
 		} else {
 			axis.args <- c(list(side = ifelse(horizontal, 1, 4), mgp = c(3, 1, 0), las = ifelse(horizontal, 0, 2)), axis.args)
 		}

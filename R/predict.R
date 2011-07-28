@@ -42,6 +42,7 @@ setMethod('predict', signature(object='Raster'),
 		lyrnames <- layerNames(object)
 		
 		haveFactor <- FALSE
+		facttest <- TRUE
 		dataclasses <- try (attr(model$terms, "dataClasses")[-1], silent=TRUE)
 		if (class(dataclasses) != "try-error") {
 			varnames <- names(dataclasses)
@@ -98,7 +99,8 @@ setMethod('predict', signature(object='Raster'),
 					if (!is.null(fl)) {
 						fv[! fv %in% factlevels[[j]] ] <- NA 
 						blockvals[,f[j]] <- factor(fv, levels=fl)
-					} else {					
+					} else {		
+						warning('not sure if the correct factor levels are used here')	
 						blockvals[,f[j]] <- factor(fv)
 					}
 				}
@@ -141,7 +143,25 @@ setMethod('predict', signature(object='Raster'),
 				} else if (is.factor(predv)) {
 					# should keep track of this to return a factor type RasterLayer
 					factres <- TRUE
-					predv <- as.integer(as.character(predv))
+					if (facttest) {
+						w <- getOption('warn')
+						options('warn'=-1) 
+						tst <- as.integer(as.character(levels(predv)))
+						options('warn'= w) 
+						if (any(is.na(tst))) {
+							factaschar = FALSE
+						} else {
+							factaschar = TRUE
+						}
+						predrast@data@attributes <- list(levels(predv))
+						predrast@data@isfactor <- TRUE
+						facttest <- FALSE
+					}
+					if (factaschar) {
+						predv <- as.integer(as.character(predv))
+					} else {
+						predv <- as.integer(predv)
+					}
 				}
 
 				if (na.rm) {  

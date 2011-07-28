@@ -51,14 +51,6 @@ setReplaceMethod("[", c("Raster", "Spatial", "missing"),
 		} else { # if (inherits(i, 'SpatialPoints')) {
 			i <- cellsFromXY(x, coordinates(i))
 
-			nl <- nlayers(x)
-			if (nl > 1) {
-				add <- ncell(x) * 0:(nl-1)
-				i <- as.vector(t((matrix(rep(i, nl), nr=nl, byrow=TRUE)) + add))
-			}
-
-			i <- as.vector(t((matrix(rep(i, nl), nr=nl, byrow=TRUE)) + add))
-			
 			return( .replace(x, i, value=value) )
 		}
 	}
@@ -98,13 +90,6 @@ setReplaceMethod("[", c("RasterStackBrick","missing","missing"),
 setReplaceMethod("[", c("Raster", "numeric", "numeric"),
 	function(x, i, j, value) {
 		i <- cellFromRowColCombine(x, i, j)
-
-		nl <- nlayers(x)
-		if (nl > 1) {
-			add <- ncell(x) * 0:(nl-1)
-			i <- as.vector(t((matrix(rep(i, nl), nr=nl, byrow=TRUE)) + add))
-		}
-
 		.replace(x, i, value)
 	}
 )	
@@ -112,13 +97,6 @@ setReplaceMethod("[", c("Raster", "numeric", "numeric"),
 setReplaceMethod("[", c("Raster","missing", "numeric"),
 	function(x, i, j, value) {
 		j <- cellFromCol(x, j)
-
-		nl <- nlayers(x)
-		if (nl > 1) {
-			add <- ncell(x) * 0:(nl-1)
-			j <- as.vector(t((matrix(rep(j, nl), nr=nl, byrow=TRUE)) + add))
-		}
-
 		.replace(x, j, value=value)
 	}
 )
@@ -131,18 +109,21 @@ setReplaceMethod("[", c("Raster","numeric", "missing"),
 		if (narg > 0) {
 			i <- cellFromRow(x, i)
 		}
-		
-		nl <- nlayers(x)
-		if (nl > 1) {
-			add <- ncell(x) * 0:(nl-1)
-			i <- as.vector(t((matrix(rep(i, nl), nr=nl, byrow=TRUE)) + add))
-		}
-		
-		
 		.replace(x, i=i, value=value)
 	}
 )
 
+
+setReplaceMethod("[", c("Raster", "matrix", "missing"),
+	function(x, i, j, value) {
+		if (ncol(i) == 2) {
+			i <- cellFromRowCol(x, i[,1], i[,2])
+		} else {
+			i <- as.vector(i)
+		}
+		.replace(x, i=i, value=value)
+	}
+)
 
 
 

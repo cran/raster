@@ -80,7 +80,7 @@ RasterLayer, RasterStack, and RasterBrick objects are, as a group, referred to a
     \code{\link{Arith-methods}} \tab Arith functions (\code{+, -, *, ^, \%\%, \%/\%, /}) \cr
 	\code{\link{Math-methods}} \tab Math functions (\code{abs, sqrt, trunc, log, log10, exp, sin, round} among others)	\cr	
     \code{\link{Logic-methods}} \tab Logic functions (\code{!, &, |}) \cr
-    \code{\link{Summary-methods}} \tab Summary functions (\code{mean, Median, max, min, range, prod, sum, any, all}) \cr
+    \code{\link{Summary-methods}} \tab Summary functions (\code{mean, max, min, range, prod, sum, any, all}) \cr
     \code{\link{Compare-methods}} \tab Compare functions (\code{==, !=, >, <, <=, >=}) \cr
 	}
 }  
@@ -320,7 +320,6 @@ It is also possible to use Arithmetic functions with Extent objects (but these w
     \code{\link{extension}} \tab Get or set the extentsion of a filename \cr
     \code{\link{cv}} \tab Coefficient of variation  \cr
     \code{\link{modal}} \tab Modal value  \cr
-    \code{\link{Median}} \tab Median value \cr
     \code{\link{sampleInt}} \tab Random sample of (possibly very large) range of integer values \cr
     \code{\link{showTmpFiles}} \tab Show temporary files \cr
     \code{\link{removeTmpFiles}} \tab Remove temporary files \cr

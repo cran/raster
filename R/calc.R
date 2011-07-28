@@ -40,8 +40,14 @@ setMethod('calc', signature(x='Raster', fun='function'),
 function(x, fun, filename='', na.rm, ...) {
 
 	nl <- nlayers(x)
-	if (nl == 1) { 	makemat <- TRUE	} else { makemat <- FALSE  }
 	tstdat <- x[1:5]
+
+	if (nl == 1) { 	
+		makemat <- TRUE	
+		tstdat <- matrix(tstdat, ncol=1)
+	} else { 
+		makemat <- FALSE  
+	}
 
 	trans <- FALSE
 	doapply <- TRUE
@@ -53,7 +59,6 @@ function(x, fun, filename='', na.rm, ...) {
 			if (class(test) == 'try-error') {
 				stop("cannot use this function. Perhaps add '...' or 'na.rm' to the function arguments?") 
 			}
-			
 		} else if (is.matrix(test)) {
 			trans <- TRUE
 		}
@@ -94,7 +99,9 @@ function(x, fun, filename='', na.rm, ...) {
 
 	if (canProcessInMemory(x, max(nlayers(x), nlayers(out)) * 2)) {
 		x <- getValues(x)
-		if (makemat) { x <- matrix(x, ncol=1) }
+		if (makemat) { 
+			x <- matrix(x, ncol=1) 
+		}
 		if (missing(na.rm)) {
 			if (! doapply ) { 
 				x <- fun(x ) 
@@ -129,30 +136,33 @@ function(x, fun, filename='', na.rm, ...) {
 	if (missing(na.rm)) {
 		for (i in 1:tr$n) {
 			v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
-			if (makemat) { v <- matrix(v, ncol=1) }
 			if ( ! doapply ) {
 				v <- fun(v)
 			} else {
+				if (makemat) { 
+					v <- matrix(v, ncol=1) 
+				}
 				v <- apply(v, 1, fun)
+				if (trans) {
+					v <- t(v)
+				}
 			}
-			if (trans) {
-				v <- t(v)
-			}
-
 			out <- writeValues(out, v, tr$row[i])
 			pbStep(pb) 
 		}
 	} else {
 		for (i in 1:tr$n) {
 			v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
-			if (makemat) { v <- matrix(v, ncol=1) }
 			if ( ! doapply ) {
 				v <- fun(v, na.rm=na.rm)
 			} else {
+				if (makemat) { 
+					v <- matrix(v, ncol=1) 
+				}
 				v <- apply(v, 1, fun, na.rm=na.rm)
-			}
-			if (trans) {
-				v <- t(v)
+				if (trans) {
+					v <- t(v)
+				}
 			}
 			out <- writeValues(out, v, tr$row[i])
 			pbStep(pb) 

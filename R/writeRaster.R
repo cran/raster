@@ -103,12 +103,15 @@ function(x, filename, bandorder='BIL', format, ...) {
 	if ( inMemory(x) ) {
 	
 		if (filetype=='CDF') {
-			x <- .startWriteCDF(x, filename=filename,  ...)
-			x <- .writeValuesBrickCDF(x, getValues(x) )	
-			return( .stopWriteCDF(x) )
+			b <- brick(x, values=FALSE)
+			b <- .startWriteCDF(b, filename=filename,  ...)
+			x <- .writeValuesBrickCDF(b, getValues(x) )	
+			x <- .stopWriteCDF(x) 
 		} else {
-			return ( .writeGDALall(x, filename=filename, format=filetype, ...) )			
+			x <- .writeGDALall(x, filename=filename, format=filetype, ...) 
 		}
+		
+		return(x)
 		
 	} else {
 			
