@@ -51,13 +51,13 @@ r <- raster(ncol=10,nrow=10)
 r[] <- 1
 r[48] <- 2
 r[66:68] <- 3
-distRaster <- gridDistance(r,origin=2,omit=3) 
-plot(distRaster)
+d <- gridDistance(r,origin=2,omit=3) 
+plot(d)
 
 #UTM small area
 projection(r) <- "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs"
-distRaster <- gridDistance(r,origin=2,omit=3) 
-plot(distRaster)
+d <- gridDistance(r,origin=2,omit=3) 
+plot(d)
 
 }
 

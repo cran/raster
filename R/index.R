@@ -32,9 +32,7 @@ function(x, i, j, ... ,drop=TRUE) {
 		callNextMethod(x, i=i, ..., drop=drop)
 	
 	} else if (compare(x, i, stopiffalse=FALSE, showwarning=FALSE)) {
-		i <- as.logical( getValues(i) )
-		i[is.na(i)] <- FALSE
-		i <- (1:ncell(x))[i]
+		i <- which( as.logical( getValues(i) ) )
 		.doExtract(x, i, drop=drop)
 
 	} else {
@@ -77,15 +75,29 @@ function(x, i, j, ... ,drop=TRUE) {
 })
 
 
+
 setMethod("[", c("Raster", "numeric", "missing"),
 function(x, i, j, ... ,drop=TRUE) {
 	theCall <- sys.call(-1)
 	narg <- length(theCall) - length(match.call(call=sys.call(-1)))
 	if (narg > 0) {
 		i <- cellFromRow(x, i)
+	} 
+	.doExtract(x, i, drop=drop)
+})
+
+
+
+setMethod("[", c("Raster", "matrix", "missing"),
+function(x, i, j, ... ,drop=TRUE) {
+	if (ncol(i) == 2) {
+		i <- cellFromRowCol(x, i[,1], i[,2])
+	} else {
+		i <- as.vector(i)
 	}
 	.doExtract(x, i, drop=drop)
 })
+
 
 
 setMethod("[", c("Raster", "logical", "missing"),
@@ -95,8 +107,7 @@ function(x, i, j, ... , drop=TRUE) {
 	if (narg > 0) {
 		stop('logical indices are only accepted if only the first index is used')
 	}
-	i[is.na(i)] <- FALSE
-	i <- (1:ncell(x))[i]
+	i <- which(i)
 	.doExtract(x, i, drop=drop)
 })
 

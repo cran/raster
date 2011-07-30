@@ -11,7 +11,7 @@ if (!isGeneric("plot")) {
 
 
 setMethod("plot", signature(x='RasterStackBrick', y='ANY'), 
-	function(x, y, col=rev(terrain.colors(255)), maxpixels=100000, alpha=1, ...)  {
+	function(x, y, col=rev(terrain.colors(255)), maxpixels=100000, alpha=1, main, ...)  {
 	
 		if (alpha < 1) {
 			alpha <- max(alpha, 0) * 255 + 1
@@ -32,10 +32,15 @@ setMethod("plot", signature(x='RasterStackBrick', y='ANY'),
 				y = .nameToIndex(y, layerNames(x))
 			}
 			y <- unique(as.integer(round(y)))
-			y = na.omit(y)
+			y <- na.omit(y)
 		}
+		
+		if (missing(main)) {
+			main <- layerNames(x)
+		}
+		
 		if (length(y) == 1) {
-			.plotraster2(raster(x, y), col=col, maxpixels=maxpixels, main=layerNames(x)[y], ...) 
+			.plotraster2(raster(x, y), col=col, maxpixels=maxpixels, main=main[y], ...) 
 		} else {
 
 			nl <- length(y)
@@ -57,7 +62,7 @@ setMethod("plot", signature(x='RasterStackBrick', y='ANY'),
 				}
 				if (rown==nr) xa='s'
 				if (coln==1) ya='s' else ya='n'
-				.plotraster2(raster(x, y[i]), col=col, maxpixels=maxpixels, xaxt=xa, yaxt=ya, main=layerNames(x)[y[i]], ...) 
+				.plotraster2(raster(x, y[i]), col=col, maxpixels=maxpixels, xaxt=xa, yaxt=ya, main=main[y[i]], ...) 
 			}		
 		}
 	}

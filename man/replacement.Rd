@@ -9,6 +9,7 @@
 
 \alias{[<-,Raster,numeric,numeric-method}
 \alias{[<-,Raster,numeric,missing-method}
+\alias{[<-,Raster,matrix,missing-method}
 \alias{[<-,Raster,logical,missing-method}
 \alias{[<-,Raster,missing,numeric-method}
 \alias{[<-,Raster,Spatial,missing-method}

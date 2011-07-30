@@ -1,3 +1,11 @@
+--- 27-July-2011, version 1.9-3
+Patches by Pierre Roudier to improve coercion from Raster* to Spatial* objects.
+new function as.data.frame for Raster* objects
+
+--- 23-July-2011, version 1.9-2
+Removed generic function 'Median'
+Added generic index/replace function for Raster* and matrix.
+
 --- 19-July-2011, version 1.9-1
 MAJOR bug fix in arith.  If x is a Raster* object, a-x returned x-a, and a/x returned x/a. Reported by Steven Mosher. 
 plot now uses rasterImage instead of image

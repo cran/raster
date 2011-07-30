@@ -14,12 +14,10 @@
 	
 	if (type=='pixel') {
 		v <- rasterToPoints(object, fun=NULL, spatial=FALSE)
-		pts <- SpatialPoints(v[,1:2])
+		sp <- SpatialPoints(v[,1:2], proj4string=crs)
 		if (dataframe) {
-			sp <- SpatialPixelsDataFrame(points=pts, data=data.frame(v[,3:ncol(v), drop=FALSE]), proj4string=crs)
-		} else {
-			sp <- SpatialPixels(points=pts, proj4string=crs)
-		}
+			sp <- SpatialPixelsDataFrame(points=sp, data=data.frame(v[,3:ncol(v), drop=FALSE]))
+		} 
 		
 	} else {
 	

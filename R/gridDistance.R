@@ -36,9 +36,9 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 		oC <- which(x %in% origin) 
 		ftC <- which(!(x %in% omit))
 		v <- .calcDist(outRaster, ncell(outRaster), ftC, oC, lonlat=lonlat)
+		v[is.infinite(v)] <- NA
 		
 		outRaster <- setValues(outRaster, v)
-		outRaster[is.infinite(outRaster)] <- NA
 		if (filename != "") {
 			outRaster <- writeRaster(outRaster, filename, ...)
 		}
