@@ -48,7 +48,7 @@ function(x, fact, filename='', ...) {
 	}
 	
 	dim(outRaster) <- c(nrow(x) * yfact, ncol(x) * xfact) 
-
+	layerNames(outRaster) <- layerNames(x)
 	
 	if (! inherits(x, 'RasterStack')) {
 		if (! inMemory(x)  & ! fromDisk(x) ) {

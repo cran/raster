@@ -2,7 +2,7 @@
 
 \alias{polygonValues}
 \alias{lineValues}
-\alias{focalValues}
+\alias{xyValues}
 
 \title{ Obsolete functions }
 
@@ -13,13 +13,15 @@ Obsolete functions. Use \code{\link[raster]{extract}} instead.
 \usage{
 polygonValues(p, x, ...)
 lineValues(lns, x, ...)
-focalValues(x, ...)
+xyValues(object, xy, ...)
 }
 
 \arguments{
 \item{p}{SpatialPolygons* object}
 \item{lns}{SpatialLines* object}
 \item{x}{Raster* object}
+ \item{object}{Raster* object}
+ \item{xy}{Coordinates (e.g. a matrix of two columns or a SpatialPoints* object)}
 \item{...}{additional arguments}
 }
 

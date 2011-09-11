@@ -26,7 +26,8 @@ gridDistance(x, origin, omit=NULL, filename="", ...)
 }
 
 
-\seealso{ See \code{\link[raster]{distance}} for 'as the crow flies' distance. Additional distance measures and options (directions, cost-distance) are available in the 'gdistance' package that is available on R-Forge} 
+\seealso{ See \code{\link[raster]{distance}} for 'as the crow flies' distance. Additional distance measures and options (directions, cost-distance) are available in the '\code{gdistance}' package.} 
+
 
 \details{
 The following additional arguments can be passed, to replace default values for this function

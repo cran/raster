@@ -25,15 +25,14 @@ function(x, ...) {
 
 setMethod("stack", signature(x='character'), 
 function(x, ..., bands=NULL, varname="") {
-	if (!is.null(bands)) {
-		if (length(list(...)) > 0) {
-			stop("if you supply a 'bands' argument, you can only supply a single filename")
-		}
-	}
+	rlist <- c(x, list(...))
     if ( varname != "") {
-		return(.stackCDF(x, varname=varname, bands=bands))
+		if (length(rlist) == 1) {
+			return(.stackCDF(x, varname=varname, bands=bands))
+		} else {
+			s <- stack(sapply(rlist, function(x) .stackCDF(x, varname=varname, bands=bands)))
+		}
 	} else {
-		rlist <- c(x, list(...))
 		return(stack(rlist, bands=bands))
 	}
 } )
@@ -44,7 +43,6 @@ function(x, bands=NULL, ...) {
 	if (class(x) == 'data.frame') {
 		return(utils::stack(x, ...))
 	}
-	j <- 0
 	r <- list()
 	lstnames <- names(x)
 	if (is.null(lstnames)) {
@@ -54,8 +52,8 @@ function(x, bands=NULL, ...) {
 		namesFromList <- TRUE
 	}
 
-	if (is.character(x[[1]]) & length(x) == 1 & !is.null(bands)) {
-		first <- raster(x[[1]])
+	first <- raster(x[[1]])
+	if (!is.null(bands)) {
 		lb <- length(bands)
 		bands <- bands[bands %in% 1:nbands(first)]
 		if (length(bands) == 0) {
@@ -64,52 +62,74 @@ function(x, bands=NULL, ...) {
 		if (length(bands) < lb) {
 			warning('invalid band numbers ignored')
 		}
-		for (b in bands) {
-			r[b] <- raster(x[[1]], band=b)
-			if (namesFromList) {
-				if (lstnames != "") {
-					layerNames(r[[b]]) <- lstnames
-				}
-			}
-		}
-		
-	} else {
-	
-		for (i in seq(along=x)) {
-			j <- j + 1
-			if (is.character(x[[i]])) {
+	} 
 
-				r[j] <- raster(x[[i]], band=1)
-				if (namesFromList) {
-					if (lstnames[i] != "") {
-						layerNames(r[[j]]) <- lstnames[i]
-					}
-				}
-
-				bds <- nbands(r[[j]])
-				if (bds > 1) {
-					for (b in 2:bds) {
-						j <- j + 1
-						r[j] <- raster(x[[i]], band=b)
-						
-						if (namesFromList) {
-							if (lstnames[i] != "") {
-								layerNames(r[[j]]) <- lstnames[i]
-							}
+	j <- 1
+	for (i in seq(along=x)) {
+		if (is.character(x[[i]])) {
+			if (!is.null(bands)) {
+				for (b in bands) {
+					r[j] <- raster(x[[i]], band=b, ...)
+					if (namesFromList) {
+						if (lstnames[i] != "") {
+							layerNames(r[[j]]) <- paste(lstnames[i], '_', b, sep='')
 						}
-
 					}
-				}
-			} else if (extends(class(x[[i]]), "Raster")) {
-				r[j] <- x[[i]]
-				if (namesFromList) {
-					if (lstnames[i] != "") {
-						layerNames(r[[j]]) <- lstnames[i]
-					}
+					j <- j + 1
 				}
 			} else {
-				stop("Arguments should be Raster* objects or filenames")	
+				r[j] <- raster(x[[i]], band=1, ...)
+				bds <- nbands(r[[j]])
+
+				if (namesFromList) {
+					if (lstnames[i] != "") {
+						if (bds > 1) {
+							layerNames(r[[j]]) <- paste(lstnames[i], '_1', sep='')						
+						} else {
+							layerNames(r[[j]]) <- lstnames[i]
+						}
+					}
+				}
+				j <- j + 1
+				if (bds > 1) {
+					for (b in 2:bds) {
+						r[j] <- raster(x[[i]], band=b, ...)
+							
+						if (namesFromList) {
+							if (lstnames[i] != "") {
+								layerNames(r[[j]]) <- paste(lstnames[i], '_', b, sep='')
+							}
+						}
+						j <- j + 1
+					}
+				}
 			}
+		} else if (extends(class(x[[i]]), "Raster")) {
+			if (inherits(x[[i]], 'RasterStackBrick')) {
+				if (!is.null(bands)) {
+					for (b in bands) {
+						r[j] <- raster(x[[i]], b)
+						j <- j + 1
+					}
+				} else {
+					if (inherits(x[[i]], 'RasterBrick')) {
+						x[[i]] <- stack(x[[i]])
+					}
+					r <- c(r, x[[i]]@layers)
+					j <- j + nlayers(x[[i]])
+				}
+			} else {
+				r[j] <- x[[i]]
+				j <- j + 1
+			}
+			
+			if (namesFromList) {
+				if (lstnames[i] != "") {
+					layerNames(r[[j]]) <- lstnames[i]
+				}
+			}
+		} else {
+			stop("Arguments should be Raster* objects or filenames")	
 		}
 	}
 	

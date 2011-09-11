@@ -3,10 +3,6 @@
 # Version 0.9
 # Licence GPL v3
 
-focalValues <- function(x, ...) {
-	stop('function has been removed. Use "extract" instead')
-}
-	
 	
 .focalValues <- function(x, row, ngb=3, fun=NULL, na.rm=FALSE, layer, nl, ...) {
 

@@ -5,7 +5,7 @@
 \title{Extent union}
 
 \description{
-unionExtent returns the union of multiple bounding boxes
+unionExtent returns the union of multiple Extent objects
 }
 
 \usage{

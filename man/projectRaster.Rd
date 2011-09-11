@@ -10,8 +10,7 @@ Project the values of a Raster* object to a new Raster* object with another proj
 You can do this by providing the new projection as a single argument in which case the function sets the extent and resolution of the new object. To have more control over the transformation, and, for example, to assure that the new object lines up with other datasets, you can provide a Raster* object with the properties that the input data should be projected to.
 
 \code{projecExtent} returns a RasterLayer with a projected extent, but without any values. This RasterLayer can then 
-be adjusted (e.g. by setting its resolution) and used as a template \code{'to'} Raster object in \code{projectRaster}. 
-\code{projectRaster} computes values for the cells of the new Raster object.
+be adjusted (e.g. by setting its resolution) and used as a template \code{'to'} in \code{projectRaster}. 
 }
 
 \usage{
@@ -69,7 +68,6 @@ RasterLayer or RasterBrick object.
 
 \seealso{ \code{resample} \code{\link[rgdal]{CRS-class}}, \code{\link[rgdal]{projInfo}}, \code{\link[rgdal]{spTransform}}}
 
-
 \examples{
 # create a new (not projected) RasterLayer with cellnumbers as values
 r <- raster(xmn=-110, xmx=-90, ymn=40, ymx=60, ncols=40, nrows=40)
@@ -78,7 +76,7 @@ projection(r)
 # proj.4 projection description
 newproj <- "+proj=lcc +lat_1=48 +lat_2=33 +lon_0=-100 +ellps=WGS84"
 
-# we need to have rgdal installed for this
+# we need the rgdal package for this
 if (require(rgdal)) {
 
 #simplest approach
@@ -109,10 +107,9 @@ plot(dif)
 
 # Meuse data to long/lat
 meuse <- raster(system.file("external/test.grd", package="raster"))
-meusell <- projectRaster(meuse, res=1/1200, crs="+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
-
-
+meusell <- projectRaster(meuse, res=1/1200, crs="+proj=longlat +datum=WGS84")
 }
+
 }
 }
 

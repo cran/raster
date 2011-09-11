@@ -17,8 +17,8 @@ atan2(y, x)
 }
 
 \arguments{
-  \item{y}{A RasterLayer object}
-  \item{x}{A RasterLayer object}
+  \item{y}{RasterLayer object}
+  \item{x}{RasterLayer object}
 }
 
 \seealso{ \code{\link[raster]{Math-methods}} }

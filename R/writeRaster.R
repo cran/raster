@@ -81,6 +81,7 @@ function(x, filename, bandorder='BIL', format, ...) {
 		}
 
 		out <- brick(x, values=FALSE)
+		layerNames(out) <- layerNames(x)
 		out <- writeStart(out, filename, bandorder=bandorder, ...)
 	
 		if (inMemory(x)) {

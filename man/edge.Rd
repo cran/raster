@@ -6,7 +6,7 @@
 \title{Edge detection}
 
 \description{
-Detect edges. Edges are those cells who have more than one class in the 9 cells surrounding it, or, if \code{classes=FALSE}, cells with values and cells with \code{NA}. 
+Detect edges. Edges are cells that have more than one class in the 9 cells surrounding it, or, if \code{classes=FALSE}, cells with values and cells with \code{NA}. 
 }
 
 \usage{

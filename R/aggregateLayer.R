@@ -47,6 +47,7 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", old=FALSE, .
 	outRaster <- raster(x)	
 	extent(outRaster) <- extent(xmin(x), xmx, ymn, ymax(x))
 	dim(outRaster) <- c(rsteps, csteps) 
+	layerNames(outRaster) <- layerNames(x)
 
 	if (! hasValues(x) ) {	return(outRaster) }	
 

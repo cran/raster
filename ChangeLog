@@ -1,3 +1,20 @@
+--- 2-September, version 1.9-9
+layerNames are now preserved when writing to (.grd) files. Bug reported by Steven Mosher.
+
+--- 28-August, version 1.9-8
+Improved handling of multifile ncdf files & varname argument, suggested by Matt Fischer. 
+cluster support for raster::predict function (run beginCluster() before using predict); but so far this seems to slow things down! 
+Much improved speed of the extract function for Raster objects with many layers. Low speed was a problem reported by Jan Verbesselt 
+http://r-sig-geo.2731867.n2.nabble.com/extracting-time-series-data-from-a-raster-brick-of-AVHRR-satellite-data-td6622055.html#a6629299
+and by Nathan Amboy.
+
+--- 11-August, version 1.9-6
+Bug fix with subset of a RasterBrick from disk. Reported by Stefan Schlaffer. 
+https://r-forge.r-project.org/tracker/?func=detail&atid=1189&aid=1520&group_id=294
+Some improvements to setValues with a RasterBrick based on suggestions by Julian Zeidler
+https://r-forge.r-project.org/tracker/?func=detail&atid=1189&aid=1504&group_id=294
+Fixed some problems (reported by Carsten Neumann) with plot that were introduced when replacing 'image' with 'rasterImage' 
+
 --- 27-July-2011, version 1.9-3
 Patches by Pierre Roudier to improve coercion from Raster* to Spatial* objects.
 new function as.data.frame for Raster* objects
@@ -17,7 +34,7 @@ bug fix in flip(x, 'y') for x is RasterStackBrick when writing to disk
 
 --- 8-July-2011, version 1.8-41
 removed gplot and plot3D functions. These are now in the rasterVis package
-added linear and histogram stretch options to plotRGB; based on Josh Gray' code in http://spatiallyexplicit.wordpress.com/2011/06/07/crop-circles/
+added linear and histogram stretch options to plotRGB; based on Josh Gray's code in http://spatiallyexplicit.wordpress.com/2011/06/07/crop-circles/
 added a scalebar function, partly based on a function by Josh Gray
 
 --- 3-July-2011, version 1.8-39

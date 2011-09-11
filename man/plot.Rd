@@ -5,8 +5,7 @@
 \alias{plot}
 \alias{plot,RasterLayer,missing-method}
 \alias{plot,RasterStackBrick,ANY-method}
-\alias{plot,RasterLayer,RasterLayer-method}
-\alias{plot,RasterStackBrick,RasterStackBrick-method}
+\alias{plot,Raster,Raster-method}
 \alias{plot,Extent,ANY-method}
 \alias{plot,Extent,missing-method}
 
@@ -43,11 +42,11 @@ If \code{x} has a 'Color table', the default all to \code{plot} is:
 
 \code{plot(x, maxpixels=500000, ext=NULL, interpolate=FALSE,  axes=FALSE, xlab="", ylab="", ...)}
 
-
 \tabular{rll}{
 \tab \code{ext}  \tab  An extent object to zoom in a region \cr
 \tab \code{interpolate} \tab Logical. Should the image be interpolated?  \cr 
 \tab \code{axes} \tab Logical. Should axes be drawn?  \cr 
+\tab \code{addfun} \tab Function. functions adding additional items such as points or polygons to the plot (map).  Typically containing statements like \code{points(xy); plot(polygons, add=TRUE)}. This is particularly useful to add something to each map when plotting a multi-layer Raster* object. \cr 
 \tab \code{...} \tab Graphical parameters \cr
 }
 
@@ -59,12 +58,12 @@ If \code{x} has a 'Color table', the default all to \code{plot} is:
 
 \tabular{rll}{
 \tab \code{x} \tab a RasterStack or RasterBrick object \cr
-\tab \code{y} \tab The index of a RasterLayer in a RasterStack to be plotted. Either a single number between 1 and nlayers(rstack), a vector of numbers, or missing. If y is missing, all RasterLayers in the RasterStack will be plotted.\cr
+\tab \code{y} \tab The index of a RasterLayer in a RasterStack to be plotted. Either a single number between 1 and nlayers(rstack), a vector of numbers, or missing. If y is missing, all RasterLayers in the RasterStack will be plotted (up to a maximum of 16).\cr
 \tab \code{ other arguments }  \tab  See above \cr
 }
 
 
-\bold{x=RasterLayer, y=RasterLayer}
+\bold{x=Raster, y=Raster}
 Produces a scatter plot of the values of x against those of y. 
 \code{plot(x, y, maxpixels=100000, cex=0.1, ...) }
 
@@ -139,9 +138,24 @@ brk <- c(0, 0.25, 0.75, 1)
 arg <- list(at=c(0.12,0.5,0.87), labels=c("Low","Med.","High"))
 plot(x, col=terrain.colors(3), breaks=brk)
 plot(x, col=terrain.colors(3), breaks=brk, axis.args=arg)
+par(mfrow=c(1,1))
 
 # color ramp
 plot(x, col=colorRampPalette(c("red", "white", "blue"))(255))
+
+# adding random points to the map
+xy <- cbind(-180 + runif(10) * 360, -90 + runif(10) * 180)
+points(xy, pch=3, cex=5)
+
+# for SpatialPolygons do
+# plot(pols, add=TRUE)
+
+# adding random points to each map of each layer of a RasterStack
+fun <- function() {
+	points(xy, cex=2)
+	points(xy, pch=3, col='red')
+}
+plot(s, addfun=fun)
 
 }
 

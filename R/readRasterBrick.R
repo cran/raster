@@ -160,16 +160,23 @@
  
 	} else {
 	#use GDAL  			
-		result <- matrix(nrow=ncols*nrows, ncol=nlayers(object))
-		offs <- c((startrow-1), (startcol-1)) 
-		reg <- c(nrows, ncols)
-		con <- GDAL.open(object@file@name, silent=TRUE)
-		for (b in 1:object@data@nlayers) {
-			result[,b] <- getRasterData(con, offset=offs, region.dim=reg, band=b)
-		}
-		closeDataset(con)
-		# if  NAvalue() has been used.....
-		result[result == object@file@nodatavalue] <- NA
+        offs <- c((startrow - 1), (startcol - 1))
+        reg <- c(nrows, ncols)
+        con <- GDAL.open(object@file@name, silent = TRUE)
+
+#		result <- getRasterData(con, offset=offs, region.dim=reg)
+#		result <- do.call(cbind, lapply(1:nlayers(object), function(i) as.vector(result[,,i])))
+# just as fast, it seems:
+        result <- matrix(nrow = ncols * nrows, ncol = nlayers(object))
+        for (b in 1:object@data@nlayers) {
+            result[, b] <- getRasterData(con, offset = offs, 
+                region.dim = reg, band = b)
+        }
+
+        closeDataset(con)
+        result[result == object@file@nodatavalue] <- NA
+		
+		
 	}
 
 	if (object@data@gain != 1 | object@data@offset != 0) {

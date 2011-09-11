@@ -19,6 +19,8 @@
 	if (x=='' | x=='.') { # etc? 
 		stop('provide a valid filename')
 	}
+	x <- normalizePath(x, winslash = "/", FALSE)
+	
 	fileext <- toupper(extension(x)) 
 
 	if (fileext %in% c(".GRD", ".GRI")) {
