@@ -97,7 +97,7 @@ setMethod('setValues', signature(x='RasterBrick'),
 
 	if (layer < 1) {
 		if (!is.matrix(values)) {
-			values <- matrix(values)
+			values <- matrix(values, nrow=ncell(x), ncol=nlayers(x))
 		}
 		if (nrow(values) == ncell(x)) {
 
@@ -119,9 +119,13 @@ setMethod('setValues', signature(x='RasterBrick'),
 		
 	} else {
 	
-		if (nlayers(x)==0) { x@data@nlayers <- 1 }
+		if (nlayers(x)==0) { 
+			x@data@nlayers <- 1
+		}
 		layer <- round(layer)
-		if (layer > nlayers(x)) { stop('layer number too high') }
+		if (layer > nlayers(x)) { 
+			stop('layer number too high') 
+		}
 		
 		if (length(values) == ncell(x)) { 
 			if ( ! inMemory(x) ) { 

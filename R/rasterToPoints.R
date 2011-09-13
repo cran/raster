@@ -29,12 +29,12 @@ rasterToPoints <- function(x, fun=NULL, spatial=FALSE, ...) {
 	if (canProcessInMemory(x, 3)) {
 		
 		xyv <- cbind(xyFromCell(x, 1:ncell(x)), getValues(x))
-		x = NULL
 		if (nl > 1) {
-			notna = apply(xyv[,3:ncol(xyv)], 1, function(x){ sum(is.na(x)) < length(x) })
+			notna <- apply(xyv[,3:ncol(xyv)], 1, function(x){ sum(is.na(x)) < length(x) })
 			xyv <- xyv[notna, ,drop=FALSE]
 		} else {
 			xyv <- na.omit(xyv)
+			attr(xyv, 'na.action') <- NULL
 		}
 		if (!is.null(fun)) {
 			xyv <- subset(xyv, fun(xyv[,3]))

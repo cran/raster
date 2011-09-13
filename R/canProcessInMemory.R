@@ -13,11 +13,15 @@ canProcessInMemory <- function(raster, n=4) {
 	if (.toDisk()) { return(FALSE) } 
 
 	n <- n + (nlayers(raster) - 1)
-	cells <- round(1.1 * ncell(raster))
+	cells <- round(1.1 * ncell(raster)) * n
 
-	if ((cells * n) > .maxmemory()) {
+	if (cells > .maxmemory()) {
 		return(FALSE) 
-	}
+	} else if ( cells < 1000000 ) {
+		return(TRUE)
+	} else {
+#		return(TRUE)
+#	}
 	
 	
 #	if (substr( R.Version()$platform, 1, 7) == "i386-pc" ) {
@@ -31,7 +35,7 @@ canProcessInMemory <- function(raster, n=4) {
 #	}
 #   } else {
 
-	g <- gc()
+#	g <- gc()
 	w <- getOption('warn')
 	on.exit(options('warn'= w))
 	options('warn'=-1) 
@@ -46,3 +50,4 @@ canProcessInMemory <- function(raster, n=4) {
 	}
 }
 
+}

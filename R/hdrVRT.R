@@ -8,10 +8,14 @@
 	
 	fn <- fname <- x@file@name
 
-	extension(fname) <- 'vrt'
+	if (tolower(extension(fn)) == '.vrt') {
+		stop('cannot (over)write a vrt header for a vrt file')
+	}
 	if (tolower(extension(fn)) == '.grd') {
 		extension(fn) <- '.gri'	
 	}
+	extension(fname) <- 'vrt'
+
 	pixsize <- dataSize(x@file@datanotation)
 	nbands <- nlayers(x)
 	
@@ -73,4 +77,6 @@
 	return( invisible(TRUE) )
 }  
 
+ 
+ 
  

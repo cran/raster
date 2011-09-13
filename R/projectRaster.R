@@ -166,9 +166,9 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 	if ( nl == 1) {
 		to <- raster(to)
 	} else {
-		to <- brick(to, values=FALSE)
-		to@data@nlayers <- nl
+		to <- brick(to, values=FALSE, nl=nl)
 	}
+	layerNames(to) <- layerNames(from)
 
 	if (!canProcessInMemory(to, n=nl*2) && filename == "") {
 		filename <- rasterTmpFile()

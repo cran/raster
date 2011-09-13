@@ -40,7 +40,7 @@ The following additional arguments can be passed, to replace default values for 
 A new RasterLayer object (in the R environment), and in some cases the side effect of a new file on disk.
 }
 
-\seealso{ \code{\link[raster]{focalFilter}}, \code{\link[raster]{focalValues}} }
+\seealso{ \code{\link[raster]{focalFilter}}} 
 
 
 \author{Robert J. Hijmans}

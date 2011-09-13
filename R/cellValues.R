@@ -4,15 +4,11 @@
 # Version 1.0
 # Licence GPL v3
 
-cellValues <- function(x, cells, ...) { 
-	stop('function no longer available. Please use "extract"')
-}
-
 	
 .cellValues <- function(x, cells, layer, nl) { 
 
 	if (inherits(x, 'RasterLayer')) {
-		return( .readCells(x, cells) )
+		return( .readCells(x, cells, 1) )
 		
 	} else {
 	
@@ -24,13 +20,13 @@ cellValues <- function(x, cells, ...) {
 		lyrs <- layer:(layer+nl-1)
 	
 		if (inherits(x, 'RasterStack')) {
-		
+	
 			result <- matrix(ncol=nl, nrow=length(cells))
-		
+			colnames(result) <- layerNames(x)[lyrs]
 			for (i in 1:nl) {
-				j = lyrs[i]
-				result[,i] <- .readCells( x@layers[[j]], cells )
+				result[,i] <- .readCells( x@layers[[lyrs[i]]], cells, 1)
 			}
+			return( result )
 			
 		} else if (inherits(x, 'RasterBrick')) {
 		
@@ -46,18 +42,9 @@ cellValues <- function(x, cells, ...) {
 				return( .readBrickCellsNetCDF(x, cells, layer, nl) )
 			} 
 
-			result <- matrix(nrow=length(cells), ncol=nl)
 			lyrs <- layer:(layer+nl-1)
-	# this loop needs to be removed!
-			for (i in 1:nl) {
-				j <- lyrs[i]
-				r <- raster(x, j)
-				result[,i] <- .readCells(r, cells)
-			}
+			return( .readCells(x, cells, lyrs) )
 		}
-		
-		colnames(result) <- layerNames(x)[lyrs]
-		return( result )
 		
 	}	
 }

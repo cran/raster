@@ -14,6 +14,13 @@ setMethod('extract', signature(x='Raster', y='missing'),
 function(x, y, ...){ 
 
 	dots <- list(...)
+
+	# focal values
+	if ( ! is.null(dots$row) ) {
+		return( .focalValues(x, ...) )
+	}
+
+
 	# backwards in-compatability
 	if (! is.null(dots$cells)) {
 		stop("the 'cells' argument is depracated")
@@ -28,10 +35,6 @@ function(x, y, ...){
 		stop("the 'lns' argument is depracated")
 	}
 	
-	# focal values
-	if ( ! is.null(dots$row) ) {
-		return( .focalValues(x, ...) )
-	}
 	stop('I do not understand what you want me to do')
 	
 	# return(getValues(x, ...)) ???
@@ -64,18 +67,39 @@ function(x, y, ...){
 
 setMethod('extract', signature(x='Raster', y='SpatialPoints'), 
 function(x, y, ...){ 
-	return( .xyValues(x, coordinates(y), ...))
+	px <- projection(x, asText=FALSE)
+	comp <- .compareCRS(px, projection(y), unknown=TRUE)
+	if (!comp) {
+		if (! .requireRgdal() ) { stop('rgdal not available') }
+		warning('Transforming SpatialPoints to the CRS of the Raster')
+		y <- spTransform(y, px)
+	}
+	.xyValues(x, coordinates(y), ...)
 })
 
 
 setMethod('extract', signature(x='Raster', y='SpatialLines'), 
 function(x, y, ...){ 
+	px <- projection(x, asText=FALSE)
+	comp <- .compareCRS(px, projection(y), unknown=TRUE)
+	if (!comp) {
+		if (! .requireRgdal() ) { stop('rgdal not available') }
+		warning('Transforming SpatialLines to the CRS of the Raster')
+		y <- spTransform(y, px)
+	}
 	.lineValues(x, y, ...)
 })
 
 
 setMethod('extract', signature(x='Raster', y='SpatialPolygons'), 
 function(x, y, ...){ 
+	px <- projection(x, asText=FALSE)
+	comp <- .compareCRS(px, projection(y), unknown=TRUE)
+	if (!comp) {
+		if (! .requireRgdal() ) { stop('rgdal not available') }
+		warning('Transforming SpatialPolygons to the CRS of the Raster')
+		y <- spTransform(y, px)
+	}
 	.polygonValues(x, y, ...)
 })
 

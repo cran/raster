@@ -56,9 +56,9 @@ Additional arguments that can be suplied to this function if \code{y} represents
 1) \code{method}. If \code{method='simple'} (the default), values for the cell a point falls in are returned. The 
 alternative is \code{method='bilinear'}, in which case the returned values are interpolated from the values of the four nearest raster cells.
 
-2) \code{buffer}. The radius of a buffer around each point for which to extract cell values. 
-It can be a single value, or a vector of the length of the number of points. 
-If the data are not projected (latitude/longitude), the unit should be meters. Otherwise it should be in map-units (typically also meters).
+2) \code{buffer}. The radius of a buffer around each point for which to extract cell values. If the distance between the sampling point and the center of
+a cell is less than or equal to the buffer, the cell is included. The buffer can be specified as a single value, or as a vector of the length of the number
+of points.  If the data are not projected (latitude/longitude), the unit should be meters. Otherwise it should be in map-units (typically also meters).  
 
 3) \code{cellnumbers}. Logical. If \code{cellnumbers=TRUE} and \code{buffer} is not \code{NULL}, cellnumbers will also be returned. \code{cellnumbers} is set to \code{FALSE} when an argument \code{fun} is used.
 

@@ -4,7 +4,15 @@
 # Licence GPL v3
 
 
-.plotraster2 <- function(object, col=rev(terrain.colors(25)), maxpixels=100000, axes=TRUE, xlab='', ylab='', ext=NULL, asp, xlim, ylim, ...) {
+.plotraster2 <- function(object, col=rev(terrain.colors(25)), maxpixels=100000, axes=TRUE, xlab='', ylab='', ext=NULL, asp, xlim, ylim, addfun, ...) {
+ 
+	doAdd <- FALSE
+	if (!missing(addfun)) {
+		if (is.function(addfun)) {
+			doAdd <- TRUE
+		}
+	}
+
  
  	if (missing(asp)) {
 		if (.couldBeLonLat(object, warnings=FALSE)) {
@@ -44,6 +52,9 @@
 #	leg <- object@legend
 	object <- sampleRegular(object, size=maxpixels, ext=ext, asRaster=TRUE)
 	.rasterImagePlot(object, col=col, axes=axes, xlab=xlab, ylab=ylab, asp=asp, ...)	
+	if (doAdd) { 
+		addfun()
+	}
 }
 
 

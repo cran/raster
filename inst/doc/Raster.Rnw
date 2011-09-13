@@ -13,12 +13,16 @@
 \newcommand{\R}{{\normalfont\textsf{R }}{}}
 \newcommand{\NA}{{\normalfont\textsf{NA }}{}}
 
-\SweaveOpts{keep.source=TRUE}
+\DeclareGraphicsExtensions{.png,.pdf,.jpg}
 
 \begin{document}
 
+\SweaveOpts{png=TRUE}
+\SweaveOpts{resolution=100}
+\SweaveOpts{keep.source=TRUE}
+
 <<foo,include=FALSE,echo=FALSE>>=
-options(keep.source = TRUE, width = 60)
+options(width = 60)
 foo <- packageDescription("raster")
 @
 

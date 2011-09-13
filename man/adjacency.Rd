@@ -38,12 +38,25 @@ r <- raster(nrows=10, ncols=10)
 adj <- adjacency(raster=r, fromCells = c(1,30,55,72,100), 
 				toCells = 1:ncell(r), directions=4) 
 	
-#put the result in a RasterLayer
+	
+# put the result in a RasterLayer
 v <- vector(length=ncell(r))
 v[c(1,30,55,72,100)] <- 1
 v[adj[,2]] <- 2
 r <- setValues(r, v)
-#plot(r)
+plot(r)
+
+
+# How many time does one cell value occur next to another cell value?
+r <- raster(ncol=10, nrow=10)
+set.seed(0)
+r[] <- round(runif(ncell(r)) * 5)
+a <- adjacency(r, 1:ncell(r), 1:ncell(r), 8)
+v1 <- r[a[,1]]
+v2 <- r[a[,2]]
+m <- matrix(0, nrow=5,ncol=5)
+for(i in 1:length(v1)) {m[v1[i], v2[i]] <- m[v1[i], v2[i]] +1}
+m
 
 }
 

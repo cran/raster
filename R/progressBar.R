@@ -12,10 +12,8 @@ pbCreate <- function(nsteps, type='text', style=3) {
 		#if (.Platform$OS.type == "windows" ) {
 		#	pb <- winProgressBar(title=tit, min=0 , max=nsteps, width = 300, label='starting')
 		#} else {
-		
 		require(tcltk)
 		pb <- tkProgressBar(title=tit, min=0, max=nsteps, width = 300, label='starting')
-		
 		#}
 	} else {
 		pb <- 'none'
@@ -43,13 +41,11 @@ pbStep <- function(pb, step=NULL, label='') {
 pbClose <- function(pb, timer) {
 	pbclass <- class(pb)
 	if (pbclass=="txtProgressBar") {
+		cat("\n\r")
 		close(pb)
-		cat("\n")
 	} else if (pbclass=="tkProgressBar") {
 		close(pb)
-#	} else if (pbclass=="winProgressBar") {
-#		close(pb)
-	} 
+	}
 	if (missing(timer)) {
 		timer <- .timer()		
 	}

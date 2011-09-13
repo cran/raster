@@ -10,14 +10,22 @@
 .rasterImagePlot <- function(x, add=FALSE, legend=TRUE, nlevel = 64, horizontal = FALSE, 
     legend.shrink = 0.5, legend.width = 0.6, legend.mar = ifelse(horizontal, 3.1, 5.1), legend.lab = NULL, graphics.reset = FALSE, 
     bigplot = NULL, smallplot = NULL, legend.only = FALSE, col = heat.colors(nlevel), 
-    lab.breaks = NULL, axis.args = NULL, legend.args = NULL, interpolate=FALSE, box=TRUE, breaks=NULL, zlim=NULL, ...) {
+    lab.breaks = NULL, axis.args = NULL, legend.args = NULL, interpolate=FALSE, box=TRUE, breaks=NULL, zlim=NULL, 
+	fun=NULL, ...) {
 
 	
 	asRaster <- function(x, col, breaks=NULL) {
 		if (!is.null(breaks)) {
 			x[] <- as.numeric(cut(x, breaks))
 		}
+		if (is.function(fun)) {
+			x[] <- fun(x)
+		}
 		r <- range(x, na.rm=TRUE)
+		if (r[1] == r[2]) {
+			r[1] <- r[1] - 0.001
+			r[2] <- r[2] + 0.001
+		}
 		x <- (x - r[1])/ (r[2] - r[1])
 		x <- round(x * (length(col)-1) + 1)
 		x[] <- col[x]
@@ -29,7 +37,7 @@
 	x <- as.matrix(x)
 	x[is.infinite(x)] <- NA
 	if (!is.null(zlim)) {
-		x[x<zlim[1] & x>zlim[2]] <- NA
+		x[x<zlim[1] | x>zlim[2]] <- NA
 	}
 	zrange <- range(x, na.rm=TRUE)
 	x <- asRaster(x, col, breaks)
@@ -66,11 +74,16 @@
 	if (legend) {
 		if ((smallplot[2] < smallplot[1]) | (smallplot[4] < smallplot[3])) {
 			par(old.par)
-			stop("plot region too small to add legend\n")
+			stop("plot region is too small. Cannot add a legend\n")
 		}
 		ix <- 1
 		minz <- zrange[1]
 		maxz <- zrange[2]
+		if (minz == maxz) {
+			minz <- minz - 0.001
+			maxz <- maxz + 0.001
+		}
+
 
 		par(new=TRUE, pty = "m", plt=smallplot, err = -1)
 		
@@ -138,5 +151,3 @@
 	invisible()
 	
 }
-
-

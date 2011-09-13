@@ -78,6 +78,7 @@ plotRGB(logo, main='logo')
 plot(logo, 1, col=rgb(cbind(0:255,0,0), maxColorValue=255))
 plot(logo, 2, col=rgb(cbind(0,0:255,0), maxColorValue=255))
 plot(logo, 3, col=rgb(cbind(0,0,0:255), maxColorValue=255))
+par(mfrow=c(1,1))
 }
 
 #get presence and pseudo-absence points
@@ -111,6 +112,16 @@ predfun <- function(model, data) {
 
 # predfun returns two variables, so use index=1:2
 r2 <- predict(logo, model, fun=predfun, index=1:2)
+
+# principal components of a RasterBrick
+# here using sampling to simulate an object too large
+# too feed all its values to prcomp
+v <- sampleRandom(logo, 100)
+pca <- prcomp(v)
+
+# note the use of the 'index' argument
+x <- predict(logo, pca, index=1:3)
+plot(x)
 
 \dontrun{
 require(randomForest)

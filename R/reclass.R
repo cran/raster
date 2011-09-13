@@ -31,7 +31,7 @@ function(x, rcl, update=FALSE, filename='', ...)  {
 	} else { out <- brick(x, values=FALSE) }	
 
 	
-	if (canProcessInMemory(out, 2)) {
+	if (canProcessInMemory(out, 4)) {
 
 		x <- getValues(x)
 		if (update) {

@@ -8,8 +8,8 @@
 
 \description{
 Compute the approximate surface area of cells in an unprojected (longitude/latitude) RasterLayer. It is an approximation because area is computed as the height (latitudial span) 
-of a cell (which is constant among all cells) times the width (longitudinal span) in the (latitudinal) middle of a cell. The width is smaller at the polewards side than at 
-the equator-wards side of a cell. This variation is greatest near the poles and the values are thus not very precise for very high latitudes. 
+of a cell (which is constant among all cells) times the width (longitudinal span) in the (latitudinal) middle of a cell. The width is smaller at the poleward side than at 
+the equator-ward side of a cell. This variation is greatest near the poles and the values are thus not very precise for very high latitudes. 
 
 }
 

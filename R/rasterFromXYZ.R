@@ -14,7 +14,10 @@ rasterFromXYZ <- function(xyz, res=c(NA, NA), crs=NA, digits=5) {
 			xyz <- coordinates(xyz)		
 		}
 	}
-	x = sort(unique(xyz[,1]))
+	if (inherits(xyz, 'data.frame')) {
+		xyz <- as.matrix(xyz)
+	}
+	x <- sort(unique(xyz[,1]))
 	dx <- x[-1] - x[-length(x)]
 
 	if (is.na(res[1])) {
@@ -36,7 +39,7 @@ rasterFromXYZ <- function(xyz, res=c(NA, NA), crs=NA, digits=5) {
 		}
 	}
 	
-	y = sort(unique(xyz[,2]))
+	y <- sort(unique(xyz[,2]))
 	dy <- y[-1] - y[-length(y)]
 	dy <- round(dy, digits)
 	
@@ -63,11 +66,17 @@ rasterFromXYZ <- function(xyz, res=c(NA, NA), crs=NA, digits=5) {
 	maxx <- max(x) + 0.5 * rx
 	miny <- min(y) - 0.5 * ry
 	maxy <- max(y) + 0.5 * ry
-	r <- raster(xmn=minx, xmx=maxx, ymn=miny, ymx=maxy, crs=crs)
+	
+	d <- dim(xyz)
+	if (d[2] <= 3) {
+		r <- raster(xmn=minx, xmx=maxx, ymn=miny, ymx=maxy, crs=crs)
+	} else {
+		r <- brick(xmn=minx, xmx=maxx, ymn=miny, ymx=maxy, crs=crs, nl=d[2]-2)	
+	}
 	res(r) <- c(rx, ry)
 	cells <- cellFromXY(r, xyz[,1:2])
-	if (dim(xyz)[2] > 2) {
-		r[cells] <- xyz[,3]
+	if (d[2] > 2) {
+		r[cells] <- xyz[,3:d[2]]
 	} 	
 	return(r)
 }	

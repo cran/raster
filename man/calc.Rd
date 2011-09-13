@@ -45,6 +45,18 @@ The following additional arguments can be passed, to replace default values for 
 a Raster* object
 }
 
+\note{
+For large objects \code{calc} will do computate values chunk by chunk. This means that for the result of \code{fun} to be  correct it should not depend on having access to _all_ values at once. For example, to scale the values of a Raster* object by subtracting its mean value (for each layer), you would _not_ do, for Raster object \code{x}: 
+
+\code{calc(x, function(x)scale(x, scale=FALSE))}
+
+Because the mean value of each chunk will likely be different. Rather do something like
+
+\code{m <- cellStats(x, 'mean')}
+
+\code{x - m}
+}
+
 
 \seealso{ \code{ \link[raster]{overlay}} ,  \code{ \link[raster]{reclass}},  \link[raster]{Arith-methods}, \link[raster]{Math-methods}, \code{ \link[raster]{reclass}}} 
 
@@ -109,6 +121,7 @@ x2 <- calc(s, fun)
 # get multiple layers, e.g. the slope _and_ intercept
 fun <- function(x) { lm(x ~ time)$coefficients }
 x3 <- calc(s, fun)
+
 }
 
 

@@ -6,7 +6,7 @@
 \title{Distance}
 
 \description{
-The function calculates the distance for all cells that are \code{NA}, to the nearest cell that is not \code{NA}.
+Calculate the distance, for all cells that are \code{NA}, to the nearest cell that is not \code{NA}.
  
 The distance unit is in meters if the RasterLayer is not projected (\code{+proj=longlat}) and in map units (typically also meters) when it is projected.
 }
@@ -25,6 +25,7 @@ distance(x, ...)
 The following additional arguments can be passed, to replace default values for this function
 \tabular{rll}{
   \tab \code{filename}  \tab Filename for the output RasterLayer \cr
+  \tab \code{doEdge}  \tab Logical. If \code{TRUE}, the \code{\link{edge}} function is called first. This may be efficient in cases where you compute the distance to large blobs. Calling edge determines the edge cells that matter for distance computation\cr
   \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
   \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
   \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
@@ -39,9 +40,7 @@ The following additional arguments can be passed, to replace default values for 
 \seealso{
 \code{\link[raster]{distanceFromPoints}},  \code{\link[raster]{gridDistance}},  \code{\link[raster]{pointDistance}}  
 
-For more advanced distances see the \code{gdistance} package (on R-Forge).
-
-For great-circle distances (and more) between points in longitude/latitude coordinates, see the \code{geosphere} package.
+See the \code{gdistance} package for more advanced distances, and the \code{geosphere} package for great-circle distances (and more) between points in longitude/latitude coordinates.
 }
 
 

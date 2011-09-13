@@ -10,9 +10,21 @@ if (!isGeneric("expand")) {
 		standardGeneric("expand"))
 }	
 
+
 setMethod('expand', signature(x='Raster', y='ANY'), 
 function(x, y, filename='', value=NA, ...) {
 
+	if (is.vector(y)) {
+		if (length(y) <= 2) {
+			adj <- abs(y) * rev(res(x))
+			y <- extent(x)
+			y@ymin <- y@ymin - adj[1]
+			y@ymax <- y@ymax + adj[1]
+			y@xmin <- y@xmin - adj[2]
+			y@xmax <- y@xmax + adj[2]
+		}
+	}
+	
 	test <- try ( y <- extent(y), silent=TRUE )
 	if (class(test) == "try-error") {
 		stop('Cannot get an Extent object from argument y')
@@ -20,15 +32,10 @@ function(x, y, filename='', value=NA, ...) {
 
 	filename <- trim(filename)
 	
-	y <- alignExtent(y, x)
-	e <- extent(y)
-	
-# only expanding here, not cutting
-	xmn <- min(e@xmin, xmin(x))
-	xmx <- max(e@xmax, xmax(x))
-	ymn <- min(e@ymin, ymin(x))
-	ymx <- max(e@ymax, ymax(x))
-	
+	y  <- alignExtent(y, x)
+# only expanding here, not cropping
+	y <- unionExtent(y, extent(x))
+
 	if (inherits(x, 'RasterLayer')) {
 		outRaster <- raster(x)
 	} else {
@@ -36,8 +43,7 @@ function(x, y, filename='', value=NA, ...) {
 	}
 	outRaster@layernames <- layerNames(x)
 
-	bndbox <- extent(xmn, xmx, ymn, ymx)
-	outRaster <- setExtent(outRaster, bndbox, keepres=TRUE)
+	outRaster <- setExtent(outRaster, y, keepres=TRUE)
 	
 	if (! hasValues(x) ) {
 		return(outRaster)

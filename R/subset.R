@@ -35,17 +35,13 @@ function(x, subset, drop=TRUE, ...) {
 	if (is.character(subset)) {
 		subset = .nameToIndex(subset, layerNames(x))
 	}
-	if (! all(subset %in% 1:nlayers(x))) {
-		stop('not a valid subset')
-	}
 	subset <- as.integer(subset)
 	nl <- nlayers(x)
+	if (! all(subset %in% 1:nl)) {
+		stop('not a valid subset')
+	}
 	if (nl==1) {
-		if (subset == 1) {
-			return(x)
-		} else {
-			return(brick(x, values=FALSE))
-		}
+		return(x)
 	}
 	
 	varname <- attr(x@data, "zvar")
@@ -53,7 +49,7 @@ function(x, subset, drop=TRUE, ...) {
 	
 	if (fromDisk(x)) {
 		if (drop & length(subset)==1) {
-			return( raster(filename(x), bands=subset, varname=varname) )
+			return( raster(filename(x), band=subset, varname=varname) )
 		} else {
 			return( stack(filename(x), bands=subset, varname=varname) )
 		}

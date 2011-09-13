@@ -70,8 +70,7 @@ setMethod("plot", signature(x='RasterStackBrick', y='ANY'),
 
 
 setMethod("plot", signature(x='RasterLayer', y='missing'), 
-
-function(x, col=rev(terrain.colors(255)), maxpixels=500000, oldstyle=FALSE, alpha=1, ...)  {
+	function(x, col=rev(terrain.colors(255)), maxpixels=500000, oldstyle=FALSE, alpha=1, ...)  {
 
 		if (alpha < 1) {
 			alpha <- max(alpha, 0) * 255 + 1
@@ -92,22 +91,59 @@ function(x, col=rev(terrain.colors(255)), maxpixels=500000, oldstyle=FALSE, alph
 )	
 
 
-setMethod("plot", signature(x='RasterStackBrick', y='RasterStackBrick'), 
-	function(x, y, maxpixels=100000, cex=0.1, ...)  {
-		plot(x[[1]], y[[1]], maxpixels=maxpixels, cex=cex, ...)
+
+
+setMethod("plot", signature(x='Raster', y='Raster'), 
+	function(x, y, maxpixels=100000, cex=0.1, xlab, ylab, ...)  {
+		compare(c(x, y), extent=TRUE, rowcol=TRUE, prj=FALSE, stopiffalse=TRUE) 
+		nl <- nlayers(x)
+		nl2 <- nlayers(y)
+		if (nl != nl2) {
+			warning('number of layers does not match')
+		}
+		nl <- min(nl, nl2)
+		if (nl > 16) {
+			warning('only first 16 layers are plotted')
+			nl <- 16
+		}
+		if (missing(xlab)) {
+			ln1 <- layerNames(x)
+		} else {
+			ln1 <- xlab
+			if (length(ln1) == 1) {
+				ln1 <- rep(ln1, nl)
+			}
+		}
+		if (missing(ylab)) {
+			ln2 <- layerNames(y)
+		} else {
+			ln2 <- ylab
+			if (length(ln1) == 1) {
+				ln2 <- rep(ln2, nl)
+			}
+		}
+
+		cells <- ncell(x)
+		x <- sampleRegular(x, size=maxpixels)
+		y <- sampleRegular(y, size=maxpixels)
+		if (length(x) < cells) {
+			warning(paste('plot used a sample of ', round(100*length(x)/nc), "% of the cells", sep=""))
+		}
+		
+		
+		if (nl > 1) {
+			old.par <- par(no.readonly = TRUE) 
+			on.exit(par(old.par))
+			nc <- ceiling(sqrt(nl))
+			nr <- ceiling(nl / nc)
+			par(mfrow=c(nr, nc), mar=c(4, 4, 2, 2))
+			for (i in 1:nl) {
+				plot(x[,i], y[,i], cex=cex, xlab=ln1[i], ylab=ln2[i], ...)			
+			}		
+		} else  {
+			plot(x, y, cex=cex, xlab=ln1[1], ylab=ln2[1], ...)			
+		}		
 	}
 )
 
-setMethod("plot", signature(x='RasterLayer', y='RasterLayer'), 
-	function(x, y, maxpixels=100000, cex=0.1, ...)  {
-		compare(c(x, y), extent=TRUE, rowcol=TRUE, prj=FALSE, stopiffalse=TRUE) 
-		nc <- ncell(x)
-		x <- sampleRegular(x, size=maxpixels)
-		y <- sampleRegular(y, size=maxpixels)
-		if (length(x) < nc) {
-			warning(paste('plot used a sample of ', round(100*length(x)/nc), "% of the cells", sep=""))
-		}
-		plot(x, y, cex=cex, ...)			
-	}
-)
 

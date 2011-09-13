@@ -16,9 +16,10 @@ expand(x, y, ...)
 }
 
 \arguments{
-  \item{x}{a RasterLayer object}
-  \item{y}{Extent object, or any object that is or has an Extent object, or an object from which it can be extracted (such as sp objects)}
-  \item{...}{additional arguments. See Details.}  
+  \item{x}{RasterLayer object}
+  \item{y}{Extent object, or any object that is or has an Extent object, or an object from which it can be extracted (such as sp objects). 
+  Alternatively, you can provide a vector of lenght 2 with the number indicating the amount of rows and columns that need to be added (or a single number when the number of rows and columns is equal)}
+  \item{...}{Additional arguments. See Details.}  
 }
 
 
@@ -47,6 +48,9 @@ r <- raster(xmn=-150, xmx=-120, ymx=60, ymn=30, ncol=36, nrow=18)
 r[] <- 1:ncell(r)
 bb <- extent(-180, 0, 0, 90)
 re <- expand(r, bb)
+
+# expand with a number of rows and columns (at each side)
+re2 <- expand(r, c(2,10))
 }
 
 \keyword{spatial}

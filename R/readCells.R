@@ -6,7 +6,7 @@
 #read data on the raster for cell numbers
 
 
-.readCells <- function(x, cells) {
+.readCells <- function(x, cells, layers) {
 	
 	if (length(cells) < 1) {
 #		cat(cells,"\n")
@@ -24,16 +24,23 @@
 		} else if ( fromDisk(x) ) {
 			if (length(uniquecells) > 100 & canProcessInMemory(x, 2)) {
 				vals <- getValues(x)
-				vals <- vals[uniquecells]
+				if (length(layers) > 1) {
+					vals <- vals[uniquecells, layers]
+				} else {
+					vals <- vals[uniquecells]				
+				}
 			} else if (x@file@driver == 'gdal') {
-				vals <- .readCellsGDAL(x, uniquecells)
-			} else if (x@file@driver == 'ascii') {
-				vals <- .readCellsAscii(x, uniquecells)			
+				vals <- .readCellsGDAL(x, uniquecells, layers)
+			} else if (x@file@driver == 'raster') {
+				vals <- .readCellsRaster(x, uniquecells, layers)
 			} else if (x@file@driver == 'netcdf') {
-				vals <- .readRasterCellsNetCDF(x, uniquecells)			
+				vals <- .readRasterCellsNetCDF(x, uniquecells) 
+			} else if (x@file@driver == 'ascii') {
+				# can only have one layer
+				vals <- .readCellsAscii(x, uniquecells)
 			} else {
-				vals <- .readCellsRaster(x, uniquecells)
-			}	
+				stop('I did not expect the code to get here. Please report')
+			}
 		} else { 
 			stop('no data on disk or in memory')
 		}	
@@ -43,9 +50,9 @@
 	
 	vals <- cbind(uniquecells, vals)
 	vals <- merge(x=cells[,2], y=vals, by=1, all=TRUE)
-	vals <- cbind(cells[,1], vals[,2])
+	vals <- as.matrix(cbind(cells[,1], vals[,2:ncol(vals)]))
 #	vals <- vals[order(cells[,1]), 2, drop=FALSE]
-	vals <- vals[order(cells[,1]), 2]
+	vals <- vals[order(cells[,1]), 2:ncol(vals)]
 	
 	if (x@data@gain != 1 | x@data@offset != 0) {
 		vals <- vals * x@data@gain + x@data@offset
@@ -54,12 +61,14 @@
 	return(vals)
 }
 
-
-.readCellsGDAL <- function(x, cells) {
+ 
+.readCellsGDAL <- function(x, cells, layers) {
 
 	if (! .requireRgdal() ) { stop('rgdal not available') }
-
-	colrow <- matrix(ncol=3, nrow=length(cells))
+	nl <- nlayers(x)
+	laysel <- length(layers)
+	
+	colrow <- matrix(ncol=2+laysel, nrow=length(cells))
 	colrow[,1] <- colFromCell(x, cells)
 	colrow[,2] <- rowFromCell(x, cells)
 	colrow[,3] <- NA
@@ -67,34 +76,60 @@
 
 	nc <- x@ncols
 	con <- GDAL.open(x@file@name, silent=TRUE)
-	for (i in 1:length(rows)) {
-		offs <- c(rows[i]-1, 0) 
-		v <- getRasterData(con, offset=offs, region.dim=c(1, nc), band = x@data@band)
-		thisrow <- subset(colrow, colrow[,2] == rows[i])
-		colrow[colrow[,2]==rows[i], 3] <- v[thisrow[,1]]
+	
+	if (laysel == 1) {
+		for (i in 1:length(rows)) {
+			offs <- c(rows[i]-1, 0) 
+			v <- getRasterData(con, offset=offs, region.dim=c(1, nc), band = layers)
+			# if  NAvalue() has been used.....
+			if (x@file@nodatavalue < 0) {
+				v[v <= x@file@nodatavalue] <- NA 			
+			} else {
+				v[v == x@file@nodatavalue] <- NA 			
+			}		
+			thisrow <- subset(colrow, colrow[,2] == rows[i])
+			colrow[colrow[,2]==rows[i], 3] <- v[thisrow[,1]]
+		}
+	} else {
+		for (i in 1:length(rows)) {
+			thisrow <- subset(colrow, colrow[,2] == rows[i])
+			if (nrow(thisrow) == 1) {
+				offs <- c(rows[i]-1, thisrow[,1]-1)
+				v <- as.vector( getRasterData(con, offset=offs, region.dim=c(1, 1)) )
+				if (x@file@nodatavalue < 0) {
+					v[v <= x@file@nodatavalue] <- NA 			
+				} else {
+					v[v == x@file@nodatavalue] <- NA 			
+				}		
+				colrow[colrow[,2]==rows[i], 2+(1:laysel)] <- v
+
+			} else {
+				offs <- c(rows[i]-1, 0)
+				v <- getRasterData(con, offset=offs, region.dim=c(1, nc))
+				v <- do.call(cbind, lapply(1:nl, function(i) v[,,i]))
+			
+			# if  NAvalue() has been used.....
+				if (x@file@nodatavalue < 0) {
+					v[v <= x@file@nodatavalue] <- NA 			
+				} else {
+					v[v == x@file@nodatavalue] <- NA 			
+				}		
+				colrow[colrow[,2]==rows[i], 2+(1:laysel)] <- v[thisrow[,1], layers]
+			}
+		}
 	}
 	closeDataset(con)
-
-	# if  NAvalue() has been used.....
-	if (x@file@nodatavalue < 0) {
-		colrow[colrow[, 3] <= x@file@nodatavalue, 3] <- NA 			
-	} else {
-		colrow[colrow[, 3] == x@file@nodatavalue, 3] <- NA 					
-	}		
-	return(colrow[, 3]) 
+	colnames(colrow)[2+(1:laysel)] <- layerNames(x)[layers]
+	return(colrow[, 2+(1:laysel)]) 
 }	
 
 
-.readCellsRaster <- function(x, cells) {
-	res <- vector(length=length(cells))
+
+
+.readCellsRaster <- function(x, cells, layers=1) {
+	nl <- length(layers)
+	res <- vector(length=length(cells)*nl)
 	res[] <- NA
-	dsize <- dataSize(x@file@datanotation)
-	if (.shortDataType(x@file@datanotation) == "FLT") { 
-		dtype <- "numeric"
-	} else { 
-		dtype <- "integer"
-	}
-	signed <- dataSigned(x@file@datanotation)
 	
 	if (! x@file@toptobottom) {
 		rows <- rowFromCell(x, cells)
@@ -105,19 +140,39 @@
 	cells <- cells + x@file@offset
 	
 	if (nbands(x) > 1) {
-		if (.bandOrder(x) == 'BIL') {
-			cells <- cells + (rowFromCell(x, cells)-1) * x@ncols * (nbands(x)-1) + (bandnr(x)-1) * x@ncols
-		} else if (.bandOrder(x) == 'BIP') {
-			cells <- (cells - 1) * nbands(x) + bandnr(x) - 1
-		} else if (.bandOrder(x) == 'BSQ') {	
-			cells <- cells + (bandnr(x)-1) * ncell(x)
+		if (inherits(x, 'RasterLayer')) {
+			if (.bandOrder(x) == 'BIL') {
+				cells <- cells + (rowFromCell(x, cells)-1) * x@ncols * (nbands(x)-1) + (bandnr(x)-1) * x@ncols
+			} else if (.bandOrder(x) == 'BIP') {
+				cells <- (cells - 1) * nbands(x) + bandnr(x)
+			} else if (.bandOrder(x) == 'BSQ') {	
+				cells <- cells + (bandnr(x)-1) * ncell(x)
+			}
+		} else {
+			if (.bandOrder(x) == 'BIL') {
+				cells <- rep(cells + (rowFromCell(x, cells)-1) * x@ncols * (nbands(x)-1) , each=nl) + (layers-1) * x@ncols
+			} else if (.bandOrder(x) == 'BIP') {
+				cells <- rep((cells - 1) * nbands(x), each=nl) + layers
+			} else if (.bandOrder(x) == 'BSQ') {	
+				cells <- rep(cells, each=nl) + (layers-1) * ncell(x)
+			}
 		}
 	}
 	
+	byteord <- x@file@byteorder
+	dsize <- dataSize(x@file@datanotation)
+	if (.shortDataType(x@file@datanotation) == "FLT") { 
+		dtype <- "numeric"
+	} else { 
+		dtype <- "integer"
+	}
+	cells <- (cells-1) * dsize
+	signed <- dataSigned(x@file@datanotation)
+
 	x <- openConnection(x)
 	for (i in seq(along=cells)) {
-		seek(x@file@con, (cells[i]-1) * dsize)
-		res[i] <- readBin(x@file@con, what=dtype, n=1, size=dsize, endian=x@file@byteorder, signed=signed) 
+		seek(x@file@con, cells[i])
+		res[i] <- readBin(x@file@con, what=dtype, n=1, size=dsize, endian=byteord, signed=signed) 
 	}
 	x <- closeConnection(x)
 	
@@ -131,7 +186,10 @@
 	} else {
 		res[res == x@file@nodatavalue] <- NA
 	}
-	
+	if (nl > 1) {
+		res <- t(matrix(res, nrow=nl))
+		colnames(res) <- layerNames(x)[layers]
+	}
 	return(res)
 }
 

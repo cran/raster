@@ -42,7 +42,7 @@ writeRaster(x, filename, ...)
 \tabular{rll}{
 \tab \code{x} \tab RasterLayer object \cr
 \tab \code{filename} \tab Output filename \cr
-\tab \code{bandorder} \tab Character. 'BIL', 'BIP', or 'BSQ'. For 'native' file formats only. For some other formats you can use the 'options' arugment (see below) \cr
+\tab \code{bandorder} \tab Character. 'BIL', 'BIP', or 'BSQ'. For 'native' file formats only. For some other formats you can use the 'options' argument (see below) \cr
 \tab \code{..} \tab Additional arguments. See below \cr
 }
 

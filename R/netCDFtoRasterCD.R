@@ -69,7 +69,7 @@
 }
 
 
-.varName <- function(nc, varname='') {
+.varName <- function(nc, varname='', warn=TRUE) {
 	n <- nc$nvars
 	vars <- vector(length=n)
 	if (n > 0) {
@@ -93,7 +93,9 @@
 				a = c(a, nc$var[[i]]$ndims) 
 			}
 			varname <- vars[which.max(a)]
-			warning('varname used is: ', varname, '\nIf that is not correct, set it to one of: ', paste(vars, collapse=", ") )
+			if (warn) {
+				warning('varname used is: ', varname, '\nIf that is not correct, set it to one of: ', paste(vars, collapse=", ") )
+			}
 		}
 	}
 
@@ -105,7 +107,7 @@
 }
 
 
-.rasterObjectFromCDF <- function(filename, varname='', band=NA, type='RasterLayer', lvar=3, level=1, ...) {
+.rasterObjectFromCDF <- function(filename, varname='', band=NA, type='RasterLayer', lvar=3, level=1, warn=TRUE, ...) {
 
 	if (!require(ncdf)) { stop('You need to install the ncdf package first') }
 	nc <- open.ncdf(filename)
@@ -114,7 +116,7 @@
 	conv <- att.get.ncdf(nc, 0, "Conventions")
 	# assuming "CF-1.0"
 	
-	zvar <- raster:::.varName(nc, varname)
+	zvar <- .varName(nc, varname, warn=warn)
 	
 	datatype <- raster:::.getRasterDTypeFromCDF( nc$var[[zvar]]$prec )
 	
