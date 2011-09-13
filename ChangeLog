@@ -1,14 +1,20 @@
---- 2-September, version 1.9-9
-layerNames are now preserved when writing to (.grd) files. Bug reported by Steven Mosher.
+--- 14-September-2011, version 1.9-12
+bug fix in sub (such that it can use field name in stead of colnumber). Reported by Alfredo Alessandrini
 
---- 28-August, version 1.9-8
+--- 11-September-2011, version 1.9-11
+new arguments to plot: fun (to transform values, e.g. log) and addfun to add e.g. points or polygons to each map in a RasterStack
+new argument to mask: inverse=FALSE to do mask areas that _are_ NA (rather than are _not_ NA) in the mask
+layerNames are now preserved when writing to (.grd) files. Bug reported by Steven Mosher.
+Bug fix: pairs did not show the correlation coefficient where there were NA values (reported by Jane Elith)
+
+--- 28-August-2011, version 1.9-8
 Improved handling of multifile ncdf files & varname argument, suggested by Matt Fischer. 
 cluster support for raster::predict function (run beginCluster() before using predict); but so far this seems to slow things down! 
 Much improved speed of the extract function for Raster objects with many layers. Low speed was a problem reported by Jan Verbesselt 
 http://r-sig-geo.2731867.n2.nabble.com/extracting-time-series-data-from-a-raster-brick-of-AVHRR-satellite-data-td6622055.html#a6629299
 and by Nathan Amboy.
 
---- 11-August, version 1.9-6
+--- 11-August-2011, version 1.9-6
 Bug fix with subset of a RasterBrick from disk. Reported by Stefan Schlaffer. 
 https://r-forge.r-project.org/tracker/?func=detail&atid=1189&aid=1520&group_id=294
 Some improvements to setValues with a RasterBrick based on suggestions by Julian Zeidler
