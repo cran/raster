@@ -1,4 +1,8 @@
+--- 15-September-2011, version 1.9-13
+Removed backwards compatibility issue (x <- normalizePath(x)  instead of x <- normalizePath(x, winslash = "/", FALSE), when creating raster from file). Reported by Julian Zeidler.
+
 --- 14-September-2011, version 1.9-12
+removed backwards compatability issue (for Linux) from vignette (\SweaveOpts{resolution=100}). Reported by Julian Zeidler 
 bug fix in sub (such that it can use field name in stead of colnumber). Reported by Alfredo Alessandrini
 
 --- 11-September-2011, version 1.9-11

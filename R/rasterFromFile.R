@@ -19,7 +19,7 @@
 	if (x=='' | x=='.') { # etc? 
 		stop('provide a valid filename')
 	}
-	x <- normalizePath(x, winslash = "/", FALSE)
+	x <- normalizePath(x)
 	
 	fileext <- toupper(extension(x)) 
 
