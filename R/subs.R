@@ -35,7 +35,7 @@ function(x, y, by=1, which=2, subsWithNA=TRUE, filename='', ...) {
 			if (is.na(by)) {stop("'by' is not a valid column name")}
 		}
 		if (is.character(which)) {
-			by <- which(which == colnames(y))[1]
+			which <- which(which == colnames(y))[1]
 			if (is.na(which)) {stop("'which' is not valid column name")}
 		}
 		

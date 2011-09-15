@@ -1,5 +1,5 @@
-7081f01114d7dce790444573eceed0ca *ChangeLog
-e0ae4bf1abaee1d1cb20a1423ffc1021 *DESCRIPTION
+ccfe1e07c93e07a240c8eae3402167d9 *ChangeLog
+79e7ab412e6a5bb01d66a27960069376 *DESCRIPTION
 e8fe88e69f6e91bc5b4d8135084e1f0c *NAMESPACE
 f93c54eb182270189b1ed903d71def6d *R/AAAClasses.R
 1e57c4c5bc9eee73ab452fae4125d72c *R/GDALtransient.R
@@ -74,7 +74,6 @@ b152118fb8681e612905be9eb1cbfa78 *R/factor.R
 370e965c621d93b84d164db6255be477 *R/flip.R
 4c2bee95a5b37c252b29c2ce9a299641 *R/focal.R
 f931aef8d77aa56e3c8d8d39c9571629 *R/focalFilter.R
-1ae0ae0afd813dc1767a19fa6d58bd36 *R/focalGeo.R
 62d2346d5ebc4cc9aef1cc3a8dfa87f1 *R/focalNA.R
 a90cfd2623c7b165c861a56606be6280 *R/focalValues.R
 8f68fea9bb33da228fdb32cbb0afacb1 *R/freq.R
@@ -216,7 +215,7 @@ a5cc010775fa646529ccbbce057c771e *R/show.R
 1c26993a363319693504fadcecc3aa86 *R/stackFile.R
 31823de6a7948dc8bc1101062f8b7a2d *R/stackSelect.R
 d89e9a9dd786c986bed756d775dfbe93 *R/stretch.R
-34787988ae9c6b4adc5948157e2ef892 *R/subs.R
+d183ae529edde9379c289777330b7be9 *R/subs.R
 91f0bcd58fa14fef447aee27838ebddd *R/subset.R
 ccfa5bdb980b1fe031f7f97708465e3d *R/summary-methods.R
 0344e6d4be9e1b2248dc042649214b8c *R/summary.R
@@ -247,12 +246,12 @@ aa0e6c64004ddf83d779923c8cbd3b0f *R/zApply.R
 293519a45b919389b6732dfb2ed096cb *R/zonal.R
 878045325deeb6df26ce02d1dbad7a17 *R/zoom.R
 f209886f74b2f384d3c80a8ddbbb9ca7 *R/zzz.R
-069f1be8062d7753bbcfaf231faaac35 *inst/doc/Raster.Rnw
-c2172974a94e2fa4d15aa6a3f81031c9 *inst/doc/Raster.pdf
+470571f5e9e249dc3fbdfc4daafd4b93 *inst/doc/Raster.Rnw
+e90ca3b9113700a64eeab3236bb9f922 *inst/doc/Raster.pdf
 cabe3641bc0b5e79eae8a1853e8a811c *inst/doc/functions.Rnw
-c5202ff40d2164ac340d2539393b4397 *inst/doc/functions.pdf
+8d6f3e57034718bcf6529e9724826f02 *inst/doc/functions.pdf
 cdf4af6595c744554a8b1e658c524cef *inst/doc/rasterfile.Rnw
-243618a647b5af80bcfb7bc5eb4fd6e5 *inst/doc/rasterfile.pdf
+9b449f778f1bf1bd2f669d61c62d9b25 *inst/doc/rasterfile.pdf
 40454ad99e7621a101f07038f6c55979 *inst/external/countries.csv
 7e1cc4f8e01df980c0e3b54d9797d6cd *inst/external/rlogo.grd
 b3ed7227bb04142c4a36cbe25067d5ac *inst/external/rlogo.gri
