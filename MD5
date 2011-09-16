@@ -1,5 +1,5 @@
-ccfe1e07c93e07a240c8eae3402167d9 *ChangeLog
-79e7ab412e6a5bb01d66a27960069376 *DESCRIPTION
+416d0276f5fdab124af5c7e74f05d610 *ChangeLog
+cc202a63dee98964260bacebe4499aaf *DESCRIPTION
 e8fe88e69f6e91bc5b4d8135084e1f0c *NAMESPACE
 f93c54eb182270189b1ed903d71def6d *R/AAAClasses.R
 1e57c4c5bc9eee73ab452fae4125d72c *R/GDALtransient.R
@@ -74,6 +74,7 @@ b152118fb8681e612905be9eb1cbfa78 *R/factor.R
 370e965c621d93b84d164db6255be477 *R/flip.R
 4c2bee95a5b37c252b29c2ce9a299641 *R/focal.R
 f931aef8d77aa56e3c8d8d39c9571629 *R/focalFilter.R
+1ae0ae0afd813dc1767a19fa6d58bd36 *R/focalGeo.R
 62d2346d5ebc4cc9aef1cc3a8dfa87f1 *R/focalNA.R
 a90cfd2623c7b165c861a56606be6280 *R/focalValues.R
 8f68fea9bb33da228fdb32cbb0afacb1 *R/freq.R
@@ -169,7 +170,7 @@ eb1b3fabe0fd95ad57bc99aa94462e0f *R/quantile.R
 582018baca24e017fd93b6ac7df61876 *R/rasterFromASCII.R
 802211c02c2cfbd701e62622178aa056 *R/rasterFromBIL.R
 a02966a8d729b38dc4140a8f3a61cdea *R/rasterFromCells.R
-7d7211a66ed7805fd4d0fda5a31ec165 *R/rasterFromFile.R
+ee4bb8fd1637f918ba94096fa2086784 *R/rasterFromFile.R
 c05fb0577464a73dd719feb006d223c3 *R/rasterFromGDAL.R
 daf3f46c3769550e9ebc68192d024b4e *R/rasterFromIDRISI.R
 e4e6394b53812142f2bf870802d6697b *R/rasterFromRasterFile.R
@@ -247,11 +248,11 @@ aa0e6c64004ddf83d779923c8cbd3b0f *R/zApply.R
 878045325deeb6df26ce02d1dbad7a17 *R/zoom.R
 f209886f74b2f384d3c80a8ddbbb9ca7 *R/zzz.R
 470571f5e9e249dc3fbdfc4daafd4b93 *inst/doc/Raster.Rnw
-e90ca3b9113700a64eeab3236bb9f922 *inst/doc/Raster.pdf
+c2172974a94e2fa4d15aa6a3f81031c9 *inst/doc/Raster.pdf
 cabe3641bc0b5e79eae8a1853e8a811c *inst/doc/functions.Rnw
-8d6f3e57034718bcf6529e9724826f02 *inst/doc/functions.pdf
+c5202ff40d2164ac340d2539393b4397 *inst/doc/functions.pdf
 cdf4af6595c744554a8b1e658c524cef *inst/doc/rasterfile.Rnw
-9b449f778f1bf1bd2f669d61c62d9b25 *inst/doc/rasterfile.pdf
+243618a647b5af80bcfb7bc5eb4fd6e5 *inst/doc/rasterfile.pdf
 40454ad99e7621a101f07038f6c55979 *inst/external/countries.csv
 7e1cc4f8e01df980c0e3b54d9797d6cd *inst/external/rlogo.grd
 b3ed7227bb04142c4a36cbe25067d5ac *inst/external/rlogo.gri
