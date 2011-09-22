@@ -106,8 +106,7 @@
 
 
 linesToRaster <- function(lns, raster, field=0, overlap='last', ...) {
-	.warnRasterize()
-	.linesToRaster(lns=lns, raster=raster, field=field, fun=overlap, ...)
+	stop('this function has been replaced by "rasterize"')
 }
 
 
@@ -190,14 +189,12 @@ linesToRaster <- function(lns, raster, field=0, overlap='last', ...) {
 		if (length(field) == nline) {
 			putvals <- field
 		} else {
-			stop('field should be a single value or equal the number of polygons') 
+			stop('field should be a single value or equal the number of lines') 
 		}	
-#	} else if (inherits(lns, 'SpatialLines') & overlap == 'sum') {
-#		putvals <- rep(1, nline)
-	} else if ( field < 0) {
+	} else if ( field <= 0) {
 		putvals <- rep(1, nline)
-	} else if ( field == 0 | class(lns) == 'SpatialLines') {
-		putvals <- as.integer(1:nline)
+	} else if (class(lns) == 'SpatialLines') {
+		putvals <- rep(field, nline)
 	} else {
 		putvals <- as.vector(lns@data[,field])
 		if (class(putvals) == 'factor') {

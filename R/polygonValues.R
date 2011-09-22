@@ -19,14 +19,20 @@ polygonValues <- function(p, x, ...) {
 
 	if (!missing(fun)) {
 		cellnumbers <- FALSE
+	} else if (weights) {
+		test <- try(slot(fun, 'generic') == 'mean', silent=TRUE)
+		if (!isTRUE(test)) {
+			warning('"fun" was changed to "mean"; other functions cannot be used when "weights=TRUE"' )
+		}
 	}
+	
 	if (missing(layer)) {
 		layer <- 1
 	} else {
 		layer <- max(min(nlayers(x), layer), 1)
 	}
 	if (missing(nl)) {
-		nl <- nlayers(x)
+		nl <- nlayers(x) - layer + 1
 	} else {
 		nl <- max(min(nlayers(x)-layer+1, nl), 1)
 	}
@@ -182,22 +188,33 @@ polygonValues <- function(p, x, ...) {
 			pbStep(pb)
 		}
 	}
-	res = res[1:npol]
+	res <- res[1:npol]
 	pbClose(pb)
 
 	if (! missing(fun)) {
 		if (weights) {
-			test <- try(slot(fun, 'generic') == 'mean', silent=TRUE)
-			if (!isTRUE(test)) {
-				warning('the fun argument was changed to "mean", as other functions cannot be used with weights' )
-			}
-			if (nlayers(x) > 1) {
-				nc <- nl + 1
-				res <- lapply(res, function(x) if (!is.null(x)) { x[,1:(nc-1)] * x[,nc]  / sum(x[,nc], na.rm=TRUE)} else NULL  )
-				res <- sapply(res, function(x) if (!is.null(x)) { apply(x, 2, sum)}  else rep(NA, nl) )		
-				res <- t(res)
+			if (nl > 1) {
+				meanfunc <- function(x) {
+					if (!is.null(x)) { 
+			# some complexity here because differnt layers could 
+			# have different NA cells
+						w <- x[,nl+1]
+						x <- x[,-(nl+1)]
+						x <- x * w
+						w <- matrix(rep(w, nl), ncol=nl)
+						w[is.na(x)] <- NA
+						w <- apply(w, 2, sum, na.rm=TRUE)
+						x <- apply(x, 1, function(x) x / w )
+						return( apply(x, 1, sum, na.rm=na.rm) )
+					} else {
+						return( NULL )
+					}	
+				}
+				res <- t(sapply(res, meanfunc))
 			} else {
+			
 				res <- sapply(res, function(x) if (!is.null(x)){ sum(apply(x, 1, prod)) / sum(x[,2])} else NA  )
+				
 			}
 			
 		} else {

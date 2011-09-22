@@ -6,7 +6,7 @@
 \title{ Draw a line or polygon }
 
 \description{
-Draw a line or polygon on a plot (map) and save it for later use
+Draw a line or polygon on a plot (map) and save it for later use. After calling the function, start clicking on the map. To finish, right-click and select 'stop'.
 }
 
 \usage{

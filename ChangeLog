@@ -1,8 +1,15 @@
+--- 22-September-2011, version 1.9-18
+option "useRaster" to plot. To use 'image' rather than 'rasterImage', because rasterImage not working on some platforms (windows server); in R versions above 2.13.0. The default is FALSE because 'image' is not working well in R 2.13.1 (it draws white lines over the image); but this was fixed in 2.13.1-patched and above.
+
+--- 21-September-2011, version 1.9-17
+Big speed gain (~50 times) for 'calc' with a RasterLayer. calc used apply(x, 1, fun), which is more natural for RasterStackBrick objects, where it simply should use fun(x).
+this can now be tested using (currently undocumented) arguments forcefun=TRUE or forceapply=TRUE
+
 --- 15-September-2011, version 1.9-13
 Removed backwards compatibility issue (x <- normalizePath(x)  instead of x <- normalizePath(x, winslash = "/", FALSE), when creating raster from file). Reported by Julian Zeidler.
 
 --- 14-September-2011, version 1.9-12
-removed backwards compatability issue (for Linux) from vignette (\SweaveOpts{resolution=100}). Reported by Julian Zeidler 
+removed backwards compatability issue (for Linux) from vignette (\SweaveOpts{resolution=100}). Reported by Mathieu Basille 
 bug fix in sub (such that it can use field name in stead of colnumber). Reported by Alfredo Alessandrini
 
 --- 11-September-2011, version 1.9-11

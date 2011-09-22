@@ -16,7 +16,7 @@
 		v <- rasterToPoints(object, fun=NULL, spatial=FALSE)
 		sp <- SpatialPoints(v[,1:2], proj4string=crs)
 		if (dataframe) {
-			sp <- SpatialPixelsDataFrame(points=sp, data=data.frame(v[,3:ncol(v), drop=FALSE]))
+			sp <- SpatialPixelsDataFrame(points=sp, data=data.frame(v[,3:ncol(v), drop=FALSE], check.names=TRUE))
 		} 
 		
 	} else {
@@ -28,13 +28,13 @@
 		grd <- GridTopology(cellcentre.offset=cc, cellsize=cs, cells.dim=cd)
 		if (dataframe) {
 			if (nlayers(object) > 1) {
-				sp <- SpatialGridDataFrame(grd, proj4string=crs, data=data.frame(getValues(object)))
+				sp <- SpatialGridDataFrame(grd, proj4string=crs, data=data.frame(values(object), check.names=TRUE))
 			} else {
-				sp <- SpatialGridDataFrame(grd, proj4string=crs, data=data.frame(values=getValues(object)))
-				ln <- trim(layerNames(object))
-				if (ln != '') {
-					colnames(sp@data) <- ln
-				}
+				ln <- layerNames(object)[1]
+				object <- matrix(values(object), ncol=1)
+				colnames(object) <- ln
+				object <- data.frame(object, check.names=TRUE)
+				sp <- SpatialGridDataFrame(grd, proj4string=crs, data=object)
 			}
 		} else { 
 			sp  <- SpatialGrid(grd, proj4string=crs)

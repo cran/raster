@@ -30,7 +30,9 @@ crosstab(x, y, ...)
 \tab \code{digits} \tab Integer. The number of digits for rounding the values before cross-tabulation\cr
 \tab \code{long} \tab Logical. If \code{TRUE} the results are returned in 'long' format (matrix with three columns) instead of a table\cr
 \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
-\tab \code{...} \tab Additional arguments that can be passed on to \code{\link[base]{table}}, such as \code{exclude=NULL} to include \code{NA} values in the tabulation
+\tab \code{...} \tab Additional arguments that can be passed on to \code{\link[base]{table}}, such as \code{exclude=NULL} 
+
+to include \code{NA} values in the tabulation
 }
 }
 

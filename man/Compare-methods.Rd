@@ -19,16 +19,12 @@ The following methods have been implemented for RasterLayer objects:
  \code{==, !=, >, <,  <=, >=}
 }
 
-\section{details}{
-If the values of the output RasterLayer cannot be held in memory, they will be saved to a temporary file unless a default filename has been set with \code{link[raster]{rasterOptions}}. You can also use \code{link[raster]{rasterOptions}} to set the format, datatype and overwrite options.
-}
-
 
 \value{
 A logical value or a RasterLayer object, and in some cases the side effect of a new file on disk.
 }
 
-\author{Robert J. Hijmans }
+\author{ Robert J. Hijmans }
 
 
 \examples{
@@ -41,7 +37,8 @@ r3 <- r1 == r2
 b <- extent(0, 360, 0, 180)
 r4 <- setExtent(r2, b)
 as(r2, 'BasicRaster') != as(r4, 'BasicRaster')
-# The following would give an error. You cannot compare RasterLayer object that do not have the same BasicRaster properties.
+# The following would give an error. You cannot compare RasterLayer 
+# that do not have the same BasicRaster properties.
 #r3 <- r1 > r4
 }
 

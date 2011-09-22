@@ -16,7 +16,7 @@
 	
 	asRaster <- function(x, col, breaks=NULL) {
 		if (!is.null(breaks)) {
-			x[] <- as.numeric(cut(x, breaks))
+			x[] <- as.numeric(cut(x, breaks, include.lowest=TRUE))
 		}
 		if (is.function(fun)) {
 			x[] <- fun(x)
