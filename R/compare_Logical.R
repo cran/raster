@@ -225,11 +225,55 @@ setMethod("Compare", signature(e1='Raster', e2='numeric'),
 )	
 
 
+
+
 setMethod("Compare", signature(e1='numeric', e2='Raster'),
 	function(e1,e2){
 		callGeneric(e2, e1)
 	}
 )	
+
+
+
+
+setMethod("Compare", signature(e1='Raster', e2='Raster'),
+    function(e1, e2){ 
+	
+		if (nlayers(e1) > 1) {
+			if (nlayers(e2) > 1 & nlayers(e2) != nlayers(e1)) {
+				stop('number of layers of objects do not match')
+			}
+			r <- brick(e1, values=FALSE)
+		} else if (nlayers(e2) > 1) {
+			r <- brick(e2, values=FALSE)
+		} else {
+			r <- raster(e1)
+		}
+	
+		cond <- compare(c(r, e2), extent=TRUE, rowcol=TRUE, prj=TRUE, tolerance=0.05, stopiffalse=FALSE) 
+		if (!cond) {
+			stop("Cannot compare Rasters that have different BasicRaster attributes. See compare()")
+		}	
+		
+		if (canProcessInMemory(r, 3)) {
+			dataType(r) <- 'LOG1S'
+			r <- setValues(r, callGeneric(getValues(e1), getValues(e2)))
+		} else {
+			tr <- blockSize(r)
+			pb <- pbCreate(tr$n, type=.progress())
+			r <- writeStart(r, filename=rasterTmpFile(), datatype='LOG1S', overwrite=TRUE )
+			for (i in 1:tr$n) {
+				v <- callGeneric(getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), getValues(e2, row=tr$row[i], nrows=tr$nrows[i]))
+				r <- writeValues(r, v, tr$row[i])
+				pbStep(pb, i) 
+			}
+			r <- writeStop(r)
+			pbClose(pb)
+		}	
+		return(r)
+	}
+)
+
 
 
 

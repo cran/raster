@@ -17,17 +17,20 @@ Get (or set) the number of rows, columns, and layers of a Raster* object. You ca
 
 \section{Methods}{
 \describe{
+
 \code{dim(x)}
 
-\tabular{rll}{
-\tab \code{x} \tab Raster* object \cr
-}
+If \code{x} is a Raster* object
+
+
 
 \code{dim(x) <- value}
 
 \tabular{rll}{
 \tab \code{x} \tab RasterLayer or RasterBrick) \cr
-\tab \code{value} \tab row number, or row _and_ column number (for a RasterLayer and a RasterBrick); or a row and column number _and_ the number of layers (only for a RasterBrick)  \cr
+\tab \code{value} \tab row number, or row _and_ column number (for a RasterLayer and a RasterBrick); 
+
+or a row and column number _and_ the number of layers (only for a RasterBrick)  \cr
 }
 }}
 

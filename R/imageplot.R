@@ -12,7 +12,7 @@
 # Licensed under the GPL -- www.gpl.org/licenses/gpl.html
     legend.shrink = 0.5, legend.width = 0.6, legend.mar = ifelse(horizontal, 3.1, 5.1), legend.lab = NULL, graphics.reset = FALSE, 
     bigplot = NULL, smallplot = NULL, legend.only = FALSE, col = heat.colors(nlevel), 
-    lab.breaks = NULL, axis.args = NULL, legend.args = NULL, midpoint = FALSE, box=TRUE, ...) {
+    lab.breaks = NULL, axis.args = NULL, legend.args = NULL, midpoint = FALSE, box=TRUE, useRaster=FALSE, ...) {
 
 	zlim <- range(z, na.rm = TRUE)
 
@@ -38,7 +38,7 @@
             par(plt = bigplot)
         }
 		if (R.Version()$minor >= 13) {
-			image(x, y, z, add = add, col = col, useRaster=TRUE, ...)
+			image(x, y, z, add = add, col = col, useRaster=useRaster, ...)
 		} else {
 			image(x, y, z, add = add, col = col, ...)
 		}
@@ -74,13 +74,13 @@
 		if (!horizontal) {
 			if (is.null(breaks)) {
 				if (R.Version()$minor >= 13) {
-					image(ix, iy, iz, xaxt="n", yaxt="n", xlab="", ylab="", col=col, useRaster=TRUE)
+					image(ix, iy, iz, xaxt="n", yaxt="n", xlab="", ylab="", col=col, useRaster=useRaster)
 				} else {
 					image(ix, iy, iz, xaxt="n", yaxt="n", xlab="", ylab="", col=col)				
 				}
 			} else {
 				if (R.Version()$minor >= 13) {
-					image(ix, iy, iz, xaxt="n", yaxt="n", xlab = "", ylab = "", col=col, breaks=breaks, useRaster=TRUE)
+					image(ix, iy, iz, xaxt="n", yaxt="n", xlab = "", ylab = "", col=col, breaks=breaks, useRaster=useRaster)
 				} else {
 					image(ix, iy, iz, xaxt="n", yaxt="n", xlab = "", ylab = "", col=col, breaks=breaks)				
 				}
@@ -88,13 +88,13 @@
 		} else {
 			if (is.null(breaks)) {
 				if (R.Version()$minor >= 13) {
-					image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col, useRaster=TRUE)
+					image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col, useRaster=useRaster)
 				} else {
 					image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col)				
 				}
 			} else {
 				if (R.Version()$minor >= 13) {
-					image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col, breaks = breaks, useRaster=TRUE)
+					image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col, breaks = breaks, useRaster=useRaster)
 				} else {
 					image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col, breaks = breaks)
 				}

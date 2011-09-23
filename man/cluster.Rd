@@ -1,4 +1,4 @@
-\name{Cluster}
+\name{cluster}
 
 \alias{beginCluster}
 \alias{endCluster}
@@ -31,7 +31,7 @@ endCluster()
 \details{
 Functions that are 'cluster-enabled' include: \code{ \link{predict}, \link{projectRaster}, \link{resample}, \link{distance},  \link{extract} (when using polygons)}.
 
-If you want to write your own cluster-enabled functions see \code{\link{getCluster}, \link{returnCluster}, and the vignette about writing functions }
+If you want to write your own cluster-enabled functions see \code{\link{getCluster}, \link{returnCluster}}, and the vignette about writing functions
 }
 
 \value{

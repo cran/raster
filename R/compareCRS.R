@@ -8,8 +8,7 @@
 	
 	
 	step1 <- function(z, verbatim) {
-		if (class(z) == 'character') { 	# do nothing
-		} else {
+		if (class(z) != 'character') { 	
 			z <- projection(z) # works for Raster and Spatial objects
 		}
 		z <- gsub(' ', '', z)

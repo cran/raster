@@ -27,13 +27,14 @@ Points, lines, and polygons can be drawn on top of a map using \code{plot(..., a
 \describe{
 \bold{x=RasterLayer}
 
-\code{plot(x, col=rev(terrain.colors(25)), maxpixels=100000, axes = TRUE, xlab="", ylab="", alpha=1, ...)}
+\code{plot(x, col=rev(terrain.colors(25)), maxpixels=100000, axes = TRUE, xlab="", ylab="", alpha=1, useRaster=TRUE, ...)}
 
 \tabular{rll}{
 \tab \code{x} \tab a RasterLayer object \cr
 \tab \code{col}  \tab  A color palette, i.e. a vector of n contiguous colors such as \code{\link{rainbow}}, \code{\link{heat.colors}}, and \code{\link{topo.colors}}, or one or your own making, perhaps using \code{\link{colorRampPalette}} \cr
 \tab \code{maxpixels}  \tab  Maximum number of pixels used for the map  \cr
 \tab \code{alpha}  \tab  Number between 0 and 1 to set transparancy. 0 is entirely transparant, 1 is not transparant  \cr
+\tab \code{useRaster}  \tab  If \code{TRUE}, the rasterImage function is used for plotting. Otherwise the image function is used. This can be useful if rasterImage does not work well on your system \cr
 \tab \code{...}  \tab  Any argument that can be passed to \code{\link[fields]{image.plot}} and to \code{\link[graphics]{plot}}  \cr
 }
 

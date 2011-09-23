@@ -9,7 +9,8 @@ Evaluate whether a two or more rasters have the same extent, number of rows and 
 }
 
 \usage{
-compare(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=FALSE, rotation=TRUE, tolerance, stopiffalse=TRUE, showwarning=FALSE) 
+compare(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=FALSE, 
+			rotation=TRUE, tolerance, stopiffalse=TRUE, showwarning=FALSE) 
 }
 
 \arguments{

@@ -36,57 +36,136 @@ if (!isGeneric("calc")) {
 }
 
 
-setMethod('calc', signature(x='Raster', fun='function'), 
-function(x, fun, filename='', na.rm, ...) {
-
-	nl <- nlayers(x)
-	tstdat <- x[1:5]
-
-	if (nl == 1) { 	
-		makemat <- TRUE	
-		tstdat <- matrix(tstdat, ncol=1)
-	} else { 
-		makemat <- FALSE  
+.calcTest <- function(tstdat, fun, na.rm, forcefun=FALSE, forceapply=FALSE) {
+	
+	if (forcefun & forceapply) {
+		forcefun <- FALSE
+		forceapply <- FALSE
 	}
 
+	
 	trans <- FALSE
-	doapply <- TRUE
-	if (! missing(na.rm)) {
-		test <- try( apply(tstdat, 1, fun, na.rm=na.rm), silent=TRUE)
-		if (class(test) == 'try-error') {
-			doapply <- FALSE
-			test <- try(fun(tstdat, na.rm=na.rm), silent=TRUE)
-			if (class(test) == 'try-error') {
-				stop("cannot use this function. Perhaps add '...' or 'na.rm' to the function arguments?") 
-			}
-		} else if (is.matrix(test)) {
-			trans <- TRUE
-		}
-	} else {
-		test <- try( apply(tstdat, 1, fun), silent=TRUE)
-		if (class(test) == 'try-error') {
-			doapply <- FALSE
-			test <- try(fun(tstdat), silent=TRUE)
-			if (class(test) == 'try-error') {
-				stop("cannot use this function") 
-			}
-		} else if (is.matrix(test)) {
-			trans <- TRUE
-		}
-	}
+	doapply <- FALSE
+	makemat <- FALSE
+	
+	nl <- NCOL(tstdat)
+		
+	if (nl == 1) {
 
+
+	# the main difference with nl > 1 is that
+	# it is important to avoid using apply when a normal fun( ) call will do. 
+	# that is a MAJOR time saver. But in the case of a RasterStackBrick it is more
+	# natural to try apply first. 	
+
+		if (forceapply) {
+			doapply <- TRUE
+			makemat <- TRUE	
+			tstdat <- matrix(tstdat, ncol=1)
+			if (missing(na.rm)) {
+				test <- try(fun(tstdat), silent=TRUE)
+			} else {
+				test <- try(fun(tstdat, na.rm=na.rm), silent=TRUE)
+			}
+			if (is.matrix(test)) {
+				if (ncol(test) > 1) {
+					trans <- TRUE
+				}
+			}
+		} else {
+			if (! missing(na.rm)) {
+				test <- try(fun(tstdat, na.rm=na.rm), silent=TRUE)
+				if (class(test) == 'try-error') {
+					test <- try( apply(tstdat, 1, fun, na.rm=na.rm), silent=TRUE)
+					doapply <- TRUE
+					if (class(test) == 'try-error') {
+						stop("cannot use this function. Perhaps add '...' or 'na.rm' to the function arguments?") 
+					} 
+					if (is.matrix(test)) {
+						if (ncol(test) > 1) {
+							trans <- TRUE
+						}
+					}
+				}
+			} else {
+				test <- try(fun(tstdat), silent=TRUE)
+				if (class(test) == 'try-error') {
+					doapply <- TRUE
+					test <- try( apply(tstdat, 1, fun), silent=TRUE)
+					if (class(test) == 'try-error') {
+						stop("cannot use this function") 
+					}
+					if (is.matrix(test)) {
+						if (ncol(test) > 1) {
+							trans <- TRUE
+						}
+					}
+				}
+			}
+		}
+
+	} else {
+	
+		if (forcefun) {
+			doapply <- FALSE
+			test  <- fun(tstdat)
+		} else {
+			doapply <- TRUE
+			if (! missing(na.rm)) {
+				test <- try( apply(tstdat, 1, fun, na.rm=na.rm), silent=TRUE)
+				if (class(test) == 'try-error') {
+					doapply <- FALSE
+					test <- try(fun(tstdat, na.rm=na.rm), silent=TRUE)
+					if (class(test) == 'try-error') {
+						stop("cannot use this function. Perhaps add '...' or 'na.rm' to the function arguments?") 
+					}
+				} else if (is.matrix(test)) {
+					trans <- TRUE
+				}
+			} else {
+				test <- try( apply(tstdat, 1, fun), silent=TRUE)
+				if (class(test) == 'try-error') {
+					doapply <- FALSE
+					test <- try(fun(tstdat), silent=TRUE)
+					if (class(test) == 'try-error') {
+						stop("cannot use this function") 
+					}
+				} else if (is.matrix(test)) {
+					trans <- TRUE
+				}
+			}
+		}
+	}	
+	
 	if (trans) {
 		test <- t(test)
 		test <- ncol(test)
 	} else {
 		test <- length(test) / 5
 	}
-	test <- as.integer(test)
-	if (test == 1) {
+	nlout <- as.integer(test)
+
+	list(doapply=doapply, makemat=makemat, trans=trans, nlout=nlout)
+}
+
+#.calcTest(test[1:5], fun, forceapply=T)
+
+
+setMethod('calc', signature(x='Raster', fun='function'), 
+function(x, fun, filename='', na.rm, forcefun=FALSE, forceapply=FALSE, ...) {
+
+	nl <- nlayers(x)
+
+	test <- .calcTest(x[1:5], fun, na.rm, forcefun, forceapply)
+	doapply <- test$doapply
+	makemat <- test$makemat
+	trans <- test$trans
+
+	if (test$nlout == 1) {
 		out <- raster(x)
 	} else {
 		out <- brick(x, values=FALSE)
-		out@data@nlayers <- test
+		out@data@nlayers <- test$nlout
 	}
 
 	fun <- .makeTextFun(fun)
@@ -173,4 +252,5 @@ function(x, fun, filename='', na.rm, ...) {
 	return(out)
 }
 )
+
 

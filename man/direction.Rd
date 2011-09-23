@@ -23,7 +23,9 @@ direction(x, ...)
 The following additional arguments can be passed, to replace default values for this function
 \tabular{rll}{
   \tab \code{fun} \tab A function that takes the direction (in radians!) as argument. E.g. \code{sin} \cr
-  \tab \code{from} \tab Logical. Default is \code{FALSE}. If \code{TRUE}, the direction from (instead of to) the nearest cell that is not \code{NA} is returned \cr
+  \tab \code{from} \tab Logical. Default is \code{FALSE}. If \code{TRUE}, the direction from (instead of to)
+
+  the nearest cell that is not \code{NA} is returned \cr
   \tab \code{filename}  \tab Filename for the output RasterLayer \cr
   \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
   \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr

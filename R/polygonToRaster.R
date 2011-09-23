@@ -59,20 +59,8 @@
 
 
 
-
-.warnRasterize <- function(n=4) {
-	d <- getOption('rasterRasterizeWarningGiven')
-	if (is.null(d)) { d <- 1 } else { d <- as.numeric(d) + 1 }
-	if (d < n) {
-		warning('this is an obsolete function. Use "rasterize"')
-		options('rasterRasterizeWarningGiven' = d)
-	}
-}
-
-
 polygonsToRaster <- function(p, raster, field=0, overlap='last', ...) {
-	.warnRasterize()
-	.polygonsToRaster(p, raster, field=field, fun=overlap, ...)
+	stop('this function has been replaced by "rasterize"')
 }
 
 
