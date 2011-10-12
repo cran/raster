@@ -8,6 +8,8 @@
 
 focalFilter <- function(x, filter, fun=sum, filename="", na.rm=FALSE, pad=TRUE, padValue=NA, ...) {
 
+	warning('this function is depracated. Please use "focal"')
+
 	stopifnot(nlayers(x) == 1)
 	stopifnot(is.matrix(filter))
 	

@@ -4,35 +4,35 @@
 \alias{lineValues}
 \alias{xyValues}
 
+\alias{pointsToRaster}
+\alias{linesToRaster}
+\alias{polygonsToRaster}
+
+
 \title{ Obsolete functions }
 
 \description{
-Obsolete functions. Use \code{\link[raster]{extract}} instead.
+Obsolete functions. Use \code{\link{extract}} or \code{\link{rasterize}} instead.
 }
 
 \usage{
-polygonValues(p, x, ...)
-lineValues(lns, x, ...)
-xyValues(object, xy, ...)
+polygonValues(...)
+lineValues(...)
+xyValues(...)
+pointsToRaster(...)
+linesToRaster(...)
+polygonsToRaster(...)
 }
 
 \arguments{
-\item{p}{SpatialPolygons* object}
-\item{lns}{SpatialLines* object}
-\item{x}{Raster* object}
- \item{object}{Raster* object}
- \item{xy}{Coordinates (e.g. a matrix of two columns or a SpatialPoints* object)}
-\item{...}{additional arguments}
+\item{...}{arguments}
 }
 
 \value{
-A list
+An error message
 }
 
-\seealso{ \code{\link[raster]{extract} } }
-
-\author{Robert J. Hijmans }
+\seealso{ \code{\link[raster]{extract}, \link[raster]{rasterize}} }
 
 
 \keyword{methods}
-\keyword{spatial}

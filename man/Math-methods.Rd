@@ -3,6 +3,7 @@
 \docType{methods}
 
 \alias{Math-methods}
+\alias{log,Raster-method}
 
 \title{Mathematical functions}
 
@@ -14,9 +15,7 @@ Generic mathematical functions that can be used with a Raster* object as argumen
 
 
 \section{Note}{
-If the values of the output Raster* object cannot be held in memory, they will be saved to a temporary file. 
-
-If you want to set the filename (and perhaps format and datatype), use \code{\link[raster]{calc}} instead of the Math-methods.
+You can use the, somewhat more flexible, function \code{\link[raster]{calc}} instead of the Math-methods.
 }
 
 \seealso{ \code{\link[raster]{Arith-methods}}, \code{\link{calc}}, \code{\link{overlay}}, \code{\link{atan2}} }

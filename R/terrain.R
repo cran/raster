@@ -1,0 +1,118 @@
+# Author: Robert J. Hijmans
+# Date : February 2011
+# Version 1.0
+# Licence GPL v3
+
+
+terrain <- function(x, filename='', opt='', unit='radians', neighbors=8, ...) {
+	
+	if (nlayers(x) > 1) {
+		warning('first layer of x is used')
+		x <- subset(x, 1)
+	}
+	stopifnot(hasValues(x))
+	
+	stopifnot(is.character(filename))
+	filename <- trim(filename)
+
+	stopifnot(is.character(opt))
+	opt <- trim(tolower(opt))
+	i <- which(! opt %in% c('tri', 'tpi', 'roughness','slope', 'aspect'))
+	if (length(i) > 0) {
+		stop('invalid value in "opt"')
+	}
+	stopifnot(length(opt) > 0 ) 
+	
+
+	nopt <- rep(0, 7)
+	if ('tri' %in% opt) {
+		nopt[1] <- 1
+	} 
+	if ('tpi' %in% opt) {
+		nopt[2] <- 1
+	} 
+	if ('roughness' %in% opt) {
+		nopt[3] <- 1
+	}
+	if ('slope' %in% opt) {
+		if (neighbors == 4) {
+			nopt[4] <- 1
+		} else {
+			nopt[6] <- 1
+		}
+	}
+	if ('aspect' %in% opt) {
+		if (neighbors == 4) {
+			nopt[5] <- 1
+		} else {
+			nopt[7] <- 1
+		}
+	} 
+	nopt <- as.integer(nopt)
+	nl <- sum(nopt)
+	
+	if (nl == 1) {
+		out <- raster(x)
+	} else {
+		out <- brick(x, values=FALSE, nl=nl)
+	}
+	layerNames(out) <- c('tri', 'tpi', 'roughness','slope', 'aspect', 'slope', 'aspect')[as.logical(nopt)]
+
+	rs <- as.double(res(out))
+	un <- as.integer(1)
+	y <- 0;
+	lonlat <- FALSE
+	if ('slope' %in% opt | 'aspect' %in% opt) {
+		stopifnot(is.character(unit))
+		unit <- trim(tolower(unit))
+		stopifnot(unit %in% c('degrees', 'radians'))
+		if (unit=='degrees') {
+			un <- as.integer(0)
+		}
+		stopifnot(neighbors %in% c(4, 8))
+		stopifnot(projection(x) != "NA")
+		lonlat <- isLonLat(out)
+		if (lonlat) {		
+			rs[2] <- pointDistance(cbind(0,0), cbind(0, rs[2]), longlat=TRUE)
+			y <- yFromRow(x, 1:nrow(x))
+		}
+	}
+	lonlat <- as.integer(lonlat)
+	
+	
+	if (canProcessInMemory(out)) {
+		v <- .Call('terrain', as.double(values(x)), as.integer(dim(out)), rs, un, nopt, lonlat, y, NAOK=TRUE, PACKAGE='raster')
+		out <- setValues(out, v)
+		if (filename  != '') {
+			out <- writeRaster(out, filename, ...)
+		}
+	} else {
+
+		out <- writeStart(out, filename, ...)
+		tr <- blockSize(out, minblocks=3, minrows=3)
+		nc <- ncol(out)
+		buf <- 1:nc
+		v <- getValues(x, row=1, nrows=tr$nrows[1]+1)
+		v <- .Call('terrain', as.double(v), as.integer(c(tr$nrows[1]+1, nc)), rs, un, nopt, lonlat, y, NAOK=TRUE, PACKAGE='raster')
+		out <- writeValues(out, matrix(v, ncol=nl), 1)
+		for (i in 2:(tr$n-1)) {
+			v <- getValues(x, row=tr$row[i]-1, nrows=tr$nrows[i]+2)
+			v <- .Call('terrain', as.double(v), as.integer(c(tr$nrows[i]+2, nc)), rs, un, nopt, lonlat, y, NAOK=TRUE, PACKAGE='raster')
+			v <- matrix(v, ncol=nl)[-buf,]
+			out <- writeValues(out, v, tr$row[i])
+		}
+		i <- tr$n
+		v <- getValues(x, row=tr$row[i]-1, nrows=tr$nrows[i]+1)
+		v <- .Call('terrain', as.double(v), as.integer(c(tr$nrows[i]+1, nc)), rs, un, nopt, lonlat, y, NAOK=TRUE, PACKAGE='raster')
+		v <- matrix(v, ncol=nl)[-buf,]
+		out <- writeValues(out, v, tr$row[i])
+		out <- writeStop(out)
+	}
+	
+	return(out)
+}
+
+
+# x <- terrain(utm, out='tri')
+
+ 

@@ -22,6 +22,9 @@ if (!isGeneric('writeValues')) {
 setMethod('writeStart', signature(x='RasterLayer', filename='character'), 
 function(x, filename, options=NULL, format, ...) {
 
+	if (filename == '') { 
+		filename <- rasterTmpFile() 
+	}
 	filename <- .fullFilename(filename)
 	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)
@@ -41,6 +44,9 @@ function(x, filename, options=NULL, format, ...) {
 setMethod('writeStart', signature(x='RasterBrick', filename='character'), 
 function(x, filename, options=NULL, format, ...) {
 
+	if (filename == '') { 
+		filename <- rasterTmpFile() 
+	}
 	filename <- .fullFilename(filename)
 	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)

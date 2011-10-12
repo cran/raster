@@ -7,7 +7,7 @@
 \alias{mask,RasterStackBrick,RasterLayer-method}
 \alias{mask,RasterLayer,RasterStackBrick-method}
 \alias{mask,RasterStackBrick,RasterStackBrick-method}
-\alias{mask,Raster,SpatialPolygons-method}
+\alias{mask,Raster,Spatial-method}
 
 \title{Mask values in a Raster object}
 
@@ -22,7 +22,7 @@ mask(x, mask, ...)
 
 \arguments{
 \item{x}{Raster* object}
-\item{mask}{Raster* object or a SpatialPolygons* object}
+\item{mask}{Raster* object or a Spatial* object}
 \item{...}{Additional arguments. See under Methods}  
 }
 

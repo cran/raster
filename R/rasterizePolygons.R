@@ -58,12 +58,6 @@
 
 
 
-
-polygonsToRaster <- function(p, raster, field=0, overlap='last', ...) {
-	stop('this function has been replaced by "rasterize"')
-}
-
-
 .polygonsToRaster <- function(p, raster, field=0, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue="all", getCover=FALSE, filename="", silent=FALSE, ...) {
 
 	dots <- list(...)

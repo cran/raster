@@ -5,7 +5,7 @@
 
 
 
-.plotraster <- function(object, col=rev(terrain.colors(25)), maxpixels=100000, axes=TRUE, xlab='', ylab='', ext=NULL, asp, xlim, ylim, ...) {
+.plotraster <- function(object, col=rev(terrain.colors(25)), maxpixels=100000, axes=TRUE, xlab='', ylab='', ext=NULL, asp, xlim, ylim, add=FALSE, addfun=NULL, ...) {
 
   	if (missing(asp)) {
 		if (.couldBeLonLat(object, warnings=FALSE)) {
@@ -63,10 +63,17 @@
 	z[is.infinite(z)] <- NA
 
 	if (length(leg@color) > 0) {
-		.imageplot(x, y, z, col=col, axes=axes, xlab=xlab, ylab=ylab, asp=asp, breaks=breaks, lab.breaks=lab.breaks, ...)
+		.imageplot(x, y, z, col=col, axes=axes, xlab=xlab, ylab=ylab, asp=asp, breaks=breaks, lab.breaks=lab.breaks, add=add, ...)
 	} else {
-		.imageplot(x, y, z, col=col, axes=axes, xlab=xlab, ylab=ylab, asp=asp, ...)	
+		.imageplot(x, y, z, col=col, axes=axes, xlab=xlab, ylab=ylab, asp=asp, add=add, ...)	
 	}
+	
+	if (!is.null(addfun)) {
+		if (is.function(addfun)) {
+			addfun()
+		}
+	}
+	
 }
 
 

@@ -4,16 +4,23 @@
 # Licence GPL v3
 
 
-polygonValues <- function(p, x, ...) {	
-	stop('function no longer available. Please use "extract"')
-}
 
 
-.polygonValues <- function(x, p, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, layer, nl, ...) {
-	spbb <- bbox(p)
+setMethod('extract', signature(x='Raster', y='SpatialPolygons'), 
+function(x, y, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, layer, nl, ...){ 
+
+	px <- projection(x, asText=FALSE)
+	comp <- .compareCRS(px, projection(y), unknown=TRUE)
+	if (!comp) {
+		if (! .requireRgdal() ) { stop('rgdal not available') }
+		warning('Transforming SpatialPolygons to the CRS of the Raster')
+		y <- spTransform(y, px)
+	}
+	
+	spbb <- bbox(y)
 	rsbb <- bbox(x)
 	addres <- max(res(x))
-	npol <- length(p@polygons)
+	npol <- length(y@polygons)
 	res <- list()
 	res[[npol+1]] = NA
 
@@ -54,7 +61,7 @@ polygonValues <- function(p, x, ...) {
 		flush.console()
 
 		clFun <- function(i) {
-			pp <- p[i,]
+			pp <- y[i,]
 			spbb <- bbox(pp)
 		
 			if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
@@ -132,7 +139,7 @@ polygonValues <- function(p, x, ...) {
 		
 	} else {
 		for (i in 1:npol) {
-			pp <- p[i,]
+			pp <- y[i,]
 			spbb <- bbox(pp)
 		
 			if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
@@ -233,5 +240,5 @@ polygonValues <- function(p, x, ...) {
 	}
 	res
 }
-
+)
 

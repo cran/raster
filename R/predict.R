@@ -132,20 +132,30 @@ setMethod('predict', signature(object='Raster'),
 				blockvals <- na.omit(blockvals)		
 			}
 
-			if (nrow(blockvals) == 0 ) {
+			nrb <- nrow(blockvals)
+			if (nrb == 0 ) {
 				predv <- napred
 			} else {
 	
 				if (doCluster) {
-					predv <- unlist( clusterApply(cl, splitRows(blockvals, length(cl)), fun, object=model))
+				
+					predv <- clusterApply(cl, splitRows(blockvals, length(cl)), fun, object=model, ...)
+					if (is.list(predv[[1]])) {
+						predv <- lapply(predv, function(x) {
+												x <- unlist(x)
+												x <- matrix(x, nrow=nrb)
+											})
+					} else {
+						predv <- do.call(rbind, clusterApply(cl, splitRows(blockvals, length(cl)), fun, object=model, ...))
+					}
 				} else {
 					predv <- fun(model, blockvals, ...)
 				}
 		
 				if (class(predv)[1] == 'list') {
-					predv = unlist(predv)
+					predv <- unlist(predv)
 					if (length(predv) != nrow(blockvals)) {
-						predv = matrix(predv, nrow=nrow(blockvals))
+						predv <- matrix(predv, nrow=nrow(blockvals))
 					}					
 				} else if (is.array(predv)) {
 					predv <- as.matrix(predv)

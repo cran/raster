@@ -14,7 +14,11 @@ if (!isGeneric("minValue")) {
 setMethod('minValue', signature(x='RasterLayer'), 
 	function(x, layer=-1, warn=TRUE) {
 		if ( x@data@haveminmax ) {
-			return(x@data@min)
+			if (! inMemory(x) ) {
+				return(x@data@min * x@data@gain + x@data@offset)
+			} else {
+				return(x@data@min)
+			}
 		} else {
 			if (warn) warning('min value not known, use setMinMax')
 			return(NA)
@@ -28,14 +32,18 @@ setMethod('minValue', signature(x='RasterBrick'),
 		layer <- round(layer)
 		if (layer < 1) { 
 			if ( x@data@haveminmax ) {
-				return(x@data@min)
+				if (! inMemory(x) ) {
+					return(x@data@min * x@data@gain + x@data@offset)
+				} else {
+					return(x@data@min)				
+				}
 			} else {
 				warning('min value not known, use setMinMax')
 				return(rep(NA, nlayers(x)))
 			}
 		} else {
 			if ( x@data@haveminmax ) {
-				return(x@data@min[layer])
+				return(x@data@min[layer] * x@data@gain + x@data@offset)
 			} else {
 				warning('min value not known, use setMinMax')
 				return(NA)
@@ -75,7 +83,7 @@ if (!isGeneric("maxValue")) {
 setMethod('maxValue', signature(x='RasterLayer'), 
 	function(x, layer=-1, warn=TRUE) {
 		if ( x@data@haveminmax ) {
-			return(x@data@max)
+			return(x@data@max * x@data@gain + x@data@offset)
 		} else {
 			if (warn) warning('max value not known, use setMinMax')
 			return(NA)
@@ -88,14 +96,14 @@ setMethod('maxValue', signature(x='RasterBrick'),
 		layer <- round(layer)
 		if (layer < 1) { 
 			if ( x@data@haveminmax ) {
-				return(x@data@max)
+				return(x@data@max * x@data@gain + x@data@offset)
 			} else {
 				warning('max value not known, use setMinMax')
 				return(rep(NA, nlayers(x)))
 			}
 		} else {
 			if ( x@data@haveminmax ) {
-				return(x@data@max[layer])
+				return(x@data@max[layer] * x@data@gain + x@data@offset)
 			} else {
 				warning('max value not known, use setMinMax')
 				return(NA)

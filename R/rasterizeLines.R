@@ -105,11 +105,6 @@
 }
 
 
-linesToRaster <- function(lns, raster, field=0, overlap='last', ...) {
-	stop('this function has been replaced by "rasterize"')
-}
-
-
 .linesToRaster <- function(lns, raster, field=0, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue="all", filename="", ...) {
 
 	dots <- list(...)

@@ -31,8 +31,11 @@ function(x, y,..., tolerance=0.05, filename="", format, overwrite, progress, tes
 	
 	nl <- unique(sapply(x, nlayers))
 	if (length(nl) != 1) {
-		# to do, recycling, should be OK of one of the two has a single layer
-		stop( 'different number of layers' )
+		if (length(nl) == 2 & min(nl) == 1) {
+			nl <- max(nl)
+		} else {
+			stop( 'different number of layers' )
+		}
 	}
 	compare(x, extent=FALSE, rowcol=FALSE, orig=TRUE, res=TRUE, tolerance=tolerance)
 	
@@ -65,8 +68,12 @@ function(x, y,..., tolerance=0.05, filename="", format, overwrite, progress, tes
 			for (i in 1:length(x)) {
 				cells <- cellsFromExtent( outRaster, extent(x[[i]]) )
 				vv <- v[cells, ]
-				na = as.logical( apply(vv, 1, FUN=function(x) sum(is.na(x))==nl) )
-				vv[na, ] <- getValues(x[[i]])[na, ]
+				na <- as.logical( apply(vv, 1, FUN=function(x) sum(is.na(x))==nl) )
+				dat <- getValues(x[[i]])
+				if (!is.matrix(dat)) {
+					dat <- matrix(dat, ncol=1)
+				}
+				vv[na, ] <- dat[na, ]
 				v[cells, ] <- vv
 			}
 		} else {

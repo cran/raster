@@ -19,7 +19,8 @@ One of the advantages of these wrapper functions is the additional \code{maxpixe
 
 \tabular{rll}{
 \tab \code{obj} \tab  A Raster* object  \cr
-\tab \code{...} \tab  Any argument that can be passed to \code{\link[sp]{spplot}} and link[lattice]{levelplot} or to \code{\link[ggplot2]{ggplot}}\cr  \tab \code{maxpixels} \tab Integer. Number of pixels to sample from each layer of large Raster objects \cr
+\tab \code{...} \tab  Any argument that can be passed to \code{\link[sp]{spplot}} and \link[lattice]{levelplot} \cr
+\tab \code{maxpixels} \tab Integer. Number of pixels to sample from each layer of large Raster objects \cr
 }
 }}
 
@@ -27,7 +28,7 @@ One of the advantages of these wrapper functions is the additional \code{maxpixe
 \seealso{
 \code{ \link[raster]{plot}, \link[raster]{plotRGB} }
 
-The rasterVis package has more advanced plotting methods
+The rasterVis package has more advanced plotting methods for Raster objects
 }
 
 \author{ Robert J. Hijmans}

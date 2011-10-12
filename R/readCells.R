@@ -53,9 +53,11 @@
 	vals <- as.matrix(cbind(cells[,1], vals[,2:ncol(vals)]))
 #	vals <- vals[order(cells[,1]), 2, drop=FALSE]
 	vals <- vals[order(cells[,1]), 2:ncol(vals)]
-	
-	if (x@data@gain != 1 | x@data@offset != 0) {
-		vals <- vals * x@data@gain + x@data@offset
+
+	if (! inMemory(x) ) {
+		if (x@data@gain != 1 | x@data@offset != 0) {
+			vals <- vals * x@data@gain + x@data@offset
+		}
 	}
 	
 	return(vals)

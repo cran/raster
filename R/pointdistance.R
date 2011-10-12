@@ -115,11 +115,13 @@ pointDistance <- function (p1, p2, longlat,  ...) {
 }
 
 .haversine <- function(x1, y1, x2, y2, r=6378137) {
-	x1 <- x1 * pi / 180
-	y1 <- y1 * pi / 180
-	x2 <- x2 * pi / 180
-	y2 <- y2 * pi / 180
+	adj <- pi / 180
+	x1 <- x1 * adj
+	y1 <- y1 * adj
+	x2 <- x2 * adj
+	y2 <- y2 * adj
 	x <- sqrt((cos(y2) * sin(x1-x2))^2 + (cos(y1) * sin(y2) - sin(y1) * cos(y2) * cos(x1-x2))^2)
 	y <- sin(y1) * sin(y2) + cos(y1) * cos(y2) * cos(x1-x2)
 	return ( r * atan2(x, y) )
 }
+

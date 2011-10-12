@@ -10,14 +10,19 @@ if (!isGeneric("mask")) {
 }	
 
 
-setMethod('mask', signature(x='Raster', mask='SpatialPolygons'), 
+setMethod('mask', signature(x='Raster', mask='Spatial'), 
 function(x, mask, filename="", inverse=FALSE, ...){ 
 	if (inverse) {
 		mask <- rasterize(mask, x, -1)
 		mask(x, mask, filename=filename, ...)
 	
 	} else {
-		rasterize(mask, x, filename=filename, mask=TRUE, ...)
+		if (nlayers(x) > 1) {
+			mask <- rasterize(mask, x, -1)
+			mask(x, mask, filename=filename, ...)
+		} else {
+			rasterize(mask, x, filename=filename, mask=TRUE, ...)
+		}
 	}
 } )
 

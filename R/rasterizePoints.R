@@ -4,11 +4,6 @@
 # Licence GPL v3
 
 
-pointsToRaster <- function(raster, xy, values=1, fun, ...) {
-	stop('this function has been replaced by "rasterize"')
-}
-
-
 
 .pointsToRaster <- function(xy, raster, field=1, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue='all', filename="", na.rm=TRUE, ...) {
 

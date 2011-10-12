@@ -32,7 +32,7 @@ This (hopefully) allows for reading the binary data (.gri), perhaps after changi
 
 \examples{ 
 r <- raster(system.file("external/test.grd", package="raster"))
-r <- writeRaster(r, filename='export.grd')
+r <- writeRaster(r, filename='export.grd', overwrite=TRUE)
 hdr(r, format="ENVI") 
 }
 

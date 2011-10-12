@@ -116,8 +116,8 @@ r2 <- predict(logo, model, fun=predfun, index=1:2)
 # principal components of a RasterBrick
 # here using sampling to simulate an object too large
 # too feed all its values to prcomp
-v <- sampleRandom(logo, 100)
-pca <- prcomp(v)
+sr <- sampleRandom(logo, 100)
+pca <- prcomp(sr)
 
 # note the use of the 'index' argument
 x <- predict(logo, pca, index=1:3)

@@ -1,135 +1,267 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
-# Date :  February 2009
-# Version 0.9
+# Author: Robert J. Hijmans
+# Date :  October 2011
+# Version 1.0
 # Licence GPL v3
 
+focal <- function(x, w, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=FALSE, ...) {
 
-
-.checkngb <- function(ngb) {
-	ngb <- as.integer(round(ngb))
-	if (length(ngb) == 1) {
-		ngb <- c(ngb, ngb)
-	} else if (length(ngb) > 2) {
-		stop('ngb should be a single value or two values')
-	}
-	if (min(ngb) < 1) { stop("ngb should be larger than 1") } 
-	return(ngb)
-}
-
-
-focal <- function(x, ngb=3, fun=mean, na.rm=TRUE, filename="", ...) {
-
-	stopifnot(nlayers(x) == 1)
+	stopifnot(nlayers(x)==1)
+	stopifnot(hasValues(x))
 	
-	ngb <- .checkngb(ngb)
+	# mistakes because of differences with old focal and old focalFilter
+	dots <- list(...)
+	if (!is.null(dots$filter)) {
+		if (missing(w)) {
+			w <- dots$filter
+			warning('argument "filter" is wrong; use "w" instead')
+		} else {
+			warning('argument "filter" is ignored!')
+		}
+	}
+	if (!is.null(dots$ngb)) {
+		if (missing(w)) {
+			w <- dots$ngb
+			warning('argument "ngb" is wrong; use "w" instead')
+		} else {
+			warning('argument "ngb" is ignored!')		
+		}
+	}
+	
+	if (missing(w)) {
+		stop('argument "w" is missing')
+	}
+	if (length(w) == 1) {
+		w <- round(w)
+		stopifnot(w > 1)
+		w=matrix(1, nc=w, nr=w)
+	} else if (length(w) == 2) {
+		w <- round(w)
+		w=matrix(1, nc=w[1], nr=w[2])
+	} 
+	if (! is.matrix(w) ) {
+		stop('w should be a single number, two numbers, or a matrix')
+	} 
+	d <- dim(w)
+	if (prod(d) == 0) { stop('ncol and nrow of w must be > 0') }
+	if (min(d %% 2) == 0) { stop('w must have uneven sides') }	
+	
+	
+	# to get the weights in the (by row) order for the C routine
+	# but keeping nrow and ncol as-is
+	w[] <- as.vector(t(w))
+		
 	out <- raster(x)
-	
-	row1 <- floor(ngb[1]/2)
-	row2 <- ngb[1]-(row1+1)
-	nrows <- ngb[1]
-	col1 <- floor(ngb[2]/2)
-	col2 <- ngb[2]-(col1+1)
-
-	nrs <- matrix(ncol=ncol(out), nrow=ngb[1])
-	nrs[] <- 1:length(nrs)
-	
-	if (.isGlobalLonLat(out)) {
-		add1 <- nrs[,(ncol(nrs)-col1+1):ncol(nrs),drop=FALSE]
-		add2 <- nrs[,1:col2,drop=FALSE]
-	} else {
-		add1 <- matrix(0, ncol=col1, nrow=ngb[1])
-		add2 <-matrix(0, ncol=col2, nrow=ngb[1])
-	}
-
-	nrs <- cbind(add1, nrs, add2)
-	
-	idx <- matrix(ncol=ncol(out), nrow=prod(ngb))
-	cc <- 1:ngb[2]
-	for (c in 1:ncol(out)) {
-		idx[,c] <- nrs[,cc] 
-		cc <- cc + 1
-	}
-	id <- as.vector(idx)
-	id <- cbind(rep(1:ncol(out), each=nrow(idx)), id)
-	id <- subset(id, id[,2]>0)
-	
-
 	filename <- trim(filename)
-	if (canProcessInMemory(out, 4)) {
-		inMem <- TRUE
-		if (!inMemory(x)) {
-			x <- readAll(x)
-		}
-		v <- matrix(nrow=ncol(out), ncol=nrow(out))		
 	
+	padrows <- FALSE
+	if (pad) {
+		padrows <- TRUE
+	}
+
+	gll <- as.integer(.isGlobalLonLat(out))
+	if (gll) {
+		pad <- TRUE
+	}
+
+	
+	if (missing(fun)) {
+		dofun <- FALSE
 	} else {
-		inMem <- FALSE				
-		if (filename == '') {
-			filename <- rasterTmpFile()
+		dofun <- TRUE
+		e <- new.env()
+		oldfun <- fun
+		if (na.rm) {
+			fun <- function(x) as.double( oldfun(x, na.rm=TRUE) )
+		} else {
+			fun <- function(x) as.double( oldfun(x) )
 		}
-		out <- writeStart(out, filename=filename, ...)
 	}
-
-	pb <- pbCreate(nrow(out), type=.progress(...))
-	ngbdata <- matrix(nrow=ngb[1], ncol=ncol(x))
-	rr <- 0
-	for (r in 1:row1) {
-		rr <- rr + 1
-		ngbdata[rr,] <- getValues(x, rr)
+	if (NAonly) {
+		na.rm <- TRUE
 	}
-	w <- getOption('warn')
-	on.exit(options('warn'= w))
-	options('warn'=-1) 
-
-	a <- 1:(ngb[1]-1)
-	b <- 2:ngb[1]
-	i <- ngb[1]
-	for (r in 1:nrow(out)) {	
-		rr <- rr + 1
-		if (rr <= ngb[1]) {
-			ngbdata[rr,] = getValues(x, rr)
-			ids <- matrix(as.vector(idx), nrow=ngb[1])
-			ids <- ids[1:rr, ]
-			ids <- matrix(as.vector(ids), ncol=ncol(out))
-			ids <- cbind(rep(1:ncol(out), each=nrow(ids)), as.vector(ids))
-			ids <- subset(ids, ids[,2]>0)
-			vv  <- tapply(as.vector(ngbdata)[ids[,2]], ids[,1], fun, na.rm=na.rm)
+	NAonly <- as.integer(NAonly)
+	narm <- as.integer(na.rm)
+	
+	if (canProcessInMemory(out)) {
+		if (pad) {
+			# this should be done in C, but for now....
+			f <- floor(d / 2)
+			v <- as.matrix(x)
+			if (padrows) {
+				padRows <- matrix(padValue, ncol=ncol(out), nrow=f[1])
+				v <- rbind(padRows, v, padRows)
+			} 
+			if (gll) {
+				v <- cbind(v[, (ncol(v)-f[2]+1):ncol(v)], v, v[, 1:f[2]])	
+			} else {
+				padCols <- matrix(padValue, nrow=nrow(v), ncol=f[2])
+				v <- cbind(padCols, v, padCols)
+			}
 			
-		} else if (r <= (nrow(out)-row1)) {
-			ngbdata[a, ] <- ngbdata[b, ]
-			ngbdata[i,] <- getValues(x, rr)
-			vv <- tapply(as.vector(ngbdata)[id[,2]], id[,1], fun, na.rm=na.rm)
+			paddim <- as.integer(dim(v))
+			if (dofun) {
+				v <- .Call('focal_fun', as.vector(t(v)), w, paddim, fun, NAonly, e, NAOK=TRUE, PACKAGE='raster')
+			} else {
+				v <- .Call('focal_sum', as.vector(t(v)), w, paddim, narm, NAonly, NAOK=TRUE, PACKAGE='raster')
+			}
+			v <- matrix(v, nrow=paddim[1], ncol=paddim[2], byrow=TRUE)
+			if (padrows) {
+				v <- v[-c(1:f[1], (nrow(v)-f[1]+1):nrow(v)), -c(1:f[2], (ncol(v)-f[2]+1):ncol(v))] 
+			} else {
+				v <- v[, -c(1:f[2], (ncol(v)-f[2]+1):ncol(v))] 			
+			}
+			v <- as.vector(t(v))
 			
 		} else {
-			ngbdata[a, ] <- ngbdata[b, ]
-			ngbdata[nrows,] <- NA
-			nrows <- nrows-1
-			ids <- matrix(as.vector(idx), nrow=ngb[1])
-			ids <- ids[1:nrows, ]
-			ids <- matrix(as.vector(ids), ncol=ncol(out))
-			ids <- cbind(rep(1:ncol(out), each=nrow(ids)), as.vector(ids))
-			ids <- subset(ids, ids[,2]>0)
-			vv  <- tapply(as.vector(ngbdata)[ids[,2]], ids[,1], fun, na.rm=na.rm)
-		}
-		if (inMem) {
-			v[,r] <- vv
-		} else {
-			out <- writeValues(out, as.vector(vv), r)
+		
+			if (dofun) {
+				v <- .Call('focal_fun', values(x), w, as.integer(dim(out)), fun, NAonly, e, NAOK=TRUE, PACKAGE='raster')
+			} else {
+				v <- .Call('focal_sum', values(x), w, as.integer(dim(out)), narm, NAonly, NAOK=TRUE, PACKAGE='raster')
+			}
 		}
 		
-		pbStep(pb, r)
-	}
-
-	pbClose(pb)
-
-	if (inMem) { 
-		out <- setValues(out, as.vector(v)) 
-		if (filename != "") {
+		out <- setValues(out, v)
+		if (filename  != '') {
 			out <- writeRaster(out, filename, ...)
 		}
+		
 	} else {
-		out <- writeStop(out)
+
+		out <- writeStart(out, filename,...)
+		tr <- blockSize(out, minblocks=3, minrows=3)
+		pb <- pbCreate(tr$n, type=.progress(...))
+
+		addr <- floor(nrow(w) / 2)
+		addc <- floor(ncol(w) / 2)
+		nc <- ncol(out)
+		nc1 <- 1:(nc * addc)
+		
+		if (pad) {
+			f <- floor(d / 2)
+			v <- getValues(x, row=1, nrows=tr$nrows[1]+addr)
+			v <- matrix(v, ncol=ncol(out), byrow=TRUE)
+			if (padrows) {
+				padRows <- matrix(padValue, ncol=ncol(out), nrow=f[1])
+				v <- rbind(padRows, v, padRows)
+			}
+			if (gll) {
+				v <- cbind(v[, (ncol(v)-f[2]+1):ncol(v)], v, v[, 1:f[2]])			
+			} else {
+				padCols <- matrix(padValue, nrow=tr$nrows[1]+addr+2*f[1], ncol=f[2])
+				v <- cbind(padCols, v, padCols)
+			}
+			paddim <- as.integer(dim(v))
+
+			if (dofun) {
+				v <- .Call('focal_fun', as.vector(t(v)), w, paddim, fun, NAonly, e, NAOK=TRUE, PACKAGE='raster')
+			} else {
+				v <- .Call('focal_sum', as.vector(t(v)), w, paddim, narm, NAonly, NAOK=TRUE, PACKAGE='raster')
+			}
+			v <- matrix(v, nrow=paddim[1], ncol=paddim[2], byrow=TRUE)
+			if (padrows) {
+				v <- v[-c(1:f[1], (nrow(v)-f[1]+1):nrow(v)), -c(1:f[2], (ncol(v)-f[2]+1):ncol(v))] 
+			} else {
+				v <- v[ , -c(1:f[2], (ncol(v)-f[2]+1):ncol(v))] 			
+			}
+			v <- as.vector(t(v))
+			out <- writeValues(out, v, 1)
+			pbStep(pb)
+			
+			for (i in 2:(tr$n-1)) {
+				v <- getValues(x, row=tr$row[i]-addr, nrows=tr$nrows[i]+(2*addr))
+				v <- matrix(v, ncol=ncol(out), byrow=TRUE)
+				if (padrows) {
+					padRows <- matrix(padValue, ncol=ncol(out), nrow=f[1])
+					v <- rbind(padRows, v, padRows)
+				}
+				if (gll) {
+					v <- cbind(v[, (ncol(v)-f[2]+1):ncol(v)], v, v[, 1:f[2]])			
+				} else {
+					padCols <- matrix(padValue, nrow=tr$nrows[i]+addr+2*f[1], ncol=f[2])
+					v <- cbind(padCols, v, padCols)
+				}
+				paddim <- as.integer(dim(v))
+				if (dofun) {
+					v <- .Call('focal_fun', as.vector(t(v)), w, paddim, fun, NAonly, e, NAOK=TRUE, PACKAGE='raster')
+				} else {
+					v <- .Call('focal_sum', as.vector(t(v)), w, paddim, narm, NAonly, NAOK=TRUE, PACKAGE='raster')
+				}
+				v <- matrix(v, nrow=paddim[1], ncol=paddim[2], byrow=TRUE)
+				if (padrows) {
+					v <- v[-c(1:f[1], (nrow(v)-f[1]+1):nrow(v)), -c(1:f[2], (ncol(v)-f[2]+1):ncol(v))] 
+				} else {
+					v <- v[, -c(1:f[2], (ncol(v)-f[2]+1):ncol(v))] 				
+				}
+				v <- as.vector(t(v))
+				out <- writeValues(out, v[-nc1], tr$row[i])
+				pbStep(pb) 
+			}
+			i <- tr$n
+			v <- getValues(x, row=tr$row[i]-addr, nrows=tr$nrows[i]+addr)
+			v <- matrix(v, ncol=ncol(out), byrow=TRUE)
+			if (padrows) {
+				padRows <- matrix(padValue, ncol=ncol(out), nrow=f[1])
+				v <- rbind(padRows, v, padRows)
+			}
+			if (gll) {
+				v <- cbind(v[, (ncol(v)-f[2]+1):ncol(v)], v, v[, 1:f[2]])			
+			} else {
+				padCols <- matrix(padValue, nrow=tr$nrows[i]+addr+2*f[1], ncol=f[2])
+				v <- cbind(padCols, v, padCols)
+			}
+			paddim <- as.integer(dim(v))
+
+			if (dofun) {
+				v <- .Call('focal_fun', as.vector(t(v)), w, paddim, fun, NAonly, e, NAOK=TRUE, PACKAGE='raster')
+			} else {
+				v <- .Call('focal_sum', as.vector(t(v)), w, paddim, narm, NAonly, NAOK=TRUE, PACKAGE='raster')
+			}
+			v <- matrix(v, nrow=paddim[1], ncol=paddim[2], byrow=TRUE)
+			if (padrows) {
+				v <- v[-c(1:f[1], (nrow(v)-f[1]+1):nrow(v)), -c(1:f[2], (ncol(v)-f[2]+1):ncol(v))] 
+			} else {
+				v <- v[, -c(1:f[2], (ncol(v)-f[2]+1):ncol(v))] 				
+			}
+			v <- as.vector(t(v))
+			
+			out <- writeValues(out, v[-nc1], tr$row[i])
+			pbStep(pb) 
+		
+		} else {
+		
+			v <- getValues(x, row=1, nrows=tr$nrows[1]+addr)
+			if (dofun) {
+				v <- .Call('focal_fun', v, w, as.integer(c(tr$nrows[1]+addr, nc)), fun, NAonly, e, NAOK=TRUE, PACKAGE='raster')
+			} else {
+				v <- .Call('focal_sum', v, w, as.integer(c(tr$nrows[1]+addr, nc)), narm, NAonly, NAOK=TRUE, PACKAGE='raster')
+			}
+			out <- writeValues(out, v, 1)
+			pbStep(pb)
+			for (i in 2:(tr$n-1)) {
+				v <- getValues(x, row=tr$row[i]-addr, nrows=tr$nrows[i]+(2*addr))
+				if (dofun) {
+					v <- .Call('focal_fun', v, w, as.integer(c(tr$nrows[i]+(2*addr), nc)), fun, NAonly, e, NAOK=TRUE, PACKAGE='raster')
+				} else {
+					v <- .Call('focal_sum', v, w, as.integer(c(tr$nrows[i]+(2*addr), nc)), narm, NAonly, NAOK=TRUE, PACKAGE='raster')
+				}
+				out <- writeValues(out, v[-nc1], tr$row[i])
+				pbStep(pb) 
+			}
+			i <- tr$n
+			v <- getValues(x, row=tr$row[i]-addr, nrows=tr$nrows[i]+addr)
+			if (dofun) {
+				v <- .Call('focal_fun', v, w, as.integer(c(tr$nrows[i]+addr, nc)), fun, NAonly, e, NAOK=TRUE, PACKAGE='raster')
+			} else {
+				v <- .Call('focal_sum', v, w, as.integer(c(tr$nrows[i]+addr, nc)), narm, NAonly, NAOK=TRUE, PACKAGE='raster')
+			}
+			out <- writeValues(out, v[-nc1], tr$row[i])
+			pbStep(pb) 
+		}
+		out <- writeStop(out)			
+		pbClose(pb)	
 	}
 	return(out)
 }
-	
+
+

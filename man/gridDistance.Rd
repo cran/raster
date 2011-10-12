@@ -37,6 +37,9 @@ The following additional arguments can be passed, to replace default values for 
   \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
   \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
  }
+ 
+ If the RasterLayer to be processed is big, it will be processed in chunks automatically. This may lead to errors in the case of complex objects spread over different chunks (meandering rivers, for instance). You can try to solve these issues by varying the chunk size, see function setOptions().
+ 
 }
 
 \value{A RasterLayer object}

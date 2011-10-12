@@ -7,14 +7,23 @@
 # July 2011
 
 
-.rasterImagePlot <- function(x, add=FALSE, legend=TRUE, nlevel = 64, horizontal = FALSE, 
+.rasterImagePlot <- function(x, col, add=FALSE, legend=TRUE, horizontal = FALSE, 
     legend.shrink = 0.5, legend.width = 0.6, legend.mar = ifelse(horizontal, 3.1, 5.1), legend.lab = NULL, graphics.reset = FALSE, 
-    bigplot = NULL, smallplot = NULL, legend.only = FALSE, col = heat.colors(nlevel), 
-    lab.breaks = NULL, axis.args = NULL, legend.args = NULL, interpolate=FALSE, box=TRUE, breaks=NULL, zlim=NULL, 
-	fun=NULL, ...) {
+    bigplot = NULL, smallplot = NULL, legend.only = FALSE, 
+    lab.breaks = NULL, axis.args = NULL, legend.args = NULL, 
+	interpolate=FALSE, box=TRUE, breaks=NULL, zlim=NULL, fun=NULL, asp, ...) {
 
+
+ 	if (missing(asp)) {
+		if (.couldBeLonLat(x, warnings=FALSE)) {
+			ym <- mean(c(x@extent@ymax, x@extent@ymin))
+			asp <- 1/cos((ym * pi)/180)
+		} else {
+			asp = 1
+		}		
+	}
 	
-	asRaster <- function(x, col, breaks=NULL) {
+	asRaster <- function(x, col, breaks=NULL, fun=NULL) {
 		if (!is.null(breaks)) {
 			x[] <- as.numeric(cut(x, breaks, include.lowest=TRUE))
 		}
@@ -39,8 +48,15 @@
 	if (!is.null(zlim)) {
 		x[x<zlim[1] | x>zlim[2]] <- NA
 	}
+	w <- getOption('warn')
+	options('warn'=-1) 
 	zrange <- range(x, na.rm=TRUE)
-	x <- asRaster(x, col, breaks)
+	options('warn'=w) 
+	if (! is.finite(zrange[1])) {
+		legend <- FALSE 
+	} else {
+		x <- asRaster(x, col, breaks, fun)
+	}
 	
     old.par <- par(no.readonly = TRUE)
     if (add) {
@@ -65,7 +81,7 @@
 	} else {
         if (!add) {
             par(plt = bigplot)
-			plot(NA, NA, xlim=e[1:2], ylim=e[3:4], type = "n", , xaxs ='i', yaxs = 'i', ...)
+			plot(NA, NA, xlim=e[1:2], ylim=e[3:4], type = "n", , xaxs ='i', yaxs = 'i', asp=asp, ...)
         }
 		rasterImage(x, e[1], e[3], e[2], e[4], interpolate=interpolate)
         big.par <- par(no.readonly = TRUE)
@@ -109,9 +125,9 @@
 			plot(NA, NA, xlim=c(0, 1), ylim=c(minz, maxz), type="n", xlab="", ylab="", xaxs ='i', yaxs = 'i', axes=FALSE)
 			
 			if (is.null(breaks)) {
-				xx <- asRaster(length(col):1, col) 
+				xx <- asRaster(length(col):1, col, fun=fun) 
 			} else {
-				xx <- rev(asRaster(midpoints, col, breaks=breaks))
+				xx <- rev(asRaster(midpoints, col, breaks=breaks, fun=fun))
 			}
 
 			rasterImage(xx, 0, minz, 1, maxz, interpolate=FALSE)
@@ -121,9 +137,9 @@
 			plot(NA, NA, ylim=c(0, 1), xlim=c(minz, maxz), type="n", xlab="", ylab="", xaxs ='i', yaxs = 'i', axes=FALSE)
 			
 			if (is.null(breaks)) {
-				xx <- t(rev(asRaster(1:length(col), col) ))
+				xx <- t(rev(asRaster(1:length(col), col, fun=fun )))
 			} else {
-				xx <- t(asRaster(midpoints, col, breaks=breaks))
+				xx <- t(asRaster(midpoints, col, breaks=breaks, fun=fun))
 			}
 			rasterImage(xx, minz, 0, maxz, 1, interpolate=FALSE)
 			do.call("axis", axis.args)

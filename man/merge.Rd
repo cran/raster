@@ -7,7 +7,7 @@
 \alias{merge,list,missing-method}
 
 \title{ 
-Merge RasterLayers
+Merge
 }
 
 \description{
