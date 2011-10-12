@@ -1,5 +1,14 @@
+--- 10-October-2011, version 1.9-25
+Functions re-implemented using C routines for better speed: focal (a combination of old functions focal, focalNA and focalFilter), distance, direction, and reclass and slopeAspect.
+slopeAspect is replaced by 'terrain' to do slope, aspect and other elevation derived terrain characteristics.
+Fixed subset bug reported by Julian Zeidler. https://r-forge.r-project.org/tracker/?func=detail&atid=1189&aid=1610&group_id=294
+
+--- 27-September-2011, version 1.9-21
+mask now works for the a RasterStack/Brick and Spatial* objects. Bug reported by Robert Buitenwerf
+
 --- 22-September-2011, version 1.9-18
 option "useRaster" to plot. To use 'image' rather than 'rasterImage', because rasterImage not working on some platforms (windows server); in R versions above 2.13.0. The default is FALSE because 'image' is not working well in R 2.13.1 (it draws white lines over the image); but this was fixed in 2.13.1-patched and above.
+Bug fix: new plot argument 'addfun' interfered with old argument 'add' such that 'add=T' did not work (reported by Achilleas Psomas)
 
 --- 21-September-2011, version 1.9-17
 Big speed gain (~50 times) for 'calc' with a RasterLayer. calc used apply(x, 1, fun), which is more natural for RasterStackBrick objects, where it simply should use fun(x).

@@ -24,7 +24,7 @@
 
 
 
-.rasterFromGDAL <- function(filename, band, type, RAT=FALSE, silent=TRUE) {	
+.rasterFromGDAL <- function(filename, band, type, RAT=FALSE, silent=TRUE, ...) {	
 
 	if (! .requireRgdal() ) { stop('package rgdal is not available') }
 

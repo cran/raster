@@ -11,7 +11,7 @@ if (!isGeneric("plot")) {
 
 
 setMethod("plot", signature(x='RasterStackBrick', y='ANY'), 
-	function(x, y, col=rev(terrain.colors(255)), maxpixels=100000, alpha=1, main, ...)  {
+	function(x, y, col=rev(terrain.colors(255)), maxpixels=100000, alpha=1, main, useRaster=TRUE, ...)  {
 	
 		if (alpha < 1) {
 			alpha <- max(alpha, 0) * 255 + 1
@@ -40,7 +40,11 @@ setMethod("plot", signature(x='RasterStackBrick', y='ANY'),
 		}
 		
 		if (length(y) == 1) {
-			.plotraster2(raster(x, y), col=col, maxpixels=maxpixels, main=main[y], ...) 
+			if (useRaster) {
+				.plotraster2(raster(x, y), col=col, maxpixels=maxpixels, main=main[y], ...) 
+			} else {
+				.plotraster(raster(x, y), col=col, maxpixels=maxpixels, main=main[y], ...) 			
+			}
 		} else {
 
 			nl <- length(y)
@@ -62,7 +66,11 @@ setMethod("plot", signature(x='RasterStackBrick', y='ANY'),
 				}
 				if (rown==nr) xa='s'
 				if (coln==1) ya='s' else ya='n'
-				.plotraster2(raster(x, y[i]), col=col, maxpixels=maxpixels, xaxt=xa, yaxt=ya, main=main[y[i]], ...) 
+				if (useRaster) {
+					.plotraster2(raster(x, y[i]), col=col, maxpixels=maxpixels, xaxt=xa, yaxt=ya, main=main[y[i]], ...) 
+				} else {
+					.plotraster(raster(x, y[i]), col=col, maxpixels=maxpixels, xaxt=xa, yaxt=ya, main=main[y[i]], ...) 				
+				}
 			}		
 		}
 	}
@@ -70,7 +78,7 @@ setMethod("plot", signature(x='RasterStackBrick', y='ANY'),
 
 
 setMethod("plot", signature(x='RasterLayer', y='missing'), 
-	function(x, col=rev(terrain.colors(255)), maxpixels=500000, useRaster=TRUE, alpha=1, ...)  {
+	function(x, col=rev(terrain.colors(255)), maxpixels=500000, useRaster=TRUE, alpha=1, add=FALSE, ...)  {
 
 		if (alpha < 1) {
 			alpha <- max(alpha, 0) * 255 + 1
@@ -82,9 +90,9 @@ setMethod("plot", signature(x='RasterLayer', y='missing'),
 		if (length(x@legend@colortable) > 0) {
 			.plotCT(x, maxpixels=maxpixels, ...)
 		} else if (! useRaster) {
-			.plotraster(x, col=col, maxpixels=maxpixels, ...) 
+			.plotraster(x, col=col, maxpixels=maxpixels, add=add, ...) 
 		} else {
-			.plotraster2(x, col=col, maxpixels=maxpixels, ...) 
+			.plotraster2(x, col=col, maxpixels=maxpixels, add=add, ...) 
 			#.plot2(x, col=col, maxpixels=maxpixels, ...)
 		}
 	}
@@ -124,13 +132,22 @@ setMethod("plot", signature(x='Raster', y='Raster'),
 		}
 
 		cells <- ncell(x)
-		x <- sampleRegular(x, size=maxpixels)
-		y <- sampleRegular(y, size=maxpixels)
-		if (length(x) < cells) {
-			warning(paste('plot used a sample of ', round(100*length(x)/nc), "% of the cells", sep=""))
+		
+		# gdal selects a slightly different set of cells than raster does for other formats.
+		# using gdal directly to subsample is faster.
+		dx <- .driver(x, warn=FALSE)
+		dy <- .driver(y, warn=FALSE)
+		if (( all(dx =='gdal') & all(dy == 'gdal')) | ( all(dx != 'gdal') & all(dy != 'gdal'))) {
+			x <- sampleRegular(x, size=maxpixels) 
+			y <- sampleRegular(y, size=maxpixels)
+		} else {
+			x <- sampleRegular(x, size=maxpixels, cells=TRUE)[,-1] 
+			y <- sampleRegular(y, size=maxpixels, cells=TRUE)[,-1]
 		}
-		
-		
+		if (length(x) < cells) {
+			warning(paste('plot used a sample of ', round(100*length(x)/cells), "% of the cells", sep=""))
+		}
+			
 		if (nl > 1) {
 			old.par <- par(no.readonly = TRUE) 
 			on.exit(par(old.par))

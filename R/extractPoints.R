@@ -5,10 +5,6 @@
 # Licence GPL v3
 
 
-xyValues <- function(object, xy, ...) {
-	stop('function no longer available. Please use "extract"')
-}
-
 	
 .xyValues <- function(object, xy, method='simple', buffer=NULL, fun=NULL, na.rm=TRUE, layer, nl, cellnumbers=FALSE, ...) { 
 

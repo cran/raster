@@ -28,8 +28,8 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 		}
 	}
 	
-	# keep  canProcessInMemory for debugging
-	if ( canProcessInMemory(x, n=5) & ncell(x) <= 100000 ) { # need to test more to see how much igraph can deal with
+	# keep canProcessInMemory for debugging
+	if ( canProcessInMemory(x, n=10) ) { # need to test more to see how much igraph can deal with
 		outRaster <- raster(x)
 		x <- getValues(x) # to avoid keeping values in memory twice
 		
@@ -46,7 +46,7 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 		
 	} else 	{
 	
-		tr <- blockSize(x, n=10, minblocks=nrow(x)/100)
+		tr <- blockSize(x, n=1)
 		
 		pb <- pbCreate(tr$n*2 - 1, type=.progress(...))
 
@@ -159,7 +159,6 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 
 
 .calcDist <- function(x, chunkSize, ftC, oC, perCell=0, startCell=0, lonlat) {
-	shortestPaths <- rep(Inf, times=max(ftC))
 	
 	if(length(oC)>0) {
 	
@@ -185,13 +184,20 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 			E(distGraph)$weight[(length(adj[,1])+1):(length(adj[,1])+length(oC))] <- perCell
 		}
 		
-		shortestPaths <- pmin(shortestPaths, shortest.paths(distGraph, startNode-1))
-		shortestPaths <- shortestPaths[-(length(shortestPaths))]
+		shortestPaths <- shortest.paths(distGraph, startNode-1)
+		shortestPaths <- shortestPaths[-(length(shortestPaths))] #chop startNode off
 		
-		if(max(ftC) < chunkSize){ 
-			
-			shortestPaths <- c(shortestPaths, rep(Inf, times=chunkSize-max(ftC)))
+		if(length(shortestPaths) < chunkSize){ 
+			#add Inf values where shortest.paths() leaves off before completing all nodes
+			shortestPaths <- c(shortestPaths, rep(Inf, times=chunkSize-length(shortestPaths))) 
 		}
+		
+	} else {
+	
+		shortestPaths <- rep(Inf, times=chunkSize)
+	
 	}
+	
 	return(shortestPaths)
+
 }

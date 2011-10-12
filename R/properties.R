@@ -6,15 +6,16 @@
 
 .driver <- function(object, warn=TRUE) {
 	if (inherits(object, 'RasterStack')) {
-		if (warn) {
-			warning('There is no driver associated with a RasterStack')
+		d <- sapply(object@layers, function(x) x@file@driver)
+		if (any(d == '' & warn)) {
+			warning('There is no driver associated with one or more layers of this RasterStack')
 		}
-		return('')
+	} else {
+		d <- object@file@driver
+		if (d == '' & warn) {
+			warning('no file/driver associated with this Raster object')
+		} 
 	}
-	d <- object@file@driver
-	if (d == '' & warn) {
-		warning('no file/driver associated with this object')
-	} 
 	return(d)
 }
 
@@ -22,7 +23,7 @@
 
 .nodatavalue <- function(object) {
 	if (inherits(object, 'RasterStack')) {
-		stop("no such thing exist for an entire 'RasterStack'")
+		return( sapply(object@layers, function(x) x@file@nodatavalue) )
 	}
 	return(object@file@nodatavalue)
 }	

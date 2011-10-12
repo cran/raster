@@ -16,6 +16,13 @@ function(x, y, ...){
 })
 
 
+setMethod('rasterize', signature(x='data.frame', y='Raster'), 
+function(x, y, ...){ 
+	x <- as.matrix(x)
+	return( .pointsToRaster(x, y, ...))
+})
+
+
 setMethod('rasterize', signature(x='SpatialPoints', y='Raster'), 
 function(x, y, ...){ 
 	return( .pointsToRaster(x, y, ...))

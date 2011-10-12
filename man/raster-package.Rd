@@ -110,13 +110,12 @@ RasterLayer, RasterStack, and RasterBrick objects are, as a group, referred to a
     \code{\link{gridDistance}} \tab Distance when traversing grid cells that are not \code{NA} \cr
     \code{\link{distanceFromPoints}} \tab Shortest distance to any point in a set of points \cr
     \code{\link{direction}} \tab Direction (azimuth) to or from cells that are not \code{NA}\cr
-    \code{\link{focal}} \tab Focal (neighborhood) functions \cr
-    \code{\link{focalFilter}} \tab Focal (neighborhood) filters \cr
+    \code{\link{focal}} \tab Focal (neighborhood; moving window) functions \cr
     \code{\link{edge}} \tab Edge detection \cr
     \code{\link{clump}} \tab Find clumps (patches) \cr
     \code{\link{adjacency}} \tab Identify cells that are adjacent to a set of cells on a raster \cr
     \code{\link{area}} \tab Compute area of cells (for longitude/latitude data) \cr
-    \code{\link{slopeAspect}} \tab Compute slope and/or aspect from elevation data \cr	
+    \code{\link{terrain}} \tab Compute slope, aspect and other characteristics from elevation data \cr	
     \code{\link{Moran}} \tab Compute global or local Moran or Geary indices of spatial autocorrelation  \cr	
   }
 }

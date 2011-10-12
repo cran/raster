@@ -7,10 +7,10 @@
 'NAvalue<-' <- function(x, value) {
 	if (inherits(x, 'RasterStack')) {
 		for (i in 1:nlayers(x)) {
-			x@layers[[i]]@file@nodatavalue <- value
+			x@layers[[i]]@file@nodatavalue <- value[[1]]
 		}
 	} else {
-		x@file@nodatavalue <- value
+		x@file@nodatavalue <- value[[1]]
 	}
 	return(x)
 }

@@ -5,7 +5,7 @@
 \title{Hill shading}
 
 \description{
-Compute hill shade from slope and aspect layers (both in radians). Slope and aspect can be computed with \code{\link{slopeAspect}}. 
+Compute hill shade from slope and aspect layers (both in radians). Slope and aspect can be computed with function \code{\link{terrain}}. 
 
 A hill shade layer is often used as a backdrop on top of which another, semi-transparant, layer is drawn.
 }
@@ -24,7 +24,7 @@ hillShade(slope, aspect, angle=45, direction=0, filename='', ...)
 }
 
 
-\seealso{ \code{\link{slopeAspect}} }
+\seealso{ \code{\link{terrain}} }
 
 \author{Andrew Bevan, Robert J. Hijmans}
 
@@ -36,11 +36,12 @@ Horn, B.K.P., 1981. Hill shading and the reflectance map. Proceedings of the IEE
 
 \examples{
 \dontrun{
-dem <- getData('alt', country='CHE')
-slas <- slopeAspect(dem)
-hill <- hillShade(slas[[1]], slas[[2]], 40, 270)
+alt <- getData('alt', country='CHE')
+slope <- terrain(alt, opt='slope')
+aspect <- terrain(alt, opt='aspect')
+hill <- hillShade(slope, aspect, 40, 270)
 plot(hill, col=grey(0:100/100), legend=FALSE, main='Switzerland')
-plot(dem, col=rainbow(25, alpha=0.35), add=TRUE)
+plot(alt, col=rainbow(25, alpha=0.35), add=TRUE)
 }
 }
 

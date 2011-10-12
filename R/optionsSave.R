@@ -56,9 +56,15 @@ clearOptions <- function() {
 
 saveOptions <- function() {
 	fn <- paste(R.home(component="etc"), '/', 'Rprofile.site', sep='')
-	lst <- readLines(fn)
-	lst <- .removeRasterOptions(lst)
-	if (lst[length(lst)] != "") { lst <- c(lst, "") }
+	if (file.exists(fn)) {
+		lst <- readLines(fn)
+		if (length(lst) == 0) { lst <- "" }
+		lst <- .removeRasterOptions(lst)
+		if (lst[length(lst)] != "") { lst <- c(lst, "") }
+	} else {
+		lst <- ""
+	}
+
 	lst <- c(lst, "# Options for the 'raster' package")
 	lst <- c(lst, paste("options(rasterFiletype='", .filetype(), "')", sep='')) 
 	lst <- c(lst, paste("options(rasterDatatype='", .datatype(), "')", sep=''))

@@ -10,141 +10,65 @@ if (!isGeneric("distance")) {
 
 
 setMethod('distance', signature(x='RasterLayer'), 
-
 function(x, filename='', doEdge=FALSE, ...) {
-
 	if (doEdge) {
 		r <- edge(x, classes=FALSE, type='inner', asNA=TRUE, progress=.progress(...)) 
 		pts <- try(  rasterToPoints(r, fun=function(z){ z>0 } )[,1:2, drop=FALSE] )
 	} else {
-		pts <- try(  rasterToPoints(x, fun=function(z){ z>0 } )[,1:2, drop=FALSE] )
+		pts <- try(  rasterToPoints(x)[,1:2, drop=FALSE] )
 	}
 	
 	if (class(pts) == "try-error") {
 		return( .distanceRows(x, filename=filename, ...) )
 	}
-
 	if (nrow(pts) == 0) {
 		stop('RasterLayer has no NA cells (for which to compute a distance)')
 	}
-
 	out <- raster(x)
+	filename <- trim(filename)
 	
-	if (.couldBeLonLat(out)) { 
-		distfun <- .haversine
+	if (raster:::.couldBeLonLat(x)) { 
+		longlat=TRUE 
 	} else { 
-		distfun <- .planedist
+		longlat=FALSE 
 	}
 	                                                                        
-	filename <- trim(filename)
-	if (!canProcessInMemory(out) && filename == '') {
-		filename <- rasterTmpFile()
-								
-	}
-	
-	if (filename == '') {
-		v <- matrix(ncol=nrow(out), nrow=ncol(out))
- 	} else {
-		out <- writeStart(out, filename, ...)
-	}
-	
-	pb <- pbCreate(nrow(out), type=.progress(...))
-
-	xy <- xFromCol(out, 1:ncol(out))
-	xy <- cbind(xy, NA)
-	
-	if (.doCluster() ) {
-		cl <- getCluster()
-		on.exit( returnCluster() )
-		
-		nodes <- min(nrow(out), length(cl)) # at least 1 row
-		
-		cat('Using cluster with', nodes, 'nodes\n')
-		flush.console()
-		
-		clFun <- function(r) {
-			vals <- getValues(x, r)
-			i <- which(is.na(vals))
-			vals[] <- 0
-			if (length(i) > 0) {
-				xy[,2] <- yFromRow(out, r)
-				for (c in i) {
-					vals[c] <- min( distfun(xy[c,1], xy[c,2], pts[,1], pts[,2]) ) 
-				}
-			}
-			return( vals )
+	if (canProcessInMemory(out, 4)) {
+		x <- values(x)
+		i <- which(is.na(x))
+		if (length(i) < 1) {
+			stop('raster has no NA values to compute distance to')
 		}
-	
-        for (i in 1:nodes) {
-			sendCall(cl[[i]], clFun, i, tag=i)
+		x[] <- 0
+		xy <- xyFromCell(out, i)
+		x[i] <- .Call("distanceToNearestPoint", xy, pts, as.integer(longlat), PACKAGE='raster')
+		out <- setValues(out, x)
+		if (filename != '') {
+			out <- writeRaster(out, filename=filename, ...)
 		}
-
-		if (filename=="") {
-			for (r in 1:nrow(out)) {
-				d <- recvOneData(cl)
-				if (! d$value$success) { stop('cluster error') }
-				v[,d$value$tag] <- d$value$value
-				nr <- nodes + r
-				if (nr <= out@nrows) {
-					sendCall(cl[[d$node]], clFun, nr, tag=nr)
-				}
-				pbStep(pb)
-			}
-			out <- setValues(out, as.vector(v)) 
-			
-		} else {
-			for (r in 1:nrow(out)) {
-				d <- recvOneData(cl)
-				if (! d$value$success) { stop('cluster error') }
-				out <- writeValues(out, as.vector(d$value$value), d$value$tag)
-				nr <- nodes + r
-				if (nr <= out@nrows) {
-					sendCall(cl[[d$node]], clFun, nr, tag=nr)
-				}
-				pbStep(pb, r)
-			}
-			out <- writeStop(out)
-		}
+		return(out)
+	} 
 	
-	} else {	
-	
-		if (filename=="") {
-			for (r in 1:nrow(out)) {	
-				vals <- getValues(x, r)
-				i <- which(is.na(vals))
-				vals[] <- 0
-				if (length(i) > 0) {
-					xy[,2] <- yFromRow(out, r)
-					for (c in i) {
-						#vals[c] <- min( pointDistance(xy[c,], pts, longlat=longlat) )
-						vals[c] <- min( distfun(xy[c,1], xy[c,2], pts[,1], pts[,2]) )
-					}
-				}
-				v[,r] <- vals
-				pbStep(pb, r) 	
-			}
-			out <- setValues(out, as.vector(v)) 
-			
-		} else {
-			for (r in 1:nrow(out)) {	
-				vals <- getValues(x, r)
-				i <- which(is.na(vals))
-				vals[] <- 0
-				if (length(i) > 0) {
-					xy[,2] <- yFromRow(out, r)
-					for (c in i) {
-#						vals[c] <- min( pointDistance(xy[c,], pts, longlat=longlat) )
-						vals[c] <- min( distfun(xy[c,1], xy[c,2], pts[,1], pts[,2]) )
-					}
-				}
-				out <- writeValues(out, vals, r)
-				pbStep(pb, r) 	
-			}
-			out <- writeStop(out)
+	out <- writeStart(out, filename=filename, ...)
+	tr <- blockSize(out)
+	pb <- pbCreate(tr$n, type=raster:::.progress(...))
+	xy <- cbind(rep(xFromCol(out, 1:ncol(out)), tr$nrows[1]), NA)
+	for (i in 1:tr$n) {
+		if (i == tr$n) {
+			xy <- xy[1:(ncol(out)*tr$nrows[i]), ]
 		}
-	}
+		xy[,2] <- rep(yFromRow(out, tr$row[i]:(tr$row[i]+tr$nrows[i]-1)), each=ncol(out))
+		vals <- getValues(x, tr$row[i], tr$nrows[i])
+		j <- which(is.na(vals))
+		vals[] <- 0
+		if (length(j) > 0) {
+			vals[j] <- .Call("distanceToNearestPoint", xy[j,,drop=FALSE], pts, as.integer(longlat), PACKAGE='raster')
+		}
+		out <- writeValues(out, vals, tr$row[i])
+		pbStep(pb) 	
+	}	
 	pbClose(pb)
-	
+	out <- writeStop(out)
 	return(out)
 }
 )

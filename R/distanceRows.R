@@ -50,15 +50,11 @@
 			to <- xyv[is.na(xyv[,3]), 1:2]
 			v[] = 0
 			if ( isTRUE(nrow(to) > 0) ) {
-				res <- vector( length=nrow(to) )
-				for (p in 1:nrow(to)) {
-					res[p] <- min( pointDistance(to[p,], from, longlat=longlat) )
-				}
-				v[is.na(xyv[,3])] <- res
+				v[is.na(xyv[,3])] <- .Call("distanceToNearestPoint", to, from, as.integer(longlat), PACKAGE='raster')
 			}			
 			if (hasWritten) {
 				# after the first round, compare new values with previously written values
-				v = pmin(v, .getTransientRows(r, tr$row[j], n=tr$nrows[j])) 
+				v <- pmin(v, .getTransientRows(r, tr$row[j], n=tr$nrows[j])) 
 			} 
 			r <- writeValues(r, v, tr$row[j])			
 		}
@@ -68,7 +64,7 @@
 	r <- writeStop(r)
 	pbClose(pb)
 	
-	r = writeRaster(r, filename=filename, ...)
+	r <- writeRaster(r, filename=filename, ...)
 	return(r)
 }	
 

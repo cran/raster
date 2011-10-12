@@ -16,45 +16,31 @@ distanceFromPoints <- function(object, xy, filename='', ...) {
 		longlat=FALSE 
 	}
 	                                                                        
-	rst <- raster(object)
-	if (!canProcessInMemory(rst, 2) && filename == '') {
-		filename <- rasterTmpFile()			
-	}
-
-	xy <- xFromCol(rst, 1:ncol(rst))
-	xy <- cbind(xy, NA)
-	
-	arow <- rep(NA, ncol(rst))
-	
-	if (filename == '') {
-		v <- matrix(ncol=nrow(rst), nrow=ncol(rst))
-	} else {
-		rst <- writeStart(rst, filename=filename, ...)
-	}
-	
-	pb <- pbCreate(nrow(rst), type=.progress(...))
-
-	for (r in 1:nrow(rst)) {	
-		vals <- arow
-		xy[,2] <- yFromRow(rst, r)
-		for (c in 1:length(xy[,1])) {
-			vals[c] <- min( pointDistance(xy[c, ], pts, longlat=longlat) )
+	out <- raster(object)
+	if (canProcessInMemory(out, 4)) {
+		xy <- xyFromCell(out, 1:ncell(out))
+		out <- setValues(out, .Call("distanceToNearestPoint", xy, pts, as.integer(longlat), PACKAGE='raster'))
+		if (filename != '') {
+			out <- writeRaster(out, filename=filename, ...)
 		}
-		if (filename == "") {
-			v[,r] <- vals
-		} else {
-			rst <- writeValues(rst, vals, r)
+		return(out)
+	} 
+	
+	out <- writeStart(out, filename=filename, ...)
+	tr <- blockSize(out)
+	pb <- pbCreate(tr$n, type=raster:::.progress(...))
+	xy <- cbind(rep(xFromCol(out, 1:ncol(out)), tr$nrows[1]), NA)
+	for (i in 1:tr$n) {
+		if (i == tr$n) {
+			xy <- xy[1:(ncol(out)*tr$nrows[i]), ]
 		}
-		pbStep(pb, r) 	
+		xy[,2] <- rep(yFromRow(out, tr$row[i]:(tr$row[i]+tr$nrows[i]-1)), each=ncol(out))
+		vals <- .Call("distanceToNearestPoint", xy, pts, as.integer(longlat), PACKAGE='raster')
+		out <- writeValues(out, vals, tr$row[i])
+		pbStep(pb) 	
 	}	
 	pbClose(pb)
-	
-	if (filename == "") { 
-		rst <- setValues(rst, as.vector(v)) 
-	} else {
-		rst <- writeStop(rst)
-	}
-	return(rst)
+	out <- writeStop(out)
+	return(out)
 }
-
 

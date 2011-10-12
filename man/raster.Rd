@@ -31,8 +31,8 @@ For an overview of the functions in the raster package have a look here: \code{\
 
 
 \arguments{
-  \item{x}{Filename (character), Extent, Raster*, SpatialPixels*, SpatialGrid* object, matrix, or missing}
-  \item{...}{Additional arguments, see below }  
+\item{x}{Filename (character), Extent, Raster*, SpatialPixels*, SpatialGrid* object, matrix, or missing}
+\item{...}{Additional arguments, see below }  
 }
 
 \usage{
@@ -45,7 +45,6 @@ raster(x, ...)
 \bold{1) Create a RasterLayer object from a file}
 
 \code{raster(x, band=1, ...)}
-
 
 \tabular{rll}{
 \tab \code{x} \tab character. Name of raster file  \cr
@@ -81,7 +80,7 @@ If \code{x} is a character value, it should be a filename of a file that the ras
  \tab \code{ymn} \tab minimum y coordinate (bottom border) \cr
  \tab \code{ymx} \tab maximum y coordinate (top border) \cr
  \tab \code{crs} \tab Character or object of class CRS. PROJ4 type description of a Coordinate Reference System (map projection). If this argument is missing, and the x coordinates are withing -360 .. 360 and the y coordinates are within -90 .. 90, "+proj=longlat +datum=WGS84" is used. \cr
- \tab \code{ext} \tab object of \code{\link[raster]{Extent-class}}. If present, the arguments \code{xmn}, \code{xmx}, \code{ymn} and \code{ynx} are ignored\cr
+ \tab \code{ext} \tab object of \link[raster]{Extent-class}. If present, the arguments xmn, xmx, ymn and ynx are ignored\cr
 }
 (item \code{x} is 'missing' in this case)
 

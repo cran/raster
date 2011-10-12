@@ -5,17 +5,21 @@
 
 
 
+setMethod('extract', signature(x='Raster', y='SpatialLines'), 
+function(x, y, fun, na.rm=FALSE, cellnumbers=FALSE, layer, nl, ...){ 
 
-lineValues <- function(lns, x, ...) {
-	stop('function no longer available. Please use "extract"')
-}
+	px <- projection(x, asText=FALSE)
+	comp <- .compareCRS(px, projection(y), unknown=TRUE)
+	if (!comp) {
+		if (! .requireRgdal() ) { stop('rgdal not available') }
+		warning('Transforming SpatialLines to the CRS of the Raster')
+		y <- spTransform(y, px)
+	}
 
-
-.lineValues <- function(x, lns, fun, na.rm=FALSE, cellnumbers=FALSE, layer, nl, ...) {
-	spbb <- bbox(lns)
+	spbb <- bbox(y)
 	rsbb <- bbox(x)
 	addres <- 2 * max(res(x))
-	nlns <- length( lns@lines )
+	nlns <- length( y@lines )
 	res <- list()
 	res[[nlns+1]] = NA
 
@@ -49,7 +53,7 @@ lineValues <- function(lns, x, ...) {
 		flush.console()
 
 		clFun <- function(i) {
-			pp <- lns[i,]
+			pp <- y[i,]
 			spbb <- bbox(pp)
 			if (! (spbb[1,1] > rsbb[1,2] | spbb[1,2] < rsbb[1,1] | spbb[2,1] > rsbb[2,2] | spbb[2,2] < rsbb[2,1]) ) {
 				rc <- crop(rr, extent(pp)+addres)
@@ -90,7 +94,7 @@ lineValues <- function(lns, x, ...) {
 	
 	
 		for (i in 1:nlns) {
-			pp <- lns[i,]
+			pp <- y[i,]
 			spbb <- bbox(pp)
 			if (! (spbb[1,1] > rsbb[1,2] | spbb[1,2] < rsbb[1,1] | spbb[2,1] > rsbb[2,2] | spbb[2,2] < rsbb[2,1]) ) {
 				rc <- crop(rr, extent(pp)+addres)
@@ -131,6 +135,6 @@ lineValues <- function(lns, x, ...) {
 	}
 	res
 }
-
+)
 
 

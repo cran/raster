@@ -1,32 +1,54 @@
 \name{focal}
 
 \alias{focal}
-\alias{focalNA}
 
-\title{Focal}
+\title{Focal values}
 
 \description{
-Calculate values for the neighborhood of focal cells. focalNA keeps original values except where these are \code{NA}. 
-New values are computed with function \code{fun}, using the values of the cells in the neigborhood of a focal cell (including the focal cell).
+Calculate "moving window" values for the neighborhood of focal cells using a matrix of weights, perhaps in combination with a function.
+
+This function replaces \code{\link{focal_old}}, \code{\link{focalNA}} and \code{\link{focalFilter}}
 }
 
 \usage{
-focal(x, ngb=3, fun=mean, na.rm=TRUE, filename="", ...) 
-focalNA(x, ngb=3, fun=mean, recursive=FALSE, maxrec=0, filename="", ...) 
+focal(x, w, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=FALSE, ...) 
 }
 
 \arguments{
-  \item{x}{A RasterLayer object}
-  \item{ngb}{Neighborhood size.  A neighborhood is expressed in number of cells in a single direction or in two direction from the focal cell. I.e. \code{ngb=3} refers to 2 cells at each side of the focal cell, queen's case, 9 cells in total. This is equivalent to \code{ngb=c(3,3)}. You can also specify a rectangular neighborhood, e.g. \code{ngb=c(3,5)}. Neighborhoods are normally odd numbers so that the focal cell is centered, but even numbers are permitted in this function}
-  \item{fun}{The function to be applied. The function fun should take multiple numbers, and return a single number. For example mean, modal, min or max. It should also accept a na.rm argument (or ignore it, e.g. as one of the 'dots' arguments. For example, \code{length} will fail, but \code{function(x, ...){na.omit(length(x))}} works}
-  \item{na.rm}{Logical. If \code{TRUE}, \code{NA} will be removed from focal computations. The result will only be \code{NA} if all focal cells are \code{NA}}
-  \item{recursive}{Logical. If \code{TRUE}, the function will continue recursively untill there are no more cells with \code{NA}}  
-  \item{maxrec}{Integer. Maximum number of recursions (if \code{recursive=TRUE})}  
-  \item{filename}{Output filename for a new raster}
-  \item{...}{additional arguments. See Details.}  
+\item{x}{RasterLayer}
+  
+\item{w}{matrix of weights (the moving window), e.g. a 3 by 3 matrix; see Details. The matrix can also be expressed as the number of cells in a single direction or in two directions from the focal cell, in which case the weights are all set to 1. I.e. \code{w=3} refers to a 3 by 3 matrix: 2 cells at each side of the focal cell, queen's case, 9 cells in total. This is equivalent to \code{w=c(3,3)}. You can also specify a rectangular neighborhood, e.g. \code{w=c(3,5)}; but the sides must be odd numbers. If you need even sides, you can add a column or row with weights of zero.}
+  
+\item{fun}{function (optional). The function fun should take multiple numbers, and return a single number. For example mean, modal, min or max. It should also accept a na.rm argument (or ignore it, e.g. as one of the 'dots' arguments. For example, \code{length} will fail, but \code{function(x, ...){na.omit(length(x))}} works. }
+
+\item{filename}{character. Filename for a new raster (optional)}
+ 
+\item{na.rm}{logical. If \code{TRUE}, \code{NA} will be removed from focal computations. The result will only be \code{NA} if all focal cells are \code{NA}. Except for some special cases (weights of 1, mean function), using na.rm=TRUE is generally not a good idea in this function because it will unbalance the effect of the weights }
+ 
+\item{pad}{logical. If \code{TRUE}, additional 'virtual' rows and columns are padded to \code{x} such that there are no edge effects. This can be useful when a function needs to have access to the central cell of the filter }
+  
+\item{padValue}{logical. The value of the cells of the padded rows and columns}
+ 
+\item{NAonly}{logical. If \code{TRUE}, only cell values that are \code{NA} are replaced with the computed focal values}
+ 
+\item{...}{additional arguments. See Details.}  
 }
 
 \details{
+\code{focal} uses a matrix of weights for the neighborhood of the focal cells. The default function is \code{sum}. It is computationally much more efficient to adjust the weights-matrix than to use another function through the \code{fun} argument. Thus while the following two statements are equivalent, the first one is faster than the second one:
+
+\code{a <- focal2(x, w=matrix(1/9, nc=3, nc=3))}
+
+\code{b <- focal2(x, w=3, fun=mean)}
+
+
+Gaussian filter: \code{filter=matrix(c(1,2,3,2,1,2,3,4,3,2,3,4,5,4,3,2,3,4,3,2,1,2,3,2,1), nrow=5)/65}
+
+Laplacian filter: \code{filter=matrix(c(0,1,0,1,-4,1,0,1,0), nrow=3)}
+
+Sobel filter: \code{filter=matrix(c(1,2,1,0,0,0,-1,-2,-1) / 4, nrow=3)}
+
+
 The following additional arguments can be passed, to replace default values for this function
 \tabular{rll}{
 \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
@@ -37,10 +59,8 @@ The following additional arguments can be passed, to replace default values for 
 }
 
 \value{
-A new RasterLayer object (in the R environment), and in some cases the side effect of a new file on disk.
+RasterLayer
 }
-
-\seealso{ \code{\link[raster]{focalFilter}}} 
 
 
 \author{Robert J. Hijmans}
@@ -48,8 +68,23 @@ A new RasterLayer object (in the R environment), and in some cases the side effe
 \examples{
 r <- raster(ncols=36, nrows=18)
 r[] <- runif(ncell(r)) 
-rf <- focal(r, fun=mean, ngb=3) 
+
+# 3x3 mean filter
+r3 <- focal(r, w=matrix(1/9,nrow=3,ncol=3)) 
+
+# 5x5 mean filter
+r5 <- focal(r, w=matrix(1/25,nrow=5,ncol=5)) 
+
+# Gaussian filter
+gf=matrix(c(1,2,3,2,1,2,3,4,3,2,3,4,5,4,3,2,3,4,3,2,1,2,3,2,1), nrow=5)/65
+rg <- focal(r, w=gf)
+
+# The max value for the lower-rigth corner of a 3x3 matrix around a focal cell
+f = matrix(c(0,0,0,0,1,1,0,1,1), nrow=3)
+f
+rm <- focal(r, w=f, fun=max)
 }
+
 
 \keyword{spatial}
 

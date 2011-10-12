@@ -78,30 +78,7 @@ function(x, y, ...){
 })
 
 
-setMethod('extract', signature(x='Raster', y='SpatialLines'), 
-function(x, y, ...){ 
-	px <- projection(x, asText=FALSE)
-	comp <- .compareCRS(px, projection(y), unknown=TRUE)
-	if (!comp) {
-		if (! .requireRgdal() ) { stop('rgdal not available') }
-		warning('Transforming SpatialLines to the CRS of the Raster')
-		y <- spTransform(y, px)
-	}
-	.lineValues(x, y, ...)
-})
 
-
-setMethod('extract', signature(x='Raster', y='SpatialPolygons'), 
-function(x, y, ...){ 
-	px <- projection(x, asText=FALSE)
-	comp <- .compareCRS(px, projection(y), unknown=TRUE)
-	if (!comp) {
-		if (! .requireRgdal() ) { stop('rgdal not available') }
-		warning('Transforming SpatialPolygons to the CRS of the Raster')
-		y <- spTransform(y, px)
-	}
-	.polygonValues(x, y, ...)
-})
 
 setMethod('extract', signature(x='Spatial', y='Raster'), 
 function(x, y, ...){ 
