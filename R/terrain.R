@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-terrain <- function(x, filename='', opt='', unit='radians', neighbors=8, ...) {
+terrain <- function(x, opt='slope', unit='radians', neighbors=8, filename='', ...) {
 	
 	if (nlayers(x) > 1) {
 		warning('first layer of x is used')
@@ -17,14 +17,14 @@ terrain <- function(x, filename='', opt='', unit='radians', neighbors=8, ...) {
 
 	stopifnot(is.character(opt))
 	opt <- trim(tolower(opt))
-	i <- which(! opt %in% c('tri', 'tpi', 'roughness','slope', 'aspect'))
+	i <- which(! opt %in% c('tri', 'tpi', 'roughness','slope', 'aspect', 'flowdir'))
 	if (length(i) > 0) {
-		stop('invalid value in "opt"')
+		stop('invalid value in "opt", choose from:\n "tri", "tpi", "roughness", "slope", "aspect", "flowdir"')
 	}
 	stopifnot(length(opt) > 0 ) 
 	
 
-	nopt <- rep(0, 7)
+	nopt <- rep(0, 8)
 	if ('tri' %in% opt) {
 		nopt[1] <- 1
 	} 
@@ -48,6 +48,10 @@ terrain <- function(x, filename='', opt='', unit='radians', neighbors=8, ...) {
 			nopt[7] <- 1
 		}
 	} 
+	if ('flowdirection' %in% opt) {
+		nopt[8] <- 1
+	}
+	
 	nopt <- as.integer(nopt)
 	nl <- sum(nopt)
 	
@@ -56,13 +60,13 @@ terrain <- function(x, filename='', opt='', unit='radians', neighbors=8, ...) {
 	} else {
 		out <- brick(x, values=FALSE, nl=nl)
 	}
-	layerNames(out) <- c('tri', 'tpi', 'roughness','slope', 'aspect', 'slope', 'aspect')[as.logical(nopt)]
+	layerNames(out) <- c('tri', 'tpi', 'roughness','slope', 'aspect', 'slope', 'aspect', 'flowdir')[as.logical(nopt)]
 
 	rs <- as.double(res(out))
 	un <- as.integer(1)
 	y <- 0;
 	lonlat <- FALSE
-	if ('slope' %in% opt | 'aspect' %in% opt) {
+	if ('slope' %in% opt | 'aspect' %in% opt | 'flowdir' %in% opt) {
 		stopifnot(is.character(unit))
 		unit <- trim(tolower(unit))
 		stopifnot(unit %in% c('degrees', 'radians'))

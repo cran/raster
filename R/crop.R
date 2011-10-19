@@ -29,6 +29,7 @@ function(x, y, filename='', ...) {
 	if (class(y) == "try-error") {
 		stop('Cannot get an Extent object from argument y')
 	}
+	validObject(y)
 
 # we could also allow the raster to expand but for now let's not and first make a separate expand function
 	e <- intersectExtent(x, y)

@@ -5,7 +5,7 @@
 \title{Slope and aspect}
 
 \description{
-Compute slope and/or aspect from elevation data. Elevation data should be in map units (typically meter) for projected (planar) raster data. They should be in meters when the coordinate reference system (CRS) is longitude/latitude. 
+This is a depracated function. Use \code{\link{terrain}} in stead. 
 }
 
 \usage{
@@ -22,24 +22,7 @@ slopeAspect(dem, filename='', out=c('slope', 'aspect'), unit='radians', neighbor
   \item{...}{Standard additional arguments for writing RasterLayer files}
 }
 
-\details{
-When \code{neighbors=4}, slope and aspect are computed according to Fleming and Hoffer (1979) and Ritter (1987). When \code{neigbors=8}, slope and aspect are computed according to Horn (1981). The Horn algorithm may be best for rough surfaces, and the Fleming and Hoffer algorithm may be better for smoother surfaces (Jones, 1997; Burrough and McDonnell, 1998). 
-}
-
-\seealso{ \code{\link{hillShade}} }
-
-
-\references{
-Burrough, P., and R.A. McDonnell, 1998. Principles of Geographical Information Systems. Oxford University Press.
-
-Fleming, M.D. and Hoffer, R.M., 1979. Machine processing of landsat MSS data and DMA topographic data for forest cover type mapping. LARS Technical Report 062879. Laboratory for Applications of Remote Sensing, Purdue University, West Lafayette, Indiana.
-
-Horn, B.K.P., 1981. Hill shading and the reflectance map. Proceedings of the IEEE 69(1):14-47
-
-Jones, K.H., 1998. A comparison of algorithms used to compute hill slope as a property of the DEM. Computers & Geosciences 24(4): 315-323 
-
-Ritter, P., 1987. A vector-based slope and aspect generation algorithm. Photogrammetric Engineering and Remote Sensing 53 (8):1109-1111
-}
+\seealso{ \code{\link{terrain}} }
 
 \author{Robert J. Hijmans}
 

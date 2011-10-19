@@ -89,6 +89,7 @@ extension <- function(filename, value=NULL, maxchar=10) {
 	} else if (format == 'ILWIS') { return('.mpr')
 	} else if (format == 'SAGA') { return('.sdat')
 	} else if (format == 'RMF') { return('.rsw')
+	} else if (format == 'KML') { return('.kml')
 	} else { return('') }
 }
 

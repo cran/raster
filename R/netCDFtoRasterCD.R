@@ -8,7 +8,7 @@
 	dodays <- TRUE
 	dohours <- FALSE
 	
-	un = nc$var[[zvar]]$dim[[dim3]]$units	
+	un <- nc$var[[zvar]]$dim[[dim3]]$units	
 	if (substr(un, 1, 10) == "days since") { 
 		startDate = as.Date(substr(un, 12, 22))
 	} else {
@@ -18,8 +18,8 @@
 		dodays <- FALSE
 	}
 	if (dohours) {
-		startTime = substr(un, 13, 30)
-		startTime = strptime(startTime, "%Y-%m-%d %H:%M:%OS")
+		startTime <- substr(un, 13, 30)
+		startTime <- strptime(startTime, "%Y-%m-%d %H:%M:%OS")
 		time <- startTime + as.numeric(x@zvalue) * 3600
 		time <- as.character(time)
 		if (!is.na(time[1])) {
@@ -30,12 +30,12 @@
 	if (dodays) {
 		# cal = nc$var[[zvar]]$dim[[dim3]]$calendar ?
 		cal = att.get.ncdf(nc, "time", "calendar")$value
-		if (cal =='gregorian' | cal=='standard') {
-			greg = TRUE
+		if (cal =='gregorian' | cal =='proleptic_gregorian' | cal=='standard') {
+			greg <- TRUE
 		} else if (cal == 'noleap' | cal == '365 day' | cal == '365_day') { 
-			greg = FALSE
+			greg <- FALSE
 		} else {
-			greg = TRUE
+			greg <- TRUE
 			warning('assuming a standard calender')
 		}
 
@@ -107,7 +107,7 @@
 }
 
 
-.rasterObjectFromCDF <- function(filename, varname='', band=NA, type='RasterLayer', lvar=3, level=1, warn=TRUE, ...) {
+.rasterObjectFromCDF <- function(filename, varname='', band=NA, type='RasterLayer', lvar=3, level=0, warn=TRUE, ...) {
 
 	if (!require(ncdf)) { stop('You need to install the ncdf package first') }
 	nc <- open.ncdf(filename)
@@ -118,23 +118,31 @@
 	
 	zvar <- .varName(nc, varname, warn=warn)
 	
-	datatype <- raster:::.getRasterDTypeFromCDF( nc$var[[zvar]]$prec )
+	datatype <- .getRasterDTypeFromCDF( nc$var[[zvar]]$prec )
 	
 	dim3 <- 3
 	dims <- nc$var[[zvar]]$ndims
 	if (dims== 1) { 
 		stop(zvar, ' only has a single dimension; I cannot make a RasterLayer from this')
 	} else if (dims == 4) { 
-	
+		nlevs <- nc$var[[zvar]]$dim[[4]]$len
+		if (level==0) {
+			level <- 1
+			if (nlevs > 1) {
+				warning('"level" set to 1 (there are ', nlevs, ' levels)')
+			}
+		} else {
+			oldlevel <- level <- round(level)
+			level <- max(1, min(level, nlevs))
+			if (oldlevel != level) {
+				warning('level set to: ', level)
+			}
+		}
 		if (lvar == 4) { 
 			dim3 <- 3 
-			level <- max(1, min(round(level), nc$var[[zvar]]$dim[[4]]$len))
-
 		} else { 
 			dim3 <- 4 
-			level <- max(1, min(round(level), nc$var[[zvar]]$dim[[3]]$len))
 		}
-		
 	} else if (dims > 4) { 
 		warning(zvar, ' has more than 4 dimensions, I do not know what to do')
 	}

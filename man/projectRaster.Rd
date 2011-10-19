@@ -58,6 +58,9 @@ The following additional arguments can be passed, to replace default values for 
 
 \note{
 Vector (points, lines, polygons) can be transformed with \code{\link[rgdal]{spTransform}}.
+
+\code{projecExtent} does not work very well when transforming projected circumpolar data to (e.g.) longitude/latitude. 
+Which such data you may need to adjust the returned object. E.g. do \code{ymax(object) <- 90}
 }
 
 \value{

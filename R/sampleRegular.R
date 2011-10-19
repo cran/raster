@@ -4,7 +4,9 @@
 # Licence GPL v3
 
 
-sampleRegular <- function( x, size, ext=NULL, cells=FALSE, asRaster=FALSE) {
+sampleRegular <- function( x, size, ext=NULL, cells=FALSE, asRaster=FALSE, useGDAL=FALSE) {
+
+	stopifnot(hasValues(x))
 	
 	size <- round(size)
 	stopifnot(size > 0)
@@ -70,9 +72,11 @@ sampleRegular <- function( x, size, ext=NULL, cells=FALSE, asRaster=FALSE) {
 	
 
 	if (fromDisk(x)) {
-		driver <- .driver(x, FALSE)
-		if (driver=='gdal' & !rotated & !cells) {
-	
+		
+		if (rotated | cells | (.driver(x, FALSE) != 'gdal')) { 
+			useGDAL <- FALSE 
+		}
+		if (useGDAL) {
 			offs <- c(firstrow,firstcol)-1
 			reg <- c(nrow(rcut), ncol(rcut))-1
 			if (nl == 1) {

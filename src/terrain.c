@@ -12,6 +12,8 @@
 #include "util.h"
 #include "dist_util.h"
 
+
+
 SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP geoy) {
 					
 	R_len_t i, j;
@@ -33,7 +35,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 
 	option = INTEGER(opt);
 	int nopt = 0;
-	for (i =0; i<7; i++) {
+	for (i =0; i<8; i++) {
 		nopt += option[i];
 	}
 
@@ -331,13 +333,50 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 		
 		add++;
 		
+	} else if (option[7]) { // flow direction
+
+		double d[8] = {0,0,0,0,0,0,0,0};
+		double p[8] = {1,2,4,16,32,64,128,256}; // pow(2, j)
+		double dxy = sqrt(dx * dx + dy * dy);
+		double dmin;
+		GetRNGstate();
+		for (i = ncol+1; i < ncol * (nrow-1); i++) {
+			if (!R_FINITE(xd[i])) {
+				xval[i] = R_NaReal;
+			} else {
+				d[0] = (xd[i] - xd[i+1]) / dx;
+				d[1] = (xd[i] - xd[i+1+ncol]) / dxy;
+				d[2] = (xd[i] - xd[i+ncol]) / dy;
+				d[3] = (xd[i] - xd[i-1+ncol]) / dxy;
+				d[4] = (xd[i] - xd[i-1]) / dx;
+				d[5] = (xd[i] - xd[i-1-ncol]) / dxy;
+				d[6] = (xd[i] - xd[i-ncol]) / dy;
+				d[7] = (xd[i] - xd[i+1-ncol]) / dxy;
+				// using the lowest neighbor, even if it is higher than the focal cell.
+				dmin = d[0];
+				xval[i] = 1;
+				for (j=1; j<8; j++) {
+					if (d[j] < dmin) {
+						dmin = d[j];
+						xval[i] = p[j];
+					} else if (d[j] == dmin) {
+						if (unif_rand() > 0.5) {
+							dmin = d[j];
+							xval[i] = p[j];
+						}
+					}
+				}
+			}
+		}
+		PutRNGstate();
+		add++;
 	}
 	
 // Set edges to NA	
 // first row	
 	for (j=0; j<add; j++) {
 		for (i = 0; i < ncol; i++) {  
-			xval[i+j*n] =  R_NaReal;
+			xval[i+j*n] = R_NaReal;
 		}
 	// last row	
 		for (i = ncol * (nrow-1); i < n; i++) {  

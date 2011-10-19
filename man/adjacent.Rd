@@ -16,9 +16,9 @@ adjacent(x, cells, directions=4, pairs=FALSE, target=NULL, sorted=FALSE)
   \item{x}{Raster* object}
   \item{cells}{vector of cell numbers for which adjacent cells should be found}
   \item{directions}{the number of directions in which cells should be connected: 4 (rook's case), 8 (queen's case), 16, or 'bishop'. Or a neigborhood matrix (see Details)}
-  \item{pairs}{Boolean. If \code{TRUE}, a matrix of pairs of adjacent cells is returned. If \code{FAlSE}, a vector of cells adjacent to \code{from} is returned (perhaps intersected with \code{to})}
+  \item{pairs}{logical. If \code{TRUE}, a matrix of pairs of adjacent cells is returned. If \code{FAlSE}, a vector of cells adjacent to \code{cells} is returned}
   \item{target}{optional vector of target cell numbers that should be considered. All other adjacent cells are ignored}
-  \item{sorted}{Boolean. Should the results be sorted? }
+  \item{sorted}{logical. Should the results be sorted? }
  }
 
 \details{

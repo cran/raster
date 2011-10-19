@@ -93,15 +93,15 @@
 	
 	if (nc$var[[zvar]]$ndims == 4) {
 		if (x@data@dim3 == 4) {
-			start = c(col, row, x@data@level, layer)
-			count = c(ncols, nrows, x@data@level, nn)
+			start <- c(col, row, x@data@level, layer)
+			count <- c(ncols, nrows, 1, nn)
 		} else {
-			start = c(col, row, layer, x@data@level)
-			count = c(ncols, nrows, nn, x@data@level)
+			start <- c(col, row, layer, x@data@level)
+			count <- c(ncols, nrows, nn, 1)
 		}		
 	} else {
-		start = c(col, row, layer)
-		count = c(ncols, nrows,  nn)
+		start <- c(col, row, layer)
+		count <- c(ncols, nrows,  nn)
 	}
 	d <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
 	

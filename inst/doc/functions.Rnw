@@ -96,7 +96,7 @@ Row by row processing is easy to do but it can be a bit inefficient. There is so
 <<code-5>>=
 f4 <- function(x, a, filename) {
 	out <- raster(x)
-	bs <- blockSize(r)
+	bs <- blockSize(out)
 	out <- writeStart(out, filename, overwrite=TRUE)
 	for (i in 1:bs$n) {
 		v <- getValues(x, row=bs$row[i], nrows=bs$nrows[i] )

@@ -73,11 +73,11 @@ setMethod ('show' , 'RasterLayer',
 			if (object@data@haveminmax) {
 				cat('min value   :' , minValue(object), '\n')
 				cat('max value   :' , maxValue(object), '\n')
-			} else { 
-				if (fd) {
-					cat('min         : ? \n')
-					cat('max         : ? \n')
-				} 
+			#} else { 
+			#	if (fd) {
+			#		cat('min         : ? \n')
+			#		cat('max         : ? \n')
+			#	} 
 			}
 		} else {
 			cat('values      : none\n')			
@@ -89,6 +89,13 @@ setMethod ('show' , 'RasterLayer',
 			if (name == '') name <- 'z-value'
 			name <- paste(sprintf("%-12s", name), ':', sep='')
 			cat(name, z[1], '\n')
+		}
+
+		if (object@file@driver == 'netcdf') {
+			z <- attr(x@data, 'zvar')
+			if (!is.null(z)) { cat('zvar        :', z, '\n') } 
+			z <- attr(x@data, 'level')
+			if (!is.null(z)) { cat('level       :', z, '\n') } 
 		}
 		
 		cat ('\n')
@@ -125,12 +132,12 @@ setMethod ('show' , 'RasterBrick',
 					minv <- c(minv[1:10], '...')
 					maxv <- c(maxv[1:10], '...')
 				}
-			} else {
-				minv <- rep('?', min(nl, 10))
-				maxv <- rep('?', min(nl, 10))
+				cat('min values  :', paste(minv, collapse=' '), '\n')
+				cat('max values  :', paste(maxv, collapse=' '), '\n')
+#			} else {
+#				minv <- rep('?', min(nl, 10))
+#				maxv <- rep('?', min(nl, 10))
 			}
-			cat('min values  :', paste(minv, collapse=' '), '\n')
-			cat('max values  :', paste(maxv, collapse=' '), '\n')
 		} else {
 			cat('values      : none\n')			
 		}
@@ -145,6 +152,13 @@ setMethod ('show' , 'RasterBrick',
 				z <- summary(z)
 				cat(name, paste(z, collapse=', ..., '), '(summary)\n')
 			}
+		}
+		
+		if (object@file@driver == 'netcdf') {
+			z <- attr(x@data, 'zvar')
+			if (!is.null(z)) { cat('zvar        :', z, '\n') } 
+			z <- attr(x@data, 'level')
+			if (!is.null(z)) { cat('level       :', z, '\n') } 
 		}
 		
 		cat ('\n')
