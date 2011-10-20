@@ -47,7 +47,7 @@
 	}
 	
 	leg <- object@legend
-	object <- sampleRegular(object, size=maxpixels, ext=ext, asRaster=TRUE)
+	object <- sampleRegular(object, size=maxpixels, ext=ext, asRaster=TRUE, useGDAL=TRUE)
 	x <- (0:ncol(object)) * xres(object) + xmin(object) 
 	y <- (0:nrow(object)) * yres(object) + ymin(object) 		
 

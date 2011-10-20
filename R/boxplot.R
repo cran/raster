@@ -17,7 +17,7 @@ setMethod('boxplot', signature(x='Raster'),
 			x <- getValues(x)
 		} else {
 			warning('taking a sample of ', maxpixels, ' cells')
-			x = sampleRegular(x, maxpixels)
+			x = sampleRegular(x, maxpixels, useGDAL=TRUE)
 		}	
 		if (nl == 1) {
 			x <- matrix(x)

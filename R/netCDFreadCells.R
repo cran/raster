@@ -43,34 +43,34 @@
 	
 #####			
 	if (nc$var[[zvar]]$ndims == 2) {
-		count = c(x@ncols, 1)
+		count <- c(x@ncols, 1)
 		for (i in 1:length(rows)) {
-			start = c(1, readrows[i])
+			start <- c(1, readrows[i])
 			v <- as.vector(get.var.ncdf(nc, varid=zvar, start=start, count=count))
 			thisrow <- subset(colrow, colrow[,2] == rows[i])
 			colrow[colrow[,2]==rows[i], 3] <- v[thisrow[,1]]
 		}	
 	} else if (nc$var[[zvar]]$ndims == 3) {
-		count = c(x@ncols, 1, 1)
+		count <- c(x@ncols, 1, 1)
 		for (i in 1:length(rows)) {
-			start = c(1, readrows[i], time)
+			start <- c(1, readrows[i], time)
 			v <- as.vector(get.var.ncdf(nc, varid=zvar, start=start, count=count))
 			thisrow <- subset(colrow, colrow[,2] == rows[i])
 			colrow[colrow[,2]==rows[i], 3] <- v[thisrow[,1]]
 		}	
 	} else {
 		if (x@data@dim3 == 4) {
-			count = c(x@ncols, 1, x@data@level, 1)
+			count <- c(x@ncols, 1, 1, 1)
 			for (i in 1:length(rows)) {
-				start = c(1, readrows[i], x@data@level, time)
+				start <- c(1, readrows[i], x@data@level, time)
 				v <- as.vector(get.var.ncdf(nc, varid=zvar, start=start, count=count))
 				thisrow <- subset(colrow, colrow[,2] == rows[i])
 				colrow[colrow[,2]==rows[i], 3] <- v[thisrow[,1]]
 			}
 		} else {
-			count = c(x@ncols, 1, 1, x@data@level)
+			count <- c(x@ncols, 1, 1, 1)
 			for (i in 1:length(rows)) {
-				start = c(1, readrows[i], time, x@data@level)
+				start <- c(1, readrows[i], time, x@data@level)
 				v <- as.vector(get.var.ncdf(nc, varid=zvar, start=start, count=count))
 				thisrow <- subset(colrow, colrow[,2] == rows[i])
 				colrow[colrow[,2]==rows[i], 3] <- v[thisrow[,1]]
@@ -94,7 +94,7 @@
 	if (length(cells) > 1000) {
 		if (canProcessInMemory(x, 2)) {
 # read all
-			endlayer = layer+nl-1
+			endlayer <- layer+nl-1
 			r <- getValues(x)
 			r <- r[cells, layer:endlayer]
 			return(r)
@@ -114,32 +114,32 @@
 	
 	
 	if (nc$var[[zvar]]$ndims == 2) {
-		count = c(1, 1)
+		count <- c(1, 1)
 		res <- matrix(nrow=length(cells), ncol=1)
 		for (i in 1:length(cells)) {
-			start = c(cols[i], rows[i])
+			start <- c(cols[i], rows[i])
 			res[i] <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
 		}	
 	} else if (nc$var[[zvar]]$ndims == 3) {
-		count = c(1, 1, nl)
+		count <- c(1, 1, nl)
 		res <- matrix(nrow=length(cells), ncol=nl)
 		for (i in 1:length(cells)) {
-			start = c(cols[i], rows[i], layer)
+			start <- c(cols[i], rows[i], layer)
 			res[i,] <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
 		}	
 	} else {
 		if (x@data@dim3 == 4) {
-			count = c(1, 1, x@data@level, nl)
+			count <- c(1, 1, 1, nl)
 			res <- matrix(nrow=length(cells), ncol=nl)
 			for (i in 1:length(cells)) {
-				start = c(cols[i], rows[i], x@data@level, layer)
+				start <- c(cols[i], rows[i], x@data@level, layer)
 				res[i,] <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
 			}	
 		} else {
-			count = c(1, 1, nl, x@data@level)
+			count <- c(1, 1, nl, 1)
 			res <- matrix(nrow=length(cells), ncol=nl)
 			for (i in 1:length(cells)) {
-				start = c(cols[i], rows[i], layer, x@data@level)
+				start <- c(cols[i], rows[i], layer, 1)
 				res[i,] <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
 			}	
 		}

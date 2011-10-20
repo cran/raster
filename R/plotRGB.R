@@ -35,9 +35,9 @@ function(x, r=1, g=2, b=3, scale,  maxpixels=500000, stretch=NULL, ext=NULL, int
 		}
 	}
 
-	r <- sampleRegular(raster(x,r), maxpixels, ext=ext, asRaster=TRUE)
-	g <- sampleRegular(raster(x,g), maxpixels, ext=ext, asRaster=TRUE)
-	b <- sampleRegular(raster(x,b), maxpixels, ext=ext, asRaster=TRUE)
+	r <- sampleRegular(raster(x,r), maxpixels, ext=ext, asRaster=TRUE, useGDAL=TRUE)
+	g <- sampleRegular(raster(x,g), maxpixels, ext=ext, asRaster=TRUE, useGDAL=TRUE)
+	b <- sampleRegular(raster(x,b), maxpixels, ext=ext, asRaster=TRUE, useGDAL=TRUE)
 	
 	if (!is.null(stretch)) {
 		stretch = tolower(stretch)

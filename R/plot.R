@@ -80,6 +80,8 @@ setMethod("plot", signature(x='RasterStackBrick', y='ANY'),
 setMethod("plot", signature(x='RasterLayer', y='missing'), 
 	function(x, col=rev(terrain.colors(255)), maxpixels=500000, useRaster=TRUE, alpha=1, add=FALSE, ...)  {
 
+		# maxpixels = min( prod(par()$din * 72), maxpixels)
+	
 		if (alpha < 1) {
 			alpha <- max(alpha, 0) * 255 + 1
 			a <- c(0:9, LETTERS[1:6])
@@ -137,12 +139,12 @@ setMethod("plot", signature(x='Raster', y='Raster'),
 		# using gdal directly to subsample is faster.
 		dx <- .driver(x, warn=FALSE)
 		dy <- .driver(y, warn=FALSE)
-		if (( all(dx =='gdal') & all(dy == 'gdal')) | ( all(dx != 'gdal') & all(dy != 'gdal'))) {
-			x <- sampleRegular(x, size=maxpixels) 
-			y <- sampleRegular(y, size=maxpixels)
+		if ( all(dx =='gdal') & all(dy == 'gdal')) {
+			x <- sampleRegular(x, size=maxpixels, useGDAL=TRUE) 
+			y <- sampleRegular(y, size=maxpixels, useGDAL=TRUE)
 		} else {
-			x <- sampleRegular(x, size=maxpixels, cells=TRUE)[,-1] 
-			y <- sampleRegular(y, size=maxpixels, cells=TRUE)[,-1]
+			x <- sampleRegular(x, size=maxpixels)
+			y <- sampleRegular(y, size=maxpixels)
 		}
 		if (length(x) < cells) {
 			warning(paste('plot used a sample of ', round(100*length(x)/cells), "% of the cells", sep=""))

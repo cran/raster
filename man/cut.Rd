@@ -8,7 +8,7 @@
 \title{Convert values to classes}
 
 \description{
-Cut uses the base function \code{\link[base]{cut}} to divides the range of the values of a Raster* object into intervals and codes the values in x according to which interval they fall. The leftmost interval corresponds to level one, the next leftmost to level two and so on.
+Cut uses the base function \code{\link[base]{cut}} to classify the values of a Raster* object according to which interval they fall in. The intervals are defined by the argument \code{breaks}. The leftmost interval corresponds to level one, the next leftmost to level two and so on.
 }
 
 \usage{
@@ -33,7 +33,7 @@ Raster* object
 
 r <- raster(ncols=36, nrows=18)
 r[] <- rnorm(ncell(r)) 
-breaks=-2:2 * 3
+breaks <- -2:2 * 3
 rc <- cut(r, breaks=breaks)
 }
 

@@ -23,10 +23,19 @@ Most of the code was taken from maptools::ContourLines2SLDF, by Roger Bivand & E
 }
 
 \value{
-An object of class SpatialLinesDataFrame 
+SpatialLinesDataFrame 
 }
+
 
 \author{Robert J. Hijmans}
 
+\examples{
+f <- system.file("external/test.grd", package="raster")
+r <- raster(f)
+x <- rasterToContour(r)
+class(x)
+plot(r)
+plot(x, add=TRUE)
+}
 
 \keyword{ spatial }

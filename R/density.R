@@ -11,7 +11,7 @@ if (!isGeneric("density")) {
 
 setMethod('density', signature(x='RasterLayer'), 
 	function(x, maxpixels=100000, plot=TRUE, main='', ...) {
-		d = sampleRegular(x, maxpixels)
+		d = sampleRegular(x, maxpixels, useGDAL=TRUE)
 		x = density(na.omit(d))
 		if (plot) {
 			plot(x, main=main, ...)

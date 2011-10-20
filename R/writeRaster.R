@@ -15,9 +15,15 @@ function(x, filename, format, ...) {
 	stopifnot(hasValues(x))
 	filename <- trim(filename)
 	if (filename == '') {	stop('provide a filename')	}
-	filename <- .fullFilename(filename)
-	filetype <- .filetype(format=format, filename=filename)
-	filename <- .getExtension(filename, filetype)
+	filename <- raster:::.fullFilename(filename)
+	filetype <- raster:::.filetype(format=format, filename=filename)
+	filename <- raster:::.getExtension(filename, filetype)
+	
+	if (filetype == 'KML') {
+		KML(x, filename, ...) 
+		return(invisible(x))
+	}
+	
 	
 	if (! inMemory(x) ) {
 		if ( toupper(x@file@name) == toupper(filename) ) {

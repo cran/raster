@@ -9,7 +9,7 @@ Take a systematic sample from a Raster* object.
 }
 
 \usage{
-sampleRegular(x, size, ext=NULL, cells=FALSE, asRaster=FALSE)
+sampleRegular(x, size, ext=NULL, cells=FALSE, asRaster=FALSE, useGDAL=FALSE)
 }
 
 \arguments{
@@ -18,6 +18,7 @@ sampleRegular(x, size, ext=NULL, cells=FALSE, asRaster=FALSE)
   \item{ext}{Extent. To limit regular sampling to the area within that box}  
   \item{cells}{Logical. Also return sampled cell numbers (if asRaster=FALSE) }  
   \item{asRaster}{Logical. If \code{TRUE}, a RasterLayer or RasterBrick is returned, rather then the sampled values}  
+  \item{useGDAL}{Logical. If \code{TRUE}, GDAL is used to sample in some cases. This is quicker, but can result in values for a different set of cells. Only for rasters that are accessed via rgdal, are not rotated, and when \code{cells=FALSE}. }    
 }
 
 \value{

@@ -48,12 +48,12 @@ setMethod('readAll', signature(object='RasterBrick'),
 		if (! object@data@fromdisk)  {
 			stop('cannot read values; there is no file associated with this RasterLayer')
 		}
-
 		object@data@inmemory <- TRUE
 		object@data@values <- .readRasterBrickValues(object, 1, object@nrows)
 		rge <- apply(object@data@values, 2, FUN=function(x){ range(x, na.rm=TRUE) } )
 		object@data@min <- as.vector(rge[1,])
 		object@data@max <- as.vector(rge[2,])
+		object@data@haveminmax <- TRUE
 		return(object)
 	}
 )

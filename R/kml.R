@@ -5,7 +5,7 @@
 # Version 0.9
 # Licence GPL v3
 
-KML <- function (x, filename, col=rainbow(255), maxpixels=100000, zip='') {
+KML <- function (x, filename, col=rainbow(255), maxpixels=100000, zip='', ...) {
     if (! .couldBeLonLat(x)) { 
         stop("CRS of x must be longitude / latitude")
 	}
@@ -13,8 +13,9 @@ KML <- function (x, filename, col=rainbow(255), maxpixels=100000, zip='') {
 	if (nlayers(x) > 1) {
 		x <- x[[1]]
 	}
+	stopifnot(hasValues(x))
 	
-	x <- sampleRegular(x, size=maxpixels, asRaster = TRUE)
+	x <- sampleRegular(x, size=maxpixels, asRaster = TRUE, useGDAL=TRUE)
 
 	imagefile <- filename
 	extension(imagefile) <- '.png'
@@ -24,9 +25,9 @@ KML <- function (x, filename, col=rainbow(255), maxpixels=100000, zip='') {
 	png(filename = imagefile, width=max(480, ncol(x)), height=max(480, nrow(x)), bg="transparent")
 	par(mar=c(0,0,0,0))
 	if (R.Version()$minor >= 13) {
-		image(x, col=col, axes=FALSE, useRaster=TRUE)
+		image(x, col=col, axes=FALSE, useRaster=TRUE, ...)
 	} else {
-		image(x, col=col, axes=FALSE)	
+		image(x, col=col, axes=FALSE, ...)	
 	}
 	dev.off()
 
@@ -38,15 +39,11 @@ KML <- function (x, filename, col=rainbow(255), maxpixels=100000, zip='') {
     S <- ymin(bb)
     N <- ymax(bb)
 	
-    kmlheader <- c("<?xml version='1.0' encoding='UTF-8'?>", 
-        "<kml xmlns='http://earth.google.com/kml/2.0'>", "<GroundOverlay>")
+    kmlheader <- c("<?xml version='1.0' encoding='UTF-8'?>", "<kml xmlns='http://earth.google.com/kml/2.0'>", "<GroundOverlay>")
     kmname <- paste("<name>", name, "</name>", sep = "")
 	
-    icon <- paste("<Icon><href>", basename(imagefile), "</href><viewBoundScale>0.75</viewBoundScale></Icon>", 
-        sep = "")
-    latlonbox <- paste("<LatLonBox><north>", N, "</north><south>", 
-        S, "</south><east>", E, "</east><west>", W, "</west></LatLonBox>", 
-        sep = "")
+    icon <- paste("<Icon><href>", basename(imagefile), "</href><viewBoundScale>0.75</viewBoundScale></Icon>", sep = "")
+    latlonbox <- paste("<LatLonBox><north>", N, "</north><south>",  S, "</south><east>", E, "</east><west>", W, "</west></LatLonBox>", sep = "")
     footer <- "</GroundOverlay></kml>"
     x <- (kmlheader)
     x <- append(x, kmname)
@@ -60,8 +57,21 @@ KML <- function (x, filename, col=rainbow(255), maxpixels=100000, zip='') {
 	if (zip == "") {
 		zip <- Sys.getenv('R_ZIPCMD', 'zip')
 	}
+	
 	if (zip!= "") {
-		cmd <- paste(zip, kmzfile, kmlfile, imagefile, collapse=" ")
+		wd <- getwd()
+		on.exit( setwd(wd) )
+		setwd(dirname(kmzfile))
+		kmzfile <- basename(kmzfile)
+		kmlfile <- basename(kmlfile)
+		imagefile <- basename(imagefile)
+		if (zip=='7z') {
+			kmzzip <- extension(kmzfile, '.zip')
+			cmd <- paste(zip, 'a',  kmzzip, kmlfile, imagefile, collapse=" ")
+			file.rename(kmzzip, kmzfile)
+		} else {
+			cmd <- paste(zip, kmzfile, kmlfile, imagefile, collapse=" ")
+		}
 		sss <- try( system(cmd, intern=TRUE) , silent = TRUE )
 		if (file.exists(kmzfile)) {
 			x <- file.remove(kmlfile, imagefile)

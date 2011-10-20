@@ -11,7 +11,7 @@ if (!isGeneric("image")) {
 setMethod("image", signature(x='RasterLayer'), 
 	function(x, maxpixels=500000, useRaster=TRUE, ...)  {
 		coltab <- x@legend@colortable
-		x <- sampleRegular(x, maxpixels, asRaster=TRUE)
+		x <- sampleRegular(x, maxpixels, asRaster=TRUE, useGDAL=TRUE)
 		y <- yFromRow(x, nrow(x):1)
 		value <- t(as.matrix(x)[nrow(x):1,])
 		x <- xFromCol(x,1:ncol(x))

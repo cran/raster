@@ -143,6 +143,8 @@
 		} else if (ext == '.rst') { return('RST') 
 		} else if (ext == '.mpr') { return('ILWIS')
 		} else if (ext == '.rsw') { return('RMF')
+		} else if (ext == '.kml') { return('KML')
+		} else if (ext == '.kmz') { return('KML')		
 		} else { 
 			warning('extension ', ext, ' is unknown. Using default format.')
 			return('') 

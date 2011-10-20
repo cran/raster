@@ -23,9 +23,9 @@ focal(x, w, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=FALSE,
 
 \item{filename}{character. Filename for a new raster (optional)}
  
-\item{na.rm}{logical. If \code{TRUE}, \code{NA} will be removed from focal computations. The result will only be \code{NA} if all focal cells are \code{NA}. Except for some special cases (weights of 1, mean function), using na.rm=TRUE is generally not a good idea in this function because it will unbalance the effect of the weights }
+\item{na.rm}{logical. If \code{TRUE}, \code{NA} will be removed from focal computations. The result will only be \code{NA} if all focal cells are \code{NA}. Except for some special cases (weights of 1, functions like min, max, mean), using \code{na.rm=TRUE} is generally not a good idea in this function because it will unbalance the effect of the weights }
  
-\item{pad}{logical. If \code{TRUE}, additional 'virtual' rows and columns are padded to \code{x} such that there are no edge effects. This can be useful when a function needs to have access to the central cell of the filter }
+\item{pad}{logical. If \code{TRUE}, additional 'virtual' rows and columns are padded to \code{x} such that there are no edge effects. This can be useful when a function needs to have access to the central cell of the filter}
   
 \item{padValue}{logical. The value of the cells of the padded rows and columns}
  
@@ -35,11 +35,13 @@ focal(x, w, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=FALSE,
 }
 
 \details{
-\code{focal} uses a matrix of weights for the neighborhood of the focal cells. The default function is \code{sum}. It is computationally much more efficient to adjust the weights-matrix than to use another function through the \code{fun} argument. Thus while the following two statements are equivalent, the first one is faster than the second one:
+\code{focal} uses a matrix of weights for the neighborhood of the focal cells. The default function is \code{sum}. It is computationally much more efficient to adjust the weights-matrix than to use another function through the \code{fun} argument. Thus while the following two statements are equivalent (if there are no \code{NA} values), the first one is faster than the second one:
 
 \code{a <- focal2(x, w=matrix(1/9, nc=3, nc=3))}
 
 \code{b <- focal2(x, w=3, fun=mean)}
+
+There is, however, a difference if \code{NA} values are considered. One can use the \code{na.rm=TRUE} option which may make sense when using a function like \code{mean}. However, the results would be wrong when using a weights matrix.
 
 
 Gaussian filter: \code{filter=matrix(c(1,2,3,2,1,2,3,4,3,2,3,4,5,4,3,2,3,4,3,2,1,2,3,2,1), nrow=5)/65}
@@ -66,7 +68,7 @@ RasterLayer
 \author{Robert J. Hijmans}
 
 \examples{
-r <- raster(ncols=36, nrows=18)
+r <- raster(ncols=36, nrows=18, xmn=0)
 r[] <- runif(ncell(r)) 
 
 # 3x3 mean filter
@@ -83,6 +85,11 @@ rg <- focal(r, w=gf)
 f = matrix(c(0,0,0,0,1,1,0,1,1), nrow=3)
 f
 rm <- focal(r, w=f, fun=max)
+
+# global lon/lat data: no 'edge effect' for the columns
+xmin(r) <- -180
+r3g <- focal(r, w=matrix(1/9,nrow=3,ncol=3)) 
+
 }
 
 

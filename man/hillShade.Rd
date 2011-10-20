@@ -11,7 +11,7 @@ A hill shade layer is often used as a backdrop on top of which another, semi-tra
 }
 
 \usage{
-hillShade(slope, aspect, angle=45, direction=0, filename='', ...)  
+hillShade(slope, aspect, angle=45, direction=0, filename='', normalize=FALSE, ...)  
 }
 
 \arguments{
@@ -20,6 +20,7 @@ hillShade(slope, aspect, angle=45, direction=0, filename='', ...)
   \item{angle}{ The the elevation angle of the light source (sun), in degrees}
   \item{direction}{ The direction (azimuth) angle of the light source (sun), in degrees}
   \item{filename}{Character. Optional filename}
+  \item{normalize}{Logical. If \code{TRUE}, values below zero are set to zero and the results are multiplied with 255}
   \item{...}{Standard additional arguments for writing RasterLayer files}
 }
 

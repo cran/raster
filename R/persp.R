@@ -10,7 +10,7 @@ if (!isGeneric("persp")) {
 
 setMethod("persp", signature(x='RasterLayer'), 
 	function(x, maxpixels=100000, ext=NULL, ...)  {
-		x <- sampleRegular(x, size=maxpixels, ext=ext, asRaster=TRUE)
+		x <- sampleRegular(x, size=maxpixels, ext=ext, asRaster=TRUE, useGDAL=TRUE)
 		value <- t((getValues(x, format='matrix'))[nrow(x):1,])
 		y <- yFromRow(x, nrow(x):1)
 		x <- xFromCol(x,1:ncol(x))

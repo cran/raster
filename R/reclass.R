@@ -1,6 +1,6 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  June 2008
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
 
 
@@ -21,11 +21,21 @@ function(x, rcl, filename='', include.lowest=FALSE, right=TRUE, ...) {
 	} else if ( dim(rcl)[2] == 1 ) { 
 		rcl <- matrix(rcl, ncol=3, byrow=TRUE) 
 	}
-	if ( dim(rcl)[2] != 3 ) { 
-		stop('rcl must have 3 columns') 
+	
+	nc <- ncol(rcl)
+	if ( nc != 3 ) { 
+		if (nc == 2) {
+			colnames(rcl) <- c("Is", "Becomes")	
+			if (getOption('verbose')) { print(rcl)  }
+			rcl <- cbind(rcl[,1], rcl)
+			right <- NA
+		} else {
+			stop('rcl must have 2 or 3 columns') 
+		}
+	} else {
+		colnames(rcl) <- c("From", "To", "Becomes")	
+		if (getOption('verbose')) { print(rcl)  }
 	}
-	colnames(rcl) <- c("From", "To", "Becomes")	
-	if (getOption('verbose')) { print(rcl)  }
 
 	
 	hasNA <- FALSE
@@ -63,6 +73,10 @@ function(x, rcl, filename='', include.lowest=FALSE, right=TRUE, ...) {
 	onlyNA <- as.integer(onlyNA)
 	valNA <- as.double(valNA)
 	
+	if (nc == 2) {
+		rcl <- rcl[ , 2:3, drop=FALSE]
+	}
+	
 	if (canProcessInMemory(out)) {
 		out <- setValues(out, .Call('reclass', values(x), rcl, include.lowest, right, onlyNA, valNA, NAOK=TRUE, PACKAGE='raster'))
 		if ( filename != "" ) { 
@@ -72,9 +86,9 @@ function(x, rcl, filename='', include.lowest=FALSE, right=TRUE, ...) {
 				
 	} else {
 		
-		out <- writeStart(out, filename=filename, ...)
 		tr <- blockSize(out)
 		pb <- pbCreate(tr$n, type=.progress(...))
+		out <- writeStart(out, filename=filename, ...)
 
 		for (i in 1:tr$n) {
 			vals <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )

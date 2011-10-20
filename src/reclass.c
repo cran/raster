@@ -8,7 +8,6 @@
 #include "Rdefines.h"
 #include "R_ext/Rdynload.h"
 #include "Rmath.h"
-
 #include "util.h"
 
 
@@ -23,14 +22,18 @@ SEXP reclass(SEXP d, SEXP r, SEXP low, SEXP right, SEXP onlyNA, SEXP valNA) {
 
 	SEXP rdim = getAttrib(r, R_DimSymbol);
 	int a = INTEGER(rdim)[0];
+	int nc = INTEGER(rdim)[1];
 	int b = a * 2;
 	
 	PROTECT(r = coerceVector(r, REALSXP));
 	rcl = REAL(r);
 	xd = REAL(d);
 
-
 	int doright = INTEGER(right)[0];
+	int doleftright = 0;
+	if (doright == R_NaInt) {
+		doleftright = 1;
+	}
 	int dolowest  = INTEGER(low)[0];
 	int NAonly = INTEGER(onlyNA)[0];
 	double NAval = REAL(valNA)[0];
@@ -41,7 +44,7 @@ SEXP reclass(SEXP d, SEXP r, SEXP low, SEXP right, SEXP onlyNA, SEXP valNA) {
 	xval = REAL(val);
 
 	
-	if (NAonly) {
+	if (NAonly) {  // only change NA values
 	
 		for (i=0; i<n; i++) {
 			if (!R_FINITE(xd[i])) {
@@ -51,11 +54,44 @@ SEXP reclass(SEXP d, SEXP r, SEXP low, SEXP right, SEXP onlyNA, SEXP valNA) {
 			}
 		}
 		
-	} else { // hasNA and other values
-	
-		if (doright) {
+	} else { // "is - becomes" reclassification
+		
+		if (nc == 2) {
+		
+			for (i=0; i<n; i++) {
+				if (! R_FINITE(xd[i])) {
+					xval[i] = NAval;
+				} else {
+					xval[i] = xd[i];
+					for (j=0; j<a; j++) {
+						if (xd[i] == rcl[j]) {
+							xval[i] = rcl[j+a];
+							break;
+						}
+					}
+				}
+			}
+		
+		// "from - to - becomes" reclassification
+		} else if (doleftright) {   // interval closed at left and right
+			
+			for (i=0; i<n; i++) {
+				if (! R_FINITE(xd[i])) {
+					xval[i] = NAval;
+				} else {
+					xval[i] = xd[i];
+					for (j=0; j<a; j++) {
+						if ((xd[i] >= rcl[j]) & (xd[i] <= rcl[j+a])) {
+							xval[i] = rcl[j+b];
+							break;
+						}
+					}
+				}
+			}
 
-			if (dolowest) {
+		} else if (doright) {  // interval closed at right
+
+			if (dolowest) {  // include lowest value (left) of interval
 			
 				rightval = rcl[0];
 				rightidx = b;
@@ -83,13 +119,13 @@ SEXP reclass(SEXP d, SEXP r, SEXP low, SEXP right, SEXP onlyNA, SEXP valNA) {
 					}
 				}
 				
-			} else {
+			} else { // !dolowest
 
 				for (i=0; i<n; i++) {
-					xval[i] = xd[i];
 					if (!R_FINITE(xd[i])) {
 						xval[i] = NAval;
 					} else {
+						xval[i] = xd[i];
 						for (j=0; j<a; j++) {
 							if ((xd[i] > rcl[j]) & (xd[i] <= rcl[j+a])) {
 								xval[i] = rcl[j+b];
@@ -130,13 +166,13 @@ SEXP reclass(SEXP d, SEXP r, SEXP low, SEXP right, SEXP onlyNA, SEXP valNA) {
 					}
 				}
 				
-			} else {
+			} else { //!dolowest
 			
 				for (i=0; i<n; i++) {
-					xval[i] = xd[i];
 					if (!R_FINITE(xd[i])) {
 						xval[i] = NAval;
 					} else {
+						xval[i] = xd[i];
 						for (j=0; j<a; j++) {	
 							if ((xd[i] >= rcl[j]) & (xd[i] < rcl[j+a])) {
 								xval[i] = rcl[j+b];
