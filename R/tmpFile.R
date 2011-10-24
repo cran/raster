@@ -4,17 +4,28 @@
 # Licence GPL v3
 
 
-
-.fileDialog <- function(filetypes="{{All files} *}") {
+.fileSaveDialog <- function(filetypes="") {
 	if (! require(tcltk) ) {
 		stop('you need to install the tcltk library')
 	}
-	f <- tclvalue(tkgetSaveFile(filetypes=filetypes))
-	return(f)
+	if (filetypes == "") {
+		filetypes="{{GeoTIFF} {.tif} } {{grid files} {.grd}}"
+	}
+	tclvalue(tkgetSaveFile(filetypes=filetypes))
+}
+
+.fileOpenDialog <- function(filetypes="") {
+	if (! require(tcltk) ) {
+		stop('you need to install the tcltk library')
+	}
+	if (filetypes == "") {
+		filetypes="{{All Files} *} {{GeoTIFF} {.tif} } {{grid files} {.grd}}"
+	}
+	tclvalue(tkgetOpenFile(filetypes=filetypes))
 }
 
 
-rasterTmpFile <- function()  {
+rasterTmpFile <- function(prefix='raster_tmp_')  {
 	f <- getOption('rasterTmpFile')
 	if (!is.null(f)) {
 		f <- trim(f)
@@ -28,7 +39,7 @@ rasterTmpFile <- function()  {
 	d <- .tmpdir()
 	dir.create(d,  showWarnings = FALSE)
 	f <- paste(round(runif(10)*10), collapse="")
-	d <- paste(d, 'raster_tmp_', f, extension, sep="")
+	d <- paste(d, prefix, f, extension, sep="")
 	if (getOption('verbose')) { cat('writing raster to:', d) }
 	return(d)
 }

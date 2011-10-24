@@ -64,7 +64,7 @@
 	if (!is.null(dots$overlap)) { stop('argument "overlap" is no longer available. Use "fun"') } 
 	if (!is.null(dots$updateRaster)) { stop('argument "updateRaster" is no longer available. Use "update"') } 
 
-						
+		
 	if (! inherits(p, 'SpatialPolygons') ) {
 		stop('The first argument should be an object of the "SpatialPolygons*" lineage')
 	}
@@ -207,22 +207,22 @@
 
 	for (r in 1:nrow(raster)) {
 		if (doFun) {
-			rv <- lst1
+			rrv <- rv <- lst1
 		} else {
-			rv <- rv1
+			rrv <- rv <- rv1
 		}
 		ly <- yFromRow(raster, r)
 		myline <- rbind(c(lxmin,ly), c(lxmax,ly))
 		holes <- holes1
 		subpol <- subset(polinfo, !(polinfo[,2] > ly | polinfo[,3] < ly), drop=FALSE)
 		if (length(subpol[,1]) > 0) { 		
-			updateHoles = FALSE
+			updateHoles <- FALSE
 			lastpolnr <- subpol[1,6]
 			for (i in 1:length(subpol[,1])) {
-				if (i == length(subpol[,1])) { 
-					updateHoles = TRUE 
-				} else if (subpol[i+1,6] > lastpolnr) {
-					updateHoles = TRUE 
+				if (i == nrow(subpol)) { 
+					updateHoles <- TRUE 
+				} else if (subpol[i+1,6] > lastpolnr) { # new polygon
+					updateHoles <- TRUE 
 					lastpolnr <- subpol[i+1,6]
 				}
 				
@@ -311,47 +311,49 @@
 					} else {
 						rv[holes] <- NA
 					}
+					rrv[!is.na(rv)] <- rv[!is.na(rv)]
 					holes <- holes1
 					updateHoles = FALSE	
-				}
+					
+				}		
 			}
 		}
 		
 		if (doFun) {
-			for (i in 1:length(rv)) {
-				if (is.null(rv[[i]])) {
-					rv[[i]] <- NA
+			for (i in 1:length(rrv)) {
+				if (is.null(rrv[[i]])) {
+					rrv[[i]] <- NA
 				}
 			}
-			rv <- sapply(rv, fun)
+			rrv <- sapply(rrv, fun)
 		}
 		
 		if (mask) {
 			oldvals <- getValues(oldraster, r)
-			ind <- which(is.na(rv))
+			ind <- which(is.na(rrv))
 			oldvals[ind] <- NA
-			rv <- oldvals
+			rrv <- oldvals
 		} else if (update) {
 			oldvals <- getValues(oldraster, r)
 			if (is.numeric(updateValue)) {
-				ind <- which(oldvals == updateValue & !is.na(rv))
+				ind <- which(oldvals == updateValue & !is.na(rrv))
 			} else if (updateValue == "all") {
-				ind <- which(!is.na(rv))
+				ind <- which(!is.na(rrv))
 			} else if (updateValue == "NA") {
 				ind <- which(is.na(oldvals))
 			} else { "!NA"
-				ind <- which(!is.na(oldvals) & !is.na(rv))
+				ind <- which(!is.na(oldvals) & !is.na(rrv))
 			}
-			oldvals[ind] <- rv[ind]
-			rv <- oldvals
+			oldvals[ind] <- rrv[ind]
+			rrv <- oldvals
 		} else {
-			rv[is.na(rv)] <- background
+			rrv[is.na(rrv)] <- background
 		}
 
 		if (filename == "") {
-			v[,r] <- rv
+			v[,r] <- rrv
 		} else {
-			raster <- writeValues(raster, rv, r)
+			raster <- writeValues(raster, rrv, r)
 		}
 		pbStep(pb, r)
 	}

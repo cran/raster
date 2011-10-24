@@ -15,9 +15,9 @@ function(x, filename, format, ...) {
 	stopifnot(hasValues(x))
 	filename <- trim(filename)
 	if (filename == '') {	stop('provide a filename')	}
-	filename <- raster:::.fullFilename(filename)
-	filetype <- raster:::.filetype(format=format, filename=filename)
-	filename <- raster:::.getExtension(filename, filetype)
+	filename <- .fullFilename(filename)
+	filetype <- .filetype(format=format, filename=filename)
+	filename <- .getExtension(filename, filetype)
 	
 	if (filetype == 'KML') {
 		KML(x, filename, ...) 
@@ -75,6 +75,12 @@ function(x, filename, bandorder='BIL', format, ...) {
 	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)
 
+	if (filetype == 'KML') {
+		KML(x, filename, ...) 
+		return(invisible(x))
+	}
+	
+	
 	if (.isNativeDriver(filetype)) {
 		if (! filetype %in% c("raster", "BIL", "BSQ", "BIP") ) {
 			stop('file format not supported for multi-band files')

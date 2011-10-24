@@ -111,7 +111,7 @@ setMethod ('show' , 'RasterBrick',
 		}
 		
 		nl <- nlayers(object)
-		cat ('dimensions  : ', nrow(object), ', ', ncol(object), ', ', nl, '  (nrow, ncol, nlayers)\n', sep="" ) 
+		cat ('dimensions  : ', nrow(object), ', ', ncol(object), ', ', ncell(object), ', ', nl, '  (nrow, ncol, ncell, nlayers)\n', sep="" ) 
 		#cat ('ncell       :' , ncell(object), '\n')
 		cat ('resolution  : ' , xres(object), ', ', yres(object), '  (x, y)\n', sep="")
 		cat ('extent      : ' , object@extent@xmin, ', ', object@extent@xmax, ', ', object@extent@ymin, ', ', object@extent@ymax, '  (xmin, xmax, ymin, ymax)\n', sep="")
@@ -182,7 +182,7 @@ setMethod ('show' , 'RasterStack',
 		if (nl == 0) {
 			cat ('nlayers     :' , nl, '\n')
 		} else {
-			cat ('dimensions  : ', nrow(object), ', ', ncol(object), ', ', nl, '  (nrow, ncol, nlayers)\n', sep="" ) 
+			cat ('dimensions  : ', nrow(object), ', ', ncol(object), ', ', ncell(object), ', ', nl, '  (nrow, ncol, ncell, nlayers)\n', sep="" ) 
 			#cat ('ncell       :' , ncell(object), '\n')
 			cat ('resolution  : ' , xres(object), ', ', yres(object), '  (x, y)\n', sep="")
 			cat ('extent      : ' , object@extent@xmin, ', ', object@extent@xmax, ', ', object@extent@ymin, ', ', object@extent@ymax, '  (xmin, xmax, ymin, ymax)\n', sep="")

@@ -14,7 +14,7 @@
 }
 
 
-.rasterObjectFromFile <- function(x, band=1, objecttype='RasterLayer', native=FALSE, silent=TRUE, ...) {
+.rasterObjectFromFile <- function(x, band=1, objecttype='RasterLayer', native=FALSE, silent=TRUE, offset=NULL, ...) {
 	x <- trim(x)
 	if (x=='' | x=='.') { # etc? 
 		stop('provide a valid filename')
@@ -34,13 +34,15 @@
 			return ( .rasterFromRasterFile(grdfile, band=band, objecttype) )
 		} 
 	}
-	if (! file.exists(x)) {
-		grifile <- .setFileExtensionValues(x, 'raster')
-		grdfile <- .setFileExtensionHeader(x, 'raster')
-		if ( file.exists( grdfile) & file.exists( grifile)) {
-			return ( .rasterFromRasterFile(grdfile, band=band, objecttype) )
-		} else {
-			# stop('file: ', x, ' does not exist')
+	if (! file.exists(x) ) {
+		if (extension(x) == '') {
+			grifile <- .setFileExtensionValues(x, 'raster')
+			grdfile <- .setFileExtensionHeader(x, 'raster')
+			if ( file.exists( grdfile) & file.exists( grifile)) {
+				return ( .rasterFromRasterFile(grdfile, band=band, objecttype) )
+			} else {
+				# stop('file: ', x, ' does not exist')
+			}
 		}
 	}
 
@@ -57,12 +59,15 @@
 		}
 	}
 
+	if (!is.null(offset)) {
+		return ( .rasterFromASCIIFile(x, offset) )
+	}
 	if(!native) {
 		if (! .requireRgdal() )  { native <- TRUE }  
 	}
 	if (native) {
 		if ( fileext == ".ASC" ) {
-			return ( .rasterFromASCIIFile(x) )
+			return ( .rasterFromASCIIFile(x, ...) )
 		}
 		if ( fileext %in% c(".BIL", ".BIP", ".BSQ")) {
 			return ( .rasterFromGenericFile(x, type=objecttype, ...) )

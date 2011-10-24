@@ -1,19 +1,23 @@
-# R function for the raster package
 # Author: Robert J. Hijmans
-# contact: r.hijmans@gmail.com
 # Date : November 2009
 # Version 0.9
 # Licence GPL v3
 
 
 blockSize <- function(x, chunksize, n=nlayers(x), minblocks=4, minrows=1) {
-	n = max(n, 1)
+
+	n <- max(n, 1)
 	if (missing(chunksize)) {
-		bs = .chunksize()  / n
+		bs <- .chunksize()  / n
 	} else {
-		bs = chunksize
+		bs <- chunksize
 	}
 	
+	blockrows <- try(slot(x@file, 'blockrows'), silent=TRUE)
+	if (class(blockrows) != 'try-error') {
+		blockrows <- 1
+	}
+		
 	nr <- nrow(x)
 	size <- min(nr, max(1, floor(bs / ncol(x))))
 	# min number of chunks
@@ -22,6 +26,7 @@ blockSize <- function(x, chunksize, n=nlayers(x), minblocks=4, minrows=1) {
 		size <- min(ceiling(nr/minblocks), size)
 	}
 	size <- min(max(size, minrows), nr)
+	size <- max(minrows, blockrows * round(size / blockrows))
 	
 	nb <- ceiling(nr / size)
 	row <- (0:(nb-1))*size + 1
@@ -30,7 +35,6 @@ blockSize <- function(x, chunksize, n=nlayers(x), minblocks=4, minrows=1) {
 	dif = nb * size - nr
 	nrows[length(nrows)] = nrows[length(nrows)] - dif
 	
-#	return(list(size=size, row=row, nrows=nrows, n=nb))	
 	return(list(row=row, nrows=nrows, n=nb))
 }
 

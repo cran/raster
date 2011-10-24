@@ -65,7 +65,7 @@ function(x, ...) {
 
 	x@layers <- c(x@layers, rasters)
 	lyrns <- sapply(x@layers, layerNames)
-	layerNames(x) <- .makeUniqueNames(lyrns)
+	layerNames(x) <- lyrns
 
 	return(x)
 }	

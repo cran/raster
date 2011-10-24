@@ -2,7 +2,8 @@
 
 \alias{subset}
 \alias{subset,RasterStack-method}
-\alias{subset,Raster-method}
+\alias{subset,RasterBrick-method}
+\alias{subset,RasterLayer-method}
 
 
 \title{Subset layers in a Raster* object}
@@ -16,11 +17,9 @@ subset(x, ...)
 }
 
 \arguments{
-	\item{x}{Raster object }
+	\item{x}{RasterBrick or RasterStack object }
 	\item{...}{Additional arguments: 
-	
 	\code{subset}, which should indicate the layers (represented as integer or by their name). 
-	
 	\code{drop=TRUE}. If \code{TRUE}, a selection of a single layer will be returned as a RasterLayer  }
 }
 
