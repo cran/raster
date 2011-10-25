@@ -5,6 +5,7 @@
 
 
 rasterFromXYZ <- function(xyz, res=c(NA, NA), crs=NA, digits=5) {
+
 	if (length(res) == 1) res = c(res, res)
 
 	if (inherits(xyz, 'SpatialPoints')) {
@@ -14,8 +15,12 @@ rasterFromXYZ <- function(xyz, res=c(NA, NA), crs=NA, digits=5) {
 			xyz <- coordinates(xyz)		
 		}
 	}
+	
+	ln <- colnames(xyz)
+	
 	if (inherits(xyz, 'data.frame')) {
 		xyz <- as.matrix(xyz)
+		xyz <- matrix(as.numeric(xyz), ncol=ncol(xyz), nrow=nrow(xyz))
 	}
 	x <- sort(unique(xyz[,1]))
 	dx <- x[-1] - x[-length(x)]
@@ -73,9 +78,11 @@ rasterFromXYZ <- function(xyz, res=c(NA, NA), crs=NA, digits=5) {
 	} else {
 		r <- brick(xmn=minx, xmx=maxx, ymn=miny, ymx=maxy, crs=crs, nl=d[2]-2)	
 	}
+
 	res(r) <- c(rx, ry)
 	cells <- cellFromXY(r, xyz[,1:2])
 	if (d[2] > 2) {
+		layerNames(r) <- ln[-c(1:2)]
 		r[cells] <- xyz[,3:d[2]]
 	} 	
 	return(r)

@@ -13,12 +13,13 @@ when no filename is provided to a function and in functions where you cannot pro
 Temporary files are automatically removed at the start of each session. During a session you can use \code{showTmpFiles} to see what is there and \code{removeTmpFiles} to delete all the temporary files.  \code{rasterTmpFile} returns a temporary filename. These can be useful when developing your own functions. }
 
 \usage{
-rasterTmpFile()
+rasterTmpFile(prefix='raster_tmp_')
 showTmpFiles()
 removeTmpFiles(h=24)
 }
 
 \arguments{
+  \item{prefix}{Character. Prefix to the filename (which will be followed by 10 random numbers)}
   \item{h}{Numeric. The minimum age of the files in number of hours (younger files are not deleted)}
 }
 
@@ -27,7 +28,7 @@ The default path where the temporary files are stored is returned by \code{showO
 }
 
 \value{
-\code{rasterTmpFile} returns a temporary file name (for use in functions)
+\code{rasterTmpFile} returns a valid file name
 
 \code{showTmpFiles} returns the names (.grd only) of the files in the temp directory
 
@@ -39,5 +40,12 @@ The default path where the temporary files are stored is returned by \code{showO
 
 \seealso{ \code{\link[raster]{setOptions}}, \code{\link[raster]{showOptions}}, \code{\link[base]{tempfile}} }  
 
+\examples{
+	rasterTmpFile('mytemp_')
+	showTmpFiles()
+	removeTmpFiles(h=240)
+}
 
 \keyword{ spatial }
+
+

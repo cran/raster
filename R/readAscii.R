@@ -8,7 +8,7 @@
 .readAllAscii <- function(x) {
 	filename <- trim(filename(x))
     if (!file.exists(filename)) { stop(paste(filename, " does not exist")) }
-	v <- as.numeric( scan(filename, skip=6, what='character', quiet=TRUE) )
+	v <- as.numeric( scan(filename, skip=x@offset, what='character', quiet=TRUE) )
 	if (x@file@nodatavalue < 0) {
 		v[v <= x@file@nodatavalue ] <- NA 			
 	} else {
@@ -19,16 +19,17 @@
 
 
 .readRowsAscii <- function(x, startrow, nrows, startcol=1, ncols=x@ncols) {
+
 	if (startcol > 1 | ncols < x@ncols) {
 		v <- matrix(nrow=ncols, ncol=nrows)
 		endcol <- startcol+ncols-1
-		skiprows <- 6 + startrow - 2 
+		skiprows <- x@file@offset + startrow - 2 
 		for (i in 1:nrows) {
 			v[,i] <- as.numeric ( scan(filename(x), skip=skiprows+i, nlines=nrows, what='character', quiet=TRUE) )[startcol:endcol]
 		}
 		v <- as.vector(v)
 	} else {
-		skiprows <- 6 + startrow - 1 
+		skiprows <- x@file@offset + startrow - 1 
 		v <- as.numeric ( scan(filename(x), skip=skiprows, nlines=nrows, what='character', quiet=TRUE) )
 	}
 	if (x@file@nodatavalue < 0) {

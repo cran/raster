@@ -18,17 +18,20 @@
 	uniquecells <- sort(na.omit(unique(cells[,2])))
 	uniquecells <- uniquecells[(uniquecells > 0) & (uniquecells <= ncell(x))]
 
+	adjust <- TRUE
 	if (length(uniquecells) > 0) {
 		if ( inMemory(x) ) {
 			vals <- getValues(x)[uniquecells]
+			adjust <- FALSE
 		} else if ( fromDisk(x) ) {
-			if (length(uniquecells) > 100 & canProcessInMemory(x, 2)) {
+			if (length(uniquecells) > 250 & canProcessInMemory(x, 2)) {
 				vals <- getValues(x)
 				if (length(layers) > 1) {
 					vals <- vals[uniquecells, layers]
 				} else {
 					vals <- vals[uniquecells]				
 				}
+				adjust <- FALSE
 			} else if (x@file@driver == 'gdal') {
 				vals <- .readCellsGDAL(x, uniquecells, layers)
 			} else if (x@file@driver == 'raster') {
@@ -54,12 +57,11 @@
 #	vals <- vals[order(cells[,1]), 2, drop=FALSE]
 	vals <- vals[order(cells[,1]), 2:ncol(vals)]
 
-	if (! inMemory(x) ) {
+	if (adjust) {
 		if (x@data@gain != 1 | x@data@offset != 0) {
 			vals <- vals * x@data@gain + x@data@offset
 		}
 	}
-	
 	return(vals)
 }
 

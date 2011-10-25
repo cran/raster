@@ -347,7 +347,7 @@ Maintainer: Robert J. Hijmans \email{r.hijmans@gmail.com}
 }
 
 \section{Acknowledgements}{
-Extensive suggestions were made by Jonathan Greenberg, Agustin Lobo, Matteo Mattiuzzi, Steven Mosher, and Kevin Ummel. Contributions were also made by Neil Best, Andrew Bevan, Roger Bivand, Isabelle Boulangeat, Josh Gray, Tim Haering, Herry Herry, Paul Hiemstra, Mayeul Kauffmann, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Justin McGrath, Edzer Pebesma, Oscar Perpinan Lamigueiro, Etienne Racine, David Ramsey, Michael Sumner, Stefan Schlaffer, Jon Olav Skoien, Shaun Walbridge, and others.
+Extensive suggestions were made by Jonathan Greenberg, Agustin Lobo, Matteo Mattiuzzi, Steven Mosher, and Kevin Ummel. Contributions were also made by Neil Best, Andrew Bevan, Roger Bivand, Isabelle Boulangeat, Lyndon Estes, Josh Gray, Tim Haering, Herry Herry, Paul Hiemstra, Ned Hornig, Mayeul Kauffmann, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Justin McGrath, Richard Plant,  Edzer Pebesma, Oscar Perpinan Lamigueiro, Etienne Racine, David Ramsey, Michael Sumner, Stefan Schlaffer, Jon Olav Skoien, Shaun Walbridge, Julian Zeidler, and others.
 }
 
 \keyword{package}

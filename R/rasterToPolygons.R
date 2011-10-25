@@ -86,6 +86,21 @@ rasterToPolygons <- function(x, fun=NULL, n=4, na.rm=TRUE, digits=12) {
 	} else {
 		sp <- SpatialPolygonsDataFrame(sp, data.frame(xyv[,3:ncol(xyv)]), match.ID=FALSE)	
 	}
+	
+	
+#	require(rgeos)
+#	u <- unique(x@data[,1])
+#	lst <- list()
+#	for (i in 1:length(u)) {
+#		s <- x[x@data[,1]==u[i], ]
+#		d <- gUnionCascaded(s)@polygons[[1]]
+#		d@ID <- as.character(i)
+#		lst[[i]] <- d
+#	}
+#	sp <- SpatialPolygons(lst, proj4string=projection(r, FALSE))
+#	sp <- SpatialPolygonsDataFrame(sp, data.frame(value=u), match.ID=FALSE)
+	
 	sp
 }
+
 

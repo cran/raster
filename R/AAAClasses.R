@@ -35,16 +35,6 @@ setClass('.Rotation',
 	representation (
 		geotrans = 'numeric',
 		transfun = 'function'
-		#upperleft = 'numeric',
-		#lowerleft = 'numeric',
-		#upperright = 'numeric',
-		#lowerright = 'numeric'
-	),	
-	prototype (	
-		#upperleft = c(0, 1),
-		#lowerleft = c(0, 0),
-		#upperright = c(1, 1),
-		#lowerright = c(1, 0)
 	)
 )
 
@@ -98,6 +88,8 @@ setClass('.RasterFile',
 		bandorder ='character',
 		offset='integer',
 		toptobottom='logical',
+		blockrows='integer',
+		blockcols='integer',
 		driver ='character'
 		),
 	prototype (	
@@ -109,6 +101,8 @@ setClass('.RasterFile',
 		bandorder = 'BIL',
 		offset = as.integer(0),
 		toptobottom = TRUE,
+		blockrows = as.integer(0),
+		blockcols= as.integer(0),
 		driver = '' # raster or gdal
 	),
 	validity = function(object) {
@@ -188,10 +182,10 @@ setClass ('RasterLayer',
 		file = '.RasterFile',
 		data = '.SingleLayerData',
 		legend = '.RasterLegend',
-		history = 'vector'
+		history = 'list'
 		),
 	prototype (
-		history = vector(mode='character')
+		history = list()
 		)
 	)
 
@@ -202,10 +196,10 @@ setClass ('.RasterLayerSparse',
 		file = '.RasterFile',
 		data = '.SingleLayerData',
 		legend = '.RasterLegend',
-		history = 'vector'
+		history = 'list'
 		),
 	prototype (
-		history = vector(mode='character')
+		history = list()
 		)
 	)
 	
@@ -213,40 +207,29 @@ setClass ('.RasterLayerSparse',
 setClass('.MultipleRasterData', 
 	representation (
 		values='matrix', 
-
 		offset='numeric',
 		gain='numeric',
-
 		inmemory='logical',
 		fromdisk='logical',
-
 		nlayers='integer',
-		
 		dropped = 'vector',
 		isfactor = 'logical',
 		attributes = 'list',
-		
 		haveminmax = 'logical',
 		min = 'vector',
 		max = 'vector'
-		
 		),
 	prototype (	
 		values=matrix(NA,0,0),
 		offset=0,
 		gain=1,
 		#indices =vector(mode='numeric'),
-
 		inmemory=FALSE,
 		fromdisk=FALSE,
-
 		nlayers=as.integer(0),
-		
 		dropped=NULL,
-		
 		isfactor = FALSE,
 		attributes = list(),
-		
 		haveminmax = FALSE,
 		min = c(Inf),
 		max = c(-Inf)
@@ -262,13 +245,49 @@ setClass ('RasterBrick',
 		file = '.RasterFile',
 		data = '.MultipleRasterData',
 		legend = '.RasterLegend',
-		history = 'vector'
+		history = 'list'
 		),
 	prototype (
-		history = vector(mode='character')
+		history = list()
 		),
 	validity = function(object)
 	{
+	}
+)
+
+
+setClass('.QuadRasterData', 
+	representation (
+		values='array',
+		offset='numeric',
+		gain='numeric',
+		inmemory='logical',
+		fromdisk='logical',
+		nlayers='integer',
+		nsteps='integer',
+		dropped = 'vector',
+		isfactor = 'logical',
+		attributes = 'list',
+		haveminmax = 'logical',
+		min = 'vector',
+		max = 'vector'
+		),
+	prototype (	
+		values=array(NA,c(0,0,0)),
+		offset=0,
+		gain=1,
+		#indices =vector(mode='numeric'),
+		inmemory=FALSE,
+		fromdisk=FALSE,
+		nlayers=as.integer(0),
+		dropped=NULL,
+		isfactor = FALSE,
+		attributes = list(),
+		haveminmax = FALSE,
+		min = c(Inf),
+		max = c(-Inf)
+	),	
+	validity = function(object) {
 	}
 )
 
@@ -295,8 +314,8 @@ setClass ('RasterStack',
 )
 
 
-setClassUnion("RasterStackBrick", c("RasterStack", "RasterBrick"))
 
+setClassUnion("RasterStackBrick", c("RasterStack", "RasterBrick"))
 
 
 setClass ('.RasterList',
@@ -312,6 +331,34 @@ setClass ('.RasterList',
 		return( length(object@layers) == object@data@nlayers )
 	}
 )
+
+
+
+setClass ('.RasterQuadBrick',
+	contains = 'RasterBrick',
+	representation (
+		nlevels = 'integer',
+		nsteps = 'integer'
+	) ,
+	prototype (
+		nlevels = as.integer(0),
+		nsteps = as.integer(0)
+	)
+)
+
+setClass ('.RasterQuadStack',
+	contains = 'RasterStack',
+	representation (
+		nlevels = 'integer',
+		nsteps = 'integer'
+	) ,
+	prototype (
+		nlevels = as.integer(0),
+		nsteps = as.integer(0)
+	)
+)
+
+
 
 
 #setClassUnion("RasterStackBrickList", c("RasterStack", "RasterBrick", "RasterList"))

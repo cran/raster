@@ -36,8 +36,15 @@ function(x, subset, drop=TRUE, ...) {
 } )
 
 
-setMethod('subset', signature(x='Raster'),
+setMethod('subset', signature(x='RasterLayer'),
+function(x, subset, ...) {
+	return(x)
+}
+)
+
+setMethod('subset', signature(x='RasterBrick'),
 function(x, subset, drop=TRUE, ...) {
+
 	if (is.character(subset)) {
 		i <- na.omit(.nameToIndex(subset, layerNames(x)))
 		if (length(i)==0) {
@@ -47,7 +54,6 @@ function(x, subset, drop=TRUE, ...) {
 		}
 		subset <- i
 	}
-	
 	
 	subset <- as.integer(subset)
 	nl <- nlayers(x)
@@ -60,6 +66,7 @@ function(x, subset, drop=TRUE, ...) {
 	
 	varname <- attr(x@data, "zvar")
 	if (is.null(varname)) { varname <- "" }
+
 	
 	if (fromDisk(x)) {
 		if (drop & length(subset)==1) {
@@ -68,12 +75,20 @@ function(x, subset, drop=TRUE, ...) {
 			return( stack(filename(x), bands=subset, varname=varname) )
 		}
 	} else {
+		if (drop & length(subset)==1) {
+			if (hasValues(x)) {
+				return(raster(x, subset))
+			} else {
+				return(raster(x))			
+			}
+		}
+	
 		if (hasValues(x)) {
 			x@data@values <- x@data@values[, subset, drop=FALSE]
-			x@layernames <- x@layernames[subset]
 			x@data@min <- x@data@min[subset]
 			x@data@max <- x@data@max[subset]
-		} 
+		}	
+		x@layernames <- x@layernames[subset]
 		x@data@nlayers <- as.integer(length(subset))
 		return(x)
 	}

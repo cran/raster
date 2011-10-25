@@ -95,6 +95,22 @@ setMethod('raster', signature(x='BasicRaster'),
 	}
 )
 
+setMethod('raster', signature(x='RasterLayer'), 
+	function(x) {
+		e <- x@extent
+		r <- raster(xmn=e@xmin, xmx=e@xmax, ymn=e@ymin, ymx=e@ymax, nrows=x@nrows, ncols=x@ncols, crs=x@crs)
+		if (rotated(x)) {
+			r@rotated <- TRUE
+			r@rotation <- x@rotation
+		}
+		if (.hasSlot(x@file, 'blockrows')) {  # old objects may not have this slot
+			r@file@blockrows <- x@file@blockrows
+			r@file@blockcols <- x@file@blockcols
+		}
+		return(r)
+	}
+)
+
 
 setMethod('raster', signature(x='RasterStack'), 
 	function(x, layer=0){
@@ -153,6 +169,11 @@ setMethod('raster', signature(x='RasterBrick'),
 				r <- raster(extent(x), nrows=nrow(x), ncols=ncol(x), crs=projection(x))	
 				r@file <- x@file
 
+				if (.hasSlot(x@file, 'blockrows')) {  # old objects may not have this slot
+					r@file@blockrows <- x@file@blockrows
+					r@file@blockcols <- x@file@blockcols
+				}
+				
 				r@data@offset <- x@data@offset
 				r@data@gain <- x@data@gain
 				r@data@inmemory <- x@data@inmemory

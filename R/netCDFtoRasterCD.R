@@ -125,23 +125,25 @@
 	if (dims== 1) { 
 		stop(zvar, ' only has a single dimension; I cannot make a RasterLayer from this')
 	} else if (dims == 4) { 
-		nlevs <- nc$var[[zvar]]$dim[[4]]$len
-		if (level==0) {
-			level <- 1
-			if (nlevs > 1) {
-				warning('"level" set to 1 (there are ', nlevs, ' levels)')
+		if (type != 'RasterQuadBrick') {
+			nlevs <- nc$var[[zvar]]$dim[[4]]$len
+			if (level <=0 ) {
+				level <- 1
+				if (nlevs > 1) {
+					warning('"level" set to 1 (there are ', nlevs, ' levels)')
+				}
+			} else {
+				oldlevel <- level <- round(level)
+				level <- max(1, min(level, nlevs))
+				if (oldlevel != level) {
+					warning('level set to: ', level)
+				}
 			}
-		} else {
-			oldlevel <- level <- round(level)
-			level <- max(1, min(level, nlevs))
-			if (oldlevel != level) {
-				warning('level set to: ', level)
+			if (lvar == 4) { 
+				dim3 <- 3 
+			} else { 
+				dim3 <- 4 
 			}
-		}
-		if (lvar == 4) { 
-			dim3 <- 3 
-		} else { 
-			dim3 <- 4 
 		}
 	} else if (dims > 4) { 
 		warning(zvar, ' has more than 4 dimensions, I do not know what to do')
@@ -199,9 +201,21 @@
 	if (type == 'RasterLayer') {
 		r <- raster(xmn=xrange[1], xmx=xrange[2], ymn=yrange[1], ymx=yrange[2], ncols=ncols, nrows=nrows)
 		r <- .enforceGoodLayerNames(r, long_name)
-	} else {
+	} else if (type == 'RasterBrick') {
 		r <- brick(xmn=xrange[1], xmx=xrange[2], ymn=yrange[1], ymx=yrange[2], ncols=ncols, nrows=nrows)
 		r@title <- long_name
+	} else if (type == 'RasterQuadBrick') {
+		r <- .quad(xmn=xrange[1], xmx=xrange[2], ymn=yrange[1], ymx=yrange[2], ncols=ncols, nrows=nrows)
+		r@title <- long_name	
+		if (lvar == 4) { 
+			dim3 <- 3 
+			step3 <- 4
+		} else { 
+			dim3 <- 4 
+			step3 <- 3
+		}
+		r@nlevels <- nc$var[[zvar]]$dim[[dim3]]$len
+		r@steps  <- nc$var[[zvar]]$dim[[step3]]$len
 	}
 	
 	if (xrange[1] < -181 | xrange[2] > 181 | yrange[1] < -91 | yrange[2] > 91) {
@@ -212,14 +226,9 @@
 	r@unit <- unit
 	
 	
-#	attr(r@data, "xvar") <- xvar
-#	attr(r@data, "yvar") <- yvar
 	attr(r@data, "zvar") <- zvar
 	attr(r@data, "dim3") <- dim3
 	attr(r@data, "level") <- level
-	
-#	attr(r@data, "add_offset") <- add_offset
-#	attr(r@data, "scale_factor") <- scale_factor
 	
 	attr(r, "prj") <- prj 
 	r@file@driver <- "netcdf"	
