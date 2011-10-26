@@ -92,10 +92,14 @@ setMethod ('show' , 'RasterLayer',
 		}
 
 		if (object@file@driver == 'netcdf') {
-			z <- attr(x@data, 'zvar')
+			z <- attr(object@data, 'zvar')
 			if (!is.null(z)) { cat('zvar        :', z, '\n') } 
-			z <- attr(x@data, 'level')
-			if (!is.null(z)) { cat('level       :', z, '\n') } 
+			z <- attr(object@data, 'level')
+			if (!is.null(z)) { 
+				if (z>0) { 
+					cat('level       :', z, '\n')  
+				}
+			}
 		}
 		
 		cat ('\n')
@@ -155,10 +159,14 @@ setMethod ('show' , 'RasterBrick',
 		}
 		
 		if (object@file@driver == 'netcdf') {
-			z <- attr(x@data, 'zvar')
+			z <- attr(object@data, 'zvar')
 			if (!is.null(z)) { cat('zvar        :', z, '\n') } 
-			z <- attr(x@data, 'level')
-			if (!is.null(z)) { cat('level       :', z, '\n') } 
+			z <- attr(object@data, 'level')
+			if (!is.null(z)) { 
+				if (z>0) { 
+					cat('level       :', z, '\n')  
+				}
+			}
 		}
 		
 		cat ('\n')

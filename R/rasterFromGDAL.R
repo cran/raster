@@ -102,7 +102,8 @@
 	if (type == 'RasterBrick') {
 	
 		r <- brick(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs="")
-		r@file@nbands <- r@data@nlayers <- band <- nbands
+		r@file@nbands <- r@data@nlayers <- nbands
+		band <- 1:nbands
 		
 	} else {
 	
@@ -120,6 +121,7 @@
 		r@data@band <- as.integer(band)
 		ct <- getColorTable( x )
 		if (! is.null(ct)) { r@legend@colortable <- ct }
+		nbands <-1 
 	}
 	if (rotated) {
 		r@rotated <- TRUE
@@ -131,7 +133,6 @@
    	r@history[[1]] <- mdata
     r@history[[2]] <- .Call("RGDAL_GetMetadata", x, "SUBDATASETS", PACKAGE = "rgdal")
 	
-    nbands <- length(band)
     GDType <- character(nbands)
     Bmin <- Bmax <- numeric(nbands)
 	hasNoDataValues <- logical(nbands)
@@ -176,8 +177,8 @@
 
 	GDAL.close(x)
 
-	r@file@blockrows[i] <- blockrows
-	r@file@blockcols[i] <- blockcols
+	r@file@blockrows <- blockrows
+	r@file@blockcols <- blockcols
 
 	if (fixGeoref) {
 		cat('Fixing "AREA_OR_POINT=Point" georeference\n')
@@ -189,7 +190,7 @@
 	}
 	
 	shortname <- gsub(" ", "_", extension(basename(filename), ""))
-	r <- .enforceGoodLayerNames(r, shortname)
+	r <- raster:::.enforceGoodLayerNames(r, shortname)
 	r@file@name <- filename
 	r@file@driver <- 'gdal' 
  

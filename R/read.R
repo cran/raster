@@ -50,6 +50,9 @@ setMethod('readAll', signature(object='RasterBrick'),
 		}
 		object@data@inmemory <- TRUE
 		object@data@values <- .readRasterBrickValues(object, 1, object@nrows)
+		w <- getOption('warn')
+		on.exit(options('warn' = w))
+		options('warn'=-1) 
 		rge <- apply(object@data@values, 2, FUN=function(x){ range(x, na.rm=TRUE) } )
 		object@data@min <- as.vector(rge[1,])
 		object@data@max <- as.vector(rge[2,])

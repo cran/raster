@@ -26,7 +26,7 @@ You can use the following additional argumetns:
 
 \tabular{rll}{
 \tab filename \tab output filename \cr
-\tab time \tab character vector with time lables for multilayer objects. The lenght of this vector should be nlayers(x)+1 \cr
+\tab time \tab character vector with time lables for multilayer objects. The lenght of this vector should be nlayers(x) to indicate "when" or nlayers(x)+1 to indicate "begin-end"\cr
 \tab col \tab color scheme to be used (see \link[graphics]{image} \cr
 \tab maxpixels \tab  maximum number of pixels. If ncell(raster) > maxpixels, sampleRegular is used to reduce the number of pixels \cr
 \tab zip \tab If there is no zip program on your path (on windows), you can supply the full path to a zip.exe here, in order to make a KMZ file \cr
@@ -39,7 +39,7 @@ None. Used for the side-effect files written to disk.
 }
 
 \author{
-This function was adapted for the raster package by Robert J. Hijmans, based on functions in the maptools package by Duncan Golicher, David Forrest and Roger Bivand 
+This function was adapted for the raster package by Robert J. Hijmans, with ideas from Tony Fischbach, and based on functions in the maptools package by Duncan Golicher, David Forrest and Roger Bivand.
 }
 
 

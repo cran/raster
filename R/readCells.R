@@ -24,7 +24,7 @@
 			vals <- getValues(x)[uniquecells]
 			adjust <- FALSE
 		} else if ( fromDisk(x) ) {
-			if (length(uniquecells) > 250 & canProcessInMemory(x, 2)) {
+			if (length(uniquecells) > 250 & canProcessInMemory(x, 4)) {
 				vals <- getValues(x)
 				if (length(layers) > 1) {
 					vals <- vals[uniquecells, layers]
@@ -55,7 +55,7 @@
 	vals <- merge(x=cells[,2], y=vals, by=1, all=TRUE)
 	vals <- as.matrix(cbind(cells[,1], vals[,2:ncol(vals)]))
 #	vals <- vals[order(cells[,1]), 2, drop=FALSE]
-	vals <- vals[order(cells[,1]), 2:ncol(vals)]
+	vals <- vals[order(vals[,1]), 2:ncol(vals)]
 
 	if (adjust) {
 		if (x@data@gain != 1 | x@data@offset != 0) {

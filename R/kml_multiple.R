@@ -44,7 +44,7 @@ setMethod('KML', signature(x='RasterStackBrick'),
 
 function (x, filename, time=NULL, col=rev(terrain.colors(255)), maxpixels=100000, zip='', ...) {
 
-    if (! .couldBeLonLat(x)) { 
+    if (! raster:::.couldBeLonLat(x)) { 
         stop("CRS of x must be longitude/latitude")
 	}
 	stopifnot(hasValues(x))
@@ -55,10 +55,15 @@ function (x, filename, time=NULL, col=rev(terrain.colors(255)), maxpixels=100000
 	nl <- nlayers(x)
 	if (is.null(time)) { 
 		dotime <- FALSE
+		atime <- time
 	} else {
 		dotime <- TRUE
-		if (length(time) != nl+1) {
-			stop('length(time) should equaly nlayers(x)+1')
+		if (length(time) == nl) {
+			when <- TRUE
+		} else if (length(time) == nl+1) {
+			when <- FALSE
+		} else {
+			stop('length(time) should equall nlayers(x) for "when", or (nlayers(x)+1) for "begin-end"')
 		}
 	}
 
@@ -67,8 +72,6 @@ function (x, filename, time=NULL, col=rev(terrain.colors(255)), maxpixels=100000
 	extension(kmlfile) <- '.kml'
 	
 	name <- layerNames(x)
-	begin <- time[-length(time)]
-	end <- time[-1]
 
     kml <- c('<?xml version="1.0" encoding="UTF-8"?>', '<kml xmlns="http://www.opengis.net/kml/2.2">')
     kml <- c(kml, c("<Folder>", paste("<name>", extension(basename(filename), ''), "</name>", sep='')))
@@ -88,15 +91,19 @@ function (x, filename, time=NULL, col=rev(terrain.colors(255)), maxpixels=100000
 		dev.off()
 		a <- c("<GroundOverlay>", paste("\t<name>", name[i], "</name>", sep=''))
 		if (dotime) {
-			time <- c("\t<TimeSpan>", paste("\t\t<begin>", begin[i], "</begin>", sep=''), 
-					paste("\t\t<end>", end[i], "</end>", sep=''), "\t</TimeSpan>")
+			if (when) {
+				atime <- c("\t<TimeSpan>", paste("\t\t<when>", time[i], "</when>", sep=''), "\t</TimeSpan>")			
+			} else {
+				atime <- c("\t<TimeSpan>", paste("\t\t<begin>", time[i], "</begin>", sep=''), 
+					paste("\t\t<end>", time[i+1], "</end>", sep=''), "\t</TimeSpan>")
+			}
 		}
-		kml <- c(kml, a, time, paste("\t<Icon><href>", basename(imagefile[i]), "</href></Icon>", sep=''), latlonbox)
+		kml <- c(kml, a, atime, paste("\t<Icon><href>", basename(imagefile[i]), "</href></Icon>", sep=''), latlonbox)
 	}
 
     kml <- c(kml, "</Folder>", "</kml>")
     cat(paste(kml, sep="", collapse="\n"), file=kmlfile, sep = "")
-	.zipKML(kmlfile, imagefile, zip)
+	raster:::.zipKML(kmlfile, imagefile, zip)
 }
 )
 
