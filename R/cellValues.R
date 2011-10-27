@@ -42,7 +42,6 @@
 				return( .readBrickCellsNetCDF(x, cells, layer, nl) )
 			} 
 
-			lyrs <- layer:(layer+nl-1)
 			return( .readCells(x, cells, lyrs) )
 		}
 		

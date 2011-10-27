@@ -224,8 +224,8 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 
 .raster <- function(country, name, mask=TRUE, path, download, ...) {
 
-	country <- .getCountry(country)
-	path <- .getDataPath(path)
+	country <- raster:::.getCountry(country)
+	path <- raster:::.getDataPath(path)
 	if (mask) {
 		mskname <- '_msk_'
 		mskpath <- 'msk_'
@@ -243,7 +243,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 		if (!file.exists(zipfilename)) {
 			if (download) {
 				theurl <- paste("http://diva-gis.org/data/", mskpath, name, "/", country, mskname, name, ".zip", sep="")
-				.download(theurl, zipfilename)
+				raster:::.download(theurl, zipfilename)
 				if (!file.exists(zipfilename))	{ 
 					cat("\nCould not download file -- perhaps it does not exist \n") 
 				}
@@ -256,10 +256,22 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 	}	
 	if (file.exists(filename)) { 
 		rs <- raster(filename)
-		projection(rs) <- "+proj=longlat +datum=WGS84"
-		return(rs)
-	}	
+	} else {
+		patrn <- paste(country, '.', mskname, name, ".grd", sep="")
+		f <- list.files(path, pattern=patrn)
+		if (length(f)==0) {
+			warning('something went wrong')
+			return(NULL)
+		} else if (length(f)==1) {
+			rs <- raster(f)
+		} else {
+			rs <- brick(f)		
+		}
+	}
+	projection(rs) <- "+proj=longlat +datum=WGS84"
+	return(rs)	
 }
+
 
 
 .SRTM <- function(lon, lat, download, path) {

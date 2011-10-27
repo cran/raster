@@ -31,6 +31,9 @@ function(x, subset, drop=TRUE, ...) {
 	} else {
 		x@layers <- x@layers[subset]
 		x@layernames <- x@layernames[subset]
+		if (length(x@zvalue)>1) {
+			x@zvalue <- x@zvalue[subset]
+		}
 	}
 	return(x)	
 } )
@@ -89,6 +92,9 @@ function(x, subset, drop=TRUE, ...) {
 			x@data@max <- x@data@max[subset]
 		}	
 		x@layernames <- x@layernames[subset]
+		if (length(x@zvalue)>1) {
+			x@zvalue <- x@zvalue[subset]
+		}
 		x@data@nlayers <- as.integer(length(subset))
 		return(x)
 	}

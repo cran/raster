@@ -23,4 +23,4 @@ SEXP rasterize_poly(SEXP object) {
 	UNPROTECT(2);
 	return(object);
 }
-	
+

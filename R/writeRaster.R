@@ -117,8 +117,11 @@ function(x, filename, bandorder='BIL', format, ...) {
 	
 		if (filetype=='CDF') {
 			b <- brick(x, values=FALSE)
+			b@zvalue <- x@zvalue
+			b@zname  <- x@zname
+			b@z  <- x@z
 			b <- .startWriteCDF(b, filename=filename,  ...)
-			x <- .writeValuesBrickCDF(b, getValues(x) )	
+			x <- .writeValuesBrickCDF(b, values(x) )	
 			x <- .stopWriteCDF(x) 
 		} else {
 			x <- .writeGDALall(x, filename=filename, format=filetype, ...) 
@@ -133,6 +136,13 @@ function(x, filename, bandorder='BIL', format, ...) {
 		}
 		
 		b <- brick(x, values=FALSE)
+		
+		if (filetype=='CDF') {
+			b@zvalue <- x@zvalue
+			b@zname  <- x@zname
+			b@z  <- x@z
+		}
+
 		tr <- blockSize(b)
 		pb <- pbCreate(tr$n, type=.progress(...))
 		b <- writeStart(b, filename=filename, bandorder=bandorder, format=filetype, ...)

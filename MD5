@@ -1,5 +1,5 @@
 75293280ecd9e0efb2452593003e53b3 *ChangeLog
-983fa553c39f8be72ebb73d7f1184513 *DESCRIPTION
+4c4189fed7dbf67151c3c68b6fd78050 *DESCRIPTION
 e8fe88e69f6e91bc5b4d8135084e1f0c *NAMESPACE
 253e7c9e79d8005c20ff3e546bee38f8 *R/AAAClasses.R
 527a8da1d599382f14c3d2356ad9d7c4 *R/AAClasses.R
@@ -33,7 +33,7 @@ f20b89946e2fc491edd5fea58d63ead2 *R/boxplot.R
 bff3d18f9c2994e561ebc1f4273a7357 *R/cellFromPolygon.R
 666c1c92f1d617011d7d1f562a6d2a8a *R/cellRowCol.R
 d5dd4c69b7d952bd8969e11e8914fc18 *R/cellStats.R
-f63abd04761c6ac8740232b96fa874f7 *R/cellValues.R
+7363a0ef96eb9abf7fd516143e0a7876 *R/cellValues.R
 4d8c2ab6b6e15875f213ac8dcdd5d35e *R/cellsFromExtent.R
 4810b47683701c3f37700681dbc9d6bc *R/clearValues.R
 e2a078b60bcef473148148c9c53d89e8 *R/click.R
@@ -88,7 +88,7 @@ f3215d8c5ca75c382201182d26fd5a70 *R/focal_old.R
 ddea09ee2097d3e3b834ca78e138ec87 *R/fullFileName.R
 6b584ebb4924fb9a82ce10ff0a73f79d *R/gainoffset.R
 b52fe05c9dbbe0a12decb0baf399e7d0 *R/gdalFormats.R
-6c195b75d6c8519b1bf0caa6e1488ffc *R/getData.R
+89830b214ed5085b96dbff88a4c1b0a7 *R/getData.R
 8670d8d6b99e68809b98f64a8ee132e2 *R/getValues.R
 f7b73cf08bfa244d90d59667490e8471 *R/getValuesBlock.R
 18d0da1fb9399e22dbbc8dff3526cc6c *R/getValuesRows.R
@@ -121,8 +121,8 @@ a95b6711319a7b89db12c570816fb472 *R/interpolate.R
 e52765215bac6c22d3659d45e347da21 *R/is.na.R
 7051d144efb4ad06399d3daa986bb71d *R/isLonLat.R
 8e6800c1bf4905702400dfc091d2d410 *R/kml.R
-530c4c897656c6d12ac88a2cb02b8e43 *R/kml_multiple.R
-b87d10da619c269c83bb7453ea84a438 *R/layerNames.R
+5c95a56f36e9252040c5e108b2822817 *R/kml_multiple.R
+db4a1073974ab01cc3afbc2068cdf6f7 *R/layerNames.R
 a8dcd13ba37c68ff557327ccb694e026 *R/layers.R
 af8d4b3a078c1c7b5ca437a6bddcc4bc *R/makeProjString.R
 c71f6fefdce846adad240670ee674f99 *R/makeRasterList.R
@@ -141,10 +141,10 @@ ec46871602810440f19cc4192dca7f48 *R/naValue.R
 5fb0f8abff64c9729721b5a9502fa955 *R/ncell.R
 806f467e5ca01e5e1e9ace782ae5afbe *R/netCDFread.R
 18c100715dcccf85bc4d6fc5d4a3e41e *R/netCDFreadCells.R
-7b01ea541d2e7163b40049b634df452f *R/netCDFtoRasterCD.R
+3a0ba59300e16e560af6dffb506dd231 *R/netCDFtoRasterCD.R
 b001066121ac83529bcabb4b6eee1688 *R/netCDFtoStack.R
 4bda16eca94aded8949fccfa97c54aff *R/netCDFutil.R
-e3f4521d9c043251592a3aa528cc83a5 *R/netCDFwriteCD.R
+b44ea5e56214ff818973515590889629 *R/netCDFwriteCD.R
 3596f5382f62505f05b27412341d0f6c *R/newPLot.R
 cc6283b5230fb14e925e4b16ee0092d4 *R/notused.R
 0e660b31ac2834c0e958c492117c4131 *R/obsolete.R
@@ -175,7 +175,7 @@ f6d5155a5fa99b96aa6aa02e5bcb28c1 *R/rasterFromASCII.R
 802211c02c2cfbd701e62622178aa056 *R/rasterFromBIL.R
 a02966a8d729b38dc4140a8f3a61cdea *R/rasterFromCells.R
 ed1927c61febe5adbdda51131bcdb3b0 *R/rasterFromFile.R
-1dfff68cc0c1d765676764d2042c0c36 *R/rasterFromGDAL.R
+4190f77d1b4592a5f2c7582270d3f6ae *R/rasterFromGDAL.R
 daf3f46c3769550e9ebc68192d024b4e *R/rasterFromIDRISI.R
 e4e6394b53812142f2bf870802d6697b *R/rasterFromRasterFile.R
 601b3cac3e10df8925359827ed1d1728 *R/rasterFromSAGA.R
@@ -183,14 +183,15 @@ e4e6394b53812142f2bf870802d6697b *R/rasterFromRasterFile.R
 32350f9d803a2ee245cf26f2581efc52 *R/rasterFromXYZ.R
 5bb9473e396e866b9380ef25eb62c157 *R/rasterImage.R
 06d0893df8a2478996de28a4cc7ce88d *R/rasterToPoints.R
-c417ee9452f24fff29c994402bc99327 *R/rasterToPolygons.R
+892e6d3ef0bb6da7c5aac4682be205a4 *R/rasterToPolygons.R
 59682b6a72cb21861ab5a913ac3f46cc *R/rasterize.R
 30c38fb92369972cb0186bef96824e4f *R/rasterizeLines.R
 ac4f0f062c0f8f782fe73b4c15889059 *R/rasterizePoints.R
 8042c4867efa098385020d8fc61d0c33 *R/rasterizePolygons.R
-f682fd9be94da81e8fee481476f69f2a *R/read.R
+1f0f4eebeee513fdf94e2559f8a1f49d *R/rasterizePolygons3.R
+d9ace603ca88cb11a5b14a17d578b1c8 *R/read.R
 429973855034d8bef2f86f58b13b4793 *R/readAscii.R
-8ec6247aef7d52d08304aab8ee8d78e8 *R/readCells.R
+85ff2f20194f0f5e6c06afe878e7557e *R/readCells.R
 88d2abfd668165ae98c31ae4b8d0b97a *R/readRasterBrick.R
 0c16ae5458f69e12e5d84851be97f088 *R/readRasterLayer.R
 89f35919a3836f4bd5e81e526936229c *R/reclass.R
@@ -213,7 +214,7 @@ f2376bdc488a0b5b3f1eb8145bdbc1e2 *R/setCV.R
 9782b9dc4019336c246eb09e6971df9c *R/setValues.R
 889c44c32d75e70094bb40fcb944a74f *R/setZ.R
 556cfe644faa38c36538d658e29b1526 *R/shift.R
-1e7886cffffa6f17f557153853e8e9d9 *R/show.R
+afc0673468e60f33a87e5b6bd4d99171 *R/show.R
 d9db5a6ad4023ffadae2e6c388042096 *R/slopeAspect.R
 f3bf895b1857fcf346a7bb6418719ffe *R/spplot.R
 3efe8f34158be0ae99604df53651cdb6 *R/stack.R
@@ -222,7 +223,7 @@ f3bf895b1857fcf346a7bb6418719ffe *R/spplot.R
 31823de6a7948dc8bc1101062f8b7a2d *R/stackSelect.R
 d89e9a9dd786c986bed756d775dfbe93 *R/stretch.R
 d183ae529edde9379c289777330b7be9 *R/subs.R
-34c5c9946208aa433c8a21f4fb4dc287 *R/subset.R
+47291020b2032f53b938abb89b6d698d *R/subset.R
 ccfa5bdb980b1fe031f7f97708465e3d *R/summary-methods.R
 0344e6d4be9e1b2248dc042649214b8c *R/summary.R
 8a881b005de4bf27c1552292c09c3b3f *R/terrain.R
@@ -239,7 +240,7 @@ b58115a8b9b0b8086311d0c217e2b3da *R/validCell.R
 0b75b89886b689c98ecd6191ceb61e52 *R/writeAllAscii.R
 735e10fefb2d942c5f86eadd8cfb7dab *R/writeAllGDAL.R
 53f41ef4a60dbd13642a086a27337fe3 *R/writeAllRaster.R
-f5b54d2b68358232a0705c5ffda42e68 *R/writeRaster.R
+b4f3f48c0f85181a24b5272b7c331a55 *R/writeRaster.R
 52831fa74d44be1180a32d24b94b9f10 *R/writeStartStop.R
 0a490f50156931f4593fe6df9098220d *R/writeStartStopAscii.R
 13dbbe78ebc437442caa775292636812 *R/writeStartStopGDAL.R
@@ -256,7 +257,7 @@ ed9bead41ddbafef13dcc84b67e88027 *R/zzz.R
 470571f5e9e249dc3fbdfc4daafd4b93 *inst/doc/Raster.Rnw
 2bacfb8a190d0b9bb2153d81809b8f34 *inst/doc/Raster.pdf
 03383f4bb928fec186da9ee51cf6e71f *inst/doc/functions.Rnw
-11c444eab0ba6a7f302333da61d40b2f *inst/doc/functions.pdf
+3f9cccf00d2c3920015ac2d5a80bcbac *inst/doc/functions.pdf
 cdf4af6595c744554a8b1e658c524cef *inst/doc/rasterfile.Rnw
 d2310fe2cd2166d58773e6d42f2544a9 *inst/doc/rasterfile.pdf
 40454ad99e7621a101f07038f6c55979 *inst/external/countries.csv
@@ -267,7 +268,7 @@ ecb70c5878c5aa24c4079d0c23867673 *inst/external/test.gri
 36f703e9927bc5039ad555a3848c8479 *man/Arith-methods.Rd
 c46465d200a6d62d9d9b13d09d124b37 *man/Compare-methods.Rd
 db3055a9ce432d69e5c5a67a04338df9 *man/Extent-class.Rd
-d7826b3cd982043e7825b4fa3ee88f6e *man/KML.Rd
+f73767a3c639c3fad933a7d4427a575f *man/KML.Rd
 aefbe698a4f30523f0e74f416ba97449 *man/Logic-methods.Rd
 c95b77bf293a321c6723742bb97d7b84 *man/Math-methods.Rd
 e46edaea8e0feef0ee8e257560ef91be *man/Raster-classes.Rd
@@ -373,7 +374,7 @@ c1a5b0e1a02339792ca21de737d9b8ed *man/rasterFromCells.Rd
 84cc6fc8a0087bf7c6b43d0fb739471f *man/rasterTmpFile.Rd
 3f64ede3215b154f2884c930812cd62e *man/rasterToContour.Rd
 9e8bbac006dceb24a6ee1a105ff809ea *man/rasterToPoints.Rd
-80d446d57a4c8f69c255ddce2dfbc861 *man/rasterToPolygons.Rd
+758664d3f99f4d143a4b562523ed9c58 *man/rasterToPolygons.Rd
 c143fe02f1ee0c310ff3ed6868b4e9a5 *man/rasterize.Rd
 1d4ed8d8d721452e25422c632a6fd866 *man/readAll.Rd
 233cae56c7a7d5627576633fb3a19356 *man/reclass.Rd
@@ -429,7 +430,8 @@ b729c69b04a2146e3e6abdf6ebfc2601 *src/distance.c
 d0d2f28d677c716adf42228a273b9386 *src/focal_fun.c
 d47ce47393bd69657d18261348bea3e9 *src/focal_sum.c
 0bdd10009e049cffa18636d4eddfe2a3 *src/intersect.c
-9d2c0238f7a69f1a7b0d35ac6a93fd76 *src/rasterize.c
+42fcda8c19b41e604a111bd545ee4820 *src/pointinpoly.c
+ede14f44cb2a74d4d92cbce567d762d3 *src/rasterize.c
 e3e53903146cdc14c8aaa4898ac4f7ee *src/reclass.c
 4d6f9eb4d68575084bd882b4f1c36c00 *src/terrain.c
 54032d7b305b087eb3a5749dc3b1d2e2 *src/util.c

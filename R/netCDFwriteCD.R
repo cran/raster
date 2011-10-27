@@ -4,7 +4,8 @@
 # Licence GPL v3
 
 
-.startWriteCDF <- function(x, filename, datatype='FLT4S', overwrite=FALSE, varname, varunit, longname, xname, yname, zname, zunit, ...) {
+.startWriteCDF <- function(x, filename, datatype='FLT4S', overwrite=FALSE, att, 
+		varname, varunit, varatt, longname, xname, yname, zname, zunit, zatt, ...) {
 
 	if (!require(ncdf)) { stop('You need to install the ncdf package') }
 
@@ -57,14 +58,43 @@
 		vardef <- var.def.ncdf( varname, varunit, list(xdim,ydim), NAvalue(x), prec = datatype )
 	}
 	nc <- create.ncdf(filename, vardef)
-	
+
+	if (! missing(zatt)){
+		for (i in 1:length(zatt)) {
+			a <- trim(unlist(strsplit(zatt[i], '=')))
+			att.put.ncdf(nc, zname, a[1], a[2])	
+		}
+	}
 	att.put.ncdf(nc, varname, '_FillValue', x@file@nodatavalue)
 	att.put.ncdf(nc, varname, 'missing_value', x@file@nodatavalue)
 	att.put.ncdf(nc, varname, 'long_name', longname)
+
+	proj <- projection(x) 
+	if (proj != "NA") { 
+		att.put.ncdf(nc, varname, 'projection', proj)
+		att.put.ncdf(nc, varname, 'projection_format', 'PROJ.4')
+	}
+
+	if (! missing(varatt)){
+		for (i in 1:length(varatt)) {
+			a <- trim(unlist(strsplit(varatt[i], '=')))
+			att.put.ncdf(nc, varname, a[1], a[2])	
+		}
+	}
+
 	att.put.ncdf(nc, 0, 'Conventions', 'CF-1.4')
+	if (! missing(att)){
+		for (i in 1:length(att)) {
+			a <- trim(unlist(strsplit(att[i], '=')))
+			att.put.ncdf(nc, 0, a[1], a[2])	
+		}
+	}
+
+	
 	pkgversion = drop(read.dcf(file=system.file("DESCRIPTION", package='raster'), fields=c("Version")))
-	att.put.ncdf(nc, 0, 'created_by', paste('R, raster package, version', pkgversion))
+	att.put.ncdf(nc, 0, 'created_by', paste('R, packages ncdf and raster (version ', pkgversion, ')', sep=''))
 	att.put.ncdf(nc, 0, 'date', format(Sys.time(), "%Y-%m-%d %H:%M:%S"))
+
 	close.ncdf(nc)
 	
 	x@data@min <- rep(Inf, nlayers(x))

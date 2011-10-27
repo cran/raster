@@ -4,12 +4,19 @@
 # Licence GPL v3
 
 
-rasterToPolygons <- function(x, fun=NULL, n=4, na.rm=TRUE, digits=12) {
+rasterToPolygons <- function(x, fun=NULL, n=4, na.rm=TRUE, digits=12, dissolve=FALSE) {
 
 	stopifnot(n %in% c(4,8,16))
 	if (nlayers(x) > 1) {
 		if (!is.null(fun)) {
 			stop('you cannot supply a "fun" argument when "x" has multiple layers')
+		}
+	}
+
+	if (dissolve) {
+		if(! require(rgeos) ) {
+			warning('rgeos not installed. Cannot dissolve')
+			dissolve <- FALSE
 		}
 	}
 
@@ -83,23 +90,18 @@ rasterToPolygons <- function(x, fun=NULL, n=4, na.rm=TRUE, digits=12) {
 	sp <- SpatialPolygons(sp, proj4string=projection(x, FALSE))
 	if (ncol(xyv)==3) {
 		sp <- SpatialPolygonsDataFrame(sp, data.frame(value=xyv[,3]), match.ID=FALSE)
+		if (dissolve) {
+			dat <- data.frame(value=unique(sp@data[,1]))
+			rownames(dat) <- dat[,1]
+			sp <- gUnionCascaded(sp, id=sp@data[,1])
+			sp <- SpatialPolygonsDataFrame(sp, dat, match.ID=TRUE)
+		}
 	} else {
-		sp <- SpatialPolygonsDataFrame(sp, data.frame(xyv[,3:ncol(xyv)]), match.ID=FALSE)	
+		sp <- SpatialPolygonsDataFrame(sp, data.frame(xyv[,3:ncol(xyv)]), match.ID=FALSE)
+		if (dissolve) {
+			warning('sorry, not dissolving multi-layer objects yet\n')
+		}
 	}
-	
-	
-#	require(rgeos)
-#	u <- unique(x@data[,1])
-#	lst <- list()
-#	for (i in 1:length(u)) {
-#		s <- x[x@data[,1]==u[i], ]
-#		d <- gUnionCascaded(s)@polygons[[1]]
-#		d@ID <- as.character(i)
-#		lst[[i]] <- d
-#	}
-#	sp <- SpatialPolygons(lst, proj4string=projection(r, FALSE))
-#	sp <- SpatialPolygonsDataFrame(sp, data.frame(value=u), match.ID=FALSE)
-	
 	sp
 }
 

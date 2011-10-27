@@ -9,7 +9,7 @@ Raster to polygons conversion. Cells with NA are not converted. A function can b
 }
 
 \usage{
-rasterToPolygons(x, fun=NULL, n=4, na.rm=TRUE, digits=12)
+rasterToPolygons(x, fun=NULL, n=4, na.rm=TRUE, digits=12, dissolve=FALSE)
 }
 
 \arguments{
@@ -18,6 +18,7 @@ rasterToPolygons(x, fun=NULL, n=4, na.rm=TRUE, digits=12)
  \item{n}{ The number of nodes for each polygon. Only 4, 8, and 16 are allowed }
  \item{na.rm}{ If \code{TRUE}, cells with \code{NA} values in all layers are ignored }
  \item{digits}{ number of digits to round the coordinates to }
+ \item{dissolve}{logical. If \code{TRUE}, polygons with the same attribute value will be dissolved into multi-polygon regions. This option requires the rgeos package}
 }
 
 \details{
