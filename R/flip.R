@@ -43,7 +43,7 @@ setMethod('flip', signature(x='RasterLayer', direction='ANY'),
 			
 		} else {
 			tr <- blockSize(outRaster)
-			pb <- pbCreate(tr$n, type=.progress(...))
+			pb <- pbCreate(tr$n, ...)
 			outRaster <- writeStart(outRaster, filename=filename, datatype=dataType(x), ... )
 
 			if (direction == 'y') {
@@ -114,7 +114,7 @@ setMethod('flip', signature(x='RasterStackBrick', direction='ANY'),
 		} else {
 
 			tr <- blockSize(outRaster)
-			pb <- pbCreate(tr$n, type=.progress(...))
+			pb <- pbCreate(tr$n, ...)
 			if (inherits(x, 'RasterStack')) { 
 				dtype <- 'FLT4S'
 			} else {

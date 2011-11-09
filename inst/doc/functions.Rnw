@@ -254,7 +254,7 @@ f8 <- function(x, a, filename='', progress='', ...) {
 	}
 	
 	bs <- blockSize(r)
-	pb <- pbCreate(bs$n, type=progress)
+	pb <- pbCreate(bs$n, progress)
 
 	for (i in 1:bs$n) {
 		v <- getValues(x, row=bs$row[i], nrows=bs$nrows[i] )
@@ -331,7 +331,7 @@ clusfun <- function(x, filename="", ...) {
 	nodes <- length(cl)
 	
 	bs <- blockSize(x, minblocks=nodes*4)
-	pb <- pbCreate(bs$n, type='')
+	pb <- pbCreate(bs$n)
 
 	# the function to be used (simple example)
 	clFun <- function(i) {

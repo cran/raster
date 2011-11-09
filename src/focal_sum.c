@@ -105,20 +105,37 @@ SEXP focal_sum(SEXP d, SEXP w, SEXP dim, SEXP rmNA, SEXP NAonly) {
 	
 // Set edges to NA	
 // first and last columns
-	for (i = wr; i < nrow; i++) {  
-		for (j = 0; j < wc; j++) {
-			xval[i * ncol + j] = R_NaReal;
-			xval[(i+1) * ncol - 1 - j] = R_NaReal;
+	if (naonly) {
+		for (i = wr; i < nrow; i++) {  
+			for (j = 0; j < wc; j++) {
+				xval[i * ncol + j] = xd[i * ncol + j];
+				xval[(i+1) * ncol - 1 - j] = xd[(i+1) * ncol - 1 - j];
+			}
 		}
-	}
-
-// first rows
-	for (i = 0; i < ncol*wr; i++) {  
-		xval[i] = R_NaReal;
-	}
-// last rows
-	for (i = ncol * (nrow-wr); i < n; i++) {  
-		xval[i] = R_NaReal;
+	// first rows
+		for (i = 0; i < ncol*wr; i++) {  
+			xval[i] = xd[i];
+		}
+	// last rows
+		for (i = ncol * (nrow-wr); i < n; i++) {  
+			xval[i] = xd[i];
+		}
+	
+	} else {
+		for (i = wr; i < nrow; i++) {  
+			for (j = 0; j < wc; j++) {
+				xval[i * ncol + j] = R_NaReal;
+				xval[(i+1) * ncol - 1 - j] = R_NaReal;
+			}
+		}
+	// first rows
+		for (i = 0; i < ncol*wr; i++) {  
+			xval[i] = R_NaReal;
+		}
+	// last rows
+		for (i = ncol * (nrow-wr); i < n; i++) {  
+			xval[i] = R_NaReal;
+		}
 	}
 	UNPROTECT(3);
 	return(val);

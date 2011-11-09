@@ -4,70 +4,83 @@
 # Licence GPL v3
 
 
-
-.asSpGrid <- function(object, type='grid', dataframe)  {
-		
-	if (rotated(object)) {
-		stop('\n Cannot coerce because object is rotated.\n Either coerce to SpatialPoints* object\n or first use the "rectify" function')
-	}	
-	crs <- projection(object, FALSE)
-	
-	if (type=='pixel') {
-		v <- rasterToPoints(object, fun=NULL, spatial=FALSE)
-		sp <- SpatialPoints(v[,1:2], proj4string=crs)
-		if (dataframe) {
-			sp <- SpatialPixelsDataFrame(points=sp, data=data.frame(v[,3:ncol(v), drop=FALSE], check.names=TRUE))
-		} 
-		
-	} else {
-	
-		bb <- bbox(object)
-		cs <- res(object)
-		cc <- bb[,1] + (cs/2)
-		cd <- cbind(ncol(object), nrow(object))
-		grd <- GridTopology(cellcentre.offset=cc, cellsize=cs, cells.dim=cd)
-		if (dataframe) {
-			if (nlayers(object) > 1) {
-				sp <- SpatialGridDataFrame(grd, proj4string=crs, data=data.frame(values(object), check.names=TRUE))
-			} else {
-				ln <- layerNames(object)[1]
-				object <- matrix(values(object), ncol=1)
-				colnames(object) <- ln
-				object <- data.frame(object, check.names=TRUE)
-				sp <- SpatialGridDataFrame(grd, proj4string=crs, data=object)
-			}
-		} else { 
-			sp  <- SpatialGrid(grd, proj4string=crs)
-		}	
-	}
-	return(sp)
-}
-
-
 # To sp pixel/grid objects	
 
 
 setAs('Raster', 'SpatialPixels', 
 	function(from) {
-		.asSpGrid(from, type='pixel', FALSE)
+		if (rotated(from)) {
+			stop('\n Cannot coerce because the object is rotated.\n Either coerce to SpatialPoints* object\n or first use the "rectify" function')
+		}	
+		sp <- rasterToPoints(from, fun=NULL, spatial=FALSE)
+		sp <- SpatialPoints(sp[,1:2], proj4string= projection(from, FALSE))
+		SpatialPixels(points=sp)
 	}
 )
 
 setAs('Raster', 'SpatialPixelsDataFrame', 
 	function(from) { 
-		.asSpGrid(from, type='pixel', TRUE)
+		if (rotated(from)) {
+			stop('\n Cannot coerce because the object is rotated.\n Either coerce to SpatialPoints* object\n or first use the "rectify" function')
+		}	
+		v <- rasterToPoints(from, fun=NULL, spatial=FALSE)
+		sp <- SpatialPoints(v[,1:2], proj4string= projection(from, FALSE))
+		if (ncol(v) > 2) {
+			SpatialPixelsDataFrame(points=sp, data = data.frame(v[, 3:ncol(v), drop = FALSE], check.names = TRUE))
+		} else {
+			warning('object has no values, returning a "SpatialPixels" object')
+			SpatialPixels(points=sp)
+		}
 	}
 )
 
+
 setAs('Raster', 'SpatialGrid', 
 	function(from) { 
-		.asSpGrid(from, type='grid', FALSE)
+		if (rotated(from)) {
+			stop('\n Cannot coerce because the object is rotated.\n Either coerce to SpatialPoints* from\n or first use the "rectify" function')
+		}	
+		crs <- projection(from, FALSE)
+		
+		bb <- bbox(from)
+		cs <- res(from)
+		cc <- bb[,1] + (cs/2)
+		cd <- cbind(ncol(from), nrow(from))
+		grd <- GridTopology(cellcentre.offset=cc, cellsize=cs, cells.dim=cd)
+	
 	}
 )
 
 setAs('Raster', 'SpatialGridDataFrame', 
 	function(from) { 
-		.asSpGrid(from, type='grid', TRUE)
+		if (rotated(from)) {
+			stop('\n Cannot coerce because the object is rotated.\n Either coerce to SpatialPoints* from\n or first use the "rectify" function')
+		}	
+		crs <- projection(from, FALSE)
+		
+		bb <- bbox(from)
+		cs <- res(from)
+		cc <- bb[,1] + (cs/2)
+		cd <- cbind(ncol(from), nrow(from))
+		grd <- GridTopology(cellcentre.offset=cc, cellsize=cs, cells.dim=cd)
+
+		if (hasValues(from)) {
+		
+			if (nlayers(from) > 1) {
+				sp <- SpatialGridDataFrame(grd, proj4string=crs, data=data.frame(values(from), check.names=TRUE))
+			} else {
+				ln <- layerNames(from)[1]
+				from <- matrix(values(from), ncol=1)
+				colnames(from) <- ln
+				from <- data.frame(from, check.names=TRUE)
+				sp <- SpatialGridDataFrame(grd, proj4string=crs, data=from)
+			}
+		} else { 
+			warning('object has no values, returning a "SpatialGrid" object')
+			sp  <- SpatialGrid(grd, proj4string=crs)
+		}
+		
+		sp
 	}
 )
 
@@ -90,6 +103,7 @@ setAs('Extent', 'SpatialPolygons',
 
 setAs('Raster', 'SpatialPoints', 
 	function(from) { 
+
 		return( SpatialPoints(rasterToPoints(from, spatial=FALSE)[,1:2]) )
 	}
 )

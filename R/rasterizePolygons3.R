@@ -127,7 +127,7 @@
 	}
 
 	tr <- blockSize(x, n=2*nlayers(x))
-	pb <- pbCreate(tr$n, type=raster:::.progress(...))
+	pb <- pbCreate(tr$n, ...)
 
 	rx <- c(xmin(x), xmax(x))
 	

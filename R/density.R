@@ -49,9 +49,12 @@ setMethod('density', signature(x='RasterStackBrick'),
 			nc <- ceiling(sqrt(nl))
 			nr <- ceiling(nl / nc)
 			
+			
 			mfrow = par("mfrow")
 			spots = mfrow[1] * mfrow[2]
 			if (spots < nl) {
+				old.par <- par(no.readonly = TRUE) 
+				on.exit(par(old.par))
 				par(mfrow=c(nr, nc))
 			}
 			for (i in 1:length(y)) {	

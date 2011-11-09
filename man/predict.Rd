@@ -12,45 +12,25 @@ Make a Raster* object with predictions based on a a fitted model object. The fir
 }
 
 \usage{
-predict(object, ...) 
+\S4method{predict}{Raster}(object, model, filename="", fun=predict, ext=NULL, const=NULL, index=1, na.rm=TRUE, format, datatype, overwrite=FALSE, progress='', ...)
 }
 
 
 \arguments{
-  \item{object}{a RasterStack, RasterBrick or RasterLayer object}
-  \item{...}{Additional arguments. See under Methods}  
-}
-
-\section{Methods}{
-\describe{
- 
-\code{predict(object, model, filename='', fun=predict, ext=NULL, const=NULL, index=1, na.rm=TRUE, ...)}
-  
-\tabular{rll}{  
-  \tab  \code{object} \tab a Raster* object. Typcially a multi-layer type (RasterStack or RasterBrick) \cr
-  \tab  \code{model}  \tab A fitted model of any class that has a 'predict' method (or for which you can supply a similar method as \code{fun} argument. E.g. glm, gam, or randomForest \cr
-  \tab  \code{filename}  \tab Optional output filename \cr
-  \tab  \code{fun} \tab Function. Default value is 'predict', but can be replaced with e.g. predict.se (depending on the type of model), or your
-  own custom function.\cr
-  \tab  \code{ext} \tab An Extent object to limit the prediction to a sub-region of \code{x} \cr
-  \tab  \code{const}  \tab data.frame. Can be used to add a constant for which there is no Raster object for model predictions. Particulalry useful if the constant is a character-like factor value for which it is currently not possible to make a RasterLayer \cr
-  \tab  \code{index}  \tab Integer. To select the column if predict.'model' returns a matrix with multiple columns \cr
-  \tab  \code{na.rm}  \tab Logical. Remove cells with \code{NA} values in the predictors before solving the model (and return a \code{NA} value for those cells). This option prevents errors with models that cannot handle \code{NA} values. In most other cases this will not affect the output. An exception is when predicting with a boosted regression trees model because these return predicted value even if some (or all!) variables are \code{NA} \cr
-  \tab  \code{...}  \tab Additional arguments to pass to the predict.'model' function \cr
-}
-
-The argument \code{se.fit} has been removed. See the examples on how to get a prediction of se.fit of a glm model.
-
-The following additional arguments can be passed, to replace default values
-\tabular{rll}{
-  \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
-  \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-  \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-  \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
+  \item{object}{Raster* object. Typcially a multi-layer type (RasterStack or RasterBrick)}
+  \item{model}{A fitted model of any class that has a 'predict' method (or for which you can supply a similar method as \code{fun} argument. E.g. glm, gam, or randomForest }
+  \item{filename}{Optional output filename }
+  \item{fun}{Function. Default value is 'predict', but can be replaced with e.g. predict.se (depending on the type of model), or your own custom function.}
+  \item{ext}{An Extent object to limit the prediction to a sub-region of \code{x} }
+  \item{const}{data.frame. Can be used to add a constant for which there is no Raster object for model predictions. Particulalry useful if the constant is a character-like factor value for which it is currently not possible to make a RasterLayer }
+  \item{index}{Integer. To select the column if predict.'model' returns a matrix with multiple columns }
+  \item{na.rm}{Logical. Remove cells with \code{NA} values in the predictors before solving the model (and return a \code{NA} value for those cells). This option prevents errors with models that cannot handle \code{NA} values. In most other cases this will not affect the output. An exception is when predicting with a boosted regression trees model because these return predicted value even if some (or all!) variables are \code{NA} }
+ \item{format}{Character. Output file type. See \link[raster]{writeRaster} (optional) }
+ \item{datatype}{Character. Output data type. See \link[raster]{dataType} (optional) }
+ \item{overwrite}{Logical. If TRUE, "filename" will be overwritten if it exists }
+ \item{progress}{Character. "text", "window", or "" (the default, no progress bar)  }
+  \item{...}{Additional arguments to pass to the predict.'model' function }
  }
-
-}}
-
 
 \seealso{
 Use \code{\link[raster]{interpolate}} if your model has 'x' and 'y' as implicit independent variables (e.g., in kriging).

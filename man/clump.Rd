@@ -10,32 +10,23 @@ Detect clumps (patches) of connected cells. Each clump gets a unique ID. NA and 
 }
 
 \usage{
-clump(x, ...) 
+\S4method{clump}{RasterLayer}(x, filename="", directions=8, gaps=TRUE, ...)
 }
 
 \arguments{
-  \item{x}{A RasterLayer object}
-  \item{...}{additional arguments. See Details.}  
+  \item{x}{RasterLayer object}
+  \item{filename}{Character. Filename for the output RasterLayer (optional)}  
+  \item{directions}{Integer. Which cells are considered adjacent? Should be 8 (Queen's case) or 4 (Rook's case) }
+  \item{gaps}{Logical. If \code{TRUE} (the default), there may be 'gaps' in the chunk numbers (e.g. you may have clumps with IDs 1, 2, 3 and 5, but not 4). If it is \code{FALSE}, these numbers will be recoded from 1 to n (4 in this example)}  
+  \item{...}{Additional arguments as for \code{\link{writeRaster}}}  
 }
 
-\details{
+\note{
 This function requires that the igraph package is available.
-
-
-The following additional arguments can be passed, to replace default values for this function
-\tabular{rll}{
-  \tab \code{directions}  \tab Integer. Which cells are considered adjacent? Default value is 8 (Queen's case), the only valid alternative is 4 (King's case) \cr
-  \tab \code{gaps}  \tab Logical. If \code{TRUE} (the default), there may be 'gaps' in the chunk numbers (e.g. you may have clumps with IDs 1, 2, 3 and 5, but not 4). If it is \code{FALSE}, these numbers will be recoded from 1 to n (4 in this example) \cr
-  \tab \code{filename}  \tab Output filename. Default = '' \cr
-  \tab \code{format}  \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
-  \tab \code{datatype}  \tab Character. Output data type; can be 'INT', 'FLT', or a complete datatype description, see \code{\link[raster]{dataType}} \cr
-  \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-  \tab \code{progress}  \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
- }
 }
 
 \value{
-A new RasterLayer object (in the R environment), and in some cases the side effect of a new file on disk.
+RasterLayer
 }
 
 \author{Robert J. Hijmans and Jacob van Etten}

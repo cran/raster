@@ -5,9 +5,8 @@
 
 
 
-
 setMethod('extract', signature(x='Raster', y='SpatialPolygons'), 
-function(x, y, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, layer, nl, ...){ 
+function(x, y, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, df=FALSE, layer, nl, ...){ 
 
 	px <- projection(x, asText=FALSE)
 	comp <- .compareCRS(px, projection(y), unknown=TRUE)
@@ -27,9 +26,11 @@ function(x, y, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, 
 	if (!missing(fun)) {
 		cellnumbers <- FALSE
 	} else if (weights) {
-		test <- try(slot(fun, 'generic') == 'mean', silent=TRUE)
-		if (!isTRUE(test)) {
-			warning('"fun" was changed to "mean"; other functions cannot be used when "weights=TRUE"' )
+		if (!missing(fun)) {
+			test <- try(slot(fun, 'generic') == 'mean', silent=TRUE)
+			if (!isTRUE(test)) {
+				warning('"fun" was changed to "mean"; other functions cannot be used when "weights=TRUE"' )
+			}
 		}
 	}
 	
@@ -46,12 +47,17 @@ function(x, y, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, 
 	
 	
 	if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
+		if (df) {
+			res <- matrix(ncol=1, nrow=0)
+			colnames(res) <- 'ID'
+			return(res)
+		}
 		return(res[1:npol])
 	}
 	
 	rr <- raster(x)
 	
-	pb <- pbCreate(npol, type=.progress(...))
+	pb <- pbCreate(npol, ...)
 	
 	if (.doCluster()) {
 		cl <- getCluster()
@@ -210,9 +216,9 @@ function(x, y, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, 
 						x <- x * w
 						w <- matrix(rep(w, nl), ncol=nl)
 						w[is.na(x)] <- NA
-						w <- apply(w, 2, sum, na.rm=TRUE)
+						w <- colSums(w, na.rm=TRUE)
 						x <- apply(x, 1, function(x) x / w )
-						return( apply(x, 1, sum, na.rm=na.rm) )
+						res <- rowSums(x, na.rm=na.rm) 
 					} else {
 						return( NULL )
 					}	
@@ -238,6 +244,21 @@ function(x, y, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, 
 			res <- j
 		}
 	}
+	
+	if (df) {
+		if (!is.list(res)) {
+			res <- cbind(1:NROW(res), res)
+		} else {
+			res <- data.frame( do.call(rbind, sapply(1:length(res), function(x) if (!is.null(res[[x]])) cbind(x, res[[x]]))) )
+		}
+
+		if (ncol(res) == 2) {
+			colnames(res) <- c('ID', 'value')
+		} else {
+			colnames(res)[1] <- 'ID'
+		}
+	}
+	
 	res
 }
 )

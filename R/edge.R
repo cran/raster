@@ -1,147 +1,128 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
-# Date : February 2010
-# Version 0.9
+# Author: Robert J. Hijmans
+# Date : November 2011
+# Version 1.0
 # Licence GPL v3
-
 
 if (!isGeneric("edge")) {
 	setGeneric("edge", function(x, ...)
 		standardGeneric("edge"))
 }	
 
-
 setMethod('edge', signature(x='RasterLayer'), 
-function(x, filename="", classes=TRUE, type='both', asNA=FALSE, asZero=TRUE, ...) {
-	
-	type <- tolower(type)
-	if (! type %in% c('both', 'inner', 'outer')) stop("type must be 'both', 'inner', or 'outer'")
+function(x, filename="", type='inner', classes=FALSE, directions=8, ...) {
+
+	dots <- list(...)
+	if (!is.null(dots$asZero)) {
+		warning("argument 'asZero' is currently ignored")
+	}
+	if (!is.null(dots$asNA)) {
+		warning("argument 'asNA' is currently ignored")
+	}
+
+	stopifnot( nlayers(x) == 1 )
+	stopifnot( hasValues(x) )
+	filename <- trim(filename)
 	
 	out <- raster(x)
+	gll <- as.integer( .isGlobalLonLat(out) )
 
-	ngb <- c(3,3) # note that this is also asuumed/hard coded further below, cannot be made an option as-is (or what that would mean)
-	
-	row1 <- floor(ngb[1]/2)
-	row2 <- ngb[1]-(row1+1)
-	nrows <- ngb[1]
-	col1 <- floor(ngb[2]/2)
-	col2 <- ngb[2]-(col1+1)
-	
-	add1 <- matrix(0, ncol=col1, nrow=ngb[1])
-	add2 <- matrix(0, ncol=col2, nrow=ngb[1])
-
-	nrs <- matrix(ncol=ncol(out), nrow=ngb[1])
-	nrs[] <- 1:length(nrs)
-	nrs <- cbind(add1, nrs, add2)
-	
-	idx <- matrix(ncol=ncol(out), nrow=prod(ngb))
-	cc <- 1:ngb[2]
-	for (c in 1:ncol(out)) {
-		idx[,c] <- nrs[,cc] 
-		cc <- cc + 1
+	type <- tolower(type)
+	if (! type %in% c('inner', 'outer')) {
+		stop("type must be 'inner', or 'outer'")
 	}
-	id <- as.vector(idx)
-	id <- cbind(rep(1:ncol(out), each=nrow(idx)), id)
-	id <- subset(id, id[,2]>0)
+		
+	if (type=='inner') { 
+		type <- as.integer(0) 
+	} else { 
+		type <- as.integer(1) 
+	}
+	classes <- as.integer(as.logical(classes))
+	directions <- as.integer(directions)
+	stopifnot(directions %in% c(4,8))
 	
-	filename <- trim(filename)
-	inmem <- TRUE
-	if (!canProcessInMemory(out, 3) && filename == '') {
-		filename <- rasterTmpFile()
-		inmem <- FALSE
-								
+	
+#	if (asNA) {	fval <- as.integer(NA) } else { fval <- as.integer(0) }
+#	asZero <- as.integer(as.logical(asZero))
+	
+	
+	datatype <- list(...)$datatype
+	if (is.null(datatype)) {
+		datatype <- 'INT2S'
 	}
-	if (inmem) {
-		v <- matrix(nrow=ncol(out), ncol=nrow(out))		
-	} else {
-		out <- writeStart(out, filename=filename, ...)
-	}
-
-	fun <- function(x) length(unique(x)) != 1
-
-	pb <- pbCreate(nrow(out), type=.progress(...))
-	ngbdata <- matrix(nrow=ngb[1], ncol=ncol(x))
-	rr <- 0
-	for (r in 1:row1) {
-		rr <- rr + 1
-		d <- getValues(x, rr)
-		if (! classes) {
-			d[!is.na(d)] <- 1
+	
+	if (canProcessInMemory(out)) {
+		x <- as.matrix(x)
+		if (gll) {
+			x <- cbind(x[, ncol(x)], x, x[, 1]) 
 		} else {
-			d <- round(d)
+			x <- cbind(x[, 1], x, x[, ncol(x)]) 
 		}
-		# Ojo, only for the case where ngb = c(3,3)
-		ngbdata[ngb[1],] <- d
-	}
-	for (r in 1:nrow(out)) {	
-		rr <- rr + 1
+		x <- rbind(x[1,], x, x[nrow(x),])
+		paddim <- as.integer(dim(x))
+		x <- .Call('edge', as.integer(t(x)), paddim, classes, type, directions, NAOK=TRUE, PACKAGE='raster')
+		x <- matrix(x, nrow=paddim[1], ncol=paddim[2], byrow=TRUE)
+		x <- x[2:(nrow(x)-1), 2:(ncol(x)-1)]
+		x <- setValues(out, as.vector(t(x)))
+		if (filename  != '') {
+			x <- writeRaster(x, filename, datatype=datatype, ...)
+		}
+		return(x)
+
+	} else {
+	
+		out <- writeStart(out, filename, datatype=datatype, ...)
+		tr <- blockSize(out, minblocks=3, minrows=3)
+		pb <- pbCreate(tr$n, ...)
 		
-		if (r <= (nrow(out)-row1)) {
+		nc <- ncol(out)+2
+		v <- getValues(x, row=1, nrows=tr$nrows[1]+1)
+		v <- matrix(v, ncol=tr$nrows[1]+1)
+		if (gll) {
+			v <- rbind(v[nrow(v),], v, v[1,])
+		} else {
+			v <- rbind(v[1,], v, v[nrow(v),])
+		}
+		v <- as.integer(cbind(v[,1], v))
 		
-			ngbdata[1:(ngb[1]-1), ] <- ngbdata[2:(ngb[1]), ]
-			d <- getValues(x, rr)
-			if (! classes) {
-				d[!is.na(d)] <- 1
+		v <- .Call('edge', v, as.integer(c(tr$nrows[1]+2, nc)),  classes, type, directions, NAOK=TRUE, PACKAGE='raster')
+		v <- matrix(v, ncol=nc, byrow=TRUE)
+		v <- as.integer(t(v[-1, 2:(ncol(v)-1)]))
+		out <- writeValues(out, v, 1)
+		pbStep(pb, 1)
+		for (i in 2:(tr$n-1)) {
+			v <- getValues(x, row=tr$row[i]-1, nrows=tr$nrows[i]+2)
+			v <- matrix(v, ncol=tr$nrows[1]+1)
+			if (gll) {
+				v <- rbind(v[nrow(v),], v, v[1,])
 			} else {
-				d <- round(d)
+				v <- rbind(v[1,], v, v[nrow(v),])
 			}
-			ngbdata[ngb[1],] <- d
-			vv <- as.vector(tapply(as.vector(ngbdata)[id[,2]], id[,1], fun))
-			if (type == 'inner') {
-				vv[is.na(ngbdata[2,])] = 0
-			} else if (type == 'outer') {
-				vv[! is.na(ngbdata[2,])] = 0
-			}
-			if (asNA) {		
-				if (asZero) {
-					vv[vv==0 & is.na(ngbdata[2,])] = NA 	
-				} else {
-					vv[vv==0] = NA 					
-				}
-			}
-			
+			v <- .Call('edge', as.integer(v), as.integer(c(tr$nrows[i]+2, nc)), classes, type, directions, NAOK=TRUE, PACKAGE='raster')
+			v <- matrix(v, ncol=nc, byrow=TRUE)
+			v <- as.integer(t(v[2:(nrow(v)-1), 2:(ncol(v)-1)]))
+			out <- writeValues(out, v, tr$row[i])
+			pbStep(pb, i)
+		}
+		i <- tr$n
+		v <- getValues(x, row=tr$row[i]-1, nrows=tr$nrows[i]+1)
+		v <- matrix(v, ncol=tr$nrows[1]+1)
+		if (gll) {
+			v <- rbind(v[nrow(v),], v, v[1,])
 		} else {
-			ngbdata[1:(ngb[1]-1), ] <- ngbdata[2:(ngb[1]), ]
-			ngbdata[nrows,] <- NA
-			nrows <- nrows-1
-			ids <- matrix(as.vector(idx), nrow=ngb[1])
-			ids <- ids[1:nrows, ]
-			ids <- matrix(as.vector(ids), ncol=ncol(out))
-			ids <- cbind(rep(1:ncol(out), each=nrow(ids)), as.vector(ids))
-			ids <- subset(ids, ids[,2]>0)
-			vv <- as.vector(tapply(as.vector(ngbdata)[ids[,2]], ids[,1], fun))
-			if (type == 'inner') {
-				vv[is.na(ngbdata[1,])] = 0
-			} else if (type == 'outer') {
-				vv[! is.na(ngbdata[1,])] = 0		
-			} 
-			if (asNA) {		
-				if (asZero) {
-					vv[vv==0 & is.na(ngbdata[1,])] = NA 	
-				} else {
-					vv[vv==0] = NA 					
-				}
-			}			
+			v <- rbind(v[1,], v, v[nrow(v),])
 		}
-		
-		if (inmem) {
-			v[,r] <- vv
-		} else {
-			out <- writeValues(out, vv, r)
-		}
-		pbStep(pb, r)
-	}
+		v <- as.integer(cbind(v, v[,ncol(v)]))
+		v <- .Call('edge', v, as.integer(c(tr$nrows[i]+1, nc)), classes, type, directions, NAOK=TRUE, PACKAGE='raster')
+		v <- matrix(v, ncol=nc, byrow=TRUE)
+		v <- as.integer(t(v[2:(nrow(v)-1), 2:(ncol(v)-1)]))
+		out <- writeValues(out, v, tr$row[i])
+		pbStep(pb, tr$n)
 
-	pbClose(pb)
-
-	if (inmem) { 
-		out <- setValues(out, as.vector(v)) 
-		if (filename != "") {
-			out <- writeRaster(out, filename, ...)
-		}
-	} else {
 		out <- writeStop(out)
+		pbClose(pb)
 	}
 	return(out)
 }
-)	
+)
+
 

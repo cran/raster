@@ -47,13 +47,13 @@
 	}
 	
 	x <- raster(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs=projstring)
-	
+
 	if (nchar(layernames) > 1) {
-		layernames <- unlist(strsplit(layernames, ':'))
+		lnams <- unlist(strsplit(layernames, ':'))
+	} else {
+		lnams <- gsub(" ", "_", extension(basename(filename), ""))
 	}
-	x@layernames <- layernames
-	shortname <- gsub(" ", "_", extension(basename(filename), ""))
-	x <- .enforceGoodLayerNames(x, shortname)
+	layerNames(x) <- lnams
 	
 	x@file@name <- filename
 	x@data@min <- minval

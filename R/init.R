@@ -35,7 +35,7 @@ init <- function(raster, fun, v, filename="", ...) {
 			} else if (v == 'x') { outRaster <- setValues(outRaster, rep(xFromCol(outRaster, 1:ncol(outRaster)), times=nrow(outRaster))) }
 		} else {
 			outRaster <- writeStart(outRaster, filename=filename, ...)
-			pb <- pbCreate(nrow(outRaster), type=.progress(...))
+			pb <- pbCreate(nrow(outRaster), ...)
 			for (r in 1:nrow(outRaster)) {
 				if (v == 'cell') { outRaster <- writeValues(outRaster, cellFromRowCol(r,1):cellFromRowCol(r,ncol(outRaster)), r)
 				} else if (v == 'row') {outRaster <-  writeValues(outRaster, rep(r, each=ncol(outRaster)), r)
@@ -54,7 +54,7 @@ init <- function(raster, fun, v, filename="", ...) {
 		} else {
 			n <- ncol(raster)
 			outRaster <- writeStart(outRaster, filename=filename, ...)
-			pb <- pbCreate(nrow(outRaster), type=.progress(...))
+			pb <- pbCreate(nrow(outRaster), ...)
 			for (r in 1:nrow(raster)) {
 				outRaster <- writeValues(outRaster, fun(n), r) 
 				pbStep(pb, r)

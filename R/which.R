@@ -38,7 +38,7 @@ function(x, cells=FALSE, ...) {
 			v <- getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i] ) 
 			
 			if (cells) {
-				offs = (tr$row[i]-1) * out@ncols
+				offs <- (tr$row[i]-1) * out@ncols
 				vv <- c(vv, which(v==TRUE) + offs)
 			} else {
 				v <- as.logical(v)

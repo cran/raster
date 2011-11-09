@@ -48,7 +48,7 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 	
 		tr <- blockSize(x, n=1)
 		
-		pb <- pbCreate(tr$n*2 - 1, type=.progress(...))
+		pb <- pbCreate(tr$n*2 - 1, ...)
 
 		#going up
 		r1 <- writeStart(raster(x), rasterTmpFile(), overwrite=TRUE)

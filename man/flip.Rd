@@ -18,25 +18,12 @@ flip(x, direction, ...)
 
 \arguments{
   \item{x}{a Raster* object}
-  \item{direction}{Character. 'y' or 'x'}
-  \item{...}{Additional arguments, see Details}  
+  \item{direction}{Character. 'y' or 'x'; or 1 (=x) or 2 (=y)}
+   \item{...}{Additional arguments as for \code{\link{writeRaster}}}  
 }
 
 \value{
 RasterLayer or RasterBrick
-}
-
-\details{
-The following additional arguments can be passed, to replace default values for this function
-\tabular{lll}{
-  \tab \code{filename} \tab Character. Output filename\cr 
-  \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
-  \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-  \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-  \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
- }
- 
-\code{direction} can also be indicated with 1 (=x) or 2 (=y)
 }
 
 

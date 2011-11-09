@@ -93,12 +93,18 @@ setMethod('extract', signature(x='Raster', y='Extent'),
 		e <- intersectExtent(x, y)
 		e <- alignExtent(e, x)
 		
-		row = rowFromY(x, e@ymax)
-		lastrow = rowFromY(x, e@ymin)
-		nrows = lastrow-row+1
-		col = colFromX(x, e@xmin)
-		lastcol = colFromX(x, e@xmax)
-		ncols = lastcol-col+1
+		r <- res(x)
+		e@xmin <- e@xmin + 0.25 * r[1]
+		e@xmax <- e@xmax - 0.25 * r[1]
+		e@ymin <- e@ymin + 0.25 * r[2]
+		e@ymax <- e@ymax - 0.25 * r[2]
+	
+		row <- rowFromY(x, e@ymax)
+		lastrow <- rowFromY(x, e@ymin)
+		nrows <- lastrow-row+1
+		col <- colFromX(x, e@xmin)
+		lastcol <- colFromX(x, e@xmax)
+		ncols <- lastcol-col+1
 		
 		v <- getValuesBlock(x, row, nrows, col, ncols)  
 		

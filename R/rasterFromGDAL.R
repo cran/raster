@@ -154,13 +154,17 @@
 			#Bmn[i] <- statsi[3]
 			#Bsd[i] <- statsi[4]
 		}
-		RATi <- .Call("RGDAL_GetRAT", rstband, PACKAGE = "rgdal")
-		if (!is.null(RATi)) {
-			RATlist[[i]] <- RATi
-		}
-		CATi <- .Call("RGDAL_GetCategoryNames", rstband, PACKAGE = "rgdal")
-		if (!is.null(CATi)) {
-			CATlist[[i]] <- CATi
+		if (RAT) {
+			RATi <- .Call("RGDAL_GetRAT", rstband, PACKAGE = "rgdal")
+			if (!is.null(RATi)) {
+				RATlist[[i]] <- RATi
+			}
+
+			CATi <- .Call("RGDAL_GetCategoryNames", rstband, PACKAGE = "rgdal")
+			if (!is.null(CATi)) {
+				CATlist[[i]] <- CATi
+			}
+			
 		}
 		NDV <- .Call("RGDAL_GetBandNoDataValue", rstband, PACKAGE = "rgdal")
 		if (is.null(NDV)) {
@@ -189,8 +193,16 @@
 		ymax(r) <- ymax(r) + 0.5 * rs[2]
 	}
 	
-	shortname <- gsub(" ", "_", extension(basename(filename), ""))
-	r <- raster:::.enforceGoodLayerNames(r, shortname)
+	if (type == 'RasterBrick') {
+		layerNames(r) <- rep(gsub(" ", "_", extension(basename(filename), "")), nbands)
+	} else {
+		lnames <- gsub(" ", "_", extension(basename(filename), ""))
+		if (nbands > 1) {
+			lnames <- paste(lnames, '_', band, sep='')
+		}
+		layerNames(r) <- lnames
+		
+	}
 	r@file@name <- filename
 	r@file@driver <- 'gdal' 
  
@@ -211,7 +223,7 @@
 	r@data@min <- minv
 	r@data@max <- maxv
 
-	if (! is.null(RATlist)) {
+	if (! is.null(RATlist[[1]])) {
 		att <- vector(length=nlayers(r), mode='list')
 		for (i in 1:length(RATlist)) {
 			if (! is.null(RATlist[[i]])) {

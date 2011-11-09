@@ -7,7 +7,7 @@
 \title{Write a KML or KMZ file}
 
 \description{
-Export raster data to a KML file and an accompanying PNG image file. Mylti-layer objects can be used to create an animation. 
+Export raster data to a KML file and an accompanying PNG image file. Multi-layer objects can be used to create an animation. 
 The function attempts to combine these into a single (and hence more convenient) KMZ file (a zip file containing the KML and PNG files). 
 }
 

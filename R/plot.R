@@ -11,7 +11,7 @@ if (!isGeneric("plot")) {
 
 
 setMethod("plot", signature(x='RasterStackBrick', y='ANY'), 
-	function(x, y, col=rev(terrain.colors(255)), maxpixels=100000, alpha=1, main, useRaster=TRUE, ...)  {
+	function(x, y, col=rev(terrain.colors(255)), maxpixels=100000, alpha=1, main, useRaster=TRUE, nc, nr, ...)  {
 	
 		if (alpha < 1) {
 			alpha <- max(alpha, 0) * 255 + 1
@@ -48,8 +48,17 @@ setMethod("plot", signature(x='RasterStackBrick', y='ANY'),
 		} else {
 
 			nl <- length(y)
-			nc <- ceiling(sqrt(nl))
-			nr <- ceiling(nl / nc)
+			if (missing(nc)) {
+				nc <- ceiling(sqrt(nl))
+			} else {
+				nc <- max(1, min(nl, round(nc)))
+			}
+			if (missing(nr)) {
+				nr <- ceiling(nl / nc)
+			} else {
+				nr <- max(1, min(nl, round(nr)))
+				nc <- ceiling(nl / nr)
+			}
 		
 			old.par <- par(no.readonly = TRUE) 
 			on.exit(par(old.par))

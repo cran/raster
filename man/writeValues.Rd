@@ -16,7 +16,7 @@
 \description{
 Functions for writing blocks (>= 1 row(s)) of values to files. Writing has to start at the first cell of a row (identified with argument \code{start}) and the values written must represent 1 or more entire rows. Begin by opening a file with \code{writeStart}, then write values to it in chunks. When writing is done close the file with \code{writeStop}. 
 
-If you want to write all values of a Raster* object at once, you can also use \link[raster]{writeRaster} which is easier to use but more limited. The functions described here allow writing values to file using chunks of different sizes (e.g. 1 or 10 rows). Function \code{\link{blockSize}} can be used to suggest a chunk size to use.
+If you want to write all values of a Raster* object at once, you can also use \code{\link{writeRaster}} which is easier to use but more limited. The functions described here allow writing values to file using chunks of different sizes (e.g. 1 or 10 rows). Function \code{\link{blockSize}} can be used to suggest a chunk size to use.
 }
 
 \usage{
@@ -28,24 +28,15 @@ writeStop(x)
 \arguments{
   \item{x}{Raster* object}
   \item{filename}{Output filename}
-  \item{...}{Additional arguments for writeStart. See under Details}    
+  \item{...}{Additional arguments as for \code{\link{writeRaster}}}
   \item{v}{vector (RasterLayer) or matrix (RasterBrick) of values}
-  \item{start}{Integer. Row number (counting starts at 1) from where to start writing}
+  \item{start}{Integer. Row number (counting starts at 1) from where to start writing \code{v}}
 
 }
 
-\details{
-Additional arguments for writeStart:
-\tabular{rll}{
-\tab \code{format} \tab Character. Output file type. When writing a file to disk, the file format is determined by the 'format=' argument if supplied, or else by the file extension (if the extension is known). If other cases the default format is used. The 'factory-fresh' default format is 'raster', but this can be changed using \code{\link[raster]{setOptions}}. Also see \code{\link[raster]{writeFormats}} \cr
-\tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-\tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-\tab \code{update} \tab Logical. If \code{TRUE}, you can write (resume writing) to an existing file (careful!). In this case, \code{overwrite} must also be \code{TRUE}  \cr
-}
-}
 
 \value{
-RasterLayer or RasterBrick object. 
+RasterLayer or RasterBrick 
 }
 
 \author{Robert J. Hijmans}

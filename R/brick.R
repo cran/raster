@@ -104,7 +104,7 @@ setMethod('brick', signature(x='RasterStack'),
 				} 
 				b <- writeStart(b, filename=filename, ...)
 				tr <- blockSize(b)
-				pb <- pbCreate(tr$n, type=.progress(...))			
+				pb <- pbCreate(tr$n, ...)			
 				for (i in 1:tr$n) {
 					vv <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
 					out <- writeValues(b, vv, tr$row[i])

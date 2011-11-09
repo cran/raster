@@ -30,11 +30,11 @@ mask(x, mask, ...)
 \describe{
 The following additional arguments can be passed, to replace default values for this function
 \tabular{rll}{
-  \tab \code{reverse} \tab Boolean. If \code{TRUE}, areas on \code{mask} that are _not_ NA are masked.  \cr
+  \tab \code{reverse} \tab Boolean. If TRUE, areas on mask that are _not_ NA are masked.  \cr
   \tab \code{filename} \tab Character. output filename \cr
-  \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
-  \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-  \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
+  \tab \code{format} \tab Character. Output file type. See \link[raster]{writeRaster} \cr
+  \tab \code{datatype} \tab Character. Output data type. See \link[raster]{dataType} \cr
+  \tab \code{overwrite} \tab Logical. If TRUE, "filename" will be overwritten if it exists \cr
   \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
 }
 }

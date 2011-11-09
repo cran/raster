@@ -24,7 +24,7 @@
 	if (! .requireRgdal() ) { stop('rgdal not available') }
 	r <- writeStart(r, filename=tmp, format='GTiff')
 	
-	pb <- pbCreate(tr$n, type=progress)			
+	pb <- pbCreate(tr$n, progress=progress)			
 	xx <- xFromCol( r, 1:ncol(r) )
 	
 	hasWritten=FALSE

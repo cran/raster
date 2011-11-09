@@ -6,12 +6,10 @@
 
 \description{
 Calculate "moving window" values for the neighborhood of focal cells using a matrix of weights, perhaps in combination with a function.
-
-This function replaces \code{\link{focal_old}}, \code{\link{focalNA}} and \code{\link{focalFilter}}
 }
 
 \usage{
-focal(x, w, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=FALSE, ...) 
+focal(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=FALSE, ...) 
 }
 
 \arguments{
@@ -53,15 +51,20 @@ Sobel filter: \code{filter=matrix(c(1,2,1,0,0,0,-1,-2,-1) / 4, nrow=3)}
 
 The following additional arguments can be passed, to replace default values for this function
 \tabular{rll}{
-\tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-\tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
-\tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
+\tab \code{overwrite} \tab Logical. If TRUE, "filename" will be overwritten if it exists \cr
+\tab \code{format} \tab Character. Output file type. See \link[raster]{writeRaster} \cr
+\tab \code{datatype} \tab Character. Output data type. See \link[raster]{dataType} \cr
 \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
 }
 }
 
 \value{
 RasterLayer
+}
+
+
+\note{
+This function replaces \code{\link{focal_old}}, \code{focalNA} and \code{\link{focalFilter}}
 }
 
 

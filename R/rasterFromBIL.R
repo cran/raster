@@ -136,9 +136,16 @@
 		x@file@bandorder <- bandorder 
 	}
 
-	shortname <- gsub(" ", "_", extension(basename(filename), ""))
-	x <- raster:::.enforceGoodLayerNames(x, shortname)
-	
+	if (type == 'RasterBrick') {
+		layerNames(r) <- rep(gsub(" ", "_", extension(basename(filename), "")), nbands)
+	} else {
+		lnames <- gsub(" ", "_", extension(basename(filename), ""))
+		if (nbands > 1) {
+			lnames <- paste(lnames, '_', band, sep='')
+		}
+		layerNames(r) <- lnames
+	}
+
 	x@file@name <- filename
 
 	if (!is.null(SIGNEDINT)) {

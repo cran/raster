@@ -10,39 +10,26 @@
 \description{
 Reclassify values of a Raster* object. The function (re)classifies groups of values to other values. E.g. All values between 1 and 10 become 1, and all values between 11 and 15 become 2. 
 
-Reclassification is done with matrix "rcl". For simple cases, the functions \code{\link{subs}} and \code{\link{cut}} may be more efficient.
-
-Reclassification is done in the order of the reclass table. Thus, if there are overlapping ranges, the last range applies.  
+Reclassification is done with matrix "rcl". For simple cases, the functions \code{\link{subs}} and \code{\link{cut}} may be more efficient. Reclassification is done in the order of the reclass table. Thus, if there are overlapping ranges, the last range applies.  
 }
 
 \usage{
-reclass(x, rcl, ...) 
+\S4method{reclass}{Raster}(x, rcl, filename='', include.lowest=FALSE, right=TRUE, ...)
 }
 
 \arguments{
-  \item{x}{A Raster* object}
-  \item{rcl}{Matrix for reclassifcation. This matrix must have 3 columns. The first two columns are "from" "to" of the input values, and the third column "becomes" has the new value for that range. (You can also supply a vector that can be coerced into a n*3 matrix (with byrow=TRUE)). You can also provide a two column matrix ("is", "becomes") which can be useful for integer values. In that case, the \code{right} argument is automatically set to \code{NA}}
-  \item{...}{additional arguments. See Details.}  
+  \item{x}{Raster* object}
+  
+  \item{rcl}{matrix for reclassifcation. This matrix must have 3 columns. The first two columns are "from" "to" of the input values, and the third column "becomes" has the new value for that range. (You can also supply a vector that can be coerced into a n*3 matrix (with byrow=TRUE)). You can also provide a two column matrix ("is", "becomes") which can be useful for integer values. In that case, the \code{right} argument is automatically set to \code{NA}}
+
+ \item{filename}{character. Output filename (optional) }
+  
+ \item{include.lowest}{logical, indicating if a value equal to the lowest value in rcl (or highest value in the second column, for right = FALSE) should be included. The default is \code{FALSE}}
+ 
+ \item{right}{logical, indicating if the intervals should be closed on the right (and open on the left) or vice versa. The default is \code{TRUE}. A special case is to use right=NA. In this case both the left and right intervals are open}
+
+ \item{...}{additional arguments as for \code{\link{writeRaster}}}  
 }
-
-\details{
-
-The following additional arguments can be passed, to replace default values for this function
-\tabular{rll}{
- \tab \code{include.lowest} \tab logical, indicating if a value equal to the lowest value in rcl (or highest value in the second column, for right = FALSE) should be included. The default is \code{FALSE} \cr
- \tab \code{right} \tab logical, indicating if the intervals should be closed on the right (and open on the left) or vice versa. The default is \code{TRUE}. A special case is to use right=NA. In this case both the left and right intervals are open \cr
-}
-
-You can also use these additional arguments to save the result to a file
-\tabular{rll}{
-  \tab \code{filename} \tab Output filename (can be absent for RasterLayers that can be stored in memory) \cr
-  \tab \code{format}  \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
-  \tab \code{datatype}  \tab Character. Output data type; can be 'INT', 'FLT', or a complete datatype description, see \code{\link[raster]{dataType}} \cr
-  \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-  \tab \code{progress}  \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
- }
-}
-
 
 \value{
 Raster* object

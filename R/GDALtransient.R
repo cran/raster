@@ -28,7 +28,7 @@
 	r <- raster(r)
 	datatype <- .datatype(...)
 	overwrite <- .overwrite(...)
-	gdalfiletype <- .filetype(...)
+	gdalfiletype <- .filetype(filename=filename, ...)
 
 	.isSupportedFormat(gdalfiletype)
 	

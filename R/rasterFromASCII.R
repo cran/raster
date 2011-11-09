@@ -74,10 +74,12 @@
 			yn <- yc - 0.5 * d
 		} 	
 	}
-	if (offset != 6 & offwarn) {
-		warning('The georeference of this object is probably wrong\nAre you using a wrong offset? Proceed with caution!\n')
-	} else {
-		warning('The georeference of this object is probably wrong\n')
+	if (offwarn) {
+		m <- 'The georeference of this object is probably wrong\n'
+		if (offset != 6) {
+			m <- paste(m, 'Are you using a wrong offset? Proceed with caution!\n', sep='')
+		} 
+		warning(m)
 	}
 	
 	xx <- xn + nc * d

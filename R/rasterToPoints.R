@@ -24,7 +24,7 @@ rasterToPoints <- function(x, fun=NULL, spatial=FALSE, ...) {
 		}
 	}
 
-	laynam <- .enforceGoodLayerNames(x, returnNames=TRUE)
+	laynam <- layerNames(x)
 	
 	if (canProcessInMemory(x, 3)) {
 		
@@ -47,7 +47,7 @@ rasterToPoints <- function(x, fun=NULL, spatial=FALSE, ...) {
 		Y <- yFromRow(x, 1:nrow(x))
 
 		tr <- blockSize(x)
-		pb <- pbCreate(tr$n, type=.progress(...))
+		pb <- pbCreate(tr$n, ...)
 
 		for (i in 1:tr$n) {
 			r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)

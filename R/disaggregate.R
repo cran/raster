@@ -6,13 +6,12 @@
 
 .hasmethod <- function(method, ...) {
 	if (!missing(method)) { 
-		if (method=='bilinear') {
-			return( TRUE )
-		} else {
-			warning('unknown "method". Should be "method=bilinear", or absent')
+		if (!method %in% c('bilinear', 'weighted', 'pycnophylactic')) {
+			stop('unknown "method". Should be "bilinear" or absent')
 		}
+		return(method)
 	}
-	return(FALSE)
+	return('')
 }
 
 
@@ -24,89 +23,101 @@ if (!isGeneric("disaggregate")) {
 setMethod('disaggregate', signature(x='Raster', fact='numeric'), 
 function(x, fact, filename='', ...) {
 
-	hasmethod <- .hasmethod(...)
+	method <- .hasmethod(...)
 	
 	if (length(fact)==1) {
 		fact <- round(fact)
+		if (fact == 1) 	return(x)
 		if (fact < 2) { stop('fact should be > 1') }
 		xfact <- yfact <- fact
 	} else if (length(fact)==2) {
 		xfact <- round(fact[1])
 		yfact <- round(fact[2])
-		if (xfact < 2) { stop('fact[1] should be > 1') } 
-		if (yfact < 2) { stop('fact[2] should be > 1') }
+		if (xfact < 1) { stop('fact[1] should be > 0') } 
+		if (yfact < 1) { stop('fact[2] should be > 0') }
+		if (xfact == 1 & yfact == 1) { return(x) }
 	} else {
 		stop('length(fact) should be 1 or 2')
 	}
 
 	filename <- trim(filename)
-	
-	if (inherits(x, 'RasterLayer')) {
-		outRaster <- raster(x)
+
+	nl <- nlayers(x)
+	if (nl > 1) {
+		out <- brick(x, values=FALSE)
 	} else {
-		outRaster <- brick(x, values=FALSE)
+		out <- raster(x)
 	}
 	
-	dim(outRaster) <- c(nrow(x) * yfact, ncol(x) * xfact) 
-	layerNames(outRaster) <- layerNames(x)
+	dim(out) <- c(nrow(x) * yfact, ncol(x) * xfact) 
+	layerNames(out) <- layerNames(x)
 	
 	if (! inherits(x, 'RasterStack')) {
 		if (! inMemory(x)  & ! fromDisk(x) ) {
-			return(outRaster)
+			return(out)
 		}
 	}
 	
-	if (hasmethod) {
-		return(resample(x, outRaster, ...))
-	}
+	if (method=='bilinear') {
+		return(resample(x, out, ...))
+	} 
 	
 	
-	if (canProcessInMemory(outRaster, 3)) { 
+	if (canProcessInMemory(out, 3)) { 
 	
 		cols <- rep(rep(1:ncol(x), each=xfact), times=nrow(x)*yfact)
 		rows <- rep(1:nrow(x), each=ncol(x)*xfact*yfact)
 		cells <- cellFromRowCol(x, rows, cols)
 		x <- getValues(x)
+
 		if (is.matrix(x)) {
 			x <- x[cells, ]
 		} else {
 			x <- x[cells]
 		}
-		outRaster <- setValues(outRaster, x)
+		
+
+		out <- setValues(out, x)
 
 		if (filename != '') {
-			outRaster <- writeRaster(outRaster, filename=filename,...)
+			out <- writeRaster(out, filename=filename,...)
 		}
 		
 	} else { 
-		if (filename == '') {
-			filename <- rasterTmpFile()						
-		}
-		cols <- rep(rep(1:ncol(x), each=xfact), times=yfact)
 
-		pb <- pbCreate(nrow(x), type=.progress(...))
-		outRaster <- writeStart(outRaster, filename=filename, datatype=dataType(x), ...)
-		if (inherits(x, 'RasterLayer')) {
-			for (r in 1:nrow(x)) {
-				vals <- getValues(x, r)
-				rown <- (r-1) * xfact + 1
-				outRaster <- writeValues(outRaster, vals[cols], rown)
+		tr <- blockSize(out)
+		pb <- pbCreate(tr$n, ...)
+		out <- writeStart(out, filename=filename, datatype=dataType(x), ...)
+
+		if (nl > 1) {
+			cols <- rep(1:ncol(x), each=xfact)
+			rows <- rep(1:tr$nrow[1], each=yfact)
+			for (i in 1:tr$n) {
+				if (i == tr$n) {
+					cols <- rep(1:ncol(x), each=xfact)
+					rows <- rep(1:tr$nrow[1], each=yfact)
+				}
+				rown <- (tr$nrow[i]-1) * xfact + 1
+				v <- getValues(x, tr$row[i], tr$nrows[i])
+				v <- v[rows, cols]
+				out <- writeValues(out, v, rown)
 				pbStep(pb, r)
 			}
 		} else {
-			for (r in 1:nrow(x)) {
-				vals <- getValues(x, r)
-				rown <- (r-1) * xfact + 1
-				outRaster <- writeValues(outRaster, vals[cols, ], rown)
-				pbStep(pb, r)
+			for (i in 1:tr$n) {
+				v <- getValues(x, tr$row[i], tr$nrows[i])
+				v <- rep(rep(v, each=xfact), yfact)
+				rown <- (tr$nrow[i]-1) * xfact + 1
+				out <- writeValues(out, v, rown)
+				pbStep(pb, i)
 			}
 		}
 
-		outRaster <- writeStop(outRaster)
+		out <- writeStop(out)
 		pbClose(pb)
 	}
 
-	return(outRaster)
+	return(out)
 }
 )
 

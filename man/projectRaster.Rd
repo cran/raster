@@ -25,7 +25,7 @@ projectExtent(object, crs)
   \item{crs}{Character or object of class 'CRS'. PROJ.4 description of the coordinate reference system. In projectRaster this is used to set the output CRS if 'to' is missing, or if 'to' has no valid CRS}
   \item{method}{Method used to compute values for the new RasterLayer. Either 'ngb' (nearest neighbor), which is useful for categorical variables, or 'bilinear' (bilinear interpolation; the default value), which is appropriate for continuous variables.}
   \item{filename}{Character. Output filename}  
-  \item{...}{Additional arguments. See Details.}    
+  \item{...}{Additional arguments as for \code{\link{writeRaster}}}  
   \item{object}{Raster* object}
 
 }
@@ -46,14 +46,6 @@ One of the best places to find PROJ.4 coordinate reference system descriptions i
 You can also consult this page: \url{http://www.remotesensing.org/geotiff/proj_list/} to find the parameter options and names for projections.
 
 Also see \code{projInfo('proj')}, \code{projInfo('ellps')}, and \code{projInfo('datum')} for valid PROJ.4 values. 
-
-The following additional arguments can be passed, to replace default values for this function
-\tabular{rll}{
-  \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-  \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
-  \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-  \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
- }
 }
 
 \note{

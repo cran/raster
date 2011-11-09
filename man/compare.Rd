@@ -30,14 +30,14 @@ compare(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=FALSE,
 \author{Robert J. Hijmans}
 
 \examples{
-	r1 <- raster()
-	r2 <- r1
-	r3 <- r1
-	compare(r1, r2, r3)
-	nrow(r3) <- 10
-#	compare(r1, r3)
-	compare(r1, r3, stopiffalse=FALSE)
-	compare(r1, r3, rowcol=FALSE)
+r1 <- raster()
+r2 <- r1
+r3 <- r1
+compare(r1, r2, r3)
+nrow(r3) <- 10
+# compare(r1, r3)
+compare(r1, r3, stopiffalse=FALSE)
+compare(r1, r3, rowcol=FALSE)
 }
 
 \keyword{ spatial }

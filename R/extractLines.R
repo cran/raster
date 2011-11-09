@@ -6,7 +6,7 @@
 
 
 setMethod('extract', signature(x='Raster', y='SpatialLines'), 
-function(x, y, fun, na.rm=FALSE, cellnumbers=FALSE, layer, nl, ...){ 
+function(x, y, fun, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, ...){ 
 
 	px <- projection(x, asText=FALSE)
 	comp <- .compareCRS(px, projection(y), unknown=TRUE)
@@ -35,14 +35,19 @@ function(x, y, fun, na.rm=FALSE, cellnumbers=FALSE, layer, nl, ...){
 	}
 	
 	if (spbb[1,1] > rsbb[1,2] | spbb[1,2] < rsbb[1,1] | spbb[2,1] > rsbb[2,2] | spbb[2,2] < rsbb[2,1]) {
-		return(res[1:nlns])
+		if (df) {
+			res <- matrix(ncol=1, nrow=0)
+			colnames(res) <- 'ID'
+			return(res)
+		} else {
+			return(res[1:nlns])
+		}
 	}
 	
 	rr <- raster(x)
 	cn <- layerNames(x)
-	if (cn == "") { cn <- paste('v', 1:nlayers(x), sep='') }
 	
-	pb <- pbCreate(nlns, type=.progress(...))
+	pb <- pbCreate(nlns, ...)
 	
 	
 	if (.doCluster()) {
@@ -132,6 +137,20 @@ function(x, y, fun, na.rm=FALSE, cellnumbers=FALSE, layer, nl, ...){
 			j[!i] <- sapply(res[!i], fun, na.rm)
 		}
 		res <- j
+	}
+	
+	if (df) {
+		if (!is.list(res)) {
+			res <- cbind(1:NROW(res), res)
+		} else {
+			res <- data.frame( do.call(rbind, sapply(1:length(res), function(x) if (!is.null(res[[x]])) cbind(x, res[[x]]))) )
+		}
+
+		if (ncol(res) == 2) {
+			colnames(res) <- c('ID', 'value')
+		} else {
+			colnames(res)[1] <- 'ID'
+		}
 	}
 	res
 }

@@ -21,21 +21,12 @@ rectify(x, ext, res, method='ngb', filename='', ...)
   \item{res}{Optional. Single or two numbers to set the resolution}
   \item{method}{Method used to compute values for the new RasterLayer, should be "bilinear" for bilinear interpolation, or "ngb" for nearest neighbor }
   \item{filename}{Character. Output filename }
-  \item{...}{Additional arguments. See Details}    
- }
-
-\details{
-The following additional arguments can be passed, to replace default values for this function
-\tabular{rll}{
-  \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-  \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
-  \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-  \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
- }
+  \item{...}{Additional arguments as for \code{\link{writeRaster}}}  
 }
 
+
 \value{
-A RasterLayer or RasterBrick object, and, in some cases, the side-effect of a file with the values of the new RasterLayer 
+RasterLayer or RasterBrick object
 }
 
 \author{Robert J. Hijmans }

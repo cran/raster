@@ -15,24 +15,16 @@ crop(x, y, ...)
 
 \arguments{
   \item{x}{A Raster* object}
-  \item{y}{Extent object, or any object from which an Extent object can be extracted (see below)}
-  \item{...}{additional arguments. See Details.}  
+  \item{y}{Extent object, or any object from which an Extent object can be extracted (see Details)}
+  \item{...}{Additional arguments as for \code{\link{writeRaster}}}  
 }
 
 \details{
-Objects that have a Extent object include RasterLayer, RasterStack and RasterBrick. They can also be extracted from objects descending from the Spatial class from the sp package. You can check this with the \code{\link[raster]{extent}} function. New Extent objects can be also be created with \code{\link{extent}} and with \code{\link{drawExtent}} by clicking twice on a plot.
- 
-The following additional arguments can be passed, to replace default values for this function
-\tabular{rll}{
- \tab \code{filename}  \tab Output filename (can be absent for RasterLayers that can be stored in memory) \cr
- \tab \code{format}  \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
- \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
- \tab \code{progress}  \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
-} 
+Objects that have a Extent object include RasterLayer, RasterStack and RasterBrick. They can also be extracted from objects descending from the Spatial class from the sp package. You can check this with the \code{\link[raster]{extent}} function. New Extent objects can be also be created with function \code{\link{extent}} and \code{\link{drawExtent}} by clicking twice on a plot.
 }
 
 \value{
-A new Raster* object
+Raster* object
 }
 
 \author{Robert J. Hijmans}

@@ -203,7 +203,7 @@
 	rv1 <- rep(NA, ncol(raster))
 	lst1 <- vector(length=ncol(raster), mode='list')
 	holes1 <- rep(FALSE, ncol(raster))
-	pb <- pbCreate(nrow(raster), type=.progress(...))
+	pb <- pbCreate(nrow(raster), ...)
 
 	for (r in 1:nrow(raster)) {
 		if (doFun) {
@@ -389,7 +389,7 @@
 		bigraster <- writeStart(bigraster, filename=filename, ...)
 	}
 	
-	pb <- pbCreate(nrow(bigraster), type=.progress(...))
+	pb <- pbCreate(nrow(bigraster), ...)
 	for (rr in 1:nrow(bigraster)) {
 		y <- yFromRow(bigraster, rr)
 		yn <- y - hr

@@ -108,7 +108,7 @@ setMethod('setValues', signature(x='RasterBrick'),
 			x@data@nlayers <- ncol(values)
 			cn <- colnames(values)
 			if (!is.null(cn)) {
-				x@layernames <- cn
+				layerNames(x) <- cn
 			}
 			x@data@values <- values
 			x <- setMinMax(x)

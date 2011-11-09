@@ -30,7 +30,7 @@ function(x, filename='', ...) {
 		
 		out <- writeStart(out, filename=filename, ...)
 		tr <- blockSize(x)
-		pb <- pbCreate(tr$n, type=.progress(...))	
+		pb <- pbCreate(tr$n, ...)	
 		for (i in 1:tr$n) {
 			v <- as.logical ( getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i] ) )
 			out <- writeValues(out, v, tr$row[i])

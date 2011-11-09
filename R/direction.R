@@ -52,7 +52,7 @@ function(x, filename='', degrees=FALSE, from=FALSE, doEdge=FALSE, ...) {
 	
 	out <- writeStart(out, filename, ...)
 	tr <- blockSize(out)
-	pb <- pbCreate(tr$n, type=.progress(...))
+	pb <- pbCreate(tr$n, ...)
 	xy <- cbind(rep(xFromCol(out, 1:ncol(out)), tr$nrows[1]), NA)
 	for (i in 1:tr$n) {
 		if (i == tr$n) {
@@ -63,7 +63,7 @@ function(x, filename='', degrees=FALSE, from=FALSE, doEdge=FALSE, ...) {
 		j <- which(is.na(vals))
 		vals[] <- NA
 		if (length(j) > 0) {
-			vals[j] <- .Call("directionToNearestPoint", xy[j, ,drop=FALSE], pts, longlat, degrees, PACKAGE='raster')
+			vals[j] <- .Call("directionToNearestPoint", xy[j, ,drop=FALSE], pts, longlat, degrees, from, PACKAGE='raster')
 		}
 		out <- writeValues(out, vals, tr$row[i])
 		pbStep(pb) 	

@@ -20,7 +20,7 @@ setMethod('freq', signature(x='RasterLayer'),
 		
 		} else {
 			tr <- blockSize(x, n=2)
-			pb <- pbCreate(tr$n, type=.progress(...))	
+			pb <- pbCreate(tr$n, ...)	
 			z <- vector(length=0)
 			for (i in 1:tr$n) {
 				d <- round(getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i]), digits=digits)

@@ -1,22 +1,32 @@
-# Authors: Robert J. Hijmans, r.hijmans@gmail.com 
+# Authors: Robert J. Hijmans
 # Date :  January 2009
 # Version 0.9
 # Licence GPL v3
 
 
-canProcessInMemory <- function(raster, n=4) {
+canProcessInMemory <- function(x, n=4) {
 
 #	setOptions(overwrite=TRUE)
 #	setOptions(format='GTiff')
 #	return(FALSE)
 	
-	if (.toDisk()) { return(FALSE) } 
+	if (.toDisk()) { 
+		return(FALSE) 
+	} 
+	n <- n + (nlayers(x) - 1)
+	cells <- round( 1.1 * ncell(x) ) * n
 
-	n <- n + (nlayers(raster) - 1)
-	cells <- round(1.1 * ncell(raster)) * n
+	if ( cells > .maxmemory() ) {
+		return(FALSE) 
+	} else {
+		return(TRUE)
+	}
+
+# the below is currently never reached.	
 
 	if (cells > .maxmemory()) {
 		return(FALSE) 
+		
 	} else if ( cells < 1000000 ) {
 		return(TRUE)
 	} else {

@@ -210,7 +210,7 @@
 		
 	if (type == 'RasterLayer') {
 		r <- raster(xmn=xrange[1], xmx=xrange[2], ymn=yrange[1], ymx=yrange[2], ncols=ncols, nrows=nrows, crs=crs)
-		r <- .enforceGoodLayerNames(r, long_name)
+		layerNames(r) <- long_name
 	} else if (type == 'RasterBrick') {
 		r <- brick(xmn=xrange[1], xmx=xrange[2], ymn=yrange[1], ymx=yrange[2], ncols=ncols, nrows=nrows, crs=crs)
 		r@title <- long_name

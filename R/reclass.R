@@ -87,7 +87,7 @@ function(x, rcl, filename='', include.lowest=FALSE, right=TRUE, ...) {
 	} else {
 		
 		tr <- blockSize(out)
-		pb <- pbCreate(tr$n, type=.progress(...))
+		pb <- pbCreate(tr$n, ...)
 		out <- writeStart(out, filename=filename, ...)
 
 		for (i in 1:tr$n) {

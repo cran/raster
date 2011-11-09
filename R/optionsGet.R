@@ -61,7 +61,7 @@
 
 
 .maxmemory <- function() {
-	default <- 1e+09
+	default <- 1e+08
 	d <- getOption('rasterMaxMemory')
 	if (is.null(d)) {
 		return( default )
@@ -154,7 +154,7 @@
 }
 
 
-.filetype <- function(..., format, filename='') {
+.filetype <- function(format, filename='', ...) {
 	if (missing(format)) { 
 		format <- .getFormat(filename)
 		if (format != '') {

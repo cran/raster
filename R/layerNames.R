@@ -4,39 +4,42 @@
 # Licence GPL v3
 
 
-.enforceGoodLayerNames <- function(x, prefix='layer', returnNames=FALSE) {
-	ln <- trim(layerNames(x))
-	ln[ln==''] <- prefix
-	ln <- make.names(ln, unique=TRUE)
-	if (returnNames) {
-		return(ln)
-	} else {
-		x@layernames <- ln
-		return(x)
+.uniqueNames <- function(x, sep='.') {
+	y <- as.matrix(table(x))
+	y <- y[y[,1] > 1, ,drop=F]
+	if (nrow(y) > 0) {
+		y <- rownames(y)
+		for (i in 1:length(y)) {
+			j <- which(x==y[i])
+			x[j] <- paste(x[j], sep, 1:length(j), sep='')
+		}
 	}
+	x
+}
+
+.goodNames <- function(ln, prefix='layer') {
+	ln <- trim(as.character(ln))
+	ln[is.na(ln)] <- ""
+	ln[ln==''] <- prefix
+	ln <- make.names(ln, unique=FALSE)
+	.uniqueNames(ln)
 }
 
 
 layerNames <- function(object) {
 	ln <- object@layernames
 	ln <- ln[1:nlayers(object)]
-	ln[is.na(ln)] <- ""
-	return(as.vector(ln))
+	.goodNames(as.vector(ln))
 }
 
 
 'layerNames<-' <- function(object, value) {
-
 	nl <- nlayers(object)
 	if (is.null(value)) {
-		value <- rep('layer', nl)
+		value <- rep('', nl)
 	} else if (length(value) != nl) {
 		stop('incorrect number of layer names')
 	}
-	value <- trim(as.character(value))
-	value[value==''] <- 'layer'
-	value <- make.names(value, unique=TRUE)
-	
-	object@layernames <- value
+	object@layernames <- .goodNames(value)
 	return(object)
 }

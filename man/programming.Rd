@@ -22,10 +22,10 @@ pbCreate creates a progress bar, pbStep sets the progress, and pbClose closes it
 }
 
 \usage{
-canProcessInMemory(raster, n=4)
-closeConnection(raster)
-openConnection(raster, silent=FALSE)
-pbCreate(nsteps, type, style=3)
+canProcessInMemory(x, n=4)
+closeConnection(x)
+openConnection(x, silent=FALSE)
+pbCreate(nsteps, progress, style=3, ...)
 pbStep(pb, step=NULL, label='')
 pbClose(pb, timer)
 getCluster()
@@ -33,12 +33,13 @@ returnCluster()
 }
 
 \arguments{
-  \item{raster}{a RasterLayer object}
-  \item{n}{the number of copies of a RasterLayer object with values that a function needs to store in memory}  
+  \item{x}{RasterLayer or RasterBrick object}
+  \item{n}{Integer. The number of copies of a RasterLayer object with values that a function needs to store in memory}  
   \item{silent}{Logical. passed on to GDAL.open}  
   \item{nsteps}{Integer. Number of steps the progress bar will make from start to end (e.g. nrow(raster)) }
-  \item{type}{Character. 'text', 'window', or ''}
+  \item{progress}{Character. 'text', 'window', or ''}
   \item{style}{style for text progress bar. See \code{\link[utils]{txtProgressBar}} }
+  \item{...}{additinal arguments}
   \item{pb}{a progress bar object created with pbCreate }
   \item{step}{which step is this ( 1 <= step <= nsteps ). If step is \code{NULL}, a single step is taken }
   \item{label}{label for the non-text progress bars}

@@ -31,7 +31,7 @@ function(x) {
 		x@data@min <- Inf
 		x@data@max <- -Inf
 		tr <- blockSize(x)
-		pb <- pbCreate(tr$n, type=.progress())			
+		pb <- pbCreate(tr$n)			
 		for (i in 1:tr$n) {
 			v <- na.omit ( getValues(x, row=tr$row[i], nrows=tr$nrows[i]) )
 			if (length(v) > 0) {

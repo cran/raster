@@ -28,30 +28,30 @@ rasterize(x, y, ...)
   \item{...}{Additional arguments, see under Details}  
 }
 
-\details{
+\section{Methods}{
+\describe{
 
 \bold{= all cases =}
 
-\tabular{rll}{
-\tab \code{field} \tab If \code{x} is a Spatial*DataFrame, the index (integer), or column name (character) of the variable to be transfered. If \code{field < 0}, all features get the attribute value 1, and if \code{field == 0}, the attribute index is used (i.e. numbers from 1 to the number of features). If the Spatial object has a data.frame, all values >= 1 will use the attribute index. In all cases you can also provide a vector with the same length as the number of spatial features, or a matrix where the number of rows matches the number of spatial features \cr
+\item{\code{field}}{If \code{x} is a Spatial*DataFrame, the index (integer), or column name (character) of the variable to be transfered. If \code{field < 0}, all features get the attribute value 1, and if \code{field == 0}, the attribute index is used (i.e. numbers from 1 to the number of features). If the Spatial object has a data.frame, all values >= 1 will use the attribute index. In all cases you can also provide a vector with the same length as the number of spatial features, or a matrix where the number of rows matches the number of spatial features}
 
-\tab \code{fun} \tab  Determine what values to assign to cells that are covered by multiple spatial features. You can use functions such as \code{min, max}, or \code{mean}, or one of the following character values: \code{'first', 'last', 'sum', 'min'}, or \code{'max'}. The default value is \code{'last'} \cr
+\item{\code{fun}}{Determine what values to assign to cells that are covered by multiple spatial features. You can use functions such as \code{min, max}, or \code{mean}, or one of the following character values: \code{'first', 'last', 'sum', 'min'}, or \code{'max'}. The default value is \code{'last'}}
 
-\tab \code{background} \tab  Value to put in the cells that are not covered by any of the features of \code{x}. Default is \code{NA} \cr
+\item{\code{background}}{Value to put in the cells that are not covered by any of the features of \code{x}. Default is \code{NA}}
 
-\tab \code{mask} \tab  Logical. If \code{TRUE} the values of the input Raster object are 'masked' by the spatial features of \code{x}. That is, cells that spatially overlap with the spatial features retain their values, the other cells become \code{NA}. Default is \code{FALSE}. This option cannot be used when \code{update=TRUE} \cr
+\item{\code{mask}}{Logical. If \code{TRUE} the values of the input Raster object are 'masked' by the spatial features of \code{x}. That is, cells that spatially overlap with the spatial features retain their values, the other cells become \code{NA}. Default is \code{FALSE}. This option cannot be used when \code{update=TRUE}}
 
-\tab \code{update} \tab  Logical. If \code{TRUE}, the values of the Raster* object are updated for the cells that overlap the spatial features of \code{x}. Default is \code{FALSE}. Cannot be used when \code{mask=TRUE} \cr
+\item{\code{update}}{Logical. If \code{TRUE}, the values of the Raster* object are updated for the cells that overlap the spatial features of \code{x}. Default is \code{FALSE}. Cannot be used when \code{mask=TRUE}}
 
-\tab \code{updateValue} \tab Numeric (normally an integer), or character. Only relevant when \code{update=TRUE}. Select, by their values, the cells to be updated with the values of the spatial features. Valid character values are \code{'all'}, \code{'NA'}, and \code{'!NA'}. Default is \code{'all'} \cr
+\item{\code{updateValue}}{Numeric (normally an integer), or character. Only relevant when \code{update=TRUE}. Select, by their values, the cells to be updated with the values of the spatial features. Valid character values are \code{'all'}, \code{'NA'}, and \code{'!NA'}. Default is \code{'all'}}
 
-\tab \code{filename} \tab  Character. Output filename (optional) \cr
+\item{\code{filename}}{Character. Output filename (optional)}
 
-\tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-\tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
-\tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-\tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
-}
+\item{\code{overwrite}}{Logical. If TRUE, "filename" will be overwritten if it exists}
+\item{\code{format}}{Character. Output file type. See \link[raster]{writeRaster}}
+\item{\code{datatype}}{Character. Output data type. See \link[raster]{dataType}}
+\item{\code{progress}}{Character. "text", "window", or "" (the default, no progress bar)}
+
 
 \bold{= points =}
 
@@ -63,9 +63,7 @@ If you want to know the number of points in each grid cell, use \code{fun=functi
 
 There is one additional argument:
 
-\tabular{rll}{
-\tab \code{na.rm} \tab If \code{TRUE}, \code{NA} values are removed if \code{fun} honors the \code{na.rm} argument \cr
-}
+\item{\code{na.rm}}{If \code{TRUE}, \code{NA} values are removed if \code{fun} honors the \code{na.rm} argument}
 
 Because of this argument, all functions \code{fun} must accept an \code{na.rm} argument, either explicitly or through 'dots'. This means that \code{fun=length} fails, but \code{fun=function(x,...)length(x)} works, although it ignores the \code{na.rm} argument. To use the \code{na.rm} argument you can use a function like this \code{fun=function(x,na.rm){if (na.rm) length(na.omit(x)) else (length(x)}}, or use a function that removes NA values in all cases, like this function to compute the number of unique values "richness": \code{fun=function(x, ...){length(unique(na.omit(x)))}}. 
 
@@ -76,12 +74,10 @@ You can also pass multiple functions using a statement like \code{fun=function(x
 
 A polygon value is transferred to a raster-cell if it covers the center of the cell. Either values associated with each polygon, or a polygon ID is transferred. Holes in polygons are recognized if they are correctly specified. The following additional arguments are available:
 
-\tabular{rll}{
-\tab \code{getCover} \tab Logical. If \code{TRUE}, the fraction of each grid cell that is covered by the polygons is returned (and the values of \code{field, fun, mask}, and \code{update} are ignored. The fraction covered is estimated by dividing each cell into 100 subcells and determining presence/absence of the polygon in the center of each subcell \cr
+\item{\code{getCover}}{Logical. If \code{TRUE}, the fraction of each grid cell that is covered by the polygons is returned (and the values of \code{field, fun, mask}, and \code{update} are ignored. The fraction covered is estimated by dividing each cell into 100 subcells and determining presence/absence of the polygon in the center of each subcell}
 
-\tab \code{silent} \tab Logical. If \code{TRUE}, feedback on the polygon count is suppressed. Default is \code{FALSE} \cr
-}
-}
+\item{\code{silent}}{Logical. If \code{TRUE}, feedback on the polygon count is suppressed. Default is \code{FALSE}}
+}}
 
 \value{
 RasterLayer or RasterBrick

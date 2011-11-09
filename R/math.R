@@ -24,7 +24,7 @@ setMethod("Math", signature(x='Raster'),
 			} else {
 			
 				tr <- blockSize(x)
-				pb <- pbCreate(tr$n, type=.progress())			
+				pb <- pbCreate(tr$n)			
 				r <- writeStart(r, filename=rasterTmpFile(), overwrite=TRUE )
 				for (i in 1:tr$n) {
 					v <- t( apply(getValues(x, row=tr$row[i], nrows=tr$nrows[i]), 1, funname) )
@@ -47,7 +47,7 @@ setMethod("Math", signature(x='Raster'),
 				}
 			
 				tr <- blockSize(x)
-				pb <- pbCreate(tr$n, type=.progress())			
+				pb <- pbCreate(tr$n)			
 				r <- writeStart(r, filename=rasterTmpFile(), datatype=datatype, overwrite=TRUE )
 				for (i in 1:tr$n) {
 					v <- callGeneric( getValues(x, row=tr$row[i], nrows=tr$nrows[i]) )
@@ -83,7 +83,7 @@ setMethod("Math2", signature(x='Raster'),
 			}
 
 			tr <- blockSize(x)
-			pb <- pbCreate(tr$n, type=.progress())			
+			pb <- pbCreate(tr$n)			
 			r <- writeStart(r, filename=rasterTmpFile(), datatype=datatype, format=.filetype(), overwrite=TRUE )
 			for (i in 1:tr$n) {
 				v <- callGeneric( getValues(x, row=tr$row[i], nrows=tr$nrows[i]), digits )
@@ -118,7 +118,7 @@ setMethod("log", signature(x='Raster'),
 			r <- setValues(r, log(values(x), base=base))
 		} else {
 			tr <- blockSize(x)
-			pb <- pbCreate(tr$n, type=.progress())			
+			pb <- pbCreate(tr$n)			
 			r <- writeStart(r, overwrite=TRUE )
 			for (i in 1:tr$n) {
 				v <- log( getValues(x, row=tr$row[i], nrows=tr$nrows[i]), base=base )

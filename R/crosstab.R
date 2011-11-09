@@ -21,7 +21,7 @@ setMethod('crosstab', signature(x='RasterLayer', y='RasterLayer'),
 		} else {
 			res=NULL
 			tr <- blockSize(x, n=2)
-			pb <- pbCreate(tr$n, type=progress)	
+			pb <- pbCreate(tr$n, progress=progress)	
 			for (i in 1:tr$n) {
 			
 				d <- table( round(getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i]), digits=digits), round(getValuesBlock(y, row=tr$row[i], nrows=tr$nrows[i]), digits=digits), ...)

@@ -22,7 +22,7 @@ setMethod('summary', signature(object='Raster'),
 		} else if (  fromDisk(object) ) {
 			if (ncell(object) > maxsamp) {
 				v = sampleRandom(object, maxsamp)
-				sumobj@warning = paste('summary based on a sample of', maxsamp, 'cells, which is', 100*maxsamp/ncell(object), '% of all cells')
+				sumobj@warning = paste('summary based on a sample of', maxsamp, 'cells, which is', round(100*maxsamp/ncell(object), 2), '% of all cells')
 			} else {
 				v = getValues(object)
 			}
@@ -52,7 +52,7 @@ setMethod('summary', signature(object='RasterStack'),
 			} else {
 				if (sumobj@ncell > maxsamp) {
 					v = sampleRandom(object@layers[[n]], maxsamp)
-					sumobj@warning = paste('summary based on a sample of', maxsamp, 'cells, which is', 100*maxsamp/ncell(object), '% of all cells')
+					sumobj@warning = paste('summary based on a sample of', maxsamp, 'cells, which is', round(100*maxsamp/ncell(object), 2), '% of all cells')
 				} else {
 					v = getValues(object@layers[[n]])
 				}
@@ -90,7 +90,7 @@ setMethod('summary', signature(object='RasterBrick'),
 		
 			if (sumobj@ncell > maxsamp) {
 				v = sampleRandom(object, maxsamp)
-				sumobj@warning = paste('summary based on a sample of', maxsamp, 'cells, which is', 100*maxsamp/ncell(object), '% of all cells')
+				sumobj@warning = paste('summary based on a sample of', maxsamp, 'cells, which is', round(100*maxsamp/ncell(object), 2), '% of all cells')
 			} else {
 				v = getValues(object)
 			}

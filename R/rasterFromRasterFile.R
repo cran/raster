@@ -98,15 +98,22 @@
 	}
 
 	if (nchar(layernames) > 0) {
-		layernames <- as.vector(unlist(strsplit(layernames, ':')))
+		lnames <- as.vector(unlist(strsplit(layernames, ':')))
+		if (length(lnames) != nbands) {
+			lnames <- rep( gsub(" ", "_", extension(basename(filename), "")), nbands)
+		}
+	} else {
+		lnames <- rep( gsub(" ", "_", extension(basename(filename), "")), nbands)
 	}
 	if (type == 'RasterBrick') {
-		x@layernames <- layernames
+		layerNames(x) <- lnames
 	} else {
-		x@layernames <- layernames[band]	
+		if (nbands > 1) {
+			layerNames(x) <- paste(lnames[band], '_', band, sep='')
+		} else {
+			layerNames(x) <- lnames[band]
+		}
 	}
-	shortname <- gsub(" ", "_", extension(basename(filename), ""))
-	x <- .enforceGoodLayerNames(x, shortname)
 	
 	dataType(x) <- inidatatype
 

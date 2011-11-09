@@ -14,50 +14,32 @@ When writing a file to disk, the file format is determined by the 'format=' argu
 }
 
 \usage{
-writeRaster(x, filename, ...)
+\S4method{writeRaster}{RasterLayer,character}(x, filename, ...)
+
+\S4method{writeRaster}{RasterStackBrick,character}(x, filename, ...)
 }
 
 \arguments{
   \item{x}{Raster* object}
   \item{filename}{Output filename}
-  \item{...}{Additional arguments. See below, under Methods}    
+  \item{...}{Additional arguments: 
+  
+    \code{format}: Character. Output file type. See \code{\link[raster]{writeFormats}}. If this argument is not provided, it is attempted to infer it from the file extension. If other cases the default format is used. The default format is 'raster', but this can be changed using \code{\link[raster]{setOptions}}.
+		
+	\code{datatype}: Character. Output data type. See \code{\link{dataType}}
+	
+	\code{overwrite}: Logical. If TRUE, "filename" will be overwritten if it exists
+	
+	\code{NAflag}: Numeric. To overwrite the default value used to represent \code{NA} in a file 
+	
+	\code{bandorder}: Character. 'BIL', 'BIP', or 'BSQ'. For 'native' file formats only. For some other formats you can use the 'options' argument (see below)
+	
+	\code{options}: Character. File format specific GDAL options. E.g., when writing a geotiff file: \code{options=c("COMPRESS=NONE", "TFW=YES")}
+
+	NetCDF files have the following additional, optional, arguments: \code{varname, varunit, longname, xname, yname, zname, zunit}.
+	}
 }
 
-\section{Methods}{
-\describe{
-\bold{Full function call when \code{x} is a RasterLayer object}
-
-\code{writeRaster(x, filename='', ...) }
- 
-\tabular{rll}{
-\tab \code{x} \tab RasterLayer object \cr
-\tab \code{filename} \tab Output filename \cr
-\tab \code{...} \tab Additional arguments. See below \cr
-}
-
-\bold{Full function call when \code{x} is a RasterBrick or RasterStack object}
-
-\code{writeRaster(x, filename='', bandorder='BIL', ...) }
- 
-\tabular{rll}{
-\tab \code{x} \tab RasterLayer object \cr
-\tab \code{filename} \tab Output filename \cr
-\tab \code{bandorder} \tab Character. 'BIL', 'BIP', or 'BSQ'. For 'native' file formats only. For some other formats you can use the 'options' argument (see below) \cr
-\tab \code{..} \tab Additional arguments. See below \cr
-}
-
-\bold{Additional arguments}
-\tabular{rll}{
-\tab \code{options} \tab Character. File format specific GDAL options. E.g., when writing a geotiff file: \code{options=c("COMPRESS=NONE", "TFW=YES")}\cr
-\tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeFormats}} \cr
-\tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-\tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-\tab \code{NAflag} \tab Numeric. To overwrite the default value used to represent \code{NA} in a file \cr
-}
-
-NetCDF files have the following additional, optional, arguments: \code{varname, varunit, longname, xname, yname, zname, zunit}.
-
-}}
 
 \details{
 See \code{writeFormats} for supported file types ("formats", "drivers").
@@ -106,7 +88,7 @@ bf <- writeRaster(b, filename="multi.grd", bandorder='BIL', overwrite=TRUE)
 # write to a new geotiff file (depends on rgdal)
 if (require(rgdal)) {
   rf <- writeRaster(r, filename="test.tif", format="GTiff", overwrite=TRUE)
-  bf <- writeRaster(b, filename="mutli.tif", options="INTERLEAVE=BAND", overwrite=TRUE)
+  bf <- writeRaster(b, filename="multi.tif", options="INTERLEAVE=BAND", overwrite=TRUE)
 }
  
 # write to netcdf 

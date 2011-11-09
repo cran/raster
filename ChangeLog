@@ -1,3 +1,27 @@
+--- 9-November-2011, version 1.9-41
+beginCluster now has 'exclude' option (suggested by Julian Zeidler)
+
+--- 8-November-2011, version 1.9-40
+Bug fix, as(x, 'SpatialPixels') returned SpatialPoints. reported by Clément Calange.
+redesigned function edge for better speed. Arguments have changed. and to deal with a bug reported by Paul Galpern
+improved speed of disaggregate and expand for large files (processing by block of rows rather than by row)
+simplified pbCreate
+new function for using clusters with raster functions: clusterR
+new .detectCores function (taken from the new (R 2.14.0) parallel package)
+new function approxNA to approximate NA values by cell, across layers (emerged from discussions with Jan Verbesselt). 
+
+--- 30-October-2011, version 1.9-35
+added generic functions %in% and match for Raster objects (suggested by Paul Galpern)
+re-implemented merge and mosaic for higher speed (by block rather than by row).
+re-implemented mean, min and max for higher speed
+blockSize now tries to respect the gdal reported block size for (hopefully) faster reading (re-implemented rasterFromGDAL to accomodate this) 
+fixed bug with reclass right=TRUE and include.lowest=TRUE (latter argument was sometimes ignored)
+rasterToPolygons now has a 'dissolve' argument (requiring rgeos)
+
+--- 26-October-2011, version 1.9-33
+Bug fix. When indexing with a single cell and a multi-layer object, only the value for the first layer was returned. Reported by Jan Verbesselt
+Fixed bug with reading multi-level (4 dimensions) ncdf files, reported by John Gross
+
 --- 24-October-2011, version 1.9-32
 Expanded function KML to create time-series from multi-layer objects (suggested by Tony Fischbach)
 Bug fixed in sampleRegular for files with gain/offset (that were applied twice). Reported by Ned Hornig.
@@ -5,7 +29,6 @@ Bug fixed in sampleRegular for files with gain/offset (that were applied twice).
 
 --- 19-October-2011, version 1.9-29
 Bug fix in projectRaster with circumpolar datasets. Reported by Anthony Fischbach
-Fixed bug with reading multi-level (4 dimensions) ncdf files, reported by John Gross
 sampleRegular has new argument, useGDAL=FALSE. If FALSE, GDAL is not used to assure that the cells extracted are always the same, irrespective of the data source (gdal driver or not). Problem reported by Ned Hornig
 reclass now has option 'right=NA' (apart from right=TRUE or right=FALSE) to allow intervals to be closed at the left and right side. It is now also possible to provide a two column relassification matrix ("is-becomes") (suggestions by Agustin Lobo). 
 

@@ -26,9 +26,9 @@ The following additional arguments can be passed, to replace default values for 
   \tab \code{from} \tab Logical. Default is \code{FALSE}. If \code{TRUE}, the direction from (instead of to)  the nearest cell that is not \code{NA} is returned \cr
   \tab \code{degrees}  \tab Logical. If \code{FALSE} (the default) the unit of direction is radians. \cr
 
-  \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
-  \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-  \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
+  \tab \code{format} \tab Character. Output file type. See \link[raster]{writeRaster} \cr
+  \tab \code{datatype} \tab Character. Output data type. See \link[raster]{dataType} \cr
+  \tab \code{overwrite} \tab Logical. If TRUE, "filename" will be overwritten if it exists \cr
   \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
  }
 }

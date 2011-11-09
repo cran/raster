@@ -275,7 +275,8 @@ function(object, v, cell, band) {
 		zvar <- object@data@zvar
 		dims <- nc$var[[zvar]]$ndims
 		
-		if (dims > 4) {
+		if (dims > 3) {
+			# there is code for one level higher, but I am not sure if it is OK, as it does not check the order or the vars.
 			stop('not yet implemented for high dimensional (>4) ncdf files')
 		}
 		if (is.matrix(v)) {

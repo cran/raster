@@ -67,7 +67,7 @@ function(x, y, by=1, which=2, subsWithNA=TRUE, filename='', ...) {
 				filename <- rasterTmpFile()
 			}
 			tr <- blockSize(r)
-			pb <- pbCreate(tr$n, type=.progress(...))
+			pb <- pbCreate(tr$n, ...)
 			r <- writeStart(r, filename=filename, ...)
 			for (i in 1:tr$n) {
 				v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
