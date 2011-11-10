@@ -62,7 +62,7 @@ function(x, y, recycle=FALSE, type='index', filename='', na.rm=FALSE, ...) {
 	
 		out <- writeStart(out, filename=filename, ...)
 		tr <- blockSize(out, n=nlx+nly)
-		pb <- pbCreate(tr$n, type=.progress(...))
+		pb <- pbCreate(tr$n, ...)
 
 		for (i in 1:tr$n) {
 			j <- round(getValues(y, row=tr$row[i], nrows=tr$nrows[i]))

@@ -19,19 +19,10 @@ init(raster, fun, v, filename="", ...)
   \item{fun}{The function to be applied. This must be a function that can take the number of cells as a single argument to return a vector of values with a length equal to the number of cells}
   \item{v}{'x', 'y', 'row', 'col', or 'cell'}
   \item{filename}{Output filename}
-  \item{...}{Additional arguments. See Details}  
+  \item{...}{Additional arguments as for \code{\link{writeRaster}}}  
+
 }
 
-\details{
-The following additional arguments can be passed, to replace default values for this function
-\tabular{rll}{
-  \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-  \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
-  \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-  \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
- }
- 
-}
 
 \value{
 A new RasterLayer object, and, in some cases, the side effect of a new file on disk.

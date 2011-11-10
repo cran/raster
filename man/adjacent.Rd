@@ -9,7 +9,7 @@ Identify cells that are adjacent to a set of cells on a raster. See \code{\link{
 }
 
 \usage{
-adjacent(x, cells, directions=4, pairs=FALSE, target=NULL, sorted=FALSE) 
+adjacent(x, cells, directions=4, pairs=FALSE, target=NULL, sorted=FALSE, include=FALSE, id=FALSE) 
 }
 
 \arguments{
@@ -19,6 +19,8 @@ adjacent(x, cells, directions=4, pairs=FALSE, target=NULL, sorted=FALSE)
   \item{pairs}{logical. If \code{TRUE}, a matrix of pairs of adjacent cells is returned. If \code{FAlSE}, a vector of cells adjacent to \code{cells} is returned}
   \item{target}{optional vector of target cell numbers that should be considered. All other adjacent cells are ignored}
   \item{sorted}{logical. Should the results be sorted? }
+  \item{include}{logical. Should the focal cells be included in the result? }
+  \item{id}{logical. Should the id of the cells be included in the result? (numbered from 1 to length(cells) }
  }
 
 \details{

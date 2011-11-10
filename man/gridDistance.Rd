@@ -8,9 +8,9 @@
 \description{
  The function calculates the distance to cells of a RasterLayer when the path has to follow the center of neighboring raster cells (currently only implemented as a 'queen' case).
  
- The distance is in meters if the RasterLayer is not projected (\code{+proj=longlat}) and in map units (typically meters) when it is projected.
+The distance is in meters if the RasterLayer is not projected (\code{+proj=longlat}) and in map units (typically meters) when it is projected.
  
- Distances are calculated by summing local distances between cells, which are connected with their neighbours in 8 directions.
+Distances are calculated by summing local distances between cells, which are connected with their neighbours in 8 directions.
 }
 
 \usage{
@@ -22,7 +22,7 @@ gridDistance(x, origin, omit=NULL, filename="", ...)
 \item{origin}{value(s) of the cells from which the distance is calculated}
 \item{omit}{value(s) of the cells which cannot be traversed (optional)}
 \item{filename}{character. output filename (optional)}
-\item{...}{additional arguments. See Details.}  
+\item{...}{Additional arguments as for \code{\link{writeRaster}}}  
 }
 
 
@@ -30,16 +30,7 @@ gridDistance(x, origin, omit=NULL, filename="", ...)
 
 
 \details{
-The following additional arguments can be passed, to replace default values for this function
-\tabular{rll}{
-  \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-  \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
-  \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-  \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
- }
- 
- If the RasterLayer to be processed is big, it will be processed in chunks automatically. This may lead to errors in the case of complex objects spread over different chunks (meandering rivers, for instance). You can try to solve these issues by varying the chunk size, see function setOptions().
- 
+If the RasterLayer to be processed is big, it will be processed in chunks automatically. This may lead to errors in the case of complex objects spread over different chunks (meandering rivers, for instance). You can try to solve these issues by varying the chunk size, see function setOptions().
 }
 
 \value{A RasterLayer object}

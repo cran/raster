@@ -4,10 +4,18 @@
 # Licence GPL v3
 
 
-pbCreate <- function(nsteps, type='text', style=3) {
-	if (type=='text') {
+pbCreate <- function(nsteps, progress, style=3, ...) {
+
+	if (missing(progress)) {
+		progress <- list(...)$type  # backwards compatability
+		if (is.null(progress)) {
+			progress <- .progress()
+		}
+	}
+	
+	if (progress=='text') {
 		pb <- txtProgressBar(min=0, max=nsteps, style=style)
-	} else if (type %in% c('window', 'tcltk', 'windows')) {
+	} else if (progress %in% c('window', 'tcltk', 'windows')) {
 		tit <- paste(' Progress (', nsteps, ' steps)', sep='')
 		#if (.Platform$OS.type == "windows" ) {
 		#	pb <- winProgressBar(title=tit, min=0 , max=nsteps, width = 300, label='starting')

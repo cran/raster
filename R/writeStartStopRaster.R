@@ -3,12 +3,12 @@
 # Version 0.9
 # Licence GPL v3
 
-.startRasterWriting <- function(x, filename, NAflag, bandorder='BIL', update=FALSE, ...) {
+.startRasterWriting <- function(x, filename, NAflag, update=FALSE, ...) {
  	filename <- trim(filename)
 	if (filename == "") {
 		stop('missing filename')
 	}
-	filetype <- .filetype(...)
+	filetype <- .filetype(filename=filename, ...)
 		
 	filename <- .setFileExtensionHeader(filename, filetype)
 	fnamevals <- .setFileExtensionValues(filename, filetype)
@@ -44,13 +44,29 @@
 	x@data@haveminmax <- FALSE
 	x@file@driver <- filetype
 	x@file@name <- filename
-	if (! bandorder %in% c('BIL', 'BIP', 'BSQ')) {
-		stop('bandorder must be one of "BIL", "BSQ", or "BIP"')
+
+	
+
+	if ( filetype %in% c("BIL", "BSQ", "BIP") ) { 
+		bandorder <- filetype
+	} else {
+		bandorder <- 'BIL'
+		if (nlayers(x) > 1) {
+			bo <- list(...)$bandorder
+			if (! is.null(bo)) {
+				if (! bo %in% c('BIL', 'BIP', 'BSQ')) {
+					warning('bandorder must be one of "BIL", "BSQ", or "BIP". Set to "BIL"')
+				} else {
+					bandorder <- bo
+				}
+			}
+		}
 	}
 	x@file@bandorder <- bandorder
 	
 	return(x)
 }
+
 
 
 .stopRasterWriting <- function(x) {

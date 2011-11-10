@@ -22,18 +22,9 @@ stackApply(x, indices, fun, filename='', na.rm=TRUE, ...)
   \item{fun}{A function that returns a single value, e.g. \code{mean} or \code{min}, and that takes an 'na.rm' argument}
   \item{na.rm}{Logical. If \code{TRUE}, \code{NA} cells are removed from calculations}
   \item{filename}{Character. Optional output filename}
-  \item{...}{Additional arguments. See below, under Methods}  
-}
+  \item{...}{Additional arguments as for \code{\link{writeRaster}}}  
 
-\section{Methods}{
-\describe{
-The following additional arguments can be passed, to replace default values for this function
-\tabular{rll}{
-  \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
-  \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-  \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-  \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
-}}}
+}
 
 \value{
 A new Raster* object, and in some cases the side effect of a new file on disk.

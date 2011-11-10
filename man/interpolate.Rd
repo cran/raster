@@ -21,11 +21,10 @@ interpolate(object, ...)
 }
 
 \section{Methods}{
-\describe{
+
 A full call to the method is 
  
 \code{predict(object, model, filename='', fun=predict, xyOnly=TRUE, ext=NULL, const=NULL, index=1, na.rm=TRUE, ...)}
-
   
 \tabular{rll}{  
   \tab  \code{object} \tab Raster* object \cr
@@ -37,20 +36,12 @@ A full call to the method is
   \tab  \code{const}  \tab data.frame. Can be used to add a constant for which there is no Raster object for model predictions. Particulalry useful if the constant is a character-like factor value \cr
   \tab  \code{index}  \tab Integer. To select the column if 'predict.model' returns a matrix with multiple columns \cr
   \tab  \code{na.rm}  \tab Logical. Remove cells with NA values in the predictors before solving the model (and return a NA value for those cells). In most cases this will not affect the output. This option prevents errors with models that cannot handle NA values. \cr  
-  \tab  \code{...}  \tab Additional arguments, see below \cr
+  \tab  \code{...}  \tab Additional arguments as for \link{writeRaster} \cr
+}
 }
 
-The following additional arguments can be passed, to replace default values
-\tabular{rll}{
-  \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
-  \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-  \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-  \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
- }
-}}
-
 \value{
-a RasterLayer object
+RasterLayer object
 }
 
 

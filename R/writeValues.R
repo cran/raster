@@ -34,7 +34,7 @@ setMethod('writeValues', signature(x='RasterLayer'),
 					v[v < 0] <- NA
 					if (x@file@datanotation == 'INT4U') { 
 						v[is.na(v)] <- x@file@nodatavalue
-						i <- v > 2147483647
+						i <- v > 2147483647 & !is.na(v)
 						v[i] <- 2147483647 - v[i]
 					}
 				} else {

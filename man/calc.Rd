@@ -19,26 +19,17 @@ See (\code{\link[raster]{overlay}}) to use functions that refer to specific laye
 }
 
 \usage{
-calc(x, fun, ...) 
+\S4method{calc}{Raster,function}(x, fun, filename='', na.rm, forcefun=FALSE, forceapply=FALSE, ...)
 }
 
 \arguments{
   \item{x}{Raster* object}
   \item{fun}{function}
-  \item{...}{Additional arguments. See Details}  
-}
-
-\details{
-The following additional arguments can be passed, to replace default values for this function
-\tabular{rll}{
-  \tab \code{na.rm}  \tab Remove \code{NA} values, if supported by 'fun' (only relevant when summarizing a
-  multilayer Raster object into a RasterLayer) \cr
-  \tab \code{filename}  \tab Output filename (optional) \cr
-  \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
-  \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-  \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-  \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
-}
+  \item{filename}{character. Output filename (optional)}
+  \item{na.rm}{Remove \code{NA} values, if supported by 'fun' (only relevant when summarizing a multilayer Raster object into a RasterLayer)}
+  \item{forcefun}{logical. For debugging. Force \code{calc} to not use fun with apply}
+  \item{forceapply}{logical. For debugging. Force \code{calc} to use fun with apply}
+  \item{...}{Additional arguments as for \code{\link{writeRaster}}}    
 }
 
 \value{

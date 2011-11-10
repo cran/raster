@@ -1,4 +1,4 @@
-# Authors: Robert J. Hijmans, r.hijmans@gmail.com 
+# Authors: Robert J. Hijmans
 # Date :  January 2009
 # Version 0.9
 # Licence GPL v3
@@ -20,94 +20,80 @@
 }
 
 
-setMethod("mean", signature(x='Raster'),
-	function(x, ..., trim = 0, na.rm=FALSE){
-		rasters <- .makeRasterList(x, ...)
-		add <- .addArgs(...)
-		fun <- function(...){ mean(..., trim=trim ) }
-		return( .summaryRasters(rasters=rasters, add=add, fun=fun, na.rm=na.rm) )		
-	}
-)
-
-
 
 setMethod("Summary", signature(x='Raster'),
 	function(x, ..., na.rm=FALSE){
-		call <- sys.call()
-        fun <- as.character(call[[1L]])
-		rasters <- .makeRasterList(x, ...)
+
+		fun <- as.character(sys.call()[[1L]])
+
+		x <- .makeRasterList(x, ...) 
+		if (length(x) > 1) {
+			x <- stack(x)
+		} else {
+			x <- x[[1]]
+		}
+
 		add <- .addArgs(...)
-		rm(x)
-		return( .summaryRasters(rasters=rasters, add=add, fun=fun, na.rm=na.rm) )
+
+		if (nlayers(x)==1 & length(add)==0) {
+			warning('Nothing to summarize if you provide a single RasterLayer; see cellStats')
+			return(x[[1]])
+		}	
+		
+		if (length(add)==0) {
+			if (fun[1] == 'sum') {
+				return(.sum( x, add))
+			} else if (fun[1] == 'min') {
+				return(.min( x, add ))
+			} else if (fun[1] == 'max') {
+				return(.max( x, add))
+			}
+		}
+
+		out <- raster(x)
+	
+		if (canProcessInMemory(x)) {
+			
+			x <- cbind(getValues(x), add)
+			if (na.rm) {
+				x <- apply(x, 1, FUN=fun, na.rm=TRUE)
+			} else {
+				x <- apply(x, 1, FUN=fun)
+			}
+			if (! is.null(dim(x))) {  # range, perhaps others?
+				x <- t(x)
+				nl <- ncol(x)
+				out <- brick(out, nl=nl)
+			}
+			out <- setValues(out, x)
+			return(out)
+		}
+		
+		layerNames(out) <- fun
+		if (fun[1] == 'range') {
+			out <- brick(out, nl=2)
+		}
+	
+		tr <- blockSize(x)
+		out <- writeStart(out, filename="")
+		pb <- pbCreate(tr$n)
+		for (i in 1:tr$n) {
+			v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
+			v <- cbind(v, add)
+			if (na.rm) {
+				v <- apply(v, 1, FUN=fun, na.rm=TRUE)
+			} else {
+				v <- apply(v, 1, FUN=fun)
+			}
+			if (class(v) == 'matrix')  { # range
+				v <- t(v)
+			}
+			out <- writeValues(out, v, tr$row[i])
+			pbStep(pb, i) 
+		} 
+		pbClose(pb)			
+		writeStop(out)
 	}
 )
 
-
-		
-.summaryRasters <- function(rasters, add, fun, na.rm=na.rm) {
-
-#	fun = match.fun(fun)
-
-	if (length(rasters)==1 & length(add)==0) {
-		warning('Nothing to summarize if you provide a single RasterLayer; see cellStats')
-		return(rasters[[1]])
-	}	
-	
-	r <- raster(rasters[[1]])
-	tr <- blockSize(r, n=length(rasters))
-	if (!canProcessInMemory(r, length(rasters)+1)) {
-		filename <- rasterTmpFile()
-		r <- writeStart(r, filename=filename, overwrite=TRUE )
-	} else {
-		filename <- ""
-		v <- matrix(ncol=nrow(r), nrow=ncol(r))
-	}
-
-	m <- matrix(NA, nrow=tr$nrows[1] * ncol(r), ncol=length(rasters))
-	if (length(add) > 0) {
-		m <- cbind(m, add) 
-	}
-	if (na.rm) {
-		on.exit(options('warn'= getOption('warn')))
-		options('warn'=-1)  # for NA rows in apply
-	}
-	pb <- pbCreate(tr$n, type=.progress())			
-	for (i in 1:tr$n) {
-		if (i==tr$n) {  # the last one could be smaller
-			m = NULL
-			for (j in 1:length(rasters)) {
-				m <- cbind(m, getValuesBlock(rasters[[j]], row=tr$row[i], nrows=tr$nrows[i]))
-			}				
-			m <- cbind(m, add)
-		} else {
-			for (j in 1:length(rasters)) {
-				m[,j] <- getValuesBlock(rasters[[j]], row=tr$row[i], nrows=tr$nrows[i])
-			}
-		}
-		if (na.rm) {
-			vv <- apply(m, 1, FUN=fun, na.rm=TRUE)
-		} else {
-			vv <- apply(m, 1, FUN=fun)
-		}
-		if (class(vv) == 'matrix')  { # range
-			vv <- vv[2,] - vv[1,]
-		}
-		
-		if (filename == "") {
-			vv <- matrix(vv, nrow=ncol(r))
-			cols <- tr$row[i]:(tr$row[i]+dim(vv)[2]-1)	
-			v[,cols] <- vv
-		} else {
-			r <- writeValues(r, vv, tr$row[i])
-		}
-		pbStep(pb, i) 
-	} 
-	pbClose(pb)			
-	if (filename == "") {
-		r <- setValues(r, as.vector(v))
-	} else {
-		r <- writeStop(r)
-	}
-	return(r)
-}
 

@@ -206,11 +206,9 @@ function(x, fun, filename='', na.rm, forcefun=FALSE, forceapply=FALSE, ...) {
 
 # else 
 	
-	if (filename == '') { filename <- rasterTmpFile()	} 
-	
 	out <- writeStart(out, filename=filename, ...)
 	tr <- blockSize(out)
-	pb <- pbCreate(tr$n, type=.progress(...))			
+	pb <- pbCreate(tr$n, ...)			
 
 	if (missing(na.rm)) {
 		for (i in 1:tr$n) {

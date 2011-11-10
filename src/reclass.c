@@ -142,10 +142,10 @@ SEXP reclass(SEXP d, SEXP r, SEXP low, SEXP right, SEXP onlyNA, SEXP valNA) {
 			
 				rightval = rcl[a];
 				rightidx = b;
-				for (j=1; j<a; j++) {
+				for (j=a+1; j<b; j++) {
 					if (rcl[j] > rightval) {
-						rightval = rcl[a+j];
-						rightidx = b+j;
+						rightval = rcl[j];
+						rightidx = a+j;
 					}
 				}
 				rightidx = rcl[rightidx];

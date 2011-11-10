@@ -29,14 +29,18 @@ Points, lines, and polygons can be drawn on top of a map using \code{plot(..., a
 
 \code{plot(x, col=rev(terrain.colors(25)), maxpixels=100000, axes = TRUE, xlab="", ylab="", alpha=1, useRaster=TRUE, ...)}
 
-\tabular{rll}{
-\tab \code{x} \tab a RasterLayer object \cr
-\tab \code{col}  \tab  A color palette, i.e. a vector of n contiguous colors such as \link{rainbow}, \link{heat.colors}, and \link{topo.colors}, or one or your own making, perhaps using \code{\link{colorRampPalette}} \cr
-\tab \code{maxpixels}  \tab  Maximum number of pixels used for the map  \cr
-\tab \code{alpha}  \tab  Number between 0 and 1 to set transparancy. 0 is entirely transparant, 1 is not transparant  \cr
-\tab \code{useRaster}  \tab  If \code{TRUE}, the rasterImage function is used for plotting. Otherwise the image function is used. This can be useful if rasterImage does not work well on your system \cr
-\tab \code{...}  \tab  Any argument that can be passed to \code{\link[fields]{image.plot}} and to \code{\link[graphics]{plot}}  \cr
-}
+\code{x} - RasterLayer object
+
+\code{col} - A color palette, i.e. a vector of n contiguous colors such as \link{rainbow}, \link{heat.colors}, and \link{topo.colors}, or one or your own making, perhaps using \code{\link{colorRampPalette}}
+
+\code{maxpixels} - Maximum number of pixels used for the map
+
+\code{alpha} - Number between 0 and 1 to set transparancy. 0 is entirely transparant, 1 is not transparant
+
+\code{useRaster} - If \code{TRUE}, the rasterImage function is used for plotting. Otherwise the image function is used. This can be useful if rasterImage does not work well on your system
+
+\code{...} - Any argument that can be passed to \code{\link[fields]{image.plot}} and to \code{\link[graphics]{plot}}
+
 
 
 If \code{x} has a 'Color table', the default all to \code{plot} is:
@@ -47,7 +51,7 @@ If \code{x} has a 'Color table', the default all to \code{plot} is:
 \tab \code{ext}  \tab  An extent object to zoom in a region \cr
 \tab \code{interpolate} \tab Logical. Should the image be interpolated?  \cr 
 \tab \code{axes} \tab Logical. Should axes be drawn?  \cr 
-\tab \code{addfun} \tab Function. functions adding additional items such as points or polygons to the plot (map).  Typically containing statements like \code{points(xy); plot(polygons, add=TRUE)}. This is particularly useful to add something to each map when plotting a multi-layer Raster* object. \cr 
+\tab \code{addfun} \tab Function. functions adding additional items such as points or polygons to the plot (map).  Typically containing statements like "points(xy); plot(polygons, add=TRUE)". This is particularly useful to add something to each map when plotting a multi-layer Raster* object. \cr 
 \tab \code{...} \tab Graphical parameters \cr
 }
 
@@ -73,7 +77,7 @@ Produces a scatter plot of the values of x against those of y.
 \tab \code{y} \tab a RasterLayer object \cr
 \tab \code{maxpixels}  \tab  Maximum number of pixels in the map display \cr
 \tab \code{cex}  \tab  point size \cr
-\tab \code{...}  \tab  Any argument that can be passed to \code{\link[graphics]{plot}}  \cr
+\tab \code{...}  \tab  Any argument that can be passed to graphics::plot  \cr
 }
 
 \bold{x=Extent, y="ANY"}

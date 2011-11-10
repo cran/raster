@@ -35,7 +35,7 @@ clearOptions()
 \arguments{
 \item{format}{Character. The default file format to use. See \code{\link[raster]{writeFormats}}}
 \item{overwrite}{Logical. The default value for overwriting existing files. If \code{TRUE}, existing files will be overwritten}
-\item{datatype}{Character. The default data type to use. See \code{\link[raster]{dataType}}}
+\item{datatype}{Character. The default data type to use. See \link[raster]{dataType}}
 \item{tmpdir}{Character. The default location for writing temporary files; See \code{\link{rasterTmpFile}}}
 \item{progress}{Character. Valid values are "text",  "window" and "" (the default in most functions, no progress bar)}
 \item{timer}{Logical. If \code{TRUE}, the time it took to complete the function is printed}

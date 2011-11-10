@@ -3,9 +3,8 @@
 # Version 0.9
 # Licence GPL v3
 
-.writeRasterAll <- function(raster, filename, NAflag, ... ) {
+.writeRasterAll <- function(raster, filename, NAflag, filetype, ... ) {
 
-	filetype <- .filetype(...)
 	raster@file@driver <- filetype
  	filename <- trim(filename)
 	fnamevals <- .setFileExtensionValues(filename, filetype)
@@ -39,7 +38,7 @@
 			raster@data@values[raster@data@values < 0] <- NA
 			if (datatype == 'INT4U') { 
 				raster@data@values[is.na(raster@data@values)] <- raster@file@nodatavalue
-				i <- raster@data@values > 2147483647
+				i <- raster@data@values > 2147483647 & !is.na(raster@data@values)
 				raster@data@values[i] <- 2147483647 - raster@data@values[i]
 			} else {
 				raster@data@values[is.na(raster@data@values)] <- raster@file@nodatavalue

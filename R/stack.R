@@ -24,7 +24,7 @@ function(x, ...) {
 
 
 setMethod("stack", signature(x='character'), 
-function(x, ..., bands=NULL, varname="") {
+function(x, ..., bands=NULL, varname="", native=FALSE) {
 	rlist <- c(x, list(...))
     if ( varname != "") {
 		if (length(rlist) == 1) {
@@ -33,13 +33,13 @@ function(x, ..., bands=NULL, varname="") {
 			s <- stack(sapply(rlist, function(x) .stackCDF(x, varname=varname, bands=bands)))
 		}
 	} else {
-		return(stack(rlist, bands=bands))
+		return(stack(rlist, bands=bands, native=native))
 	}
 } )
 
 
 setMethod("stack", signature(x='list'), 
-function(x, bands=NULL, ...) {
+function(x, bands=NULL, native=FALSE, ...) {
 	if (class(x) == 'data.frame') {
 		return(utils::stack(x, ...))
 	}
@@ -69,7 +69,7 @@ function(x, bands=NULL, ...) {
 		if (is.character(x[[i]])) {
 			if (!is.null(bands)) {
 				for (b in bands) {
-					r[j] <- raster(x[[i]], band=b, ...)
+					r[j] <- raster(x[[i]], band=b, native=native, ...)
 					if (namesFromList) {
 						if (lstnames[i] != "") {
 							layerNames(r[[j]]) <- paste(lstnames[i], '_', b, sep='')
@@ -78,7 +78,7 @@ function(x, bands=NULL, ...) {
 					j <- j + 1
 				}
 			} else {
-				r[j] <- raster(x[[i]], band=1, ...)
+				r[j] <- raster(x[[i]], band=1, native=native, ...)
 				bds <- nbands(r[[j]])
 
 				if (namesFromList) {
@@ -93,7 +93,7 @@ function(x, bands=NULL, ...) {
 				j <- j + 1
 				if (bds > 1) {
 					for (b in 2:bds) {
-						r[j] <- raster(x[[i]], band=b, ...)
+						r[j] <- raster(x[[i]], band=b, native=native, ...)
 							
 						if (namesFromList) {
 							if (lstnames[i] != "") {

@@ -14,9 +14,11 @@ blockSize <- function(x, chunksize, n=nlayers(x), minblocks=4, minrows=1) {
 	}
 	
 	blockrows <- try(slot(x@file, 'blockrows'), silent=TRUE)
-	if (class(blockrows) != 'try-error') {
+	if (class(blockrows) == 'try-error') {
 		blockrows <- 1
 	}
+	blockrows <- max(blockrows, 1)
+	
 		
 	nr <- nrow(x)
 	size <- min(nr, max(1, floor(bs / ncol(x))))

@@ -18,44 +18,26 @@ Note that the function must work for vectors (not only for single numbers). That
 If a single mutli-layer object is provided, its layers are treated as individual RasterLayer objects if the argument "unstack=TRUE" is used. If multiple objects are provided, they should have the same number of layers, or it should be possible to recycle them (e.g., 1, 3, and 9 layers, which would return a RasterBrick with 9 layers).
 }
 
-\section{Methods}{
-\describe{
-\code{overlay(x, y, ..., fun)}
+\usage{
+\S4method{overlay}{Raster,Raster}(x, y, ..., fun, filename="", datatype, format, overwrite, progress, recycle=TRUE)
 
-\bold{1) \code{x} and \code{y} are Raster* objects}
-
-\tabular{rll}{
-\tab \code{x} \tab Raster* object \cr
-\tab \code{y} \tab Raster* object \cr
-\tab \code{...} \tab Additional Raster* objects \cr
-\tab \code{fun} \tab the function to be applied. The number of arguments of the function should match the number of Raster objects, or it should take any number of arguments  \cr
-}
-  
-\bold{2) \code{x} is a Raster object, \code{y} is missing}
-
-\code{overlay(x, fun, unstack=TRUE)}
-
-In this case, the function returns a RasterLayer based on computations that combine the individual layers of the Raster* object. If \code{x} is a RasterLayer, this is equivalent to using the \code{\link[raster]{calc}} function.
-
-\code{overlay(x, fun, overwrite, format, datatype, progress)}
-\tabular{rll}{
-\tab \code{x}  \tab RasterStack or RasterBrick object \cr
-\tab \code{fun} \tab Function to be applied. The number of arguments of the function should match the number of layers of the RasterStack/Brick object  \cr
-\tab \code{unstack}  \tab Logical. Unstack object \code{x} into individual layers? \cr
+\S4method{overlay}{Raster,missing}(x, y, ..., fun, filename="", datatype, format, overwrite, progress, unstack=TRUE)
 }
 
-
-In all cases you can also use these arguments:
-
-\tabular{rll}{
-\tab \code{filename} \tab  filename for the output raster. A valid filename must be provided when the data of the input rasters are on disk \cr
-\tab \code{overwrite}\tab logical. If \code{TRUE}, existing files will be overwritten \cr
-\tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
-\tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
+\arguments{
+  \item{x}{Raster* object}
+  \item{y}{Raster* object, or missing (only useful if \code{x} has multiple layers)}
+  \item{...}{Additional Raster objects}    
+  \item{fun}{Function to be applied. When using RasterLayer objects, the number of arguments of the function should match the number of Raster objects, or it should take any number of arguments. When using mult-layer objects the function should match the number of layers of the RasterStack/Brick object (unless unstack=FALSE) }
+  \item{filename}{Character. Output filename (optional) }
+  \item{format}{Character. Output file type. See \code{\link[raster]{writeFormats}}}
+  \item{datatype}{Character. Output data type. See \code{\link[raster]{dataType}}}
+  \item{overwrite}{Logical. If TRUE, "filename" will be overwritten if it exists}
+  \item{progress}{Character. "text", "window", or "" (the default, no progress bar)}
+  \item{recycle}{Logical. Should layers from Raster objects with fewer layers be recycled?}  
+  \item{unstack}{Logical. Should layers be ustacked before computation (i.e. does the \code{fun} refer to individual layers in a multilayer object)?}  
 }
 
-}
-}
 
 \details{
 Instead of the overlay function you can also use aritmethic functions such as \code{*, /, +, -} with Raster objects (see examples). In that case you cannot specifiy an output filename. Moreover, the overlay function should be more efficient when using large data files that cannot be loaded into memory, as the use of the complex arithmetic functions might lead to the creation of many temporary files.

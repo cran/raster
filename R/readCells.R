@@ -172,7 +172,8 @@
 	}
 	cells <- (cells-1) * dsize
 	signed <- dataSigned(x@file@datanotation)
-
+	if (dsize > 2) { signed <- TRUE }
+	
 	x <- openConnection(x)
 	for (i in seq(along=cells)) {
 		seek(x@file@con, cells[i])
@@ -181,7 +182,8 @@
 	x <- closeConnection(x)
 	
 	if (x@file@datanotation == 'INT4U') {
-		res[res < 0] <- 2147483647 - res[res < 0] 
+		i <- !is.na(res) & res < 0
+		res[i] <- 2147483647 - res[i] 
 	}
 	
 	if (dtype == "numeric") {

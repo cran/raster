@@ -49,23 +49,13 @@ function(x, ...) {
 		}
 
 		nl <- 1
-		r@layernames <- trim(as.character(r@layernames))
-		if (trim(r@layernames) != "") {
-			cname <- trim(r@layernames)
-		} else {
-			cname <- "layer1"
-		}
-		x@layernames[1] <- cname
 		x@layers[nl] <- r 
-		
 		rasters <- rasters[-1]
 		if (length(rasters)==0) { return(x) }
 	}
-		
 
 	x@layers <- c(x@layers, rasters)
-	lyrns <- sapply(x@layers, layerNames)
-	layerNames(x) <- lyrns
+	layerNames(x) <- sapply(x@layers, layerNames)
 
 	return(x)
 }	

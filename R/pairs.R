@@ -6,7 +6,7 @@
  
 
 setMethod('pairs', signature(x='RasterStackBrick'), 
-	function(x, hist=TRUE, cor=TRUE, maxpixels=100000, cex=0.5, main='', use="pairwise.complete.obs") {
+	function(x, hist=TRUE, cor=TRUE, use="pairwise.complete.obs",  maxpixels=100000, ...) {
 	
 		panelhist <- function(x,...)	{
 			usr <- par("usr"); on.exit(par(usr))
@@ -33,7 +33,13 @@ setMethod('pairs', signature(x='RasterStackBrick'),
 	
 	
 		d <- sampleRegular(x, maxpixels)
-		
+	
+		dots <- list(...) 
+		cex <- dots$cex
+		main <- dots$main
+		if (is.null(cex)) cex <- 0.5
+		if (is.null(main)) main <- ''
+	
 		pairs(d, main=main, cex=cex, upper.panel=up, diag.panel=dp)
 	}
 )

@@ -17,24 +17,14 @@ rotate(x, ...)
 }
 
 \arguments{
-  \item{x}{a Raster* object}
-  \item{...}{Additional arguments, see Details}  
+\item{x}{Raster* object}
+\item{...}{Additional arguments as for \code{\link{writeRaster}}}  
 }
 
 \value{
-A RasterLayer or a RasterBrick object, and, in some cases, the side effect of a new file on disk.
+RasterLayer or a RasterBrick object
 }
 
-\details{
-The following additional arguments can be passed, to replace default values for this function
-\tabular{lll}{
-  \tab \code{filename} \tab Character. Output filename\cr 
-  \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
-  \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-  \tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-  \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
- }
-}
 
 \seealso{ \code{\link[raster]{flip}} }
 

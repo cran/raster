@@ -40,8 +40,8 @@ setMethod('trim', signature(x='matrix'),
 		if (is.character(x)) {
 			x[] = trim(as.vector(x))
 		} else {
-			rows <- apply(x, 1, function(x)sum(is.na(x)))
-			cols <- apply(x, 2, function(x)sum(is.na(x)))
+			rows <- rowSums(is.na(x))
+			cols <- colSums(is.na(x))
 			rows <- which(rows != ncol(x))
 			cols <- which(cols != nrow(x))
 			if (length(rows)==0) {
@@ -57,7 +57,6 @@ setMethod('trim', signature(x='matrix'),
 
 
 setMethod('trim', signature(x='Raster'), 
-
 function(x, padding=0, filename='', ...) {
 
 	filename <- trim(filename)

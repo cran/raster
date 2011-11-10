@@ -1,12 +1,15 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  March  2009
-# Version 0.9
 # Licence GPL v3
+# updated November 2011
+# version 1.0
 
 
-.bilinearValue <- function(raster, xyCoords, na.rm=FALSE, layer, n) {
+.bilinearValue <- function(raster, xyCoords, layer, n) {
+
 
 	fourCellsFromXY <- function(raster, xy) {
+	# should have a variant for global lon/lat data
 		cells <- cellFromXY(raster, xy)
 		row <- rowFromCell(raster, cells)
 		col <- colFromCell(raster, cells)
@@ -31,37 +34,103 @@
 		return(four)
 	}
 	
-	bilinear <- function(x,y, x1,x2,y1,y2, v) {
-		v = v / ((x2-x1)*(y2-y1))
+	bilinear_old <- function(x, y, x1, x2, y1, y2, v) {
+		v <- v / ((x2-x1)*(y2-y1))
 		return( v[,1]*(x2-x)*(y2-y) + v[,3]*(x-x1)*(y2-y) + v[,2]*(x2-x)*(y-y1) + v[,4]*(x-x1)*(y-y1) )
 		#div <- (x2-x1)*(y2-y1)
 		#return ( (v[,1]/div)*(x2-x)*(y2-y) + (v[,3]/div)*(x-x1)*(y2-y) + (v[,2]/div)*(x2-x)*(y-y1) + (v[,4]/div)*(x-x1)*(y-y1) )
 	}
 	
-	four <- fourCellsFromXY(raster, xyCoords)
-	xy4 <- matrix(xyFromCell(raster, as.vector(four)), ncol=8)
+	bilinear <- function(xy, x, y, v) {
+		v <- v / ((x[2,]-x[1,])*(y[2,]-y[1,]))
+		return(	v[,1]*(x[2,]-xy[,1])*(y[2,]-xy[,2]) + v[,3]*(xy[,1]-x[1,])*(y[2,]-xy[,2]) + 
+				v[,2]*(x[2,]-xy[,1])*(xy[,2]-y[1,]) + v[,4]*(xy[,1]-x[1,])*(xy[,2]-y[1,]) )
+	}
+	
+	r <- raster(raster)
+	
+	four <- fourCellsFromXY(r, xyCoords)
+	xy4 <- matrix(xyFromCell(r, as.vector(four)), ncol=8)
 	x <- apply(xy4[,1:4,drop=FALSE], 1, range)
 	y <- apply(xy4[,5:8,drop=FALSE], 1, range)
 	xy4 <- cbind(c(x[1,], x[1,], x[2,], x[2,]), c(y[1,], y[2,], y[1,], y[2,]))
-	cells <- cellFromXY(raster, xy4)
+	cells <- cellFromXY(r, xy4)
+
+	row1 <- rowFromCell(r, min(cells, na.rm=TRUE))
+	nrows <- row1 - 1 + rowFromCell(r, max(cells, na.rm=TRUE))
+	offs <- cellFromRowCol(r, row1, 1) - 1
+	cells <- cells - offs
 	
 	nls <- nlayers(raster)
 	if (nls == 1) {
-		v <- matrix( .cellValues(raster, cells), ncol=4)
-		bilinear(xyCoords[,1], xyCoords[,2], x[1,], x[2,], y[1,], y[2,], v)
+		vv <- getValues(raster, row1, nrows)
+		v <- matrix( vv[cells], ncol=4)
+
+		res <- rep(NA, nrow(v))
+		rs <- rowSums(is.na(v))
+		i <- rs==3
+		if (sum(i) > 0) {
+			cells <- cellFromXY(raster, xyCoords[i,]) - offs
+			res[i] <- vv[cells]
+		}
+		i <- rs > 0 & rs < 3
+		if (sum(i) > 0) {
+			vv <- v[i,]
+			vv[is.na(vv[,1]),1] <- vv[is.na(vv[,1]),2]
+			vv[is.na(vv[,2]),2] <- vv[is.na(vv[,2]),1]
+			vv[is.na(vv[,3]),3] <- vv[is.na(vv[,3]),4]
+			vv[is.na(vv[,4]),4] <- vv[is.na(vv[,4]),3]
+			vmean <- rep(rowMeans(vv, na.rm=TRUE), 4)
+			vv[is.na(vv)] <- vmean[is.na(vv)]
+#			res[i] <- bilinear(xyCoords[i,1], xyCoords[i,2], x[1,i], x[2,i], y[1,i], y[2,i], vv)
+			res[i] <- bilinear(xyCoords[i,], x[,i], y[,i], vv)
+		}
+		i <- rs==0
+		if (sum(i) > 0) {
+#			res[i] <- bilinear(xyCoords[i,1], xyCoords[i,2], x[1,i], x[2,i], y[1,i], y[2,i], v[i,])
+			res[i] <- bilinear(xyCoords[i,], x[,i], y[,i], v[i,])
+		}
+		res
+		
 	} else {
 	
 		if (missing(layer)) { layer <- 1 }
 		if (missing(n)) { n <- (nls-layer+1) }
 		lyrs <- layer:(layer+n-1)
-		res <- matrix(ncol=length(lyrs), nrow=nrow(xyCoords))
-		cv <- .cellValues(raster, cells, layer=layer, nl=n)
-		for (i in 1:ncol(cv)) {
-			v <- matrix(cv[, i], ncol=4)
-			res[,i] <- bilinear(xyCoords[,1], xyCoords[,2], x[1,], x[2,], y[1,], y[2,], v)
+		allres <- matrix(ncol=length(lyrs), nrow=nrow(xyCoords))
+		colnames(allres) <- layerNames(raster)[lyrs]
+
+		cvv <- getValues(raster, row1, nrows)[, lyrs]
+		cv <- cvv[cells,]
+		for (j in 1:ncol(cv)) {
+			v <- matrix(cv[, j], ncol=4)
+			
+			res <- rep(NA, nrow(v))
+			rs <- rowSums(is.na(v))
+			i <- rs==3
+			if (sum(i) > 0) {
+				cells <- cellFromXY(raster, xyCoords[i,]) - offs
+				res[i] <- cvv[cells, j]
+			}
+			i <- rs > 0 & rs < 3
+			if (sum(i) > 0) {
+				vv <- v[i,]
+				vv[is.na(vv[,1]),1] <- vv[is.na(vv[,1]),2]
+				vv[is.na(vv[,2]),2] <- vv[is.na(vv[,2]),1]
+				vv[is.na(vv[,3]),3] <- vv[is.na(vv[,3]),4]
+				vv[is.na(vv[,4]),4] <- vv[is.na(vv[,4]),3]
+				vmean <- rep(rowMeans(vv, na.rm=TRUE), 4)
+				vv[is.na(vv)] <- vmean[is.na(vv)]
+				res[i] <- bilinear(xyCoords[i,], x[,i], y[,i], vv)
+			}
+			i <- rs==0
+			if (sum(i) > 0) {
+				res[i] <- bilinear(xyCoords[i,], x[,i], y[,i], v[i,])
+			}
+
+			allres[,j] <- res
 		}
-		colnames(res) <- layerNames(raster)[lyrs]
-		return(res)
+		allres
 	}
 }
 

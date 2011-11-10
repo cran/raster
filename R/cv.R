@@ -1,8 +1,6 @@
 # Author: Robert J. Hijmans 
-# International Rice Research Institute
-# contact: r.hijmans@gmail.com
-# Date : October 2008
-# Version 0.9
+# Date : October 2008-2011
+# Version 1.0
 # Licence GPL v3
 
 
@@ -38,11 +36,33 @@ function(x, ..., aszero=FALSE, na.rm=FALSE) {
 
 setMethod("cv", signature(x='Raster'),
 	function(x, ..., aszero=FALSE, na.rm=FALSE){
-		rasters <- .makeRasterList(x, ...)
-		add <- .addArgs(...)
-		fun <- function(...){ cv(..., aszero=aszero) }
-		return( .summaryRasters(rasters=rasters, add=add, fun=fun, na.rm=na.rm) )	
+
+		dots <- list(...)
+		if (length(dots) > 0) {
+			x <- stack(.makeRasterList(x, ...))
+			add <- .addArgs(...)
+		} else {
+			add <- NULL
+		}
+		out <- raster(x)
+		
+		if (canProcessInMemory(x)) {
+			x <- cbind(getValues(x), add)
+			x <- setValues(out, apply(x, 1, cv, aszero=aszero, na.rm=na.rm))
+			return(x)
+		}
+
+		tr <- blockSize(out)
+		pb <- pbCreate(tr$n)
+		out <- writeStart(out, filename="")
+		for (i in 1:tr$n) {
+			v <- cbind( getValues( x, row=tr$row[i], nrows=tr$nrows[i] ), add)
+			v <- apply(v, 1, cv, aszero=aszero, na.rm=na.rm)
+			out <- writeValues(out, v, tr$row[i])
+			pbStep(pb, i)
+		}
+		pbClose(pb)
+		writeStop(out)
 	}
 )
-
 

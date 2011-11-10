@@ -10,28 +10,20 @@ Pairs plot (matrix of scatterplots)
 }
 
 \description{
-Pair plots of layers in a RasterStack or RasterBrick
+Pair plots of layers in a RasterStack or RasterBrick. This is a wrapper around graphics function \code{\link[graphics]{pairs}}.
 }
 
 \usage{
-pairs(x, ...)
+\S4method{pairs}{RasterStackBrick}(x, hist=TRUE, cor=TRUE, use="pairwise.complete.obs", maxpixels=100000, ...)
 }
 
 \arguments{
 \item{x}{RasterBrick or RasterStack}
-\item{...}{Additional arguments. See Methods}
-}
-
-\section{Methods}{
-\describe{
-\code{pairs(x, hist=TRUE, cor=TRUE, maxpixels=100000)}
-
-\tabular{rll}{
-\tab \code{hist} \tab Logical. If \code{TRUE} a histogram of the values is shown on the diagonal\cr
-\tab \code{cor} \tab Logical. If \code{TRUE} the correlation coefficient is shown in the upper panels \cr
-\tab \code{maxpixels} \tab Integer. Number of pixels to sample from each layer of large Raster objects \cr
-}		
-}
+\item{hist}{Logical. If TRUE a histogram of the values is shown on the diagonal}
+\item{cor}{Logical. If TRUE the correlation coefficient is shown in the upper panels}
+\item{use}{Argument passed to the \code{\link[stats]{cor}} function}
+\item{maxpixels}{Integer. Number of pixels to sample from each layer of large Raster objects}
+\item{...}{Additional arguments (only \code{cex} and \code{main})}
 }
 
 \seealso{

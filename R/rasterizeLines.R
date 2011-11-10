@@ -213,7 +213,7 @@
 
 	yrs <- yres(raster)
 	
-	pb <- pbCreate(nrow(raster), type=.progress(...))
+	pb <- pbCreate(nrow(raster), ...)
 	for (r in 1:nrow(raster)) {
 		ly <- yFromRow(raster, r)
 		uly <- ly + 0.51 * yrs

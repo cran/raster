@@ -120,6 +120,7 @@
 		}
 		dsize <- dataSize(object@file@datanotation)
 		dsign <- dataSigned(object@file@datanotation)
+		if (dsize > 2) { dsign <- TRUE }
 		
 		object <- openConnection(object)
 		if (object@data@nlayers > 1) {
@@ -140,7 +141,8 @@
 #		result[is.nan(result)] <- NA
 
 		if (object@file@datanotation == 'INT4U') {
-			result[result < 0] <- 2147483647 - result[result < 0]
+			i <- !is.na(result) & result < 0
+			result[i] <- 2147483647 - result[i]
 		}
 
 		if (dtype == 'numeric') {

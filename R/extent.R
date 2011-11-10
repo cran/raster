@@ -1,6 +1,4 @@
-# R function for the raster package
 # Author: Robert J. Hijmans
-# contact: r.hijmans@gmail.com
 # Date : January 2009
 # Version 0.9
 # Licence GPL v3
@@ -19,10 +17,11 @@ setMethod('extent', signature(x='Extent'),
 setMethod('extent', signature(x='BasicRaster'), 
 	function(x, r1, r2, c1, c2){ 
 		e <- x@extent
-		if (! missing(c1) )  { xn <- xFromCol(x, c1) } else { xn <- e@xmin }
-		if (! missing(c2) )  { xx <- xFromCol(x, c2) } else { xx <- e@xmax }
-		if (! missing(r1) )  { yx <- yFromRow(x, r1) } else { yx <- e@ymax }
-		if (! missing(r2) )  { yn <- yFromRow(x, r2) } else { yn <- e@ymin }
+		r <- res(x)
+		if (! missing(c1) )  { xn <- xFromCol(x, c1) - 0.5 * r[1] } else { xn <- e@xmin }
+		if (! missing(c2) )  { xx <- xFromCol(x, c2) + 0.5 * r[1] } else { xx <- e@xmax }
+		if (! missing(r1) )  { yx <- yFromRow(x, r1) + 0.5 * r[2] } else { yx <- e@ymax }
+		if (! missing(r2) )  { yn <- yFromRow(x, r2) - 0.5 * r[2] } else { yn <- e@ymin }
 		e <- extent(xn, xx, yn, yx )
 		if (validObject(e)) { return(e) }
 	}

@@ -69,7 +69,7 @@ focalFilter <- function(x, filter, fun=sum, filename="", na.rm=FALSE, pad=TRUE, 
 		out <- writeStart(out, filename=filename, ...)
 	}
 	
-	pb <- pbCreate(nrow(out), type=.progress(...))
+	pb <- pbCreate(nrow(out), ...)
 
 	lastrow <- nrow(filter)
 	rrows <- 1:(lastrow-1)

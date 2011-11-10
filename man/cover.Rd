@@ -7,33 +7,24 @@
 \alias{cover,RasterStackBrick,Raster-method}
 
 \title{ Replace NA values with values of other layers }
+
 \description{
- Replace \code{NA} values in the first Raster object (\code{x}) with the values of the second (\code{y}), and so forth for additional Rasters.
- If \code{x} has mutliple layers, the subsequent Raster objects should have the same number of layers, or have a single layer only (which will be recycled).
+Replace \code{NA} values in the first Raster object (\code{x}) with the values of the second (\code{y}), and so forth for additional Rasters. If \code{x} has mutliple layers, the subsequent Raster objects should have the same number of layers, or have a single layer only (which will be recycled).
+}
+
+\usage{
+cover(x, y, ...)
+}
+
+\arguments{
+  \item{x}{Raster* object}
+  \item{y}{Raster* object}
+  \item{...}{Additional Raster objects, and additional arguments as for \code{\link{writeRaster}}}  
 }
 
 
-\section{Methods}{
-\describe{
-\code{cover(x, y, ..., filename="") }
-  \item{\code{x}}{ Raster* object }
-  \item{\code{y}}{ Raster* object }
-  \item{\code{...}}{ Additional Raster* objects or other arguments (see Details) }
-  \item{\code{filename}}{ filename (optional) }
-
-Additional arguments for writing the results to a file on disk:
-\tabular{rll}{
-  \tab \code{format} \tab Character. Output file type. See \code{\link[raster]{writeRaster}} \cr
-  \tab \code{datatype} \tab Character. Output data type. See \code{\link[raster]{dataType}} \cr
-  \tab \code{overwrite} \tab If \code{TRUE}, "filename" will be overwritten if it exists \cr
-  \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
- }
-  
-}}
-
-
 \value{
-A RasterLayer or RasterBrick object, and in some cases the side effect of a new file on disk.
+RasterLayer or RasterBrick object
 }
 
 \author{Robert J. Hijmans}

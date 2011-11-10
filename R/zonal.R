@@ -50,7 +50,7 @@ zonal <- function(x, zones, stat='mean', digits=0, na.rm=TRUE, progress) {
 		cnttab <- alltab
 	
 		tr <- blockSize(x, n=2)
-		pb <- pbCreate(tr$n, type=.progress())			
+		pb <- pbCreate(tr$n)			
 		
 		for (i in 1:tr$n) {
 			d <- getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i])

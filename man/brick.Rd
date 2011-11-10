@@ -57,8 +57,7 @@ For netCDF files (CF convention):
 \tabular{rll}{
 \tab \code{varname} \tab character. The variable name (e.g. 'altitude' or 'precipitation'. If not supplied and the file has multiple
 variables are a guess will be made (and reported))\cr
-\tab \code{band} \tab integer > 0. The 'band' (layer) number of the file. E.g., the 'time' variable (if there are any) (default=NA)\cr
-\tab \code{level} \tab integer > 0. To select the 'level' (4th dimension variable) to use, if the data has 4 dimensions (default=1) \cr
+\tab \code{level} \tab integer > 0 (default=3). To select the 'level' (4th dimension variable) to use, if the data has 4 dimensions \cr
 }
 
 To read netCDF files, the \code{ncdf} package needs to be available. 

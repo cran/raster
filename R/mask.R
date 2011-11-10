@@ -61,7 +61,7 @@ function(x, mask, filename="", inverse=FALSE, ...){
 
 		out <- writeStart(out, filename=filename, ...)
 		tr <- blockSize(out)
-		pb <- pbCreate(tr$n, type=.progress(...))
+		pb <- pbCreate(tr$n, ...)
 
 		if (inverse) {
 			for (i in 1:tr$n) {
@@ -118,7 +118,7 @@ function(x, mask, filename="", inverse=FALSE, ...){
 		out <- writeStart(out, filename=filename, ...)
 
 		tr <- blockSize(out)
-		pb <- pbCreate(tr$n, type=.progress(...))
+		pb <- pbCreate(tr$n, ...)
 
 		if (inverse) {
 			for (i in 1:tr$n) {
@@ -173,7 +173,7 @@ function(x, mask, filename="", ...){
 		out <- writeStart(out, filename=filename, ...)
 
 		tr <- blockSize(out)
-		pb <- pbCreate(tr$n, type=.progress(...))
+		pb <- pbCreate(tr$n, ...)
 
 		for (i in 1:tr$n) {
 			v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
@@ -229,7 +229,7 @@ function(x, mask, filename="", ...){
 		out <- writeStart(out, filename=filename, ...)
 
 		tr <- blockSize(out)
-		pb <- pbCreate(tr$n, type=.progress(...))
+		pb <- pbCreate(tr$n, ...)
 
 		for (i in 1:tr$n) {
 			v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )

@@ -70,7 +70,7 @@ focal_old <- function(x, ngb=3, fun=mean, na.rm=TRUE, filename="", ...) {
 		out <- writeStart(out, filename=filename, ...)
 	}
 
-	pb <- pbCreate(nrow(out), type=.progress(...))
+	pb <- pbCreate(nrow(out), ...)
 	ngbdata <- matrix(nrow=ngb[1], ncol=ncol(x))
 	rr <- 0
 	for (r in 1:row1) {

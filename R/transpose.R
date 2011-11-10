@@ -28,7 +28,7 @@ setMethod('t', signature(x='RasterLayer'),
 			return(setValues(r, t(as.matrix(x))))
 		} else {
 			tr <- blockSize(r)
-			pb <- pbCreate(tr$n, type=.progress())			
+			pb <- pbCreate(tr$n)			
 			r <- writeStart(r, filename=rasterTmpFile(), overwrite=TRUE )
 			for (i in 1:tr$n) {
 				v <- getValuesBlock(x, row=1, nrows=r@ncols, col=tr$row[i], ncols=tr$nrows[i])
@@ -61,7 +61,7 @@ setMethod('t', signature(x='RasterStackBrick'),
 			return( brick(x, xmn=xmin(b), xmx=xmax(b), ymn=ymin(b), ymx=ymax(b), crs=projection(b)) )
 		} else {
 			tr <- blockSize(b)
-			pb <- pbCreate(tr$n, type=.progress())			
+			pb <- pbCreate(tr$n)			
 			b <- writeStart(b, filename=rasterTmpFile(), overwrite=TRUE )
 			for (i in 1:tr$n) {
 				v <- getValuesBlock(x, row=1, nrows=b@ncols, col=tr$row[i], ncols=tr$nrows[i])

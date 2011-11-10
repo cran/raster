@@ -111,7 +111,7 @@ cellStats <- function(x, stat='mean', ...) {
 
 		
 	tr <- blockSize(x)
-	pb <- pbCreate(tr$n, type=.progress())			
+	pb <- pbCreate(tr$n)			
 	
 	for (i in 1:tr$n) {
 		d <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])

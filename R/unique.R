@@ -32,7 +32,7 @@ function(x, progress='') {
 		u2 <- vector()
 		
 		tr <- blockSize(x, n=2)
-		pb <- pbCreate(tr$n, type=progress)	
+		pb <- pbCreate(tr$n, progress=progress)	
 
 		for (i in 1:tr$n) {
 			u1 <- unique( c(u1, getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i])) )
@@ -83,7 +83,7 @@ function(x, progress='') {
 		un <- list(length=nl, mode='list')
 		
 		tr <- blockSize(x, n=2)
-		pb <- pbCreate(tr$n, type=progress)	
+		pb <- pbCreate(tr$n, progress=progress)	
 
 		un <- NULL
 		for (i in 1:tr$n) {

@@ -1,8 +1,8 @@
-# raster package
-# Authors: Robert J. Hijmans,  r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date : October 2008
-# Version 0.9
 # Licence GPL v3
+# revised November 2011
+# version 1.0
 
 
 if (!isGeneric("expand")) {
@@ -12,7 +12,7 @@ if (!isGeneric("expand")) {
 
 
 setMethod('expand', signature(x='Raster', y='ANY'), 
-function(x, y, filename='', value=NA, ...) {
+function(x, y, filename='', value=NA, datatype, ...) {
 
 	if (is.vector(y)) {
 		if (length(y) <= 2) {
@@ -36,64 +36,71 @@ function(x, y, filename='', value=NA, ...) {
 # only expanding here, not cropping
 	y <- unionExtent(y, extent(x))
 
-	if (inherits(x, 'RasterLayer')) {
-		outRaster <- raster(x)
+	
+	if (nlayers(x) <= 1) {
+		out <- raster(x)
+		leg <- x@legend
 	} else {
-		outRaster <- brick(x, values=FALSE)
+		out <- brick(x, values=FALSE)	
+		leg <- new('.RasterLegend')
 	}
-	outRaster@layernames <- layerNames(x)
-
-	outRaster <- setExtent(outRaster, y, keepres=TRUE)
+	out@layernames <- layerNames(x)
+	out <- setExtent(out, y, keepres=TRUE)
 	
+	if (nrow(x) == nrow(out) & ncol(x) == ncol(out)) {
+		# nothing to do.
+		return(x)
+	}
+
 	if (! hasValues(x) ) {
-		return(outRaster)
+		return(out)
 	}
 	
-	datatype <- list(...)$datatype
-	if (is.null(datatype)) {
-		if (inherits(x, 'RasterStack')) {
-			datatype <- 'FLT4S'
-		} else {
-			datatype <- dataType(x)
+	if (missing(datatype)) { 
+		datatype <- unique(dataType(x))
+		if (length(datatype) > 1) {
+			datatype <- .commonDataType(datatype)
 		}
-	} 
-	
-	if (canProcessInMemory(outRaster)) {
-		d <- matrix(nrow=ncell(outRaster), ncol=nlayers(x))
-		d[] <- value
-		cells <- cellsFromExtent(outRaster, extent(x))
-		d[cells, ] <- getValues(x)
-		outRaster <- setValues(outRaster, d)	
-		if (filename != '') {
-			outRaster <- writeRaster(outRaster, filename=filename, datatype=datatype, ...)
-		}
-	} else { 
-		if (filename == '') {
-			filename <- rasterTmpFile()						
-		}
+	}
 
-		startrow <- rowFromY(outRaster, yFromRow(x, 1))
-		endrow <- rowFromY(outRaster, yFromRow(x, nrow(x)))
-		startcol <- colFromX(outRaster, xFromCol(x, 1))
-		endcol <- colFromX(outRaster, xFromCol(x, ncol(x)))
-		
-		d <- matrix(nrow=ncol(outRaster), ncol=nlayers(x))
-		xr <- 0
-		outRaster <- writeStart(outRaster, filename=filename, datatype=datatype, ... )
-		pb <- pbCreate(nrow(outRaster), type=.progress(...))
-		for (r in 1:nrow(outRaster)) {
-			d[] <- value
-			if (r >= startrow & r <= endrow) {
-				xr <- xr + 1
-				d[startcol:endcol, ] <- getValues(x, xr)
-			}
-			outRaster <- writeValues(outRaster, d, r)
-			pbStep(pb, r) 			
+	
+	if (canProcessInMemory(out)) {
+	
+		d <- matrix(value, nrow=ncell(out), ncol=nlayers(x))
+		d[cellsFromExtent(out, extent(x)), ] <- getValues(x)
+		x <- setValues(out, d)	
+		if (filename != '') {
+			x <- writeRaster(x, filename=filename, datatype=datatype, ...)
 		}
+		return(x)
+		
+	} else { 
+	
+		startrow <- rowFromY(out, yFromRow(x, 1))
+		endrow <- rowFromY(out, yFromRow(x, nrow(x)))
+		startcol <- colFromX(out, xFromCol(x, 1))
+		endcol <- colFromX(out, xFromCol(x, ncol(x)))
+		
+		tr <- blockSize(out)
+		tr$row <- sort(unique(c(tr$row, startrow, endrow)))
+		tr$nrows <- c(tr$row[-1], nrow(out)+1) - tr$row
+		tr$n <- length(tr$row)
+			
+		pb <- pbCreate(tr$n, ...)
+		out <- writeStart(out, filename=filename, datatype=datatype, ... )
+		for (i in 1:tr$n) {
+			d <- matrix(value, tr$nrows[i] * ncol(out))
+			if (tr$row[i] <= endrow & (tr$row[i]+tr$nrows[i]-1) >= startrow) {
+				cells <- startcol:endcol + rep((0:(tr$nrows[i]-1)) * ncol(out), each=endcol-startcol+1)
+				d[cells, ] <- getValues(x, (tr$row[i]-startrow+1), tr$nrows[i])
+			}
+			out <- writeValues(out, d, tr$row[i])
+			pbStep(pb, i) 			
+		}
+		
 		pbClose(pb)
-		outRaster <- writeStop(outRaster)
+		return(  writeStop(out) )
 	} 
-	return(outRaster)
 }
 )
 

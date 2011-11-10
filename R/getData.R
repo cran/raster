@@ -44,9 +44,10 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 
 .getCountry <- function(country='') {
 #	country <- toupper(trim(country[1]))
-	if (country == '') {
+	if (nchar(country) < 3) {
 		stop('provide a 3 letter ISO country code')
 	}
+	country <- substr(toupper(country), 1, 3)
 	cs <- .ISO()
 	try (cs <- toupper(cs))
 	if (! country %in% cs[,2]) {

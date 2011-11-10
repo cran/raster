@@ -34,7 +34,7 @@
 
 
 
-focalNA <- function(x, ngb=3, fun=mean, recursive=FALSE, maxrec=0, filename="", ...) {
+.focalNA <- function(x, ngb=3, fun=mean, recursive=FALSE, maxrec=0, filename="", ...) {
 
 	warning('this function is depracated. Please use "focal"')
 
@@ -105,7 +105,7 @@ focalNA <- function(x, ngb=3, fun=mean, recursive=FALSE, maxrec=0, filename="", 
 
 	keepGoing <- FALSE
 	
-	pb <- pbCreate(nrow(ngbgrid), type=.progress(...))
+	pb <- pbCreate(nrow(ngbgrid), ...)
 	if (filename != '') {
 		ngbgrid <- writeStart(ngbgrid, filename=filename, ...)			
 	}

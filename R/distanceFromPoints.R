@@ -28,7 +28,7 @@ distanceFromPoints <- function(object, xy, filename='', ...) {
 	
 	out <- writeStart(out, filename=filename, ...)
 	tr <- blockSize(out)
-	pb <- pbCreate(tr$n, type=raster:::.progress(...))
+	pb <- pbCreate(tr$n, ...)
 	xy <- cbind(rep(xFromCol(out, 1:ncol(out)), tr$nrows[1]), NA)
 	for (i in 1:tr$n) {
 		if (i == tr$n) {

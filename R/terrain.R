@@ -94,25 +94,31 @@ terrain <- function(x, opt='slope', unit='radians', neighbors=8, filename='', ..
 
 		out <- writeStart(out, filename, ...)
 		tr <- blockSize(out, minblocks=3, minrows=3)
+		pb <- pbCreate(tr$n, ...)
+		
 		nc <- ncol(out)
 		buf <- 1:nc
 		v <- getValues(x, row=1, nrows=tr$nrows[1]+1)
 		v <- .Call('terrain', as.double(v), as.integer(c(tr$nrows[1]+1, nc)), rs, un, nopt, lonlat, y, NAOK=TRUE, PACKAGE='raster')
 		out <- writeValues(out, matrix(v, ncol=nl), 1)
+		pbStep(pb, 1)
 		for (i in 2:(tr$n-1)) {
 			v <- getValues(x, row=tr$row[i]-1, nrows=tr$nrows[i]+2)
 			v <- .Call('terrain', as.double(v), as.integer(c(tr$nrows[i]+2, nc)), rs, un, nopt, lonlat, y, NAOK=TRUE, PACKAGE='raster')
 			v <- matrix(v, ncol=nl)[-buf,]
 			out <- writeValues(out, v, tr$row[i])
+			pbStep(pb, i)		
 		}
 		i <- tr$n
 		v <- getValues(x, row=tr$row[i]-1, nrows=tr$nrows[i]+1)
 		v <- .Call('terrain', as.double(v), as.integer(c(tr$nrows[i]+1, nc)), rs, un, nopt, lonlat, y, NAOK=TRUE, PACKAGE='raster')
 		v <- matrix(v, ncol=nl)[-buf,]
 		out <- writeValues(out, v, tr$row[i])
+		pbStep(pb, tr$n)
+		
 		out <- writeStop(out)
 	}
-	
+	pbClose(pb)
 	return(out)
 }
 

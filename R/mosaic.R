@@ -1,187 +1,186 @@
-# Authors: Robert J. Hijmans 
-# contact: r.hijmans@gmail.com
-# Date : March 2010
-# Version 1.0
+# Author: Robert J. Hijmans
+# Date : October 2008
+# Version 0.9
 # Licence GPL v3
+# redesinged for multiple row processing
+# October 2011
+# version 1
 
-	
 if (!isGeneric("mosaic")) {
 	setGeneric("mosaic", function(x, y, ...)
 		standardGeneric("mosaic"))
 }	
 
 
-setMethod('mosaic', signature(x='list', y='missing'), 
-function(x, y, ..., fun, na.rm=TRUE, tolerance=0.05, filename="", format, overwrite, progress) { 
-	
-	if (missing(fun)) {	stop('you need to supply a function with a fun=   argument') } 
-	if (missing(format)) {	format <- .filetype() } 
-	if (missing(overwrite)) {	overwrite <- .overwrite() }
-	if (missing(progress)) { progress <- .progress() }
-	
-	if (! all(sapply(x, function(x) inherits(x, 'RasterLayer')))) {
-		stop('elements of "x" should all inherit from RasterLayer')
-	}
 
-	do.call(mosaic, c(x, fun=fun, na.rm=na.rm, tolerance=tolerance, filename=filename, format=format, overwrite=overwrite, progress=progress))
-	
+setMethod('mosaic', signature(x='Raster', y='Raster'), 
+function(x, y, ..., fun, tolerance=0.05, filename="", format, datatype, overwrite, progress) { 
+	x <- c(x, y, list(...))
+	x <- x[ sapply(x, function(x) inherits(x, 'Raster')) ]
+	if (length(x) < 2) {
+		stop('mosaic needs at least 2 Raster* objects')
+	}
+	filename <- trim(filename)
+	if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
+	if (missing(overwrite)) { overwrite <- .overwrite()	}
+	if (missing(progress)) { progress <- .progress() }
+	if (missing(datatype)) { datatype <- .commonDataType(sapply(x, dataType)) } 
+	mosaic(x, fun=fun, tolerance=tolerance, filename=filename, format=format, datatype=datatype, overwrite=overwrite, progress=progress, check=FALSE)
 } )
 
 
-setMethod('mosaic', signature(x='RasterLayer', y='RasterLayer'), 
-function(x, y, ..., fun, na.rm=TRUE, tolerance=0.05, filename="", format, datatype, overwrite, progress) { 
-	
-	if (missing(fun)) {	stop('you need to supply a function with a fun=   argument') } 
 
-	filename <- trim(filename)
-	if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
-	if (missing(overwrite)) {	overwrite <- .overwrite() }
-	if (missing(progress)) { progress <- .progress() }
+setMethod('mosaic', signature(x='list', y='missing'), 
+function(x, y,..., fun, tolerance=0.05, filename="", format, datatype, overwrite, progress, check=TRUE){ 
 
-	dots <- list(...)
-	dots <- unlist(dots) #  make simple list
-	rasters <- c(x, y)
-	if (length(dots) > 0) {
-		for (i in 1:length(dots)) {
-			if (class(dots[[i]]) == 'RasterLayer') {
-				rasters <- c(rasters, dots[[i]])
-			}
+	if (check) {
+		x <- x[ sapply(x, function(x) inherits(x, 'Raster')) ]
+		if (length(x) < 2) {
+			stop('merge needs at least 2 Raster* objects')
 		}
+		filename <- trim(filename)
+		if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
+		if (missing(overwrite)) { overwrite <- .overwrite()	}
+		if (missing(progress)) { progress <- .progress() }
+		if (missing(datatype)) { datatype <- .commonDataType(sapply(x, dataType)) } 
 	}
 
-	compare(rasters, extent=FALSE, rowcol=FALSE, orig=TRUE, res=TRUE, tolerance=tolerance)
-	e <- unionExtent(rasters)
-	outraster <- raster(rasters[[1]])
-	outraster <- setExtent(outraster, e, keepres=TRUE, snap=FALSE)
+	nl <- max(unique(sapply(x, nlayers)))
+	compare(x, extent=FALSE, rowcol=FALSE, orig=TRUE, res=TRUE, tolerance=tolerance)
 
-	hasvalues = sapply(rasters, fromDisk) | sapply(rasters, inMemory)
-	if (! all(hasvalues)) {
-		rasters = rasters[hasvalues]
-		if (length(rasters) == 0 ) {
-			return(outraster)
-		}
-	}
-
-	
-	isInt <- TRUE
-	for (i in 1:length(rasters)) {
-		dtype <- .shortDataType(rasters[[i]]@file@datanotation)
-		if (dtype != 'INT') {
-			isInt <- FALSE
-		}
-	}
-	if (missing(datatype)) {
-		if (isInt) { 
-			datatype <- 'INT4S'
-		} else { 
-			datatype <- 'FLT4S'
-		}
-	}
-
-	rowcol <- matrix(0, ncol=3, nrow=length(rasters))
-	for (i in 1:length(rasters)) {
-		xy1 <- xyFromCell(rasters[[i]], 1) # first row/col on old raster[[i]]
-		xy2 <- xyFromCell(rasters[[i]], ncell(rasters[[i]]) ) #last row/col on old raster[[i]]
-		rowcol[i,1] <- rowFromY(outraster, xy1[2]) #start row on new raster
-		rowcol[i,2] <- rowFromY(outraster, xy2[2]) #end row
-		rowcol[i,3] <- colFromX(outraster, xy1[1]) #start col
-	}
-
-	todisk = FALSE	
-	if (! canProcessInMemory(outraster) ) {
-		todisk = TRUE
-		if (filename == "") {
-			filename <- rasterTmpFile()
-		} 
-	}
-	if (filename != '') {
-		if (file.exists(filename) & ! overwrite) {
-			stop('File exists, use overwrite = TRUE if you want to overwrite it')
-		}
-	}
-
-
-	if (todisk) {
-		outraster <- writeStart(outraster, filename=filename, format=format, datatype=datatype, overwrite=overwrite)
+	bb <- unionExtent(x)
+	if (nl > 1) {
+		out <- brick(x[[1]], values=FALSE, nl=nl)
 	} else {
-		v = matrix(ncol=nrow(outraster), nrow=ncol(outraster))
+		out <- raster(x[[1]])
 	}
 	
-	pb <- pbCreate(nrow(outraster), type=progress)
-	
-	rd <- matrix(nrow=ncol(outraster), ncol=length(rasters)) 
-	ids = rd
-	ids[] = FALSE
-	for (i in 1:length(rasters)) {
-		rr <- seq(1:ncol(rasters[[i]])) + rowcol[i,3] - 1
-		ids[rr, i] <- TRUE
-	}
-	emptyrow <- rep(NA, ncol(outraster))
-	
+	out <- setExtent(out, bb, keepres=TRUE, snap=FALSE)
+
 	fun <- .makeTextFun(fun)
 	if (class(fun) == 'character') { 
 		rowcalc <- TRUE 
 		fun <- .getRowFun(fun)
-	} else { rowcalc <- FALSE }
-	
-	
-	w <- getOption('warn')
-	on.exit( options('warn'= w) )
-	
-	if (rowcalc) {
-		for (r in 1:nrow(outraster)) {
-			rdd <- rd
-			for (i in 1:length(rasters)) { 
-				if (r >= rowcol[i,1] & r <= rowcol[i,2]) { 
-					rdd[ids[,i], i] <- getValues(rasters[[i]], r+1-rowcol[i,1])
-				}	
-			}
-		
-			options('warn'=-1) 
-			res <- fun(rdd, na.rm=na.rm ) 
-			options('warn'=w) 
-		
-			if (todisk) {
-				outraster <- writeValues(outraster, res, r)
-			} else {
-				v[,r] = res
-			}
-			pbStep(pb, r)
-		}
-		pbClose(pb)
-	
-	} else {
-		for (r in 1:nrow(outraster)) {
-			rdd <- rd
-			for (i in 1:length(rasters)) { 
-				if (r >= rowcol[i,1] & r <= rowcol[i,2]) { 
-					rdd[ids[,i], i] <- getValues(rasters[[i]], r+1-rowcol[i,1])
-				}	
-			}
-			options('warn'=-1) 
-			res <- apply(rdd, 1, FUN=fun, na.rm=na.rm)
-			options('warn'=w) 
-		
-			if (todisk) {
-				outraster <- writeValues(outraster, res, r)
-			} else {
-				v[,r] = res
-			}
-			pbStep(pb, r)
-		}
-		pbClose(pb)
+	} else { 
+		rowcalc <- FALSE 
 	}
 	
-	if (todisk) {
-		outraster <- writeStop(outraster)
-	} else {
-		outraster <- setValues(outraster, as.vector(v))
+	if ( canProcessInMemory(out, 3) ) {
+		if (nl > 1) {
+			v <- matrix(NA, nrow=ncell(out)*nl, ncol=length(x))
+			for (i in 1:length(x)) {
+				cells <- cellsFromExtent( out, extent(x[[i]]) )
+				cells <- cells + rep(0:(nl-1)*ncell(out), each=length(cells))
+				v[cells, i] <- as.vector(getValues(x[[i]]))
+			}
+			if (rowcalc) {
+				v <- fun(v, na.rm=TRUE)
+			} else {
+				v <- apply(v, 1, fun, na.rm=TRUE)
+			}
+			v <- matrix(v, ncol=nl)	
+			
+		} else {
+		
+			v <- matrix(NA, nrow=ncell(out), ncol=length(x))
+			for (i in 1:length(x)) {
+				cells <- cellsFromExtent( out, extent(x[[i]]) )
+				v[cells,i] <- getValues(x[[i]])
+			}
+			if (rowcalc) {
+				v <- fun(v, na.rm=TRUE)
+			} else {
+				v <- apply(v, 1, fun, na.rm=TRUE)
+			}
+		}
+		out <- setValues(out, v)
 		if (filename != '') {
-			outraster <- writeRaster(outraster, filename, format=format, overwrite=overwrite)
+			out <- writeRaster(out, filename=filename, format=format, datatype=datatype, overwrite=overwrite)
+		}
+		return(out)
+	}
+
+	rowcol <- matrix(NA, ncol=6, nrow=length(x))
+	for (i in 1:length(x)) {
+		xy1 <- xyFromCell(x[[i]], 1) 				# first row/col on old raster[[i]]
+		xy2 <- xyFromCell(x[[i]], ncell(x[[i]]) )   # last row/col on old raster[[i]]
+		rowcol[i,1] <- rowFromY(out, xy1[2])       	# start row on new raster
+		rowcol[i,2] <- rowFromY(out, xy2[2])    	# end row
+		rowcol[i,3] <- colFromX(out, xy1[1])	    # start col
+		rowcol[i,4] <- colFromX(out, xy2[1])		# end col
+		rowcol[i,5] <- i							# layer
+		rowcol[i,6] <- nrow(x[[i]])
+	}
+
+	tr <- blockSize(out)
+	pb <- pbCreate(tr$n, progress=progress)
+	out <- writeStart(out, filename=filename, format=format, datatype=datatype, overwrite=overwrite)
+
+	if (nl == 1) {
+		for (i in 1:tr$n) {
+			rc <- subset(rowcol, (tr$row[i]+tr$nrow[i]-1) > rowcol[,1] &  tr$row[i] < rowcol[,2])
+			if (nrow(rc) > 0) {
+				v <- matrix(NA, nrow=tr$nrow[i] * ncol(out), ncol=nrow(rc))
+				for (j in 1:nrow(rc)) {
+				
+					r1 <- tr$row[i]-rc[j,1]+1 
+					r2 <- r1 + tr$nrow[i]-1
+					z1 <- abs(min(1,r1)-1)+1
+					r1 <- max(1, r1)
+					r2 <- min(rc[j,6], r2)
+					nr <- r2 - r1 + 1
+					z2 <- z1 + nr - 1
+				
+					cells <- cellFromRowColCombine(out, z1:z2, rc[j,3]:rc[j,4])
+					v[cells, j] <- getValues(x[[ rc[j,5] ]], r1, nr)
+				}
+				if (rowcalc) {
+					v <- fun(v, na.rm=TRUE)
+				} else {
+					v <- apply(v, 1, fun, na.rm=TRUE)
+				}				
+			} else {
+				v <- rep(NA, tr$nrow[i] * ncol(out))
+			}
+			out <- writeValues(out, v, tr$row[i])
+			pbStep(pb, i)
+		}
+	} else {
+		for (i in 1:tr$n) {
+			rc <- subset(rowcol, (tr$row[i]+tr$nrow[i]-1) > rowcol[,1] &  tr$row[i] < rowcol[,2])
+			if (nrow(rc) > 0) {
+				v <- matrix(NA, nrow=tr$nrow[i]*ncol(out) * nl, ncol=nrow(rc))
+				for (j in 1:nrow(rc)) { 
+
+					r1 <- tr$row[i]-rc[j,1]+1 
+					r2 <- r1 + tr$nrow[i]-1
+					z1 <- abs(min(1,r1)-1)+1
+					r1 <- max(1, r1)
+					r2 <- min(rc[j,6], r2)
+					nr <- r2 - r1 + 1
+					z2 <- z1 + nr - 1
+
+					cells <- cellFromRowColCombine(out, z1:z2, rc[j,3]:rc[j,4])
+					cells <- cells + rep(0:(nl-1)* tr$nrow[i]*ncol(out), each=length(cells))
+					v[cells, j] <- as.vector( getValues(x[[ rc[j,5] ]], r1, nr) )
+					
+				}
+				if (rowcalc) {
+					v <- fun(v, na.rm=TRUE)
+				} else {
+					v <- apply(v, 1, fun, na.rm=TRUE)
+				}
+				v <- matrix(v, ncol=nl)
+			} else {
+				v <- matrix(NA, nrow=tr$nrow[i] * ncol(out), ncol=nl)
+			}
+			
+			out <- writeValues(out, v, tr$row[i])
+			pbStep(pb, i)
 		}
 	}
-	return(outraster)
+	pbClose(pb)
+	writeStop(out)
 }
 )
-
 

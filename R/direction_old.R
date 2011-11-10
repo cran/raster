@@ -80,7 +80,7 @@
 	xy <- xFromCol(out, 1:ncol(out))
 	xy <- cbind(xy, NA)
 	
-	pb <- pbCreate(nrow(out), type=.progress(...))
+	pb <- pbCreate(nrow(out), ...)
 	
 	for (r in 1:nrow(out)) {	
 		vals <- getValues(x, r)

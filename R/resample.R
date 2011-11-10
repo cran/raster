@@ -21,41 +21,32 @@ function(x, y, method="bilinear", filename="", ...)  {
 	if (nl == 1) {
 		y <- raster(y)
 	} else {
-		y <- brick(y, values=FALSE)
-		y@data@nlayers <- nl
+		y <- brick(y, values=FALSE, nl=nl)
 	}
 	
 	if (!hasValues(x)) {
 		return(y)
 	}	
 
-	if (missing(method)) {
-		stop("provide a method: 'bilinear' or 'ngb'")
-	}
 	if (!method %in% c('bilinear', 'ngb')) {
 		stop('invalid method') 
 	}
 	if (method == 'ngb') method <- 'simple'
 	
-	filename <- trim(filename)
 
 	resdif <- max(res(y) / res(x))
 	if (resdif > 3) {
 		warning('you are resampling y a raster with a much larger cell size, perhaps you should use "aggregate" first')
 	}
 	
-	e = intersectExtent(x, y, validate=TRUE)
+	e <- intersectExtent(x, y, validate=TRUE)
 	
-	if (is.null(filename)){ filename <- "" }
-	
-	if (!canProcessInMemory(y, 3*nl) && filename == '') {
-		filename <- rasterTmpFile()	
-	}
-	
-	inMemory <- filename == ""
-	if (inMemory) {
+	filename <- trim(filename)
+	if (canProcessInMemory(y, 3*nl)) {
+		inMemory <- TRUE
 		v <- matrix(NA, nrow=ncell(y), ncol=nlayers(x))
 	} else {
+		inMemory <- FALSE
 		y <- writeStart(y, filename=filename, ... )
 	}
 
@@ -71,7 +62,7 @@ function(x, y, method="bilinear", filename="", ...)  {
 		flush.console()
 		
 		tr <- blockSize(y, minblocks=nodes)
-		pb <- pbCreate(tr$n, type=.progress(...))
+		pb <- pbCreate(tr$n, ...)
 
 		clFun <- function(i) {
 			#r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
@@ -116,8 +107,9 @@ function(x, y, method="bilinear", filename="", ...)  {
 		}	
 		
 	} else {
+	
 		tr <- blockSize(y)
-		pb <- pbCreate(tr$n, type=.progress(...))
+		pb <- pbCreate(tr$n, ...)
 		
 		if (inMemory) {
 			for (i in 1:tr$n) {

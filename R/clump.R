@@ -33,7 +33,7 @@ if (!isGeneric("clump")) {
 
 setMethod('clump', signature(x='RasterLayer'), 
 
-function(x, filename='', directions=8, gaps=TRUE, datatype='INT2U', ...) {
+function(x, filename='', directions=8, gaps=TRUE, ...) {
 
 	if( !require(igraph)) {
 		stop('you need to install the igraph package to be able to use this function')
@@ -48,9 +48,15 @@ function(x, filename='', directions=8, gaps=TRUE, datatype='INT2U', ...) {
 		}
 	}
 
-	outRaster <- raster(x)
+	datatype <- list(...)$datatype
+	if (is.null(datatype)) {
+		datatype <- 'INT2S'
+	}
+		
 	
-	if (canProcessInMemory(outRaster, 3)) {
+	out <- raster(x)
+	
+	if (canProcessInMemory(out, 3)) {
 		x <- .smallClump(x, directions)
 		if (filename != '') {
 			x <- writeRaster(x, filename, ...)
@@ -59,22 +65,22 @@ function(x, filename='', directions=8, gaps=TRUE, datatype='INT2U', ...) {
 	} 
 	# else 
 
-	outRaster <- writeStart(outRaster, filename=rasterTmpFile(), datatype='INT2U')
+	out <- writeStart(out, filename=rasterTmpFile(), datatype='INT2U')
 
-	tr <- blockSize(outRaster, minrows=3)
-	pb <- pbCreate(tr$n, type=.progress(...))
+	tr <- blockSize(out, minrows=3)
+	pb <- pbCreate(tr$n, ...)
 	
-	ext <- c(xmin(outRaster), xmax(outRaster), ymax(outRaster), NA)
+	ext <- c(xmin(out), xmax(out), ymax(out), NA)
 	maxval <- 0
 	
 	rcl <- matrix(nrow=0, ncol=2)
 	
 	for (i in 1:tr$n) {
 	
-		ext[4] <- yFromRow(outRaster, tr$row[i]) + 0.5 * yres(outRaster)
+		ext[4] <- yFromRow(out, tr$row[i]) + 0.5 * yres(out)
 		
 		endrow <- tr$row[i] + tr$nrows[i] - 1 
-		ext[3] <- yFromRow(outRaster, endrow) - 1.5 * yres(outRaster) # one additional row for overlap
+		ext[3] <- yFromRow(out, endrow) - 1.5 * yres(out) # one additional row for overlap
 		xc <- crop(x, extent(ext))
 		
 		xc <- .smallClump(xc, directions) + maxval
@@ -89,10 +95,10 @@ function(x, filename='', directions=8, gaps=TRUE, datatype='INT2U', ...) {
 		if (!is.na(mv)) {
 			maxval <- mv
 		}
-		outRaster <- writeValues(outRaster, getValues(xc, 1, tr$nrows[i]), tr$row[i])
+		out <- writeValues(out, getValues(xc, 1, tr$nrows[i]), tr$row[i])
 		pbStep(pb)
 	}
-	outRaster <- writeStop(outRaster)
+	out <- writeStop(out)
 	pbClose(pb)
 	
 	
@@ -102,20 +108,20 @@ function(x, filename='', directions=8, gaps=TRUE, datatype='INT2U', ...) {
 		rc <- cbind(V(g),cl)
 		i <- rc[,1] != rc[,2]
 		rc <- rc[i, ,drop=FALSE]
-		outRaster <- subs(outRaster, data.frame(rc), subsWithNA=FALSE, filename=filename, datatype=datatype, ...)
-		return(outRaster)
+		out <- subs(out, data.frame(rc), subsWithNA=FALSE, filename=filename, datatype=datatype, ...)
+		return(out)
 		
 	} else if (!gaps) {
-		un <- unique(outRaster)
+		un <- unique(out)
 		un <- data.frame(cbind(un, 1:length(un)))
-		return( subs(outRaster, un, subsWithNA=FALSE, filename=filename, datatype=datatype, ...) )
+		return( subs(out, un, subsWithNA=FALSE, filename=filename, datatype=datatype, ...) )
 		
 		
 	} else if (filename != '') {
-		return( writeRaster(outRaster, filename=filename, datatype=datatype, ...) )
+		return( writeRaster(out, filename=filename, datatype=datatype, ...) )
 		
 	} else {
-		return(outRaster)
+		return(out)
 	}
 }
 

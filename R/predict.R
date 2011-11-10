@@ -9,7 +9,7 @@ if (!isGeneric("predict")) {
 }	
 
 setMethod('predict', signature(object='Raster'), 
-	function(object, model, filename="", fun=predict, ext=NULL, const=NULL, index=1, na.rm=TRUE, progress='', format, datatype, overwrite=FALSE, ...) {
+	function(object, model, filename="", fun=predict, ext=NULL, const=NULL, index=1, na.rm=TRUE, format, datatype, overwrite=FALSE, progress='', ...) {
 	
 		filename <- trim(filename)
 		if (missing(format)) { format <- .filetype(filename=filename) } 
@@ -91,7 +91,7 @@ setMethod('predict', signature(object='Raster'),
 		
 		napred <- matrix(rep(NA, ncol(predrast) * tr$nrows[1] * nlayers(predrast)), ncol=nlayers(predrast))
 		factres	<- FALSE
-		pb <- pbCreate(tr$n,  type=progress )			
+		pb <- pbCreate(tr$n,  progress=progress )			
 
 		for (i in 1:tr$n) {
 		
