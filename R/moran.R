@@ -20,15 +20,9 @@
 
 Moran <- function(x, w=3 ) {
 
-	doC=TRUE
-	
 	z <- x - cellStats(x, mean)
 	w <- raster:::.getFilter(w)
-	if (doC) {
-		wZiZj <- focal(z, w=w, na.rm=TRUE, pad=TRUE)
-	} else {
-		wZiZj <- focalFilter(z, filter=w, fun=sum, na.rm=TRUE, pad=TRUE)	
-	}
+	wZiZj <- focal(z, w=w, na.rm=TRUE, pad=TRUE)
 	wZiZj <- overlay(wZiZj, z, fun=function(x,y){ x * y })
 	wZiZj <- cellStats(wZiZj, sum)
 	z2 <- cellStats(z*z, sum)
@@ -36,19 +30,11 @@ Moran <- function(x, w=3 ) {
 	# weights
 	if (sum(! unique(w) %in% 0:1) > 0) {
 		zz <- calc(z, fun=function(x) ifelse(is.na(x), NA ,1))
-		if (doC) {
-			W <- focal( zz, w=w, na.rm=TRUE, pad=TRUE) 
-		} else {
-			W <- focalFilter( zz, filter=w, fun=sum, na.rm=TRUE, pad=TRUE) 		
-		}
+		W <- focal( zz, w=w, na.rm=TRUE, pad=TRUE) 
 	} else {
 		w2 <- w
 		w2[w2==0] <- NA
-		if (doC) {
-			W <- focal( z, w=w2, fun=function(x, ...){  as.double(sum(!is.na(x))) }, pad=TRUE)		
-		} else {
-			W <- focalFilter( z, filter=w2, fun=function(x, ...){  sum(!is.na(x)) }, pad=TRUE)
-		}
+		W <- focal( z, w=w2, fun=function(x, ...){  as.double(sum(!is.na(x))) }, pad=TRUE)		
 	}
 	NS0 <- n / cellStats(W, sum)
 	mI <- NS0 * wZiZj / z2
@@ -58,32 +44,18 @@ Moran <- function(x, w=3 ) {
 
 MoranLocal <- function(x, w=3) { 
 	
-	doC = TRUE
-	
 	z  <- x - cellStats(x, mean) 
 	#weights
 	w <- .getFilter(w)
 	if (sum(! unique(w) %in% 0:1) > 0) {
 		zz <- calc(z, fun=function(x) ifelse(is.na(x), NA ,1))
-		if (doC) {
-			W  <- focal( zz, w=w, na.rm=TRUE, pad=TRUE)		
-		} else {
-			W  <- focalFilter( zz, filter=w, fun=sum, na.rm=TRUE, pad=TRUE)
-		}
+		W  <- focal( zz, w=w, na.rm=TRUE, pad=TRUE)		
 	} else {
 		w2 <- w
 		w2[w2==0] <- NA
-		if (doC) {
-			W  <- focal( z, w=w2, fun=function(x, ...){ sum(!is.na(x)) }, na.rm=TRUE, pad=TRUE)
-		} else {
-			W  <- focalFilter( z, filter=w2, fun=function(x, ...){ sum(!is.na(x)) }, na.rm=TRUE, pad=TRUE)
-		}
+		W  <- focal( z, w=w2, fun=function(x, ...){ sum(!is.na(x)) }, na.rm=TRUE, pad=TRUE)
 	}
-	if (doC) {
-		lz <- focal(z, w=w, na.rm=TRUE, pad=TRUE) / W
-	} else {
-		lz <- focalFilter(z, filter=w, fun=sum, na.rm=TRUE, pad=TRUE) / W
-	}
+	lz <- focal(z, w=w, na.rm=TRUE, pad=TRUE) / W
 		
 	n <- ncell(x) - cellStats(x, 'countNA')
 	s2 <-  cellStats(x, sd)^2 

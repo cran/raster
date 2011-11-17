@@ -23,7 +23,7 @@
 
 
 
-.rasterFromGDAL <- function(filename, band, type, RAT=FALSE, silent=TRUE, ...) {	
+.rasterFromGDAL <- function(filename, band, type, RAT=FALSE, silent=TRUE, warn=TRUE, ...) {	
 
 # most of this was taken from the GDALinfo function in rgdal
 
@@ -46,7 +46,9 @@
     #dr <- getDriverName(getDriver(x))
     gt <- .Call("RGDAL_GetGeoTransform", x, PACKAGE = "rgdal")
     if (attr(gt, "CE_Failure") ) {
-		warning("GeoTransform values not available; georeferencing will not be correct")
+		if (warn) {
+			warning("GeoTransform values not available; georeferencing will not be correct")
+		}
 	}
 
     ysign <- sign(gt[6])
@@ -64,8 +66,9 @@
 		rotated <- TRUE
 
 		## adapted from rgdal::getGeoTransFunc
-		warning('\n\n This file has a rotation\n Support such files is limited and results of data processing might be wrong.\n Proceed with caution & consider using the "rectify" function\n')
-
+		if (warn) {
+			warning('\n\n This file has a rotation\n Support such files is limited and results of data processing might be wrong.\n Proceed with caution & consider using the "rectify" function\n')
+		}
 		rotMat <- matrix(gt[c(2, 3, 5, 6)], 2)
 		invMat <- solve(rotMat)
 		
@@ -111,11 +114,15 @@
 		r@file@nbands <- as.integer(nbands)
 		band <- as.integer(band)
 		if ( band > nbands(r) ) {
-			warning("band too high. Set to nbands")
+			if (warn) {
+				warning("band too high. Set to nbands")
+			}
 			band <- nbands(r) 
 		}
 		if ( band < 1) { 
-			warning("band too low. Set to 1")
+			if (warn) {
+				warning("band too low. Set to 1")
+			}
 			band <- 1 
 		}
 		r@data@band <- as.integer(band)

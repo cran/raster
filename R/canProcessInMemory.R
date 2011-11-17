@@ -46,6 +46,12 @@ canProcessInMemory <- function(x, n=4) {
 #   } else {
 
 #	g <- gc()
+
+
+#  if (.Platform$OS.type == "unix"){
+## Memory in KB, from: http://stackoverflow.com/questions/2441046/how-to-get-physical-memory-in-bash
+#	mem <- as.numeric(system("grep MemTotal /proc/meminfo | awk '{print $2}'",intern=TRUE))
+
 	w <- getOption('warn')
 	on.exit(options('warn'= w))
 	options('warn'=-1) 

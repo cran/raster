@@ -27,8 +27,7 @@
 
 Geary <- function(x, w=3) {
 
-	doC=TRUE
-	w <- .getFilter(w)
+	w <- raster:::.getFilter(w)
 	
 	i <- trunc(length(w)/2)+1 
 
@@ -37,26 +36,14 @@ Geary <- function(x, w=3) {
 	fun <- function(x,...) sum(w*(x-x[i])^2, ...)
 	w2 <- w
 	w2[] <- 1
-	if (doC) {
-		Eij <- cellStats(focal(x, w=w2, fun=fun, na.rm=TRUE, pad=TRUE), sum)	
-	} else {
-		Eij <- cellStats(focalFilter(x, filter=w2, fun=fun, na.rm=TRUE, pad=TRUE), sum)
-	}
+	Eij <- cellStats(focal(x, w=w2, fun=fun, na.rm=TRUE, pad=TRUE), sum)	
 
 	if (sum(! unique(w) %in% 0:1) > 0) {
 		x <- calc(x, fun=function(x) ifelse(is.na(x), NA ,1))
-		if (doC) {
-			W <- focal(x, w=w, na.rm=TRUE, pad=TRUE ) 
-		} else {
-			W <- focalFilter(x, filter=w, fun=sum, na.rm=TRUE, pad=TRUE ) 		
-		}
+		W <- focal(x, w=w, na.rm=TRUE, pad=TRUE ) 
 	} else {
 		w[w==0] <- NA
-		if (doC) {
-			W <- focal(x, w=w, fun=function(x, ...){  sum(!is.na(x)) }, pad=TRUE )
-		} else {
-			W <- focalFilter(x, filter=w, fun=function(x, ...){  sum(!is.na(x)) }, pad=TRUE )
-		}
+		W <- focal(x, w=w, fun=function(x, ...){  sum(!is.na(x)) }, pad=TRUE )
 	}
 	z <- 2 * cellStats(W, sum) * cellStats((x - cellStats(x, mean))^2, sum)
 	
@@ -67,17 +54,12 @@ Geary <- function(x, w=3) {
 
 
 GearyLocal <- function(x, w=3) { 
-	doC=TRUE
 	w <- .getFilter(w)
 	i <- trunc(length(w)/2)+1 
 	fun <- function(x,...) sum(w*(x-x[i])^2, ...)
 	w2 <- w
 	w2[] <- 1
-	if (doC) {
-		Eij <- focal(x, w=w2, fun=fun, na.rm=TRUE, pad=TRUE)
-	} else {
-		Eij <- focalFilter(x, filter=w2, fun=fun, na.rm=TRUE, pad=TRUE)	
-	}
+	Eij <- focal(x, w=w2, fun=fun, na.rm=TRUE, pad=TRUE)
 
 	s2 <-  cellStats(x, sd)^2 
 	if (ncell(x) < 1000000) { n <- ncell(x) - cellStats(x, 'countNA' )

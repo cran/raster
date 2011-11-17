@@ -417,16 +417,3 @@ function(x, y,..., tolerance=0.05, filename="", format, datatype, overwrite, pro
 )
 
 
-
-
-setMethod('merge', signature(x='Spatial', y='data.frame'), 
-function(x, y, by=intersect(names(x), names(y)), by.x=by, by.y=by, suffixes = c(".x",".y"), incomparables = NULL, ...) {
-	stopifnot(!'data' %in% slotNames(x))
-	d <- x@data
-	d$donotusethisvariablename976 <- 1:nrow(d)
-	d <- merge(d, y, by=by, by.x=by.x, by.y=by.y, suffixes=suffixes, incomprables=incomprable, all.x=TRUE, all.y=FALSE)
-	d <- d[order(d$donotusethisvariablename976), ]
-	d <- d[, -which(colnames(d)=='donotusethisvariablename976')]
-	x@data <- d
-	x
-} )

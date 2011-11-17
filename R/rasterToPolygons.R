@@ -99,7 +99,7 @@ rasterToPolygons <- function(x, fun=NULL, n=4, na.rm=TRUE, digits=12, dissolve=F
 	} else {
 		sp <- SpatialPolygonsDataFrame(sp, data.frame(xyv[,3:ncol(xyv)]), match.ID=FALSE)
 		if (dissolve) {
-			warning('sorry, not dissolving multi-layer objects yet\n')
+			warning('sorry, I cannot dissolve multi-layer objects yet\n')
 		}
 	}
 	sp

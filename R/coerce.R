@@ -47,7 +47,8 @@ setAs('Raster', 'SpatialGrid',
 		cc <- bb[,1] + (cs/2)
 		cd <- cbind(ncol(from), nrow(from))
 		grd <- GridTopology(cellcentre.offset=cc, cellsize=cs, cells.dim=cd)
-	
+		
+		SpatialGrid(grd, proj4string=crs)
 	}
 )
 

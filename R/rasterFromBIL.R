@@ -137,13 +137,13 @@
 	}
 
 	if (type == 'RasterBrick') {
-		layerNames(r) <- rep(gsub(" ", "_", extension(basename(filename), "")), nbands)
+		layerNames(x) <- rep(gsub(" ", "_", extension(basename(filename), "")), nbands)
 	} else {
 		lnames <- gsub(" ", "_", extension(basename(filename), ""))
 		if (nbands > 1) {
 			lnames <- paste(lnames, '_', band, sep='')
 		}
-		layerNames(r) <- lnames
+		layerNames(x) <- lnames
 	}
 
 	x@file@name <- filename
