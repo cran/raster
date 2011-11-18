@@ -3,20 +3,20 @@
 # Version 1.0
 # Licence GPL v3
 
-focal <- function(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=FALSE, ...) {
 
-	stopifnot(nlayers(x)==1)
-	stopifnot(hasValues(x))
-	
-	# mistakes because of differences with old focal and old focalFilter
-	dots <- list(...)
-	if (!is.null(dots$filter)) {
-		warning('argument "filter" is ignored!')
+.checkngb <- function(ngb) {
+	ngb <- as.integer(round(ngb))
+	if (length(ngb) == 1) {
+		ngb <- c(ngb, ngb)
+	} else if (length(ngb) > 2) {
+		stop('ngb should be a single value or two values')
 	}
-	if (!is.null(dots$ngb)) {
-		warning('argument "ngb" is ignored!')		
-	}
-	
+	if (min(ngb) < 1) { stop("ngb should be larger than 1") } 
+	return(ngb)
+}
+
+
+.getW <- function(w) {
 	if (length(w) == 1) {
 		w <- round(w)
 		stopifnot(w > 1)
@@ -28,15 +28,37 @@ focal <- function(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA,
 	if (! is.matrix(w) ) {
 		stop('w should be a single number, two numbers, or a matrix')
 	} 
+	return(w)
+}
+
+if (!isGeneric("focal")) {
+	setGeneric("focal", function(x, ...)
+		standardGeneric("focal"))
+}	
+
+setMethod('focal', signature(x='RasterLayer'), 
+function(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=FALSE, ...) {
+
+	stopifnot(hasValues(x))
+	
+	# mistakes because of differences with old focal and old focalFilter
+	dots <- list(...)
+	if (!is.null(dots$filter)) {
+		warning('argument "filter" is ignored!')
+	}
+	if (!is.null(dots$ngb)) {
+		warning('argument "ngb" is ignored!')		
+	}
+	
+	w <- .getW(w)
 	d <- dim(w)
 	if (prod(d) == 0) { stop('ncol and nrow of w must be > 0') }
 	if (min(d %% 2) == 0) { stop('w must have uneven sides') }	
 	
-	
 	# to get the weights in the (by row) order for the C routine
 	# but keeping nrow and ncol as-is
 	w[] <- as.vector(t(w))
-		
+
 	out <- raster(x)
 	filename <- trim(filename)
 	
@@ -250,5 +272,5 @@ focal <- function(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA,
 	}
 	return(out)
 }
-
+)
 

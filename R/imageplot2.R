@@ -50,7 +50,7 @@
 	}
 	w <- getOption('warn')
 	options('warn'=-1) 
-	zrange <- range(x, na.rm=TRUE)
+	zrange <- range(x, zlim, breaks, na.rm=TRUE)
 	options('warn'=w) 
 	if (! is.finite(zrange[1])) {
 		legend <- FALSE 
@@ -96,8 +96,12 @@
 		minz <- zrange[1]
 		maxz <- zrange[2]
 		if (minz == maxz) {
-			minz <- minz - 0.001
-			maxz <- maxz + 0.001
+			if (!is.null(breaks)) {
+				breaks=minz
+			} else {
+				minz <- minz - 0.001
+				maxz <- maxz + 0.001
+			}
 		}
 
 

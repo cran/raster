@@ -34,7 +34,7 @@
 				adjust <- FALSE
 			} else if (x@file@driver == 'gdal') {
 				vals <- .readCellsGDAL(x, uniquecells, layers)
-			} else if (x@file@driver == 'raster') {
+			} else if ( .isNativeDriver( x@file@driver) ) {  # raster, BIL, ..
 				vals <- .readCellsRaster(x, uniquecells, layers)
 			} else if (x@file@driver == 'netcdf') {
 				vals <- .readRasterCellsNetCDF(x, uniquecells) 
@@ -70,6 +70,9 @@
 
 	if (! .requireRgdal() ) { stop('rgdal not available') }
 	nl <- nlayers(x)
+	if (nl == 1) {
+		layers <- bandnr(x)
+	}
 	laysel <- length(layers)
 	
 	colrow <- matrix(ncol=2+laysel, nrow=length(cells))
@@ -82,6 +85,9 @@
 	con <- GDAL.open(x@file@name, silent=TRUE)
 	
 	if (laysel == 1) {
+		if (nl == 1) {
+			bandnr(x)
+		}
 		for (i in 1:length(rows)) {
 			offs <- c(rows[i]-1, 0) 
 			v <- getRasterData(con, offset=offs, region.dim=c(1, nc), band = layers)

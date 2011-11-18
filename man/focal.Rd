@@ -1,6 +1,8 @@
 \name{focal}
 
 \alias{focal}
+\alias{focal,RasterLayer-method}
+
 
 \title{Focal values}
 
@@ -9,7 +11,7 @@ Calculate "moving window" values for the neighborhood of focal cells using a mat
 }
 
 \usage{
-focal(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=FALSE, ...) 
+\S4method{focal}{RasterLayer}(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=FALSE, ...) 
 }
 
 \arguments{
@@ -64,7 +66,7 @@ RasterLayer
 
 
 \note{
-This function replaces \code{\link{focal_old}}, \code{focalNA} and \code{\link{focalFilter}}
+This function has replaced a previous version of \code{focal}, and functions \code{focalNA} and \code{focalFilter})
 }
 
 

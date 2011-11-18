@@ -1,7 +1,11 @@
+--- 17-November-2011, version 1.9-43
+fixed bug with cell values reading with BIL driver (reported by sonal singhal)
+addition: crop (intersect) method for Spatial objects
+addition: aggregate (dissolve) method for SpatialPolygons
+addition: merge (join) method for Spatial + data.frame
+
 --- 9-November-2011, version 1.9-41
 beginCluster now has 'exclude' option (suggested by Julian Zeidler)
-
---- 8-November-2011, version 1.9-40
 Bug fix, as(x, 'SpatialPixels') returned SpatialPoints. reported by Clément Calange.
 redesigned function edge for better speed. Arguments have changed. and to deal with a bug reported by Paul Galpern
 improved speed of disaggregate and expand for large files (processing by block of rows rather than by row)
@@ -9,8 +13,6 @@ simplified pbCreate
 new function for using clusters with raster functions: clusterR
 new .detectCores function (taken from the new (R 2.14.0) parallel package)
 new function approxNA to approximate NA values by cell, across layers (emerged from discussions with Jan Verbesselt). 
-
---- 30-October-2011, version 1.9-35
 added generic functions %in% and match for Raster objects (suggested by Paul Galpern)
 re-implemented merge and mosaic for higher speed (by block rather than by row).
 re-implemented mean, min and max for higher speed

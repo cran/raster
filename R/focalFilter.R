@@ -6,7 +6,7 @@
 # new version April 2011
 # padding, wrapping of global lon/lat data
 
-focalFilter <- function(x, filter, fun=sum, filename="", na.rm=FALSE, pad=TRUE, padValue=NA, ...) {
+.focalFilter <- function(x, filter, fun=sum, filename="", na.rm=FALSE, pad=TRUE, padValue=NA, ...) {
 
 	warning('this function is depracated. Please use "focal"')
 

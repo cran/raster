@@ -4,6 +4,7 @@
 
 \alias{merge}
 \alias{merge,Spatial,data.frame-method}
+\alias{merge,SpatialPolygons,SpatialPolygons-method}
 \alias{merge,Raster,Raster-method}
 \alias{merge,list,missing-method}
 

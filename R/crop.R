@@ -1,5 +1,4 @@
 # Authors: Robert J. Hijmans and Jacob van Etten
-# contact: r.hijmans@gmail.com
 # Date : October 2008
 # Version 0.9
 # Licence GPL v3
@@ -12,7 +11,7 @@ if (!isGeneric("crop")) {
 
 
 setMethod('crop', signature(x='Raster', y='ANY'), 
-function(x, y, filename='', datatype, ...) {
+function(x, y, filename='', ...) {
 
 	filename <- trim(filename)
 
@@ -22,7 +21,8 @@ function(x, y, filename='', datatype, ...) {
 	}
 	validObject(y)
 	
-	if (missing(datatype)) { 
+	datatype <- list(...)$datatype
+	if (is.null(datatype)) { 
 		datatype <- unique(dataType(x))
 		if (length(datatype) > 1) {
 			datatype <- .commonDataType(datatype)

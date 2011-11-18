@@ -5,19 +5,7 @@
 
 
 
-.checkngb <- function(ngb) {
-	ngb <- as.integer(round(ngb))
-	if (length(ngb) == 1) {
-		ngb <- c(ngb, ngb)
-	} else if (length(ngb) > 2) {
-		stop('ngb should be a single value or two values')
-	}
-	if (min(ngb) < 1) { stop("ngb should be larger than 1") } 
-	return(ngb)
-}
-
-
-focal_old <- function(x, ngb=3, fun=mean, na.rm=TRUE, filename="", ...) {
+.focal <- function(x, ngb=3, fun=mean, na.rm=TRUE, filename="", ...) {
 
 	stopifnot(nlayers(x) == 1)
 	

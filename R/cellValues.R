@@ -15,7 +15,7 @@
 		nlyrs <- nlayers(x)
 		if (missing(layer)) { layer <- 1 }
 		layer <- min( max( round(layer), 1), nlyrs)
-		if (missing(nl)) { nl <- nlayers(x) }
+		if (missing(nl)) { nl <- nlyrs }
 		nl <-  min( max( round(nl), 1), nlyrs-layer+1 )
 		lyrs <- layer:(layer+nl-1)
 	

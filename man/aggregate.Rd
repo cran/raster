@@ -5,6 +5,7 @@
 \alias{aggregate}
 \alias{aggregate,RasterLayer-method}
 \alias{aggregate,RasterStackBrick-method}
+\alias{aggregate,SpatialPolygons-method}
 
 \title{Aggregate cells}
 
@@ -18,6 +19,8 @@ The value for the resulting cells is computed with a user-specified function (de
 \S4method{aggregate}{RasterLayer}(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename='', ...)
 
 \S4method{aggregate}{RasterStackBrick}(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename='', ...)
+
+\S4method{aggregate}{SpatialPolygons}(x, v, ...)
 }
 
 \arguments{
@@ -29,6 +32,7 @@ The value for the resulting cells is computed with a user-specified function (de
   \item{na.rm}{logical. If \code{TRUE}, NA cells are removed from calculations }
   \item{filename}{Character. Output filename}  
   \item{...}{Additional arguments as for \code{\link{writeRaster}}}  
+  \item{v}{Character or integer. The fields (column names or numbers) on which to aggregate (dissolve) the SpatialPolygons. If not provided, all polygons are aggregated together} 
 }
 
 \details{

@@ -48,21 +48,29 @@ setMethod('predict', signature(object='Raster'),
 		
 		haveFactor <- FALSE
 		facttest <- TRUE
-		dataclasses <- try (attr(model$terms, "dataClasses")[-1], silent=TRUE)
-		if (class(dataclasses) != "try-error") {
-			varnames <- names(dataclasses)
-			if ( length( unique(lyrnames[(lyrnames %in% varnames)] )) != length(lyrnames[(lyrnames %in% varnames)] )) {
-				stop('duplicate names in Raster* object: ', lyrnames)
-			}
-
-			f <- names( which(dataclasses == 'factor') )
+		
+		if (inherits(model, "randomForest")) {
+			f <- names(which(sapply(model$forest$xlevels, max)!= "0"))
 			if (length(f) > 0) { 
 				haveFactor <- TRUE 
 				factlevels <- list()
 				for (i in 1:length(f)) {
-					if (inherits(model, "randomForest")) {
-						factlevels[[i]] <- model$forest$xlevels[[f]]
-					} else {
+					factlevels[[i]] <- model$forest$xlevels[[f]]
+				}
+			}
+		} else {
+		
+			dataclasses <- try (attr(model$terms, "dataClasses")[-1], silent=TRUE)
+			if (class(dataclasses) != "try-error") {
+				varnames <- names(dataclasses)
+				if ( length( unique(lyrnames[(lyrnames %in% varnames)] )) != length(lyrnames[(lyrnames %in% varnames)] )) {
+					stop('duplicate names in Raster* object: ', lyrnames)
+				}
+				f <- names( which(dataclasses == 'factor') )
+				if (length(f) > 0) { 
+					haveFactor <- TRUE 
+					factlevels <- list()
+					for (i in 1:length(f)) {
 						factlevels[[i]] <- levels( model$data[f][,1] )
 					}
 				}
@@ -139,14 +147,11 @@ setMethod('predict', signature(object='Raster'),
 	
 				if (doCluster) {
 				
-					predv <- clusterApply(cl, splitRows(blockvals, length(cl)), fun, object=model, ...)
-					if (is.list(predv[[1]])) {
-						predv <- lapply(predv, function(x) {
-												x <- unlist(x)
-												x <- matrix(x, nrow=nrb)
-											})
+					predv <- clusterApply(cl, splitRows(blockvals, length(cl)), fun, object=model)
+					if (is.vector(predv[[1]])) {
+						predv <- unlist(predv)
 					} else {
-						predv <- do.call(rbind, clusterApply(cl, splitRows(blockvals, length(cl)), fun, object=model, ...))
+						predv <- do.call(rbind, predv)
 					}
 				} else {
 					predv <- fun(model, blockvals, ...)
