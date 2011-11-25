@@ -47,6 +47,8 @@
 			raster@data@values[is.na(raster@data@values)] <- raster@file@nodatavalue
 		}
 		raster@data@values <- as.integer(round(raster@data@values ))
+		raster@data@min <- round(raster@data@min)
+		raster@data@max <- round(raster@data@max)
 		
 	} else if ( dtype =='FLT') {
 		raster@data@values <- as.numeric(raster@data@values)

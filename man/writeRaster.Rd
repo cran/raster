@@ -14,19 +14,18 @@ When writing a file to disk, the file format is determined by the 'format=' argu
 }
 
 \usage{
-\S4method{writeRaster}{RasterLayer,character}(x, filename, ...)
+\S4method{writeRaster}{RasterLayer,character}(x, filename, format, ...)
 
-\S4method{writeRaster}{RasterStackBrick,character}(x, filename, ...)
+\S4method{writeRaster}{RasterStackBrick,character}(x, filename, format, ...)
 }
 
 \arguments{
   \item{x}{Raster* object}
   \item{filename}{Output filename}
+  \item{format}{Character. Output file type. See \code{\link[raster]{writeFormats}}. If this argument is not provided, it is attempted to infer it from the filename extension. If that fails, the default format is used. The default format is 'raster', but this can be changed using \code{\link[raster]{setOptions}}}
   \item{...}{Additional arguments: 
-  
-    \code{format}: Character. Output file type. See \code{\link[raster]{writeFormats}}. If this argument is not provided, it is attempted to infer it from the file extension. If other cases the default format is used. The default format is 'raster', but this can be changed using \code{\link[raster]{setOptions}}.
-		
-	\code{datatype}: Character. Output data type. See \code{\link{dataType}}
+  		
+	\code{datatype}: Character. Output data type (e.g. 'INT2S' or 'FLT4S'). See \code{\link{dataType}}
 	
 	\code{overwrite}: Logical. If TRUE, "filename" will be overwritten if it exists
 	

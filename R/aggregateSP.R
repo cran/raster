@@ -1,72 +1,98 @@
 
 setMethod('aggregate', signature(x='SpatialPolygons'), 
-function(x, v=colnames(x@data), ...) {
+function(x, vars=NULL, sums=NULL, ...) {
 	require(rgeos)
 	
 	if (! .hasSlot(x, 'data') ) {
+		hd <- FALSE
+		if (!is.null(vars)) {
+			if (length(vars) == length(x@polygons)) {
+				x <- SpatialPolygonsDataFrame(x, data=data.frame(ID=vars))
+				vars = 1
+			}
+		}
+	} else {
+		hd <- TRUE
+	}
+	
+	if (isTRUE(is.null(vars))) {
 		if (version_GEOS0() < "3.3.0") {
 			x <- gUnionCascaded(x)
 		} else {
 			x <- gUnaryUnion(x)
 		}	
+		if (hd) {
+			x <- SpatialPolygonsDataFrame(x, data=data.frame(ID=1))
+		}
 		return(x)
-	
+		
 	} else {
-		if (isTRUE(is.null(v)) | isTRUE(is.na(v))) {
-			if (version_GEOS0() < "3.3.0") {
-				x <- gUnionCascaded(x)
-			} else {
-				x <- gUnaryUnion(x)
-			}	
-			x <- SpatialPolygonsDataFrame(x, data=data.frame(id=1))
-			return(x)
-			
-		} else {
-			dat <- x@data
+		getVars <- function(v, cn) {
 			vl <- length(v)
 			v <- unique(v)
 			if (is.numeric(v)) {
 				v <- round(v)
-				v <- v[v>0 & v <= ncol(dat)]
+				v <- v[v>0 & v <= ncol(x@data)]
 				if (length(v) < 1) {
-					stop('v has no valid column numbers')
+					stop('invalid column numbers')
 				}
 			} else if (is.character(v)) {
 				v <- v[v %in% colnames(dat)]
 				if (length(v) < 1) {
-					stop('v has no valid column names')
+					stop('invalid column names')
 				}
 			}
-			if (length(v) < vl) {
-				warning('not all variables were unique or valid')
-			}
-			
-			dat <- dat[,v]
-			crs <- x@proj4string
-			dc <- apply(dat, 1, function(y) paste(as.character(y), collapse='_'))
-			dc <- data.frame(oid=1:length(dc), v=dc)
-			dc[,2] <- as.integer(dc[,2])
-			ud <- data.frame(v=unique(dc[,2]))
-			md <- merge(dc, ud, by='v')
-			md <- md[order(md$oid), ]
-			id <- md[!duplicated(md[,1]),]
-			id <- id[order(id$v), ]
-			dat <- dat[id[,2], ]
-			
-			if (version_GEOS0() < "3.3.0") {
-				x <- lapply(1:nrow(ud), function(y) gUnionCascaded(x[md[md$v==y,2],]))
-			} else {
-				x <- lapply(1:nrow(ud), function(y) gUnaryUnion(x[md[md$v==y,2],]))
-			}	
-			
-			x <- sapply(1:length(x), function(y) x[[y]]@polygons[[1]]@Polygons)
-			x <- SpatialPolygons(lapply(1:length(x), function(y) Polygons(x[[y]], y)))
-			x@proj4string <- crs
-			
-			rownames(dat) <- 1:nrow(dat)
-			
-			SpatialPolygonsDataFrame(x, data=dat)
+			v
 		}
+		
+		dat <- x@data
+		cn <- colnames(dat)
+		
+		
+		v <- getVars(vars, cn)
+		
+		dat <- dat[,v, drop=FALSE]
+		crs <- x@proj4string
+		dc <- apply(dat, 1, function(y) paste(as.character(y), collapse='_'))
+		dc <- data.frame(oid=1:length(dc), v=as.integer(as.factor(dc)))
+		id <- dc[!duplicated(dc$v), ,drop=FALSE]
+		id <- id[order(id$v), ]
+
+		dat <- dat[id[,1], ,drop=FALSE]
+		if (!is.null(sums)) {
+			out <- list()
+			for (i in 1:length(sums)) {
+				if (length(sums[[i]]) != 2) {
+					stop('argument "s" most of be list in which each element is a list of two (fun + varnames)')
+				}
+				fun = sums[[i]][[1]]
+				if (!is.function(fun)) {
+					if (is.character(fun)) {
+						if (tolower(fun[1]) == 'first') {
+							fun <- function(x) x[1]
+						} else if  (tolower(fun[1]) == 'last') {
+							fun <- function(x) x[length(x)]
+						} 
+					}
+				}
+				v <- getVars(sums[[i]][[2]], cn)
+				ag <- aggregate(x@data[,v,drop=FALSE], by=list(dc$v), FUN=fun) 
+				out[[i]] <- ag[,-1,drop=FALSE]
+			}
+			out <- do.call(cbind, out)
+			dat <- cbind(dat, out)
+		}
+		
+		if (version_GEOS0() < "3.3.0") {
+			x <- lapply(1:nrow(id), function(y) spChFIDs(gUnionCascaded(x[dc[dc$v==y,1],]), as.character(y)))
+		} else {
+			x <- lapply(1:nrow(id), function(y) spChFIDs(gUnaryUnion(x[dc[dc$v==y,1],]), as.character(y)))
+		}	
+		
+		x <- do.call(rbind, x)
+		x@proj4string <- crs
+		rownames(dat) <- as.character(id$v)	
+		SpatialPolygonsDataFrame(x, data=dat)
 	}
 }
 )

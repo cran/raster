@@ -16,6 +16,13 @@ setMethod("modal", signature(x='Raster'),
 			add <- NULL
 		}
 		
+		nl <- nlayers(x)
+		if (nl < 2) {
+			return(x)
+		} else if (nl == 2) {
+			warning('running modal with only two layers')
+		}
+		
 		out <- raster(x)
 		
 		if (canProcessInMemory(x)) {

@@ -3,7 +3,7 @@ importFrom("graphics", plot, hist, lines, image, contour, persp, pairs, text, bo
 importFrom("grDevices", as.raster)
 importFrom("stats", aggregate, predict, density, quantile, update)
 importFrom("utils", stack, unstack, head, tail)
-importFrom("sp", coordinates, overlay, bbox, Spatial, SpatialPixels, SpatialPixelsDataFrame, SpatialGrid, SpatialGridDataFrame, spplot)
+importFrom("sp", coordinates, overlay, bbox, Spatial, SpatialPixels, SpatialPixelsDataFrame, SpatialGrid, SpatialGridDataFrame, SpatialPolygons, spplot)
 exportClasses(Extent, BasicRaster, Raster, RasterLayer, RasterBrick, RasterStack, RasterStackBrick)
 exportMethods("[", area, bandnr, brick, calc, clump, crop, disaggregate, distance, extent, extract, expand, flip, ncell, nlayers, overlay, plotRGB, raster, reclass, resample, rotate, sampleRandom, stackSelect, shift, subs, trim, unstack)
 exportPattern("^[^\\.]")

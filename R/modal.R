@@ -5,7 +5,7 @@
 # Licence GPL v3
 
 
-setGeneric("modal", function(x, ..., ties='random', na.rm=FALSE)
+setGeneric("modal", function(x, ...)
 	standardGeneric("modal"))
 	
 
@@ -20,7 +20,7 @@ function(x, ..., ties='random', na.rm=FALSE) {
 	x <- c(x, ...)
 	z <- x[!is.na(x)]
 	if (length(z) == 0) { return(NA) 
-	} else if (na.rm == FALSE & length(z) < length(x)) { 
+	} else if (!na.rm & length(z) < length(x)) { 
 		return(NA)	 
 	} else if (length(z) == 1) {
 		return(z)

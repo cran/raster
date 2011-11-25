@@ -10,13 +10,13 @@ if (!isGeneric('writeRaster')) {
 
 
 setMethod('writeRaster', signature(x='RasterLayer', filename='character'), 
-function(x, filename, ...) {
+function(x, filename, format, ...) {
 
 	stopifnot(hasValues(x))
 	filename <- trim(filename)
 	if (filename == '') {	stop('provide a filename')	}
 	filename <- .fullFilename(filename)
-	filetype <- .filetype(..., filename=filename)
+	filetype <- .filetype(format , filename=filename)
 	filename <- .getExtension(filename, filetype)
 	
 	if (filetype == 'KML') {
@@ -66,13 +66,13 @@ function(x, filename, ...) {
 
 
 setMethod('writeRaster', signature(x='RasterStackBrick', filename='character'), 
-function(x, filename, ...) {
+function(x, filename, format, ...) {
 
 	stopifnot(hasValues(x))
 	filename <- trim(filename)
 	if (filename == '') {	stop('provide a filename')	}
 	filename <- .fullFilename(filename)
-	filetype <- .filetype(..., filename=filename)
+	filetype <- .filetype(format, filename=filename)
 	filename <- .getExtension(filename, filetype)
 
 	if (filetype == 'KML') {
@@ -88,7 +88,7 @@ function(x, filename, ...) {
 	
 		out <- brick(x, values=FALSE)
 		layerNames(out) <- layerNames(x)
-		out <- writeStart(out, filename, ...)
+		out <- writeStart(out, filename, format=filetype, ...)
 	
 		if (inMemory(x)) {
 			out <- writeValues(out, getValues(x), 1)

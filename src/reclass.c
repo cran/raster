@@ -15,8 +15,7 @@ SEXP reclass(SEXP d, SEXP r, SEXP low, SEXP right, SEXP onlyNA, SEXP valNA) {
 					
 	R_len_t i, j;
 	SEXP val;
-	double *xd, *rcl, *xval, rightval;
-	int rightidx;
+	double *xd, *rcl, *xval, lowval, lowres;
 
 	PROTECT(d = coerceVector(d, REALSXP));
 
@@ -93,21 +92,23 @@ SEXP reclass(SEXP d, SEXP r, SEXP low, SEXP right, SEXP onlyNA, SEXP valNA) {
 
 			if (dolowest) {  // include lowest value (left) of interval
 			
-				rightval = rcl[0];
-				rightidx = b;
+				lowval = rcl[0];
+				lowres = rcl[b];
 				for (j=1; j<a; j++) {
-					if (rcl[j] < rightval) {
-						rightval = rcl[j];
-						rightidx = b+j;
+					if (rcl[j] < lowval) {
+						lowval = rcl[j];
+						lowres = rcl[b+j];
 					}
 				}
-				rightidx = rcl[rightidx];
+				
+//				Rprintf ("lowval = %f \n", lowval);
+//				Rprintf ("lowres = %f \n", lowres);
 				
 				for (i=0; i<n; i++) {
 					if (!R_FINITE(xd[i])) {
 						xval[i] = NAval;
-					} else if (xd[i] == rightval) {
-						xval[i] = rightidx;
+					} else if (xd[i] == lowval) {
+						xval[i] = lowres;
 					} else {
 						xval[i] = xd[i];
 						for (j=0; j<a; j++) {
@@ -140,21 +141,20 @@ SEXP reclass(SEXP d, SEXP r, SEXP low, SEXP right, SEXP onlyNA, SEXP valNA) {
 		
 			if (dolowest) { // which here means highest because right=FALSE
 			
-				rightval = rcl[a];
-				rightidx = b;
+				lowval = rcl[a];
+				lowres = rcl[b];
 				for (j=a+1; j<b; j++) {
-					if (rcl[j] > rightval) {
-						rightval = rcl[j];
-						rightidx = a+j;
+					if (rcl[j] > lowval) {
+						lowval = rcl[j];
+						lowres = rcl[a+j];
 					}
 				}
-				rightidx = rcl[rightidx];
 				
 				for (i=0; i<n; i++) {
 					if (!R_FINITE(xd[i])) {
 						xval[i] = NAval;
-					} else if (xd[i] == rightval) {
-						xval[i] = rightidx;
+					} else if (xd[i] == lowval) {
+						xval[i] = lowres;
 					} else {
 						xval[i] = xd[i];
 						for (j=0; j<a; j++) {

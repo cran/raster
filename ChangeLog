@@ -1,8 +1,14 @@
---- 17-November-2011, version 1.9-43
+--- 25-November-2011, version 1.9-46
+Improvements to new polygon manipulation functions. 
+Bug fix with reclass(include.lowest=TRUE) if the reclass value was a Real (like NA) it was coerced to an integer. Reported by Steve Mosher.
+
+--- 17-November-2011, version 1.9-44
 fixed bug with cell values reading with BIL driver (reported by sonal singhal)
-addition: crop (intersect) method for Spatial objects
+fixed serious bug with a stack from different bands from the same file. .cellValues returned values for the first band only (introduced in 1.9-41?). Reported by Matteo Mattiuzzi & Benjamin Mack
+addition: crop method for Spatial objects
 addition: aggregate (dissolve) method for SpatialPolygons
-addition: merge (join) method for Spatial + data.frame
+addition: merge (join) method for Spatial*DataFrane & data.frame; and for SpatialPolygons & SpatialPolygons
+addition: raster algebra for SpatialPolygons: + (same as function merge), - (difference), * (= function crop)
 
 --- 9-November-2011, version 1.9-41
 beginCluster now has 'exclude' option (suggested by Julian Zeidler)

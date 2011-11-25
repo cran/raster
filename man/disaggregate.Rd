@@ -27,7 +27,7 @@ If no filename is specified, and the resulting RasterLayer is too large to hold 
 
 The following additional arguments can be passed, to replace default values for this function
 \tabular{rll}{
-  \tab \code{method}  \tab Characer. Should be missing or 'bilinear' for bilinear interpolation  \cr
+  \tab \code{method}  \tab Character. Should be missing or 'bilinear' for bilinear interpolation  \cr
   \tab \code{filename}  \tab Filename for the output RasterLayer \cr
   \tab \code{format} \tab Character. Output file type. See \link[raster]{writeRaster} \cr
   \tab \code{overwrite} \tab If TRUE, "filename" will be overwritten if it exists \cr

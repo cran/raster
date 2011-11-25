@@ -53,7 +53,7 @@ function(x, filename="", method="linear", yleft, yright, rule=1, f=0, ties=mean,
 			if (length(i) > 0 ) {
 				v[i,] <- t( apply(v[i,], 1, function(x) approx(x, xout=xout, method=method, rule=rule, f=f, ties=ties)$y ) )
 			}
-			out <- writeValues(out, v)
+			out <- writeValues(out, v, tr$row[i])
 			pbStep(pb)
 		}
 		
@@ -72,7 +72,7 @@ function(x, filename="", method="linear", yleft, yright, rule=1, f=0, ties=mean,
 					v[i,] <- t( apply(v[i,], 1, function(x) approx(x, xout=xout, method=method, yright=yright, yleft=yleft, rule=rule, f=f, ties=ties)$y ) )
 				}
 			}
-			out <- writeValues(out, v)
+			out <- writeValues(out, v, tr$row[i])
 			pbStep(pb)
 		}
 	}
