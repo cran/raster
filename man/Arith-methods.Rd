@@ -4,10 +4,10 @@
 
 \alias{Arith-methods}
 
-\title{Arithmic with Raster* objects}
+\title{Arithmetic with Raster* objects}
 
 \description{
-Standard arithmic operators for computations with Raster* objects and numeric values. The following operators are available:
+Standard arithmetic operators for computations with Raster* objects and numeric values. The following operators are available:
 \code{ +, -, *, /, ^, \%\%, \%/\% }
 
 Input Raster* objects should have the same extent, origin and resolution. If only the extent differs, the computation will continue for 

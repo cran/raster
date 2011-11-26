@@ -20,7 +20,9 @@ click <- function(object, n=1, id=FALSE, xy=FALSE, cell=FALSE, type="n", ...) {
 		if (xy) {
 			res <- cbind(xyCoords, res)
 		}
-		rownames(res) <- 1:n
+		if (is.matrix(res)) {
+			rownames(res) <- 1:n
+		}
 		return(res)
 	} else if (!inherits(object, 'Raster')) {
 		warning('object is not of a supported class')

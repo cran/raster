@@ -41,7 +41,11 @@
 	} else { btorder <- 1 }
 	cat("byte order = ", btorder, "\n",file = thefile)		
 
-	cat("map info = {projection, 1, 1,", xmin(raster),", ", ymax(raster),", ", xres(raster),", ", yres(raster), "}\n", file = thefile)
+	if (.couldBeLonLat(raster)) {
+		cat("map info = {Geographic Lat/Lon, 1, 1,", xmin(raster),", ", ymax(raster),", ", xres(raster),", ", yres(raster), "}\n", file = thefile)
+		} else {
+		cat("map info = {projection, 1, 1,", xmin(raster),", ", ymax(raster),", ", xres(raster),", ", yres(raster), "}\n", file = thefile)
+	}
     cat("projection info =", projection(raster), "\n", file = thefile) 
 	cat("z plot range = {", minValue(raster),", ", maxValue(raster), "}\n", file = thefile) 
 	close(thefile)	
