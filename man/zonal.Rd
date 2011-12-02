@@ -9,7 +9,7 @@ Compute zonal statistics, values of a Raster* object for each "zone" in a Raster
 }
 
 \usage{
-zonal(x, zones, stat='mean', digits=0, na.rm=TRUE, progress) 
+zonal(x, zones, stat='mean', digits=0, na.rm=TRUE, progress='') 
 }
 
 \arguments{

@@ -3,7 +3,7 @@
 # Version 0.9
 # Licence GPL v3
 
-setMethod('writeValues', signature(x='RasterLayer'), 
+setMethod('writeValues', signature(x='RasterLayer', v='vector'), 
 	function(x, v, start) {
 
 		v[is.infinite(v)] <- NA
@@ -78,7 +78,7 @@ setMethod('writeValues', signature(x='RasterLayer'),
 
 
 
-setMethod('writeValues', signature(x='RasterBrick'), 
+setMethod('writeValues', signature(x='RasterBrick', v='matrix'), 
 	function(x, v, start) {
 	
 		v[is.infinite(v)] <- NA

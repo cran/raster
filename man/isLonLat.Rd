@@ -2,6 +2,7 @@
 
 \alias{isLonLat}
 \alias{isLonLat,Raster-method}
+\alias{isLonLat,Spatial-method}
 \alias{isLonLat,CRS-method}
 \alias{isLonLat,character-method}
 
@@ -9,7 +10,7 @@
 \title{Is this longitude/latitude data?}
 
 \description{
- Test whether a Raster* object has the a longitude / latitude coordinate reference system.
+ Test whether a Raster* object has the a longitude/latitude coordinate reference system.
 }
 
 \usage{

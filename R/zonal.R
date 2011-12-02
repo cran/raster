@@ -3,31 +3,27 @@
 # Version 0.9
 # Licence GPL v3
 
-zonal <- function(x, zones, stat='mean', digits=0, na.rm=TRUE, progress) {
+zonal <- function(x, zones, stat='mean', digits=0, na.rm=TRUE, progress='') {
 
 	compare(c(x, zones))
 	
 	layernames <- layerNames(x)
 	
-	if (missing(progress)) { progress <- .progress() }
-
-	if (inMemory(x) & inMemory(zones)) {
-		inmem <- TRUE
-	} else if (canProcessInMemory(x, 3)) {
+	if (canProcessInMemory(x, 3)) {
 		inmem <- TRUE
 	} else {
 		inmem <- FALSE
 	}
 	
 	if (inmem) {
-
+		pb <- pbCreate(2, progress)		
 		fun <- match.fun(stat)
-		d <- getValues(x)
-		rm(x)
-		d <- cbind(d, round(getValues(zones), digits=digits))
-		rm(zones)
-		alltab <- aggregate(d[,1:(ncol(d)-1)], by=list(d[,ncol(d)]), FUN=fun, na.rm=na.rm) 
+		x <- getValues(x)
+		x <- cbind(x, round(getValues(zones), digits=digits))
+		pb <- pbStep(pb, 1)		
+		alltab <- aggregate(x[,1:(ncol(x)-1)], by=list(x[,ncol(x)]), FUN=fun, na.rm=na.rm) 
 		stat <- deparse(substitute(stat))
+		pb <- pbStep(pb, 2)
 			
 	} else {
 		
@@ -50,7 +46,7 @@ zonal <- function(x, zones, stat='mean', digits=0, na.rm=TRUE, progress) {
 		cnttab <- alltab
 	
 		tr <- blockSize(x, n=2)
-		pb <- pbCreate(tr$n)			
+		pb <- pbCreate(tr$n, progress)		
 		
 		for (i in 1:tr$n) {
 			d <- getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i])
@@ -70,7 +66,6 @@ zonal <- function(x, zones, stat='mean', digits=0, na.rm=TRUE, progress) {
 			}
 			pbStep(pb, i)
 		}
-		pbClose(pb)
 			
 		alltab <- aggregate(alltab[,2:ncol(alltab)], by=list(alltab[,1]), FUN=fun, na.rm=na.rm) 	
 		if (counts) {
@@ -86,7 +81,8 @@ zonal <- function(x, zones, stat='mean', digits=0, na.rm=TRUE, progress) {
 	} else {
 		colnames(alltab)[2] <- stat[1]
 	}
-	
+	pbClose(pb)
+
 	return(alltab)
 }
 

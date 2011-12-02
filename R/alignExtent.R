@@ -5,17 +5,35 @@
 # Licence GPL v3
 
 
-alignExtent <- function(extent, object) {
+alignExtent <- function(extent, object, snap='near') {
 
+	snap <- tolower(snap)
+	stopifnot(snap %in% c('near', 'in', 'out'))
+	
 	extent <- extent(extent)
 	if (!inherits(object, 'BasicRaster')) { stop('object should inherit from BasicRaster') }
 	res <- res(object)
 	orig <- origin(object)
+	
 # snap points to pixel boundaries
-	xmn <- round((extent@xmin-orig[1]) / res[1]) * res[1] + orig[1]
-	xmx <- round((extent@xmax-orig[1]) / res[1]) * res[1] + orig[1]
-	ymn <- round((extent@ymin-orig[2]) / res[2]) * res[2] + orig[2]
-	ymx <- round((extent@ymax-orig[2]) / res[2]) * res[2] + orig[2]
+
+	if (snap == 'near') {
+		xmn <- round((extent@xmin-orig[1]) / res[1]) * res[1] + orig[1]
+		xmx <- round((extent@xmax-orig[1]) / res[1]) * res[1] + orig[1]
+		ymn <- round((extent@ymin-orig[2]) / res[2]) * res[2] + orig[2]
+		ymx <- round((extent@ymax-orig[2]) / res[2]) * res[2] + orig[2]
+	} else if (snap == 'out') {
+		xmn <- floor((extent@xmin-orig[1]) / res[1]) * res[1] + orig[1]
+		xmx <- ceiling((extent@xmax-orig[1]) / res[1]) * res[1] + orig[1]
+		ymn <- floor((extent@ymin-orig[2]) / res[2]) * res[2] + orig[2]
+		ymx <- ceiling((extent@ymax-orig[2]) / res[2]) * res[2] + orig[2]
+	} else if (snap == 'in') {
+		xmn <- ceiling((extent@xmin-orig[1]) / res[1]) * res[1] + orig[1]
+		xmx <- floor((extent@xmax-orig[1]) / res[1]) * res[1] + orig[1]
+		ymn <- ceiling((extent@ymin-orig[2]) / res[2]) * res[2] + orig[2]
+		ymx <- floor((extent@ymax-orig[2]) / res[2]) * res[2] + orig[2]
+	}
+	
 	if (xmn == xmx) {
 		if (xmn < extent@xmin) {
 			xmx <- xmx + res[1]

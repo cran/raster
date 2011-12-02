@@ -65,7 +65,7 @@ function(x, y,..., fun, tolerance=0.05, filename="", format, datatype, overwrite
 		rowcalc <- FALSE 
 	}
 	
-	if ( canProcessInMemory(out, 3) ) {
+	if ( canProcessInMemory(out, 2 + length(x)) ) {
 		if (nl > 1) {
 			v <- matrix(NA, nrow=ncell(out)*nl, ncol=length(x))
 			for (i in 1:length(x)) {
