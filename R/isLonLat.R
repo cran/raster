@@ -44,6 +44,14 @@ if (!isGeneric("isLonLat")) {
 		standardGeneric("isLonLat"))
 }	
 
+
+setMethod('isLonLat', signature(x='Spatial'), 
+	function(x){
+		isLonLat(projection(x))
+    }
+)
+
+
 setMethod('isLonLat', signature(x='Raster'), 
 # copied from the SP package (slightly adapted)
 #author:
@@ -75,6 +83,7 @@ setMethod('isLonLat', signature(x='character'),
 		}
     }
 )
+
 
 
 setMethod('isLonLat', signature(x='CRS'), 

@@ -12,7 +12,7 @@ if (!isGeneric("distance")) {
 setMethod('distance', signature(x='RasterLayer'), 
 function(x, filename='', doEdge=FALSE, ...) {
 	if (doEdge) {
-		r <- edge(x, classes=FALSE, type='inner', asNA=TRUE, progress=.progress(...)) 
+		r <- edge(x, classes=FALSE, type='inner', progress=.progress(...)) 
 		pts <- try(  rasterToPoints(r, fun=function(z){ z>0 } )[,1:2, drop=FALSE] )
 	} else {
 		pts <- try(  rasterToPoints(x)[,1:2, drop=FALSE] )
@@ -33,19 +33,24 @@ function(x, filename='', doEdge=FALSE, ...) {
 		longlat=FALSE 
 	}
 	                                                                        
-	if (canProcessInMemory(out, 4)) {
+	if (canProcessInMemory(out, 6)) {
+		pb <- pbCreate(3, ...)
 		x <- values(x)
 		i <- which(is.na(x))
 		if (length(i) < 1) {
 			stop('raster has no NA values to compute distance to')
 		}
+		pbStep(pb)
 		x[] <- 0
 		xy <- xyFromCell(out, i)
 		x[i] <- .Call("distanceToNearestPoint", xy, pts, as.integer(longlat), PACKAGE='raster')
+		pbStep(pb)
 		out <- setValues(out, x)
 		if (filename != '') {
 			out <- writeRaster(out, filename=filename, ...)
 		}
+		pbStep(pb)
+		pbClose(pb)
 		return(out)
 	} 
 	

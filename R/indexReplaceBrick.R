@@ -4,6 +4,42 @@
 # Licence GPL v3
 
 
+
+setReplaceMethod("[[", c("RasterStack", "numeric", "missing"),
+	function(x, i, j, value) {
+		i <- round(i)
+
+		if (i < 1) {
+			stop('index should be > 0')
+		}
+		nl <- nlayers(x)
+		if (i > nl + 1) {
+			stop('index should be <= nlayers(x)+1')
+		}
+		if (!inherits(value, 'RasterLayer')) {
+			val <- value
+			if (i > nl) {
+				value <- x[[nl]]
+			} else {
+				value <- x[[i]]
+			}
+			value[] <- val
+		} else {
+			compare(x, value)
+		}
+		
+		if (i > nl) {
+			x <- addLayer(x, value)
+		} else {
+			x@layers[[i]] <- value
+		}
+		x
+	}
+)
+
+
+
+
 setReplaceMethod("[", c("RasterStackBrick", "Raster", "missing"),
 	function(x, i, j, value) {
 	
@@ -27,7 +63,7 @@ setReplaceMethod("[", c("Raster", "Extent", "missing"),
 		nl <- nlayers(x)
 		if (nl > 1) {
 			add <- ncell(x) * 0:(nl-1)
-			i <- as.vector(t((matrix(rep(i, nl), nr=nl, byrow=TRUE)) + add))
+			i <- as.vector(t((matrix(rep(i, nl), nrow=nl, byrow=TRUE)) + add))
 		}
 		.replace(x, i, value=value)
 	}

@@ -50,7 +50,7 @@ function(x, filename="", type='inner', classes=FALSE, directions=8, ...) {
 		datatype <- 'INT2S'
 	}
 	
-	if (canProcessInMemory(out)) {
+	if (canProcessInMemory(out, 4)) {
 		x <- as.matrix(x)
 		if (gll) {
 			x <- cbind(x[, ncol(x)], x, x[, 1]) 
@@ -86,12 +86,12 @@ function(x, filename="", type='inner', classes=FALSE, directions=8, ...) {
 		
 		v <- .Call('edge', v, as.integer(c(tr$nrows[1]+2, nc)),  classes, type, directions, NAOK=TRUE, PACKAGE='raster')
 		v <- matrix(v, ncol=nc, byrow=TRUE)
-		v <- as.integer(t(v[-1, 2:(ncol(v)-1)]))
+		v <- as.integer(t(v[2:(nrow(v)-1), 2:(ncol(v)-1)]))
 		out <- writeValues(out, v, 1)
 		pbStep(pb, 1)
 		for (i in 2:(tr$n-1)) {
 			v <- getValues(x, row=tr$row[i]-1, nrows=tr$nrows[i]+2)
-			v <- matrix(v, ncol=tr$nrows[1]+1)
+			v <- matrix(v, ncol=tr$nrows[1]+3)
 			if (gll) {
 				v <- rbind(v[nrow(v),], v, v[1,])
 			} else {
@@ -112,7 +112,7 @@ function(x, filename="", type='inner', classes=FALSE, directions=8, ...) {
 			v <- rbind(v[1,], v, v[nrow(v),])
 		}
 		v <- as.integer(cbind(v, v[,ncol(v)]))
-		v <- .Call('edge', v, as.integer(c(tr$nrows[i]+1, nc)), classes, type, directions, NAOK=TRUE, PACKAGE='raster')
+		v <- .Call('edge', v, as.integer(c(tr$nrows[i]+2, nc)), classes, type, directions, NAOK=TRUE, PACKAGE='raster')
 		v <- matrix(v, ncol=nc, byrow=TRUE)
 		v <- as.integer(t(v[2:(nrow(v)-1), 2:(ncol(v)-1)]))
 		out <- writeValues(out, v, tr$row[i])

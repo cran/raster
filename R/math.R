@@ -8,6 +8,10 @@ setMethod("Math", signature(x='Raster'),
     function(x){ 
 		funname <- as.character(sys.call(sys.parent())[[1]])
 		
+		if (!hasValues(x)) {
+			return(x)
+		}
+		
 		nl <- nlayers(x)
 		if (nl > 1) {
 			r <- brick(x, values=FALSE)
@@ -16,9 +20,31 @@ setMethod("Math", signature(x='Raster'),
 		}
 
 		if (substr(funname, 1, 3) == 'cum' ) { 
-			if (nl <= 1) {
-				return(x)
-			} 
+			if (nl == 1) {
+				if (canProcessInMemory(r, 3)) {
+					r <- setValues(r, do.call(funname, list(values(x))))
+				} else {
+					tr <- blockSize(x)
+					pb <- pbCreate(tr$n)			
+					r <- writeStart(r, filename=rasterTmpFile(), overwrite=TRUE )
+					last <- 0
+					for (i in 1:tr$n) {
+						v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
+						if (i==1) {
+							v <- do.call(funname, list(v))
+						} else {
+							v <- do.call(funname, list(c(last, v)))[-1]
+						} 
+						last <- v[length(v)]
+						r <- writeValues(r, v, tr$row[i])
+						pbStep(pb, i) 
+					}
+					r <- writeStop(r)
+					pbClose(pb)
+				}
+				return(r)
+			}
+			
 			if (canProcessInMemory(r, 3)) {
 				r <- setValues(r, t( apply(getValues(x), 1, funname)) )
 			} else {

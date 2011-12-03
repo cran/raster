@@ -101,8 +101,8 @@ setMethod('interpolate', signature(object='Raster'),
 				p <- na.omit(p)
 				blockvals <- data.frame(x=p[,1], y=p[,2])
 			} else {
-				blockvals <- as.data.frame(getValuesBlock(object, row=rr, nrows=tr$nrows[i], firstcol, ncols))
-				#colnames(blockvals) <- lyrnames
+				blockvals <- data.frame(getValuesBlock(object, row=rr, nrows=tr$nrows[i], firstcol, ncols))
+				colnames(blockvals) <- lyrnames # necessary if there is only one layer
 				if (haveFactor) {
 					for (i in 1:length(f)) {
 						blockvals[,f[i]] <- as.factor(blockvals[,f[i]])
@@ -121,7 +121,7 @@ setMethod('interpolate', signature(object='Raster'),
 			if (gstatmod) { 
 				if (sp) { 
 					row.names(p) <- 1:nrow(p)
-					blockvals <- SpatialPointsDataFrame(coords=p, data = blockvals, proj4string = projection(predrast, asText = FALSE))
+					blockvals <- SpatialPointsDataFrame(coords=p, data = blockvals, proj4string=projection(predrast, asText = FALSE))
 				}
 				if (i == 1) { 
 					predv <- predict(model, blockvals, debug.level=debug.level, ...) 

@@ -1,6 +1,14 @@
---- 25-November-2011, version 1.9-46
+--- 2-December-2011, version 1.9-52
+writeValues methods now only available with a vector (RasterLayer) or matrix (RasterStack) argument. To avoid perhaps unexpected coercion (column-wise coercion to vector); problem pointed out by Kristina Helle.
+new argument 'snap' in alignExtent and crop (suggested by Matteo Mattiuzzi)
+approxNA can now interpolated over non-equal distance (suggested by Tobias Schmidt)
+bug fix for 'edge', reported by Steve Mosher.
+bug fix for 'expand' with mutlti-layer objects and block-wise processing, reported by Jonathan Greenberg
+bug fix in 'interpolate' reported by David Stephens
+
+--- 25-November-2011, version 1.9-47
 Improvements to new polygon manipulation functions. 
-Bug fix with reclass(include.lowest=TRUE) if the reclass value was a Real (like NA) it was coerced to an integer. Reported by Steve Mosher.
+Bug fixes with reclass(include.lowest=TRUE) if the reclass value was a Real (like NA) it was coerced to an integer, reported by Steve Mosher.
 
 --- 17-November-2011, version 1.9-44
 fixed bug with cell values reading with BIL driver (reported by sonal singhal)

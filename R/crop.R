@@ -11,7 +11,7 @@ if (!isGeneric("crop")) {
 
 
 setMethod('crop', signature(x='Raster', y='ANY'), 
-function(x, y, filename='', ...) {
+function(x, y, filename='', snap='near', ...) {
 
 	filename <- trim(filename)
 
@@ -31,7 +31,7 @@ function(x, y, filename='', ...) {
 
 # we could also allow the raster to expand but for now let's not and first make a separate expand function
 	e <- intersectExtent(x, y)
-	e <- alignExtent(e, x)
+	e <- alignExtent(e, x, snap=snap)
 	
 
 	if (nlayers(x) <= 1) {

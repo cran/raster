@@ -11,31 +11,55 @@ if (!isGeneric("sampleRandom")) {
 
 
 setMethod('sampleRandom', signature(x='Raster'), 
-function(x, size, na.rm=TRUE, extent=NULL, cells=FALSE, rowcol=FALSE, sp=FALSE, ...) {
+function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, sp=FALSE, asRaster=FALSE, ...) {
 
+	if (!hasValues(x)) {
+		stop('No values associated with the Raster object')
+	}	
+
+
+	if (asRaster) {
+		if (! is.null(ext)) {
+			x <- crop(x, ext)
+		}
+		if (size >= ncell(x)) {
+			return(x)
+		}
+		
+		r <- raster(x)
+		if (na.rm) {
+			x <- sampleRandom(x, min(ncell(r), size), cells=TRUE, na.rm=TRUE)
+			r <- rasterize(xyFromCell(r, x[,1]), r, x[,-1], ...)
+		} else {
+			cells <- sample(ncell(r), size)
+			x <- extract(x, cells)
+			r <- rasterize(xyFromCell(r, cells), r, x, ...)
+		}
+		return(r)
+	}
+	
+	stopifnot(size <= ncell(x))
+	
 	r <- raster(x)
 	layn <- layerNames(x)
-	layn[layn==""] <- "value"
+
 	
 	if (sp | rowcol) {
 		removeCells <- ! cells
 		cells <- TRUE
 	}
 
-	if (!hasValues(x)) {
-		stop('No values associated with the Raster object')
-	}	
-	
+
 	if ( inMemory(x) ) {
-		if (is.null(extent)) {
+		if (is.null(ext)) {
 			x <- getValues(x)
 		} else {
-			x <- crop(x, extent)
+			x <- crop(x, ext)
 			x <- getValues(x)
 		}
 		
 		if (cells) {
-			if (is.null(extent)) {
+			if (is.null(ext)) {
 				x <- cbind(cell=1:ncell(r), value=x)			
 			} else {
 				xy <- xyFromCell(r, 1:ncell(r))
@@ -65,20 +89,20 @@ function(x, size, na.rm=TRUE, extent=NULL, cells=FALSE, rowcol=FALSE, sp=FALSE, 
 		
 	} else {
 		
-		if (! is.null(extent)) {
-			r <- crop(r, extent)
+		if (! is.null(ext)) {
+			r <- crop(r, ext)
 		}
 			
 		if (size >= ncell(r)) {
 			
-			if (is.null(extent)) {
+			if (is.null(ext)) {
 				x <- cbind(1:ncell(r), getValues(x))
 			} else {
-				x <- cbind(1:ncell(r), getValues(crop(x, extent)))			
+				x <- cbind(1:ncell(r), getValues(crop(x, ext)))			
 			}
 			
 			if (cells) {
-				if (is.null(extent)) {
+				if (is.null(ext)) {
 					x <- cbind(cell=1:ncell(r), value=x)
 				} else {
 					xy <- xyFromCell(r, 1:ncell(r))
@@ -106,7 +130,7 @@ function(x, size, na.rm=TRUE, extent=NULL, cells=FALSE, rowcol=FALSE, sp=FALSE, 
 
 			rcells <- sampleInt(ncell(r), N)
 			
-			if (!is.null(extent)) {
+			if (!is.null(ext)) {
 				xy <- xyFromCell(r, rcells)
 				rcells <- cellFromXY(x, xy)
 			}

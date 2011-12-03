@@ -69,7 +69,7 @@ This function is used for the side-effect of writing values to a file.
 
 \author{Robert J. Hijmans}
 
-\seealso{\code{\link[raster]{writeFormats}}, and for faster writing: \code{\link[raster]{writeValues}} }  
+\seealso{\code{\link[raster]{writeFormats}}, \code{\link[raster]{writeValues}} }  
 
 \examples{ 
 r <- raster(system.file("external/test.grd", package="raster"))

@@ -10,7 +10,7 @@ if (!isGeneric("stackSelect")) {
 }	
 
 setMethod('stackSelect', signature(x='RasterStackBrick', y='Raster'), 
-function(x, y, recycle=FALSE, type='index', filename='', na.rm=FALSE, ...) {
+function(x, y, recycle=FALSE, type='index', filename='', ...) {
 
 	filename <- trim(filename)
 	out <- brick(x, values=FALSE)	

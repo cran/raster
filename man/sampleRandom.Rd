@@ -28,6 +28,9 @@ sampleRandom(x, size, ...)
 	\code{rowcol}  Logical. If \code{TRUE}, sampled row and column numbers are also returned
 
 	\code{sp}  Logical. If \code{TRUE}, a SpatialPointsDataFrame is returned
+	
+	\code{asRaster}  Logical. If \code{TRUE}, a Raster* object is returned with random cells with values, all other cells with \code{NA}
+	
 	}
 }
 
@@ -36,7 +39,7 @@ With \code{na.rm=TRUE}, the returned sample may be smaller than requested
 }
 
 \value{
-A vector, matrix (if \code{cells=TRUE}; or for a multi-layered object), or a SpatialPointsDataFrame (if \code{sp=TRUE} )
+A vector, matrix (if \code{cells=TRUE} or \code{x} is a multi-layered object), or a SpatialPointsDataFrame (if \code{sp=TRUE} )
 }
 
 \seealso{\code{\link{sampleRegular}}}

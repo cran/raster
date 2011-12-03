@@ -12,7 +12,7 @@ If \code{x} is a Raster* object, the Extent is aligned to \code{x}. Areas includ
 }
 
 \usage{
-\S4method{crop}{Raster}(x, y, filename="", ...)
+\S4method{crop}{Raster}(x, y, filename="", snap='near', ...)
 
 \S4method{crop}{Spatial}(x, y, ...)
 }
@@ -21,6 +21,7 @@ If \code{x} is a Raster* object, the Extent is aligned to \code{x}. Areas includ
   \item{x}{Raster* object or SpatialPolygons* or SpatialLines* object}
   \item{y}{Extent object, or any object from which an Extent object can be extracted (see Details)}
   \item{filename}{Character, output filename. Optional}
+  \item{snap}{Character. One of 'near', 'in', or 'out', for use with \code{\link{alignExtent}}}  
   \item{...}{Additional arguments as for \code{\link{writeRaster}}}  
 }
 

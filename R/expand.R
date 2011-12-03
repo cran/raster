@@ -89,7 +89,7 @@ function(x, y, filename='', value=NA, datatype, ...) {
 		pb <- pbCreate(tr$n, ...)
 		out <- writeStart(out, filename=filename, datatype=datatype, ... )
 		for (i in 1:tr$n) {
-			d <- matrix(value, tr$nrows[i] * ncol(out))
+			d <- matrix(value, nrow=tr$nrows[i] * ncol(out), ncol=nlayers(out))
 			if (tr$row[i] <= endrow & (tr$row[i]+tr$nrows[i]-1) >= startrow) {
 				cells <- startcol:endcol + rep((0:(tr$nrows[i]-1)) * ncol(out), each=endcol-startcol+1)
 				d[cells, ] <- getValues(x, (tr$row[i]-startrow+1), tr$nrows[i])

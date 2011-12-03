@@ -17,10 +17,6 @@
 
 \description{
 Extract data from a Raster object using cell numbers or the locations of other spatial data (i.e., a spatial query). You can use coordinates (points), lines, polygons or an Extent (rectangle) object.
-
-
-This function has replaced five other functions in this package (cellValues, xyValues, lineValues, polygonValues, and focalValues)
-
 }
 
 \usage{

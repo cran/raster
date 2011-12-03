@@ -7,6 +7,9 @@
 \alias{[<-,RasterStackBrick,Raster,missing-method}
 \alias{[<-,RasterStackBrick,missing,missing-method}
 
+\alias{[[<-,RasterStack,numeric,missing-method}
+
+
 \alias{[<-,Raster,numeric,numeric-method}
 \alias{[<-,Raster,numeric,missing-method}
 \alias{[<-,Raster,matrix,missing-method}

@@ -3,7 +3,6 @@
 # Version 0.9
 # Licence GPL v3
 
-
 	
 if (!isGeneric("resample")) {
 	setGeneric("resample", function(x, y, ...)
@@ -91,6 +90,9 @@ function(x, y, method="bilinear", filename="", ...)  {
 				pbStep(pb)
 			}
 			y <- setValues(y, v)
+			if (filename != '') {
+				writeRaster(y, filename, ...)
+			}
 			
 		} else {
 		
@@ -123,7 +125,15 @@ function(x, y, method="bilinear", filename="", ...)  {
 
 				pbStep(pb, i)
 			}
-			y <- setValues(y, v)
+			v <- setValues(y, v)
+			if (filename != '') {
+				writeRaster(v, filename, ...)
+				
+			}
+			pbClose(pb)
+			layerNames(v) <- ln
+			return(v)
+			
 		} else {
 			for (i in 1:tr$n) {
 				#r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)

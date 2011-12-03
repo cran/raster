@@ -8,8 +8,8 @@
 \alias{writeStop,RasterLayer-method}
 \alias{writeStop,RasterBrick-method}
 \alias{writeValues}
-\alias{writeValues,RasterLayer-method}
-\alias{writeValues,RasterBrick-method}
+\alias{writeValues,RasterLayer,vector-method}
+\alias{writeValues,RasterBrick,matrix-method}
 
 \title{Write values to a file}
 

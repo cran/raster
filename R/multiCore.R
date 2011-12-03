@@ -31,14 +31,15 @@ beginCluster <- function(n, type, nice, exclude=NULL) {
 	options(rasterClusterExclude = exclude)
 	
 	
-	if (!missing(nice)){
-		if (.Platform$OS.type == 'unix') {
-			invisible(clusterExport(cl, "nice"))
-			clusterEvalQ(cl,system(paste("renice",nice,"-p", Sys.getpid())))	
-		} else {
-			warning("argument 'nice' only supported on UNIX like operating systems")
-		}
-	}
+	if (!missing(nice)){ 
+        if (.Platform$OS.type == 'unix') { 
+            cmd <- paste("renice",nice,"-p")
+            foo <- function() system(paste(cmd, Sys.getpid()))
+            clusterCall(cl,foo) 
+        } else { 
+            warning("argument 'nice' only supported on UNIX like operating systems") 
+        } 
+    } 
 	
 }
 
