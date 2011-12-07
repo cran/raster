@@ -1,3 +1,7 @@
+--- 8-December-2011, version 1.9-54
+improvements to merge (Raster,Raster) function and merge docs.
+bug with progressbar fixed in terrain (reported by Pascal Fust)
+
 --- 2-December-2011, version 1.9-52
 writeValues methods now only available with a vector (RasterLayer) or matrix (RasterStack) argument. To avoid perhaps unexpected coercion (column-wise coercion to vector); problem pointed out by Kristina Helle.
 new argument 'snap' in alignExtent and crop (suggested by Matteo Mattiuzzi)
@@ -13,9 +17,9 @@ Bug fixes with reclass(include.lowest=TRUE) if the reclass value was a Real (lik
 --- 17-November-2011, version 1.9-44
 fixed bug with cell values reading with BIL driver (reported by sonal singhal)
 fixed serious bug with a stack from different bands from the same file. .cellValues returned values for the first band only (introduced in 1.9-41?). Reported by Matteo Mattiuzzi & Benjamin Mack
-addition: crop method for Spatial objects
-addition: aggregate (dissolve) method for SpatialPolygons
-addition: merge (join) method for Spatial*DataFrane & data.frame; and for SpatialPolygons & SpatialPolygons
+addition: crop method for Spatial* objects
+addition: aggregate (dissolve) method for SpatialPolygons*
+addition: merge (join) method for Spatial*DataFrame & data.frame; and for SpatialPolygons & SpatialPolygons
 addition: raster algebra for SpatialPolygons: + (same as function merge), - (difference), * (= function crop)
 
 --- 9-November-2011, version 1.9-41
@@ -25,7 +29,7 @@ redesigned function edge for better speed. Arguments have changed. and to deal w
 improved speed of disaggregate and expand for large files (processing by block of rows rather than by row)
 simplified pbCreate
 new function for using clusters with raster functions: clusterR
-new .detectCores function (taken from the new (R 2.14.0) parallel package)
+new .detectCores function (taken from the new (R 2.14-0) parallel package)
 new function approxNA to approximate NA values by cell, across layers (emerged from discussions with Jan Verbesselt). 
 added generic functions %in% and match for Raster objects (suggested by Paul Galpern)
 re-implemented merge and mosaic for higher speed (by block rather than by row).

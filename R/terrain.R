@@ -90,6 +90,7 @@ terrain <- function(x, opt='slope', unit='radians', neighbors=8, filename='', ..
 		if (filename  != '') {
 			out <- writeRaster(out, filename, ...)
 		}
+		
 	} else {
 
 		out <- writeStart(out, filename, ...)
@@ -117,8 +118,8 @@ terrain <- function(x, opt='slope', unit='radians', neighbors=8, filename='', ..
 		pbStep(pb, tr$n)
 		
 		out <- writeStop(out)
+		pbClose(pb)
 	}
-	pbClose(pb)
 	return(out)
 }
 
