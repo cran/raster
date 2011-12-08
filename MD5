@@ -1,5 +1,5 @@
-c29a09f627b2be8ab42a4975e83fb0a8 *ChangeLog
-28738fcfa8e3ad9e69d28a400665a070 *DESCRIPTION
+f8c1029374594c51412bdd9ac92df541 *ChangeLog
+c5ddb4382a73dcd1ed61e1a789904188 *DESCRIPTION
 74ecb4a28e46e699a9675c2bb67f9500 *NAMESPACE
 253e7c9e79d8005c20ff3e546bee38f8 *R/AAAClasses.R
 527a8da1d599382f14c3d2356ad9d7c4 *R/AAClasses.R
@@ -140,7 +140,7 @@ fffa806f2ed93ef421ad7fa1d35e8427 *R/match.R
 49b24b140d40e84bab6b5d71e6cfb664 *R/math.R
 1cb6fcb1766b9889e304fffe45456c04 *R/maxDataType.R
 3ee1b921cfa5bd66fc683e32c8f676db *R/mean.R
-5a25a0eea6f08cf403e04acb9fee53bb *R/merge.R
+e9f40ccb8d1eac5c149e2fcfc33b49b6 *R/merge.R
 29e212de112d898a9dac300b77a640c8 *R/mergeSP.R
 689a7e659df950d6c6f79e0d74fa4c82 *R/minValue.R
 656fde58ca54462f5e73b87ee7852f3f *R/modal.R
@@ -235,7 +235,7 @@ d89e9a9dd786c986bed756d775dfbe93 *R/stretch.R
 47291020b2032f53b938abb89b6d698d *R/subset.R
 548e4045723e6f62c7f66830203f3acb *R/summary-methods.R
 388b3f562e464174f824dffa7f3c3860 *R/summary.R
-357349b2cbc74a83d667a772d3db7083 *R/terrain.R
+861842874faf872e4cd0047342820ceb *R/terrain.R
 856384e90bfead73b6c7da1b438fac3d *R/text.R
 739dbfd897fb38b2aac40a4223000c21 *R/tmpFile.R
 4cf4cc41f381a1ce75222f0f5f83f9f5 *R/transpose.R
@@ -266,7 +266,7 @@ b4569431ba721675f71bb0446bfbd9aa *R/zzz.R
 470571f5e9e249dc3fbdfc4daafd4b93 *inst/doc/Raster.Rnw
 fac5a8a8e6089c97d232cb15552265c5 *inst/doc/Raster.pdf
 b034de25282f5d8414f0d5d8e6e8d274 *inst/doc/functions.Rnw
-9f808aab3448e3e15255dc46a477f1be *inst/doc/functions.pdf
+59e1c91baebba935b6d189f65ff571f3 *inst/doc/functions.pdf
 cdf4af6595c744554a8b1e658c524cef *inst/doc/rasterfile.Rnw
 d2310fe2cd2166d58773e6d42f2544a9 *inst/doc/rasterfile.pdf
 40454ad99e7621a101f07038f6c55979 *inst/external/countries.csv
@@ -357,7 +357,9 @@ fd613468a501b36d7f24d9e46ec195b9 *man/intersectExtent.Rd
 1c8dcf81e5fd9ee5fdc8cd71e78a0c23 *man/isLonLat.Rd
 dbaf6fe3e0826b5b9014f98b202556a8 *man/mask.Rd
 c97fcafcdb34e87dacac0d70a23da69c *man/match.Rd
-b0cecb63aa508c64681743832691346d *man/merge.Rd
+3d56ffc374c6f2ce80d05235341b7bba *man/merge.Rd
+13040a3b6db0bf3fb3ac668b99f071ad *man/mergeSP.Rd
+68a4fa0024e5d08e0058ec282b1bc3cf *man/mergeSP2.Rd
 5b60368a5d61b604e56c72e465b1c42d *man/modal.Rd
 59e0025bf8d99a5910d42b6f960605be *man/mosaic.Rd
 23d4c290b1a13b87670da09bfe89a92c *man/movingFun.Rd

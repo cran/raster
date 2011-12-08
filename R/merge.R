@@ -21,35 +21,16 @@ function(x, y, ..., tolerance=0.05, filename="", format, datatype, overwrite, pr
 	if (length(x) < 2) {
 		stop('merge needs at least 2 Raster* objects')
 	}
+
+	compare(x, extent=FALSE, rowcol=FALSE, orig=TRUE, res=TRUE, tolerance=tolerance)
+
 	filename <- trim(filename)
 	if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
 	if (missing(overwrite)) { overwrite <- .overwrite()	}
 	if (missing(progress)) { progress <- .progress() }
 	if (missing(datatype)) { datatype <- .commonDataType(sapply(x, dataType)) } 
-	merge(x, tolerance=tolerance, filename=filename, format=format, datatype=datatype, overwrite=overwrite, progress=progress, ext=ext, overlap=overlap, check=FALSE)
-} )
-
-
-
-setMethod('merge', signature(x='list', y='missing'), 
-function(x, y,..., tolerance=0.05, filename="", format, datatype, overwrite, progress, ext=NULL, overlap=TRUE, check=TRUE){ 
-
-	if (check) {
-		x <- x[ sapply(x, function(x) inherits(x, 'Raster')) ]
-		if (length(x) < 2) {
-			stop('merge needs at least 2 Raster* objects')
-		}
-		filename <- trim(filename)
-		if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
-		if (missing(overwrite)) { overwrite <- .overwrite()	}
-		if (missing(progress)) { progress <- .progress() }
-		if (missing(datatype)) { datatype <- .commonDataType(sapply(x, dataType)) } 
-	}
 
 	nl <- max(unique(sapply(x, nlayers)))
-
-	compare(x, extent=FALSE, rowcol=FALSE, orig=TRUE, res=TRUE, tolerance=tolerance)
-
 	bb <- unionExtent(x)
 	if (nl > 1) {
 		out <- brick(x[[1]], values=FALSE, nl=nl)
@@ -88,11 +69,11 @@ function(x, y,..., tolerance=0.05, filename="", format, datatype, overwrite, pro
 						if (xy1[2] > ymin(out) & xy2[2] < ymax(out) & xy1[1] < xmax(out) & xy2[1] > xmin(out)) {		
 							cells <- cellsFromExtent( out, extent(x[[i]]) )
 							vv <- v[cells, ]
-							na <- as.logical( rowSums(is.na(vv))==nl )
 							dat <- extract(x[[i]], ext)
 							if (!is.matrix(dat)) {
 								dat <- matrix(dat, ncol=1)
 							}
+							na <- ! rowSums(dat)==nl 
 							vv[na, ] <- dat[na, ]
 							v[cells, ] <- vv
 						}
@@ -145,11 +126,11 @@ function(x, y,..., tolerance=0.05, filename="", format, datatype, overwrite, pro
 					for (i in 1:length(x)) {
 						cells <- cellsFromExtent( out, extent(x[[i]]) )
 						vv <- v[cells, ]
-						na <- as.logical( rowSums(is.na(x)) == nl )
 						dat <- getValues(x[[i]])
 						if (!is.matrix(dat)) {
 							dat <- matrix(dat, ncol=1)
 						}
+						na <- ! rowSums(is.na(dat)) == nl 
 						vv[na, ] <- dat[na, ]
 						v[cells, ] <- vv
 					}
