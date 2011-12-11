@@ -6,7 +6,7 @@
 \alias{*,SpatialPolygons,SpatialPolygons-method}
 \alias{^,SpatialPolygons,SpatialPolygons-method}
 
-\title{Algebra (notation) for overlaying SpatialPolygons* }
+\title{Algebra (notation) for manipulating SpatialPolygons* }
 
 \description{
 These funcitons are experimental. Under development!
@@ -38,13 +38,13 @@ Comparison of terminology for polygon overlay methods used in ArcGIS and in this
   \tab symdif    \tab  "^" (to be done) \cr
 }
  
-To do: identity /update 
+To do: identity/update 
 
-For spatialjoin and other spatial queries, see sp functions 'over' and 'overlay' (or raster function extract when using Raster objects)
+For spatial-join and other spatial queries, see sp functions 'over' and 'overlay' (or raster function extract when using Raster objects)
 }
 
 
-\seealso{ \code{\link[raster]{merge}, \link[raster]{aggregate}}, \link[raster]{crop} }
+\seealso{\code{ \link[raster]{aggregate}, \link{crop}, \link{merge,SpatialPolygons,SpatialPolygons-method}} }
 
 \author{Robert J. Hijmans}
 

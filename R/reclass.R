@@ -60,8 +60,8 @@ function(x, rcl, filename='', include.lowest=FALSE, right=TRUE, ...) {
 	}
 	stopifnot(all(rcl[,2] >= rcl[,1]))
 
-	
-	if (nlayers(x) == 1) { 
+	nl <- nlayers(x)
+	if (nl == 1) { 
 		out <- raster(x)
 	} else { 
 		out <- brick(x, values=FALSE) 
@@ -89,10 +89,13 @@ function(x, rcl, filename='', include.lowest=FALSE, right=TRUE, ...) {
 		tr <- blockSize(out)
 		pb <- pbCreate(tr$n, ...)
 		out <- writeStart(out, filename=filename, ...)
-
+		
 		for (i in 1:tr$n) {
 			vals <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
 			vals <- .Call('reclass', vals, rcl, include.lowest, right, onlyNA, valNA, NAOK=TRUE, PACKAGE='raster')
+			if (nl > 1) {
+				vals <- matrix(vals, ncol=nl)
+			}
 			out <- writeValues(out, vals, tr$row[i])
 			pbStep(pb, i)
 		}
