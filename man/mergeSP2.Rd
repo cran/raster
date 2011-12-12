@@ -33,6 +33,8 @@ SpatialPolygons*
 The \code{\link{merge,Spatial,data.frame-method}} for merging a data.frame with attributes of Spatial objects
 
 The \code{\link{merge,Raster,Raster-method}} for merging Raster objects
+
+And \code{\link{+,SpatialPolygons,SpatialPolygons-method}} for an algebraic notation
 }
 
 

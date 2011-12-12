@@ -43,12 +43,6 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", ...)  {
 	ymn <- ymax(x) - rsteps * yfact * yres(x)
 	xmx <- xmin(x) + csteps * xfact * xres(x)
 		
-	fun <- .makeTextFun(fun)
-	if (class(fun) == 'character') { 
-		rowcalc <- TRUE 
-		fun <- .getRowFun(fun)
-	} else { rowcalc <- FALSE }
-
 	nl <- nlayers(x)
 	if (nl > 1) {
 		out <- brick(x, values=FALSE)
@@ -60,10 +54,17 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", ...)  {
 	layerNames(out) <- layerNames(x)
 
 	if (! hasValues(x) ) {	return(out) }	
-	nl <- nlayers(x)
 	
 	if (nl < 2) {	
-		
+
+		fun <- .makeTextFun(fun)
+		if (class(fun) == 'character') { 
+			rowcalc <- TRUE 
+			fun <- .getRowFun(fun)
+		} else { 
+			rowcalc <- FALSE 
+		}
+
 		if (! canProcessInMemory(x)) {
 			if (filename == '') { 
 				filename <- rasterTmpFile() 

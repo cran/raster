@@ -4,35 +4,29 @@
 
 \alias{aggregate}
 \alias{aggregate,Raster-method}
-\alias{aggregate,SpatialPolygons-method}
 
-\title{Aggregate cells or polygons}
+
+\title{Aggregate cells}
 
 \description{
 Aggregate a Raster* object to create a new RasterLayer or RasterBrick with a lower resolution (larger cells). 
 Aggregation groups rectangular areas to create larger cells. The value for the resulting cells is computed with a user-specified function. 
 
-There is also an aggregate ('dissolve') method for SpatialPolygons that merges polygons if the values of selected variables are the same.
+See \code{\link{aggregate,SpatialPolygons-method}} for aggregating SpatialPolygons*
 }
 
 \usage{
 \S4method{aggregate}{Raster}(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename='', ...)
-
-\S4method{aggregate}{SpatialPolygons}(x, vars=NULL, sums, ...)
 }
 
 \arguments{
-  \item{x}{Raster* object or SpatialPolygons object}
+  \item{x}{Raster* object}
   \item{fact}{Integer. Aggregation factor expressed as number of cells in each direction (horizontally and vertically). Or two integers (horizontal and vertical aggregation factor). See Details}  
   \item{fun}{Function used to aggregate values }  
   \item{expand}{logical. If \code{TRUE} the output Raster* object will be larger then the input Raster* object if a division of the number of columns or rows with \code{factor} is not an integer}
   \item{na.rm}{logical. If \code{TRUE}, NA cells are removed from calculations }
   \item{filename}{Character. Output filename}
   \item{...}{Additional arguments as for \code{\link{writeRaster}}}
-
-  \item{vars}{Character or integer. The variables (column names or numbers) that should be used to aggregate (dissolve) the SpatialPolygons by only maintaining unique combinations of these variables. The default setting is to use no variables and aggregate all polygons. You can also supply a vector with a length of length(row.names(x)) }
-
-  \item{sums}{List with function(s) and variable(s) to summarize. This should be a list of lists in which each element of the main lists has two items. The first item is function (e.g. mean), the second element is a vector of column names (or indices) that need to summarize with that function. Be careful with character and factor variables (you can use, e.g. 'first' \code{function(x)x[1]} or 'last' \code{function(x)x[length(x)]} or \code{modal} for these variables}
 }
 
 
@@ -54,7 +48,8 @@ It should also accept a \code{na.rm} argument (or ignore it as one of the 'dots'
 RasterLayer or RasterBrick
 }
 
-\seealso{ \code{\link{disaggregate}, \link{resample}} }
+\seealso{ \code{\link{disaggregate}, \link{resample}}, and \code{\link{aggregate,SpatialPolygons-method}}  }
+
 
 \author{Robert J. Hijmans and Jacob van Etten}
 
@@ -63,8 +58,13 @@ r <- raster()
 # a new aggregated raster, no values
 ra <- aggregate(r, fact=10)
 r <- setValues(r, runif(ncell(r)))
-ra <- aggregate(r, fact=10, fun=max)
+
 # a new aggregated raster, max of the values
+ra <- aggregate(r, fact=10, fun=max)
+
+# multiple layers
+s <- stack(r, r*2)
+x <- aggregate(s,2)
 }
 
 \keyword{methods}

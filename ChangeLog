@@ -1,4 +1,5 @@
---- 8-December-2011, version 1.9-54
+--- 12-December-2011, version 1.9-55
+bug fix aggregate with multi-layer objects, reported by Colin Rundel.
 improvements to merge (Raster,Raster) function and merge docs.
 bug with progressbar fixed in terrain (reported by Pascal Fust)
 

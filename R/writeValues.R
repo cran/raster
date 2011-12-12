@@ -85,7 +85,7 @@ setMethod('writeValues', signature(x='RasterBrick', v='matrix'),
 		
 		if ( x@file@driver %in% .nativeDrivers() ) {
 			
-			if (!is.matrix(v)) v <- matrix(v, ncol=1)
+			#if (!is.matrix(v)) v <- matrix(v, ncol=1)
 
 			if (x@file@dtype == "INT") { 
 				v[is.na(v)] <- x@file@nodatavalue		
