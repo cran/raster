@@ -31,13 +31,13 @@ int intmode(int *d, int size, int ties) {
 		} else if (count == bestcount) {
 			if (ties == 1) { 
 			// lowest
-				if (bestmod == R_NaInt | mod < bestmod) {
+				if ((bestmod == R_NaInt) | (mod < bestmod)) {
 					bestmod = mod;
 					bestcount = count;
 				}
 			} else if (ties == 2) { 
 			// highest
-				if (bestmod == R_NaInt | mod > bestmod) {
+				if ((bestmod == R_NaInt) | (mod > bestmod)) {
 					bestmod = mod;
 					bestcount = count;
 				}

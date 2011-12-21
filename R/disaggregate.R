@@ -1,38 +1,31 @@
-# raster package
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
-# Date : October 2008
-# Version 0.9
+# Author: Robert Hijmans
+# Date : October 2008 - December 2011
+# Version 1.0
 # Licence GPL v3
-
-.hasmethod <- function(method, ...) {
-	if (!missing(method)) { 
-		if (!method %in% c('bilinear', 'weighted', 'pycnophylactic')) {
-			stop('unknown "method". Should be "bilinear" or absent')
-		}
-		return(method)
-	}
-	return('')
-}
 
 
 if (!isGeneric("disaggregate")) {
-	setGeneric("disaggregate", function(x, fact, ...)
+	setGeneric("disaggregate", function(x, ...)
 		standardGeneric("disaggregate"))
 }
 
-setMethod('disaggregate', signature(x='Raster', fact='numeric'), 
-function(x, fact, filename='', ...) {
+setMethod('disaggregate', signature(x='Raster'), 
+function(x, fact=NULL, method='', filename='', ...) {
 
-	method <- .hasmethod(...)
+	method <- tolower(method)
+	if (!method %in% c('bilinear', '')) {
+		stop('unknown "method". Should be "bilinear" or ""')
+	}
 	
+	stopifnot(!is.null(fact))
+	fact <- round(fact)
 	if (length(fact)==1) {
-		fact <- round(fact)
 		if (fact == 1) 	return(x)
 		if (fact < 2) { stop('fact should be > 1') }
 		xfact <- yfact <- fact
 	} else if (length(fact)==2) {
-		xfact <- round(fact[1])
-		yfact <- round(fact[2])
+		xfact <- fact[1]
+		yfact <- fact[2]
 		if (xfact < 1) { stop('fact[1] should be > 0') } 
 		if (yfact < 1) { stop('fact[2] should be > 0') }
 		if (xfact == 1 & yfact == 1) { return(x) }

@@ -13,6 +13,7 @@ Compute the approximate surface area of cells in an unprojected (longitude/latit
 
 \usage{
 \S4method{area}{RasterLayer}(x, filename="", na.rm=FALSE, weights=FALSE, ...)
+
 \S4method{area}{RasterStackBrick}(x, filename="", na.rm=FALSE, weights=FALSE, ...)
 }
 

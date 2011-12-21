@@ -4,6 +4,7 @@
 
 \alias{zoom}
 \alias{zoom,Raster-method}
+\alias{zoom,Spatial-method}
 
 \title{Zoom in on a plot}
 
@@ -13,34 +14,28 @@ Zoom in on a plot (map) by providing a new extent, by default this is done by cl
 
 \usage{
 zoom(x, ...) 
+\S4method{zoom}{Raster}(x, ext=drawExtent(), maxpixels=100000, layer=1, new=TRUE, useRaster=TRUE, ...)
+
+\S4method{zoom}{Spatial}(x, ext=drawExtent(), new=TRUE, ...)
 }
 
 \arguments{
-\item{x}{Raster* object }
-\item{...}{Additional arguments. See Details}
+\item{x}{Raster* or Spatial* (vector type) object}
+\item{ext}{Extent object}
+\item{maxpixels}{Maximum number of pixels used for the map}
+\item{layer}{Positive integer to select the layer to be used if x is a mutilayer Raster object}
+\item{new}{Logical. If \code{TRUE}, the zoomed in map will appear on a new device (window)}
+\item{useRaster}{Logical. If \code{TRUE}, a bitmap raster is used to plot the image instead of polygons}
+\item{...}{additional paramters for \code{\link[graphics]{plot}}}
 }
-
-\details{
-A full call (with the default values) to zoom is
-\code{zoom(x, ext=drawExtent(), maxpixels=100000, layer=1, new=TRUE, ...)}
-
-\tabular{rll}{
-\tab \code{x} \tab a RasterLayer object \cr
-\tab \code{ext} \tab Extent object \cr
-\tab \code{maxpixels} \tab Maximum number of pixels used for the map \cr
-\tab \code{layer} \tab Positive integer to select the layer to be used if x is a mutilayer Raster object \cr
-\tab \code{new} \tab Logical. If \code{TRUE}, the zoomed in map will appear on a new device (window)  \cr
-}
-}
-
 
 \value{
-An extent object (invisibly)
+Extent object (invisibly)
 }
 
 \author{Robert J. Hijmans}
 
 \seealso{ \code{\link[raster]{drawExtent}}, \code{\link[raster]{plot}}}
 
-\keyword{ spatial }
+\keyword{spatial}
 

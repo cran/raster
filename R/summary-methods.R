@@ -42,11 +42,11 @@ setMethod("Summary", signature(x='Raster'),
 		
 		if (length(add)==0) {
 			if (fun[1] == 'sum') {
-				return(.sum( x, add))
+				return(.sum( x, add, na.rm=na.rm))
 			} else if (fun[1] == 'min') {
-				return(.min( x, add ))
+				return(.min( x, add, na.rm=na.rm ))
 			} else if (fun[1] == 'max') {
-				return(.max( x, add))
+				return(.max( x, add, na.rm=na.rm))
 			}
 		}
 

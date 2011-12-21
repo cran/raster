@@ -1,3 +1,16 @@
+--- 21-December-2011, version 1.9-58
+new 'select' method to visually select parts of SpatialPolygons, SpatialPixels, SpatialGrid objects.
+new 'disaggregate' methods for SpatialPolygons and SpatialLines objects
+new 'click' methods to visually do a spatial query with SpatialPolygons, SpatialPixels, SpatialGrid objects.
+new 'zoom' method for Spatial objects
+approxNA failed for large objects, reported and fixes suggested by Stefan Schlaffer
+Bug fixes in extract with RasterBrick (thanks to reports by Colin Rundel and Laurent Fernandez Soldevila)
+
+--- 13-December-2011, version 1.9-56
+functions min, max, mean (with a RasterStackBrick object) ignored the na.rm argument. Bug reported by Maximilian Reinwand
+bug occurred when creating a RasterStack from a named list of Raster objects. Reported by Laurent Fernandez  
+Fixed problem in getData: file.rename failed on some systems if the temp folder is on a different device. Reported by Edzer Pebesma
+ 
 --- 12-December-2011, version 1.9-55
 bug fix aggregate with multi-layer objects, reported by Colin Rundel.
 improvements to merge (Raster,Raster) function and merge docs.

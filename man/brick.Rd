@@ -42,13 +42,13 @@ A RasterBrick can be created from RasterLayer objects, from a RasterStack, or fr
 
 \tabular{rll}{
 \tab \code{x} \tab character. A filename of a file that the raster package can read. Supported file types are the 'native' raster 
-package format and those that can be read via rgdal. See \code{\link[rgdal]{readGDAL}} help for supported file types.\cr
+package format and those that can be read via rgdal. See \code{\link[rgdal]{readGDAL}} for supported file types.\cr
 \tab \code{...} \tab additional arguments.\cr
 }
 
 Additional arguments:
 \tabular{rll}{
-\tab \code{native} \tab Logical.  Default is \code{FALSE} except when package rgdal is missing. If \code{TRUE}, reading and writing
+\tab \code{native} \tab Logical.  Default is \code{FALSE} except when package rgdal is missing. If TRUE, reading and writing
 of IDRISI, BIL, BSQ, BIP, and Arc ASCII files is done with native (raster package) drivers, rather then via rgdal. 'raster', RSAGA,
 and netcdf format files are always read with native drivers.
 }
@@ -108,7 +108,7 @@ To read netCDF files, the \code{ncdf} package needs to be available.
 
 \code{brick(x, nl=1)}
 
-This copies the parameters of a RasterStack object to a new RasterBrick. The values of the RasterStack are transferred to the RasterBrick, unless \code{values=FALSE}.  
+This copies the parameters of a RasterStack object to a new RasterBrick. The values of the RasterStack are transferred to the RasterBrick, unless values=FALSE.
 
 \tabular{rll}{
 \tab \code{x} \tab a Raster* object \cr

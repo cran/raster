@@ -11,8 +11,28 @@ if (!isGeneric("expand")) {
 }	
 
 
-setMethod('expand', signature(x='Raster', y='ANY'), 
-function(x, y, filename='', value=NA, datatype, ...) {
+
+setMethod('expand', signature(x='Extent'), 
+# function by Etienne B. Racine
+function(x, y, ...) {
+	if (length(y) == 1) {
+		y <- rep(y, 4)
+	} else if (length(y) == 2) {
+		y <- rep(y, each=2)
+	} else if (! length(y) == 4 ) {
+		stop('argument "y" should be a vector of 1, 2, or 4 elements')	
+	}
+	x@xmin <- x@xmin - y[1]
+	x@xmax <- x@xmax + y[2]
+	x@ymin <- x@ymin - y[3]
+	x@ymax <- x@ymax + y[4]
+	validObject(x)
+	x
+}
+)
+
+setMethod('expand', signature(x='Raster'), 
+function(x, y, value=NA, filename='', ...) {
 
 	if (is.vector(y)) {
 		if (length(y) <= 2) {
@@ -56,7 +76,8 @@ function(x, y, filename='', value=NA, datatype, ...) {
 		return(out)
 	}
 	
-	if (missing(datatype)) { 
+	datatype <- list(...)$datatype
+	if (is.null(datatype)) { 
 		datatype <- unique(dataType(x))
 		if (length(datatype) > 1) {
 			datatype <- .commonDataType(datatype)

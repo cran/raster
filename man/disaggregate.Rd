@@ -1,7 +1,7 @@
 \name{disaggregate}
 
 \alias{disaggregate}
-\alias{disaggregate,Raster,numeric-method}
+\alias{disaggregate,Raster-method}
 
 \title{Disaggregate}
 
@@ -10,36 +10,23 @@ Disaggregate a RasterLayer to create a new RasterLayer with a higher resolution 
 }
 
 \usage{
-disaggregate(x, fact, ...) 
+\S4method{disaggregate}{Raster}(x, fact=NULL, method='', filename='', ...)
 }
 
 \arguments{
-  \item{x}{a RasterLayer object}
-  \item{fact}{degree of aggregation or disaggregation expressed as number of cells (horizontally and vertically). See details}
-  \item{...}{additional arguments. See Details.}  
+  \item{x}{a Raster object}
+  \item{fact}{integer. amount of disaggregation expressed as number of cells (horizontally and vertically). This can be a single integer or two integers c(x,y), in which case the first one is the horizontal disaggregation factor and y the vertical disaggreation factor. If a single integer values is supplied, cells are disaggregated with the same factor in x and y direction}
+  \item{method}{Character. '' or 'bilinear'. If 'bilinear', values are locally interpolated (using the \code{\link[raster]{resample}} function}
+  \item{filename}{Character. Output filename (optional)}
+  \item{...}{Additional arguments as for \code{\link{writeRaster}}}
 }
 
-\details{
-Fact can be a single integer or two integers c(x,y), in which case the first one is the horizontal disaggregation factor and y the vertical disaggreation factor. 
-If a single integer values is supplied, cells are disaggregated with the same factor in x and y direction.
-
-If no filename is specified, and the resulting RasterLayer is too large to hold in memory, it is saved to a temporary file.  
-
-The following additional arguments can be passed, to replace default values for this function
-\tabular{rll}{
-  \tab \code{method}  \tab Character. Should be missing or 'bilinear' for bilinear interpolation  \cr
-  \tab \code{filename}  \tab Filename for the output RasterLayer \cr
-  \tab \code{format} \tab Character. Output file type. See \link[raster]{writeRaster} \cr
-  \tab \code{overwrite} \tab If TRUE, "filename" will be overwritten if it exists \cr
-  \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
- }
-}
 
 \value{
-A new RasterLayer object, and in some cases the side effect of a new file on disk.
+Raster object
 }
 
-\seealso{ \code{\link[raster]{aggregate}} }
+\seealso{ \code{\link[raster]{aggregate}}, \code{\link{disaggregate,SpatialPolygons-method}} }
 
 \author{Robert J. Hijmans}
 

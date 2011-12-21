@@ -29,7 +29,7 @@ Aggregate ('dissolve') method for SpatialPolygons to merge polygons if the value
 SpatialPolygons*
 }
 
-\seealso{ \code{\link{merge,SpatialPolygons,SpatialPolygons-method}} }
+\seealso{ \code{\link{disaggregate,SpatialPolygons-method}}, \code{\link{merge,SpatialPolygons,SpatialPolygons-method}} }
 
 
 \author{Robert J. Hijmans}

@@ -25,7 +25,7 @@ See \code{\link{aggregate,SpatialPolygons-method}} for aggregating SpatialPolygo
   \item{fun}{Function used to aggregate values }  
   \item{expand}{logical. If \code{TRUE} the output Raster* object will be larger then the input Raster* object if a division of the number of columns or rows with \code{factor} is not an integer}
   \item{na.rm}{logical. If \code{TRUE}, NA cells are removed from calculations }
-  \item{filename}{Character. Output filename}
+  \item{filename}{Character. Output filename (optional)}
   \item{...}{Additional arguments as for \code{\link{writeRaster}}}
 }
 

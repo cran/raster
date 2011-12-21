@@ -91,17 +91,16 @@ setMethod('brick', signature(x='RasterStack'),
 		filename <- trim(filename)
 		if (values) {
 			
-			b@layernames <- x@layernames
-			if (canProcessInMemory(b)) {
-				x <- setValues( b, getValues(x)) 
+			b@layernames <- x@layernames[1:nl]
+			if (canProcessInMemory(b, nl*2)) {
+				x <- setValues( b, getValues(x)[,1:nl]) 
 				if (filename != '') {
 					x <- writeRaster(x, filename, ...)
 				}
 				return(x)
+				
 			} else {
-				if ( filename == '') { 
-					filename <- rasterTmpFile() 
-				} 
+
 				b <- writeStart(b, filename=filename, ...)
 				tr <- blockSize(b)
 				pb <- pbCreate(tr$n, ...)			
