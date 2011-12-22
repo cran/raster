@@ -48,7 +48,7 @@ function(x, bands=NULL, native=FALSE, ...) {
 	if (is.null(lstnames)) {
 		namesFromList <- FALSE
 	} else {
-		lstnames <- trim(lstnames)
+		lstnames <- .goodNames(lstnames)
 		namesFromList <- TRUE
 	}
 
@@ -71,9 +71,7 @@ function(x, bands=NULL, native=FALSE, ...) {
 				for (b in bands) {
 					r[j] <- raster(x[[i]], band=b, native=native, ...)
 					if (namesFromList) {
-						if (lstnames[i] != "") {
-							layerNames(r[[j]]) <- paste(lstnames[i], '_', b, sep='')
-						}
+						layerNames(r[[j]]) <- paste(lstnames[i], '_', b, sep='')
 					}
 					j <- j + 1
 				}
@@ -82,12 +80,10 @@ function(x, bands=NULL, native=FALSE, ...) {
 				bds <- nbands(r[[j]])
 
 				if (namesFromList) {
-					if (lstnames[i] != "") {
-						if (bds > 1) {
-							layerNames(r[[j]]) <- paste(lstnames[i], '_1', sep='')						
-						} else {
-							layerNames(r[[j]]) <- lstnames[i]
-						}
+					if (bds > 1) {
+						layerNames(r[[j]]) <- paste(lstnames[i], '_1', sep='')						
+					} else {
+						layerNames(r[[j]]) <- lstnames[i]
 					}
 				}
 				j <- j + 1
@@ -96,9 +92,7 @@ function(x, bands=NULL, native=FALSE, ...) {
 						r[j] <- raster(x[[i]], band=b, native=native, ...)
 							
 						if (namesFromList) {
-							if (lstnames[i] != "") {
-								layerNames(r[[j]]) <- paste(lstnames[i], '_', b, sep='')
-							}
+							layerNames(r[[j]]) <- paste(lstnames[i], '_', b, sep='')
 						}
 						j <- j + 1
 					}
@@ -120,13 +114,10 @@ function(x, bands=NULL, native=FALSE, ...) {
 				}
 			} else {
 				r[j] <- x[[i]]
-				j <- j + 1
-			}
-			
-			if (namesFromList) {
-				if (lstnames[i] != "") {
+				if (namesFromList) {
 					layerNames(r[[j]]) <- lstnames[i]
 				}
+				j <- j + 1				
 			}
 		} else {
 			stop("Arguments should be Raster* objects or filenames")	

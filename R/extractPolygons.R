@@ -232,10 +232,10 @@ function(x, y, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, 
 			
 		} else {
 			i <- sapply(res, is.null)
-			if (nlayers(x) > 1) {
-				j <- matrix(ncol=nlayers(x), nrow=length(res))
+			if (nl > 1) {
+				j <- matrix(ncol=nl, nrow=length(res))
 				j[!i] <- t(sapply(res[!i], function(x) apply(x, 2, FUN=fun, na.rm=na.rm)))
-				colnames(j) <- layerNames(x)
+				colnames(j) <- layerNames(x)[lyrs]
 			} else {
 				j <- vector(length=length(i))
 				j[i] <- NA
@@ -247,16 +247,14 @@ function(x, y, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, 
 	
 	if (df) {
 		if (!is.list(res)) {
-			res <- cbind(1:NROW(res), res)
+			res <- cbind(ID=1:NROW(res), res)
 		} else {
-			res <- data.frame( do.call(rbind, sapply(1:length(res), function(x) if (!is.null(res[[x]])) cbind(x, res[[x]]))) )
+			res <- data.frame( do.call(rbind, lapply(1:length(res), function(x) if (!is.null(res[[x]])) cbind(ID=x, res[[x]]))) )
 		}
 
 		if (ncol(res) == 2) {
-			colnames(res) <- c('ID', 'value')
-		} else {
-			colnames(res)[1] <- 'ID'
-		}
+			colnames(res)[2] <- layerNames(x)[lyrs]
+		} 
 	}
 	
 	res

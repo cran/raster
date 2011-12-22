@@ -111,7 +111,7 @@
 				} else {
 					v[v == x@file@nodatavalue] <- NA 			
 				}		
-				colrow[colrow[,2]==rows[i], 2+(1:laysel)] <- v
+				colrow[colrow[,2]==rows[i], 2+(1:laysel)] <- v[layers]
 
 			} else {
 				offs <- c(rows[i]-1, 0)

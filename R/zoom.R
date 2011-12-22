@@ -14,9 +14,6 @@ if (!isGeneric("zoom")) {
 
 setMethod('zoom', signature(x='Raster'), 
 function(x, ext=drawExtent(), maxpixels=100000, layer=1, new=TRUE, useRaster=TRUE, ...) {
-	if (missing(x)) {
-		stop('You must provide a Raster* object as first argument to this function')
-	}
 	ext <- ext  # force to start with drawing before creating a new graphics device
 	if (new) { dev.new() }
 	if (nlayers(x) > 1) { 
@@ -31,3 +28,15 @@ function(x, ext=drawExtent(), maxpixels=100000, layer=1, new=TRUE, useRaster=TRU
 	return(invisible(ext))
 }
 )
+
+
+
+setMethod('zoom', signature(x='Spatial'), 
+function(x, ext=drawExtent(), new=TRUE, ...) {
+	ext <- ext  # force to start with drawing before creating a new graphics device
+	if (new) { dev.new() }
+	sp::plot(x, xlim=c(ext@xmin, ext@xmax), ylim=c(ext@ymin, ext@ymax), ...)
+	return(invisible(ext))
+}
+)
+

@@ -23,7 +23,7 @@
 	
 			result <- matrix(ncol=nl, nrow=length(cells))
 			colnames(result) <- layerNames(x)[lyrs]
-			for (i in 1:nl) {
+			for (i in 1:length(lyrs)) {
 				result[,i] <- .readCells( x@layers[[lyrs[i]]], cells, 1)
 			}
 			return( result )
@@ -36,15 +36,21 @@
 					return(cells)
 				}
 				return( x@data@values[cells, lyrs] )
-			} 
-		
-			if (x@file@driver == 'netcdf') {
+				
+			} else if (x@file@driver == 'netcdf') {
 				return( .readBrickCellsNetCDF(x, cells, layer, nl) )
-			} 
-
-			return( .readCells(x, cells, lyrs) )
+				
+			}  else {
+				result <-  .readCells(x, cells, lyrs) 
+				if (is.null(dim(result))) { 
+						# single layer of brick returns vector perhaps should be fixed in readCells
+						# only an issue with a single layer?
+					names(result) <- layerNames(x)[lyrs]
+				}
+				return(result)
+			}
 		}
-		
-	}	
-}
+	}
+}	
+
 

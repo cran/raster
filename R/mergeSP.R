@@ -96,15 +96,7 @@ function(x, y, ..., intersect=TRUE) {
 			if (xdata) {
 				ids <- as.numeric(sapply(row.names(dif1), function(x) strsplit(x, ' ')[[1]][1]))
 				#ids <- match(ids, rownames(x@data))
-				d <- x@data[ids,]
-				rownames(d) <- NULL
-				if (ydata & !is.null(daty)) {
-					dd <- daty
-					dd[1:length(ids),] <- NA
-					dat <- cbind(d, dd)
-				} else {
-					dat <- d
-				}
+				dat[1:length(ids), colnames(datx)] <- x@data[ids,]
 			} else if (ydata) {
 				dat[1:length(dif1@polygons),] <- NA
 			}
@@ -117,16 +109,7 @@ function(x, y, ..., intersect=TRUE) {
 			ids <- sapply(row.names(dif2), function(x) strsplit(x, ' ')[[1]][1])
 			if (ydata) {
 				#ids <- match(ids, rownames(y@data))
-				d <- y@data[ids, ,drop=FALSE]
-				rownames(d) <- NULL
-				if (xdata) {
-					dd <- datx
-					dd[1:length(ids),] <- NA
-					dd <- cbind(d, dd)
-					dat <- rbind(dat, dd)
-				} else {
-					dat <- rbind(dat, d)
-				}
+				dat <- rbind(dat, y@data[ids, ,drop=FALSE])
 			} else if (xdata) {
 				dat[(nrow(dat)+1):(nrow(dat)+length(ids)),] <- NA
 			}
@@ -169,7 +152,6 @@ function(x, y, ..., intersect=TRUE) {
 		#aggregate(res, v=colnames(res@data))
 		x <- res
 	}
-	
 	x	
 }
 )

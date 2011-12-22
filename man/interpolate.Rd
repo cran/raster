@@ -24,7 +24,7 @@ interpolate(object, ...)
 
 A full call to the method is 
  
-\code{predict(object, model, filename='', fun=predict, xyOnly=TRUE, ext=NULL, const=NULL, index=1, na.rm=TRUE, ...)}
+\code{interpolate(object, model, filename='', fun=predict, xyOnly=TRUE, ext=NULL, const=NULL, index=1, na.rm=TRUE, ...)}
   
 \tabular{rll}{  
   \tab  \code{object} \tab Raster* object \cr
