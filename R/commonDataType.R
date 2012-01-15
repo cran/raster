@@ -6,12 +6,12 @@
 
 .commonDataType <- function(dtype) {
 	dtype <- as.vector(unlist(dtype))
-	utype <- unique(dtype)
-	if (length(utype==1)) {
-		datatype <- utype
+	dtype <- unique(dtype)
+	if (length(dtype)==1) {
+		datatype <- dtype
 	} else {
-		dtype <- .shortDataType(dtype)
 		dsize <- dataSize(dtype)
+		dtype <- raster:::.shortDataType(dtype)
 		if (any(dtype == 'FLT')) {
 			dsize <- max(dsize[dtype=='FLT'])
 			datatype <- paste('FLT', dsize, 'S', sep='')
@@ -30,3 +30,4 @@
 	}
 	datatype
 }
+

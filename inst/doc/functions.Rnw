@@ -124,7 +124,7 @@ f5 <- function(x, a, filename='') {
 	small <- canProcessInMemory(out, 3)
 	filename <- trim(filename)
 	
-	if (small & filename == '') {
+	if (!small & filename == '') {
 		filename <- rasterTmpFile()
 	}
 	
@@ -402,6 +402,7 @@ r <- raster()
 # beginCluster()
 r[] <- ncell(r):1
 # x <- clusfun(r)
+# endCluster()
 @
 
 \end{document}

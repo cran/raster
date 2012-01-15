@@ -29,7 +29,7 @@
 	if (is.null(ext)) {
 		e <- extent(object)
 	} else  { 
-		e <- ext <- intersectExtent(extent(object), ext) 
+		e <- ext <- intersect(extent(object), ext) 
 	}
 	
 	

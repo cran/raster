@@ -95,6 +95,7 @@ function(x, mask, filename="", inverse=FALSE, ...){
 	compare(x, mask)
 	
 	out <- brick(x, values=FALSE)
+	layerNames(out) <- layerNames(x)
 	
 	if (canProcessInMemory(x, nlayers(x)+4)) {
 
@@ -211,6 +212,7 @@ function(x, mask, filename="", ...){
 	
 	compare(x, mask)
 	out <- brick(x, values=FALSE)
+	layerNames(out) <- layerNames(x)
 	
 	if (canProcessInMemory(x, nlayers(x)+4)) {
 

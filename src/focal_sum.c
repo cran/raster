@@ -46,15 +46,64 @@ SEXP focal_sum(SEXP d, SEXP w, SEXP dim, SEXP rmNA, SEXP NAonly) {
 	xval = REAL(val);
 	xw = REAL(w);
 
+	int nwc = ncol - wc - 1;
+	int col = 0;
+	
 	if (narm) {
 		if (naonly) {
+		// first rows
+			for (i = 0; i < ncol*wr; i++) {  
+				xval[i] = xd[i];
+			}
+
 			for (i = ncol*wr; i < ncol * (nrow-wr); i++) {
 				if (R_FINITE(xd[i])) {
 					xval[i] = xd[i];
 				} else {
-					xval[i] = 0;
+					col = i % ncol;
+					if ((col < wc) | (col > nwc)) {
+						xval[i] = xd[i];
+					} else {
+						xval[i] = 0;
+						q = 0;
+						p = 0;
+						for (j = -wr; j <= wr; j++) {
+							for (k = -wc; k <= wc; k++) {
+								a = xd[j * ncol + k + i];
+								if ( R_FINITE(a) ) {
+									xval[i] += a * xw[q];
+									p++;
+								}
+								q++;
+							}
+						}
+						if (p==0) {
+							xval[i] = R_NaReal;
+						}
+					}
+				}
+			}
+			
+		// last rows
+			for (i = ncol * (nrow-wr); i < n; i++) {  
+				xval[i] = xd[i];
+			}
+			
+		} else {
+
+			// first rows
+			for (i = 0; i < ncol*wr; i++) {  
+				xval[i] = R_NaReal;
+			}
+
+			for (i = ncol*wr; i < ncol * (nrow-wr); i++) {
+				col = i % ncol;
+				if ((col < wc) | (col > nwc)) {
+					xval[i] = R_NaReal;
+				} else {
 					q = 0;
 					p = 0;
+					xval[i] = 0;
 					for (j = -wr; j <= wr; j++) {
 						for (k = -wc; k <= wc; k++) {
 							a = xd[j * ncol + k + i];
@@ -70,73 +119,39 @@ SEXP focal_sum(SEXP d, SEXP w, SEXP dim, SEXP rmNA, SEXP NAonly) {
 					}
 				}
 			}
-		} else {
-			for (i = ncol*wr; i < ncol * (nrow-wr); i++) {
-				q = 0;
-				p = 0;
+			
+			// last rows
+			for (i = ncol * (nrow-wr); i < n; i++) {  
+				xval[i] = R_NaReal;
+			}
+		}
+	} else {
+
+		// first rows
+		for (i = 0; i < ncol*wr; i++) {  
+			xval[i] = R_NaReal;
+		}
+		for (i = ncol*wr; i < ncol * (nrow-wr); i++) {
+			col = i % ncol;
+			if ((col < wc) | (col > nwc)) {
+				xval[i] = R_NaReal;
+			} else {
 				xval[i] = 0;
+				q = 0;
 				for (j = -wr; j <= wr; j++) {
 					for (k = -wc; k <= wc; k++) {
-						a = xd[j * ncol + k + i];
-						if ( R_FINITE(a) ) {
-							xval[i] += a * xw[q];
-							p++;
-						}
+						xval[i] += xd[j * ncol + k + i]  * xw[q];
 						q++;
 					}
 				}
-				if (p==0) {
-					xval[i] = R_NaReal;
-				}
 			}
 		}
-	} else {
-		for (i = ncol*wr; i < ncol * (nrow-wr); i++) {
-			xval[i] = 0;
-			q = 0;
-			for (j = -wr; j <= wr; j++) {
-				for (k = -wc; k <= wc; k++) {
-					xval[i] += xd[j * ncol + k + i]  * xw[q];
-					q++;
-				}
-			}
-		}
-	}
-	
-// Set edges to NA	
-// first and last columns
-	if (naonly) {
-		for (i = wr; i < nrow; i++) {  
-			for (j = 0; j < wc; j++) {
-				xval[i * ncol + j] = xd[i * ncol + j];
-				xval[(i+1) * ncol - 1 - j] = xd[(i+1) * ncol - 1 - j];
-			}
-		}
-	// first rows
-		for (i = 0; i < ncol*wr; i++) {  
-			xval[i] = xd[i];
-		}
-	// last rows
-		for (i = ncol * (nrow-wr); i < n; i++) {  
-			xval[i] = xd[i];
-		}
-	
-	} else {
-		for (i = wr; i < nrow; i++) {  
-			for (j = 0; j < wc; j++) {
-				xval[i * ncol + j] = R_NaReal;
-				xval[(i+1) * ncol - 1 - j] = R_NaReal;
-			}
-		}
-	// first rows
-		for (i = 0; i < ncol*wr; i++) {  
-			xval[i] = R_NaReal;
-		}
-	// last rows
+		// last rows
 		for (i = ncol * (nrow-wr); i < n; i++) {  
 			xval[i] = R_NaReal;
-		}
+		}		
 	}
+	
 	UNPROTECT(3);
 	return(val);
 }

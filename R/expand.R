@@ -54,8 +54,7 @@ function(x, y, value=NA, filename='', ...) {
 	
 	y  <- alignExtent(y, x)
 # only expanding here, not cropping
-	y <- unionExtent(y, extent(x))
-
+	y <- union(y, extent(x))
 	
 	if (nlayers(x) <= 1) {
 		out <- raster(x)

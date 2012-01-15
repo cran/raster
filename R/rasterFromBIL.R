@@ -157,14 +157,18 @@
 		if (pixtype == 'SIGNEDINT') {
 			dataType(x) <- 'INT1S'
 		} else {
-			if (pixtype != 'UNSIGNEDINT') warning('assumed data is unsigned. If not, use  dataType(x) <- "INT1S"')
+			if (pixtype != 'UNSIGNEDINT') {
+				warning('assuming data is unsigned. If this is not correct, use  dataType(x) <- "INT1S"')
+			}
 			dataType(x) <- 'INT1U'		
 		}
 	} else if (nbits == 16) {
 		if (pixtype == 'SIGNEDINT') {
 			dataType(x) <- 'INT2S'
 		} else {
-			if (pixtype != 'UNSIGNEDINT') warning('assumed data is unsigned. If not, use  dataType(x) <- "INT2S"')
+			if (pixtype != 'UNSIGNEDINT') {
+				warning('assumed data is unsigned. If this is not correct, use  dataType(x) <- "INT2S"')
+			}
 			dataType(x) <- 'INT2U'		
 		}
 	} else if (nbits == 32) {

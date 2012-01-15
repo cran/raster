@@ -23,7 +23,7 @@ setMethod('rotate', signature(x='Raster'),
 		r2@extent@xmin <- r2@extent@xmin - xrange
 		r2@extent@xmax <- r2@extent@xmax - xrange
 		ln <- layerNames(x)
-		x <- merge(r1, r2, ...)	
+		x <- merge(r1, r2, overlap=FALSE, ...)
 		layerNames(x) <- ln
 		return(x)
 	}

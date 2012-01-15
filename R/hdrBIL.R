@@ -26,7 +26,7 @@
 		if (dataSigned(x@file@datanotation)) {
 			pixtype <- "SIGNEDINT"
 		} else {
-			pixtype <- "INT"
+			pixtype <- "UNSIGNEDINT"
 		}
 	} else { 
 		pixtype <- "FLOAT" 

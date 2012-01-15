@@ -47,10 +47,50 @@ SEXP focal_fun(SEXP d, SEXP w, SEXP dim, SEXP fun, SEXP NAonly, SEXP rho) {
 	xans = REAL(ans);
 	xw = REAL(w);
 
+	int nwc = ncol - wc - 1;
+	int col = 0;
+	
 	if (naonly) {
+		// first rows
+		for (i = 0; i < ncol*wr; i++) {  
+			xans[i] = xd[i];
+		}
 		for (i = ncol*wr; i < ncol * (nrow-wr); i++) {
 			if (R_FINITE(xd[i])) {
 				xans[i] = xd[i];
+			} else {
+				col = i % ncol;
+				if ((col < wc) | (col > nwc)) {
+					xans[i] = xd[i];
+				} else {
+					q = 0;
+					for (j = -wr; j <= wr; j++) {
+						for (k = -wc; k <= wc; k++) {
+							xx[q] = xd[j * ncol + k + i] * xw[q];
+							q++;
+						}
+					}
+					SETCADR(R_fcall, x);
+					xans[i] = REAL(eval(R_fcall, rho))[0];
+				}
+			}
+		}
+		// last rows
+		for (i = ncol * (nrow-wr); i < n; i++) {  
+			xans[i] = xd[i];
+		}
+		
+	} else {
+
+		// first rows
+		for (i = 0; i < ncol*wr; i++) {  
+			xans[i] = R_NaReal;
+		}
+		
+		for (i = ncol*wr; i < (ncol * (nrow-wr)); i++) {
+			col = i % ncol;
+			if ((col < wc) | (col > nwc)) {
+				xans[i] = R_NaReal;
 			} else {
 				q = 0;
 				for (j = -wr; j <= wr; j++) {
@@ -63,58 +103,13 @@ SEXP focal_fun(SEXP d, SEXP w, SEXP dim, SEXP fun, SEXP NAonly, SEXP rho) {
 				xans[i] = REAL(eval(R_fcall, rho))[0];
 			}
 		}
+		// last rows
+		for (i = ncol * (nrow-wr); i < n; i++) {  
+			xans[i] = R_NaReal;
+		}
 		
-	} else {
-		for (i = ncol*wr; i < ncol * (nrow-wr); i++) {
-			q = 0;
-			for (j = -wr; j <= wr; j++) {
-				for (k = -wc; k <= wc; k++) {
-					xx[q] = xd[j * ncol + k + i] * xw[q];
-					q++;
-				}
-			}
-			SETCADR(R_fcall, x);
-			xans[i] = REAL(eval(R_fcall, rho))[0];
-		}
 	}
-	
 
-// Set edges to NA	
-
-	if (naonly) {
-		for (i = wr; i < nrow; i++) {  
-			for (j = 0; j < wc; j++) {
-				xans[i * ncol + j] = xd[i * ncol + j];
-				xans[(i+1) * ncol - 1 - j] = xd[(i+1) * ncol - 1 - j];
-			}
-		}
-	// first rows
-		for (i = 0; i < ncol*wr; i++) {  
-			xans[i] = xd[i];
-		}
-	// last rows
-		for (i = ncol * (nrow-wr); i < n; i++) {  
-			xans[i] = xd[i];
-		}
-	
-	} else {
-
-		for (i = wr; i < nrow; i++) {  
-			for (j = 0; j < wc; j++) {
-				xans[i * ncol + j] = R_NaReal;
-				xans[(i+1) * ncol - 1 - j] = R_NaReal;
-			}
-		}
-
-	// first rows
-		for (i = 0; i < ncol*wr; i++) {  
-			xans[i] = R_NaReal;
-		}
-	// last rows
-		for (i = ncol * (nrow-wr); i < n; i++) {  
-			xans[i] = R_NaReal;
-		}
-	}
 	
 	UNPROTECT(5);
 	return(ans);

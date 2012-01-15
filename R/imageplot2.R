@@ -50,7 +50,11 @@
 	}
 	w <- getOption('warn')
 	options('warn'=-1) 
-	zrange <- range(x, zlim, breaks, na.rm=TRUE)
+	if (is.null(breaks)) {
+		zrange <- range(x, zlim, na.rm=TRUE)
+	} else {
+		zrange <- range(x, zlim, breaks, na.rm=TRUE)
+	}
 	options('warn'=w) 
 	if (! is.finite(zrange[1])) {
 		legend <- FALSE 
@@ -110,9 +114,6 @@
 		if (!is.null(breaks)) {
 			binwidth <- (maxz - minz)/100
 			midpoints <- seq(minz, maxz, by = binwidth)
-		}
-
-		if (!is.null(breaks)) {
 			axis.args <- c(list(side=ifelse(horizontal,1,4), mgp=c(3,1,0), las=ifelse(horizontal,0,2)), axis.args)
 			if (is.null(axis.args$at)) {
 				axis.args$at <- breaks
@@ -129,7 +130,8 @@
 			plot(NA, NA, xlim=c(0, 1), ylim=c(minz, maxz), type="n", xlab="", ylab="", xaxs ='i', yaxs = 'i', axes=FALSE)
 			
 			if (is.null(breaks)) {
-				xx <- asRaster(length(col):1, col, fun=fun) 
+				mult <- round(max(1, 100 / length(col) ))
+				xx <- asRaster( ((mult*length(col)):1)/mult, col, fun=fun) 
 			} else {
 				xx <- rev(asRaster(midpoints, col, breaks=breaks, fun=fun))
 			}
@@ -141,7 +143,8 @@
 			plot(NA, NA, ylim=c(0, 1), xlim=c(minz, maxz), type="n", xlab="", ylab="", xaxs ='i', yaxs = 'i', axes=FALSE)
 			
 			if (is.null(breaks)) {
-				xx <- t(rev(asRaster(1:length(col), col, fun=fun )))
+				mult <- round(max(1, 100 / length(col) ))
+				xx <- t(asRaster((1:(mult*length(col)))/mult, col, fun=fun ))
 			} else {
 				xx <- t(asRaster(midpoints, col, breaks=breaks, fun=fun))
 			}

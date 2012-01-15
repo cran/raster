@@ -11,8 +11,6 @@
 \description{
 Aggregate a Raster* object to create a new RasterLayer or RasterBrick with a lower resolution (larger cells). 
 Aggregation groups rectangular areas to create larger cells. The value for the resulting cells is computed with a user-specified function. 
-
-See \code{\link{aggregate,SpatialPolygons-method}} for aggregating SpatialPolygons*
 }
 
 \usage{
@@ -48,7 +46,7 @@ It should also accept a \code{na.rm} argument (or ignore it as one of the 'dots'
 RasterLayer or RasterBrick
 }
 
-\seealso{ \code{\link{disaggregate}, \link{resample}}, and \code{\link{aggregate,SpatialPolygons-method}}  }
+\seealso{ \code{\link{disaggregate}, \link{resample}}}
 
 
 \author{Robert J. Hijmans and Jacob van Etten}

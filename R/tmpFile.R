@@ -58,33 +58,44 @@ removeTmpFiles <- function(h=24) {
 	warnopt <- getOption('warn')
 	on.exit(options('warn'= warnopt))
 
-	d <- .removeTrailingSlash(.tmpdir())
-	f <- list.files(path=d, pattern='raster_tmp*', full.names=TRUE)
-	fin <- file.info(f)
-	dif <- Sys.time() - fin$mtime
-	dif <- as.numeric(dif, units="hours")
+	tmpdir <- .tmpdir(create=FALSE)
+	if (!is.na(tmpdir)) {
 	
-	dif[is.na(dif)] <- h + 1
-	f <- f[dif > h]
-	if (length(f) > 1) {
-		file.remove(f)
+		d <- .removeTrailingSlash(.tmpdir())
+		f <- list.files(path=d, pattern='raster_tmp*', full.names=TRUE)
+		fin <- file.info(f)
+		dif <- Sys.time() - fin$mtime
+		dif <- as.numeric(dif, units="hours")
+		
+		dif[is.na(dif)] <- h + 1
+		f <- f[dif > h]
+		if (length(f) > 1) {
+			file.remove(f)
+		}
+	#	if (file.exists(d)) {
+	#		unlink(paste(d, "/raster_tmp_*", sep=""), recursive = FALSE)
+	#	}
 	}
-#	if (file.exists(d)) {
-#		unlink(paste(d, "/raster_tmp_*", sep=""), recursive = FALSE)
-#	}
+	
 	options('warn'=warnopt) 
 }
 
+
 showTmpFiles <- function() {
-	d <- .removeTrailingSlash(.tmpdir())
-	if (file.exists(d)) {
-		f <- list.files(d, pattern='raster_tmp_')
-		if (length(f) == 0) {
-			cat('--- none ---\n')
+	tmpdir <- .tmpdir(create=FALSE)
+	if (!is.na(tmpdir)) {
+		d <- .removeTrailingSlash(tmpdir)
+		if (file.exists(d)) {
+			f <- list.files(d, pattern='raster_tmp_')
+			if (length(f) == 0) {
+				cat('--- none ---\n')
+			} else {
+				extension(f) <- ''
+				f <- unique(f)
+				cat(f, "\n")
+			}
 		} else {
-			extension(f) <- ''
-			f <- unique(f)
-			cat(f, "\n")
+			cat('--- none ---\n')
 		}
 	} else {
 		cat('--- none ---\n')

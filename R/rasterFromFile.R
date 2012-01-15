@@ -1,16 +1,18 @@
 # R raster package
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
 # Date : September 2009
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
 
 
-.requireRgdal <- function() {
+.requireRgdal <- function(stopIfAbsent=TRUE) {
 	w <- getOption('warn')
 	options('warn'=-1) 
-	r <- try( require(rgdal, quietly=TRUE ) )
+	x <- isTRUE( try( require(rgdal, quietly=TRUE ) ) )
 	options('warn'= w) 
-	return(r)
+	if (!x & stopIfAbsent) {
+		stop("package 'rgdal' is not available")
+	}
+	return(x)
 }
 
 
@@ -63,7 +65,7 @@
 		return ( .rasterFromASCIIFile(x, offset) )
 	}
 	if(!native) {
-		if (! .requireRgdal() )  { native <- TRUE }  
+		if (! .requireRgdal(FALSE) )  { native <- TRUE }  
 	}
 	if (native) {
 		if ( fileext == ".ASC" ) {
@@ -90,7 +92,7 @@
 		} # else use gdal
 	}
 
-	if (! .requireRgdal() ) {
+	if (! .requireRgdal(FALSE) ) {
 		stop("Cannot create RasterLayer object from this file; perhaps you need to install rgdal first")
 	}
 	test <- try( r <- .rasterFromGDAL(x, band=band, objecttype, ...), silent=silent )

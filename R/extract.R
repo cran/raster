@@ -70,7 +70,7 @@ function(x, y, ...){
 	px <- projection(x, asText=FALSE)
 	comp <- .compareCRS(px, projection(y), unknown=TRUE)
 	if (!comp) {
-		if (! .requireRgdal() ) { stop('rgdal not available') }
+		.requireRgdal()
 		warning('Transforming SpatialPoints to the CRS of the Raster')
 		y <- spTransform(y, px)
 	}
@@ -90,7 +90,7 @@ function(x, y, ...){
 setMethod('extract', signature(x='Raster', y='Extent'), 
  	function(x, y, fun, na.rm=FALSE, lyrs, ...) {
 
-		e <- intersectExtent(x, y)
+		e <- intersect(extent(x), y)
 		e <- alignExtent(e, x)
 		
 		r <- res(x)

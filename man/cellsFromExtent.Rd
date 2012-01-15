@@ -18,7 +18,7 @@ cellsFromExtent(object, extent, expand=FALSE)
   \item{extent}{An object of class Extent (which you can create with newExtent(), or another Raster* object )}  
   \item{expand}{Logical. If \code{TRUE}, \code{NA} is returned for (virtual) cells implied by \code{bndbox}, 
       that are outside the RasterLayer (\code{object}). If \code{FALSE}, only cell numbers for the area where \code{object} and \code{bndbox}
-      overlap are returned (see \link[raster]{intersectExtent}) }
+      overlap are returned (see \link[raster]{intersect}) }
 }
 
 \value{

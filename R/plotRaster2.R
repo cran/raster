@@ -13,7 +13,7 @@
 	if (is.null(ext)) {
 		ext <- extent(object)
 	} else  { 
-		ext <- intersectExtent(extent(object), ext) 
+		ext <- intersect(extent(object), ext) 
 	}
 	if (!missing(xlim)) { 
 		if (xlim[1] >= xlim[2]) stop('invalid xlim')

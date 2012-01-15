@@ -48,6 +48,7 @@
 	}
 	
 	r <- raster(raster)
+	nls <- nlayers(raster)
 	
 	four <- fourCellsFromXY(r, xyCoords)
 	xy4 <- matrix(xyFromCell(r, as.vector(four)), ncol=8)
@@ -56,12 +57,22 @@
 	xy4 <- cbind(c(x[1,], x[1,], x[2,], x[2,]), c(y[1,], y[2,], y[1,], y[2,]))
 	cells <- cellFromXY(r, xy4)
 
+	w <- getOption('warn')
+	options('warn'=-1) 
 	row1 <- rowFromCell(r, min(cells, na.rm=TRUE))
+	options('warn' = w)
+	if (is.na(row1)) {
+		if (nls == 1) {
+			return(rep(NA, nrow(xyCoords)))
+		} else {
+			return(matrix(NA, nrow= nrow(xyCoords), ncol=nls))
+		}
+	}
+	
 	nrows <- row1 - 1 + rowFromCell(r, max(cells, na.rm=TRUE))
 	offs <- cellFromRowCol(r, row1, 1) - 1
 	cells <- cells - offs
 	
-	nls <- nlayers(raster)
 	if (nls == 1) {
 		vv <- getValues(raster, row1, nrows)
 		v <- matrix( vv[cells], ncol=4)
@@ -75,7 +86,7 @@
 		}
 		i <- rs > 0 & rs < 3
 		if (sum(i) > 0) {
-			vv <- v[i,]
+			vv <- v[i,,drop=FALSE]
 			vv[is.na(vv[,1]),1] <- vv[is.na(vv[,1]),2]
 			vv[is.na(vv[,2]),2] <- vv[is.na(vv[,2]),1]
 			vv[is.na(vv[,3]),3] <- vv[is.na(vv[,3]),4]
@@ -83,12 +94,12 @@
 			vmean <- rep(rowMeans(vv, na.rm=TRUE), 4)
 			vv[is.na(vv)] <- vmean[is.na(vv)]
 #			res[i] <- bilinear(xyCoords[i,1], xyCoords[i,2], x[1,i], x[2,i], y[1,i], y[2,i], vv)
-			res[i] <- bilinear(xyCoords[i,], x[,i], y[,i], vv)
+			res[i] <- bilinear(xyCoords[i,,drop=FALSE], x[,i,drop=FALSE], y[,i,drop=FALSE], vv)
 		}
 		i <- rs==0
 		if (sum(i) > 0) {
 #			res[i] <- bilinear(xyCoords[i,1], xyCoords[i,2], x[1,i], x[2,i], y[1,i], y[2,i], v[i,])
-			res[i] <- bilinear(xyCoords[i,], x[,i], y[,i], v[i,])
+			res[i] <- bilinear(xyCoords[i, ,drop=FALSE], x[,i,drop=FALSE], y[,i,drop=FALSE], v[i,,drop=FALSE])
 		}
 		res
 		
@@ -114,18 +125,18 @@
 			}
 			i <- rs > 0 & rs < 3
 			if (sum(i) > 0) {
-				vv <- v[i,]
+				vv <- v[i,,drop=FALSE]
 				vv[is.na(vv[,1]),1] <- vv[is.na(vv[,1]),2]
 				vv[is.na(vv[,2]),2] <- vv[is.na(vv[,2]),1]
 				vv[is.na(vv[,3]),3] <- vv[is.na(vv[,3]),4]
 				vv[is.na(vv[,4]),4] <- vv[is.na(vv[,4]),3]
 				vmean <- rep(rowMeans(vv, na.rm=TRUE), 4)
 				vv[is.na(vv)] <- vmean[is.na(vv)]
-				res[i] <- bilinear(xyCoords[i,], x[,i], y[,i], vv)
+				res[i] <- bilinear(xyCoords[i,,drop=FALSE], x[,i,drop=FALSE], y[,i,drop=FALSE], vv)
 			}
 			i <- rs==0
 			if (sum(i) > 0) {
-				res[i] <- bilinear(xyCoords[i,], x[,i], y[,i], v[i,])
+				res[i] <- bilinear(xyCoords[i,,drop=FALSE], x[,i,drop=FALSE], y[,i,drop=FALSE], v[i,,drop=FALSE])
 			}
 
 			allres[,j] <- res

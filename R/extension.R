@@ -46,7 +46,7 @@ extension <- function(filename, value=NULL, maxchar=10) {
 				break 
 			}
 		}
-		if (extstart > 0 & (lfn[f] - extstart) < 5) {
+		if (extstart > 0 & (lfn[f] - extstart) < 8) {
 			fname[f] <- paste(substr(filename[f], 1, extstart-1), value, sep="")
 		} else { 
 			fname[f] <- paste(filename[f], value, sep="")  

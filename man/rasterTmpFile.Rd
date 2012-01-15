@@ -41,9 +41,9 @@ The default path where the temporary files are stored is returned by \code{showO
 \seealso{ \code{\link[raster]{setOptions}}, \code{\link[raster]{showOptions}}, \code{\link[base]{tempfile}} }  
 
 \examples{
-	rasterTmpFile('mytemp_')
-	showTmpFiles()
-	removeTmpFiles(h=240)
+#rasterTmpFile('mytemp_')
+showTmpFiles()
+removeTmpFiles(h=24)
 }
 
 \keyword{ spatial }

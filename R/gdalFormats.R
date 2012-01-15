@@ -21,7 +21,7 @@
 
 
 .isSupportedGDALFormat <- function(dname) {
-	if (! .requireRgdal() ) { stop('rgdal not available') }
+	.requireRgdal()
 	gd <- .gdalWriteFormats()
 	res <- dname %in% gd[,1]
 	if (!res) { stop(paste(dname, "is not a supported file format. See writeFormats()" ) ) }
