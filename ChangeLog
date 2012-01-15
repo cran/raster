@@ -1,3 +1,12 @@
+--- 15-January-2012, version 1.9-63
+All the recent new functions that operate on vectors (polygons mostly) have been removed and placed in the new 'geovec' package (on R-Forge).
+Fixed problem with .commonDataType, that affeced the datatype selection for crop (and some other functions). Problem report by Jon Olav Skoien.
+Fixed problem with focal() that, with a large filter, crashed R because of out of bound array indices in C. Problem reported by Jérôme Guélat
+expand method implemented for Extent objects. Code provided by Etienne B. Racine
+Also implemented generic functions 'intersect' and 'union' for Extent objects (to replace intersectExtent and unionExtent)
+Legend sometimes was not entirely right when using a few breaks only (reported by Barry Rowlingson)
+mask now keeps layer names (suggested by Jane Elith)
+
 --- 21-December-2011, version 1.9-58
 new 'select' method to visually select parts of SpatialPolygons, SpatialPixels, SpatialGrid objects.
 new 'disaggregate' methods for SpatialPolygons and SpatialLines objects

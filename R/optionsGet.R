@@ -18,18 +18,22 @@
 }	
 
 
-.tmpdir <- function() {
+.tmpdir <- function(create=TRUE) {
 	d <- getOption('rasterTmpDir')
 	if (is.null(d)) {
 		d <- paste(dirname(tempdir()), '/R_raster_tmp/', sep="")
 	}
-	lastchar = substr(d, nchar(d), nchar(d))
-	if (lastchar == "/" | lastchar == '\\') {
-		dd <- substr(d, 1, nchar(d)-1)
-	}		
+	lastchar <- substr(d, nchar(d), nchar(d))
+	if (lastchar == '/' | lastchar == '\\') {
+		dd <- substr( d, 1, nchar(d)-1 )
+	}
 	if (!file.exists(dd)) {
-		d <- paste(dirname(tempdir()), '/R_raster_tmp/', sep="")
-		dir.create(d, recursive=TRUE, showWarnings=FALSE )
+		if (create) {
+			d <- paste(dirname(tempdir()), '/R_raster_tmp/', sep="")
+			dir.create( d, recursive=TRUE, showWarnings=FALSE )
+		} else {
+			return(NA)
+		}
 	}
 	return(d)
 }

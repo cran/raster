@@ -11,7 +11,7 @@ function(x, y, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, 
 	px <- projection(x, asText=FALSE)
 	comp <- .compareCRS(px, projection(y), unknown=TRUE)
 	if (!comp) {
-		if (! .requireRgdal() ) { stop('rgdal not available') }
+		.requireRgdal()
 		warning('Transforming SpatialPolygons to the CRS of the Raster')
 		y <- spTransform(y, px)
 	}
@@ -48,7 +48,7 @@ function(x, y, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, 
 	
 	if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
 		if (df) {
-			res <- matrix(ncol=1, nrow=0)
+			res <- data.frame(matrix(ncol=1, nrow=0))
 			colnames(res) <- 'ID'
 			return(res)
 		}
@@ -235,7 +235,7 @@ function(x, y, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, 
 			if (nl > 1) {
 				j <- matrix(ncol=nl, nrow=length(res))
 				j[!i] <- t(sapply(res[!i], function(x) apply(x, 2, FUN=fun, na.rm=na.rm)))
-				colnames(j) <- layerNames(x)[lyrs]
+				colnames(j) <- layerNames(x)[layer:(layer+nl-1)]
 			} else {
 				j <- vector(length=length(i))
 				j[i] <- NA
@@ -247,13 +247,13 @@ function(x, y, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, 
 	
 	if (df) {
 		if (!is.list(res)) {
-			res <- cbind(ID=1:NROW(res), res)
+			res <- data.frame(cbind(ID=1:NROW(res), res))
 		} else {
 			res <- data.frame( do.call(rbind, lapply(1:length(res), function(x) if (!is.null(res[[x]])) cbind(ID=x, res[[x]]))) )
 		}
 
 		if (ncol(res) == 2) {
-			colnames(res)[2] <- layerNames(x)[lyrs]
+			colnames(res)[2] <- layerNames(x)[layer]
 		} 
 	}
 	

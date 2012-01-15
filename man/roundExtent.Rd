@@ -1,33 +1,39 @@
-\name{nudgeExtent}
+\name{Extent math}
 
-\alias{roundExtent}
-\alias{nudgeExtent}
+\alias{floor,Extent-method}
+\alias{ceiling,Extent-method}
   
-\title{Round extent coordinates}
+\title{round Extent coordinates}
 
 \description{
-\code{roundExtent} rounds the coordinates of the extent of a Raster* to a number of digits specified. 
-This can be useful when dealing with a small inprecision in the data (e.g. 179.9999 instead of 180). 
-nudgeCoords takes the floor (lower integer) of the mimumum x and y of the exent and the ceiling (upper integer) 
-of the maximum x and y of the extent. Thus returning a RasterLayer with an extent of rounded coordinates and that 
-always includes the original extent. This can be useful when creating raster objects based on the extent of other objects.
+
+use \code{round(x, digits=0)} to round the coordinates of an Extent object to the number of digits specified. This can be useful when dealing with a small inprecision in the data (e.g. 179.9999 instead of 180). \code{floor} and \code{ceiling} move the coordiantes to the outer or inner whole integer numbers.
+
+It is also possible to use Arithmetic functions with Extent objects (but these work perhaps unexpectedly!)
+
+See \code{\link[raster]{Math-methods}} for these (and many more) methods with Raster* objects.
 }
 
 \usage{
-roundExtent(object, digits=0)
-nudgeExtent(object)
+\S4method{floor}{Extent}(x)
+\S4method{ceiling}{Extent}(x)
 }
 
 \arguments{
-  \item{object}{ a Raster* object }
-  \item{digits}{ integer indicating the precision to be used} 
- }
+\item{x}{Extent object }
+}
+
+
+\seealso{\code{\link[raster]{Math-methods}}}
   
 \author{Robert J. Hijmans }
 \examples{
-r <- raster(xmn=0.999999,  xmx=10.000011, ymn=-60, ymx=60)
-r <- roundExtent(r, 2)
-r <- nudgeExtent(r)	
+e <- extent(c(0.999999,  10.000011, -60.4, 60))
+round(e)
+ceiling(e)
+floor(e)
 }
+
 \keyword{ spatial }
+
 

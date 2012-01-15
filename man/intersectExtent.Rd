@@ -5,7 +5,7 @@
 \title{Extent intersection}
 
 \description{
-intersectExtent returns the intersection (i.e. the area in which they all overlap) of multiple Extent objects
+Obsolete. See \code{\link{intersect}}
 }
 
 \usage{
@@ -24,13 +24,12 @@ Extent object
   
 \author{Robert J. Hijmans}
 
-\seealso{ \code{\link[raster]{unionExtent}}, \code{\link[raster]{extent}}}
+\seealso{ \code{\link[raster]{union}, \link[raster]{intersect}, \link[raster]{extent}} }
 
 \examples{
-r <- raster()
-b1 <- extent(-10, 10, -20, 20)
-b2 <- extent(0, 20, -40, 5)
-i <- intersectExtent(b1, b2)
+e1 <- extent(-10, 10, -20, 20)
+e2 <- extent(0, 20, -40, 5)
+intersectExtent(e1, e2)
 }
 
 \keyword{spatial}

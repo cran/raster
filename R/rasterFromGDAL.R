@@ -27,9 +27,7 @@
 
 # most of this was taken from the GDALinfo function in rgdal
 
-	if (! .requireRgdal() ) { 
-		stop('package rgdal is not available') 
-	}
+	.requireRgdal() 
 
 	# suppressing the geoTransform warning...
 	w <- getOption('warn')

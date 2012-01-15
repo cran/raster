@@ -31,7 +31,7 @@ function(x, y, ..., tolerance=0.05, filename="", format, datatype, overwrite, pr
 	if (missing(datatype)) { datatype <- .commonDataType(sapply(x, dataType)) } 
 
 	nl <- max(unique(sapply(x, nlayers)))
-	bb <- unionExtent(x)
+	bb <- .unionExtent(x)
 	if (nl > 1) {
 		out <- brick(x[[1]], values=FALSE, nl=nl)
 	} else {
@@ -42,10 +42,10 @@ function(x, y, ..., tolerance=0.05, filename="", format, datatype, overwrite, pr
 
 	if (!is.null(ext)) {
 		ext <- extent(ext)
-		out1 <- expand(out, unionExtent(ext, extent(out)))
+		out1 <- expand(out, union(ext, extent(out)))
 		out1 <- crop(out1, ext)
 
-		test <- try( intersectExtent(out, out1) )
+		test <- try( intersect(extent(out), extent(out1)) )
 		if (class(test) == 'try-error') {
 			stop('"ext" does not overlap with any of the input data')
 		} 

@@ -4,6 +4,7 @@
 
 \alias{merge}
 \alias{merge,Raster,Raster-method}
+\alias{merge,Extent,Extent-method}
 
 \title{ 
 Merge
@@ -11,8 +12,6 @@ Merge
 
 \description{
 Merge Raster* objects to form a new Raster object with a larger spatial extent. If objects overlap, the values get priority in the same order as the arguments, but \code{NA} values are ignored (except when \code{overlap=FALSE})
-
-See the \code{\link{merge,Spatial,data.frame-method}} for merging a data.frame with attributes of Spatial objects and the \code{\link{merge,SpatialPolygons,SpatialPolygons-method}} for appending and perhaps spatially intersecting polygons.
 }
 
 \usage{
@@ -20,9 +19,9 @@ See the \code{\link{merge,Spatial,data.frame-method}} for merging a data.frame w
 }
 
 \arguments{
-  \item{x}{Raster* object}
-  \item{y}{Raster* object}
-  \item{...}{Additional Raster objects}
+  \item{x}{Raster* or Extent object}
+  \item{y}{Raster* or Extent object}
+  \item{...}{Additional Raster or Extent objects}
   \item{tolerance}{Numeric. Permissable difference in origin (relative to the cell resolution). See \code{\link[base]{all.equal}}}
   \item{filename}{Character. output filename}
   \item{overwrite}{Logical. If TRUE, "filename" will be overwritten if it exists}
@@ -43,11 +42,6 @@ RasterLayer or RasterBrick
 
 \author{Robert J. Hijmans}
 
-\seealso{
-The \code{\link{merge,Spatial,data.frame-method}} for merging a data.frame with attributes of Spatial objects
-
-The \code{\link{merge,SpatialPolygons,SpatialPolygons-method}} for appending and perhaps spatially intersecting polygons
-}
 
 \examples{
 r1 <- raster(xmx=-150, ymn=60, ncols=30, nrows=30)

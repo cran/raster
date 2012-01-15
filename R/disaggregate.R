@@ -52,7 +52,7 @@ function(x, fact=NULL, method='', filename='', ...) {
 	}
 	
 	if (method=='bilinear') {
-		return(resample(x, out, ...))
+		return(resample(x, out, method='bilinear', ...))
 	} 
 	
 	

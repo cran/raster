@@ -50,7 +50,7 @@ function(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=F
 		warning('argument "ngb" is ignored!')		
 	}
 	
-	w <- .getW(w)
+	w <- raster:::.getW(w)
 	d <- dim(w)
 	if (prod(d) == 0) { stop('ncol and nrow of w must be > 0') }
 	if (min(d %% 2) == 0) { stop('w must have uneven sides') }	
@@ -67,7 +67,7 @@ function(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=F
 		padrows <- TRUE
 	}
 
-	gll <- as.integer(.isGlobalLonLat(out))
+	gll <- as.integer(raster:::.isGlobalLonLat(out))
 	if (gll) {
 		pad <- TRUE
 	}
@@ -157,7 +157,7 @@ function(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=F
 			if (gll) {
 				v <- cbind(v[, (ncol(v)-f[2]+1):ncol(v)], v, v[, 1:f[2]])			
 			} else {
-				padCols <- matrix(padValue, nrow=tr$nrows[1]+addr+2*f[1], ncol=f[2])
+				padCols <- matrix(padValue, nrow=nrow(v), ncol=f[2])
 				v <- cbind(padCols, v, padCols)
 			}
 			paddim <- as.integer(dim(v))
@@ -186,8 +186,8 @@ function(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=F
 				}
 				if (gll) {
 					v <- cbind(v[, (ncol(v)-f[2]+1):ncol(v)], v, v[, 1:f[2]])			
-				} else {
-					padCols <- matrix(padValue, nrow=tr$nrows[i]+addr+2*f[1], ncol=f[2])
+				} else {				
+					padCols <- matrix(padValue, nrow=nrow(v), ncol=f[2])
 					v <- cbind(padCols, v, padCols)
 				}
 				paddim <- as.integer(dim(v))
@@ -216,7 +216,7 @@ function(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=F
 			if (gll) {
 				v <- cbind(v[, (ncol(v)-f[2]+1):ncol(v)], v, v[, 1:f[2]])			
 			} else {
-				padCols <- matrix(padValue, nrow=tr$nrows[i]+addr+2*f[1], ncol=f[2])
+				padCols <- matrix(padValue, nrow=nrow(v), ncol=f[2])
 				v <- cbind(padCols, v, padCols)
 			}
 			paddim <- as.integer(dim(v))

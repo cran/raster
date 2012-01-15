@@ -9,7 +9,10 @@
 cellsFromExtent <- function(object, extent, expand=FALSE) {
 	object <- raster(object) 
 	extent <- alignExtent(extent(extent), object)
-	innerBox <- intersectExtent(extent(object), extent)
+	innerBox <- intersect(extent(object), extent)
+	if (is.null(innerBox)) { 
+		return(NULL) 
+	}
 	
 	srow <- rowFromY(object, innerBox@ymax - 0.5 * yres(object))
 	erow <- rowFromY(object, innerBox@ymin + 0.5 * yres(object))

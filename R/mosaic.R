@@ -48,7 +48,7 @@ function(x, y,..., fun, tolerance=0.05, filename="", format, datatype, overwrite
 	nl <- max(unique(sapply(x, nlayers)))
 	compare(x, extent=FALSE, rowcol=FALSE, orig=TRUE, res=TRUE, tolerance=tolerance)
 
-	bb <- unionExtent(x)
+	bb <- .unionExtent(x)
 	if (nl > 1) {
 		out <- brick(x[[1]], values=FALSE, nl=nl)
 	} else {

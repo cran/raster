@@ -6,9 +6,7 @@
 
 .writeHdrPRJ <- function(x, ESRI=TRUE) {
 
-	if ( ! .requireRgdal() ) { 
-		stop('you need to install the rgdal package to be able use this function')
-	}
+	.requireRgdal()
 
 	p4s <- try(	showWKT(projection(x), file = NULL, morphToESRI = ESRI) )
 	if (class(p4s) != 'try-error') {

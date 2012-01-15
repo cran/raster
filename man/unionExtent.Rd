@@ -5,7 +5,7 @@
 \title{Extent union}
 
 \description{
-unionExtent returns the union of multiple Extent objects
+Obsolete. See \code{\link{union}}
 }
 
 \usage{
@@ -18,18 +18,17 @@ unionExtent(x, ...)
 }
  
 \value{
-a Extent object
+Extent object
 }
   
 \author{Robert J. Hijmans}
 
-\seealso{  \code{\link[raster]{intersectExtent}}, \code{\link[raster]{extent}},  \code{\link[raster]{setExtent}}} 
+\seealso{  \code{\link[raster]{union}}, \code{\link[raster]{intersect}},  \code{\link[raster]{extent}}} 
 
 \examples{
-r <- raster()
-b1 <- extent(-10, 10, -20, 20)
-b2 <- extent(0, 20, -40, 5)
-u <- unionExtent(b1, b2)
+e1 <- extent(-10, 10, -20, 20)
+e2 <- extent(0, 20, -40, 5)
+unionExtent(e1, e2)
 }
 
 \keyword{spatial}

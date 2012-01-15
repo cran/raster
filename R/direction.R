@@ -42,7 +42,7 @@ function(x, filename='', degrees=FALSE, from=FALSE, doEdge=FALSE, ...) {
 		i <- which(is.na(vals))
 		xy <- xyFromCell(out, i)
 		vals[] <- NA
-		vals[i] <- .Call('directionToNearestPoint', xy, pts, longlat, degrees, from)
+		vals[i] <- .Call('directionToNearestPoint', xy, pts, longlat, degrees, from, PACKAGE='raster')
 		out <- setValues(out, vals)
 		if (filename != '') {
 			out <- writeRaster(out, filename, ...)

@@ -26,7 +26,7 @@ Disaggregate a RasterLayer to create a new RasterLayer with a higher resolution 
 Raster object
 }
 
-\seealso{ \code{\link[raster]{aggregate}}, \code{\link{disaggregate,SpatialPolygons-method}} }
+\seealso{ \code{\link[raster]{aggregate}} }
 
 \author{Robert J. Hijmans}
 

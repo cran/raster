@@ -68,7 +68,6 @@
  
 .readCellsGDAL <- function(x, cells, layers) {
 
-	if (! .requireRgdal() ) { stop('rgdal not available') }
 	nl <- nlayers(x)
 	if (nl == 1) {
 		layers <- bandnr(x)

@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com 
+# Author: Robert J. Hijmans
 # Date :  January 2009
 # Version 0.9
 # Licence GPL v3
@@ -13,12 +13,13 @@ setMethod("Arith", signature(e1='Raster', e2='Raster'),
 		nl2 <- nlayers(e2)
 		nl <- max(nl1, nl2)
 
-		if ( ! compare(e1, e2, stopiffalse=FALSE) ) {
+		proj1 <- projection(e1)
+		proj2 <- projection(e2)
+	
+		if ( ! compare(e1, e2, prj=FALSE, stopiffalse=FALSE) ) {
 			if ( compare(e1, e2, extent=FALSE, rowcol=FALSE, prj=TRUE, res=TRUE, orig=TRUE, stopiffalse=TRUE) ) {
-				ie <- intersectExtent(extent(e1), extent(e2), validate=FALSE)
-				if (is.null(ie)) {
-					stop('Layers have non-overlapping extents')
-				}
+				ie <- intersect(extent(e1), extent(e2))
+				if (is.null(ie)) { 	stop() }
 				warning('Raster objects have different extents. Result for their intersection is returned')
 				e1 <- crop(e1, ie)
 				e2 <- crop(e2, ie)

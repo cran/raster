@@ -37,7 +37,7 @@ function(x, i, j, ... ,drop=TRUE) {
 
 	} else {
 
-		i <- intersectExtent(x, i)
+		i <- intersect(extent(x), extent(i))
 		callNextMethod(x, i=i, ..., drop=drop)
 	}
 })

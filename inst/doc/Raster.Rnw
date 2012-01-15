@@ -34,28 +34,28 @@ foo <- packageDescription("raster")
 
 \section{Introduction}
 
-This vignette describes the \R package '\verb@raster@'. A raster is a spatial (geographic) data structure that divides a region into rectangles (called 'cells' or 'pixels') and stores one or more values for each of these rectangles.  Such a data structure is also referred to as a 'grid' and is often contrasted with 'vector' data that is used to represent points, lines, and polygons. 
+This vignette describes the \R package '\verb@raster@'. A raster is a spatial (geographic) data structure that divides a region into rectangles called 'cells' (or 'pixels') that can store one or more values for each of these cells.  Such a data structure is also referred to as a 'grid' and is often contrasted with 'vector' data that is used to represent points, lines, and polygons. 
 
-The \verb@raster@ package has functions for creating, reading, manipulating, and writing raster data. The package provides, among other things, general low-level raster data manipulation functions that can easily be used to develop high-level functions. For example, to read a chunk of raster values from a file or to convert cell numbers to coordinates and back. It also implements raster algebra and several 'high level' functions for raster data manipulation that are common in Geographic Information Systems (GIS) programs. The types of functions in the raster package are similar to those in GIS programs such as Idrisi, the raster functions of GRASS, and the 'grid' module of ArcInfo ('workstation').
+The \verb@raster@ package has functions for creating, reading, manipulating, and writing raster data. The package provides, among other things, general raster data manipulation functions that can easily be used to develop more specific functions. For example, there are functions to read a chunk of raster values from a file or to convert cell numbers to coordinates and back. The package also implements raster algebra and most functions for raster data manipulation that are common in Geographic Information Systems (GIS). These functions are similar to those in GIS programs such as Idrisi, the raster functions of GRASS, and the 'grid' module of ArcInfo ('workstation').
 
-A notable feature of the \verb@raster@ package is that it can work with raster datasets that are stored on disk and are too large to be loaded into memory (RAM). The package can work with large files because it creates objects from these files that only contain information about the structure of the data, such as the number of rows and columns, the spatial extent, and the filename, but it does not attempt to read all the cell values and keep them in memory. In computations with these objects, data is read and processed in chunks. If no output filename is specified to a function, and the output raster is too large to keep in memory, the results are written to a temporary file. 
+A notable feature of the \verb@raster@ package is that it can work with raster datasets that are stored on disk and are too large to be loaded into memory (RAM). The package can work with large files because the objects it creates from these files only contain information about the structure of the data, such as the number of rows and columns, the spatial extent, and the filename, but it does not attempt to read all the cell values in memory. In computations with these objects, data is processed in chunks. If no output filename is specified to a function, and the output raster is too large to keep in memory, the results are written to a temporary file. 
 
-To understand what is covered in this vignette, you must understand the basics of the \R language. There is a multitude of on-line and other resources that can help you to get acquainted with \R. The \verb@raster@ package does not operate in isolation. For example, for vector type data it uses classes defined in the \verb@sp@ package. See the vignette and help pages of that package or Bivand {\it et al}. (2008). Bivand {\it et al}., provide an introduction to handling spatial data in \R, and to statistically oriented spatial data analysis (such as inference from spatial data, point pattern analysis, and geostatistics). 
+To understand what is covered in this vignette, you must understand the basics of the \R language. There is a multitude of on-line and other resources that can help you to get acquainted with it. The \verb@raster@ package does not operate in isolation. For example, for vector type data it uses classes defined in the \verb@sp@ package. See the vignette and help pages of that package or Bivand {\it et al}. (2008). Bivand {\it et al}., provide an introduction to the use of \R for handling spatial data, and to statistically oriented spatial data analysis (such as inference from spatial data, point pattern analysis, and geostatistics). 
 
 In the next section, some general aspects of the design of the '\verb@raster@' package are discussed, notably the structure of the main classes, and what they represent. The use of the package is illustrated in subsequent sections. \verb@raster@ has a large number of functions, not all of them are discussed here, and those that are discussed are mentioned only briefly. See the help files of the package for more information on individual functions and {\bf help("raster-package")} for an index of functions by topic.
 
 
 \section{Classes}
 
-The package is built around a number of 'S4' classes of which the \verb@RasterLayer@, \verb@RasterBrick@ , and \verb@RasterStack@ classes are the most important. See Chambers (2009) for a detailed discussion of the use of S4 classes in \R. When discussing methods that can operate on all three of these objects, they are referred to as 'Raster*' objects.
+The package is built around a number of 'S4' classes of which the \verb@RasterLayer@, \verb@RasterBrick@, and \verb@RasterStack@ classes are the most important. See Chambers (2009) for a detailed discussion of the use of S4 classes in \R. When discussing methods that can operate on all three of these objects, they are referred to as 'Raster*' objects.
 
 \subsection{RasterLayer}
 
-A \verb@RasterLayer@ object represents a single-variable raster dataset. A \verb@RasterLayer@ object always stores a number of fundamental parameters that describe it. These include the number of columns and rows, the coordinates of its spatial extent ('bounding box'), and the coordinate reference system (the 'map projection'). In addition, a \verb@RasterLayer@ can store information about the file in which the raster cell values are stored (if there is such a file). A \verb@RasterLayer@ can also hold the raster cell values in memory.
+A \verb@RasterLayer@ object represents single-layer (variable) raster data. A \verb@RasterLayer@ object always stores a number of fundamental parameters that describe it. These include the number of columns and rows, the coordinates of its spatial extent ('bounding box'), and the coordinate reference system (the 'map projection'). In addition, a \verb@RasterLayer@ can store information about the file in which the raster cell values are stored (if there is such a file). A \verb@RasterLayer@ can also hold the raster cell values in memory.
 
 \subsection{RasterStack and RasterBrick}
 
-It is quite common to analyze raster data using single-variable objects. However, in many cases multi-variable raster data sets are used. The \verb@raster@ package has two classes for multi-raster data the \verb@RasterStack@ and the \verb@RasterBrick@. The principal difference between these two classes is that a \verb@RasterBrick@ can only be linked to a single (multi-layer) file. In contrast, a \verb@RasterStack@ can be formed from separate files and/or from a few layers ('bands') from a single file. 
+It is quite common to analyze raster data using single-layer objects. However, in many cases multi-variable raster data sets are used. The \verb@raster@ package has two classes for multi-layer data the \verb@RasterStack@ and the \verb@RasterBrick@. The principal difference between these two classes is that a \verb@RasterBrick@ can only be linked to a single (multi-layer) file. In contrast, a \verb@RasterStack@ can be formed from separate files and/or from a few layers ('bands') from a single file. 
 
 In fact, a \verb@RasterStack@ is a collection of \verb@RasterLayer@ objects with the same spatial extent and resolution. In essence it is a list of \verb@RasterLayer@ objects. A \verb@RasterStack@ can easily be formed form a collection of files in different locations and these can be mixed with \verb@RasterLayer@ objects that only exist in memory.
 
@@ -72,42 +72,53 @@ An object of class \verb@Extent@ has four slots: xmin, xmax, ymin, and ymax. The
 
 \verb@Raster@  is a virtual class. This means that it cannot be instantiated (you cannot create objects from this class). It was created to allow the definition of methods for that class. These methods will be dispatched when called with a descendent of the class (i.e. when the method is called with a \verb@RasterLayer@, \verb@RasterBrick@  or \verb@RasterStack@ object as argument). This allows for efficient code writing because many methods are the same for any of these three classes, and hence a single method for \verb@Raster@ suffices. 
 
-\verb@RasterStackBrick@ is a class union of the \verb@RasterStack@ and \verb@RasterBrick@ class. This is a also a virtual class. It allows defining methods that apply to both a \verb@RasterStack@ and to a \verb@RasterBrick@. 
+\verb@RasterStackBrick@ is a class union of the \verb@RasterStack@ and \verb@RasterBrick@ class. This is a also a virtual class. It allows defining methods (functions) that apply to both \verb@RasterStack@ and \verb@RasterBrick@ objects.
 
 
 \section{Creating Raster* objects}
 
-A \verb@RasterLayer@ can easily be created from scratch using the function {\bf raster}. The default settings will create a global raster data structure with a longitude/latitude coordinate reference system and 1 by 1 degree cells. You can change these settings by providing additional arguments such as {\it xmin}, {\it nrow}, {\it ncol}, and/or {\it crs}, to the function. You can also change these parameters after creating the object. If you set the projection, this is only to properly define it, not to change it. To transform a \verb@RasterLayer@ to another coordinate reference system (projection) you can use the function {\bf projectRaster}. 
+A \verb@RasterLayer@ can easily be created from scratch using the function {\bf raster}. The default settings will create a global raster data structure with a longitude/latitude coordinate reference system and 1 by 1 degree cells. You can change these settings by providing additional arguments such as {\bf xmin}, {\bf nrow}, {\bf ncol}, and/or {\bf crs}, to the function. You can also change these parameters after creating the object. If you set the projection, this is only to properly define it, not to change it. To transform a \verb@RasterLayer@ to another coordinate reference system (projection) you can use the function {\bf projectRaster}. 
 
 Here is an example of creating and changing a \verb@RasterLayer@ object 'r' from scratch.
 <<raster-1a>>=
 library(raster)
-# \RasterLayer with the default parameters
-r <- raster()
-r
+# RasterLayer with the default parameters
+x <- raster()
+x
 
 # With other parameters
-r <- raster(ncol=36, nrow=18, xmn=-1000, xmx=1000, ymn=-100, ymx=900)
+x <- raster(ncol=36, nrow=18, xmn=-1000, xmx=1000, ymn=-100, ymx=900)
 # that can be changed
-res(r)
-res(r) <- 100
-res(r)
-ncol(r)
-ncol(r) <- 18
-ncol(r)
-res(r)
-projection(r) <- "+proj=utm +zone=48 +datum=WGS84"
-r
+res(x)
+
+# change resolution
+res(x) <- 100
+res(x)
+ncol(x)
+# change the numer of columns (affects resolution)
+ncol(x) <- 18
+ncol(x)
+res(x)
+
+# set the coordinate reference system (CRS) (define the projection)
+projection(x) <- "+proj=utm +zone=48 +datum=WGS84"
+x
 @
 
-The objects 'r' created in the example above only consist of a 'skeleton', that is, we have defined the number of rows and columns, and where the raster is located in geographic space, but there are no cell-values associated with it. Setting and accessing values is illustrated below.
+The objects 'x' created in the example above only consist of a 'skeleton', that is, we have defined the number of rows and columns, and where the raster is located in geographic space, but there are no cell-values associated with it. Setting and accessing values is illustrated below.
 
 <<raster-1b, fig=TRUE , echo=TRUE>>=
 r <- raster(ncol=10, nrow=10)
 ncell(r)
 hasValues(r)
+
 # use the 'values' function
+# e.g., 
+values(r) <- 1:ncell(r)
+# or
+set.seed(0)
 values(r) <- runif(ncell(r))
+
 hasValues(r)
 inMemory(r)
 values(r)[1:10]
@@ -115,18 +126,21 @@ values(r)[1:10]
 plot(r, main='Raster with 100 cells')
 @
 
-In some cases, for example when you change the number of columns or rows, you will lose the values associated with the \verb@RasterLayer@ if there were any (or the link to a file if there was one). The same applies, in most cases, if you change the resolution directly (as this can affect the number of rows or columns). Values are not lost when changing it via the extent as this adjusts the resolution, but does not change the number of rows or columns. 
+In some cases, for example when you change the number of columns or rows, you will lose the values associated with the \verb@RasterLayer@ if there were any (or the link to a file if there was one). The same applies, in most cases, if you change the resolution directly (as this can affect the number of rows or columns). Values are not lost when changing the extent as this change adjusts the resolution, but does not change the number of rows or columns. 
 
 <<raster-1c, echo=TRUE>>=
 hasValues(r)
 res(r)
 dim(r)
 xmax(r)
-xmax <- 0
+
+# change the maximum x coordinate of the extent (bounding box) of the RasterLayer
+xmax(r) <- 0
+
 hasValues(r)
 res(r)
 dim(r)
-xmax(r)
+
 ncol(r) <- 6
 hasValues(r)
 res(r)
@@ -134,13 +148,15 @@ dim(r)
 xmax(r)
 @
 
-The function {\bf raster} also allows you to create a \verb@RasterLayer@ from another object, including another \verb@RasterLayer@, \verb@RasterStack@ and \verb@RasterBrick@ , as well as from a SpatialPixels* and SpatialGrid* object (defined in the \verb@sp@ package), an \verb@Extent@ object, a matrix, an 'im' object (SpatStat), and 'asc' and 'kasc' objects (adehabitat).
+The function {\bf raster} also allows you to create a \verb@RasterLayer@ from another object, including another \verb@RasterLayer@, \verb@RasterStack@ and \verb@RasterBrick@ , as well as from a \verb@SpatialPixels*@ and \verb@SpatialGrid*@ object (defined in the \verb@sp@ package), an \verb@Extent@ object, a matrix, an 'im' object (SpatStat), and 'asc' and 'kasc' objects (adehabitat).
 
-It is more common, however, to create a \verb@RasterLayer@ object from a file. The raster package can use raster files in several formats, including some 'natively' supported formats and other formats via the \verb@rgdal@ package. Supported formats for reading include ESRI, ENVI, and ERDAS grids and geoTiff. Most formats supported for reading can also be written too. Here is an example using the 'Meuse' dataset (taken from the \verb@sp@ package), using a file in the native 'raster-file' format:
+It is more common, however, to create a \verb@RasterLayer@ object from a file. The raster package can use raster files in several formats, including some 'natively' supported formats and other formats via the \verb@rgdal@ package. Supported formats for reading include GeoTIFF, ESRI, ENVI, and ERDAS. Most formats supported for reading can also be written to. Here is an example using the 'Meuse' dataset (taken from the \verb@sp@ package), using a file in the native 'raster-file' format:
 
 <<raster-2a, fig=TRUE , echo=TRUE>>=
-#get the name of an example file installed with the package
-filename <- (system.file("external/test.grd", package="raster"))
+# get the name of an example file installed with the package
+# do not use this construction of your own files
+filename <- system.file("external/test.grd", package="raster")
+
 filename
 r <- raster(filename)
 filename(r)
@@ -170,14 +186,16 @@ b1 <- brick(r1, r2, r3)
 b2 <- brick(s)
 
 # create a RasterBrick  from file
-b <- brick(system.file("external/rlogo.grd", package="raster"))
+filename <- system.file("external/rlogo.grd", package="raster")
+filename
+b <- brick(filename)
 b
 nlayers(b)
 
 # extract a single RasterLayer
 r <- raster(b, layer=2)
 # equivalent to creating it from disk
-r <- raster(system.file("external/rlogo.grd", package="raster"), band=2)
+r <- raster(filename, band=2)
 @
 
 

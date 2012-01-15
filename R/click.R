@@ -15,28 +15,8 @@ setMethod('click', signature(x='missing'),
 		cbind(x=loc$x, y=loc$y)
 	}
 )
+
 	
-setMethod('click', signature(x='SpatialPolygons'), 
-	function(x, n=1, id=FALSE, xy=FALSE, type="n", ...) {
-		loc <- locator(n, type, ...)
-		xyCoords <- cbind(x=loc$x, y=loc$y)
-		if (id) {
-			text(xyCoords, labels=1:n)
-		}
-	
-		res <- overlay(x, SpatialPoints(xyCoords))
-		if (xy) {
-			res <- cbind(xyCoords, res)
-		}
-		if (is.matrix(res)) {
-			rownames(res) <- 1:n
-		}
-		return(res)
-	}
-)
-
-
-
 setMethod('click', signature(x='SpatialGrid'), 
 	function(x, n=1, id=FALSE, xy=FALSE, type="n", ...) {
 		x <- brick(x)
