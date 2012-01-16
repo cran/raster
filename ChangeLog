@@ -1,3 +1,8 @@
+--- 17-January-2012, version 1.9-64
+Bug fix in projectRaster for small rasters (< 50 rows or columns). Rported by Klaus Jacobi
+Bug fix in plot with breaks argument (legend did not always match). Reported by Jane Elith
+Setting layer names to a RasterStack now also changes the layer names of the component RasterLayer objects
+
 --- 15-January-2012, version 1.9-63
 All the recent new functions that operate on vectors (polygons mostly) have been removed and placed in the new 'geovec' package (on R-Forge).
 Fixed problem with .commonDataType, that affeced the datatype selection for crop (and some other functions). Problem report by Jon Olav Skoien.

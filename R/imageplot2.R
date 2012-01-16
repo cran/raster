@@ -26,17 +26,18 @@
 	asRaster <- function(x, col, breaks=NULL, fun=NULL) {
 		if (!is.null(breaks)) {
 			x[] <- as.numeric(cut(x, breaks, include.lowest=TRUE))
+		} else {
+			if (is.function(fun)) {
+				x[] <- fun(x)
+			}
+			r <- range(x, na.rm=TRUE)
+			if (r[1] == r[2]) {
+				r[1] <- r[1] - 0.001
+				r[2] <- r[2] + 0.001
+			}
+			x <- (x - r[1])/ (r[2] - r[1])
+			x <- round(x * (length(col)-1) + 1)
 		}
-		if (is.function(fun)) {
-			x[] <- fun(x)
-		}
-		r <- range(x, na.rm=TRUE)
-		if (r[1] == r[2]) {
-			r[1] <- r[1] - 0.001
-			r[2] <- r[2] + 0.001
-		}
-		x <- (x - r[1])/ (r[2] - r[1])
-		x <- round(x * (length(col)-1) + 1)
 		x[] <- col[x]
 		as.raster(x)
 	}

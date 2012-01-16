@@ -41,5 +41,11 @@ layerNames <- function(object) {
 		stop('incorrect number of layer names')
 	}
 	object@layernames <- .goodNames(value)
+	if (inherits(object, 'RasterStack')){
+		for (i in 1:nl) {
+			object@layers[[i]]@layernames <- object@layernames[i]
+		}
+	}
 	return(object)
 }
+
