@@ -1,5 +1,5 @@
-f7872cfd80a224e70ef71f360f9ac7ce *ChangeLog
-376d4f826df0edd0190e18321aa77807 *DESCRIPTION
+fc79eadbb765067319a14e037b856a62 *ChangeLog
+e6584ad2d5317f912871e08aeee63600 *DESCRIPTION
 74ecb4a28e46e699a9675c2bb67f9500 *NAMESPACE
 253e7c9e79d8005c20ff3e546bee38f8 *R/AAAClasses.R
 527a8da1d599382f14c3d2356ad9d7c4 *R/AAClasses.R
@@ -116,7 +116,7 @@ ac0df6867501d9447c1cb24c5d5f60f1 *R/hist.R
 ed4d5f8bca1d4b7e9ccaa125336ba7aa *R/idwValue.R
 8195134c8949b78b2a22cf53aff77aff *R/image.R
 9d948ad1d5e67251efb8b38bac57cf82 *R/imageplot.R
-5162ca7859b361f9b4980e3a967ffec7 *R/imageplot2.R
+cbaa758a57c0d4e75232233492595c0d *R/imageplot2.R
 0829d0247b919f050c333a34c80bb9a8 *R/index.R
 b1e9a7ea7ecdfe0cbf7675fe45c1bbe8 *R/indexDouble.R
 0a88a48e6035e1df815de2c7553cf63d *R/indexReplace.R
@@ -130,7 +130,7 @@ a452de983d5944d88cbaeffb5d0c0a0a *R/is.na.R
 1e330d9826feeb9bd36e9222e74cddcb *R/isLonLat.R
 8e6800c1bf4905702400dfc091d2d410 *R/kml.R
 5c95a56f36e9252040c5e108b2822817 *R/kml_multiple.R
-d66aa8b878a92c241a81b862fb846e46 *R/layerNames.R
+d2a8365a060552fc877ba7a3d46e000b *R/layerNames.R
 a8dcd13ba37c68ff557327ccb694e026 *R/layers.R
 af8d4b3a078c1c7b5ca437a6bddcc4bc *R/makeProjString.R
 c71f6fefdce846adad240670ee674f99 *R/makeRasterList.R
@@ -162,7 +162,7 @@ cc6283b5230fb14e925e4b16ee0092d4 *R/notused.R
 5d8fbee6cdd40831c4fa7e7d5fb06184 *R/optionsSave.R
 93b4129cf7403d864e22228fdeffb5d9 *R/optionsSet.R
 947d06ce4af0877a06610799336ef555 *R/origin.R
-c11f7ae322bc15ce4033ef895fb862de *R/overlay.R
+5877102fe28adbde0dc06162ec23a163 *R/overlay.R
 8d133d44a56a333e8c5336b23e713cb8 *R/pairs.R
 7de276db7fc7416d2d22c9c7697a5b54 *R/persp.R
 c09357af65299d26f62d1600510e7742 *R/plot.R
@@ -174,7 +174,7 @@ b01a99b4de11201fe20d3b6474732e3c *R/plotCT.R
 e9871804a14fee4cb06dadac5c5420a0 *R/pointdistance.R
 a26ec0569a989a6a5e35c1880e01a286 *R/predict.R
 e1cd98945b67078bdfc202929f3c56e7 *R/progressBar.R
-6bab04ccf9b9dbee0b55b740510a32e3 *R/projectRaster.R
+60410664e2d7ec57b45b6f605529675e *R/projectRaster.R
 3bbc0bf438ea8190d847fa9b800e75ca *R/projection.R
 d5a1ce960d1ce121f70846636f1733b3 *R/properties.R
 d026104ec33cbe96309286ebd2412ef4 *R/quad.R
@@ -265,9 +265,9 @@ b4569431ba721675f71bb0446bfbd9aa *R/zzz.R
 a309f17dc9238395a1219dcdeff4b3f6 *inst/doc/Raster.Rnw
 7b39c766e1ad5d09323e0478c07c8615 *inst/doc/Raster.pdf
 b19c28ec2d02d8d503521d72953098a9 *inst/doc/functions.Rnw
-0c7a167dd66d3e2f54d0896ea8cb30d6 *inst/doc/functions.pdf
+94f34c7bf671e21524a6af405bbe9f56 *inst/doc/functions.pdf
 cdf4af6595c744554a8b1e658c524cef *inst/doc/rasterfile.Rnw
-d2310fe2cd2166d58773e6d42f2544a9 *inst/doc/rasterfile.pdf
+574542ccfbc91cea0ed475115f682f37 *inst/doc/rasterfile.pdf
 40454ad99e7621a101f07038f6c55979 *inst/external/countries.csv
 7e1cc4f8e01df980c0e3b54d9797d6cd *inst/external/rlogo.grd
 b3ed7227bb04142c4a36cbe25067d5ac *inst/external/rlogo.gri

@@ -82,7 +82,7 @@ function(x, y, ..., fun, filename="", datatype, format, overwrite, progress, uns
 			test3 <- try ( do.call(fun, testlst), silent=TRUE )
 			nlout <- length(test3)/5
 			if (class(test3) == "try-error" | length(test3) < 5) {
-				stop('cannot use this formula, it is not vectorized')
+				stop('cannot use this formula, probably because it is not vectorized')
 			}
 		} 
 	}

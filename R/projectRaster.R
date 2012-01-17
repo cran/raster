@@ -22,7 +22,7 @@ projectExtent <- function(object, crs) {
 #	xy <- matrix(c(xmn, ymx, xha, ymx, xmx, ymx, xmn, yha, xha, yha, xmx, yha, xmn, ymn, xha, ymn, xmx, ymn), ncol=2, byrow=T)
 	
 	
-	rows <- unique(c(seq(1,nrow(object), by=max(1, round(ncol(object)/50))), nrow(object)))
+	rows <- unique(c(seq(1,nrow(object), by=max(1, round(nrow(object)/50))), nrow(object)))
 	cols <- unique(c(seq(1,ncol(object), by=max(1, round(ncol(object)/50))), ncol(object)))
 	
 	xy1 <- xyFromCell(object, cellFromRowCol(object, rows, 1))
@@ -45,12 +45,22 @@ projectExtent <- function(object, crs) {
 	xy4[1,1] <- xy4[1,1] - 0.5 * xres(object)
 	xy4[ncol(xy4),1] <- xy4[ncol(xy4),1] + 0.5 * xres(object)
 	
+	
 	# added for circumpolar data:
-	rows <- c(seq(min(ncol(object), 25),nrow(object), by=50))
-	cols <- c(seq(min(ncol(object), 25),ncol(object), by=50))
-	xy5 <- xyFromCell(object, cellFromRowColCombine(object, rows, cols))
+	if (nrow(object) > 75 & ncol(object) > 75) {
+	
+		rows <- c(seq(min(nrow(object), 25), nrow(object), by=50))
+		cols <- c(seq(min(ncol(object), 25), ncol(object), by=50))
+		xy5 <- xyFromCell(object, cellFromRowColCombine(object, rows, cols))
+		
+		xy <- rbind(xy1, xy2, xy3, xy4, xy5)
+		
+	} else {
 
-	xy <- rbind(xy1, xy2, xy3, xy4, xy5)
+		xy <- rbind(xy1, xy2, xy3, xy4)
+	
+	}
+	
 
 	
 	res <- .Call("transform", projfrom, projto, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
