@@ -22,9 +22,10 @@
 		stop('provide a valid filename')
 	}
 
-	# quick fix for opendap https://r-forge.r-project.org/forum/message.php?msg_id=5015
-	if (tolower(substr(x, 1, 4)) != 'http') {	
-		x <- normalizePath(x)
+	# fix for opendap https://r-forge.r-project.org/forum/message.php?msg_id=5015
+	start <- tolower(substr(x, 1, 4))
+	if (start != 'http' & start != 'ftp') {	
+		try( x <- normalizePath( x, mustWork=FALSE), silent=TRUE )
 	}
 	
 	fileext <- toupper(extension(x)) 

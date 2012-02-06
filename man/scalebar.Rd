@@ -9,7 +9,7 @@ Add a scalebar to a plot
 }
 
 \usage{
-scalebar(d, xy = NULL, type = "line", divs = 2, below = "", lonlat = NULL, labels, adj=c(0.5, -0.5), lwd = 2, ...)
+scalebar(d, xy = NULL, type = "line", divs = 2, below = "", lonlat = NULL, label, adj=c(0.5, -0.5), lwd = 2, ...)
 }
 
 \arguments{
@@ -18,9 +18,9 @@ scalebar(d, xy = NULL, type = "line", divs = 2, below = "", lonlat = NULL, label
 \item{type}{"line" or "bar"}
 \item{divs}{Number of divisions for a bar type. 2 or 4}
 \item{below}{Text to go below scalebar (e.g., "kilometers")}
-\item{lonlat}{If not NULL, this should be the average latitude of the plot. In that case d is interpreted to be in kilometers, but the scalebar is drawn in equivalent units in degrees}
+\item{lonlat}{Logical or NULL. If logical, \code{TRUE} indicates if the plot is using longitude/latitude coordinates. If \code{NULL} this is guessed from the plot's coordinates}
 \item{adj}{adjustment for text placement}
-\item{labels}{Vector of three numbers to label the scale bar (beginning, midpoint, end)}
+\item{label}{Vector of three numbers to label the scale bar (beginning, midpoint, end)}
 \item{lwd}{line width for the "line" type scalebar}
 \item{...}{arguments to be passed to other methods }
 }

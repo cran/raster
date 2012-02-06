@@ -81,8 +81,8 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 		} else {
 			p <- path
 		}
-		if (!file.exists(p)) {
-			stop('path does not exist: ', p)
+		if (!file.exists(p) & !file.exists(path)) {
+			stop('path does not exist: ', path)
 		}
 	}
 	if (substr(path, nchar(path), nchar(path)) != '/' & substr(path, nchar(path), nchar(path)) != '\\') {
