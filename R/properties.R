@@ -29,6 +29,15 @@
 }	
 
 
+filename <- function(x) {
+	if (inherits(x, 'RasterStack')) { 
+		return(x@filename) 
+	} 
+	return(x@file@name)
+}
+
+
+
 	
 #	fileext <- toupper(extension(fn)) 
 #	if ( fileext == ".GRD" | fileext == ".GRI" ) {

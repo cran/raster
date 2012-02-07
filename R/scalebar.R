@@ -42,50 +42,80 @@
 }
 
 
-scalebar <- function(d, xy=NULL, type='line', divs=2, below='', lonlat=NULL, labels, adj=c(0.5, -0.5), lwd=2, ...){
-	if (!is.null(lonlat)) {
-		p <- cbind(0, lonlat)
-		dd <- .destPoint(p, d)
+scalebar <- function(d, xy=NULL, type='line', divs=2, below='', lonlat=NULL, label, adj=c(0.5, -0.5), lwd=2, ...){
+
+	stopifnot(type %in% c('line', 'bar'))
+	pr <- par()
+	if (is.null(lonlat)) {
+		if ( pr$usr[1] > -181 & pr$usr[2] < 181 &  pr$yaxp[1] > -200 &  pr$yaxp[2] < 200  ) {
+			lonlat <- TRUE
+		} else {
+			lonlat <- FALSE
+		}
+	}
+
+	if (lonlat) {
+		lat <- mean(pr$yaxp[1:2])
+		if (missing(d)) {
+			dx <- (pr$usr[2] - pr$usr[1]) / 10
+			d <- pointDistance(cbind(0, lat), cbind(dx, lat), TRUE)
+			d <- signif(d / 1000, 2) 
+			label <- NULL
+		}
+		p <- cbind(0, lat)
+		dd <- .destPoint(p, d * 1000)
 		dd <- dd[1,1]
 	} else {
+		if (missing(d)) {
+			d <- round(10*(pr$usr[2] - pr$usr[1])/10) / 10
+			label <- NULL
+		}
 		dd <- d
 	}
 	
     if(is.null(xy)) {
 		padding=c(5,5) / 100
 		#defaults to a lower left hand position
-		parrange <- c(par()$usr[2] - par()$usr[1], par()$usr[4] - par()$usr[3])
-		xy <- c(par()$usr[1]+(padding[1]*parrange[1]),par()$usr[3]+(padding[2]*parrange[2]))
+		parrange <- c(pr$usr[2] - pr$usr[1], pr$usr[4] - pr$usr[3])
+		xy <- c(pr$usr[1]+(padding[1]*parrange[1]), pr$usr[3]+(padding[2]*parrange[2]))
 	}
 
 	if (type == 'line') {
 		lines(matrix(c(xy[1], xy[2], xy[1]+dd, xy[2]), byrow=T, nrow=2), lwd=lwd, ...)
-		if (missing(labels)) {
-			labels <- paste(d)
+		if (missing(label)) {
+			label <- paste(d)
+		}
+		if (is.null(label)) {
+			label <- paste(d)
 		}
 		if (missing(adj)) {
 			adj <- c(0.5, -0.2-lwd/20 )
 		}
-		text(xy[1]+(0.5*dd), xy[2],labels=labels, adj=adj,...)
+		text(xy[1]+(0.5*dd), xy[2],labels=label, adj=adj,...)
 		
 		
 	} else if (type == 'bar') {
+		stopifnot(divs > 0)
 		
 		if (missing(adj)) {
 			adj <- c(0.5, -1 )
 		}
-		lwd <- dd / 20
+		lwd <- dd / 25
 		
 		if (divs==2) {
 			half <- xy[1] + dd / 2
 			polygon(c(xy[1], xy[1], half, half), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='white')
 			polygon(c(half, half, xy[1]+dd, xy[1]+dd ), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='black')
-			if (missing(labels)) {
-				labels <- c('0', '', d)
+			if (missing(label)) {
+				label <- c('0', '', d)
 			}
-			text(xy[1], xy[2],labels=labels[1], adj=adj,...)
-			text(xy[1]+0.5*dd, xy[2],labels=labels[2], adj=adj,...)
-			text(xy[1]+dd, xy[2],labels=labels[3], adj=adj,...)
+			if (is.null(label)) {
+				label <- c('0', '', d)
+			}
+			
+			text(xy[1], xy[2],labels=label[1], adj=adj,...)
+			text(xy[1]+0.5*dd, xy[2],labels=label[2], adj=adj,...)
+			text(xy[1]+dd, xy[2],labels=label[3], adj=adj,...)
 		} else {
 			q1 <- xy[1] + dd / 4
 			half <- xy[1] + dd / 2
@@ -95,12 +125,15 @@ scalebar <- function(d, xy=NULL, type='line', divs=2, below='', lonlat=NULL, lab
 			polygon(c(q1, q1, half, half), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='black')
 			polygon(c(half, half, q3, q3 ), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='white')
 			polygon(c(q3, q3, end, end), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='black')
-			if (missing(labels)) {
-				labels <- c('0', round(0.5*d), d)
+			if (missing(label)) {
+				label <- c('0', round(0.5*d), d)
 			}
-			text(xy[1], xy[2], labels=labels[1], adj=adj,...)
-			text(half, xy[2], labels=labels[2], adj=adj,...)
-			text(end, xy[2],labels=labels[3], adj=adj,...)
+			if (is.null(label)) {
+				label <- c('0', round(0.5*d), d)
+			}
+			text(xy[1], xy[2], labels=label[1], adj=adj,...)
+			text(half, xy[2], labels=label[2], adj=adj,...)
+			text(end, xy[2],labels=label[3], adj=adj,...)
 		}
 			
 		if (below != "") {

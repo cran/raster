@@ -1,5 +1,5 @@
-fc79eadbb765067319a14e037b856a62 *ChangeLog
-e6584ad2d5317f912871e08aeee63600 *DESCRIPTION
+222d7e98dd5662e03bd32e8c1180d485 *ChangeLog
+877071ab26bea847bce53d945e2e3012 *DESCRIPTION
 74ecb4a28e46e699a9675c2bb67f9500 *NAMESPACE
 253e7c9e79d8005c20ff3e546bee38f8 *R/AAAClasses.R
 527a8da1d599382f14c3d2356ad9d7c4 *R/AAClasses.R
@@ -81,7 +81,6 @@ cf30b22ef349ec86ac934fbf781bbb4c *R/extentUnion.R
 0515b2fe3912fa9c2995f49bbebbe59f *R/extractPoints.R
 173cae468cfdced4071f5605f3600e68 *R/extractPolygons.R
 b152118fb8681e612905be9eb1cbfa78 *R/factor.R
-87632607d843a117f25f24f1e8ad8adb *R/filename.R
 5559b633eff091779be327d29dc06844 *R/fixDBFnames.R
 a45c00fe4c1d81b3b4dfe47f2a994ec5 *R/flip.R
 7b528691467d4f344e8984e50198e6ae *R/focal.R
@@ -93,7 +92,7 @@ b5eb6df3708debfaf9e79d454e7ddbfe *R/freq.R
 ddea09ee2097d3e3b834ca78e138ec87 *R/fullFileName.R
 6b584ebb4924fb9a82ce10ff0a73f79d *R/gainoffset.R
 fe09044bc567987485553e5c659af59b *R/gdalFormats.R
-4fe1051f023755bce9f7ea7f897018ed *R/getData.R
+62b65f3dc4c5ce64951dc6782b69b066 *R/getData.R
 f288089672b6a148e01393d72a8ef701 *R/getValues.R
 f7b73cf08bfa244d90d59667490e8471 *R/getValuesBlock.R
 18d0da1fb9399e22dbbc8dff3526cc6c *R/getValuesRows.R
@@ -176,14 +175,14 @@ a26ec0569a989a6a5e35c1880e01a286 *R/predict.R
 e1cd98945b67078bdfc202929f3c56e7 *R/progressBar.R
 60410664e2d7ec57b45b6f605529675e *R/projectRaster.R
 3bbc0bf438ea8190d847fa9b800e75ca *R/projection.R
-d5a1ce960d1ce121f70846636f1733b3 *R/properties.R
+31948fdd053643d4d2c9b2e4637120c9 *R/properties.R
 d026104ec33cbe96309286ebd2412ef4 *R/quad.R
 eb1b3fabe0fd95ad57bc99aa94462e0f *R/quantile.R
 d6a534ca486b09a9a9cafd393a8c5789 *R/raster.R
 a59ad3a30aa277eb63cfc63da8aa6b93 *R/rasterFromASCII.R
 7e49b4e7ec48cfbf86d8f864002f2285 *R/rasterFromBIL.R
 a02966a8d729b38dc4140a8f3a61cdea *R/rasterFromCells.R
-a0712f00f06a7eafca1b7e4a1efe5894 *R/rasterFromFile.R
+21aaf791f4bb27681f996a27687991ef *R/rasterFromFile.R
 3650903679e8e2c37de23cc5e83c3338 *R/rasterFromGDAL.R
 a83f407da2bdc99825873a1ac2fa23c4 *R/rasterFromIDRISI.R
 6f863e3431c953276373420c14b2b367 *R/rasterFromRasterFile.R
@@ -213,7 +212,7 @@ c73ec29a3524488da4e8f1c563e87ee0 *R/rowMinMax.R
 fe0ac262e0014bc559efe498a748f9d8 *R/sampleInt.R
 95ee00e81c1a2936dcd4963cebda5dc5 *R/sampleRandom.R
 cacaf58506650d6dc0a0aed6c0220deb *R/sampleRegular.R
-4520f5b39ead856534e9dfa0ed210de7 *R/scalebar.R
+938d1a0519fe8a5f2be7a7fe8e21e3da *R/scalebar.R
 f2376bdc488a0b5b3f1eb8145bdbc1e2 *R/setCV.R
 40e9f04b0c551b81cfd9b1d6eaa80e84 *R/setExtent.R
 571ac033fc42a303c7243026d74449b2 *R/setFileExt.R
@@ -233,7 +232,7 @@ d89e9a9dd786c986bed756d775dfbe93 *R/stretch.R
 47291020b2032f53b938abb89b6d698d *R/subset.R
 3b5936b064a354cec5e35c1255b3cb9b *R/summary-methods.R
 388b3f562e464174f824dffa7f3c3860 *R/summary.R
-861842874faf872e4cd0047342820ceb *R/terrain.R
+606f3924e8502a160761ae200497816c *R/terrain.R
 856384e90bfead73b6c7da1b438fac3d *R/text.R
 e0b2fd38f7dbca11f4bb717f479fc3a8 *R/tmpFile.R
 4cf4cc41f381a1ce75222f0f5f83f9f5 *R/transpose.R
@@ -403,7 +402,7 @@ fe12222e600e2610e61e7457913a457b *man/sampleInt.Rd
 e867a362d53517df859cc160924ce172 *man/sampleRandom.Rd
 cd90472b666391eec7921fe8689f935b *man/sampleRegular.Rd
 a9e95fb11b0fcec0614de5c12e13d257 *man/saveStack.Rd
-dd3f82566b5bdb248639c8de297c1115 *man/scalebar.Rd
+f290bce3c7d8c5ca0c8054e64518d5c5 *man/scalebar.Rd
 ec25e9f688b2e56b94800e6432a6dd41 *man/setExtent.Rd
 bae06497de4a21c774e9344e13c51872 *man/setMinMax.Rd
 eda34eadd26fe46ee29724e467819513 *man/setValues.Rd
