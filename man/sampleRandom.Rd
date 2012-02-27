@@ -7,7 +7,7 @@
 \title{Random sample}
 
 \description{
-Take a random sample from a Raster* object. 
+Take a random sample from the cell values of a Raster* object (without replacement). 
 }
 
 \usage{

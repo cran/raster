@@ -281,7 +281,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 
 .SRTM <- function(lon, lat, download, path) {
 	stopifnot(lon >= -180 & lon <= 180)
-	stopifnot(lat >= -60 & lon <= 60)
+	stopifnot(lat >= -60 & lat <= 60)
 	
 	rs <- raster(nrows=24, ncols=72, xmn=-180, xmx=180, ymn=-60, ymx=60 )
 	rowTile <- rowFromY(rs, lat)

@@ -7,7 +7,7 @@
 \title{Focal values}
 
 \description{
-Calculate "moving window" values for the neighborhood of focal cells using a matrix of weights, perhaps in combination with a function.
+Calculate focal ("moving window") values for the neighborhood of focal cells using a matrix of weights, perhaps in combination with a function.
 }
 
 \usage{
@@ -19,7 +19,7 @@ Calculate "moving window" values for the neighborhood of focal cells using a mat
   
 \item{w}{matrix of weights (the moving window), e.g. a 3 by 3 matrix; see Details. The matrix can also be expressed as the number of cells in a single direction or in two directions from the focal cell, in which case the weights are all set to 1. I.e. \code{w=3} refers to a 3 by 3 matrix: 2 cells at each side of the focal cell, queen's case, 9 cells in total. This is equivalent to \code{w=c(3,3)}. You can also specify a rectangular neighborhood, e.g. \code{w=c(3,5)}; but the sides must be odd numbers. If you need even sides, you can add a column or row with weights of zero.}
   
-\item{fun}{function (optional). The function fun should take multiple numbers, and return a single number. For example mean, modal, min or max. It should also accept a na.rm argument (or ignore it, e.g. as one of the 'dots' arguments. For example, \code{length} will fail, but \code{function(x, ...){na.omit(length(x))}} works. }
+\item{fun}{function (optional). The function fun should take multiple numbers, and return a single number. For example mean, modal, min or max. It should also accept a \code{na.rm} argument (or ignore it, e.g. as one of the 'dots' arguments. For example, \code{length} will fail, but \code{function(x, ...){na.omit(length(x))}} works. }
 
 \item{filename}{character. Filename for a new raster (optional)}
  
@@ -43,17 +43,13 @@ Calculate "moving window" values for the neighborhood of focal cells using a mat
 
 There is, however, a difference if \code{NA} values are considered. One can use the \code{na.rm=TRUE} option which may make sense when using a function like \code{mean}. However, the results would be wrong when using a weights matrix.
 
-
-Gaussian filter: \code{filter=matrix(c(1,2,3,2,1,2,3,4,3,2,3,4,5,4,3,2,3,4,3,2,1,2,3,2,1), nrow=5)/65}
-
 Laplacian filter: \code{filter=matrix(c(0,1,0,1,-4,1,0,1,0), nrow=3)}
 
 Sobel filter: \code{filter=matrix(c(1,2,1,0,0,0,-1,-2,-1) / 4, nrow=3)}
 
-
 The following additional arguments can be passed, to replace default values for this function
 \tabular{rll}{
-\tab \code{overwrite} \tab Logical. If TRUE, "filename" will be overwritten if it exists \cr
+\tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
 \tab \code{format} \tab Character. Output file type. See \link[raster]{writeRaster} \cr
 \tab \code{datatype} \tab Character. Output data type. See \link[raster]{dataType} \cr
 \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
@@ -82,8 +78,20 @@ r3 <- focal(r, w=matrix(1/9,nrow=3,ncol=3))
 # 5x5 mean filter
 r5 <- focal(r, w=matrix(1/25,nrow=5,ncol=5)) 
 
-# Gaussian filter
-gf=matrix(c(1,2,3,2,1,2,3,4,3,2,3,4,5,4,3,2,3,4,3,2,1,2,3,2,1), nrow=5)/65
+# Gaussian filter for square cells
+fgauss <- function(sigma, n=5) {
+	m <- matrix(nc=n, nr=n)
+	col <- rep(1:n, n)
+	row <- rep(1:n, each=n)
+	x <- col - ceiling(n/2)
+	y <- row - ceiling(n/2)
+# according to http://en.wikipedia.org/wiki/Gaussian_filter
+	m[cbind(row, col)] <- 1/(2*pi*sigma^2) * exp(-(x^2+y^2)/(2*sigma^2))
+# sum of weights should add up to 1	
+	m / sum(m)
+}
+
+gf=fgauss(1.5)
 rg <- focal(r, w=gf)
 
 # The max value for the lower-rigth corner of a 3x3 matrix around a focal cell

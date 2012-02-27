@@ -5,6 +5,9 @@
 
 
 .gridDistance2 <- function(x, filename='', ...) {
+
+# currently only works for planar data! 
+
 	rs <- res(x)
 	xdist <- rs[1]
 	ydist <- rs[2]
@@ -17,30 +20,27 @@
 		f <- rep(Inf, nc)
 		z1a <- z2a <- raster(x)
 		x <- getValues(x)
-		a = as.integer(dim(z1))
-		b = c(xdist, ydist, xydist)
-		zer = as.integer(0)
-		one = as.integer(1)
-		two = as.integer(2)
-		z1a[] <- .Call('broom', x, f, a , b, one, as.integer(2), NAOK=TRUE, PACKAGE='raster')
-		z2a[] <- .Call('broom', x, f, a , b, zer, as.integer(2), NAOK=TRUE, PACKAGE='raster')
+		a <- as.integer(dim(z1))
+		b <- c(xdist, ydist, xydist)
+		z1a[] <- .Call('broom', x, f, a , b, as.integer(1), NAOK=TRUE, PACKAGE='raster')
+		z2a[] <- .Call('broom', x, f, a , b, as.integer(0), NAOK=TRUE, PACKAGE='raster')
 		x <- min(z1a, z2a)
 		if (filename != '') {
 			x <- writeRaster(x, filename, ...)
 		}
 	} else {
 		tr <- blockSize(z1)
-		pb <- pbCreate(tr$n * 2)
+		pb <- pbCreate(tr$n*2, ...)
 		z1 <- writeStart(z1, rasterTmpFile())
 		i <- 1
 		v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
 		f <- rep(Inf, nc)
-		z <- .Call('broom', v, 	f, as.integer(c(tr$nrows[i], nc)), c(xdist, ydist, xydist), as.integer(1), as.integer(2), NAOK=TRUE, PACKAGE='raster')
+		z <- .Call('broom', v, 	f, as.integer(c(tr$nrows[i], nc)), c(xdist, ydist, xydist), as.integer(1), NAOK=TRUE, PACKAGE='raster')
 		z1 <- writeValues(z1, z, tr$row[i])
 		f <- z[(length(z)-nc+1):length(z)]
 		for (i in 2:tr$n) {
 			v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
-			z <- .Call('broom', v, f, as.integer(c(tr$nrows[i], nc)), c(xdist, ydist, xydist), as.integer(1),as.integer(2), NAOK=TRUE, PACKAGE='raster')
+			z <- .Call('broom', v, f, as.integer(c(tr$nrows[i], nc)), c(xdist, ydist, xydist), as.integer(1), NAOK=TRUE, PACKAGE='raster')
 			z1 <- writeValues(z1, z, tr$row[i])
 			f <- z[(length(z)-nc+1):length(z)]
 			pbStep(pb, i)
@@ -51,12 +51,12 @@
 		i <- tr$n
 		v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
 		f <- rep(Inf, nc)
-		z <- .Call('broom', v, 	f, as.integer(c(tr$nrows[i], nc)), c(xdist, ydist, xydist), as.integer(0),as.integer(2), NAOK=TRUE, PACKAGE='raster')
+		z <- .Call('broom', v, 	f, as.integer(c(tr$nrows[i], nc)), c(xdist, ydist, xydist), as.integer(0), NAOK=TRUE, PACKAGE='raster')
 		z2 <- writeValues(z2, z, tr$row[i])
 		f <- z[1:nc]
 		for (i in (tr$n-1):1) {
 			v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
-			z <- .Call('broom', v, f, as.integer(c(tr$nrows[i], nc)), c(xdist, ydist, xydist), as.integer(0),as.integer(2), NAOK=TRUE, PACKAGE='raster')
+			z <- .Call('broom', v, f, as.integer(c(tr$nrows[i], nc)), c(xdist, ydist, xydist), as.integer(0), NAOK=TRUE, PACKAGE='raster')
 			z2 <- writeValues(z2, z, tr$row[i])
 			f <- z[1:nc]
 			pbStep(pb, i)
@@ -68,7 +68,4 @@
 	}
 	return(x)
 }
-
-
-
 

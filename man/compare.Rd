@@ -9,7 +9,7 @@ Evaluate whether a two or more rasters have the same extent, number of rows and 
 }
 
 \usage{
-compare(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=FALSE, 
+compare(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE, orig=FALSE, 
 			rotation=TRUE, tolerance, stopiffalse=TRUE, showwarning=FALSE) 
 }
 
@@ -18,7 +18,7 @@ compare(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=FALSE,
   \item{...}{Additional Raster* objects}
   \item{extent}{Logical. If \code{TRUE}, bounding boxes are compared}
   \item{rowcol}{Logical. If \code{TRUE}, number of rows and columns of the objects are compared}
-  \item{prj}{Logical. If \code{TRUE} projections are compared.}
+  \item{crs}{Logical. If \code{TRUE}, coordinate reference systems are compared.}
   \item{res}{Logical. If \code{TRUE}, resolutions are compared (redundant when checking extent and rowcol)}
   \item{orig}{Logical. If \code{TRUE}, origins are compared}
   \item{rotation}{Logical. If \code{TRUE}, rotations are compared}  

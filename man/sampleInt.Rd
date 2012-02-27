@@ -5,7 +5,7 @@
 \title{Sample integer values}
 
 \description{
-Take a random sample from a range of Integer values between 1 and n. Its purpose is similar to that of \code{\link[base]{sample.int}}, but that function fails when n is very large.
+Take a random sample from a range of integer values between 1 and \code{n}. Its purpose is similar to that of \code{\link[base]{sample}}, but that function fails when \code{n} is very large.
 }
 
 \usage{
@@ -13,9 +13,9 @@ sampleInt(n, size, replace=FALSE)
 }
 
 \arguments{
-  \item{n}{a poistive number (integer); the number of items to choose from }
-  \item{size}{a non-negative integer; the number of items to choose.}  
-  \item{replace}{logical. Should sampling be with replacement?}
+  \item{n}{Positive number (integer); the number of items to choose from }
+  \item{size}{Non-negative integer; the number of items to choose}  
+  \item{replace}{Logical. Should sampling be with replacement?}
  }
 
 

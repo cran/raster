@@ -27,8 +27,9 @@ a vector of cell numbers
   
 \author{Robert J. Hijmans}
 
-\seealso{  \code{\link[raster]{extent}}, \code{\link[raster]{polygonFromExtent}}, \code{\link{cellFromXY}}
- }
+\seealso{ 
+ \code{\link[raster]{extent}}, \code{\link{cellFromXY}}
+}
 
 \examples{
 r <- raster()

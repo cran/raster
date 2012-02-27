@@ -42,7 +42,7 @@ function(x, y, ...){
 
 setMethod('rasterize', signature(x='Extent', y='Raster'), 
  	function(x, y, ...) {
-		y <- polygonFromExtent(y)
+		y <- as(y, 'SpatialPolygons')
 		.polygonsToRaster(x, y, ...)
 	}
 )

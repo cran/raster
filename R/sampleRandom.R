@@ -81,10 +81,8 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, sp=FALSE, asR
 			}
 		} else { 
 			x <- as.vector(x)
-			if (length(x) > size ) {
-				s = sampleInt(length(x), size)
-				x <- x[s]			
-			}
+			s <- sampleInt(length(x), size)
+			x <- x[s]			
 		}
 		
 	} else {

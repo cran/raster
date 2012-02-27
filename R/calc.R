@@ -52,7 +52,6 @@ if (!isGeneric("calc")) {
 		
 	if (nl == 1) {
 
-
 	# the main difference with nl > 1 is that
 	# it is important to avoid using apply when a normal fun( ) call will do. 
 	# that is a MAJOR time saver. But in the case of a RasterStackBrick it is more
@@ -63,9 +62,12 @@ if (!isGeneric("calc")) {
 			makemat <- TRUE	
 			tstdat <- matrix(tstdat, ncol=1)
 			if (missing(na.rm)) {
-				test <- try(fun(tstdat), silent=TRUE)
+				test <- try( apply(tstdat, 1, fun), silent=TRUE)
 			} else {
-				test <- try(fun(tstdat, na.rm=na.rm), silent=TRUE)
+				test <- try( apply(tstdat, 1, fun, na.rm=na.rm), silent=TRUE)
+			}
+			if (length(test) < length(tstdat) | class(test) == 'try-error') {
+				stop('cannot forceapply this function')
 			}
 			if (is.matrix(test)) {
 				if (ncol(test) > 1) {
@@ -89,11 +91,13 @@ if (!isGeneric("calc")) {
 				}
 			} else {
 				test <- try(fun(tstdat), silent=TRUE)
-				if (class(test) == 'try-error') {
+				if (length(test) < length(tstdat) | class(test) == 'try-error') {
 					doapply <- TRUE
+					makemat <- TRUE	
+					tstdat <- matrix(tstdat, ncol=1)					
 					test <- try( apply(tstdat, 1, fun), silent=TRUE)
 					if (class(test) == 'try-error') {
-						stop("cannot use this function") 
+						stop("cannot use this function")
 					}
 					if (is.matrix(test)) {
 						if (ncol(test) > 1) {

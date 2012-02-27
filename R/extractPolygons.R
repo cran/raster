@@ -109,7 +109,11 @@ function(x, y, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, 
 							value <- .cellValues(x, cell, layer=layer, nl=nl)
 							if (weights) {
 								weight=0
-								r <- cbind(cell, value, weight)
+								if (cellnumbers) {
+									r <- cbind(cell, value, weight)
+								} else {
+									r <- cbind(value, weight)								
+								}
 							} else if (cellnumbers) {
 								r <- cbind(cell, value)					
 							} else {
