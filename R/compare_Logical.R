@@ -28,7 +28,7 @@
 
 setMethod('==', signature(e1='BasicRaster', e2='BasicRaster'),
 	function(e1,e2){
-		cond <- compare(c(e1, e2), extent=TRUE, rowcol=TRUE, prj=TRUE, tolerance=0.05, stopiffalse=FALSE) 
+		cond <- compare(c(e1, e2), extent=TRUE, rowcol=TRUE, crs=TRUE, tolerance=0.05, stopiffalse=FALSE) 
 		return(cond)
 	}
 )	
@@ -36,7 +36,7 @@ setMethod('==', signature(e1='BasicRaster', e2='BasicRaster'),
 
 setMethod('!=', signature(e1='BasicRaster', e2='BasicRaster'),
 	function(e1,e2){
-		cond <- compare(c(e1, e2), extent=TRUE, rowcol=TRUE, prj=TRUE, tolerance=0.05, stopiffalse=FALSE) 
+		cond <- compare(c(e1, e2), extent=TRUE, rowcol=TRUE, crs=TRUE, tolerance=0.05, stopiffalse=FALSE) 
 		return(!cond)
 	}
 )	
@@ -250,7 +250,7 @@ setMethod("Compare", signature(e1='Raster', e2='Raster'),
 			r <- raster(e1)
 		}
 	
-		cond <- compare(c(r, e2), extent=TRUE, rowcol=TRUE, prj=TRUE, tolerance=0.05, stopiffalse=FALSE) 
+		cond <- compare(c(r, e2), extent=TRUE, rowcol=TRUE, crs=TRUE, tolerance=0.05, stopiffalse=FALSE) 
 		if (!cond) {
 			stop("Cannot compare Rasters that have different BasicRaster attributes. See compare()")
 		}	
@@ -291,7 +291,7 @@ setMethod("Logic", signature(e1='Raster', e2='Raster'),
 			r <- raster(e1)
 		}
 	
-		cond <- compare(c(r, e2), extent=TRUE, rowcol=TRUE, prj=TRUE, tolerance=0.05, stopiffalse=FALSE) 
+		cond <- compare(c(r, e2), extent=TRUE, rowcol=TRUE, crs=TRUE, tolerance=0.05, stopiffalse=FALSE) 
 		if (!cond) {
 			stop("Cannot compare Rasters that have different BasicRaster attributes. See compare()")
 		}	

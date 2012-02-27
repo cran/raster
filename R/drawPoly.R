@@ -29,14 +29,3 @@ drawLine <- function(sp=TRUE, col='red', lwd=2, ...) {
 	}
 }
 
-
-polygonFromExtent <- function(x, sp=TRUE) {
-	bb <- extent(x)
-	p <- rbind(c(bb@xmin, bb@ymin), c(bb@xmin, bb@ymax), c(bb@xmax, bb@ymax), c(bb@xmax, bb@ymin), c(bb@xmin, bb@ymin) )
-	if (sp) {
-		return( SpatialPolygons(list(Polygons(list(Polygon(p)), 1))) )
-	} else {
-		return(p)
-	}
-}
-

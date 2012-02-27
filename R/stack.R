@@ -134,6 +134,7 @@ function(x, bands=NULL, native=FALSE, ...) {
 			x@ncols <- r@ncols
 			x@extent <- r@extent
 			x@crs <- r@crs
+			x@layernames <- r@layernames
 			if(rotated(r)) {
 				x@rotated = r@rotated
 				x@rotation = r@rotation

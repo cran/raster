@@ -19,7 +19,8 @@ setMethod('cover', signature(x='RasterLayer', y='RasterLayer'),
 	} 
 		
 	outRaster <- raster(x)
-
+	compare(c(outRaster, rasters))
+	
 	filename <- trim(filename)
 	if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
 	if (missing(overwrite)) { overwrite <- .overwrite()	}

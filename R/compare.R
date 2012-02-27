@@ -5,7 +5,7 @@
 # Licence GPL v3
 
 
-compare <- function(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=FALSE, rotation=TRUE, tolerance, stopiffalse=TRUE, showwarning=FALSE) {
+compare <- function(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE, orig=FALSE, rotation=TRUE, tolerance, stopiffalse=TRUE, showwarning=FALSE) {
 
 	if (missing(tolerance)) {
 		tolerance <- .tolerance()
@@ -46,7 +46,7 @@ compare <- function(x, ..., extent=TRUE, rowcol=TRUE, prj=TRUE, res=FALSE, orig=
 				if (showwarning) { warning('nrows different') }
 			}
 		}
-		if (prj) {
+		if (crs) {
 			thisproj <- projection(objects[[i]])
 			if (is.na(proj1)) {
 				proj1 <- thisproj

@@ -114,7 +114,7 @@ setMethod("plot", signature(x='RasterLayer', y='missing'),
 
 setMethod("plot", signature(x='Raster', y='Raster'), 
 	function(x, y, maxpixels=100000, cex=0.1, xlab, ylab, ...)  {
-		compare(c(x, y), extent=TRUE, rowcol=TRUE, prj=FALSE, stopiffalse=TRUE) 
+		compare(c(x, y), extent=TRUE, rowcol=TRUE, crs=FALSE, stopiffalse=TRUE) 
 		nl <- nlayers(x)
 		nl2 <- nlayers(y)
 		if (nl != nl2) {

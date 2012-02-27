@@ -291,8 +291,8 @@ Advanced writing of entire files or parts thereof
     \code{\link{round}} \tab round/floor/ceiling of the coordinates of an Extent object \cr			
     \code{\link{alignExtent}} \tab Align an extent with a Raster* object \cr
     \code{\link{drawExtent}} \tab Create an Extent object by drawing it on top of a map (see plot) \cr		
-    \code{\link{polygonFromExtent}} \tab Create a SpatialPolygons object from an Extent object \cr			
   }
+  You can also use S4 type coercion such as \code{as(extent, 'SpatialPolygons')}
 }
 
 \section{XV. Options}{

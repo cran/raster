@@ -1,3 +1,12 @@
+--- 27-February-2012, version 1.9-70
+Removed function 'polygonFromExtent' (in favor of as(x, 'SpatialPolygons') )
+In 'compare', the name of argument 'prj' was changed to 'crs'
+Fixed bug in srtm download limits. Reported by Stefan Schlaffer
+Fixed bug that made init fail for large rasters. Reported by Oscar Perpiñan Lamigueiro.
+removed bug in calc (some functions produced an error) reported by Alfredo Alessandrini
+sampleRandom did not always return the randomly selected numbers in random order. Reported by Etienne Racine.
+cover did not check if input rasters were overlapping. This could lead to wrong results. Reported by Thiago Veloso
+
 --- 6-February-2012, version 1.9-67
 Bug fix in terrain('slope') for lon/lat rasters that were processed on disk. Latitude of the first chunk of rows was used for all rows. Reported by Bart Kranstauber
 Bug fixed that occured when using getData and a root working like "c:\". Reported by Uwe Ligges. 
