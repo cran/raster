@@ -16,7 +16,7 @@
 \title{Extract values from Raster objects}
 
 \description{
-Extract data from a Raster object using cell numbers or the locations of other spatial data (i.e., a spatial query). You can use coordinates (points), lines, polygons or an Extent (rectangle) object.
+Extract data from a Raster object for the locations of other spatial data (i.e., a spatial query). You can use coordinates (points), lines, polygons or an Extent (rectangle) object. You can also use cell numbers.
 }
 
 \usage{
@@ -25,9 +25,8 @@ extract(x, y, ...)
 
 \arguments{
   \item{x}{Raster* object}
-  \item{y}{A vector (representing cell numbers); or a SpatialPoints object or a two-column data.frame or matrix (representing points); 
-  or a \code{\link[sp]{SpatialPolygons}}, \code{\link[sp]{SpatialLines}}, or \code{\link{Extent}} object }
-  \item{...}{Additional arguments, see under Details}  
+  \item{y}{A \code{\link{SpatialPoints}*}, two-column data.frame or matrix (representing points), \code{\link[sp]{SpatialPolygons}*}, \code{\link[sp]{SpatialLines}}, \code{\link{Extent}} object, or a vector (representing cell numbers)}
+  \item{...}{Additional arguments, see Details}  
 }
 
 \details{
@@ -38,10 +37,12 @@ Below are additional arguments that can be used, depending on the type of object
 1) \code{fun}. Function to summarize the values (e.g. \code{mean}). The function should 
 take a single numeric vector as argument and return a single values (e.g. mean, min or max), and accept a \code{na.rm} argument.
 Thus, standard R functions not including an na.rm argument must be wrapped as in this example: fun=function(x,...)length(x)
-
 If \code{y} represents points supplying a \code{fun} argument is only useful when a buffer is used (see below). 
 
 2) \code{na.rm}. Only useful when \code{fun} is supplied. If \code{na.rm=TRUE} (the default value), NA values are removed before fun is applied. This argument may be ignored if the function used has a \code{...} argument and ignres an additional \code{na.rm} argument. 
+
+3) \code{df}. Logical. If \code{df=TRUE}, results will be returned as a data.frame. The first column is a sequential ID, the other column(s) are the extracted values. 
+
 
 
 \bold{= points =}
@@ -61,45 +62,26 @@ of points.  If the data are not projected (latitude/longitude), the unit should 
 
 \bold{= lines =}
 
-\code{df}. Logical. If \code{df=TRUE}, results will be returned as a data.frame, rather than as a list. 
-
-And, if no \code{fun} argument is supplied:
-
-\code{cellnumbers}. Logical. If \code{cellnumbers=TRUE} is used, cell-numbers will also be returned. 
+if \code{y} represents lines, the \code{extract} method returns the values of the cells of a Raster* object that are touched by a line.
+ 
+\code{cellnumbers}. Logical. If \code{cellnumbers=TRUE} is used, cell-numbers will also be returned (only relevant if no \code{fun} argument is supplied). 
 
 
 \bold{= polygons =}
 
-If \code{y} represents polygons, the \code{extract} method returns the values of the cells of a Raster* object that is covered by a polygon.
-A cell is covered if its center is inside the polygon (but see the \code{weights} option for considering partly covered cells; and argument \code{small} for getting values for small polygons anyway).
-
-if \code{y} represents polygons are:
+if \code{y} represents polygons, the \code{extract} method returns the values of the cells of a Raster* object that is covered by a polygon. 
+A cell is covered if its center is inside the polygon (but see the \code{weights} option for considering partly covered cells; 
+and argument \code{small} for getting values for small polygons anyway).
 
 1) \code{small}. Logical. Default is \code{FALSE}. If \code{TRUE} a value is also returned for relatively small polygons (e.g. those smaller than a single cell of the Raster* object), 
 or polygons with an odd shape, for which otherwise no values are returned because they do not cover any Raster* object's cell centers. In some cases, you could use alternatively 
 use the centroids of such polygons, for example using \code{extract(x, coordinates(y))} or \code{extract(x, coordinates(y), method='bilinear')}. 
 
-2) \code{df}. Logical. If \code{df=TRUE}, results will be returned as a data.frame, rather than as a list. 
-
-
-Additional arguments that can be suplied to this function, if no \code{fun} argument is supplied:
-
-3) \code{weights}. If \code{TRUE}, the function returns, for each polygon, a matrix with the cell values and the approximate fraction
+2) \code{weights}. If \code{TRUE}, the function returns, for each polygon, a matrix with the cell values and the approximate fraction
  of each cell that is covered by the polygon(rounded to 1/100). The weights can be used for averaging; see examples. 
  This option can be useful if the polygons are small relative to the cells size of the Raster* object.
 
-4) \code{cellnumbers}. Logical. If \code{cellnumbers=TRUE}, cell-numbers will also be returned. 
-
-
-
-\bold{= focal values =}
-
-If \code{y} is missing, you can supply two arguments to get 'focal' values (i.e. the values in a neighborhood around each cell)
-
-1) \code{row}. row number (this is a required argument). 
-
-2) \code{ngb}. The neighborhood to consider. Either a single integer or a vector of two integers. Default is 3. See \code{\link{focal}} 
-
+3) \code{cellnumbers}. Logical. If \code{cellnumbers=TRUE}, cell-numbers will also be returned (only relevant if no \code{fun} argument is supplied).  
 
 
 \bold{= all multi-layer objects =}
@@ -115,12 +97,11 @@ these two additional arguments:
 
 \value{
 A vector for RasterLayer objects, and a matrix for a RasterStack or RasterBrick object.
-A list if \code{y} is a SpatialPolygons* or SpatialLines* object or if a \code{buffer} argument is used (but not a \code{fun} argument).
-focal values are returned as a n column matrix. The first column has the column numbers, the remaining has the focal values for each layer. 
+A list or data.frame {\code{df=TURE}} if \code{y} is a SpatialPolygons* or SpatialLines* object or if a \code{buffer} argument is used (but not a \code{fun} argument).
 }
 
 
-\seealso{ \code{\link{values}} }
+\seealso{ \code{\link{getValues}, \link{getValuesFocal}}  }
 
 
 \author{Robert J. Hijmans}
@@ -205,14 +186,6 @@ e <- extent(150,170,-60,-40)
 extract(r, e)
 #plot(r)
 #plot(e, add=T)
-
-
-###############################
-# focal values
-###############################
-f <- extract(r, row=5, ngb=3)
-f[1:15, ]
-
 }
 
 \keyword{methods}

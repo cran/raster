@@ -23,18 +23,34 @@
 
 
 
-.rasterFromGDAL <- function(filename, band, type, RAT=FALSE, silent=TRUE, warn=TRUE, ...) {	
+.rasterFromGDAL <- function(filename, band, type, sub=0, RAT=FALSE, silent=TRUE, warn=TRUE, ...) {	
 
 # most of this was taken from the GDALinfo function in rgdal
+# that was written by Roger Bivand and others
 
 	.requireRgdal() 
 
 	# suppressing the geoTransform warning...
-	w <- getOption('warn')
-	on.exit(options('warn'= w))
-	options('warn'= -1) 
-	
-	options('warn'= w) 
+#	w <- getOption('warn')
+#	on.exit(options('warn'= w))
+#	options('warn'= -1) 
+#	options('warn'= w) 
+
+
+	if (sub > 0) {
+		sub <- round(sub)
+		x <- GDAL.open(filename, silent=TRUE)
+		subdsmdata <- .Call("RGDAL_GetMetadata", x, "SUBDATASETS", PACKAGE = "rgdal")
+		GDAL.close(x)
+		i <- grep(paste("SUBDATASET_", sub, "_NAME", sep=''), subdsmdata)
+		if (length(i) > 0) {
+			x <- subdsmdata[i[1]]
+			filename <- unlist(strsplit(x, '='))[2]
+		} else {
+			stop(paste('subdataset "sub=', sub, '" not available', sep=''))
+		}
+	}
+
 	x <- GDAL.open(filename, silent=TRUE)
 	
 	nc <- as.integer(.Call('RGDAL_GetRasterXSize', x, PACKAGE="rgdal"))

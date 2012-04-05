@@ -158,7 +158,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 		stop('resolution should be one of: 0.5, 2.5, 5, 10')
 	}
 	if (res==2.5) { res <- '2-5' }
-	stopifnot(var %in% c('tmin', 'tmax', 'prec', 'bio', 'alt'))
+	stopifnot(var %in% c('tmean', 'tmin', 'tmax', 'prec', 'bio', 'alt'))
 	path <- paste(path, 'wc', res, '/', sep='')
 	dir.create(path, showWarnings=FALSE)
 

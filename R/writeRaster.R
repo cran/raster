@@ -15,7 +15,12 @@ function(x, filename, format, ...) {
 	stopifnot(hasValues(x))
 	filename <- trim(filename)
 	if (filename == '') {	stop('provide a filename')	}
-	filename <- .fullFilename(filename)
+	filename <- .fullFilename(filename, expand=TRUE)
+		
+	if (!file.exists(dirname(filename))) {
+		stop("Attempting to write a file to a path that does not exist:\n  ", dirname(filename))
+	}
+	
 	filetype <- .filetype(format , filename=filename)
 	filename <- .getExtension(filename, filetype)
 	
@@ -55,8 +60,7 @@ function(x, filename, format, ...) {
 		return( .stopWriteCDF(x) )
 		
 	} else { 
-		x <- .writeGDALall(x, filename=filename, ...)
-		
+		x <- .writeGDALall(x, filename=filename, format=filetype, ...)
 	}
 	return(x)
 }	
@@ -71,7 +75,7 @@ function(x, filename, format, ...) {
 	stopifnot(hasValues(x))
 	filename <- trim(filename)
 	if (filename == '') {	stop('provide a filename')	}
-	filename <- .fullFilename(filename)
+	filename <- .fullFilename(filename, expand=TRUE)
 	filetype <- .filetype(format, filename=filename)
 	filename <- .getExtension(filename, filetype)
 
@@ -118,7 +122,7 @@ function(x, filename, format, ...) {
 			x <- .writeValuesBrickCDF(b, values(x) )	
 			x <- .stopWriteCDF(x) 
 		} else {
-			x <- .writeGDALall(x, filename=filename, ...) 
+			x <- .writeGDALall(x, filename=filename, format=filetype, ...) 
 		}
 		
 		return(x)
@@ -130,7 +134,6 @@ function(x, filename, format, ...) {
 		}
 		
 		b <- brick(x, values=FALSE)
-		
 		if (filetype=='CDF') {
 			b@zvalue <- x@zvalue
 			b@zname  <- x@zname
@@ -147,8 +150,7 @@ function(x, filename, format, ...) {
 		}
 		b <- writeStop(b)
 		pbClose(pb)
-		return(b)
-			
+		return(b)	
 	} 
 }
 )

@@ -9,10 +9,13 @@
 # Storing the full file name is to avoid that a filename becomes invalid if the working directory 
 # changes during an R session
 
-.fullFilename <- function(x) {
+.fullFilename <- function(x, expand=FALSE) {
 	x <- trim(x)
 	if (identical(basename(x), x)) {
 		x <- file.path(getwd(), x)
+	}
+	if (expand) {
+		x <- path.expand(x)
 	}
 	return(x)
 }

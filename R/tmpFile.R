@@ -40,6 +40,9 @@ rasterTmpFile <- function(prefix='raster_tmp_')  {
 	dir.create(d,  showWarnings = FALSE)
 	f <- paste(round(runif(10)*10), collapse="")
 	d <- paste(d, prefix, f, extension, sep="")
+	if (file.exists(d)) {
+		d <- rasterTmpFile(prefix=prefix)
+	}
 	if (getOption('verbose')) { cat('writing raster to:', d) }
 	return(d)
 }
@@ -91,8 +94,8 @@ showTmpFiles <- function() {
 				cat('--- none ---\n')
 			} else {
 				extension(f) <- ''
-				f <- unique(f)
-				cat(f, "\n")
+				f <- paste(unique(f), '\n')
+				cat(f)
 			}
 		} else {
 			cat('--- none ---\n')

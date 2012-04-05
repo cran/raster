@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  June 2008
 # Version 0.9
 # Licence GPL v3
@@ -6,6 +6,8 @@
 	
 .focalValues <- function(x, row, ngb=3, fun=NULL, na.rm=FALSE, layer, nl, ...) {
 
+	#warning('this function is depracated. Use "getValuesFocal" instead.')
+	
 	dots <- list(...)
 	if (! is.null(dots$buffer) ) {
 		warning('argument "buffer" is ignored')

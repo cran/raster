@@ -17,10 +17,10 @@
 	
 	dim3 <- 3
 	if (dims== 1) { 
-		stop('zvar only has a single dimension; I cannot make a RasterLayer from this')
+		stop('variable only has a single dimension; I cannot make a RasterLayer from this')
 	} else if (dims > 3) { 
 		dim3 <- dims
-		warning(zvar, 'has ', dims, ' dimensions, I do am using the last one')
+		warning(zvar, ' has ', dims, ' dimensions, I am using the last one')
 	} else if (dims == 2) {
 		return( stack ( raster(filename, varname=zvar )  )  )
 	} else {

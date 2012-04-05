@@ -105,7 +105,7 @@
 }
 
 
-.linesToRaster <- function(lns, raster, field=0, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue="all", filename="", ...) {
+.linesToRaster <- function(lns, raster, field, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue="all", filename="", ...) {
 
 	dots <- list(...)
 	if (!is.null(dots$overlap)) { stop('argument "overlap" is no longer available. Use "fun"') } 
@@ -173,36 +173,9 @@
 	lxmin <- min(spbb[1,1], rsbb[1,1]) - 0.5 * xres(raster)
 	lxmax <- max(spbb[1,2], rsbb[1,2]) + 0.5 * xres(raster)
 	
-	if (! is.numeric(field) ) {
-		field <- which(colnames(lns@data) == field)[1]
-		if (is.na(field)) {
-			stop('field does not exist')
-		}
-	} 
-	
-	if (length(field) > 1) { 
-		if (length(field) == nline) {
-			putvals <- field
-		} else {
-			stop('field should be a single value or equal the number of lines') 
-		}	
-	} else if ( field <= 0) {
-		putvals <- rep(1, nline)
-	} else if (class(lns) == 'SpatialLines') {
-		putvals <- rep(field, nline)
-	} else {
-		putvals <- as.vector(lns@data[,field])
-		if (class(putvals) == 'factor') {
-			warning('selected field is factor type')
-			putvals <- as.numeric(as.character(putvals))
-		}
-		if (class(putvals) == 'character') {
-			warning('selected field is character type')
-			putvals <- as.numeric(putvals)
-		}
-	}
-		
 
+	putvals <- .getPutVals(lns, field, nline, mask)
+	
 	if (filename == "") {
 		v <- matrix(NA, ncol=nrow(raster), nrow=ncol(raster))
 	} else {

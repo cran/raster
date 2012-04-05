@@ -27,8 +27,14 @@
 	}
 
 	overwrite <- .overwrite( ...)
-	if (!overwrite & (file.exists(filename) | file.exists(fnamevals))) {
-		stop(paste(filename,"exists.","use 'overwrite=TRUE' if you want to overwrite it")) 
+	if (filetype == 'raster') {
+		if (!overwrite & file.exists(filename)) {
+			stop(paste(filename,"exists.","use 'overwrite=TRUE' if you want to overwrite it")) 
+		}
+	} else {
+		if (!overwrite & (file.exists(filename) | file.exists(fnamevals))) {
+			stop(paste(filename,"exists.","use 'overwrite=TRUE' if you want to overwrite it")) 
+		}
 	}
 	
 	if (update) {

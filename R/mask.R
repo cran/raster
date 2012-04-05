@@ -32,7 +32,7 @@ setMethod('mask', signature(x='RasterLayer', mask='RasterLayer'),
 function(x, mask, filename="", inverse=FALSE, ...){ 
 
 	compare(x, mask)
-
+	ln <- layerNames(x)
 	if ( inMemory(x) & inMemory(mask)=='all') {
 		x[is.na(mask)] <- NA
 		if (filename != '') {
@@ -51,13 +51,17 @@ function(x, mask, filename="", inverse=FALSE, ...){
 		}
 		if (filename != '') {
 			x <- writeRaster(x, filename, ...)
+			layerNames(x) <- ln
 		}
 		return(x)
 		
 	} else {
 		out <- raster(x)
+		layerNames(out) <- ln		
 
-		if (filename=='') { 	filename <- rasterTmpFile() }
+		if (filename=='') { 	
+			filename <- rasterTmpFile() 
+		}
 
 		out <- writeStart(out, filename=filename, ...)
 		tr <- blockSize(out)
@@ -83,6 +87,7 @@ function(x, mask, filename="", inverse=FALSE, ...){
 		pbClose(pb)
 
 		out <- writeStop(out)
+		layerNames(out) <- ln		
 		return(out)
 	}
 }
@@ -95,7 +100,8 @@ function(x, mask, filename="", inverse=FALSE, ...){
 	compare(x, mask)
 	
 	out <- brick(x, values=FALSE)
-	layerNames(out) <- layerNames(x)
+	ln <- layerNames(x)
+	layerNames(out) <- ln
 	
 	if (canProcessInMemory(x, nlayers(x)+4)) {
 
@@ -109,12 +115,15 @@ function(x, mask, filename="", inverse=FALSE, ...){
 		if (filename != '') {
 			out <- writeRaster(out, filename, ...)
 		} 
+		layerNames(out) <- ln
 		return(out)
 		
 	} else {
 	
 
-		if ( filename=='') { filename <- rasterTmpFile() }
+		if ( filename=='') { 
+			filename <- rasterTmpFile() 
+		}
 
 		out <- writeStart(out, filename=filename, ...)
 
@@ -142,6 +151,7 @@ function(x, mask, filename="", inverse=FALSE, ...){
 		pbClose(pb)
 
 		out <- writeStop(out)
+		layerNames(out) <- ln
 		return(out)
 	}
 }
@@ -152,7 +162,7 @@ setMethod('mask', signature(x='RasterLayer', mask='RasterStackBrick'),
 function(x, mask, filename="", ...){ 
 
 	compare(x, mask)
-	
+
 	out <- brick(mask, values=FALSE)
 	
 	if (canProcessInMemory(mask, nlayers(x)*2+2)) {
@@ -212,7 +222,8 @@ function(x, mask, filename="", ...){
 	
 	compare(x, mask)
 	out <- brick(x, values=FALSE)
-	layerNames(out) <- layerNames(x)
+	ln <- layerNames(x)
+	layerNames(out) <- ln
 	
 	if (canProcessInMemory(x, nlayers(x)+4)) {
 
@@ -221,6 +232,8 @@ function(x, mask, filename="", ...){
 		out <- setValues(out, x)
 		if (filename != '') {
 			out <- writeRaster(out, filename, ...)
+			layerNames(out) <- ln
+			
 		} 
 		return(out)
 		
@@ -243,6 +256,7 @@ function(x, mask, filename="", ...){
 		pbClose(pb)
 
 		out <- writeStop(out)
+		layerNames(out) <- ln
 		return(out)
 	}
 }

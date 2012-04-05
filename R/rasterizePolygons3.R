@@ -1,6 +1,6 @@
 # Author: Robert J. Hijmans, r.hijmans@gmail.com
-# Date : January 2009
-# Version 0.9
+# Date : July 2011
+# Version 1.0
 # Licence GPL v3
 
 
@@ -29,8 +29,12 @@
 .p3r <- function(p, x, field=0, background=NA, mask=FALSE, update=FALSE, filename="", ...) {
 
 	filename <- trim(filename)
-	if (mask) {
+	if (mask | update) {
+		if (mask & update) {
+			stop('you cannot use mask=TRUE & update=TRUE at the same time')
+		}
 		oldx <- x
+		
 	}
 	x <- raster(x)
 	projp <- projection(p)
@@ -156,13 +160,13 @@
 				if (nl == 1) {
 					vals <- matrix(vals, ncol=1)
 				}
-				vals[!is.na(rrv), ] <- NA
+				vals[is.na(rrv), ] <- NA
 			} else if (update) {
 				vals <- getValues(oldx, tr$row[i], tr$nrows[i])
 				if (nl == 1) {
 					vals <- matrix(vals, ncol=1)
 				}
-				vals[!is.na(rrv), ] <- putvals[!is.na(rrv), ]
+				vals[is.na(rrv), ] <- putvals[!is.na(rrv), ]
 			} else {
 				vals <- putvals[rrv, ]
 			}

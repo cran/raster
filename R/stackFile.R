@@ -23,7 +23,7 @@ stackSave <- function(x, filename) {
 	for (i in 1:length(x@layers)) {
 		fname <- trim(filename(x@layers[[i]]))
 		if (fname == "") {
-			stop("cannot save a RasterStack that has layers that only exist in memory. Use writeStack first/instead.")
+			stop("cannot save a RasterStack that has layers that only exist in memory. Use writeRaster first/instead.")
 		}	
 		cat(fname, "\t", bandnr(x@layers[[i]]),"\n", file=thefile)
 	}

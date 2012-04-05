@@ -26,7 +26,9 @@ setMethod('area', signature(x='RasterLayer'),
 		}	
 	
 		if (! .couldBeLonLat(out)) {
-			stop('This function is only useful for layer with a longitude/latitude coordinates')
+			warning('This function is only useful for Raster* objects with a longitude/latitude coordinates')
+			ar <- prod(res(out))
+			return( init(out, function(x) ar, filename=filename, ...) )
 		}
 	
 		filename <- trim(filename)
@@ -100,7 +102,7 @@ setMethod('area', signature(x='RasterStackBrick'),
 		out = brick(x, values=FALSE)
 
 		if (! .couldBeLonLat(out)) {
-			stop('This function is only useful for layer with a longitude/latitude coordinates')
+			stop('This function is only useful for Raster* objects with a longitude/latitude coordinates')
 		}
 	
 		filename <- trim(filename)

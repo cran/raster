@@ -20,8 +20,10 @@
 .goodNames <- function(ln, prefix='layer') {
 	ln <- trim(as.character(ln))
 	ln[is.na(ln)] <- ""
-	ln[ln==''] <- prefix
-	ln <- make.names(ln, unique=FALSE)
+	if (.standardnames()) {
+		ln[ln==''] <- prefix
+		ln <- make.names(ln, unique=FALSE)
+	}
 	.uniqueNames(ln)
 }
 

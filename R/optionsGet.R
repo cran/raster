@@ -21,7 +21,7 @@
 .tmpdir <- function(create=TRUE) {
 	d <- getOption('rasterTmpDir')
 	if (is.null(d)) {
-		d <- paste(dirname(tempdir()), '/R_raster_tmp/', sep="")
+		d <- .tmppath()
 	}
 	lastchar <- substr(d, nchar(d), nchar(d))
 	if (lastchar == '/' | lastchar == '\\') {
@@ -29,7 +29,7 @@
 	}
 	if (!file.exists(dd)) {
 		if (create) {
-			d <- paste(dirname(tempdir()), '/R_raster_tmp/', sep="")
+			d <- .tmppath()
 			dir.create( d, recursive=TRUE, showWarnings=FALSE )
 		} else {
 			return(NA)
@@ -119,7 +119,8 @@
 		} 
 	} 
 	if (! datatype %in% c('LOG1S', 'INT1S', 'INT2S', 'INT4S', 'INT1U', 'INT2U', 'INT4U', 'FLT4S', 'FLT8S')) {
-		warning(datatype, ' is an invalid datatype, changed to FLT8S')
+		warning(datatype, ' is an invalid datatype, changed to "FLT8S"')
+		datatype <- 'FLT8S'
 	}
 	return(datatype)
 }
@@ -219,6 +220,28 @@
 		return(as.logical(timer))
 	}
 }	
+	
+.standardnames <- function(..., standardnames) {
+	if (missing(standardnames)) { 
+		standardnames <- getOption('rasterStandardNames')
+		if (is.null(standardnames)) {
+			return(TRUE)  # the default
+		} else {
+			try (todisk <- as.logical(standardnames))
+			if (is.logical(standardnames)) {
+				return(standardnames)
+			} else {
+				return(TRUE)
+			}
+		}
+	} else { 
+		if (is.logical(todisk)) {
+			return(todisk)
+		} else {
+			return(TRUE)
+		}
+	}
+}
 	
 
 .toDisk <- function(..., todisk) {
