@@ -1,32 +1,32 @@
 
 
-xyValues <- function(...) {
+..xyValues <- function(...) {
 	stop('function no longer available. Please use "extract"')
 }
 
 
-lineValues <- function(...) {
+..lineValues <- function(...) {
 	stop('function no longer available. Please use "extract"')
 }
 
 
-polygonValues <- function(...) {	
+..polygonValues <- function(...) {	
 	stop('function no longer available. Please use "extract"')
 }
 
 
-linesToRaster <- function(...) {
+..linesToRaster <- function(...) {
 	stop('function no longer available. Please use "rasterize"')
 }
 
 
 
-polygonsToRaster <- function(...) {
+..polygonsToRaster <- function(...) {
 	stop('function no longer available. Please use "rasterize"')
 }
 
 
-pointsToRaster <- function(...) {
+..pointsToRaster <- function(...) {
 	stop('function no longer available. Please use "rasterize"')
 }
 

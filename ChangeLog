@@ -1,3 +1,14 @@
+New function 'getValuesFocal' to get focal values (a cell and its neighborhood)
+Added .tmpdir function, provided by Shaun Walbridge, to make the name of the folder used to store temporary files user-specific to avoid collisions on multi-user platforms such as cluster computers. 
+Improved support for accessing subdatasets (in gdal provided raster data). Non-standard names like "subdatset:filename" should now work (previously some were normalized to (invalid) path names). There is also an argument "sub" in raster().
+Bug fixes: 
+disaggregate sometimes failed for large files, patched by Jim Regetz. 
+It was not possible to make a RasterStack from a single-layer RasterBrick (reported by Julian Zeidler).
+The 'slope' returned by 'terrain' was not correct when used together with 'tri', 'tpi', or 'roughness', and when you use unit = 'degrees' (reported by Forrest Stevens)
+predict / randomForest failed with more than one factor variable, reported by Xiong Xiong
+Fixed bug when writing to EHdr files, reported by Elena
+It is now assured that the filename returned by rasterTmpFile() does not exist (avoiding "overwrite" problems, reported by Diann Prosser).
+
 --- 27-February-2012, version 1.9-70
 Removed function 'polygonFromExtent' (in favor of as(x, 'SpatialPolygons') )
 In 'compare', the name of argument 'prj' was changed to 'crs'
@@ -27,10 +38,6 @@ Legend sometimes was not entirely right when using a few breaks only (reported b
 mask now keeps layer names (suggested by Jane Elith)
 
 --- 21-December-2011, version 1.9-58
-new 'select' method to visually select parts of SpatialPolygons, SpatialPixels, SpatialGrid objects.
-new 'disaggregate' methods for SpatialPolygons and SpatialLines objects
-new 'click' methods to visually do a spatial query with SpatialPolygons, SpatialPixels, SpatialGrid objects.
-new 'zoom' method for Spatial objects
 approxNA failed for large objects, reported and fixes suggested by Stefan Schlaffer
 Bug fixes in extract with RasterBrick (thanks to reports by Colin Rundel and Laurent Fernandez Soldevila)
 

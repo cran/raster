@@ -113,7 +113,7 @@ RasterLayer, RasterStack, and RasterBrick objects are, as a group, referred to a
     \code{\link{focal}} \tab Focal (neighborhood; moving window) functions \cr
     \code{\link{edge}} \tab Edge detection \cr
     \code{\link{clump}} \tab Find clumps (patches) \cr
-    \code{\link{adjacency}} \tab Identify cells that are adjacent to a set of cells on a raster \cr
+    \code{\link{adjacent}} \tab Identify cells that are adjacent to a set of cells on a raster \cr
     \code{\link{area}} \tab Compute area of cells (for longitude/latitude data) \cr
     \code{\link{terrain}} \tab Compute slope, aspect and other characteristics from elevation data \cr	
     \code{\link{Moran}} \tab Compute global or local Moran or Geary indices of spatial autocorrelation  \cr	
@@ -165,6 +165,7 @@ You can coerce Raster* objects to Spatial* objects using \code{as}, as in \code{
   \tabular{ll}{
     \code{\link{getValues}} \tab Get all cell values (fails with very large rasters), or a row of values (safer) \cr
     \code{\link{getValuesBlock}} \tab Get values for a block (a rectangular area defined by start and end row and column \cr
+    \code{\link{getValuesFocal}} \tab Get focal values for one or more rows\cr
     \code{\link{as.matrix}} \tab Get cell values as a matrix \cr
     \code{\link{as.array}} \tab Get cell values as an array \cr
     \code{\link{extract}} \tab Extract cell values from a Raster* object (e.g., by cell, coordinates, polygon)\cr

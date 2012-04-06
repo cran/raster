@@ -16,20 +16,21 @@
 
 
 showOptions <- function() {
-	cat('format    :', .filetype(), '\n' )
-	cat('datatype  :', .datatype(), '\n')
-	cat('overwrite :', .overwrite(), '\n')
-	cat('progress  :', .progress(), '\n')
-	cat('timer     :', .timer(), '\n')
-	cat('chunksize :', .chunksize(), '\n')
-	cat('maxmemory :', .maxmemory(), '\n')
-	cat('tmpdir    :', .tmpdir(), '\n')
-	cat('setfileext:', .setfileext(), '\n')
-	cat('tolerance :', .tolerance(), '\n')
+	cat('format       :', .filetype(), '\n' )
+	cat('datatype     :', .datatype(), '\n')
+	cat('overwrite    :', .overwrite(), '\n')
+	cat('progress     :', .progress(), '\n')
+	cat('timer        :', .timer(), '\n')
+	cat('chunksize    :', .chunksize(), '\n')
+	cat('maxmemory    :', .maxmemory(), '\n')
+	cat('tmpdir       :', .tmpdir(), '\n')
+	cat('setfileext   :', .setfileext(), '\n')
+	cat('tolerance    :', .tolerance(), '\n')
+	cat('standardnames:', .standardnames(), '\n')
 	
 #	cat('usecluster:', .usecluster(), '\n')
 	if (.toDisk()) {
-		cat('toDisk    : TRUE\n')
+	   cat('toDisk       : TRUE\n')
 	}
 }
 
@@ -44,6 +45,7 @@ clearOptions <- function() {
 	options(setfileext = TRUE)
 	options(rasterTmpDir = .tmpdir())
 	options(rasterTolerance = 0.1)
+	options(rasterStandardNames = TRUE)
 		
 	fn <- paste(R.home(component="etc"), '/', 'Rprofile.site', sep='')
 	lst <- readLines(fn)
@@ -76,6 +78,7 @@ saveOptions <- function() {
 	lst <- c(lst, paste("options(rasterSetFileExt=", .setfileext(), ')', sep=''))
 	lst <- c(lst, paste("options(rasterTmpDir='", .tmpdir(), "')", sep=''))
 	lst <- c(lst, paste("options(rasterTolerance=", .tolerance(), ')', sep=''))
+	lst <- c(lst, paste("options(rasterStandardNames=", .standardnames(), ')', sep=''))
 
 	r <- try( write(unlist(lst), fn), silent = TRUE )
 #	if (class(r) == "try-error") { cat('Cannot save options. No write access to: ', fn, '\n')	}

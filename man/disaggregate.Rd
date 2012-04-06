@@ -28,7 +28,7 @@ Raster object
 
 \seealso{ \code{\link[raster]{aggregate}} }
 
-\author{Robert J. Hijmans}
+\author{Robert J. Hijmans and Jim Regetz}
 
 \examples{
 r <- raster(ncols=10, nrows=10)

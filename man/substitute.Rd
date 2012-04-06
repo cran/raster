@@ -3,7 +3,7 @@
 \docType{methods}
 
 \alias{subs}
-\alias{subs,RasterLayer,data.frame-method}
+\alias{subs,Raster,data.frame-method}
 
 \title{ Substitute values in a RasterLayer }
 
@@ -12,38 +12,20 @@ Substitute (replace) values in a RasterLayer with values in a \code{data.frame}.
 }
 
 \usage{
-subs(x, y, ...) 
+\S4method{subs}{Raster,data.frame}(x, y, by=1, which=2, subsWithNA=TRUE, filename='', ...)
 }
+
 
 \arguments{
-  \item{x}{A RasterLayer object}
-  \item{y}{A data.frame}
-  \item{...}{Additional arguments. See under Methods}  
+  \item{x}{Raster* object}
+  \item{y}{data.frame}
+  \item{by}{The column number or name that is the key (ID) to match a the \code{data.frame} row to a value of the RasterLayer. Default is 1}
+  \item{which}{The column number or name that has the new (replacement) values. Default is 2}
+  \item{subsWithNA}{Logical. If \code{TRUE} values that are not matched become NA. If \code{FALSE}, they retain their original value (which could also be NA. This latter option is handy when you want to replace only one or a few values}
+  \item{filename}{Character. output filename}
+  \item{...}{Additional arguments as for \code{\link{writeRaster}}}  
 }
 
-
-\section{Methods}{
-\describe{
-A full call to \code{subs} is:
-
-\code{subs(x, y, by=1, which=2, subsWithNA=TRUE, filename='', ... ) }
-
-  \item{\code{x}}{RasterLayer}
-  \item{\code{y}}{data.frame}
-  \item{\code{by}}{The column number or name that is the key (ID) to match a the \code{data.frame} row to a value of the RasterLayer. Default is 1}
-  \item{\code{which}}{The column number or name that has the new (replacement) values. Default is 2}
-  \item{\code{subsWithNA}}{Logical. If \code{TRUE} values that are not matched become NA. If \code{FALSE}, they retain their original value (which could also be NA. This latter option is handy when you want to replace only one or a few values). }
-  \item{\code{filename}}{Character. output filename}
-  \item{\code{...}}{Standard additional variables, see below}
-  
-  
-
-  \item{\code{overwrite}}{Logical. If TRUE, "filename" will be overwritten if it exists}
-  \item{\code{format}}{Character. output file type. Either 'raster', 'ascii' or a supported GDAL 'driver' name see \code{\link[raster]{writeFormats}}}
-  \item{\code{datatype}}{Character. Output data type. See \link[raster]{dataType}}
-  \item{\code{progress}}{Character. "text", "window", or "" (the default, no progress bar)}
-}  
-} 
 
 \details{
 You could obtain the same result with \code{\link[raster]{reclass}}, but \code{subs} is more efficient for simple replacement. Use reclass if you want to replace ranges of values with new values. 
@@ -57,14 +39,22 @@ A new RasterLayer object, and in some cases, the side effect of a new file on di
 
 \author{Robert J. Hijmans}
 
-\seealso{ \code{\link[raster]{reclass}}}
+\seealso{ \code{\link{reclass}, \link{cut}}}
 
 \examples{
 r <- raster(ncol=10, nrow=10)
 r[] <- round(runif(ncell(r)) * 10)
-df = data.frame(id=2:8, v=c(10,10,11,11,12:14))
-x = subs(r, df)
-x2 = subs(r, df, subsWithNA=FALSE)
+df <- data.frame(id=2:8, v=c(10,10,11,11,12:14))
+x <- subs(r, df)
+x2 <- subs(r, df, subsWithNA=FALSE)
+
+df$v2 <- df$v * 10
+x3 <- subs(r, df, which=2:3)
+
+s <- stack(r, r*3)
+layerNames(s) <- c('first', 'second')
+x4 <- subs(s, df)
+x5 <- subs(s, df, which=2:3)
 }
 
 \keyword{methods}

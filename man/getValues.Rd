@@ -15,8 +15,9 @@
 \title{Get raster cell values}
 
 \description{
-getValues returns all values or a row of values for a Raster* object. It will take them from memory if available, else it will read them from disk. 
-Function \code{values} is a shorthand version of getValues.
+getValues returns all values or the values for a number of rows of a Raster* object.  
+
+\code{values} is a shorthand version of getValues (for all rows).
 }
 
 \usage{
@@ -42,6 +43,9 @@ Additional arguments when x is a \code{RasterLayer}:
 \value{
 vector or matrix of raster values
 }
+
+\seealso{ \code{\link{getValuesBlock}, \link{getValuesFocal}, \link{setValues}} }
+
 
 \author{Robert J. Hijmans}
 \examples{

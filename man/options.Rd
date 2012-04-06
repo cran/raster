@@ -26,7 +26,7 @@ To permanentely set any of these options, you can add them to \code{<your R inst
 
 \usage{
 setOptions(format, overwrite, datatype, tmpdir, progress, timer, chunksize,
-			maxmemory, todisk, setfileext, tolerance)
+			maxmemory, todisk, setfileext, tolerance, standardnames)
 showOptions()
 saveOptions()
 clearOptions()
@@ -44,10 +44,11 @@ clearOptions()
 \item{todisk}{Logical. For debugging only. Default is \code{FALSE} and should normally not be changed. If \code{TRUE}, results are always written to disk, even if no filename is supplied (a temporary filename is used)}
 \item{setfileext}{Logical. Default is \code{TRUE}. If \code{TRUE}, the file extension will be changed when writing (if known for the file type). E.g. GTiff files will be saved with the .tif extension }
 \item{tolerance}{Numeric. The tolerance used when comparing the origin and resolution of Raster* objects. Expressed as the fraction of a single cell. This should be a number between 0 and 0.5 }
+\item{standardnames}{Logical. Default is \code{TRUE}. Should \code{\link{layerNames}} be standardized to be syntactically valid names (using \code{\link{make.names}}}
 }
 
 \value{
-None. This function is used for the side-effect of setting global options.
+None. These functions are used to get or set global options.
 }
 
 \author{Robert J. Hijmans}

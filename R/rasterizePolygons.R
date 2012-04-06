@@ -4,6 +4,50 @@
 # Licence GPL v3
 
 
+.getPutVals <- function(obj, field, n, mask) {
+	if (mask) {
+		putvals <- rep(1, length=n)
+	
+	} else if (missing(field)) {
+		putvals <- as.integer(1:n)
+		
+	} else if (isTRUE (is.na(field))) { 
+		putvals <- rep(NA, n)
+		
+	} else if (!is.numeric(field) ) {
+		if (! .rasterHasSlot(obj, 'data')) {
+			stop("field name is not numeric, and vector object has no data.frame")
+		}
+		field <- which(colnames(obj@data) == field)[1]
+		if (is.na(field)) {
+			stop('field does not exist')
+		}
+		putvals <- as.vector(obj@data[[field]])
+		if (class(putvals) == 'factor') {
+			warning('selected field is factor type')
+			putvals <- as.numeric(as.character(putvals))
+		}
+		if (class(putvals) == 'character') {
+			warning('selected field is character type')
+			putvals <- as.numeric(putvals)
+		}		
+		
+	} else {
+		if (length(field) > 1) { 
+			if (NROW(field) == n) {  # multiple fields at once?
+#			if (length(field) == n) {
+				putvals <- field
+			} else {
+				stop('field should be a single value or equal the number of spatial features') 
+			}
+		} else {
+			putvals <- vector(length=n)
+			putvals[] <- field
+		}
+	}
+	putvals
+}
+
 .intersectSegments <- function(x1, y1, x2, y2, x3, y3, x4, y4) {
 # Translated by RH from LISP code by Paul Reiners
 # http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/linesegments.lisp
@@ -58,7 +102,7 @@
 
 
 
-.polygonsToRaster <- function(p, raster, field=0, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue="all", getCover=FALSE, filename="", silent=FALSE, ...) {
+.polygonsToRaster <- function(p, raster, field, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue="all", getCover=FALSE, filename="", silent=FALSE, ...) {
 
 	dots <- list(...)
 	if (!is.null(dots$overlap)) { stop('argument "overlap" is no longer available. Use "fun"') } 
@@ -120,39 +164,7 @@
 	}
 	
 	npol <- length(p@polygons)
-	
-	if (! is.numeric(field) ) {
-		field <- which(colnames(p@data) == field)[1]
-		if (is.na(field)) {
-			stop('field does not exist')
-		}
-	} 
-		
-	if (length(field) > 1) { 
-		if (length(field) == npol) {
-			putvals <- field
-		} else {
-			stop('field should be a single value or equal the number of polygons') 
-		}
-	} else if (mask) {
-		putvals <- rep(1, length=npol)	
-#	} else if (inherits(p, 'SpatialPolygons') & overlap == 'sum') {
-#		putvals <- rep(1, npol)
-	} else if (field < 0) {
-		putvals <- rep(1, length=npol)	
-	} else if (field == 0) {
-		putvals <- as.integer(1:npol)
-	} else {
-		putvals <- as.vector(p@data[[field]])
-		if (class(putvals) == 'factor') {
-			warning('selected field is factor type')
-			putvals <- as.numeric(as.character(putvals))
-		}
-		if (class(putvals) == 'character') {
-			warning('selected field is character type')
-			putvals <- as.numeric(putvals)
-		}
-	}
+	putvals <- .getPutVals(p, field, npol, mask)
 
 	polinfo <- matrix(NA, nrow=npol * 2, ncol=6)
 	addpol <- matrix(NA, nrow=500, ncol=6)

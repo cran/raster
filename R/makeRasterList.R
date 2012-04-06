@@ -17,7 +17,7 @@
 		} else {
 			return(x)
 		}
-	} else if (unstack & (nlayers(r) > 1)) {
+	} else if (unstack & inherits(r, 'RasterStackBrick')) { 
 		if ( compare & length(x) > 0 ) { 
 			compare(x[[1]], r)  
 		}

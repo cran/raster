@@ -22,6 +22,7 @@ getValuesBlock(x, row, ...)
 }
   
 
+
 \details{
 Additional arguments:
 
@@ -36,6 +37,8 @@ Additional arguments:
 \value{
 vector \code{(x=RasterLayer)} or matrix 
 }
+
+\seealso{ \code{\link{getValues}} }
 
 \author{Robert J. Hijmans}
 \examples{

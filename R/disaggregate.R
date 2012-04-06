@@ -3,6 +3,8 @@
 # Version 1.0
 # Licence GPL v3
 
+# April 2012: Several patches & improvements by Jim Regetz
+
 
 if (!isGeneric("disaggregate")) {
 	setGeneric("disaggregate", function(x, ...)
@@ -18,10 +20,10 @@ function(x, fact=NULL, method='', filename='', ...) {
 	}
 	
 	stopifnot(!is.null(fact))
-	fact <- round(fact)
+	fact <- as.integer(round(fact))
 	if (length(fact)==1) {
-		if (fact == 1) 	return(x)
-		if (fact < 2) { stop('fact should be > 1') }
+		if (fact == 1) 	return(x) 
+		if (fact < 2) { stop('fact should be >= 1') }
 		xfact <- yfact <- fact
 	} else if (length(fact)==2) {
 		xfact <- fact[1]
@@ -41,8 +43,10 @@ function(x, fact=NULL, method='', filename='', ...) {
 	} else {
 		out <- raster(x)
 	}
-	
-	dim(out) <- c(nrow(x) * yfact, ncol(x) * xfact) 
+
+	ncx <- ncol(x)
+	nrx <- nrow(x)
+	dim(out) <- c(nrx * yfact, ncx * xfact) 
 	layerNames(out) <- layerNames(x)
 	
 	if (! inherits(x, 'RasterStack')) {
@@ -52,64 +56,59 @@ function(x, fact=NULL, method='', filename='', ...) {
 	}
 	
 	if (method=='bilinear') {
-		return(resample(x, out, method='bilinear', ...))
+		return(resample(x, out, method='bilinear', filename=filename, ...))
 	} 
 	
+		
 	
 	if (canProcessInMemory(out, 3)) { 
-	
-		cols <- rep(rep(1:ncol(x), each=xfact), times=nrow(x)*yfact)
-		rows <- rep(1:nrow(x), each=ncol(x)*xfact*yfact)
-		cells <- cellFromRowCol(x, rows, cols)
+
 		x <- getValues(x)
-
-		if (is.matrix(x)) {
-			x <- x[cells, ]
+		cols <- rep(seq.int(ncx), each=xfact)
+		rows <- rep(seq.int(nrx), each=yfact)
+		cells <- as.vector( outer(cols, ncx*(rows-1), FUN="+") )
+		if (nl > 1) {
+			x <- x[cells, ]			
 		} else {
-			x <- x[cells]
+			x <- x[cells]			
 		}
-		
-
 		out <- setValues(out, x)
-
 		if (filename != '') {
 			out <- writeRaster(out, filename=filename,...)
 		}
 		
 	} else { 
-
-		tr <- blockSize(out)
+	
+		tr <- blockSize(x)
+		rown <- (tr$row-1) * yfact + 1
 		pb <- pbCreate(tr$n, ...)
 		out <- writeStart(out, filename=filename, datatype=dataType(x), ...)
+		
+		cols <- rep(seq.int(ncx), each=xfact)
+		rows <- rep(seq.int(tr$nrows[1]), each=yfact)
+		cells <- as.vector( outer(cols, ncx*(rows-1), FUN="+") )
 
-		if (nl > 1) {
-			cols <- rep(1:ncol(x), each=xfact)
-			rows <- rep(1:tr$nrow[1], each=yfact)
-			for (i in 1:tr$n) {
-				if (i == tr$n) {
-					cols <- rep(1:ncol(x), each=xfact)
-					rows <- rep(1:tr$nrow[1], each=yfact)
+		for (i in 1:tr$n) {
+			if (i == tr$n) {
+				if (tr$nrows[i] != tr$nrows[1]) {
+					rows <- rep(seq.int(tr$nrows[i]), each=yfact)
+					cells <- outer(cols, ncx*(rows-1), FUN="+")
 				}
-				rown <- (tr$nrow[i]-1) * xfact + 1
-				v <- getValues(x, tr$row[i], tr$nrows[i])
-				v <- v[rows, cols]
-				out <- writeValues(out, v, rown)
-				pbStep(pb, r)
 			}
-		} else {
-			for (i in 1:tr$n) {
-				v <- getValues(x, tr$row[i], tr$nrows[i])
-				v <- rep(rep(v, each=xfact), yfact)
-				rown <- (tr$nrow[i]-1) * xfact + 1
-				out <- writeValues(out, v, rown)
-				pbStep(pb, i)
+			v <- getValues(x, tr$row[i], tr$nrows[i])
+			if (nl > 1) {
+				v <- v[cells, ]
+			} else {
+				v <- v[cells]			
 			}
+			out <- writeValues(out, v, rown[i])
+			pbStep(pb, i)
 		}
-
+	
 		out <- writeStop(out)
-		pbClose(pb)
+		pbClose(pb)			
+	
 	}
-
 	return(out)
 }
 )

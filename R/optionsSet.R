@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-setOptions <- function(format, overwrite, datatype, tmpdir, progress, timer, chunksize, maxmemory, todisk, setfileext, tolerance) {
+setOptions <- function(format, overwrite, datatype, tmpdir, progress, timer, chunksize, maxmemory, todisk, setfileext, tolerance, standardnames) {
 	
 	setFiletype <- function(format) {
 		if (.isSupportedFormat(format)) {	options(rasterFiletype = format)	
@@ -95,6 +95,15 @@ setOptions <- function(format, overwrite, datatype, tmpdir, progress, timer, chu
 		options(rasterTolerance = x)
 	}
 	
+	setStandardNames <- function(x) {
+		if (is.logical(x)) {
+			if (is.na(x)) {
+				x <- TRUE
+			}
+			options(rasterStandardNames = x)
+		}
+	}
+		
  	
 	if (!missing(format)) { setFiletype(format) }
 	if (!missing(overwrite)) { setOverwrite(overwrite) }
@@ -107,5 +116,7 @@ setOptions <- function(format, overwrite, datatype, tmpdir, progress, timer, chu
 	if (!missing(maxmemory)) { setMaxMemorySize(maxmemory) }
 	if (!missing(chunksize)) { setChunksize(chunksize) }
 	if (!missing(tolerance)) { setTolerance(tolerance) }
+	if (!missing(standardnames)) { setStandardNames(standardnames) }
+	
 }
 

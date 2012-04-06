@@ -102,9 +102,17 @@ projectExtent <- function(object, crs) {
 	xy <- cbind(c(x1, x2, x, x), c(y, y, y1, y2))
 	pXY <- .Call("transform", projection(raster), crs, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
 	pXY <- cbind(pXY[[1]], pXY[[2]])
-	res <- c((pXY[2,1] - pXY[1,1]), (pXY[4,2] - pXY[3,2]))
+	out <- c((pXY[2,1] - pXY[1,1]), (pXY[4,2] - pXY[3,2]))
+	if (any(is.na(res))) {
+		if (isLonLat(raster)) {
+			out <- pointDistance(cbind(x1, y1), cbind(x2, y2), longlat=TRUE)
+			out <- c(out, out)
+		} else {
+			out <- res
+		}
+	}
 	# abs should not be necessary, but who knows what a projection might do?
-	abs( signif(res, digits=3) )
+	abs( signif(out, digits=3) )
 }
 
 

@@ -49,7 +49,8 @@ raster(x, ...)
 
 \tabular{rll}{
 \tab \code{x} \tab character. Name of raster file  \cr
-\tab \code{band} \tab integer. Band number in case of a file of multiple bands, default = 1 \cr
+\tab \code{band} \tab positive integer. Band number in case of a file of multiple bands, default = 1 \cr
+\tab \code{sub} \tab positive integer. Subdataset number for a file with subdatasets \cr
 \tab \code{...} \tab additional arguments.  \cr
 }
 

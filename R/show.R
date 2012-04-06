@@ -83,6 +83,9 @@ setMethod ('show' , 'RasterLayer',
 			cat('values      : none\n')			
 		}
 
+		ln <- 
+		cat('layer name  :', layerNames(object), '\n')
+		
 		z <- getZ(object)
 		if (length(z) > 0) {
 			name <- object@zname
@@ -127,6 +130,7 @@ setMethod ('show' , 'RasterBrick',
 			} else {
 				cat('values      : in memory\n')			
 			}
+
 			if (object@data@haveminmax) {
 				minv <- format(minValue(object), digits=2)
 				maxv <- format(maxValue(object), digits=2)
@@ -138,6 +142,7 @@ setMethod ('show' , 'RasterBrick',
 				}
 				cat('min values  :', paste(minv, collapse=' '), '\n')
 				cat('max values  :', paste(maxv, collapse=' '), '\n')
+
 #			} else {
 #				minv <- rep('?', min(nl, 10))
 #				maxv <- rep('?', min(nl, 10))
@@ -145,6 +150,12 @@ setMethod ('show' , 'RasterBrick',
 		} else {
 			cat('values      : none\n')			
 		}
+		ln <- layerNames(object)
+		if (nl > 10) {
+			ln <- c(ln[1:10], '...')
+		}
+		cat('layer names :', paste(ln, collapse=', '), '\n')
+
 		z <- getZ(object)
 		if (length(z) > 0) {
 			name <- object@zname
@@ -154,7 +165,7 @@ setMethod ('show' , 'RasterBrick',
 				cat(name, paste(z, collapse=', '), '\n')
 			} else {
 				z <- summary(z)
-				cat(name, paste(z, collapse=', ..., '), '(summary)\n')
+				cat(name, paste(z, collapse=' - '), '(range)\n')
 			}
 		}
 		
@@ -206,7 +217,14 @@ setMethod ('show' , 'RasterStack',
 			}
 			cat('min values  :', paste(minv, collapse=' '), '\n')
 			cat('max values  :', paste(maxv, collapse=' '), '\n')
+			
 		}
+		ln <- layerNames(object)
+		if (nl > 10) {
+			ln <- c(ln[1:10], '...')
+		}
+		cat('layer names :', paste(ln, collapse=', '), '\n')
+		
 		
 		z <- getZ(object)
 		if (length(z) > 0) {
@@ -216,8 +234,8 @@ setMethod ('show' , 'RasterStack',
 			if (length(z) < 10) {
 				cat(name, paste(z, collapse=', '), '\n')
 			} else {
-				z <- summary(z)
-				cat(name, paste(z, collapse=' ... '), '(summary)\n')
+				z <- range(z)
+				cat(name, paste(z, collapse=' - '), '(range)\n')
 			}
 		}
 		

@@ -25,7 +25,11 @@
 	# fix for opendap https://r-forge.r-project.org/forum/message.php?msg_id=5015
 	start <- tolower(substr(x, 1, 4))
 	if (start != 'http' & start != 'ftp') {	
-		try( x <- normalizePath( x, mustWork=FALSE), silent=TRUE )
+		y <- NULL
+		try( y <- normalizePath( x, mustWork=TRUE), silent=TRUE )
+		if (! is.null(y)) {
+			x <- y
+		}
 	}
 	
 	fileext <- toupper(extension(x)) 

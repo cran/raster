@@ -1,9 +1,14 @@
-# R raster package
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date : September 2008
 # Version 1.0
 # Licence GPL v3
-	
+
+.rasterHasSlot <- function(object, slot) {
+# for older versions of the methods package that does not have the .hasSlot function
+	isTRUE(try(.hasSlot(object, slot), silent=TRUE))
+}
+
+
 if ( !isGeneric("raster") ) {
 	setGeneric("raster", function(x, ...)
 		standardGeneric("raster"))
@@ -103,7 +108,8 @@ setMethod('raster', signature(x='RasterLayer'),
 			r@rotated <- TRUE
 			r@rotation <- x@rotation
 		}
-		if (.hasSlot(x@file, 'blockrows')) {  # old objects may not have this slot
+		
+		if (.rasterHasSlot(x@file, 'blockrows')) {  # old objects may not have this slot
 			r@file@blockrows <- x@file@blockrows
 			r@file@blockcols <- x@file@blockcols
 		}
@@ -169,7 +175,7 @@ setMethod('raster', signature(x='RasterBrick'),
 				r <- raster(extent(x), nrows=nrow(x), ncols=ncol(x), crs=projection(x))	
 				r@file <- x@file
 
-				if (.hasSlot(x@file, 'blockrows')) {  # old objects may not have this slot
+				if (.rasterHasSlot(x@file, 'blockrows')) {  # old objects may not have this slot
 					r@file@blockrows <- x@file@blockrows
 					r@file@blockcols <- x@file@blockcols
 				}

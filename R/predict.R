@@ -55,7 +55,7 @@ setMethod('predict', signature(object='Raster'),
 				haveFactor <- TRUE 
 				factlevels <- list()
 				for (i in 1:length(f)) {
-					factlevels[[i]] <- model$forest$xlevels[[f]]
+					factlevels[[i]] <- model$forest$xlevels[[ f[i] ]]
 				}
 			}
 		} else {

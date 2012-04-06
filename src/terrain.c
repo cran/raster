@@ -60,6 +60,8 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 	xval = REAL(val);
 	
 	int add=0;
+	int addn=0;
+	
 	if (option[0]) {  
 	// terrain ruggedness
 		for (i = ncol+1; i < ncol * (nrow-1); i++) {
@@ -69,15 +71,17 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 		add++;
 	} 
 	if (option[1]) {
+		addn = add * n;
 	// topograhic position
 		for (i = ncol+1; i < ncol * (nrow-1); i++) {
-			xval[i+add*n] = xd[i] - (xd[i-1-ncol] + xd[i-1] + xd[i-1+ncol] + xd[i-ncol]
+			xval[i+addn] = xd[i] - (xd[i-1-ncol] + xd[i-1] + xd[i-1+ncol] + xd[i-ncol]
 								+ xd[i+ncol] + xd[i+1-ncol] + xd[i+1] + xd[i+1+ncol]) / 8;
 		}
 		add++;
 	} 
 	if (option[2]) {
 	// roughness 
+		addn = add * n;
 		int a[9] = { -1-ncol, -1, -1+ncol, -ncol, 0, ncol, 1-ncol, 1, 1+ncol };
 		double min, max, v;
 		for (i = ncol+1; i < ncol * (nrow-1); i++) {
@@ -91,7 +95,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 					min = v;
 				}
 			}
-			xval[i+add*n] = max - min;
+			xval[i+addn] = max - min;
 		}
 		add++;
 	} 
@@ -99,6 +103,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 
 	if (option[3]) {
 	// slope 4 neighbors	
+		addn = add * n;
 		if (geo) {
 			int k, q;
 			double xwi[2] = {-1,1};
@@ -118,12 +123,12 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 				}
 				zx = xd[i-1] * xw[0] + xd[i+1] * xw[1];
 				zy = xd[i-ncol] * yw[0] + xd[i+ncol] * yw[1];
-				xval[i+add*n] = atan( sqrt( pow(zy, 2) + pow(zx, 2) ) );
+				xval[i+addn] = atan( sqrt( pow(zy, 2) + pow(zx, 2) ) );
 			}
 			if (unit == 0) {
 				double adj = 180 / M_PI;
 				for (i = ncol+1; i < ncol * (nrow-1); i++) {
-					xval[i+add*n] = xval[i] * adj;
+					xval[i+addn] = xval[i+addn] * adj;
 				}
 			}
 	
@@ -138,12 +143,12 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 			for (i = ncol+1; i < ncol * (nrow-1); i++) {
 				zx = xd[i-1] * xw[0] + xd[i+1] * xw[1];
 				zy = xd[i-ncol] * yw[0] + xd[i+ncol] * yw[1];
-				xval[i+add*n] = atan( sqrt( pow(zy, 2) + pow(zx, 2) ) );
+				xval[i+addn] = atan( sqrt( pow(zy, 2) + pow(zx, 2) ) );
 			}
 			if (unit == 0) {
 				double adj = 180 / M_PI;
 				for (i = ncol+1; i < ncol * (nrow-1); i++) {
-					xval[i+add*n] = xval[i] * adj;
+					xval[i+addn] = xval[i+addn] * adj;
 				}
 			}
 		}
@@ -153,7 +158,8 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 
 	if (option[4]) {
 	// aspect 4 neighbors	
-		
+		addn = add * n;
+
 		if (geo) {
 			int k, q;
 			double xwi[2] = {-1,1};
@@ -174,12 +180,12 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 				zx = xd[i-1] * xw[0] + xd[i+1] * xw[1];
 				zy = xd[i-ncol] * yw[0] + xd[i+ncol] * yw[1];
 				zx = atan2(zy, zx);
-				xval[i+add*n] = mod( M_PI_2 - zx, M_2PI);
+				xval[i+addn] = mod( M_PI_2 - zx, M_2PI);
 			}
 			if (unit == 0) {
 				double adj = 180 / M_PI;
 				for (i = ncol+1; i < ncol * (nrow-1); i++) {
-					xval[i+add*n] = xval[i+add*n] * adj;
+					xval[i+addn] = xval[i+addn] * adj;
 				}
 			}				
 	
@@ -196,12 +202,12 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 				zx = xd[i-1] * xw[0] + xd[i+1] * xw[1];
 				zy = xd[i-ncol] * yw[0] + xd[i+ncol] * yw[1];
 				zx = atan2(zy, zx);
-				xval[i+add*n] = mod( M_PI_2 -zx, M_2PI);
+				xval[i+addn] = mod( M_PI_2 -zx, M_2PI);
 			}
 			if (unit == 0) {
 				double adj = 180 / M_PI;
 				for (i = ncol+1; i < ncol * (nrow-1); i++) {
-					xval[i+add*n] = xval[i+add*n] * adj;
+					xval[i+addn] = xval[i+addn] * adj;
 				}
 			}
 		}
@@ -213,6 +219,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 	
 	if (option[5]) {
 	// slope 8 neighbors	
+		addn = add * n;
 		if (geo) {
 			int k, q;
 			double xwi[6] = {-1,-2,-1,1,2,1};
@@ -234,13 +241,13 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 						+ xd[i+1-ncol] * xw[3] + xd[i+1] * xw[4] + xd[i+1+ncol] * xw[5];
 				zy = xd[i-1-ncol] * yw[0] + xd[i-1+ncol] * yw[1] + xd[i-ncol] * yw[2] 
 						+ xd[i+ncol] * yw[3] + xd[i+1-ncol] * yw[4] + xd[i+1+ncol] * yw[5];
-				xval[i+add*n] = atan( sqrt( pow(zy, 2) + pow(zx, 2) ) );
+				xval[i+addn] = atan( sqrt( pow(zy, 2) + pow(zx, 2) ) );
 								
 			}
 			if (unit == 0) {
 				double adj = 180 / M_PI;
 				for (i = ncol+1; i < ncol * (nrow-1); i++) {
-					xval[i+add*n] = xval[i] * adj;
+					xval[i+addn] = xval[i+addn] * adj;
 				}
 			}
 			
@@ -257,13 +264,13 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 						+ xd[i+1-ncol] * xw[3] + xd[i+1] * xw[4] + xd[i+1+ncol] * xw[5];
 				zy = xd[i-1-ncol] * yw[0] + xd[i-1+ncol] * yw[1] + xd[i-ncol] * yw[2] 
 						+ xd[i+ncol] * yw[3] + xd[i+1-ncol] * yw[4] + xd[i+1+ncol] * yw[5];
-				xval[i+add*n] = atan( sqrt( pow(zy, 2) + pow(zx, 2) ) );
+				xval[i+addn] = atan( sqrt( pow(zy, 2) + pow(zx, 2) ) );
 
 			}
 			if (unit == 0) {
 				double adj = 180 / M_PI;
 				for (i = ncol+1; i < ncol * (nrow-1); i++) {
-					xval[i+add*n] = xval[i] * adj;
+					xval[i+addn] = xval[i+addn] * adj;
 				}
 			}
 		}
@@ -274,6 +281,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 	
 	if (option[6]) {
 	// aspect 8 neighbors	
+		addn = add * n;
 	
 		if (geo) {
 			int k, q;
@@ -297,12 +305,12 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 				zy = xd[i-1-ncol] * yw[0] + xd[i-1+ncol] * yw[1] + xd[i-ncol] * yw[2] 
 						+ xd[i+ncol] * yw[3] + xd[i+1-ncol] * yw[4] + xd[i+1+ncol] * yw[5];
 				zx = atan2(zy, zx);
-				xval[i+add*n] = mod( M_PI_2 -zx, M_2PI);
+				xval[i+addn] = mod( M_PI_2 -zx, M_2PI);
 			}
 			if (unit == 0) {
 				double adj = 180 / M_PI;
 				for (i = ncol+1; i < ncol * (nrow-1); i++) {
-					xval[i+add*n] = xval[i+add*n] * adj;
+					xval[i+addn] = xval[i+addn] * adj;
 				}
 			}
 		
@@ -320,12 +328,12 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 				zy = xd[i-1-ncol] * yw[0] + xd[i-1+ncol] * yw[1] + xd[i-ncol] * yw[2] 
 						+ xd[i+ncol] * yw[3] + xd[i+1-ncol] * yw[4] + xd[i+1+ncol] * yw[5];
 				zx = atan2(zy, zx);
-				xval[i+add*n] = mod( M_PI_2 -zx, M_2PI);
+				xval[i+addn] = mod( M_PI_2 -zx, M_2PI);
 			}
 			if (unit == 0) {
 				double adj = 180 / M_PI;
 				for (i = ncol+1; i < ncol * (nrow-1); i++) {
-					xval[i+add*n] = xval[i+add*n] * adj;
+					xval[i+addn] = xval[i+addn] * adj;
 				}
 			}
 			
@@ -334,6 +342,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 		add++;
 		
 	} else if (option[7]) { // flow direction
+		addn = add * n;
 
 		double d[8] = {0,0,0,0,0,0,0,0};
 		double p[8] = {1,2,4,16,32,64,128,256}; // pow(2, j)
@@ -342,7 +351,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 		GetRNGstate();
 		for (i = ncol+1; i < ncol * (nrow-1); i++) {
 			if (!R_FINITE(xd[i])) {
-				xval[i] = R_NaReal;
+				xval[i+addn] = R_NaReal;
 			} else {
 				d[0] = (xd[i] - xd[i+1]) / dx;
 				d[1] = (xd[i] - xd[i+1+ncol]) / dxy;
@@ -354,15 +363,15 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 				d[7] = (xd[i] - xd[i+1-ncol]) / dxy;
 				// using the lowest neighbor, even if it is higher than the focal cell.
 				dmin = d[0];
-				xval[i] = 1;
+				xval[i+addn] = 1;
 				for (j=1; j<8; j++) {
 					if (d[j] < dmin) {
 						dmin = d[j];
-						xval[i] = p[j];
+						xval[i+addn] = p[j];
 					} else if (d[j] == dmin) {
 						if (unif_rand() > 0.5) {
 							dmin = d[j];
-							xval[i] = p[j];
+							xval[i+addn] = p[j];
 						}
 					}
 				}
@@ -375,17 +384,18 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 // Set edges to NA	
 // first row	
 	for (j=0; j<add; j++) {
+	    int jn = j * n;
 		for (i = 0; i < ncol; i++) {  
-			xval[i+j*n] = R_NaReal;
+			xval[i+jn] = R_NaReal;
 		}
 	// last row	
 		for (i = ncol * (nrow-1); i < n; i++) {  
-			xval[i+j*n] = R_NaReal; 
+			xval[i+jn] = R_NaReal; 
 		}
 	// first and last columns
 		for (i = 1; i < nrow; i++) {  
-			xval[i * ncol + j*n] = R_NaReal;
-			xval[i * ncol - 1 + j*n] = R_NaReal;
+			xval[i * ncol + jn] = R_NaReal;
+			xval[i * ncol - 1 + jn] = R_NaReal;
 		}
 	}
 

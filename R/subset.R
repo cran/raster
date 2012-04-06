@@ -31,8 +31,8 @@ function(x, subset, drop=TRUE, ...) {
 	} else {
 		x@layers <- x@layers[subset]
 		x@layernames <- x@layernames[subset]
-		if (length(x@zvalue)>1) {
-			x@zvalue <- x@zvalue[subset]
+		if (length(x@z)>0) {
+			x@z <- lapply(x@z, function(x) x[subset])
 		}
 	}
 	return(x)	

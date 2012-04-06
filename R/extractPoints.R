@@ -6,7 +6,7 @@
 
 
 	
-.xyValues <- function(object, xy, method='simple', buffer=NULL, fun=NULL, na.rm=TRUE, layer, nl, cellnumbers=FALSE, ...) { 
+.xyValues <- function(object, xy, method='simple', buffer=NULL, fun=NULL, na.rm=TRUE, layer, nl, cellnumbers=FALSE, df=FALSE, ...) { 
 
 	nlyrs <- nlayers(object)
 	if (nlyrs > 1) {
@@ -25,19 +25,33 @@
 		
 	if (! is.null(buffer)) {
 	if (method != 'simple') { warning('method argument is ignored when a buffer is used') }
-		return( .xyvBuf(object, xy, buffer, fun, na.rm, layer=layer, nl=nl, cellnumbers=cellnumbers) )
+		res <- .xyvBuf(object, xy, buffer, fun, na.rm, layer=layer, nl=nl, cellnumbers=cellnumbers) 		
 	}
 
 	if (method == 'bilinear') {
-		return ( .bilinearValue(object, xy, layer=layer, n=nl) )
+		res <- .bilinearValue(object, xy, layer=layer, n=nl) 
 
 	} else if (method=='simple') {
 		cells <- cellFromXY(object, xy)
-		return( .cellValues(object, cells, layer=layer, nl=nl) )
+		res <-  .cellValues(object, cells, layer=layer, nl=nl) 
 			
 	} else {
 		stop('invalid "method" argument. Should be simple or bilinear.')
 	}
+	
+	if (df) {
+		if (is.list(res)) {
+			res <- data.frame( do.call(rbind, lapply(1:length(res), function(x) if (!is.null(res[[x]])) cbind(ID=x, res[[x]]))) )
+		} else {
+			res <- data.frame(cbind(ID=1:NROW(res), res))
+		}
+		if (ncol(res) == 2) {
+			colnames(res)[2] <- layerNames(object)[layer]
+		} 
+	}
+	
+	
+	res
 }
 
 
