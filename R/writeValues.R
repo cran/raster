@@ -16,13 +16,15 @@ setMethod('writeValues', signature(x='RasterLayer', v='vector'),
 		
 		if ( x@file@driver == 'gdal' ) {
 			off = c(start-1, 0)
+			if (substr(x@file@datanotation,1,1) != 'F') {
+				v <- round(v)
+			}
 			if (substr(x@file@datanotation,5,5) == 'U') {
 				v[v < 0] <- NA
 				if (x@file@datanotation == 'INT4U') {
 					v[v > 2147483647] <- NA
 				}
-			}
-			
+			}			
 			v[is.na(v)] <- x@file@nodatavalue
 			v <- matrix(v, nrow=x@ncols)
 			

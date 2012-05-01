@@ -11,7 +11,7 @@ if (!isGeneric("crop")) {
 
 
 setMethod('crop', signature(x='Raster', y='ANY'), 
-function(x, y, filename='', snap='near', ...) {
+function(x, y, filename='', snap='near', datatype=NULL, ...) {
 
 	filename <- trim(filename)
 
@@ -21,13 +21,12 @@ function(x, y, filename='', snap='near', ...) {
 	}
 	validObject(y)
 	
-	datatype <- list(...)$datatype
 	if (is.null(datatype)) { 
 		datatype <- unique(dataType(x))
 		if (length(datatype) > 1) {
 			datatype <- .commonDataType(datatype)
 		}
-	}
+	} 
 
 # we could also allow the raster to expand but for now let's not and first make a separate expand function
 	e <- intersect(extent(x), extent(y))
@@ -66,7 +65,7 @@ function(x, y, filename='', snap='near', ...) {
 		x <- getValuesBlock(x, row1, nrows=nr, col=col1, ncols=nc)
 		out <- setValues(out, x)
 		if (filename != "") { 
-			out <- writeRaster(out, filename=filename, datatype=datatype, ...)
+			out <- writeRaster(out, filename=filename, datatype=datatype, ...)			
 		}
 	} else { 
 		tr <- blockSize(out)

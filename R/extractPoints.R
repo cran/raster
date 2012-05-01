@@ -6,7 +6,7 @@
 
 
 	
-.xyValues <- function(object, xy, method='simple', buffer=NULL, fun=NULL, na.rm=TRUE, layer, nl, cellnumbers=FALSE, df=FALSE, ...) { 
+.xyValues <- function(object, xy, method='simple', cellnumbers=FALSE, buffer=NULL, fun=NULL, na.rm=TRUE, layer, nl, df=FALSE, ...) { 
 
 	nlyrs <- nlayers(object)
 	if (nlyrs > 1) {
@@ -24,34 +24,41 @@
 	}
 		
 	if (! is.null(buffer)) {
-	if (method != 'simple') { warning('method argument is ignored when a buffer is used') }
-		res <- .xyvBuf(object, xy, buffer, fun, na.rm, layer=layer, nl=nl, cellnumbers=cellnumbers) 		
-	}
-
-	if (method == 'bilinear') {
-		res <- .bilinearValue(object, xy, layer=layer, n=nl) 
+		if (method != 'simple') { 
+			warning('method argument is ignored when a buffer is used') 
+		}
+		value <- .xyvBuf(object, xy, buffer, fun, na.rm, layer=layer, nl=nl, cellnumbers=cellnumbers) 		
+		
+	} else if (method == 'bilinear') {
+		value <- .bilinearValue(object, xy, layer=layer, n=nl) 
+		if (cellnumbers) {
+			warning("'cellnumbers' does not apply for bilinear values")
+		}
 
 	} else if (method=='simple') {
 		cells <- cellFromXY(object, xy)
-		res <-  .cellValues(object, cells, layer=layer, nl=nl) 
+		value <-  .cellValues(object, cells, layer=layer, nl=nl) 
+		if (cellnumbers) {			
+			value <- cbind(cells, value)
+			if (ncol(value) == 2) {
+				colnames(value)[2] <- layerNames(object)[layer]
+			} 
+		}
 			
 	} else {
 		stop('invalid "method" argument. Should be simple or bilinear.')
 	}
 	
 	if (df) {
-		if (is.list(res)) {
-			res <- data.frame( do.call(rbind, lapply(1:length(res), function(x) if (!is.null(res[[x]])) cbind(ID=x, res[[x]]))) )
+		if (is.list(value)) {
+			value <- data.frame( do.call(rbind, 
+				lapply(1:length(value), function(x) if (!is.null(value[[x]])) cbind(ID=x, value[[x]]))) )
 		} else {
-			res <- data.frame(cbind(ID=1:NROW(res), res))
+			value <- data.frame(cbind(ID=1:NROW(value), value))
 		}
-		if (ncol(res) == 2) {
-			colnames(res)[2] <- layerNames(object)[layer]
-		} 
 	}
 	
-	
-	res
+	value
 }
 
 

@@ -10,43 +10,12 @@ if (!isGeneric("extract")) {
 }	
 
 
-setMethod('extract', signature(x='Raster', y='missing'), 
-function(x, y, ...){ 
-
-	dots <- list(...)
-
-	# focal values
-	if ( ! is.null(dots$row) ) {
-		warning("the 'row' argument is extract is depracated; use getValuesFocal instead")
-		return( .focalValues(x, ...) )
-	}
-
-	# backwards in-compatability
-	if (! is.null(dots$cells)) {
-		stop("the 'cells' argument is depracated")
-	}
-	if (! is.null(dots$xy)) {
-		stop("the 'xy' argument is depracated")
-	}
-	if (! is.null(dots$p)) {
-		stop("the 'p' argument is depracated")
-	}
-	if (! is.null(dots$lns)) {
-		stop("the 'lns' argument is depracated")
-	}
-	
-	stop('I do not understand what you want me to do')
-	
-	# return(getValues(x, ...)) ???
-})
-
-
 
 setMethod('extract', signature(x='Raster', y='vector'), 
 function(x, y, ...){ 
 	y <- round(y)
 	if (length(y) == 2) {
-		warning("returning values at CELL NUMBERS (not coordinates) : ", y[1], " and ", y[2])
+		cat("note: returning values at CELL NUMBERS (not coordinates) : ", y[1], " and ", y[2], "\n")
 	}
 	return( .cellValues(x, y, ...) )
 })
@@ -79,19 +48,26 @@ function(x, y, ...){
 
 
 
-
-setMethod('extract', signature(x='Spatial', y='Raster'), 
-function(x, y, ...){ 
-# For backwards compatibility
-	stop('the order of the first two arguments is reversed' )
-})
-
-
 setMethod('extract', signature(x='Raster', y='Extent'), 
- 	function(x, y, fun, na.rm=FALSE, layer, nl, ...) {
+ 	function(x, y, cellnumbers=FALSE, fun=NULL, na.rm=FALSE, layer, nl, df=FALSE, ...) {
 
 		e <- intersect(extent(x), y)
 		e <- alignExtent(e, x)
+
+		if (!is.null(fun)) {
+			cellnumbers <- FALSE
+		} else if (cellnumbers) {
+			cell <- cellsFromExtent(x, e)
+			value <- extract(x, cell, layer=layer, nl=nl)
+			value <- cbind(cell, value)
+			if (ncol(value)==2) {
+				colnames(value)[2] <- layerNames(x)[layer]
+			}
+			if (df) {
+				value <- data.frame(value)
+			}
+			return(value)
+		}
 		
 		r <- res(x)
 		e@xmin <- e@xmin + 0.25 * r[1]
@@ -123,7 +99,7 @@ setMethod('extract', signature(x='Raster', y='Extent'),
 			v <- v[ , lyrs, drop=FALSE] 
 		}
 		
-		if (! missing(fun)) {
+		if (! is.null(fun)) {
 			if (is.matrix(v)) {
 				ln <- colnames(v)
 				v <- apply(v, 2, FUN=fun, na.rm=na.rm)
@@ -131,6 +107,10 @@ setMethod('extract', signature(x='Raster', y='Extent'),
 			} else {
 				v <- fun(v, na.rm=na.rm)
 			}
+		}
+
+		if (df) {
+			v <- data.frame(v)
 		}
 		return(v)
 	}

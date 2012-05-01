@@ -23,59 +23,40 @@
 }
 
 
-.stopGDALwriting <- function(raster) {
+.stopGDALwriting <- function(x) {
 
-	nl <- nlayers(raster)
+	nl <- nlayers(x)
 
-	if (packageDescription('rgdal')$Version > '0.6-28') {
-	
-		if (nl == 1) {
-#			if (raster@data@haveminmax) {
-				if (inMemory(raster)) {
-					statistics <- c(raster@data@min, raster@data@max, mean(raster@data@values, na.rm=TRUE), sd(raster@data@values, na.rm=TRUE))
-				} else {
-					statistics <- c(raster@data@min, raster@data@max, 0, 0)
-				}
-				b <- new("GDALRasterBand", raster@file@transient, 1)
-				try ( .Call("RGDAL_SetStatistics", b, as.double(statistics), PACKAGE = "rgdal"), silent=TRUE )
-#			}
-		} else {
-#			if (raster@data@haveminmax) {
-				if (inMemory(raster)) {
-					statistics <- cbind(raster@data@min, raster@data@max, apply(raster@data@values, 2, mean, na.rm=TRUE), apply(raster@data@values, 2, sd, na.rm=TRUE))
-				} else {
-					statistics <- cbind(raster@data@min, raster@data@max, 0, 0)
-				}
-				for (i in 1:nl) {
-					b <- new("GDALRasterBand", raster@file@transient, i)
-					try ( .Call("RGDAL_SetStatistics", b, as.double(statistics[i,]), PACKAGE = "rgdal"), silent=TRUE )
-				}		
-#			}
-		}
-		
+	statistics <- cbind(x@data@min, x@data@max, 0, 0)
+	if (substr(x@file@datanotation, 1, 1) != 'F') {
+		statistics <- round(statistics)
+	}
+
+	for (i in 1:nl) {
+		b <- new("GDALRasterBand", x@file@transient, i)
+		try ( .Call("RGDAL_SetStatistics", b, as.double(statistics[i,]), PACKAGE = "rgdal"), silent=TRUE )
 	}
 		
-	if (raster@file@options[1] == "") {
-		options <- NULL
+	if(x@file@options[1] != "") {
+		saveDataset(x@file@transient, x@file@name, options=x@file@options)
 	} else {
-		options <- raster@file@options	
+		saveDataset(x@file@transient, x@file@name)	
 	}
-	saveDataset(raster@file@transient, raster@file@name, options=options)
-	GDAL.close(raster@file@transient) 
+	
+	GDAL.close(x@file@transient) 
 	
 	if (nl > 1) {
-		out <- brick(raster@file@name)
+		out <- brick(x@file@name)
 	} else {
-		out <- raster(raster@file@name)
+		out <- raster(x@file@name)
 	}
 	
-	if (! out@data@haveminmax) {
-		out@data@min <- raster@data@min
-		out@data@max <- raster@data@max
+	if (! out@data@haveminmax ) {
+		out@data@min <- statistics[1]
+		out@data@max <- statistics[2]
 		out@data@haveminmax <- TRUE
 	}
 
-#	.writeStx(rasterout) 
 	return(out)
 }
 

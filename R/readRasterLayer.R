@@ -6,15 +6,15 @@
 
 .readRasterLayerValues <- function(object, startrow, nrows=1, startcol=1, ncols=ncol(object)-startcol+1) {
 
-	if (nrows < 1) { stop("nrows should be > 1") }
-	startrow <- min(max(1, round(startrow)), object@nrows)
-	endrow <- min(object@nrows, startrow+nrows-1)
-	nrows <- endrow - startrow + 1
+#	if (nrows < 1) { stop("nrows should be > 1") }
+#	startrow <- min(max(1, round(startrow)), object@nrows)
+#	endrow <- min(object@nrows, startrow+nrows-1)
+#	nrows <- endrow - startrow + 1
 
-	if (ncols < 1) { stop("ncols should be > 1") }
-	startcol <- min(max(1, round(startcol)), object@ncols)
-	endcol <- min(object@ncols, startcol+ncols-1)
-	ncols <- endcol - startcol + 1
+#	if (ncols < 1) { stop("ncols should be > 1") }
+#	startcol <- min(max(1, round(startcol)), object@ncols)
+#	endcol <- min(object@ncols, startcol+ncols-1)
+#	ncols <- endcol - startcol + 1
 		
 	if (.isNativeDriver(object@file@driver))  {
 

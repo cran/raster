@@ -2,6 +2,7 @@
 
 \alias{projection<-}
 \alias{projection}
+\alias{proj4string}
 
 \title{ Get or set a projection }
 

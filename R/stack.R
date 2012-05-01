@@ -24,7 +24,7 @@ function(x, ...) {
 
 
 setMethod("stack", signature(x='character'), 
-function(x, ..., bands=NULL, varname="", native=FALSE) {
+function(x, ..., bands=NULL, varname="", native=FALSE, quick=FALSE) {
 	rlist <- c(x, list(...))
     if ( varname != "") {
 		if (length(rlist) == 1) {
@@ -33,6 +33,12 @@ function(x, ..., bands=NULL, varname="", native=FALSE) {
 			s <- stack(sapply(rlist, function(x) .stackCDF(x, varname=varname, bands=bands)))
 		}
 	} else {
+		if (quick) {
+			if (!is.null(bands)) {
+				stop("cannot do 'quick' if bands is not NULL")
+			}
+			return(.quickStack(rlist, native=native))
+		}
 		return(stack(rlist, bands=bands, native=native))
 	}
 } )

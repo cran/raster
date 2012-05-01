@@ -6,7 +6,7 @@
 	
 .focalValues <- function(x, row, ngb=3, fun=NULL, na.rm=FALSE, layer, nl, ...) {
 
-	#warning('this function is depracated. Use "getValuesFocal" instead.')
+	warning('this function is depracated. Use "getValuesFocal" instead.')
 	
 	dots <- list(...)
 	if (! is.null(dots$buffer) ) {

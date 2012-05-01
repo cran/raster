@@ -6,44 +6,39 @@
 \alias{nlayers,RasterStack-method}
 \alias{nlayers,RasterBrick-method}
 \alias{nlayers,Spatial-method}
-\alias{layerNames}
-\alias{layerNames<-}
   
 \title{Number of layers}
 
 \description{
-Get or set layer properties of a RasterStack object
+Get the number of layers in a Raster* object, typically used with a (multilayer) RasterStack or RasterBrick object
 }
 
 \usage{
-nlayers(object)
-layerNames(object)
-layerNames(object) <- value
+nlayers(x)
 }
 
 \arguments{
-  \item{object}{Raster* object}
-  \item{value}{a vector of character}
+\item{x}{Raster* object}
 }
 
 \value{
-nlayers: A single numeric value >= 1
-layerNames: a vector of character
+integer
 }
 
-\seealso{ \code{\link[raster]{bands}} }
+\seealso{ \code{\link[raster]{layerNames}} }
 
 
 \author{Robert J. Hijmans }
 \examples{
-#using a new default raster (1 degree global)
 r <- raster(ncols=10, nrows=10)
 r[] <- 1:ncell(r)
 s <- stack(r, r, r)
 nlayers(s)
-layerNames(s)
-layerNames(s) <- c('a', 'b', 'c')
-layerNames(s)[2] <- c('bb')
+s <- stack(s,s)
+nlayers(s)
+s <- dropLayer(s, 2:3)
+nlayers(s)
+
 }
 
 \keyword{spatial}

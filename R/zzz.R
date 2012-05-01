@@ -1,12 +1,10 @@
 
 .onLoad <- function(lib, pkg)  {
-	pkg.info <- drop(read.dcf(file=system.file("DESCRIPTION", package=pkg), fields=c("Version","Date")))
-	packageStartupMessage(paste(pkg, " version ", pkg.info["Version"], " (", pkg.info["Date"], ")", sep=""))
-
-	#library.dynam("raster", pkg, lib)	
 	
-	tst <- try( removeTmpFiles(), silent=TRUE )
+	pkg.info <- utils::packageDescription('raster') 
+	packageStartupMessage(paste("raster ", pkg.info[["Version"]], " (", pkg.info["Date"], ")", sep=""))
 
+	tst <- try( removeTmpFiles(), silent=TRUE )
 	return(invisible(0))
 }
 

@@ -6,7 +6,7 @@
 
 
 setMethod('extract', signature(x='Raster', y='SpatialPolygons'), 
-function(x, y, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, df=FALSE, layer, nl, ...){ 
+function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, df=FALSE, layer, nl, ...){ 
 
 	px <- projection(x, asText=FALSE)
 	comp <- .compareCRS(px, projection(y), unknown=TRUE)
@@ -23,10 +23,10 @@ function(x, y, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, 
 	res <- list()
 	res[[npol+1]] = NA
 
-	if (!missing(fun)) {
+	if (!is.null(fun)) {
 		cellnumbers <- FALSE
 	} else if (weights) {
-		if (!missing(fun)) {
+		if (!is.null(fun)) {
 			test <- try(slot(fun, 'generic') == 'mean', silent=TRUE)
 			if (!isTRUE(test)) {
 				warning('"fun" was changed to "mean"; other functions cannot be used when "weights=TRUE"' )
@@ -208,7 +208,7 @@ function(x, y, fun, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, 
 	res <- res[1:npol]
 	pbClose(pb)
 
-	if (! missing(fun)) {
+	if (! is.null(fun)) {
 		if (weights) {
 			if (nl > 1) {
 				meanfunc <- function(x) {

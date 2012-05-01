@@ -46,3 +46,11 @@ projection <- function(x, asText=TRUE) {
 }
 
 
+setMethod("proj4string", signature('Raster'), 
+	function(obj) {
+		projection(obj)
+	}
+)
+
+
+
