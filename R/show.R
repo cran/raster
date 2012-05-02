@@ -4,30 +4,6 @@
 # Licence GPL v3
 
 
-setMethod ('print' , 'Raster', 
-	function(x, ...) {
-		if (inherits(x, 'RasterStack')) {
-			show(x)
-		} else {
-			if (x@file@driver == 'netcdf') {
-				nc <- open.ncdf(x@file@name)
-				print(nc)
-				close.ncdf(nc)
-			} else if (is.factor(x)) {
-				cat('factor levels (value attributes)\n')
-				f <- x@data@attributes[[1]]
-				if (nrow(f) > 15) { 
-					f <- f[1:15,]
-				}
-				print(f)
-			# cat('levels      :' , paste(object@data@levels, collapse=', '), '\n')
-			# cat('labels      :' , paste(object@data@labels, collapse=', '), '\n')
-			} else callNextMethod(x, ...)
-		}
-	}
-)
-
-
 
 setMethod ('show' , 'Extent', 
 	function(object) {
@@ -83,7 +59,6 @@ setMethod ('show' , 'RasterLayer',
 			cat('values      : none\n')			
 		}
 
-		ln <- 
 		cat('layer name  :', layerNames(object), '\n')
 		
 		z <- getZ(object)
@@ -117,6 +92,7 @@ setMethod ('show' , 'RasterBrick',
 			cat('rotated     : TRUE\n')
 		}
 		
+		mnr <- 15
 		nl <- nlayers(object)
 		cat ('dimensions  : ', nrow(object), ', ', ncol(object), ', ', ncell(object), ', ', nl, '  (nrow, ncol, ncell, nlayers)\n', sep="" ) 
 		#cat ('ncell       :' , ncell(object), '\n')
@@ -136,12 +112,12 @@ setMethod ('show' , 'RasterBrick',
 				maxv <- format(maxValue(object), digits=2)
 				minv <- gsub('Inf', '?', minv)
 				maxv <- gsub('-Inf', '?', maxv)
-				if (nl > 10) {
-					minv <- c(minv[1:10], '...')
-					maxv <- c(maxv[1:10], '...')
+				if (nl > mnr) {
+					minv <- c(minv[1:mnr], '...')
+					maxv <- c(maxv[1:mnr], '...')
 				}
-				cat('min values  :', paste(minv, collapse=' '), '\n')
-				cat('max values  :', paste(maxv, collapse=' '), '\n')
+				cat('min values  :', paste(trim(minv), collapse=', '), '\n')
+				cat('max values  :', paste(trim(maxv), collapse=', '), '\n')
 
 #			} else {
 #				minv <- rep('?', min(nl, 10))
@@ -151,8 +127,8 @@ setMethod ('show' , 'RasterBrick',
 			cat('values      : none\n')			
 		}
 		ln <- layerNames(object)
-		if (nl > 10) {
-			ln <- c(ln[1:10], '...')
+		if (nl > mnr) {
+			ln <- c(ln[1:mnr], '...')
 		}
 		cat('layer names :', paste(ln, collapse=', '), '\n')
 
@@ -161,7 +137,7 @@ setMethod ('show' , 'RasterBrick',
 			name <- object@zname
 			if (name == '') name <- 'z-value'
 			name <- paste(sprintf("%-12s", name), ':', sep='')
-			if (length(z) < 10) {
+			if (length(z) < mnr) {
 				cat(name, paste(z, collapse=', '), '\n')
 			} else {
 				z <- summary(z)
@@ -194,6 +170,7 @@ setMethod ('show' , 'RasterStack',
 			cat('rotated     : TRUE\n')
 		}
 		
+		mnr <- 15		
 		if (filename(object) != '') {
 			cat ('filename    :' , filename(object), '\n')
 		}
@@ -211,17 +188,17 @@ setMethod ('show' , 'RasterStack',
 			maxv <- format(maxValue(object), digits=2)
 			minv <- gsub('Inf', '?', minv)
 			maxv <- gsub('-Inf', '?', maxv)
-			if (nl > 10) {
-				minv <- c(minv[1:10], '...')
-				maxv <- c(maxv[1:10], '...')
+			if (nl > mnr) {
+				minv <- c(minv[1:mnr], '...')
+				maxv <- c(maxv[1:mnr], '...')
 			}
-			cat('min values  :', paste(minv, collapse=' '), '\n')
-			cat('max values  :', paste(maxv, collapse=' '), '\n')
+			cat('min values  :', paste(trim(minv), collapse=', '), '\n')
+			cat('max values  :', paste(trim(maxv), collapse=', '), '\n')
 			
 		}
 		ln <- layerNames(object)
-		if (nl > 10) {
-			ln <- c(ln[1:10], '...')
+		if (nl > mnr) {
+			ln <- c(ln[1:mnr], '...')
 		}
 		cat('layer names :', paste(ln, collapse=', '), '\n')
 		
@@ -231,7 +208,7 @@ setMethod ('show' , 'RasterStack',
 			name <- object@zname
 			if (name == '') name <- 'z-value'
 			name <- paste(sprintf("%-12s", name), ':', sep='')
-			if (length(z) < 10) {
+			if (length(z) < mnr) {
 				cat(name, paste(z, collapse=', '), '\n')
 			} else {
 				z <- range(z)

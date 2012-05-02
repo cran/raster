@@ -15,7 +15,9 @@
 \description{
 Transfer values associated with 'vector' type spatial data (points, lines, polygons) to spatially overlapping raster cells. 
 
-For polygons, 'spatially overlapping' means that the polygon must cover the center of a raster cell. All cells that are touched by a line are considered to be overlapping. Points that fall on a border between cells are placed in the cell to the right and/or in the cell below.
+For polygons, 'spatially overlapping' means that the polygon must cover the center of a raster cell. For lines, all cells that are touched by a line are considered to be overlapping. You can combine this behaviour by rasterizing polygons as lines first and then as polygons. 
+
+Points that fall on a border between cells are placed in the cell to the right and/or in the cell below.
 }
 
 \usage{
@@ -33,7 +35,7 @@ rasterize(x, y, ...)
 
 \bold{= all cases =}
 
-\item{\code{field}}{ The value(s) to be transferred. This can be a single number, or a vector of numbers that has the same length as the number o spatial features (points, lines, polygons. If \code{x} is a Spatial*DataFrame, this can be the column name (character) of the variable to be transfered. If missing, the attribute index is used (i.e. numbers from 1 to the number of features). You can also provide a vector with the same length as the number of spatial features, or a matrix where the number of rows matches the number of spatial features}
+\item{\code{field}}{ The value(s) to be transferred. This can be a single number, or a vector of numbers that has the same length as the number of spatial features (points, lines, polygons. If \code{x} is a Spatial*DataFrame, this can be the column name of the variable to be transfered. If missing, the attribute index is used (i.e. numbers from 1 to the number of features). You can also provide a vector with the same length as the number of spatial features, or a matrix where the number of rows matches the number of spatial features}
 
 \item{\code{fun}}{Determine what values to assign to cells that are covered by multiple spatial features. You can use functions such as \code{min, max}, or \code{mean}, or one of the following character values: \code{'first', 'last', 'sum', 'min'}, or \code{'max'}. The default value is \code{'last'}}
 
@@ -47,10 +49,7 @@ rasterize(x, y, ...)
 
 \item{\code{filename}}{Character. Output filename (optional)}
 
-\item{\code{overwrite}}{Logical. If TRUE, "filename" will be overwritten if it exists}
-\item{\code{format}}{Character. Output file type. See \link[raster]{writeRaster}}
-\item{\code{datatype}}{Character. Output data type. See \link[raster]{dataType}}
-\item{\code{progress}}{Character. "text", "window", or "" (the default, no progress bar)}
+Further optional arguments as for \code{\link{writeRaster}}
 
 
 \bold{= points =}
@@ -107,7 +106,7 @@ r3 <- rasterize(xy, r, vals, fun=sum)
 
 # with a SpatialPointsDataFrame
 vals <- 1:n
-p <- as.data.frame(cbind(xy, name=vals))
+p <- data.frame(xy, name=vals)
 coordinates(p) <- ~x+y
 r <- rasterize(p, r, 'name', fun=min)
 #r2 <- rasterize(p, r, 'name', fun=max)

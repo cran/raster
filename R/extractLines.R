@@ -6,7 +6,7 @@
 
 
 setMethod('extract', signature(x='Raster', y='SpatialLines'), 
-function(x, y, fun, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, ...){ 
+function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, ...){ 
 
 	px <- projection(x, asText=FALSE)
 	comp <- .compareCRS(px, projection(y), unknown=TRUE)
@@ -30,7 +30,7 @@ function(x, y, fun, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, ...){
 		nl <- nlayers(x)
 	}	
 	
-	if (!missing(fun)) {
+	if (!is.null(fun)) {
 		cellnumbers <- FALSE
 	}
 	
@@ -125,7 +125,7 @@ function(x, y, fun, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, ...){
 	
 	pbClose(pb)
 	
-	if (! missing(fun)) {
+	if (! is.null(fun)) {
 		i <- sapply(res, is.null)
 		if (nlayers(x) > 1) {
 			j <- matrix(ncol=nlayers(x), nrow=length(res))

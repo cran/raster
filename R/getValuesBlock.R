@@ -14,11 +14,16 @@ setMethod('getValuesBlock', signature(x='RasterStack', row='numeric'),
 	function(x, row, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs) {
 		stopifnot(row <= x@nrows)
 		stopifnot(col <= x@ncols)
-		nrows <- min(round(nrows), x@nrows-row+1)
-		ncols <- min((x@ncols-col+1), ncols)
 		stopifnot(nrows > 0)
 		stopifnot(ncols > 0)
+		row <- max(1, min(x@nrows, round(row[1])))
+		lastrow <- min(x@nrows, row + round(nrows[1]) - 1)
+		nrows <- lastrow - row + 1
+		col <- max(1, min(x@ncols, round(col[1])))
+		lastcol <- col + round(ncols[1]) - 1
+		ncols <- lastcol - col + 1
 
+		
 		nlyrs <- nlayers(x)
 		if (missing(lyrs)) {
 			lyrs <- 1:nlyrs
@@ -28,13 +33,33 @@ setMethod('getValuesBlock', signature(x='RasterStack', row='numeric'),
 				stop("no valid layers selected")
 			}
 			nlyrs <- length(lyrs)
+			x <- x[[lyrs]]
 		}
 		
+		startcell <- cellFromRowCol(x, row, col)
+		lastcell <- cellFromRowCol(x, lastrow, lastcol)
+
+		nc <- ncol(x)
 		res <- matrix(ncol=nlyrs, nrow=nrows * ncols)
-		for (i in 1:nlyrs) {
-			res[,i] <- getValuesBlock(x@layers[[lyrs[i]]], row, nrows, col, ncols)
+		
+		inmem <- sapply(x@layers, function(x) x@data@inmemory)
+		if (any(inmem)) {
+			if (col==1 & ncols==nc) {
+				cells <- startcell:lastcell
+			}
+			cells <- cellFromRowColCombine(x, row:lastrow, col:lastcol)
 		}
-		colnames(res) <- layerNames(x)[lyrs]
+		
+		for (i in 1:nlyrs) {
+			xx <- x@layers[[lyrs[i]]]
+			if ( inMemory(xx) ) {			
+				res[,i] <- xx@data@values[cells]		
+			} else {
+				res[,i] <- .readRasterLayerValues(xx, row, nrows, col, ncols)
+			}
+		}
+		
+		colnames(res) <- layerNames(x)
 		res
 	}
 )
@@ -43,10 +68,12 @@ setMethod('getValuesBlock', signature(x='RasterStack', row='numeric'),
 
 setMethod('getValuesBlock', signature(x='RasterBrick', row='numeric'), 
 	function(x, row, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs) {
+		row <- max(1, round(row))
+		col <- max(1, round(col))
 		stopifnot(row <= x@nrows)
 		stopifnot(col <= x@ncols)
-		nrows <- min(round(nrows), x@nrows-row+1)
-		ncols <- min((x@ncols-col+1), ncols)
+		nrows <- min(round(nrows), x@nrows-row+1)		
+		ncols <- min((x@ncols-col+1), round(ncols))
 		stopifnot(nrows > 0)
 		stopifnot(ncols > 0)
 
@@ -64,43 +91,30 @@ setMethod('getValuesBlock', signature(x='RasterBrick', row='numeric'),
 		
 		
 		if ( inMemory(x) ){
-			row <- max(1, as.integer(round(row)))
-			nrows <- round(nrows)
-			nrows <- min(nrows, x@nrows-row+1)
 			lastrow <- row + nrows - 1
-			col <- as.integer(round(col))
-			ncols <- as.integer(round(ncols))
-			lastcol <- col + ncols - 1
-			if (col==1 & ncols==ncol(x)) {
-				if (row==1 & nrows==nrow(x)) {
-					res <- x@data@values[,lyrs]
-				} else {
-					start = cellFromRowCol(x, row, 1)
-					end =  cellFromRowCol(x, lastrow, ncol(x))
-					res <- x@data@values[start:end, lyrs]
-				}
+			if (col==1 & ncols==x@ncols) {
+				start <- cellFromRowCol(x, row, 1)
+				end <-  cellFromRowCol(x, lastrow, ncol(x))
+				res <- x@data@values[start:end, ]
 			} else {
-				cells <- cellFromRowColCombine(x, row:lastrow, col:lastcol)
-				res <- x@data@values[cells, lyrs]
+				lastcol <- col + ncols - 1
+				res <- x@data@values[cellFromRowColCombine(x, row:lastrow, col:lastcol), ]
 			}
+			if (ncol(res) > nlyrs) {
+				res <- res[, lyrs, drop=FALSE]
+			}
+			
 			
 		} else if ( fromDisk(x) ) {
-			if (x@file@driver == 'netcdf') {
-				return( .readRowsBrickNetCDF(x, row, nrows, col, ncols, lyrs=lyrs) )
-			} else {
-				res <- matrix(ncol=nlyrs, nrow=nrows*ncols)
-				for (i in 1:nlyrs) {
-				# to do: need something more efficient 
-					res[,i] <- .readRasterLayerValues(raster(x, lyrs[i]), row, nrows, col, ncols)
-				}
+			res <- .readRasterBrickValues(x, row, nrows, col, ncols)
+			if (ncol(res) > nlyrs) {
+				res <- res[, lyrs, drop=FALSE]
 			}
-			
 		} else {
 			res <- ( matrix(rep(NA, nrows * ncols * nlyrs), ncol=nlyrs) )
+			colnames(res) <- layerNames(x)[lyrs]
 		}
-		
-	colnames(res) <- layerNames(x)[lyrs]
-	return(res)
+		return(res)
 	}
 )
 

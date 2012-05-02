@@ -4,10 +4,9 @@
 
 \alias{mosaic}
 \alias{mosaic,Raster,Raster-method}
-\alias{mosaic,list,missing-method}
 
 \title{ 
-Merge Raster* objects, using a function to compute cell value for overlapping areas.
+Merge Raster* objects, using a function to compute cell value for overlapping areas. See \code{\link{merge}} for a simpler apporach.
 }
 
 \description{
@@ -15,38 +14,21 @@ Mosaic Raster* objects to form a new object with a larger spatial extent. A func
 }
 
 \usage{
-mosaic(x, y, ...) 
+\S4method{mosaic}{Raster,Raster}(x, y, ..., fun, tolerance=0.05, filename="")
 }
 
 \arguments{
   \item{x}{Raster* object}
   \item{y}{Raster* object}
-  \item{...}{Additional RasterLayers and other arguments. See below, under Methods}  
+  \item{...}{Additional Raster or Extent objects (and/or arguments for writing files as in \code{\link{writeRaster})}}
+  \item{fun}{Function. E.g. mean, min, or max. Must be a function that accepts a 'na.rm' argument}
+  \item{tolerance}{Numeric. Permissable difference in origin (relative to the cell resolution). See \code{\link[base]{all.equal}}}
+  \item{filename}{Character. Output filename (optional)}
 }
 
 
-\section{Methods}{
-\describe{
-A full call to mosaic is:
-
-\code{mosaic(x, y, ..., fun, na.rm=TRUE, tolerance=0.05, filename="", overwrite, format, progress ) }
-
-  \item{\code{x}}{Raster* object; or a list of Raster* objects}
-  \item{\code{y}}{Raster* object}
-  \item{\code{...}}{Additional Raster* objects}
-  \item{\code{fun}}{Function. E.g. mean, min, or max. Must be a function that accepts a 'na.rm' argument}
-  \item{\code{na.rm}}{Logical. Only return \code{NA} when all values are \code{NA}}
-  \item{\code{tolerance}}{Numeric. Permissable difference in origin (relative to the cell resolution). See \link[base]{all.equal}}
-  \item{\code{filename}}{Character. output filename}
-  \item{\code{overwrite}}{Logical. If TRUE, "filename" will be overwritten if it exists}
-  \item{\code{format}}{Character. output file type. Either 'raster', 'ascii' or a supported GDAL 'driver' name see \code{\link[raster]{writeFormats}}}
-  \item{\code{datatype}}{Character. Output data type. See \link[raster]{dataType}}
-  \item{\code{progress}}{Character. "text", "window", or "" (the default, no progress bar)}
-}  
-} 
-
 \details{
-The RasterLayer objects must have the same origin and resolution. 
+The Raster objects must have the same origin and resolution. 
 }
 
 \value{

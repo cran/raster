@@ -153,7 +153,7 @@ You can coerce Raster* objects to Spatial* objects using \code{as}, as in \code{
     \code{\link{summary}} \tab Summary of the values of a Raster* object (quartiles and mean) \cr
     \code{\link{freq}} \tab Frequency table of Raster cell values \cr
     \code{\link{count}} \tab Count the frequency of a single (range of) value(s) \cr
-    \code{\link{crosstab}} \tab Cross-tabulate two RasterLayer objects \cr
+    \code{\link{crosstab}} \tab Cross-tabulate two RasterLayer objects, or mulitple layers in a RasterStack/Brick \cr
     \code{\link{unique}} \tab Get the unique values in a Raster* object \cr
     \code{\link{zonal}} \tab Summarize a Raster* object by zones in a RasterLayer \cr
   }
@@ -220,6 +220,8 @@ Basic parameters of existing Raster* objects can be obtained, and in most cases 
     \code{\link{nrow}} \tab The number of rows \cr
     \code{\link{ncell}} \tab The number of cells (can not be set directly, only via ncol or nrow) \cr
     \code{\link{res}} \tab The resolution (x and y) \cr
+    \code{\link{nlayers}} \tab How many layers does the object have? \cr	
+    \code{\link{layerNames}} \tab Get or set the layer names \cr	
     \code{\link{xres}} \tab The x resolution (can be set with res) \cr
     \code{\link{yres}} \tab The y resolution (can be set with res)\cr
     \code{\link{xmin}} \tab The minimum x coordinate (or longitude) \cr
@@ -235,7 +237,7 @@ Basic parameters of existing Raster* objects can be obtained, and in most cases 
     \code{\link{nbands}} \tab How many bands (layers) does the file have? \cr	
     \code{\link{compare}} \tab Compare for equality the basic parameters of two Raster* objects \cr		
     \code{\link{NAvalue}} \tab Get or set the \code{NA} value (for reading from file; see \link{writeRaster} for setting it when writing a file) \cr
-  }
+}
 
 If there are values associated with a RasterLayer object (either in memory or via a link to a file) these are lost when you change the number of columns or rows or the resolution. This is not the case when the extent is changed (as the number of columns and rows will not be affected). Simlarly, with \bold{projection} you can set the projection, but this does not transform the data (see \link{projectRaster} for that).   
 }

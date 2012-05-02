@@ -4,7 +4,7 @@
 
 \alias{merge}
 \alias{merge,Raster,Raster-method}
-\alias{merge,Extent,Extent-method}
+\alias{merge,Extent,ANY-method}
 
 \title{ 
 Merge
@@ -15,25 +15,24 @@ Merge Raster* objects to form a new Raster object with a larger spatial extent. 
 }
 
 \usage{
-\S4method{merge}{Raster,Raster}(x, y, ..., tolerance=0.05, filename="", format, datatype, overwrite, progress, overlap=TRUE, ext=NULL)
+\S4method{merge}{Raster,Raster}(x, y, ..., tolerance=0.05, filename="", overlap=TRUE, ext=NULL)
+
+\S4method{merge}{Extent,ANY}(x, y, ...)
+
 }
 
 \arguments{
   \item{x}{Raster* or Extent object}
-  \item{y}{Raster* or Extent object}
-  \item{...}{Additional Raster or Extent objects}
+  \item{y}{Raster* if \code{x} is a Raster* object. If \code{x} is an Extent, \code{y} can be an Extent or object from wich an Extent can be extracted}
+  \item{...}{Additional Raster or Extent objects (and/or arguments for writing files as in \code{\link{writeRaster})}}
   \item{tolerance}{Numeric. Permissable difference in origin (relative to the cell resolution). See \code{\link[base]{all.equal}}}
-  \item{filename}{Character. output filename}
-  \item{overwrite}{Logical. If TRUE, "filename" will be overwritten if it exists}
-  \item{format}{Character. output file type. Either 'raster', 'ascii' or a supported GDAL 'driver' name see \code{\link[raster]{writeFormats}}}
-  \item{datatype}{Character. Output data type. See \code{\link[raster]{dataType}}}
-  \item{progress}{Character. "text", "window", or "" (the default, no progress bar)}
+  \item{filename}{Character. Output filename (optional)}
   \item{overlap}{Logical. If \code{FALSE} values of overlapping objects are based on the first layer, even if they are \code{NA}}
   \item{ext}{Extent object (optional) to limit the output to that extent}
 } 
 
 \details{
-The Raster objects must have the same origin and resolution. In areas where the Raster objects overlap, the values of the Raster object that is first in the sequence of arguments will be retained. If you'd rather use the average of cell values, or do another computation, you can use \code{\link[raster]{mosaic}} instead of merge.
+The Raster objects must have the same origin and resolution. In areas where the Raster objects overlap, the values of the Raster object that is first in the sequence of arguments will be retained. If you would rather use the average of cell values, or do another computation, you can use \code{\link[raster]{mosaic}} instead of merge.
 }
 
 \value{

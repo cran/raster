@@ -14,36 +14,21 @@ if (!isGeneric("mosaic")) {
 
 
 setMethod('mosaic', signature(x='Raster', y='Raster'), 
-function(x, y, ..., fun, tolerance=0.05, filename="", format, datatype, overwrite, progress) { 
-	x <- c(x, y, list(...))
-	x <- x[ sapply(x, function(x) inherits(x, 'Raster')) ]
-	if (length(x) < 2) {
-		stop('mosaic needs at least 2 Raster* objects')
+function(x, y, ..., fun, tolerance=0.05, filename="") { 
+	x <- c(x, y, list(...))	
+	isRast <- sapply(x, function(x) inherits(x, 'Raster'))
+
+	if (sum(isRast) < 2) {
+		stop('merge needs at least 2 Raster* objects')
+	}
+	
+	dotargs <- x[ !isRast ]
+	x <- x[ isRast ]
+	if (is.null(dotargs$datatype)) {
+		dotargs$datatype <- .commonDataType(sapply(x, dataType))  
 	}
 	filename <- trim(filename)
-	if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
-	if (missing(overwrite)) { overwrite <- .overwrite()	}
-	if (missing(progress)) { progress <- .progress() }
-	if (missing(datatype)) { datatype <- .commonDataType(sapply(x, dataType)) } 
-	mosaic(x, fun=fun, tolerance=tolerance, filename=filename, format=format, datatype=datatype, overwrite=overwrite, progress=progress, check=FALSE)
-} )
-
-
-
-setMethod('mosaic', signature(x='list', y='missing'), 
-function(x, y,..., fun, tolerance=0.05, filename="", format, datatype, overwrite, progress, check=TRUE){ 
-
-	if (check) {
-		x <- x[ sapply(x, function(x) inherits(x, 'Raster')) ]
-		if (length(x) < 2) {
-			stop('merge needs at least 2 Raster* objects')
-		}
-		filename <- trim(filename)
-		if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
-		if (missing(overwrite)) { overwrite <- .overwrite()	}
-		if (missing(progress)) { progress <- .progress() }
-		if (missing(datatype)) { datatype <- .commonDataType(sapply(x, dataType)) } 
-	}
+	dotargs$filename <- filename
 
 	nl <- max(unique(sapply(x, nlayers)))
 	compare(x, extent=FALSE, rowcol=FALSE, orig=TRUE, res=TRUE, tolerance=tolerance)
@@ -95,7 +80,8 @@ function(x, y,..., fun, tolerance=0.05, filename="", format, datatype, overwrite
 		}
 		out <- setValues(out, v)
 		if (filename != '') {
-			out <- writeRaster(out, filename=filename, format=format, datatype=datatype, overwrite=overwrite)
+			dotargs$x <- out
+			out <- do.call(writeRaster, dotargs)
 		}
 		return(out)
 	}
@@ -113,8 +99,10 @@ function(x, y,..., fun, tolerance=0.05, filename="", format, datatype, overwrite
 	}
 
 	tr <- blockSize(out)
-	pb <- pbCreate(tr$n, progress=progress)
-	out <- writeStart(out, filename=filename, format=format, datatype=datatype, overwrite=overwrite)
+	pb <- do.call(pbCreate, dotargs)
+
+	dotargs$x <- out
+	out <- do.call(writeStart, dotargs)
 
 	if (nl == 1) {
 		for (i in 1:tr$n) {

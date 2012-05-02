@@ -28,26 +28,26 @@
 }
 
 
-layerNames <- function(object) {
-	ln <- object@layernames
-	ln <- ln[1:nlayers(object)]
+layerNames <- function(x) {
+	ln <- x@layernames
+	ln <- ln[1:nlayers(x)]
 	.goodNames(as.vector(ln))
 }
 
 
-'layerNames<-' <- function(object, value) {
-	nl <- nlayers(object)
+'layerNames<-' <- function(x, value) {
+	nl <- nlayers(x)
 	if (is.null(value)) {
 		value <- rep('', nl)
 	} else if (length(value) != nl) {
 		stop('incorrect number of layer names')
 	}
-	object@layernames <- .goodNames(value)
-	if (inherits(object, 'RasterStack')){
+	x@layernames <- .goodNames(value)
+	if (inherits(x, 'RasterStack')){
 		for (i in 1:nl) {
-			object@layers[[i]]@layernames <- object@layernames[i]
+			x@layers[[i]]@layernames <- x@layernames[i]
 		}
 	}
-	return(object)
+	return(x)
 }
 

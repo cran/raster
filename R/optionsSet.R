@@ -77,7 +77,8 @@ setOptions <- function(format, overwrite, datatype, tmpdir, progress, timer, chu
 	}
  
 	setChunksize <- function(chunksize) {
-		chunksize = max(1, round(chunksize[1]))
+		chunksize <- max(1, round(chunksize[1]))
+		chunksize <- min(chunksize, 10^9)
 		options(rasterChunkSize = chunksize )
 	}
 

@@ -1,3 +1,18 @@
+New features, improvements:
+New function weighted.mean 
+New function layerStats to compute the correlation, covariance and weighted covariance matrix across layers (by Jonathan Greenberg)
+crosstab can now also process multi-layer objects, suggested by Neil Best
+Improved speed of getValuesBlock for RasterBrick using suggestion by Stefan Schlaffer
+print method for Spatial* objects similar to that for Raster* objects
+
+bug fixes:
+'overlay' ignored the writeRaster arguments. Reported by Oliver Soong
+The 'buffer' argument in extract (with points) was lost in the previous version. It has been restored. 
+In extract with polygons failed with "getCover=TRUE". Reported by Ariel Ortiz-Bobea
+'predict' now also works when using a single predictor raster layer. Reported by Ben Weinstein
+'crop' now accepts a 'datatype' argument. Reported by Jonathan Greenberg
+
+--- 5-April-2012, version 1.9-82
 New function 'getValuesFocal' to get focal values (a cell and its neighborhood)
 Added .tmpdir function, provided by Shaun Walbridge, to make the name of the folder used to store temporary files user-specific to avoid collisions on multi-user platforms such as cluster computers. 
 Improved support for accessing subdatasets (in gdal provided raster data). Non-standard names like "subdatset:filename" should now work (previously some were normalized to (invalid) path names). There is also an argument "sub" in raster().

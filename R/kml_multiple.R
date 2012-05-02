@@ -42,7 +42,7 @@
 
 setMethod('KML', signature(x='RasterStackBrick'), 
 
-function (x, filename, time=NULL, col=rev(terrain.colors(255)), maxpixels=100000, zip='', ...) {
+function (x, filename, time=NULL, col=rev(terrain.colors(255)), maxpixels=100000, blur=1, zip='', ...) {
 
     if (! .couldBeLonLat(x)) { 
         stop("CRS of x must be longitude/latitude")
@@ -81,7 +81,7 @@ function (x, filename, time=NULL, col=rev(terrain.colors(255)), maxpixels=100000
 
 	imagefile <- paste(extension(filename, ''), "_", 1:nl, ".png", sep="")
 	for (i in 1:nl) {
-		png(filename = imagefile[i], width=max(480, ncol(x)), height=max(480, nrow(x)), bg="transparent")
+		png(filename = imagefile, width=max(480, blur*ncol(x)), height=max(480,blur*nrow(x)), bg="transparent")
 		par(mar=c(0,0,0,0))
 		if (R.Version()$minor >= 13) {
 			image(x[[i]], col=col, axes=FALSE, useRaster=TRUE, ...)

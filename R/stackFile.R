@@ -6,28 +6,50 @@
 
 
 stackOpen <- function(stackfile) {
-	st <- read.table(stackfile, as.is=FALSE, strip.white=TRUE)
-	if (dim(st)[2] > 1) {
-		rst <- stack(as.vector(st[,1]), bands=as.vector(st[,2]))
+	f <- read.table(stackfile, as.is=FALSE, strip.white=TRUE)
+	if (dim(f)[2] > 1) {
+		s <- stack(as.vector(f[,1]), bands=as.vector(f[,2]))
 	} else {
-		rst <- stack(as.vector(st[,1]))
+		s <- stack(as.vector(f[,1]))
 	}
-	rst@filename <- stackfile
-	return(rst)
+	s@filename <- stackfile
+	return(s)
+}
+
+..stackOpen <- function(stackfile, quick=FALSE) {
+	f <- read.table(stackfile, as.is=FALSE, strip.white=TRUE)
+	if (quick) {
+		if (dim(f)[2] > 1) {
+			s <- .quickStack(f[,1], f[,2], f[,3])	
+		} else {
+			s <- .quickStack(f[,1])
+		}
+	} else {
+		if (dim(f)[2] > 1) {
+			s <- stack(as.vector(f[,1]), bands=as.vector(f[,2]))
+		} else {
+			s <- stack(as.vector(f[,1]))
+		}
+	}
+	s@filename <- stackfile
+	return(s)
 }
 
 stackSave <- function(x, filename) {
 	filename <- trim(filename)
-	if (filename == "") { stop('Provide a non empty filename.') }
-	thefile <- file(filename, "w")
-	for (i in 1:length(x@layers)) {
-		fname <- trim(filename(x@layers[[i]]))
-		if (fname == "") {
-			stop("cannot save a RasterStack that has layers that only exist in memory. Use writeRaster first/instead.")
-		}	
-		cat(fname, "\t", bandnr(x@layers[[i]]),"\n", file=thefile)
+	if (filename == "") { 
+		stop('Provide a non empty filename.') 
 	}
-	close(thefile)
+	
+	info <- t( sapply(x@layers, function(i) c(i@file@name, i@file@nbands, i@data@band)) )
+	if (any(info[,1] == '')) {
+		stop("cannot save a RasterStack that has layers that only exist in memory. Use writeRaster first/instead.")
+	}
+	if (any(info[,2] != '1')) {
+		write.table(info, filename, row.names=FALSE, col.names=FALSE)
+	} else {
+		write.table(info[,1], filename, row.names=FALSE, col.names=FALSE)
+	}
 	x@filename <- filename
 	return(x)
 }

@@ -19,21 +19,17 @@ If a single mutli-layer object is provided, its layers are treated as individual
 }
 
 \usage{
-\S4method{overlay}{Raster,Raster}(x, y, ..., fun, filename="", datatype, format, overwrite, progress, recycle=TRUE)
+\S4method{overlay}{Raster,Raster}(x, y, ..., fun, filename="", recycle=TRUE)
 
-\S4method{overlay}{Raster,missing}(x, y, ..., fun, filename="", datatype, format, overwrite, progress, unstack=TRUE)
+\S4method{overlay}{Raster,missing}(x, y, ..., fun, filename="", unstack=TRUE)
 }
 
 \arguments{
   \item{x}{Raster* object}
   \item{y}{Raster* object, or missing (only useful if \code{x} has multiple layers)}
-  \item{...}{Additional Raster objects}    
+  \item{...}{Additional Raster objects (and/or arguments for writing files as in \code{\link{writeRaster})}}    
   \item{fun}{Function to be applied. When using RasterLayer objects, the number of arguments of the function should match the number of Raster objects, or it should take any number of arguments. When using mult-layer objects the function should match the number of layers of the RasterStack/Brick object (unless unstack=FALSE) }
   \item{filename}{Character. Output filename (optional) }
-  \item{format}{Character. Output file type. See \code{\link[raster]{writeFormats}}}
-  \item{datatype}{Character. Output data type. See \code{\link[raster]{dataType}}}
-  \item{overwrite}{Logical. If TRUE, "filename" will be overwritten if it exists}
-  \item{progress}{Character. "text", "window", or "" (the default, no progress bar)}
   \item{recycle}{Logical. Should layers from Raster objects with fewer layers be recycled?}  
   \item{unstack}{Logical. Should layers be ustacked before computation (i.e. does the \code{fun} refer to individual layers in a multilayer object)?}  
 }

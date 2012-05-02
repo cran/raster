@@ -14,22 +14,39 @@ if (!isGeneric("merge")) {
 }	
 
 
+setMethod('merge', signature(x='Extent', y='ANY'), 
+	function(x, y, ...) {
+		x <- c(x, y, list(...))	
+		x <- sapply(x, extent)
+		x <- x[sapply(x, function(x) inherits(x, 'Extent'))]
+		x <- lapply(x, function(e) t(bbox(e)))
+		x <- do.call(rbind, x)
+		x <- apply(x, 2, range)
+		extent(as.vector(x))
+	}
+)
+
+
 setMethod('merge', signature(x='Raster', y='Raster'), 
-function(x, y, ..., tolerance=0.05, filename="", format, datatype, overwrite, progress, overlap=TRUE, ext=NULL) { 
-	x <- c(x, y, list(...))
-	x <- x[ sapply(x, function(x) inherits(x, 'Raster')) ]
-	if (length(x) < 2) {
+function(x, y, ..., tolerance=0.05, filename="", overlap=TRUE, ext=NULL) { 
+	x <- c(x, y, list(...))	
+	isRast <- sapply(x, function(x) inherits(x, 'Raster'))
+
+	if (sum(isRast) < 2) {
 		stop('merge needs at least 2 Raster* objects')
 	}
-
+	
+	dotargs <- x[ !isRast ]
+	x <- x[ isRast ]
+	
 	compare(x, extent=FALSE, rowcol=FALSE, orig=TRUE, res=TRUE, tolerance=tolerance)
-
+	
+	if (is.null(dotargs$datatype)) {
+		dotargs$datatype <- .commonDataType(sapply(x, dataType))  
+	}
 	filename <- trim(filename)
-	if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
-	if (missing(overwrite)) { overwrite <- .overwrite()	}
-	if (missing(progress)) { progress <- .progress() }
-	if (missing(datatype)) { datatype <- .commonDataType(sapply(x, dataType)) } 
-
+	dotargs$filename <- filename
+	
 	nl <- max(unique(sapply(x, nlayers)))
 	bb <- .unionExtent(x)
 	if (nl > 1) {
@@ -94,7 +111,8 @@ function(x, y, ..., tolerance=0.05, filename="", format, datatype, overwrite, pr
 				rm(vv)
 				out <- setValues(out, v)
 				if (filename != '') {
-					out <- writeRaster(out, filename=filename, format=format, datatype=datatype, overwrite=overwrite)
+					dotargs$x <- out
+					out <- do.call(writeRaster, dotargs)
 				}
 				return(out)
 				
@@ -111,7 +129,8 @@ function(x, y, ..., tolerance=0.05, filename="", format, datatype, overwrite, pr
 				}
 				out <- setValues(out, v)
 				if (filename != '') {
-					out <- writeRaster(out, filename=filename, format=format, datatype=datatype, overwrite=overwrite)
+					dotargs$x <- out
+					out <- do.call(writeRaster, dotargs)
 				}
 				return(out)
 			
@@ -146,7 +165,8 @@ function(x, y, ..., tolerance=0.05, filename="", format, datatype, overwrite, pr
 				rm(vv)
 				out <- setValues(out, v)
 				if (filename != '') {
-					out <- writeRaster(out, filename=filename, format=format, datatype=datatype, overwrite=overwrite)
+					dotargs$x <- out
+					out <- do.call(writeRaster, dotargs)
 				}
 				return(out)
 				
@@ -159,7 +179,8 @@ function(x, y, ..., tolerance=0.05, filename="", format, datatype, overwrite, pr
 				}
 				out <- setValues(out, v)
 				if (filename != '') {
-					out <- writeRaster(out, filename=filename, format=format, datatype=datatype, overwrite=overwrite)
+					dotargs$x <- out
+					out <- do.call(writeRaster, dotargs)
 				}
 				return(out)
 			}
@@ -186,8 +207,9 @@ function(x, y, ..., tolerance=0.05, filename="", format, datatype, overwrite, pr
 	#	tr$nrows <- c(tr$row[-1], nrow(out)+1) - c(tr$row)
 	#	tr$n <- length(tr$row)
 
-		pb <- pbCreate(tr$n, progress=progress)
-		out <- writeStart(out, filename=filename, format=format, datatype=datatype, overwrite=overwrite)
+		pb <- pbCreate(tr$n, dotargs)
+		dotargs$x <- out
+		out <- do.call(writeStart, dotargs)
 		
 		if (overlap) {
 		
@@ -309,8 +331,9 @@ function(x, y, ..., tolerance=0.05, filename="", format, datatype, overwrite, pr
 	#	tr$nrows <- c(tr$row[-1], nrow(out)+1) - c(tr$row)
 	#	tr$n <- length(tr$row)
 
-		pb <- pbCreate(tr$n, progress=progress)
-		out <- writeStart(out, filename=filename, format=format, datatype=datatype, overwrite=overwrite)
+		pb <- pbCreate(tr$n, dotargs)
+		dotargs$x <- out
+		out <- do.call(writeStart, dotargs)
 
 		if (overlap) {
 		

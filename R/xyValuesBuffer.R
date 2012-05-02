@@ -49,13 +49,13 @@
 				if (is.na(s)) {
 					return(NA)
 				} else {
-					vals <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
-					cells <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
-					coords <- xyFromCell(obj, cells)
+					value <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
+					cell <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
+					coords <- xyFromCell(obj, cell)
 					if (cellnumbers) {
-						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), cells, vals)
+						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), cell, value)
 					} else {
-						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), vals)
+						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), value)
 					}
 					if (nrow(pd) > 1) {
 						pd <- pd[pd[,1] <= buffer[i], -1]
@@ -91,13 +91,13 @@
 				if (is.na(s)) {
 					cv[[i]] <- NA
 				} else {
-					vals <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
-					cells <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
-					coords <- xyFromCell(obj, cells)
+					value <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
+					cell <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
+					coords <- xyFromCell(obj, cell)
 					if (cellnumbers) {
-						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), cells, vals)
+						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), cell, value)
 					} else {
-						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), vals)
+						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), value)
 					}
 					if (nrow(pd) > 1) {
 						cv[[i]] <- pd[pd[,1] <= buffer[i], -1]
@@ -131,13 +131,13 @@
 				if (is.na(s)) {
 					return(NA)
 				} else {
-					vals <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
-					cells <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
-					coords <- xyFromCell(obj, cells)
+					value <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
+					cell <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
+					coords <- xyFromCell(obj, cell)
 					if (cellnumbers) {
-						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), cells, vals)
+						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), cell, value)
 					} else {
-						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), vals)
+						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), value)
 					}
 					if (nrow(pd) > 1) {
 						pd <- pd[pd[,1] <= buffer[i], -1]
@@ -169,13 +169,13 @@
 				if (is.na(s)) {
 					cv[[i]] <- NA
 				} else {
-					vals <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
-					cells <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
-					coords <- xyFromCell(obj, cells)
+					value <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
+					cell <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
+					coords <- xyFromCell(obj, cell)
 					if (cellnumbers) {
-						pd <- cbind(pointDistance(xy[i,], coords, longlat=FALSE), cells, vals)
+						pd <- cbind(pointDistance(xy[i,], coords, longlat=FALSE), cell, value)
 					} else {
-						pd <- cbind(pointDistance(xy[i,], coords, longlat=FALSE), vals)
+						pd <- cbind(pointDistance(xy[i,], coords, longlat=FALSE), value)
 					}
 					if (nrow(pd) > 1) {
 						cv[[i]] <- pd[pd[,1] <= buffer[i], -1]

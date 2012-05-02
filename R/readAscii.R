@@ -24,8 +24,14 @@
 		v <- matrix(nrow=ncols, ncol=nrows)
 		endcol <- startcol+ncols-1
 		skiprows <- x@file@offset + startrow - 2 
-		for (i in 1:nrows) {
-			v[,i] <- as.numeric ( scan(filename(x), skip=skiprows+i, nlines=nrows, what='character', quiet=TRUE) )[startcol:endcol]
+		cols <- endcol-startcol+1
+		r <- raster(x)
+		nrow(r) <- nrows
+		tr <- blockSize(r, minblocks=1)
+		for (i in 1:tr$n) {
+			start <- skiprows + tr$row[i]
+			d <- matrix( scan(filename(x), skip=start, nlines=tr$nrows[i], what='character', quiet=TRUE), ncol=tr$nrows[i])
+			v[,tr$row[i]:(tr$row[i]+tr$nrows[i]-1)] <- as.numeric(d[startcol:endcol, ])
 		}
 		v <- as.vector(v)
 	} else {

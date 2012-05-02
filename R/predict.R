@@ -101,6 +101,7 @@ setMethod('predict', signature(object='Raster'),
 		factres	<- FALSE
 		pb <- pbCreate(tr$n,  progress=progress )			
 
+		factorwarned <- FALSE
 		for (i in 1:tr$n) {
 		
 			if (i==tr$n) {
@@ -115,7 +116,8 @@ setMethod('predict', signature(object='Raster'),
 			} else {
 				blockvals <- data.frame(getValues(object, row=rr, nrows=tr$nrows[i]))	# faster
 			}
-			# colnames(blockvals) <- lyrnames
+			# need to do this if using a single variable
+			colnames(blockvals) <- lyrnames
 			
 			if (haveFactor) {
 				for (j in 1:length(f)) {
@@ -125,9 +127,12 @@ setMethod('predict', signature(object='Raster'),
 					if (!is.null(fl)) {
 						fv[! fv %in% factlevels[[j]] ] <- NA 
 						blockvals[,f[j]] <- factor(fv, levels=fl)
-					} else {		
-						warning('not sure if the correct factor levels are used here')	
+					} else {
 						blockvals[,f[j]] <- factor(fv)
+						if (!factorwarned) {
+							warning('not sure if the correct factor levels are used here')
+							factorwarned <- TRUE
+						}
 					}
 				}
 			}

@@ -202,9 +202,9 @@
 	if (((tolower(substr(nc$var[[zvar]]$dim[[1]]$name, 1, 3)) == 'lon')  &
 		(tolower(substr(nc$var[[zvar]]$dim[[2]]$name, 1, 3)) == 'lat')) | 
 		(xrange[1] < -181 | xrange[2] > 181 | yrange[1] < -91 | yrange[2] > 91)) {
-			crs <- 'NA'
+			crs <- '+proj=longlat +datum=WGS84'
 	} else {
-		crs <- '+proj=longlat +datum=WGS84'
+		crs <- NA
 	}
 
 		

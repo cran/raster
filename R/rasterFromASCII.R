@@ -28,8 +28,21 @@
 	
 	ini[,1] = toupper(ini[,1]) 
 	
-	nodataval <- -Inf
-	xn <- yn <- d <- nr <- nc <- xc <- yc <- NA
+	w <- getOption('warn')
+	on.exit(options('warn' = w))
+	options('warn'=-1) 
+	test <- sum(as.numeric(ini[,1]), na.rm=TRUE) > 0
+	options('warn' = w)
+	if (test) {
+		m <- 'The header of this file appears to be incorrect: there are numbers where there should be keywords'
+		if (offset != 6) {
+			m <- paste(m, '\n  Are you using a wrong offset?', sep='')
+		} 
+		stop(m)
+	}
+	
+	
+	nodataval <- xn <- yn <- d <- nr <- nc <- xc <- yc <- NA
 	for (i in 1:nrow(ini)) {
 		if (ini[i,1] == "NCOLS") { nc <- as.integer(ini[i,2])
 		} else if (ini[i,1] == "NROWS") { nr <- as.integer(ini[i,2])
@@ -39,11 +52,18 @@
 		} else if (ini[i,1] == "YLLCENTER") { yc <- as.numeric(ini[i,2])
 		} else if (ini[i,1] == "CELLSIZE") { d <- as.numeric(ini[i,2])
 		} else if (ini[i,1] == "NODATA_VALUE") { try (nodataval <- as.numeric(ini[i,2]), silent=TRUE)
+		} else if (ini[i,1] == "NODATA") { try (nodataval <- as.numeric(ini[i,2]), silent=TRUE)		
 		}
     }  
+	
 	if (is.na(nr)) stop('"NROWS" not detected') 
 	if (is.na(nc)) stop('"NCOLS" not detected')
 
+	if (is.na(nodataval)) {
+		warning('"NODATA_VALUE" not detected. Setting it to -Inf\n  You can set it to another value with function "NAvalue"')
+		nodataval <- -Inf
+	}
+	
 	offwarn <- FALSE
 	if (is.na(d)) { 
 		warning('"CELLSIZE" not detected. Setting it to 1.');
@@ -77,7 +97,7 @@
 	if (offwarn) {
 		m <- 'The georeference of this object is probably wrong\n'
 		if (offset != 6) {
-			m <- paste(m, 'Are you using a wrong offset? Proceed with caution!\n', sep='')
+			m <- paste(m, '  Are you using a wrong offset? Proceed with caution!\n', sep='')
 		} 
 		warning(m)
 	}
