@@ -14,13 +14,18 @@ setMethod ('print', 'Raster',
 				nc <- open.ncdf(x@file@name)
 				print(nc)
 				close.ncdf(nc)
-			} else if (is.factor(x)) {
+			} else if (any(is.factor(x))) {
 				cat('factor levels (value attributes)\n')
-				f <- x@data@attributes[[1]]
-				if (nrow(f) > 15) { 
-					f <- f[1:15,]
+				f <- x@data@attributes
+				for (i in 1:length(f)) {
+					ff <- f[[i]]
+					if (!is.null(ff)) {
+						if (nrow(ff) > 15) { 
+							ff <- ff[1:15,]
+						}
+						print(ff)
+					}
 				}
-				print(f)
 			# cat('levels      :' , paste(object@data@levels, collapse=', '), '\n')
 			# cat('labels      :' , paste(object@data@labels, collapse=', '), '\n')
 			} else callNextMethod(x, ...)
@@ -42,63 +47,62 @@ setMethod ('print' , 'Spatial',
 	
 		cat('class       :' , class(x), '\n')
 		isRaster <- hasData <- FALSE
+		nc <- 0
 		if (.hasSlot(x, 'data')) {
 			hasData <- TRUE
+			nc <- ncol(x@data)
 		}
 		
 		if (inherits(x, 'SpatialPixels')) {
 			isRaster <- TRUE
 			cr <- x@grid@cells.dim
-			nl <- ifelse(hasData, ncol(x@data), 0)
-			cat ('dimensions  : ', cr[2], ', ', cr[1], ', ', nrow(x@coords), ', ', nl, '  (nrow, ncol, npixels, nlayers)\n', sep="" ) 
+			cat ('dimensions  : ', cr[2], ', ', cr[1], ', ', nrow(x@coords), ', ', nc, '  (nrow, ncol, npixels, nlayers)\n', sep="" ) 
 			cs <- x@grid@cellsize
 			cat ('resolution  : ', cs[1], ', ', cs[2], '  (x, y)\n', sep="")		
 
 		} else if (inherits(x, 'SpatialGrid')) {
 			isRaster <- TRUE
 			cr <- x@grid@cells.dim
-			nl <- ifelse(hasData, ncol(x@data), 0)
-			cat ('dimensions  : ', cr[2], ', ', cr[1], ', ', prod(cr), ', ', nl, '  (nrow, ncol, ncell, nlayers)\n', sep="" ) 
+			cat ('dimensions  : ', cr[2], ', ', cr[1], ', ', prod(cr), ', ', nc, '  (nrow, ncol, ncell, nlayers)\n', sep="" ) 
 			cs <- x@grid@cellsize
 			cat ('resolution  : ', cs[1], ', ', cs[2], '  (x, y)\n', sep="")		
 			
 		} else {		
-			cat('nfeatures   :' , length(row.names(x)), '\n')
+			cat('nfeatures   :' , length(x), '\n')
 		}
 		
 		e <- bbox(x)
 		cat('extent      : ' , e[1], ', ', e[2], ', ', e[3], ', ', e[4], '  (xmin, xmax, ymin, ymax)\n', sep="")
 		cat('coord. ref. :' , projection(x, TRUE), '\n')
-		if (.hasSlot(x, 'data')) {
-			if (!isRaster) {
-				cat('data dims   : ', nrow(x), ', ', ncol(x), '  (nrow, ncol)\n', sep="" ) 
-			}
+		
+		
+		if (hasData) {
+			x <- x@data
 			
-			nfact <- sapply(1:ncol(x@data), function(i) is.numeric(x@data[,i]))
-			lf <- length(nfact)
-			if (lf > 15) {
-				nfact <- nfact[1:15]
+			maxnl <- 15
+			
+			if (! isRaster) {
+				cat('nvariables  : ', nc, '\n', sep="" ) 
 			}
-			if (sum(nfact) > 1) {
-				r <- apply(x@data[,which(nfact)], 2, range, na.rm=TRUE)
-				fc <- as.character(nfact)
-				fc[! nfact] <- '(f)'
-				maxv <- minv <- fc
-				minv[nfact] <- as.vector(r[1, ])
-				maxv[nfact] <- as.vector(r[2,])
-				if (lf > 15) {
-					minv <- c(minv, '...')
-					maxv <- c(maxv, '...')
-				}
-				cat('min values  :', paste(minv, collapse=', '), '\n')
-				cat('max values  :', paste(maxv, collapse=', '), '\n')
-			} 
-				
-			coln <- colnames(x@data)
-			if (length(coln) > 10) {
-				coln <- c(coln[1:10], '...')
+			if (nc > maxnl) {
+				x <- x[, 1:maxnl]
+			}
+			coln <- colnames(x)
+			if (nc > maxnl) {
+				coln <- c(coln[1:maxnl], '...')
+				x <- x[, 1:maxnl]
 			}
 			cat('variables   :', paste(coln, collapse=', '), '\n')
+
+			r <- apply(x, 2, range, na.rm=TRUE)
+			minv <- as.vector(r[1, ])
+			maxv <- as.vector(r[2, ])
+			if (nc > maxnl) {
+				minv <- c(minv, '...')
+				maxv <- c(maxv, '...')
+			}
+			cat('min values  :', paste(minv, collapse=', '), '\n')
+			cat('max values  :', paste(maxv, collapse=', '), '\n')
 		}
 	}
 )	

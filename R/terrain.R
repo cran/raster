@@ -60,7 +60,7 @@ terrain <- function(x, opt='slope', unit='radians', neighbors=8, filename='', ..
 	} else {
 		out <- brick(x, values=FALSE, nl=nl)
 	}
-	layerNames(out) <- c('tri', 'tpi', 'roughness','slope', 'aspect', 'slope', 'aspect', 'flowdir')[as.logical(nopt)]
+	names(out) <- c('tri', 'tpi', 'roughness','slope', 'aspect', 'slope', 'aspect', 'flowdir')[as.logical(nopt)]
 
 	rs <- as.double(res(out))
 	un <- as.integer(1)

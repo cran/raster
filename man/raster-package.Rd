@@ -221,7 +221,7 @@ Basic parameters of existing Raster* objects can be obtained, and in most cases 
     \code{\link{ncell}} \tab The number of cells (can not be set directly, only via ncol or nrow) \cr
     \code{\link{res}} \tab The resolution (x and y) \cr
     \code{\link{nlayers}} \tab How many layers does the object have? \cr	
-    \code{\link{layerNames}} \tab Get or set the layer names \cr	
+    \code{\link{names}} \tab Get or set the layer names \cr	
     \code{\link{xres}} \tab The x resolution (can be set with res) \cr
     \code{\link{yres}} \tab The y resolution (can be set with res)\cr
     \code{\link{xmin}} \tab The minimum x coordinate (or longitude) \cr
@@ -348,7 +348,7 @@ Maintainer: Robert J. Hijmans \email{r.hijmans@gmail.com}
 }
 
 \section{Acknowledgements}{
-Extensive suggestions were made by Jonathan Greenberg, Agustin Lobo, Matteo Mattiuzzi, Steven Mosher, and Kevin Ummel. Contributions were also made by Neil Best, Andrew Bevan, Roger Bivand, Isabelle Boulangeat, Lyndon Estes, Josh Gray, Tim Haering, Herry Herry, Paul Hiemstra, Ned Hornig, Mayeul Kauffmann, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Justin McGrath, Richard Plant,  Edzer Pebesma, Oscar Perpinan Lamigueiro, Etienne Racine, David Ramsey, Michael Sumner, Stefan Schlaffer, Jon Olav Skoien, Shaun Walbridge, Julian Zeidler, and others.
+Extensive suggestions were made by Jonathan Greenberg, Agustin Lobo, Matteo Mattiuzzi, Steven Mosher, Stefan Schlaffer, and Kevin Ummel. Contributions were also made by Neil Best, Andrew Bevan, Roger Bivand, Isabelle Boulangeat, Lyndon Estes, Josh Gray, Tim Haering, Herry Herry, Paul Hiemstra, Ned Hornig, Mayeul Kauffmann, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Justin McGrath, Richard Plant, Edzer Pebesma, Oscar Perpinan Lamigueiro, Etienne Racine, David Ramsey, Michael Sumner, Jon Olav Skoien, Shaun Walbridge, Julian Zeidler, and many others.
 }
 
 \keyword{package}

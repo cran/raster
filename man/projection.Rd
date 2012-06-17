@@ -1,29 +1,34 @@
 \name{projection}
 
-\alias{projection<-}
 \alias{projection}
+\alias{projection<-}
 \alias{proj4string}
+\alias{proj4string<-}
 
-\title{ Get or set a projection }
+\title{ Get or set a coordinate reference system (projection) }
 
 \description{
-Get or set the projection of a Raster* object
+Get or set the coordinate reference system (CRS) of a Raster* object. 
 }
 
 \usage{
-projection(x, asText = TRUE)
+projection(x, asText=TRUE)
 projection(x) <- value
 }
 
 \arguments{
   \item{x}{A Raster* object }
-  \item{asText}{logical. If \code{TRUE}, the projection is returned as text. Otherwise a CRS object is returned}
-  \item{value}{a CRS object or a character string describing a projection and datum in PROJ4 format }
+  \item{asText}{logical. If \code{TRUE}, the projection is returned as text. Otherwise a \code{\link[sp]{CRS}} object is returned}
+  \item{value}{a \code{CRS} object or a character string describing a projection and datum in the PROJ.4 format }
 }
 
 
 \value{
-a Raster* object
+Raster* object
+}
+
+\note{
+For compatability with \code{sp} you can use \code{proj4string} instead of \code{projection}. 
 }
 
 \seealso{ \code{\link[raster]{projectRaster}, \link[rgdal]{CRS-class}, \link[rgdal]{spTransform-methods}, \link[rgdal]{projInfo}}}

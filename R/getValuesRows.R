@@ -20,7 +20,7 @@ function(x, row, nrows) {
 			res[,i] <- getValues(x@layers[[i]], row, nrows)
 		}
 	}
-	colnames(res) <- layerNames(x)
+	colnames(res) <- names(x)
 	res
 }
 )
@@ -68,26 +68,23 @@ setMethod('getValues', signature(x='RasterBrick', row='numeric', nrows='missing'
 setMethod('getValues', signature(x='RasterBrick', row='numeric', nrows='numeric'), 
 function(x, row, nrows) {
 
-	if (! validRow(x, row)) { stop(row, ' is not a valid rownumber') }
+	if (! validRow(x, row)) { 
+		stop(row, ' is not a valid rownumber') 
+	}
 	row <- min(x@nrows, max(1, round(row)))
 	endrow <- max(min(x@nrows, row+round(nrows)-1), row)
 	nrows <- endrow - row + 1
 
-	startcell <- cellFromRowCol(x, row, 1)
-	endcell <- cellFromRowCol(x, row+nrows-1, x@ncols)
-
-	readrow <- FALSE
-	if (!  inMemory(x) ) {
-		readrow <- TRUE
-	} else if ( inMemory(x) ){
+	if ( inMemory(x) ){
+		startcell <- cellFromRowCol(x, row, 1)
+		endcell <- cellFromRowCol(x, row+nrows-1, x@ncols)
 		res <- x@data@values[startcell:endcell, ,drop=FALSE]
-	} else {
-		stop('something is wrong with this RasterBrick')
-	}
-	if (readrow) {
+	} else if (fromDisk(x)) {
 		res <- .readRasterBrickValues(x, row, nrows)
+	} else {
+		res <- matrix(NA, nrow=nrows*ncol(x), ncol=nlayers(x))
 	}
-	colnames(res) <- layerNames(x)
-	return(res)
+	colnames(res) <- names(x)
+	res
 }
 )

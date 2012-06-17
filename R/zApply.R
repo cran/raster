@@ -13,7 +13,7 @@ zApply <- function(x, by, fun=mean, name='', ...){
     b <- stackApply(x, as.numeric(factor(by)), match.fun(fun))
     zval <- my.sort(my.unique(by))
     b <- setZ(b, zval, name)
-    layerNames(b) <- as.character(zval)
+    names(b) <- as.character(zval)
     b
 }
 

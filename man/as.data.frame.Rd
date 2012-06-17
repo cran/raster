@@ -1,8 +1,7 @@
 \name{as.data.frame}
 
 \alias{as.data.frame}
-\alias{as.data.frame,RasterStackBrick-method}
-\alias{as.data.frame,RasterLayer-method}
+\alias{as.data.frame,Raster-method}
   
 \title{Get a data.frame with raster cell values}
 
@@ -20,10 +19,10 @@ as.data.frame(x, row.names=NULL, optional=FALSE, ...)
 }
 
 \arguments{
- \item{x}{ Raster* object }
- \item{row.names}{NULL or a character vector giving the row names for the data frame. Missing values are not allowed.} 
- \item{optional}{ logical. If TRUE, setting row names and converting column names (to syntactic names: see make.names) is optional.}
- \item{...}{ Additional arguments (none).} 
+ \item{x}{Raster* object}
+ \item{row.names}{NULL or a character vector giving the row names for the data frame. Missing values are not allowed} 
+ \item{optional}{logical. If TRUE, setting row names and converting column names (to syntactic names: see make.names) is optional}
+ \item{...}{Additional arguments (none)} 
 }
   
 

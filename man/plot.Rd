@@ -3,103 +3,70 @@
 \docType{methods}
 
 \alias{plot}
-\alias{plot,RasterLayer,missing-method}
-\alias{plot,RasterStackBrick,ANY-method}
+\alias{plot,Raster,ANY-method}
 \alias{plot,Raster,Raster-method}
 \alias{plot,Extent,ANY-method}
 \alias{plot,Extent,missing-method}
-
-\alias{text}
-\alias{text,RasterLayer-method}
 
 \title{Plot a Raster* object}
 
 \description{
 Plot (that is, make a map of) the values of a Raster* object, or make a scatterplot of their values.
 
-Points, lines, and polygons can be drawn on top of a map using \code{plot(..., add=TRUE)}, or functions like \code{points, lines, polygons}
+Points, lines, and polygons can be drawn on top of a map using \code{plot(..., add=TRUE)}, or with functions like \code{points, lines, polygons}
 
-\code{text} plots a textual (rather than color) representation of values of the cells on top of the cells. 
+See the rasterVis package for more advanced (trellis/lattice) plotting of Raster* objects.
+}
+
+\usage{
+\S4method{plot}{Raster,ANY}(x, y, col=rev(terrain.colors(255)), maxpixels=500000, alpha=1, colNA=NA, add=FALSE, ext=NULL, useRaster=TRUE, interpolate=FALSE, addfun=NULL, nc, nr, ...)
+
+
+\S4method{plot}{Raster,Raster}(x, y, maxpixels=100000, cex=0.1, ...)
 }
 
 
-\section{Methods}{
-\describe{
-\bold{x=RasterLayer}
-
-\code{plot(x, col=rev(terrain.colors(25)), maxpixels=100000, axes = TRUE, xlab="", ylab="", alpha=1, useRaster=TRUE, ...)}
-
-\code{x} - RasterLayer object
-
-\code{col} - A color palette, i.e. a vector of n contiguous colors such as \link{rainbow}, \link{heat.colors}, and \link{topo.colors}, or one or your own making, perhaps using \code{\link{colorRampPalette}}
-
-\code{maxpixels} - Maximum number of pixels used for the map
-
-\code{alpha} - Number between 0 and 1 to set transparancy. 0 is entirely transparant, 1 is not transparant
-
-\code{useRaster} - If \code{TRUE}, the rasterImage function is used for plotting. Otherwise the image function is used. This can be useful if rasterImage does not work well on your system
-
-\code{...} - Any argument that can be passed to \code{\link[fields]{image.plot}} and to \code{\link[graphics]{plot}}
-
-
-
-If \code{x} has a 'Color table', the default all to \code{plot} is:
-
-\code{plot(x, maxpixels=500000, ext=NULL, interpolate=FALSE,  axes=FALSE, xlab="", ylab="", ...)}
-
-\tabular{rll}{
-\tab \code{ext}  \tab  An extent object to zoom in a region \cr
-\tab \code{interpolate} \tab Logical. Should the image be interpolated?  \cr 
-\tab \code{axes} \tab Logical. Should axes be drawn?  \cr 
-\tab \code{addfun} \tab Function. functions adding additional items such as points or polygons to the plot (map).  Typically containing statements like "points(xy); plot(polygons, add=TRUE)". This is particularly useful to add something to each map when plotting a multi-layer Raster* object. \cr 
-\tab \code{...} \tab Graphical parameters \cr
+\arguments{
+  \item{x}{Raster* object}
+  \item{y}{If \code{x} is a RasterStack or RasterBrick: integer, character (layer name(s)), or missing to select which layer(s) to plot. If missing, all RasterLayers in the RasterStack will be plotted (up to a maximum of 16). Or another Raster* object of the same extent and resolution, to produce a scatter plot of the cell values. }
+  \item{col}{A color palette, i.e. a vector of n contiguous colors such as \link{rainbow}, \link{heat.colors}, \link{topo.colors},
+       \link[sp]{bpy.colors} or one or your own making, perhaps using \code{\link{colorRampPalette}}}
+  \item{maxpixels}{Maximum number of pixels used}
+  \item{useRaster}{If \code{TRUE}, the rasterImage function is used for plotting. Otherwise the image function is used. This can be useful
+       if rasterImage does not work well on your system (see note)}
+  \item{alpha}{Number between 0 and 1 to set transparancy. 0 is entirely transparant, 1 is not transparant}
+  \item{colNA}{The color to use for the backgournd (default is transparant)}  
+  \item{add}{Logical. Add to current plot?}
+  \item{ext}{An extent object to zoom in a region (see also \code{\link{zoom}} and \code{\link{crop}(x, \link{drawExtent}())}}
+  \item{interpolate}{Logical. Should the image be interpolated (smoothed)?}
+  \item{addfun}{Function to add additional items such as points or polygons to the plot (map). Typically containing statements like
+        "points(xy); plot(polygons, add=TRUE)". This is particularly useful to add something to each map when plotting a multi-layer Raster* object.}
+  \item{...}{Graphical parameters. Any argument that can be passed to \code{\link[fields]{image.plot}} and to \code{\link[graphics]{plot}}, 
+        such as axes=FALSE, main='title', ylab='latitude'}
+  \item{nc}{Optional. The number of columns to divide the plotting device in (when plotting mulitple layers in a RasteLayer or RasterBrick object)}
+  \item{nr}{Optional. The number of rows to divide the plotting device in (when plotting mulitple layers in a RasteLayer or RasterBrick object)}
+  \item{cex}{Symbol size for scatter plots}
 }
-
-
-
-\bold{x=RasterStack or RasterBrick, y=numeric or missing}
-
-\code{plot(x, col=rev(terrain.colors(25)), subsample=TRUE, maxpixels=100000, alpha=1, axes=TRUE, xlab="", ylab="", ...)}
-
-\tabular{rll}{
-\tab \code{x} \tab a RasterStack or RasterBrick object \cr
-\tab \code{y} \tab The index of a RasterLayer in a RasterStack to be plotted. Either a single number between 1 and nlayers(rstack), a vector of numbers, or missing. If y is missing, all RasterLayers in the RasterStack will be plotted (up to a maximum of 16).\cr
-\tab \code{ other arguments }  \tab  See above \cr
-}
-
-
-\bold{x=Raster, y=Raster}
-Produces a scatter plot of the values of x against those of y. 
-\code{plot(x, y, maxpixels=100000, cex=0.1, ...) }
-
-\tabular{rll}{
-\tab \code{x} \tab a RasterLayer object \cr
-\tab \code{y} \tab a RasterLayer object \cr
-\tab \code{maxpixels}  \tab  Maximum number of pixels in the map display \cr
-\tab \code{cex}  \tab  point size \cr
-\tab \code{...}  \tab  Any argument that can be passed to graphics::plot  \cr
-}
-
-\bold{x=Extent, y="ANY"}
-Draws the (rectangular) bounding box of a raster object. 
-\code{plot(ext) }
-
-\tabular{rll}{
-\tab \code{ext} \tab a Extent object \cr
-}
-
-}}
 
 
 \details{
 Most of the code for this function was taken from image.plot (fields package). 
-Raster objects with a color-table (e.g. a graphics file) will be plotted according to the color table.
+
+Raster objects with a color-table (e.g. a graphics file) are plotted according to the color table.
 }
 
-\seealso{
-\code{ \link[raster]{spplot}, \link[raster]{plotRGB}, \link[raster]{persp}, \link[raster]{contour}, \link[raster]{pairs}, \link[raster]{hist}}  
 
-The rasterVis package has more advanced plotting methods for Raster* objects. 
+\note{
+raster uses \code{\link[graphics]{rasterImage}} from the graphics package. For unknown reasons this does not work on Windows Server. On that system you may need to use argument \code{useRaster=FALSE} to get a plot.
+}
+
+
+\seealso{
+\code{ \link[raster]{spplot}} and the \code{rasterVis} package have lattice based methods for plotting Raster* objects. 
+
+red-green-blue plots (e.g. false color composits) can be made with \code{\link[raster]{plotRGB}}
+
+\code{\link[raster]{text}, \link[raster]{persp}, \link[raster]{contour}, \link[raster]{pairs}, \link[raster]{hist}}
 }
 
 \author{ Robert J. Hijmans }
@@ -109,7 +76,6 @@ The rasterVis package has more advanced plotting methods for Raster* objects.
 r <- raster(nrows=10, ncols=10)
 r <- setValues(r, 1:ncell(r))
 plot(r)
-text(r)
 
 e <- extent(r)
 plot(e, add=TRUE, col='red', lwd=4)
@@ -155,7 +121,7 @@ points(xy, pch=3, cex=5)
 # for SpatialPolygons do
 # plot(pols, add=TRUE)
 
-# adding random points to each map of each layer of a RasterStack
+# adding the same points to each map of each layer of a RasterStack
 fun <- function() {
 	points(xy, cex=2)
 	points(xy, pch=3, col='red')

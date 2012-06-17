@@ -1,10 +1,17 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date : November 2009
 # Version 0.9
 # Licence GPL v3
 
 
-sampleRegular <- function( x, size, ext=NULL, cells=FALSE, asRaster=FALSE, useGDAL=FALSE) {
+if (!isGeneric("sampleRegular")) {
+	setGeneric("sampleRegular", function(x, size, ...)
+		standardGeneric("sampleRegular"))
+}	
+
+
+setMethod('sampleRegular', signature(x='Raster'), 
+function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, useGDAL=FALSE, ...) {
 
 	stopifnot(hasValues(x))
 	
@@ -65,36 +72,59 @@ sampleRegular <- function( x, size, ext=NULL, cells=FALSE, asRaster=FALSE, useGD
 
 	cols <- unique(round(cols))
 	rows <- unique(round(rows))
-	cols = cols[cols>0]
-	rows = rows[rows>0]
+	cols <- cols[cols>0]
+	rows <- rows[rows>0]
 	nr <- length(rows)
 	nc <- length(cols)
 	
 
 	if (fromDisk(x)) {
 		
-		if (rotated | cells | (.driver(x, FALSE) != 'gdal')) { 
+		if (cells | any(rotated | .driver(x, FALSE) != 'gdal')) { 
 			useGDAL <- FALSE 
 		}
 		if (useGDAL) {
 			offs <- c(firstrow,firstcol)-1
 			reg <- c(nrow(rcut), ncol(rcut))-1
-			if (nl == 1) {
-				band <- bandnr(x)
+			if (inherits(x, 'RasterStack')) {
+				
+				v <- matrix(NA, ncol=nl, nrow=prod(nr, nc))
+				
+				for (i in 1:nl) {
+					xx <- x[[i]]
+					con <- GDAL.open(xx@file@name, silent=TRUE)
+					band <- bandnr(xx)
+					vv <- getRasterData(con, band=band, offset=offs, region.dim=reg, output.dim=c(nr, nc)) 
+					closeDataset(con)
+					if (xx@data@gain != 1 | xx@data@offset != 0) {
+						vv <- vv * xx@data@gain + xx@data@offset
+					}
+					if (xx@file@nodatavalue < 0) {
+						vv[vv <= xx@file@nodatavalue] <- NA
+					} else {
+						vv[vv == xx@file@nodatavalue] <- NA
+					}
+					v[, i] <- vv
+				}
+				
 			} else {
-				band <- NULL
-			}
-			con <- GDAL.open(x@file@name, silent=TRUE)
-			v <- getRasterData(con, band=band, offset=offs, region.dim=reg, output.dim=c(nr, nc)) 
-			closeDataset(con)
-			v <- as.vector(v)
-			if (x@data@gain != 1 | x@data@offset != 0) {
-				v <- v * x@data@gain + x@data@offset
-			}
-			if (x@file@nodatavalue < 0) {
-				v[v <= x@file@nodatavalue] <- NA
-			} else {
-				v[v == x@file@nodatavalue] <- NA
+				if (nl == 1) {
+					band <- bandnr(x)
+				} else {
+					band <- NULL
+				}
+				con <- GDAL.open(x@file@name, silent=TRUE)
+				v <- getRasterData(con, band=band, offset=offs, region.dim=reg, output.dim=c(nr, nc)) 
+				closeDataset(con)
+				
+				if (x@data@gain != 1 | x@data@offset != 0) {
+					v <- v * x@data@gain + x@data@offset
+				}
+				if (x@file@nodatavalue < 0) {
+					v[v <= x@file@nodatavalue] <- NA
+				} else {
+					v[v == x@file@nodatavalue] <- NA
+				}
 			}
 	
 			if (asRaster) {
@@ -107,11 +137,22 @@ sampleRegular <- function( x, size, ext=NULL, cells=FALSE, asRaster=FALSE, useGD
 				ncol(outras) <- nc
 				if (nl > 1) {
 					outras <- brick(outras, nl=nl)
-					return( setValues(outras, v))
+					outras <- setValues(outras, v)
 				} else {
-					return( setValues(outras, as.vector(v)))
+					outras <- setValues(outras, as.vector(v))
 				}
+				return(outras)
+				
 			} else {
+				if (cells) {
+					warning("'cells=TRUE' is ignored when 'useGDAL=TRUE'")
+				}
+				if (xy) {
+					warning("'xy=TRUE' is ignored when 'useGDAL=TRUE'")
+				}
+				if (sp) {
+					warning("'sp=TRUE' is ignored when 'useGDAL=TRUE'")
+				}
 				return(v)
 			}
 		}
@@ -148,17 +189,26 @@ sampleRegular <- function( x, size, ext=NULL, cells=FALSE, asRaster=FALSE, useGD
 			outras <- brick(outras, nl=nl)
 		}
 		outras <- setValues(outras, m)
-		layerNames(outras) <- layerNames(x)
+		names(outras) <- names(x)
 		return(outras)
 		
 	} else {
 	
-		m <- .cellValues(x, cell)
+		m <- NULL
+		if (xy) {
+			m <- xyFromCell(x, cell)
+		}
 		if (cells) {
-			m <- cbind(cell, m)
-			colnames(m)[2:ncol(m)] <- layerNames(x)
+			m <- cbind(m, cell=cell)
 		} 
+		m <- cbind(m, .cellValues(x, cell))
+		
+		if (sp) {
+			m <- SpatialPointsDataFrame(xyFromCell(x, cell), data.frame(m), proj4string=projection(x, asText=FALSE))
+		}
+		
 		return(m)
 	}	
 }
 
+)

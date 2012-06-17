@@ -1,14 +1,14 @@
 # Author: Robert J. Hijmans
-# contact: r.hijmans@gmail.com
 # Date : November 2008
 # Version 1.0
 # Licence GPL v3
 
 	
-.cellValues <- function(x, cells, layer, nl) { 
+.cellValues <- function(x, cells, layer, nl, df=FALSE) { 
 
 	if (inherits(x, 'RasterLayer')) {
-		return( .readCells(x, cells, 1) )
+		result <- .readCells(x, cells, 1)
+		lyrs <- layer <- 1
 		
 	} else {
 	
@@ -22,11 +22,10 @@
 		if (inherits(x, 'RasterStack')) {
 	
 			result <- matrix(ncol=nl, nrow=length(cells))
-			colnames(result) <- layerNames(x)[lyrs]
+			colnames(result) <- names(x)[lyrs]
 			for (i in 1:length(lyrs)) {
 				result[,i] <- .readCells( x@layers[[lyrs[i]]], cells, 1)
 			}
-			return( result )
 			
 		} else if (inherits(x, 'RasterBrick')) {
 		
@@ -35,22 +34,44 @@
 				if (length(na.omit(cells)) == 0) {
 					return(cells)
 				}
-				return( x@data@values[cells, lyrs] )
+				result <-  x@data@values[cells, lyrs] 
 				
 			} else if (x@file@driver == 'netcdf') {
-				return( .readBrickCellsNetCDF(x, cells, layer, nl) )
+				result <- .readBrickCellsNetCDF(x, cells, layer, nl) 
 				
 			}  else {
 				result <-  .readCells(x, cells, lyrs) 
 				if (is.null(dim(result))) { 
 						# single layer of brick returns vector perhaps should be fixed in readCells
 						# only an issue with a single layer?
-					names(result) <- layerNames(x)[lyrs]
+					names(result) <- names(x)[lyrs]
 				}
-				return(result)
 			}
 		}
 	}
+	if (df) {
+		if (!is.matrix(result)) {
+			result <- matrix(result)
+			colnames(result) <- names(x)
+		}
+		result <- data.frame(ID=1:NROW(result), result)
+		
+		facts <- is.factor(x)[lyrs]
+		if (any(facts)) {
+			if (ncol(result) == 2) {
+				# possibly multiple columns added
+				result <- cbind(result[,1,drop=FALSE], factorValues(x, result[,2], layer))
+			} else {
+				# single columns only
+				i <- which(facts)
+				for (j in i) {
+					result <- .insertColsInDF(result, factorValues(x, result[, j+1], j), j+1)
+				}
+			}
+		}
+
+	}
+	result
 }	
 
 

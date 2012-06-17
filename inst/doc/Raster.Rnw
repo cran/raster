@@ -346,7 +346,7 @@ Function {\bf clump} identifies groups of cells that are connected. {\bf edge} i
 r <- raster(nrow=45, ncol=90)
 r[] <- round(runif(ncell(r))*3)
 a <- area(r)
-zonal(a,r,sum)
+zonal(a, r, 'sum')
 @
 
 

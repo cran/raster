@@ -154,7 +154,7 @@ RasterBrick object
 b <- brick(system.file("external/rlogo.grd", package="raster"))
 b
 nlayers(b)
-layerNames(b)
+names(b)
 extract(b, 870)
 }
 

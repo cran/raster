@@ -47,25 +47,28 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 
 
 .getCountry <- function(country='') {
-#	country <- toupper(trim(country[1]))
-	if (nchar(country) < 3) {
-		stop('provide a 3 letter ISO country code')
-	}
-	country <- substr(toupper(country), 1, 3)
+	country <- toupper(trim(country[1]))
+#	if (nchar(country) < 3) {
+#		stop('provide a 3 letter ISO country code')
+#	}
 	cs <- .ISO()
 	try (cs <- toupper(cs))
-	if (! country %in% cs[,2]) {
-		if (country %in% cs[,3]) {
+
+	iso3 <- substr(toupper(country), 1, 3)
+	if (iso3 %in% cs[,2]) {
+		return(iso3)
+	} else {
+		iso2 <- substr(toupper(country), 1, 3)
+		if (iso2 %in% cs[,3]) {
 			i <- which(country==cs[,3])
-			country <- cs[i,2]
+			return( cs[i,2] )
 		} else if (country %in% cs[,1]) {
 			i <- which(country==cs[,1])
-			country <- cs[i,2]
+			return( cs[i,2] )
 		} else {
-			stop('provide a valid 3 letter ISO country code; you can get a list with: getData("ISO3")')
+			stop('provide a valid name or 3 letter ISO country code; you can get a list with: getData("ISO3")')
 		}
 	}
-	return(country)
 }
 
 
@@ -227,7 +230,8 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 }
 
 
-.raster <- function(country, name, mask=TRUE, path, download, ...) {
+
+.raster <- function(country, name, mask=TRUE, path, download, keepzip=FALSE, ...) {
 
 	country <- raster:::.getCountry(country)
 	path <- raster:::.getDataPath(path)
@@ -256,21 +260,26 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 				cat("\nFile not available locally. Use 'download = TRUE'\n")
 			}
 		}
-		unzip(zipfilename, exdir=dirname(zipfilename))
-		file.remove(zipfilename)
+		ff <- unzip(zipfilename, exdir=dirname(zipfilename))
+		if (!keepzip) {
+			file.remove(zipfilename)
+		}
 	}	
 	if (file.exists(filename)) { 
 		rs <- raster(filename)
 	} else {
-		patrn <- paste(country, '.', mskname, name, ".grd", sep="")
-		f <- list.files(path, pattern=patrn)
+		#patrn <- paste(country, '.', mskname, name, ".grd", sep="")
+		#f <- list.files(path, pattern=patrn)
+		f <- ff[substr(ff, nchar(ff)-3, nchar(ff)) == '.grd']
 		if (length(f)==0) {
 			warning('something went wrong')
 			return(NULL)
 		} else if (length(f)==1) {
 			rs <- raster(f)
 		} else {
-			rs <- brick(f)		
+			rs <- sapply(f, raster)
+			cat('returning a list of RasterLayer objects\n')
+			return(rs)
 		}
 	}
 	projection(rs) <- "+proj=longlat +datum=WGS84"

@@ -9,10 +9,12 @@ rowFromCell <- function(object, cell) {
 	object <- raster(object)
 	cell <- round(cell)
 	cell[cell < 1 | cell > ncell(object)] <- NA
-	rownr <- as.integer(trunc((cell-1)/ncol(object)) + 1)
-    return(rownr)
+	trunc((cell-1)/ncol(object)) + 1
 }
 
+.rowFromCell <- function(object, cell) {
+	trunc((cell-1)/ncol(object)) + 1
+}
 
 
 cellFromRow <- function(object, rownr) {
@@ -23,8 +25,9 @@ cellFromRow <- function(object, rownr) {
 	}
 	cols <- rep(1:ncol(object), times=length(rownr))
 	rows <- rep(rownr, each=ncol(object))	
-	return(cellFromRowCol(object, rows, cols))
+	cellFromRowCol(object, rows, cols)
 }
+
 
 cellFromCol <- function(object, colnr) {
 	object <- raster(object)
@@ -59,11 +62,15 @@ colFromCell <- function(object, cell) {
 	object <- raster(object)
 	cell <- round(cell)
 	cell[cell < 1 | cell > ncell(object)] <- NA	
-	rownr <- as.integer(trunc((cell-1)/object@ncols) + 1)
-	colnr <- as.integer(cell - ((rownr-1) * object@ncols))
-    return(colnr)
+	rownr <- trunc((cell-1)/object@ncols) + 1
+	as.integer(cell - ((rownr-1) * object@ncols))
 }
 
+.colFromCell <- function(object, cell) {
+	nc <- object@ncols
+	rownr <- trunc((cell-1)/nc) + 1
+	cell - ((rownr-1) * nc)
+}
 
 rowColFromCell <- function(object, cell) {
 	object <- raster(object)

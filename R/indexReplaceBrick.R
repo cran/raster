@@ -1,8 +1,15 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  January 2009
 # Version 1.0
 # Licence GPL v3
 
+
+setMethod("[[", "Raster",
+function(x,i,j,...,drop=TRUE) {
+	if ( missing(i)) { stop('you must provide an index') }
+	if (! missing(j)) { warning('second index is ignored') }
+	subset(x, i, drop=drop)
+})
 
 
 setReplaceMethod("[[", c("RasterStack", "numeric", "missing"),
@@ -102,7 +109,7 @@ setReplaceMethod("[", c("RasterStackBrick","missing","missing"),
 		}
 		
 		if (is.matrix(value)) {
-			if (all(dim(value)) == c(ncell(x), nl)) {
+			if (all(dim(value) == c(ncell(x), nl))) {
 				x <- try( setValues(x, value))
 			} else {
 				stop('dimensions of the matrix do not match the Raster* object')

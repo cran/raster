@@ -109,7 +109,7 @@
 		if (missing(n)) { n <- (nls-layer+1) }
 		lyrs <- layer:(layer+n-1)
 		allres <- matrix(ncol=length(lyrs), nrow=nrow(xyCoords))
-		colnames(allres) <- layerNames(raster)[lyrs]
+		colnames(allres) <- names(raster)[lyrs]
 
 		cvv <- getValues(raster, row1, nrows)[, lyrs]
 		cv <- cvv[cells,]

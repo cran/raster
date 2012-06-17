@@ -11,7 +11,6 @@ if (!isGeneric("reclass")) {
 
 
 setMethod('reclass', signature(x='Raster', rcl='ANY'), 
-
 function(x, rcl, filename='', include.lowest=FALSE, right=TRUE, ...) {
 	
 	filename <- trim(filename)
@@ -41,24 +40,32 @@ function(x, rcl, filename='', include.lowest=FALSE, right=TRUE, ...) {
 	hasNA <- FALSE
 	onlyNA <- FALSE
 	valNA <- NA
-	for (i in 1:nrow(rcl)) {
-		if (is.na(rcl[i,1]) | is.na(rcl[i,2])) {
-			if (!hasNA) {
-				valNA <- rcl[i,3]
-				hasNA <- TRUE
-			}
-			rcl <- rcl[-i, ,drop=FALSE]
-		}
+#	if (nc == 3) {
+	i <- which(is.na(rcl[, 1]) | is.na(rcl[, 2]))
+	if (length(i) > 0) {
+		valNA <- rcl[i[1],3]
+		hasNA <- TRUE
+		rcl <- rcl[-i, ,drop=FALSE]
 	}
-	if (hasNA) {
-		if (dim(rcl)[1] == 0) {
+
+#	} else {
+#		i <- which(is.na(rcl[, 1]))
+#		if (length(i) > 1) {
+#			valNA <- rcl[i[1], 2]
+#			hasNA <- TRUE
+#			rcl <- rcl[-i, ,drop=FALSE]
+#		}
+#	}
+
+	if (dim(rcl)[1] == 0) {
+		if (hasNA) {
 			onlyNA <- TRUE
-		} else {
-			print(rcl)
-			stop('I do not understand this reclass matrix')
-		}
+		} 
+	} else {
+		stopifnot(all(rcl[,2] >= rcl[,1]))
 	}
-	stopifnot(all(rcl[,2] >= rcl[,1]))
+	
+	
 
 	nl <- nlayers(x)
 	if (nl == 1) { 

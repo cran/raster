@@ -12,38 +12,35 @@
 \title{Mask values in a Raster object}
 
 \description{
-Create a new Raster* object where all cells that are \code{NA} in a 'mask' object are set to \code{NA}, and that has the same values as \code{x} in the other cells. Or use \code{inverse=TRUE} to set the cells that are not \code{NA} in the mask to \code{NA}.
+Create a new Raster* object where all cells that are \code{NA} in a 'mask' object are set to \code{NA}, and that has the same values as \code{x} in the other cells. The mask can be either another Raster* object of the same extent and resolution, or a Spatial* object (e.g. SpatialPolygons) in which case all cells that are not covered by the Spatial object are set to \code{NA}. You can use \code{inverse=TRUE} to set the cells that are not \code{NA} in the mask, or not coverd by the Spatial* object to \code{NA}.
 }
 
 \usage{
-mask(x, mask, ...) 
+\S4method{mask}{RasterLayer,RasterLayer}(x, mask, filename="", inverse=FALSE, ...)
+
+\S4method{mask}{Raster,Spatial}(x, mask, filename="", inverse=FALSE, ...)
+
+\S4method{mask}{RasterStackBrick,RasterLayer}(x, mask, filename="", inverse=FALSE, ...)
+
+\S4method{mask}{RasterLayer,RasterStackBrick}(x, mask, filename="", inverse=FALSE, ...)
+
+\S4method{mask}{RasterStackBrick,RasterStackBrick}(x, mask, filename="", inverse=FALSE, ...)
 }
 
 
 \arguments{
 \item{x}{Raster* object}
 \item{mask}{Raster* object or a Spatial* object}
-\item{...}{Additional arguments. See under Methods}  
+\item{inverse}{logical. If \code{TRUE}, areas on mask that are _not_ NA are masked}
+\item{filename}{Character. Optional. Output filename}
+\item{...}{Additional arguments as in \code{\link{writeRaster}}}
 }
-
-\section{Methods}{
-\describe{
-The following additional arguments can be passed, to replace default values for this function
-\tabular{rll}{
-  \tab \code{reverse} \tab Boolean. If TRUE, areas on mask that are _not_ NA are masked.  \cr
-  \tab \code{filename} \tab Character. output filename \cr
-  \tab \code{format} \tab Character. Output file type. See \link[raster]{writeRaster} \cr
-  \tab \code{datatype} \tab Character. Output data type. See \link[raster]{dataType} \cr
-  \tab \code{overwrite} \tab Logical. If TRUE, "filename" will be overwritten if it exists \cr
-  \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
-}
-}
-}
-
 
 \value{
-A new Raster* object, and in some cases the side effect of a new file on disk.
+Raster* object
 }
+
+\seealso{\code{\link{rasterize}, \link{crop}}}
 
 \author{Robert J. Hijmans}
 
@@ -52,7 +49,7 @@ r <- raster(ncol=10, nrow=10)
 m <- raster(ncol=10, nrow=10)
 r[] <- runif(ncell(r)) * 10
 m[] <- runif(ncell(r))
-m[m <0.5] <- NA
+m[m < 0.5] <- NA
 mr <- mask(r, m)
 }
 

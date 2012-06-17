@@ -16,7 +16,7 @@ layerStats <- function(x, stat, w, asSample=TRUE, na.rm=FALSE, ...) {
 	nl <- nlayers(x)
 	n <- ncell(x)
 	mat <- matrix(NA, nrow=nl, ncol=nl)
-	colnames(mat) <- rownames(mat) <- layerNames(x)
+	colnames(mat) <- rownames(mat) <- names(x)
 	
 	if (stat == 'weighted.cov') {
 		if (missing(w))	{

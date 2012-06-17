@@ -10,8 +10,8 @@
 
 gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 
-	if( !require(igraph)) {
-		stop('you need to install the igraph package to be able to use this function')
+	if( !require(igraph0)) {
+		stop('you need to install the igraph0 package to be able to use this function')
 	}
 	
 	if (missing(origin)) stop("you must supply an 'origin' argument")

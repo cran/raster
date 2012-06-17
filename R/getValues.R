@@ -46,7 +46,7 @@ function(x) {
 			return( matrix(rep(NA, ncell(x) * nlayers(x)), ncol=nlayers(x)) )
 		}
 	}
-	colnames(x@data@values) <- layerNames(x)
+	colnames(x@data@values) <- names(x)
 	x@data@values
 }
 )
@@ -56,7 +56,7 @@ function(x) {
 setMethod("getValues", signature(x='RasterStack', row='missing', nrows='missing'), 
 function(x) {
 	m <- matrix(nrow=ncell(x), ncol=nlayers(x))
-	colnames(m) <- layerNames(x)
+	colnames(m) <- names(x)
 	for (i in 1:nlayers(x)) {
 		m[,i] <- getValues(x@layers[[i]])
 	}

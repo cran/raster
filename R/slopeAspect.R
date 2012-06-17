@@ -61,7 +61,7 @@ slopeAspect <- function(dem, filename='', out=c('slope', 'aspect'), unit='radian
 		if (unit == 'degrees') {
 			x <- x * (180 / pi)
 		}
-		layerNames(x) <- 'slope'
+		names(x) <- 'slope'
 		
 	} else if (type == 'aspect') {
 		x <- atan2(zy, zx)
@@ -73,7 +73,7 @@ slopeAspect <- function(dem, filename='', out=c('slope', 'aspect'), unit='radian
 			slope <-  sqrt( zy^2 + zx^2 ) 
 			aspect <- overlay(x, slope, fun=function(x, y) { x[y==0] <- flatAspect; return(x) } )
 		}
-		layerNames(x) <- 'aspect'
+		names(x) <- 'aspect'
 		
 	} else {
 		x <- atan( sqrt( zy^2 + zx^2 ) )
@@ -88,8 +88,8 @@ slopeAspect <- function(dem, filename='', out=c('slope', 'aspect'), unit='radian
 			aspect <- overlay(aspect, x, fun=function(x, y) { x[y==0] <- flatAspect; return(x) } )
 		}
 		
-		layerNames(x) <- 'slope'
-		layerNames(aspect) <- 'aspect'
+		names(x) <- 'slope'
+		names(aspect) <- 'aspect'
 		x <- stack(x, aspect)
 	}
 

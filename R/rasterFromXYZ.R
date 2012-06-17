@@ -82,7 +82,7 @@ rasterFromXYZ <- function(xyz, res=c(NA, NA), crs=NA, digits=5) {
 	res(r) <- c(rx, ry)
 	cells <- cellFromXY(r, xyz[,1:2])
 	if (d[2] > 2) {
-		layerNames(r) <- ln[-c(1:2)]
+		names(r) <- ln[-c(1:2)]
 		r[cells] <- xyz[,3:d[2]]
 	} 	
 	return(r)

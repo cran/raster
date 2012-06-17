@@ -28,7 +28,7 @@ setMethod('crosstab', signature(x='RasterStackBrick', y='missing'),
 		if (nl < 2) {
 			stop('crosstab needs at least 2 layers')
 		}
-		nms <- layerNames(x)
+		nms <- names(x)
 		
 		if (canProcessInMemory(x)) {
 			res <- getValues(x)

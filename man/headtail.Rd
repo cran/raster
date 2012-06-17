@@ -5,9 +5,11 @@
 \alias{head}
 \alias{head,RasterLayer-method}
 \alias{head,RasterStackBrick-method}
+\alias{head,Spatial-method}
 \alias{tail}
 \alias{tail,RasterLayer-method}
 \alias{tail,RasterStackBrick-method}
+\alias{tail,Spatial-method}
 
 \title{Show the head or tail of a Raster* object}
 

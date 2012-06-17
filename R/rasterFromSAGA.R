@@ -56,7 +56,7 @@
 	} else {
 		lnams <- gsub(" ", "_", extension(basename(filename), ""))
 	}
-	layerNames(x) <- lnams
+	names(x) <- lnams
 	
 	x@file@name <- filename
 	x@data@haveminmax <- FALSE

@@ -12,7 +12,7 @@ The distance unit is in meters if the RasterLayer is not projected (\code{+proj=
 }
 
 \usage{
-\S4method{distance}{RasterLayer}(x, filename='', doEdge=FALSE, ...)
+\S4method{distance}{RasterLayer}(x, filename='', doEdge=TRUE, ...)
 }
 
 \arguments{

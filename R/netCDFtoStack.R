@@ -33,13 +33,17 @@
 		st@title <- r@layernames
 
 		if (length(bands) > 1) {
-			st@zname <- nc$var[[zvar]]$dim[[dim3]]$units[bands]
-			st@zvalue <- nc$var[[zvar]]$dim[[dim3]]$vals[bands]
+			names(st@z) <- nc$var[[zvar]]$dim[[dim3]]$units[bands]
+			st@z <- list( nc$var[[zvar]]$dim[[dim3]]$vals[bands] )
 			if ( nc$var[[zvar]]$dim[[dim3]]$name == 'time' ) {	
 				st <- try( .doTime(st, nc, zvar, dim3)  )
 			}
-			st@layers = lapply(as.list(bands), function(x){r@data@band <- x; r@layernames <- st@zvalue[x]; return(r)} )
-			st@layernames <- st@zvalue
+			st@layers = lapply(list(bands), function(x){
+												r@data@band <- x; 
+												r@layernames <- st@z[[1]][x]; 
+												return(r)} 
+											)
+			st@layernames <- getZ(st)
 		} 
 		return( st )
 	}

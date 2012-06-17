@@ -22,3 +22,11 @@ setMethod('ncell', signature(x='ANY'),
 	}
 )
 
+
+
+setMethod('length', signature(x='BasicRaster'), 
+	function(x) {
+		ncell(x) * nlayers(x)
+	}
+)
+

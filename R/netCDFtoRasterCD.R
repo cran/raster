@@ -20,11 +20,11 @@
 	if (dohours) {
 		startTime <- substr(un, 13, 30)
 		startTime <- strptime(startTime, "%Y-%m-%d %H:%M:%OS")
-		time <- startTime + as.numeric(x@zvalue) * 3600
+		time <- startTime + as.numeric(getZ(x)) * 3600
 		time <- as.character(time)
 		if (!is.na(time[1])) {
-			x@zvalue <- time
-			x@zname <- as.character('Date/time')
+			x@z <- list(time)
+			names(x@z) <- as.character('Date/time')
 		}
 	}
 	if (dodays) {
@@ -39,7 +39,7 @@
 			warning('assuming a standard calender')
 		}
 
-		time <- x@zvalue
+		time <- getZ(x)
 		if (greg) {
 			time <- as.Date(time, origin=startDate)
 		} else {
@@ -48,8 +48,8 @@
 			doy <- (time - (year * 365))
 			time <- as.Date(doy, origin=paste(year, "-1-1", sep='')) - 1
 		}
-		x@zvalue <- as.character(time)
-		x@zname <- as.character('Date')
+		x@z <- list(time)
+		names(x@z) <- as.character('Date')
 		
 	}
 	return(x)
@@ -210,7 +210,7 @@
 		
 	if (type == 'RasterLayer') {
 		r <- raster(xmn=xrange[1], xmx=xrange[2], ymn=yrange[1], ymx=yrange[2], ncols=ncols, nrows=nrows, crs=crs)
-		layerNames(r) <- long_name
+		names(r) <- long_name
 	} else if (type == 'RasterBrick') {
 		r <- brick(xmn=xrange[1], xmx=xrange[2], ymn=yrange[1], ymx=yrange[2], ncols=ncols, nrows=nrows, crs=crs)
 		r@title <- long_name
@@ -230,7 +230,7 @@
 	
 	r@file@name <- filename
 	r@file@toptobottom <- toptobottom
-	r@unit <- unit
+	r@data@unit <- unit
 	
 	
 	attr(r@data, "zvar") <- zvar
@@ -255,11 +255,11 @@
 		nbands = 1
 	} else {
 		r@file@nbands <- nc$var[[zvar]]$dim[[dim3]]$len
-		r@zname <- nc$var[[zvar]]$dim[[dim3]]$units
-		r@zvalue <- nc$var[[zvar]]$dim[[dim3]]$vals
-		
+		r@z <- list( nc$var[[zvar]]$dim[[dim3]]$vals )
 		if ( nc$var[[zvar]]$dim[[dim3]]$name == 'time' ) {
-			r <- try( .doTime(r, nc, zvar, dim3)  )
+			try( r <- .doTime(r, nc, zvar, dim3) )
+		} else {
+			names(r@z) <- nc$var[[zvar]]$dim[[dim3]]$units
 		}
 	}
 	
@@ -277,7 +277,7 @@
 			} else {
 				r@data@band <- as.integer( min(max(1, band), r@file@nbands) )
 			}
-			r@zvalue <- r@zvalue[r@data@band]
+			r@z <- list( getZ(r)[r@data@band] )
 		} 
 
 	} else {
@@ -287,7 +287,7 @@
 		r@data@nlayers <- r@file@nbands
 		r@data@min <- rep(Inf, r@file@nbands)
 		r@data@max <- rep(-Inf, r@file@nbands)
-		try( layerNames(r) <- as.character(r@zvalue), silent=TRUE )
+		try( names(r) <- as.character(r@z[[1]]), silent=TRUE )
 	}
 	
 	return(r)

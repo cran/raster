@@ -188,7 +188,7 @@
 	}
 
 	nls <- nlayers(object)
-	nms <- layerNames(object)
+	nms <- names(object)
 	if (nls > 1) {
 		if (layer > 1 | nl < nls) {
 			lyrs <- layer:(layer+nl-1) 

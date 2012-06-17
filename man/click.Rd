@@ -14,9 +14,9 @@ Click on a map (plot) to get values of a Raster* or SpatialGrid or SpatialPixels
 }
 
 \usage{
-\S4method{click}{Raster}(x, n=1, id=FALSE, xy=FALSE, cell=FALSE, type = "n", ...)
+\S4method{click}{Raster}(x, n=1, id=FALSE, xy=FALSE, cell=FALSE, type="n", ...)
 
-\S4method{click}{SpatialGrid}(x, n=1, id=FALSE, xy=FALSE, type = "n", ...)
+\S4method{click}{SpatialGrid}(x, n=1, id=FALSE, xy=FALSE, cell=FALSE, type = "n", ...)
 }
 
 

@@ -7,6 +7,7 @@
 \alias{ncell}
 \alias{ncell,ANY-method}
 \alias{ncell,BasicRaster-method}
+\alias{length,BasicRaster-method}
 \alias{nrow<-}
 \alias{ncol<-}
 

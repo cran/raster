@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date : June 2008
 # Version 0.9
 # Licence GPL v3
@@ -62,6 +62,7 @@
 			vals <- vals * x@data@gain + x@data@offset
 		}
 	}
+	
 	return(vals)
 }
 
@@ -73,6 +74,7 @@
 		layers <- bandnr(x)
 	}
 	laysel <- length(layers)
+	if (laysel > 1) att = FALSE
 	
 	colrow <- matrix(ncol=2+laysel, nrow=length(cells))
 	colrow[,1] <- colFromCell(x, cells)
@@ -128,8 +130,8 @@
 		}
 	}
 	closeDataset(con)
-	colnames(colrow)[2+(1:laysel)] <- layerNames(x)[layers]
-	return(colrow[, 2+(1:laysel)]) 
+	colnames(colrow)[2+(1:laysel)] <- names(x)[layers]
+	colrow[, 2+(1:laysel)]
 }	
 
 
@@ -199,7 +201,7 @@
 	}
 	if (nl > 1) {
 		res <- t(matrix(res, nrow=nl))
-		colnames(res) <- layerNames(x)[layers]
+		colnames(res) <- names(x)[layers]
 	}
 	return(res)
 }

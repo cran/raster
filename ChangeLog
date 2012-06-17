@@ -1,3 +1,22 @@
+To do:
+focal for multi-layer objects
+
+--- Development version
+More support for factors and (related) Raster Attribute Tables (functions ratify, deratify)
+z-values are saved to file (native format only)
+Old slot @zvalue removed (in favor of slot @z)
+New function 'names' to (eventually) replace 'layerNames', for compatibility with sp.
+New function 'proj4string' (equivalent to 'projection') for compatibility with sp.
+New function 'sampleStratified'
+Improved speed for creating a RasterStack from a list of RasterLayer objects (thanks to report by Jonathan Kennel), and for rasterToPoints
+setValues(brick, values) now also works if the existing values (on disk) cannot be all loaded into memory (suggested by Jonathan Greenberg).
+bug fixes: 
+rasterize with polygons ignores the 'field' argument (bug introduced in previous version)
+log failed when writing to disk (reported by Jochen Albrecht)
+sampleRegular failed in some cases for a RasterStack (affecting spplot). Reported by Matthew Landis)
+
+
+--- 1-May-2012, version 1.9-82
 New features, improvements:
 New function weighted.mean 
 New function layerStats to compute the correlation, covariance and weighted covariance matrix across layers (by Jonathan Greenberg)

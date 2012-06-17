@@ -14,7 +14,7 @@ if (!isGeneric("KML")) {
 
 setMethod('KML', signature(x='RasterLayer'), 
 
-function (x, filename, col=rev(terrain.colors(255)), maxpixels=100000, blur=1, zip='', ...) {
+function (x, filename, col=rev(terrain.colors(255)), colNA=NA, maxpixels=100000, blur=1, zip='', ...) {
 
     if (! .couldBeLonLat(x)) { 
         stop("CRS of x must be longitude / latitude")
@@ -37,11 +37,15 @@ function (x, filename, col=rev(terrain.colors(255)), maxpixels=100000, blur=1, z
 	extension(kmlfile) <- '.kml'
 
 	png(filename = imagefile, width=max(480, blur*ncol(x)), height=max(480,blur*nrow(x)), bg="transparent")
-	par(mar=c(0,0,0,0))
+	if (!is.na(colNA)) {
+		par(mar=c(0,0,0,0), bg=colNA)
+	} else {
+		par(mar=c(0,0,0,0))	
+	}
 	image(x, col=col, axes=FALSE, useRaster=TRUE, ...)
 	dev.off()
 
-	name <- layerNames(x)[1]
+	name <- names(x)[1]
 	if (name == "") { name <- 'x' }
     kml <- c('<?xml version="1.0" encoding="UTF-8"?>', '<kml xmlns="http://www.opengis.net/kml/2.2">', "<GroundOverlay>")
     kmname <- paste("<name>", name, "</name>", sep = "")

@@ -73,7 +73,7 @@
 		
 		alldata <- getValuesBlock(x, r1, nrows)
 		v <- matrix(nrow=nrow(id), ncol=nl+1)
-		colnames(v) <- c('col', layerNames(x)[lyrs])
+		colnames(v) <- c('col', names(x)[lyrs])
 		v[,1] <- id[,1]
 		for (i in 1:nl) {
 			j <- lyrs[i]
@@ -84,7 +84,7 @@
 		if (!is.null(fun)) {
 			v <- aggregate(v[,-1,drop=FALSE], list(v[,1]), FUN=fun, na.rm=na.rm)
 			v <- as.matrix(v)[,-1]
-			colnames(v) <- layerNames(x)[lyrs]
+			colnames(v) <- names(x)[lyrs]
 		} 
 	}
 		

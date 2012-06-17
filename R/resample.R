@@ -15,7 +15,7 @@ function(x, y, method="bilinear", filename="", ...)  {
 	
 	# y do: compare projections of x and y
 		
-	ln <- layerNames(x)
+	ln <- names(x)
 	nl <- nlayers(x)
 	if (nl == 1) {
 		y <- raster(y)
@@ -131,7 +131,7 @@ function(x, y, method="bilinear", filename="", ...)  {
 				
 			}
 			pbClose(pb)
-			layerNames(v) <- ln
+			names(v) <- ln
 			return(v)
 			
 		} else {
@@ -149,7 +149,7 @@ function(x, y, method="bilinear", filename="", ...)  {
 	}
 
 	pbClose(pb)
-	layerNames(y) <- ln
+	names(y) <- ln
 	return(y)
 	
 }

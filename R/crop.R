@@ -21,18 +21,11 @@ function(x, y, filename='', snap='near', datatype=NULL, ...) {
 	}
 	validObject(y)
 	
-	if (is.null(datatype)) { 
-		datatype <- unique(dataType(x))
-		if (length(datatype) > 1) {
-			datatype <- .commonDataType(datatype)
-		}
-	} 
 
 # we could also allow the raster to expand but for now let's not and first make a separate expand function
 	e <- intersect(extent(x), extent(y))
 	e <- alignExtent(e, x, snap=snap)
 	
-
 	if (nlayers(x) <= 1) {
 		out <- raster(x)
 		leg <- x@legend
@@ -40,13 +33,15 @@ function(x, y, filename='', snap='near', datatype=NULL, ...) {
 		out <- brick(x, values=FALSE)	
 		leg <- new('.RasterLegend')
 	}
-
 	out <- setExtent(out, e, keepres=TRUE)
-	layerNames(out) <- layerNames(x)
-	
+	names(out) <- names(x)
+
 	if (! hasValues(x)) {
 		return(out)
 	}
+
+	out@data@isfactor <- x@data@isfactor
+	out@data@attributes <- x@data@attributes
 	
 	col1 <- colFromX(x, xmin(out)+0.5*xres(out))
 	col2 <- colFromX(x, xmax(out)-0.5*xres(out))
@@ -59,11 +54,17 @@ function(x, y, filename='', snap='near', datatype=NULL, ...) {
 	nc <- ncol(out)
 	nr <- row2 - row1 + 1
 	
+	if (is.null(datatype)) { 
+		datatype <- unique(dataType(x))
+		if (length(datatype) > 1) {
+			datatype <- .commonDataType(datatype)
+		}
+	} 
+	dataType(out) <- datatype
 	
 	if (canProcessInMemory(out, 3)) {
-		dataType(out) <- datatype
-		x <- getValuesBlock(x, row1, nrows=nr, col=col1, ncols=nc)
-		out <- setValues(out, x)
+		v <- getValuesBlock(x, row1, nrows=nr, col=col1, ncols=nc)
+		out <- setValues(out, v)
 		if (filename != "") { 
 			out <- writeRaster(out, filename=filename, datatype=datatype, ...)			
 		}
@@ -81,6 +82,7 @@ function(x, y, filename='', snap='near', datatype=NULL, ...) {
 	}
 
 	out@legend <- leg
+
 	return(out)
 }
 )

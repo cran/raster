@@ -10,7 +10,7 @@ if (!isGeneric("distance")) {
 
 
 setMethod('distance', signature(x='RasterLayer'), 
-function(x, filename='', doEdge=FALSE, ...) {
+function(x, filename='', doEdge=TRUE, ...) {
 	if (doEdge) {
 		r <- edge(x, classes=FALSE, type='inner', progress=.progress(...)) 
 		pts <- try(  rasterToPoints(r, fun=function(z){ z>0 } )[,1:2, drop=FALSE] )

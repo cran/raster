@@ -9,6 +9,21 @@ if (!isGeneric("click")) {
 		standardGeneric("click"))
 }	
 
+
+
+.getCellFromClick <- function(x, n, type, id, ...) {
+	loc <- locator(n, type, ...)
+	xyCoords <- cbind(x=loc$x, y=loc$y)
+	if (id) {
+		text(xyCoords, labels=1:n)
+	}
+	cells <- cellFromXY(x, xyCoords)
+	cells <- unique(na.omit(cells))
+	if (length(cells) == 0 ) { stop('no valid cells selected') }
+	cells
+}
+
+
 setMethod('click', signature(x='missing'), 
 	function(x, n=1, type="n", ...) {
 		loc <- locator(n, type, ...)
@@ -18,48 +33,66 @@ setMethod('click', signature(x='missing'),
 
 	
 setMethod('click', signature(x='SpatialGrid'), 
-	function(x, n=1, id=FALSE, xy=FALSE, type="n", ...) {
-		x <- brick(x)
-		click(x, n=n, id=id, xy=xy, type=type, ...)
+	function(x, n=1, id=FALSE, xy=FALSE, cell=FALSE, type="n", ...) {
+		r <- raster(x)
+		cells <- .getCellFromClick(r, n, type, id, ...)
+		
+		if (.hasSlot(x, 'data')) {
+			value <- x@data[cells, ,drop=FALSE]
+		} else {
+			value <- NULL
+		}
+		if (cell) {
+			value <- data.frame(cells, value)
+		}
+		if (xy) { 
+			xyCoords <- xyFromCell(x, cells)
+			colnames(xyCoords) <- c('x', 'y')
+			value <- data.frame(xyCoords, value)
+		} 
+		value
 	}
 )
 
 setMethod('click', signature(x='SpatialPixels'), 
-	function(x, n=1, id=FALSE, xy=FALSE, type="n", ...) {
-		x <- brick(x)
-		click(x, n=n, id=id, xy=xy, type=type, ...)
+	function(x, n=1, id=FALSE, xy=FALSE, cell=FALSE, type="n", ...) {
+		r <- raster(x)
+		cells <- .getCellFromClick(r, n, type, id, ...)
+		
+		if (.hasSlot(x, 'data')) {
+			value <- x@data[cells, ,drop=FALSE]
+		} else {
+			value <- NULL
+		}
+		if (cell) {
+			value <- data.frame(cells, value)
+		}
+		if (xy) { 
+			xyCoords <- xyFromCell(x, cells)
+			colnames(xyCoords) <- c('x', 'y')
+			value <- data.frame(xyCoords, value)
+		} 
+		value
 	}
 )
+
 
 setMethod('click', signature(x='Raster'), 
 	function(x, n=1, id=FALSE, xy=FALSE, cell=FALSE, type="n", ...) {
 	
-	loc <- locator(n, type, ...)
-	xyCoords <- cbind(x=loc$x, y=loc$y)
-
-	if (id) {
-		text(xyCoords, labels=1:n)
-	}
-	
-	cells <- cellFromXY(x, xyCoords)
-	cells <- unique(na.omit(cells))
-	if (length(cells) == 0 ) { stop('no valid cells selected') }
-	xyCoords <- xyFromCell(x, cells)
-	colnames(xyCoords) <- c('x', 'y')
-	n <- nrow(xyCoords)
-
+	cells <- .getCellFromClick(x, n, type, id, ...)
 	value <- .cellValues(x, cells)
-
-	if (nlayers(x) == 1)  {
+	if (is.vector(value) == 1)  {
 		value <- matrix(value)
-		colnames(value) <- layerNames(x)
+		colnames(value) <- names(x)
 	}
-	
 	if (cell) {
-		value <- cbind(cells, value)
+		value <- data.frame(cells, value)
 	}
 	if (xy) { 
-		value <- cbind(xyCoords, value)
+		xyCoords <- xyFromCell(x, cells)
+		colnames(xyCoords) <- c('x', 'y')
+		value <- data.frame(xyCoords, value)
 	} 
 	value
 }

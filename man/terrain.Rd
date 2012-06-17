@@ -45,11 +45,11 @@ Such measures can also be computed with the \code{\link{focal}} function:
 
 \code{f <- matrix(1, nrow=3, ncol=3)}
 
-\code{TRI <- focal(x, w=f, fun=function(x, ...) sum(abs(x[-5]-x[5]))/8 )}
+\code{TRI <- focal(x, w=f, fun=function(x, ...) sum(abs(x[-5]-x[5]))/8, pad=TRUE, padValue=NA)}
 
-\code{TPI <- focal(x, w=f, fun=function(x, ...) x[5] - mean(x[-5]))}
+\code{TPI <- focal(x, w=f, fun=function(x, ...) x[5] - mean(x[-5]), pad=TRUE, padValue=NA)}
 
-\code{rough <- focal(x, w=f, fun=function(x, ...) max(x) - min(x))}
+\code{rough <- focal(x, w=f, fun=function(x, ...) max(x) - min(x), pad=TRUE, padValue=NA, na.rm=TRUE)}
 }
 
 
@@ -83,6 +83,16 @@ Wilson, M.F.J., O'Connell, B., Brown, C., Guinan, J.C., Grehan, A.J., 2007. Mult
 elevation <- getData('alt', country='CHE')
 x <- terrain(elevation, opt=c('slope', 'aspect'), unit='degrees')
 plot(x)
+
+
+# TPI for different neighborhood size:
+tpiw <- function(x, w=5) {
+	m <- matrix(1/(w^2-1), nc=w, nr=w)
+	m[ceiling(0.5 * length(m))] <- 0
+	f <- focal(x, m)
+	x - f
+}
+tpi5 <- tpiw(elevation, w=5)
 }
 }
 

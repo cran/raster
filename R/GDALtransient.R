@@ -70,7 +70,12 @@
 	if (rotated(r)) {
 		gt <- r@rotation@geotrans
 	} else {
+		#if (flip) {
+		#	gt <- c(xmin(r), xres(r), 0, 0, ymax(r), yres(r))		
+		#	cat('flipping (this creates an invalid RasterLayer)\n')
+		#} else {
 		gt <- c(xmin(r), xres(r), 0, ymax(r), 0, -yres(r))
+		#}
 	}
 	
     .Call("RGDAL_SetGeoTransform", transient, gt, PACKAGE = "rgdal")

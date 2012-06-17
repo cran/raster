@@ -239,7 +239,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 			if (nl > 1) {
 				j <- matrix(ncol=nl, nrow=length(res))
 				j[!i] <- t(sapply(res[!i], function(x) apply(x, 2, FUN=fun, na.rm=na.rm)))
-				colnames(j) <- layerNames(x)[layer:(layer+nl-1)]
+				colnames(j) <- names(x)[layer:(layer+nl-1)]
 			} else {
 				j <- vector(length=length(i))
 				j[i] <- NA
@@ -251,16 +251,25 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 	
 	if (df) {
 		if (!is.list(res)) {
-			res <- data.frame(cbind(ID=1:NROW(res), res))
+			res <- data.frame(ID=1:NROW(res), res)
 		} else {
-			res <- data.frame( do.call(rbind, lapply(1:length(res), function(x) if (!is.null(res[[x]])) cbind(ID=x, res[[x]]))) )
-		}
+			res <- data.frame( do.call(rbind, sapply(1:length(res), function(x) if (!is.null(res[[x]])) cbind(x, res[[x]]))) )
+		}		
 
-		if (ncol(res) == 2) {
-			colnames(res)[2] <- layerNames(x)[layer]
-		} 
+		lyrs <- layer:(layer+nl-1)
+		colnames(res) <- c('ID', names(x)[lyrs])
+		
+		if (any(is.factor(x))) {
+			v <- res[, -1, drop=FALSE]
+			if (ncol(v) == 1) {
+				v <- data.frame(factorValues(x, v[,1], layer))
+			} else {
+				v <- .insertFacts(x, v, lyrs)
+			}
+			res <- data.frame(res[,1,drop=FALSE], v)
+		}
 	}
-	
+
 	res
 }
 )

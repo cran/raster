@@ -57,3 +57,29 @@ setMethod('tail', signature(x='RasterStackBrick'),
 		return(v)
 	}
 )
+
+
+
+setMethod('head', signature(x='Spatial'), 
+	function(x, n=6L,...) {
+		if (.hasSlot(x, 'data')) {
+			head(x@data, n=n, ...)
+		} else {
+			x[1,]
+		}
+	}
+)
+
+
+
+setMethod('tail', signature(x='Spatial'), 
+	function(x,  n=6L, ...) {
+		if (.hasSlot(x, 'data')) {
+			tail(x@data, n=n, ...)
+		} else {
+			x[length(x),]
+		}
+	}
+)
+
+

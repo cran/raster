@@ -90,7 +90,7 @@ function(x, row, nrows, ngb, names=FALSE, outside=NA, ...) {
 			mm[[i]] <- m
 		}
 	}
-	names(mm) <- layerNames(x)
+	names(mm) <- names(x)
 	return(mm)
 }
 )

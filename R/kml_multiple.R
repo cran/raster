@@ -42,7 +42,7 @@
 
 setMethod('KML', signature(x='RasterStackBrick'), 
 
-function (x, filename, time=NULL, col=rev(terrain.colors(255)), maxpixels=100000, blur=1, zip='', ...) {
+function (x, filename, time=NULL, col=rev(terrain.colors(255)), colNA=NA, maxpixels=100000, blur=1, zip='', ...) {
 
     if (! .couldBeLonLat(x)) { 
         stop("CRS of x must be longitude/latitude")
@@ -71,7 +71,7 @@ function (x, filename, time=NULL, col=rev(terrain.colors(255)), maxpixels=100000
 	kmlfile <- filename
 	extension(kmlfile) <- '.kml'
 	
-	name <- layerNames(x)
+	name <- names(x)
 
     kml <- c('<?xml version="1.0" encoding="UTF-8"?>', '<kml xmlns="http://www.opengis.net/kml/2.2">')
     kml <- c(kml, c("<Folder>", paste("<name>", extension(basename(filename), ''), "</name>", sep='')))
@@ -80,9 +80,16 @@ function (x, filename, time=NULL, col=rev(terrain.colors(255)), maxpixels=100000
 						e@xmax, "</east><west>", e@xmin, "</west>", sep = ""), "\t</LatLonBox>", "</GroundOverlay>")
 
 	imagefile <- paste(extension(filename, ''), "_", 1:nl, ".png", sep="")
+	
+	
 	for (i in 1:nl) {
 		png(filename = imagefile, width=max(480, blur*ncol(x)), height=max(480,blur*nrow(x)), bg="transparent")
-		par(mar=c(0,0,0,0))
+		if (!is.na(colNA)) {
+			par(mar=c(0,0,0,0), bg=colNA)
+		} else {
+			par(mar=c(0,0,0,0))	
+		}
+		
 		if (R.Version()$minor >= 13) {
 			image(x[[i]], col=col, axes=FALSE, useRaster=TRUE, ...)
 		} else {

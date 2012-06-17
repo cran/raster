@@ -39,10 +39,14 @@ r <- raster(ncols=10, nrows=10)
 r[] <- runif(ncell(r)) * 1:ncell(r)
 z <- r
 z[] <- rep(1:5, each=20)
-zonal(r, z, mean)
-zonal(r, z, min)
 # for big files, use a character value rather than a function
 zonal(r, z, 'sum')
+
+# for smaller files you can also provide a function
+\dontrun{
+zonal(r, z, mean)
+zonal(r, z, min)
+}
 
 # multiple layers
 zonal(stack(r, r*10), z, 'sum')

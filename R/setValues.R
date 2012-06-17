@@ -23,7 +23,9 @@ function(x, values) {
 		}
 	}
   
-	if (!is.vector(values)) {stop('values must be a vector')}
+	if (!is.vector(values)) { 
+		stop('values must be a vector')
+	}
 	if (!(is.numeric(values) | is.integer(values) | is.logical(values))) {
 		stop('values must be numeric, integer or logical.')	}
 	
@@ -50,8 +52,14 @@ function(x, values) {
 
 setMethod('setValues', signature(x='RasterStack'), 
 	function(x, values, layer=-1) {
-		b <- brick(x, values=TRUE)
-		return(setValues(b, values, layer))
+		if (layer > 0) {
+			stopifnot(layer <= nlayers(x))
+			x[[layer]] <- setValues(x[[layer]], values)
+			return(x)
+		} else {
+			b <- brick(x, values=FALSE)
+			setValues(b, values)
+		}
 	}	
  )
 	
@@ -74,7 +82,7 @@ setMethod('setValues', signature(x='RasterBrick'),
 			#if (dm[1] == dm[2]) { warning('assuming values should be transposed') }
 			transpose <- TRUE
 		} else if (dmb[1] != dm[1] | dmb[2] != dm[2]) {
-			stop('dimnesions of array do not match the RasterBrick')
+			stop('dimensions of array do not match the RasterBrick')
 		}
 # speed imrovements suggested by Justin  McGrath
 # http://pastebin.com/uuLvsrYc
@@ -99,6 +107,7 @@ setMethod('setValues', signature(x='RasterBrick'),
 		if (!is.matrix(values)) {
 			values <- matrix(values, nrow=ncell(x), ncol=nlayers(x))
 		}
+		
 		if (nrow(values) == ncell(x)) {
 
 			x@file@name <- ""
@@ -108,13 +117,13 @@ setMethod('setValues', signature(x='RasterBrick'),
 			x@data@nlayers <- ncol(values)
 			cn <- colnames(values)
 			if (!is.null(cn)) {
-				layerNames(x) <- cn
+				names(x) <- cn
 			}
 			x@data@values <- values
 			x <- setMinMax(x)
 			 
 		} else {
-			stop('data size is not correct')
+			stop("the size of 'values' is not correct")
 		}
 		
 	} else {
@@ -128,19 +137,53 @@ setMethod('setValues', signature(x='RasterBrick'),
 		}
 		
 		if (length(values) == ncell(x)) { 
-			if ( ! inMemory(x) ) { 
-				atry <- try(x <- readAll(x), silent=T)
-				if (class(atry) == "try-error") {
-					stop("you can only setValues for a single layer if all values are in memory. But values could not be loaded")				
+			if ( inMemory(x) ) { 
+			
+				x@data@values[,layer] <- values
+				rge <- range(values, na.rm=TRUE)
+				x@data@min[layer] <- rge[1]
+				x@data@max[layer] <- rge[2]
+				
+			} else {
+			
+				if (canProcessInMemory(x)) {
+					if (hasValues(x)) {
+						x <- readAll(x)
+						x@file@name <- ""
+						x@file@driver <- ""
+						x@data@inmemory <- TRUE
+						x@data@fromdisk <- FALSE						
+					} else {
+						nl <- nlayers(x)
+						x@data@values <- matrix(NA, nrow=ncell(x), ncol=nl)
+						x@data@min <- rep(Inf, nl)
+						x@data@max <- rep(-Inf, nl)
+						x@data@haveminmax <- TRUE
+						x@data@inmemory <- TRUE
+					}
+					x@data@values[,layer] <- values
+					rge <- range(values, na.rm=TRUE)
+					x@data@min[layer] <- rge[1]
+					x@data@max[layer] <- rge[2]
+					
+				} else {
+				
+					tr <- blockSize(x)
+					pb <- pbCreate(tr$n)
+					r <- x
+					r <- writeStart(r, filename=rasterTmpFile(), format=.filetype(), overwrite=TRUE )
+					nc <- ncol(x)
+					for (i in 1:tr$n) {
+						v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
+						v[, layer] <- values[cellFromRowCol(x, tr$row[i], 1):cellFromRowCol(x, tr$row[i]+tr$nrows[i]-1, nc)]
+						r <- writeValues(r, v, tr$row[i])
+						pbStep(pb, i) 	
+					}
+					r <- writeStop(r)
+					pbClose(pb)
+					return(r)
 				}
 			}
-			x@file@name <- ""
-			x@file@driver <- ""
-			x@data@inmemory <- TRUE
-			x@data@fromdisk <- FALSE
-			x@data@values[,layer] <- values
-			x <- setMinMax(x)
-			
 		} else {
 			stop("length(values) is not equal to ncell(x)") 
 		}

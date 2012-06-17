@@ -36,7 +36,7 @@ function(x, y, ...){
 
 
 setMethod('rasterize', signature(x='SpatialPolygons', y='Raster'), 
-function(x, y, field, ...){ 
+function(x, y, ...){ 
 	.polygonsToRaster(x, y, ...)
 })
 

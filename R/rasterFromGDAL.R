@@ -23,7 +23,7 @@
 
 
 
-.rasterFromGDAL <- function(filename, band, type, sub=0, RAT=FALSE, silent=TRUE, warn=TRUE, ...) {	
+.rasterFromGDAL <- function(filename, band, type, sub=0, RAT=TRUE, silent=TRUE, warn=TRUE, ...) {	
 
 # most of this was taken from the GDALinfo function in rgdal
 # that was written by Roger Bivand and others
@@ -121,6 +121,7 @@
 		r <- brick(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs="")
 		r@file@nbands <- r@data@nlayers <- nbands
 		band <- 1:nbands
+		#RAT <- FALSE
 		
 	} else {
 	
@@ -215,13 +216,13 @@
 	}
 	
 	if (type == 'RasterBrick') {
-		layerNames(r) <- rep(gsub(" ", "_", extension(basename(filename), "")), nbands)
+		names(r) <- rep(gsub(" ", "_", extension(basename(filename), "")), nbands)
 	} else {
 		lnames <- gsub(" ", "_", extension(basename(filename), ""))
 		if (nbands > 1) {
 			lnames <- paste(lnames, '_', band, sep='')
 		}
-		layerNames(r) <- lnames
+		names(r) <- lnames
 		
 	}
 	r@file@name <- filename
@@ -244,12 +245,14 @@
 	r@data@min <- minv
 	r@data@max <- maxv
 
-	if (! is.null(RATlist[[1]])) {
+	rats <- ! sapply(RATlist, is.null) 
+	if (any(rats)) {
 		att <- vector(length=nlayers(r), mode='list')
 		for (i in 1:length(RATlist)) {
 			if (! is.null(RATlist[[i]])) {
-				att[[i]] <- data.frame(RATlist[[i]], stringsAsFactors=FALSE)
-				
+				dr <- data.frame(RATlist[[i]], stringsAsFactors=FALSE)
+				colnames(dr)[1] <- 'ID'
+				att[[i]] <- dr
 				if (! silent) {
 					usage <- attr(RATlist[[i]], 'GFT_usage')
 					if (! isTRUE(usage[1] == "GFU_MinMax")) {
@@ -261,10 +264,11 @@
 						}
 					}
 				}
-				r@data@isfactor[i] <- TRUE 
 			}
 		}
+		
 		r@data@attributes <- att
+		r@data@isfactor <- rats
 	}
 	
 #oblique.x   0  #oblique.y   0 

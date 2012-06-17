@@ -49,7 +49,7 @@ function(x, y, ...){
 
 
 setMethod('extract', signature(x='Raster', y='Extent'), 
- 	function(x, y, cellnumbers=FALSE, fun=NULL, na.rm=FALSE, layer, nl, df=FALSE, ...) {
+ 	function(x, y, cellnumbers=FALSE, fun=NULL, na.rm=FALSE, layer=1, nl, df=FALSE, ...) {
 
 		e <- intersect(extent(x), y)
 		e <- alignExtent(e, x)
@@ -58,13 +58,11 @@ setMethod('extract', signature(x='Raster', y='Extent'),
 			cellnumbers <- FALSE
 		} else if (cellnumbers) {
 			cell <- cellsFromExtent(x, e)
-			value <- extract(x, cell, layer=layer, nl=nl)
-			value <- cbind(cell, value)
-			if (ncol(value)==2) {
-				colnames(value)[2] <- layerNames(x)[layer]
-			}
+			value <- extract(x, cell, layer=layer, nl=nl, df=df)
 			if (df) {
-				value <- data.frame(value)
+				value <- data.frame(cell=cell, value)
+			} else {
+				value <- cbind(cell=cell, value)
 			}
 			return(value)
 		}
@@ -97,6 +95,8 @@ setMethod('extract', signature(x='Raster', y='Extent'),
 			}
 			lyrs <- layer:(layer+nl-1)
 			v <- v[ , lyrs, drop=FALSE] 
+		} else {
+			lyrs <- 1
 		}
 		
 		if (! is.null(fun)) {
@@ -111,8 +111,15 @@ setMethod('extract', signature(x='Raster', y='Extent'),
 
 		if (df) {
 			v <- data.frame(v)
+			if (ncol(v) == 1) {
+				v <- data.frame(factorValues(x, v, lyrs))
+			} else {
+				v <- .insertFacts(x, v, lyrs)
+			}
 		}
 		return(v)
 	}
 )
+
+
 

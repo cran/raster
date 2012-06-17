@@ -9,7 +9,7 @@ zonal <- function(x, zones, stat='mean', digits=0, na.rm=TRUE, progress='') {
 	stopifnot(hasValues(zones))
 	stopifnot(hasValues(x))
 	
-	layernames <- layerNames(x)
+	layernames <- names(x)
 	
 	if (canProcessInMemory(x, 3)) {
 		inmem <- TRUE

@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  September 2009
 # Version 0.9
 # Licence GPL v3
@@ -54,7 +54,7 @@ setMethod('brick', signature(x='RasterLayer'),
 				b@rotation <- x@rotation
 			}
 			return(b)
-		}	
+		}
 		x <- stack(x, ...)
 		filename <- trim(filename)
 		if (missing(format)) { format <- .filetype(filename=filename) } 
@@ -69,6 +69,7 @@ setMethod('brick', signature(x='RasterLayer'),
 
 setMethod('brick', signature(x='RasterStack'), 
 	function(x, values=TRUE, nl, filename='', ...){
+	
 		e <- x@extent
 		b <- brick(xmn=e@xmin, xmx=e@xmax, ymn=e@ymin, ymx=e@ymax, nrows=x@nrows, ncols=x@ncols, crs=projection(x))
 		if (rotated(x)) {
@@ -89,15 +90,20 @@ setMethod('brick', signature(x='RasterStack'),
 		b@data@nlayers <- as.integer(nl)
 		
 		filename <- trim(filename)
+		
 		if (values) {
 			
 			b@layernames <- x@layernames[1:nl]
 			if (canProcessInMemory(b, nl*2)) {
-				x <- setValues( b, getValues(x)[,1:nl]) 
-				if (filename != '') {
-					x <- writeRaster(x, filename, ...)
+				b <- setValues( b, getValues(x)[,1:nl]) 
+				if (any(is.factor(x))) {
+					b@data@isfactor <- is.factor(x)
+					b@data@attributes <- levels(x)
 				}
-				return(x)
+				if (filename != '') {
+					b <- writeRaster(b, filename, ...)
+				}
+				return(b)
 				
 			} else {
 
@@ -106,7 +112,7 @@ setMethod('brick', signature(x='RasterStack'),
 				pb <- pbCreate(tr$n, ...)			
 				for (i in 1:tr$n) {
 					vv <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
-					out <- writeValues(b, vv, tr$row[i])
+					b <- writeValues(b, vv, tr$row[i])
 					pbStep(pb, i)
 				}
 				pbClose(pb)
@@ -151,6 +157,7 @@ setMethod('brick', signature(x='Extent'),
 		projection(b) <- crs
 		nl <- max(round(nl), 0)
 		b@data@nlayers <- as.integer(nl)
+		b@data@isfactor <- rep(FALSE, nl)
 		return(b) 
 	}
 )
@@ -162,18 +169,27 @@ setMethod('brick', signature(x='SpatialGrid'),
 		extent(b) <- extent(x)
 		projection(b) <- x@proj4string
 		dim(b) <- c(x@grid@cells.dim[2], x@grid@cells.dim[1])	
-		
+				
 		if (class(x) == 'SpatialGridDataFrame') {
-			for (i in 1:ncol(x@data)) {
-				if (is.character(x@data[,i])) {
-					x@data[,i] =  as.factor(x@data[,i])
-				}
-				if (is.factor(x@data[,i])) {
-					x@data[,i] = as.numeric(x@data[,i])
+			
+			x <- x@data
+			
+			b@data@isfactor <- rep(FALSE, ncol(x))
+			
+			isfact <- sapply(x, function(i) is.factor(i) | is.character(i))
+			b@data@isfactor <- isfact
+			if (any(isfact)) {
+				for (i in which(isfact)) {
+					rat <- data.frame(table(x[[i]]))
+					rat <- data.frame(1:nrow(rat), rat[,2], rat[,1])
+					colnames(rat) <- c("ID", "COUNT", colnames(x)[i])
+					b@data@attributes[[i]] <- rat
+					x[,i] <- as.integer(x[,i])
 				}
 			}
-			b <- setValues(b, as.matrix(x@data))
-			b@layernames <- colnames(x@data)
+			
+			b <- setValues(b, as.matrix(x))
+			b@layernames <- colnames(x)
 		}
 		return(b)
 	}	
@@ -201,7 +217,9 @@ setMethod('brick', signature(x='array'),
 		if (length(dm) != 3) {
 			stop('array has wrong number of dimensions (needs to be 3)')
 		}
-		b <- brick(xmn=xmn, xmx=xmx, ymn=ymn, ymx=ymx, crs=crs)
+		b <- brick(xmn=xmn, xmx=xmx, ymn=ymn, ymx=ymx, crs=crs, nl=dm[3])
+		names(b) <- dimnames(x)[[3]]
+		
 		if (transpose) {
 			dim(b) <- c(dm[2], dm[1], dm[3])
 		} else {
@@ -210,13 +228,11 @@ setMethod('brick', signature(x='array'),
 			# https://r-forge.r-project.org/forum/message.php?msg_id=4312
 			x = aperm(x, perm=c(2,1,3))
 		}
-		attributes(x) <- NULL
+		attributes(x) <- list()
 		dim(x) <- c(dm[1] * dm[2], dm[3])
 		setValues(b, x)
 	}
 )
-
-
 	
 
 

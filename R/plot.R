@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  June 2008
 # Version 0.9
 # Licence GPL v3
@@ -10,8 +10,8 @@ if (!isGeneric("plot")) {
 }	
 
 
-setMethod("plot", signature(x='RasterStackBrick', y='ANY'), 
-	function(x, y, col=rev(terrain.colors(255)), maxpixels=100000, alpha=1, main, useRaster=TRUE, nc, nr, ...)  {
+setMethod("plot", signature(x='Raster', y='ANY'), 
+	function(x, y, col=rev(terrain.colors(255)), maxpixels=500000, alpha=1, colNA=NA, add=FALSE, ext=NULL, useRaster=TRUE, interpolate=FALSE, addfun=NULL, nc, nr, maxnl=16, main, ...)  {
 	
 		if (alpha < 1) {
 			alpha <- max(alpha, 0) * 255 + 1
@@ -20,30 +20,56 @@ setMethod("plot", signature(x='RasterStackBrick', y='ANY'),
 			col <- paste(substr(col, 1, 7), alpha, sep="")
 		}
 
+		if (nlayers(x) == 1) {
+			if (!missing(y)) {
+				if (is.character(y)) {
+					if (is.factor(x)) {
+						x <- deratify(x, y)														
+					} else {
+						y <- match(y, names(x))
+						if (is.na(y)) {
+							warning('argument "y" ignored')
+						}
+					}
+				}
+			}
+			if (missing(main)) {
+				main <- ''
+			}
+				
+			if (length(x@legend@colortable) > 0) {
+				.plotCT(x, maxpixels=maxpixels, ext=ext, interpolate=interpolate, main=main, ...)
+			} else if (! useRaster) {
+				.plotraster(x, col=col, maxpixels=maxpixels, add=add, ext=ext, main=main,...) 
+			} else {
+				.plotraster2(x, col=col, maxpixels=maxpixels, add=add, ext=ext, interpolate=interpolate, colNA=colNA, main=main,...) 
+				#.plot2(x, col=col, maxpixels=maxpixels, ...)
+			}
+			return(invisible(NULL))
+		}
 	
 		if (missing(y)) {
 			y <- 1:nlayers(x)
-			if (length(y) > 16) {
-				warning('only first 16 layers are plotted')
-				y <- 1:16
+			if (length(y) > maxnl) {
+				y <- 1:maxnl
 			}
 		} else {
 			if (is.character(y)) {
-				y = .nameToIndex(y, layerNames(x))
+				y <- match(y, names(x))
 			}
 			y <- unique(as.integer(round(y)))
 			y <- na.omit(y)
 		}
 		
 		if (missing(main)) {
-			main <- layerNames(x)
+			main <- names(x)
 		}
 		
 		if (length(y) == 1) {
 			if (useRaster) {
-				.plotraster2(raster(x, y), col=col, maxpixels=maxpixels, main=main[y], ...) 
+				.plotraster2(raster(x, y), col=col, colNA=colNA, maxpixels=maxpixels, main=main[y], ext=ext, interpolate=interpolate, ...) 
 			} else {
-				.plotraster(raster(x, y), col=col, maxpixels=maxpixels, main=main[y], ...) 			
+				.plotraster(raster(x, y), col=col, maxpixels=maxpixels, main=main[y], ext=ext, interpolate=interpolate, ...) 
 			}
 		} else {
 
@@ -76,69 +102,54 @@ setMethod("plot", signature(x='RasterStackBrick', y='ANY'),
 				if (rown==nr) xa='s'
 				if (coln==1) ya='s' else ya='n'
 				if (useRaster) {
-					.plotraster2(raster(x, y[i]), col=col, maxpixels=maxpixels, xaxt=xa, yaxt=ya, main=main[y[i]], ...) 
+					.plotraster2(raster(x, y[i]), col=col, maxpixels=maxpixels, xaxt=xa, yaxt=ya, main=main[y[i]], 
+					 ext=ext, interpolate=interpolate, colNA=colNA, ...) 
 				} else {
-					.plotraster(raster(x, y[i]), col=col, maxpixels=maxpixels, xaxt=xa, yaxt=ya, main=main[y[i]], ...) 				
+					.plotraster(raster(x, y[i]), col=col, maxpixels=maxpixels, xaxt=xa, yaxt=ya, main=main[y[i]], 
+					ext=ext, interpolate=interpolate, ...) 
 				}
 			}		
 		}
+		return(invisible(NULL))
 	}
 )	
-
-
-setMethod("plot", signature(x='RasterLayer', y='missing'), 
-	function(x, col=rev(terrain.colors(255)), maxpixels=500000, useRaster=TRUE, alpha=1, add=FALSE, ...)  {
-
-		# maxpixels = min( prod(par()$din * 72), maxpixels)
-	
-		if (alpha < 1) {
-			alpha <- max(alpha, 0) * 255 + 1
-			a <- c(0:9, LETTERS[1:6])
-			alpha <- paste(rep(a, each=16), rep(a, times=16), sep='')[alpha]
-			col <- paste(substr(col, 1, 7), alpha, sep="")
-		}
-
-		if (length(x@legend@colortable) > 0) {
-			.plotCT(x, maxpixels=maxpixels, ...)
-		} else if (! useRaster) {
-			.plotraster(x, col=col, maxpixels=maxpixels, add=add, ...) 
-		} else {
-			.plotraster2(x, col=col, maxpixels=maxpixels, add=add, ...) 
-			#.plot2(x, col=col, maxpixels=maxpixels, ...)
-		}
-	}
-)	
-
 
 
 
 setMethod("plot", signature(x='Raster', y='Raster'), 
-	function(x, y, maxpixels=100000, cex=0.2, xlab, ylab, ...)  {
+	function(x, y, maxpixels=100000, cex=0.2, xlab, ylab, maxnl=16, ...)  {
 		compare(c(x, y), extent=TRUE, rowcol=TRUE, crs=FALSE, stopiffalse=TRUE) 
-		nl <- nlayers(x)
-		nl2 <- nlayers(y)
-		if (nl != nl2) {
-			warning('number of layers does not match')
+		nlx <- nlayers(x)
+		nly <- nlayers(y)
+
+		maxnl <- max(1, round(maxnl))
+		nl <- max(nlx, nly)
+		if (nl > maxnl) {
+			nl <- maxnl
+			if (nlx > maxnl) {
+				x <- x[[1:maxnl]]
+				nlx <- maxnl
+			}
+			if (nly > maxnl) {
+				y <- y[[1:maxnl]]
+				nly <- maxnl
+			}
 		}
-		nl <- min(nl, nl2)
-		if (nl > 16) {
-			warning('only first 16 layers are plotted')
-			nl <- 16
-		}
+		
 		if (missing(xlab)) {
-			ln1 <- layerNames(x)
+			ln1 <- names(x)
 		} else {
 			ln1 <- xlab
 			if (length(ln1) == 1) {
-				ln1 <- rep(ln1, nl)
+				ln1 <- rep(ln1, nlx)
 			}
 		}
 		if (missing(ylab)) {
-			ln2 <- layerNames(y)
+			ln2 <- names(y)
 		} else {
 			ln2 <- ylab
 			if (length(ln1) == 1) {
-				ln2 <- rep(ln2, nl)
+				ln2 <- rep(ln2, nly)
 			}
 		}
 
@@ -159,6 +170,18 @@ setMethod("plot", signature(x='Raster', y='Raster'),
 			warning(paste('plot used a sample of ', round(100*length(x)/cells), "% of the cells", sep=""))
 		}
 			
+		if (nlx != nly) {	
+			# recycling
+			d <- cbind(as.vector(x), as.vector(y))
+			x <- matrix(d[,1], ncol=nl)
+			y <- matrix(d[,2], ncol=nl)
+			lab <- vector(length=nl)
+			lab[] <- ln1
+			ln1 <- lab
+			lab[] <- ln2
+			ln2 <- lab		
+		}
+		
 		if (nl > 1) {
 			old.par <- par(no.readonly = TRUE) 
 			on.exit(par(old.par))
