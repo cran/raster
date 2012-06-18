@@ -31,7 +31,7 @@ setMethod('quantile', signature(x='Raster'),
 			for (i in 2:nlayers(x)) {
 				q <- rbind(q, quantile(v[,i], ...))
 			}
-			rownames(q) <- layerNames(x)
+			rownames(q) <- names(x)
 			return(q)
 		}
 	}

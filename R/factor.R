@@ -1,7 +1,61 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
-# Date : February 2010
-# Version 0.9
+# Author: Robert J. Hijmans
+# Date : February 2010 / June 2012
+# Version 1.0
 # Licence GPL v3
+
+
+
+factorValues <- function(x, v, layer=1, att=NULL, append.names=FALSE) {
+	stopifnot(is.factor(x)[layer])
+	rat <- levels(x)[[layer]]
+	if (!is.data.frame(rat)) {
+		rat <- rat[[1]]
+	}
+	if (colnames(rat)[2]=='WEIGHT') {
+		i <- which(match(rat$ID, round(v))==1)
+		r <- rat[i, -1, drop=FALSE]
+	} else {
+		i <- match(round(v), rat$ID)
+		r <- rat[i, -c(1:2), drop=FALSE]
+	}
+
+	rownames(r) <- NULL
+	if (!is.null(att)) {
+		if (is.character(att)) {
+			att <- na.omit(match(att, colnames(r)))
+			if (length(att)	== 0) {
+				warning("att does not includes valid names")
+			} else {
+				r <- r[, att, drop=FALSE]
+			}
+		} else {
+			r <- r[, att, drop=FALSE]
+		}
+	}
+	if (append.names) {
+		colnames(r) <- paste(names(x)[layer], colnames(r), sep="_")
+	}
+	r
+}
+
+
+
+.insertFacts <- function(x, v, lyrs) {
+	facts <- is.factor(x)[lyrs]
+	if (!any(facts)) {
+		return(v)
+	}
+	i <- which(facts)
+	v <- sapply(1:length(facts), 
+		function(i) {
+			if (facts[i]) {
+				data.frame(factorValues(x, v[, i], i, append.names=TRUE))
+			} else {
+				v[, i, drop=FALSE]
+			}
+		} )
+	do.call(data.frame, v)
+}
 
 
 	
@@ -12,7 +66,12 @@ if (!isGeneric("is.factor")) {
 
 setMethod('is.factor', signature(x='Raster'), 
 	function(x) {
-		return(x@data@isfactor)
+		f <- x@data@isfactor
+		nl <- nlayers(x)
+		if (length(f) < nl) {
+			f <- c(f, rep(FALSE, nl))[1:nl]
+		}
+		f
 	}
 )
 
@@ -23,91 +82,115 @@ setMethod('is.factor', signature(x='RasterStack'),
 )
 
 
-if (!isGeneric("labels")) {
-	setGeneric("labels", function(object, ...)
-		standardGeneric("labels"))
+if (!isGeneric("levels")) {
+	setGeneric("levels", function(x)
+		standardGeneric("levels"))
 }	
 
-setMethod('labels', signature(object='Raster'), 
-	function(object, ...) {
-		return(object@data@attributes)
-	}
-)
-
-setMethod('labels', signature(object='RasterStack'), 
-	function(object, ...) {
-		sapply(object@layers, function(x) x@data@attributes) 
-	}
-)
-
-
-if (!isGeneric("labels<-")) {
-	setGeneric("labels<-", function(object, value)
-		standardGeneric("labels<-"))
-}	
-
-
-setMethod('labels<-', signature(object='RasterLayer', value='list'), 
-	function(object, value) {
-		if (length(value) != 1) {
-			stop('length(value) != 1')
+setMethod('levels', signature(x='Raster'), 
+	function(x) {
+		f <- is.factor(x)
+		if (any(f)) {
+			if (inherits(x, 'RasterStack')) {
+				return( lapply(x@layers, function(i) i@data@attributes)  )
+			} else {
+				return(x@data@attributes)
+			}
+		} else {
+			return(NULL)
 		}
-		object@data@attributes <- value
-		return(object)
 	}
 )
 
-setMethod('labels<-', signature(object='RasterBrick', value='list'), 
-	function(object, value) {
-		if (length(value) != nlayers(object)) {
-			stop('length(value) != nlayers(object)')
+
+
+.checkLevels <- function(old, newv) {
+	if (! is.data.frame(newv)) { 
+		stop('new raster attributes (factor values) should be in a data.frame (inside a list)')
+	}
+	if (! ncol(newv) > 2) {
+		stop('the number of columns in the raster attributes (factors) data.frame should be > 2')
+	}
+	if (! colnames(newv)[1] == c('ID')) {
+		stop('the first column name of the raster attributes (factors) data.frame should be "ID"')
+	}
+	
+	if (!is.null(old)) {
+		if (colnames(newv)[2] == 'WEIGHT') {
+			if (nrow(newv) < nrow(old)) {
+				warning('the number of rows in the raster attributes (factors) data.frame is lower than expected (values missing?)')
+			}
+			if (! all(unique(sort(newv[,1])) == sort(unique(old[,1])))) {
+				warning('the values in the "ID" column in the raster attributes (factors) data.frame have changed')
+			}
+	
+		} else {
+		
+			if (! nrow(newv) == nrow(old)) {
+				warning('the number of rows in the raster attributes (factors) data.frame is unexpected')
+			}
+			if (! all(sort(newv[,1]) == sort(old[,1]))) {
+				warning('the values in the "ID" column in the raster attributes (factors) data.frame have changed')
+			}
 		}
-		object@data@attributes <- value
-		return(object)
 	}
-)
-
-
-
-if (!isGeneric("asFactor")) {
-	setGeneric("asFactor", function(x, ...)
-		standardGeneric("asFactor"))
+	
+	if (colnames(newv)[2] == 'WEIGHT') {
+		newv[, 1] <- as.integer(newv[, 1])
+		newv[, 2] <- as.numeric(newv[, 2])
+	} else {
+		newv[, 1] <- as.integer(newv[, 1])
+		newv[, 2] <- as.integer(newv[, 2])
+	}
+	newv
 }
 
-setMethod('asFactor', signature(x='ANY'), 
-	function(x, ...) {
-		return(factor(x, ...))
+
+setMethod('levels<-', signature(x='Raster'), 
+	function(x, value) {
+		
+		isfact <- is.factor(x)
+
+		if (inherits(x, 'RasterLayer')) {
+			if (!is.data.frame(value)) {
+				if (is.list(value)) {
+					value <- value[[1]]
+				}
+			}
+			value <- .checkLevels(levels(x)[[1]], value)
+			x@data@attributes <- list(value)
+			x@data@isfactor <- TRUE
+			return(x)
+		} 
+		
+		i <- sapply(value, is.null)
+		if (! all(i)) {
+			stopifnot (length(value) == nlayers(x))
+			levs <- levels(x)
+			for (j in which(!i)) {
+				value[j] <- .checkLevels(levs[[j]], value[[j]])				
+			}
+			x@data@attributes <- value
+		} else {
+			x@data@attributes <- list()		
+		}
+		x@data@isfactor <- i
+		return(x)		
 	}
 )
 
-setMethod('asFactor', signature(x='RasterLayer'), 
-	function(x, value=NULL, ...) {
-		x@data@isfactor <- TRUE
-		if (is.null(value) ) {
-			#x <- round(x) #this makes slot isfactor FALSE again
-			x@data@attributes <- list(data.frame(VALUE=unique(x)))
-		} else {
-			x@data@attributes <- value
-		}	
-		return(x)
-	}
-)
 
-.asFactor <- function(x, value){
 
-		return(x)
-}		
 
-setMethod('asFactor', signature(x='RasterBrick'), 
-	function(x, value=NULL, ...) {
-		x@data@isfactor <- TRUE
-		if (is.null(value) ) {
-			#x <- round(x) #this makes slot isfactor FALSE again
-			x@data@attributes <- list(data.frame(VALUE=unique(x)))
-		} else {
-			x@data@attributes <- value
-		}			
-		return(x)
+if (!isGeneric("as.factor")) {
+	setGeneric("as.factor", function(x)
+		standardGeneric("as.factor"))
+}
+
+
+setMethod('as.factor', signature(x='RasterLayer'), 
+	function(x) {
+		ratify(x)
 	}
 )
 

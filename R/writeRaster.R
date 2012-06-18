@@ -91,7 +91,7 @@ function(x, filename, format, ...) {
 		}
 	
 		out <- brick(x, values=FALSE)
-		layerNames(out) <- layerNames(x)
+		names(out) <- names(x)
 		out <- writeStart(out, filename, format=filetype, ...)
 	
 		if (inMemory(x)) {
@@ -115,8 +115,6 @@ function(x, filename, format, ...) {
 	
 		if (filetype=='CDF') {
 			b <- brick(x, values=FALSE)
-			b@zvalue <- x@zvalue
-			b@zname  <- x@zname
 			b@z  <- x@z
 			b <- .startWriteCDF(b, filename=filename,  ...)
 			x <- .writeValuesBrickCDF(b, values(x) )	
@@ -135,7 +133,6 @@ function(x, filename, format, ...) {
 		
 		b <- brick(x, values=FALSE)
 		if (filetype=='CDF') {
-			b@zvalue <- x@zvalue
 			b@zname  <- x@zname
 			b@z  <- x@z
 		}

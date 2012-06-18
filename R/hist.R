@@ -8,7 +8,7 @@ setMethod('hist', signature(x='RasterStackBrick'),
 		
 		if (missing(layer)) y = 1:nlayers(x)
 		else if (is.character(layer)) {
-			y = .nameToIndex(layer, layerNames(x))
+			y = match(layer, names(x))
 		} else { 
 			y = layer 
 		}
@@ -26,7 +26,7 @@ setMethod('hist', signature(x='RasterStackBrick'),
 				nl <- 16
 				y <- y[1:16]
 			}
-			if (missing(main)) {	main=layerNames(x) }
+			if (missing(main)) {	main=names(x) }
 
 			nc <- ceiling(sqrt(nl))
 			nr <- ceiling(nl / nc)
@@ -44,7 +44,7 @@ setMethod('hist', signature(x='RasterStackBrick'),
 			}		
 
 		} else if (nl==1) {
-			if (missing(main)) main = layerNames(x)[y]
+			if (missing(main)) main = names(x)[y]
 			x <- raster(x, y)
 			if (plot) { res = hist(x, maxpixels=maxpixels, main=main, ...)
 			} else { res = hist(r, maxpixels=maxpixels, plot=FALSE, ...) }

@@ -2,6 +2,7 @@
 
 \docType{methods}
 
+\alias{intersect}
 \alias{intersect,Extent-method}
 \alias{intersect,Raster-method}
 

@@ -44,7 +44,7 @@ setMethod('predict', signature(object='Raster'),
 			gvb <- FALSE
 		}
 			
-		lyrnames <- layerNames(object)
+		lyrnames <- names(object)
 		
 		haveFactor <- FALSE
 		facttest <- TRUE
@@ -228,7 +228,7 @@ setMethod('predict', signature(object='Raster'),
 		pbClose(pb)
 
 		if (length(index) > 1) {
-			try(layerNames(predrast) <- colnames(predv), silent=TRUE)
+			try(names(predrast) <- colnames(predv), silent=TRUE)
 		}
 
 		if (filename == '') {

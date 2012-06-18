@@ -49,7 +49,7 @@ function(x, bands=NULL, native=FALSE, ...) {
 	if (class(x) == 'data.frame') {
 		return(utils::stack(x, ...))
 	}
-	r <- list()
+
 	lstnames <- names(x)
 	if (is.null(lstnames)) {
 		namesFromList <- FALSE
@@ -57,6 +57,40 @@ function(x, bands=NULL, native=FALSE, ...) {
 		lstnames <- .goodNames(lstnames)
 		namesFromList <- TRUE
 	}
+
+	# first try simplest case, all RasterLayer objects
+	cls <- sapply(x, function(i) inherits(i, 'RasterLayer'))
+	if (all(cls)) {
+		hd <- sapply(x, function(i) hasValues(i) )
+		if (!all(hd)) {
+			if (sum(hd) == 0) {
+				s <- new("RasterStack")
+				s@nrows <- x[[1]]@nrows
+				s@ncols <- x[[1]]@ncols
+				s@extent <- x[[1]]@extent
+				s@crs <- x[[1]]@crs
+				return(s)
+			}
+			warning('RasterLayer objects without cell values were removed')
+			x <- x[hd]
+		}
+		if (length(x) > 1) compare(x)	
+		s <- new("RasterStack")
+		s@nrows <- x[[1]]@nrows
+		s@ncols <- x[[1]]@ncols
+		s@extent <- x[[1]]@extent
+		s@crs <- x[[1]]@crs
+		s@layers <- x
+		if (namesFromList) {
+			names(s) <- lstnames
+		} else {
+			names(s) <- sapply(x, names)
+		}
+		return(s)
+	}
+	
+	
+	r <- list()
 
 	first <- raster(x[[1]])
 	if (!is.null(bands)) {
@@ -77,7 +111,7 @@ function(x, bands=NULL, native=FALSE, ...) {
 				for (b in bands) {
 					r[j] <- raster(x[[i]], band=b, native=native, ...)
 					if (namesFromList) {
-						layerNames(r[[j]]) <- paste(lstnames[i], '_', b, sep='')
+						names(r[[j]]) <- paste(lstnames[i], '_', b, sep='')
 					}
 					j <- j + 1
 				}
@@ -87,9 +121,9 @@ function(x, bands=NULL, native=FALSE, ...) {
 
 				if (namesFromList) {
 					if (bds > 1) {
-						layerNames(r[[j]]) <- paste(lstnames[i], '_1', sep='')						
+						names(r[[j]]) <- paste(lstnames[i], '_1', sep='')						
 					} else {
-						layerNames(r[[j]]) <- lstnames[i]
+						names(r[[j]]) <- lstnames[i]
 					}
 				}
 				j <- j + 1
@@ -98,7 +132,7 @@ function(x, bands=NULL, native=FALSE, ...) {
 						r[j] <- raster(x[[i]], band=b, native=native, ...)
 							
 						if (namesFromList) {
-							layerNames(r[[j]]) <- paste(lstnames[i], '_', b, sep='')
+							names(r[[j]]) <- paste(lstnames[i], '_', b, sep='')
 						}
 						j <- j + 1
 					}
@@ -121,7 +155,7 @@ function(x, bands=NULL, native=FALSE, ...) {
 			} else {
 				r[j] <- x[[i]]
 				if (namesFromList) {
-					layerNames(r[[j]]) <- lstnames[i]
+					names(r[[j]]) <- lstnames[i]
 				}
 				j <- j + 1				
 			}

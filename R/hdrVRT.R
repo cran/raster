@@ -61,7 +61,7 @@
 	
 	for (i in 1:nlayers(x)) {
 		cat('\t<VRTRasterBand dataType="', datatype, '" band="', i, '" subClass="VRTRawRasterBand">\n', sep = "" , file = f)
-		cat('\t\t<Description>', layerNames(x), '</Description>\n', sep = "", file = f)
+		cat('\t\t<Description>', names(x), '</Description>\n', sep = "", file = f)
 		cat('\t\t<SourceFilename relativetoVRT="1">', basename(fn), '</SourceFilename>\n', sep = "", file = f)
 		cat('\t\t<ImageOffset>', imgoff[i], '</ImageOffset>\n', sep = "", file = f)
 		cat('\t\t<PixelOffset>', pixoff, '</PixelOffset>\n', sep = "", file = f)

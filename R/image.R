@@ -10,16 +10,19 @@ if (!isGeneric("image")) {
 
 setMethod("image", signature(x='RasterLayer'), 
 	function(x, maxpixels=500000, useRaster=TRUE, ...)  {
-		coltab <- x@legend@colortable
+#		coltab <- x@legend@colortable
+#		if (is.null(coltab) | length(coltab) == 0 | is.null(list(...)$col)) {
+#			colortab <- FALSE		
+#		}
 		x <- sampleRegular(x, maxpixels, asRaster=TRUE, useGDAL=TRUE)
 		y <- yFromRow(x, nrow(x):1)
 		value <- t(as.matrix(x)[nrow(x):1,])
 		x <- xFromCol(x,1:ncol(x))
-		if (! is.null(coltab) & is.null(list(...)$col)) {
-			image(x=x, y=y, z=value, col=coltab, useRaster=useRaster, ...)
-		} else {
-			image(x=x, y=y, z=value, ...)			
-		}
+#		if (colortab) {
+#			image(x=x, y=y, z=value, col=coltab[value], useRaster=useRaster, ...)
+#		} else {
+		image(x=x, y=y, z=value, useRaster=useRaster, ...)			
+#		}
 	}
 )
 

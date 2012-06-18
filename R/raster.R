@@ -41,13 +41,25 @@ setMethod('raster', signature(x='list'),
 		if (is.null(x$z)) { stop('list has no "z"') }
 		if (! all(dim(x$z) == c(length(x$x), length(x$y)))) { stop('"z" does not have the right dimensions') }
 
-		resx <- ( x$x[length(x$x)] - x$x[1] ) / length(x$x)
-		resy <- ( x$y[length(x$y)] - x$y[1] ) / length(x$y)
+		# omitted "-1" bug fix by Barry Rowlingson 
+		resx <- ( x$x[length(x$x)] - x$x[1] ) / (length(x$x)-1)
+		resy <- ( x$y[length(x$y)] - x$y[1] ) / (length(x$y)-1)
 		xmn <- min(x$x) - 0.5 * resx
 		xmx <- max(x$x) + 0.5 * resx
 		ymn <- min(x$y) - 0.5 * resy
 		ymx <- max(x$y) + 0.5 * resy
 
+		
+		dx <- abs(max(abs((x$x[-1] - x$x[-length(x$x)])) / resx) - 1)
+		dy <- abs(max(abs((x$y[-1] - x$y[-length(x$y)])) / resy) - 1)
+		if (is.na(dx) | is.na(dy)) {
+			stop('NA values in coordinates')
+		} 
+		if (dx > 0.01 | dy > 0.01) {
+			stop('data are not on a regular grid')
+		}
+		
+		
 		if (missing(crs)) {
 			if (xmn > -360.1 & xmx < 360.1 & ymn > -90.1 & ymx < 90.1) { 
 				crs = "+proj=longlat +datum=WGS84"
@@ -104,15 +116,12 @@ setMethod('raster', signature(x='RasterLayer'),
 	function(x) {
 		e <- x@extent
 		r <- raster(xmn=e@xmin, xmx=e@xmax, ymn=e@ymin, ymx=e@ymax, nrows=x@nrows, ncols=x@ncols, crs=x@crs)
-		if (rotated(x)) {
-			r@rotated <- TRUE
-			r@rotation <- x@rotation
-		}
+
+		r@rotated <- x@rotated
+		r@rotation <- x@rotation
 		
-		if (.rasterHasSlot(x@file, 'blockrows')) {  # old objects may not have this slot
-			r@file@blockrows <- x@file@blockrows
-			r@file@blockcols <- x@file@blockcols
-		}
+		r@file@blockrows <- x@file@blockrows
+		r@file@blockcols <- x@file@blockcols
 		return(r)
 	}
 )
@@ -123,7 +132,7 @@ setMethod('raster', signature(x='RasterStack'),
 		newindex = -1
 		if (nlayers(x) > 0) {
 			if (!is.numeric(layer)) {
-				newindex <- which(layerNames(x) == layer)[1]
+				newindex <- which(names(x) == layer)[1]
 				if (is.na (newindex) ) { 
 					warning('variable', layer, 'does not exist')
 					newindex = -1
@@ -135,7 +144,7 @@ setMethod('raster', signature(x='RasterStack'),
 			dindex <- max(1, min(nlayers(x), layer))
 			if (dindex != layer) { warning(paste("layer was changed to", dindex))}
 			r <- x@layers[[dindex]]
-			layerNames(r) <- layerNames(x)[dindex]
+			names(r) <- names(x)[dindex]
 		} else {
 			r <- raster(extent(x))
 			dim(r) <- c(nrow(x), ncol(x))
@@ -157,7 +166,7 @@ setMethod('raster', signature(x='RasterBrick'),
 		newindex = -1
 		if (nlayers(x) > 0) {
 			if (!is.numeric(layer)) {
-				newindex <- which(layerNames(x) == layer)[1]
+				newindex <- which(names(x) == layer)[1]
 				if (is.na (newindex) ) { 
 					warning('variable', layer, 'does not exist')
 					newindex = -1
@@ -184,7 +193,6 @@ setMethod('raster', signature(x='RasterBrick'),
 				r@data@gain <- x@data@gain
 				r@data@inmemory <- x@data@inmemory
 				r@data@fromdisk <- x@data@fromdisk
-				r@data@isfactor <- x@data@isfactor
 				r@data@haveminmax <- x@data@haveminmax
 
 				r@data@band <- dindex
@@ -192,8 +200,10 @@ setMethod('raster', signature(x='RasterBrick'),
 				r@data@max <- x@data@max[dindex]
 				ln <- x@layernames[dindex]
 				if (! is.na(ln) ) { r@layernames <- ln }
-				zv <- x@zvalue[dindex]
-				if (! is.na(zv) ) { r@zvalue <- zv }
+				zv <- unlist(x@z[1])[dindex]
+				if (! is.null(zv) ) { 
+					r@z <- list(zv)
+				}
 				if ( x@data@inmemory ) {
 					r@data@values <- x@data@values[,dindex]
 				}
@@ -203,6 +213,10 @@ setMethod('raster', signature(x='RasterBrick'),
 					attr(r@data, "dim3") <- x@data@dim3
 					attr(r@data, "level") <- x@data@level
 				}
+
+				r@data@offset <- x@data@offset
+				r@data@gain <- x@data@gain
+				r@file@nodatavalue <- x@file@nodatavalue
 				
 			} else {
 			
@@ -210,13 +224,11 @@ setMethod('raster', signature(x='RasterBrick'),
 				if ( inMemory(x) ) {
 					if ( dindex != layer ) { warning(paste("layer was changed to", dindex)) }
 					r <- setValues(r, x@data@values[,dindex])
-					ln <- x@layernames[dindex]
-					if (! is.na(ln) ) { r@layernames <- ln }
+					r@layernames <- names(x)[dindex]
 				}
 			}
-			r@data@offset <- x@data@offset
-			r@data@gain <- x@data@gain
-			r@file@nodatavalue <- x@file@nodatavalue
+			r@data@isfactor <- x@data@isfactor[dindex]
+			r@data@attributes <- x@data@attributes[dindex]
 			
 		} else {
 			r <- raster(extent(x), nrows=nrow(x), ncols=ncol(x), crs=projection(x))	
@@ -267,11 +279,11 @@ setMethod('raster', signature(x='SpatialGrid'),
 						if (dindex != layer) { warning(paste("layer was changed to", dindex))}
 						layer <- dindex
 					}
-					layerNames(r) <- colnames(x@data)[layer]
+					names(r) <- colnames(x@data)[layer]
 				} else if (!(layer %in% names(x))) {
 					stop(layer, 'does not exist')
 				} else {
-					layerNames(r) <- layer
+					names(r) <- layer
 				}
 
 				if (is.character( x@data[[layer]]) ) { 
@@ -279,8 +291,8 @@ setMethod('raster', signature(x='SpatialGrid'),
 				}
 				if (is.factor( x@data[[layer]]) ) { 
 					r@data@isfactor <- TRUE 
-					#r@data@levels <- levels(x@data[[layer]])
-					r <- setValues(r, as.numeric(x@data[[layer]]))
+					r@data@attributes <- list(levels(x@data[[layer]]))
+					r <- setValues(r, as.integer(x@data[[layer]]))
 				} else {
 					r <- setValues(r, x@data[[layer]])
 				}

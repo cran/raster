@@ -53,4 +53,11 @@ setMethod("proj4string", signature('Raster'),
 )
 
 
+setMethod("proj4string<-", signature('Raster'), 
+	function(obj, value) {
+		projection(obj) <- value
+		obj
+	}
+)
+
 

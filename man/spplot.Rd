@@ -36,7 +36,7 @@ The rasterVis package has more advanced plotting methods for Raster objects
 \examples{ 
 r <- raster(system.file("external/test.grd", package="raster"))
 s <- stack(r, r*2)
-layerNames(s) <- c('meuse', 'meuse x 2')
+names(s) <- c('meuse', 'meuse x 2')
 
 spplot(s)
 }

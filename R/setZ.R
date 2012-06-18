@@ -6,18 +6,23 @@
 
 
 setZ <- function(x, z, name='time') {
+	if (is.list(z)) {
+		z <- unlist(z)
+	}
 	stopifnot(length(z) == nlayers(x))
-	x@z[[1]] <- z
-	x@zname <- trim(name)
+	z <- list(z)
+	names(z) <- name[1]
+	x@z <- z
 	x
 }
 
 
 getZ <- function(x) {
-	z <- try(slot(x, 'z'), silent=TRUE)
-	if (class(z) == 'try-error') return(NULL)
-	if (length(z) < 1) return(NULL)
-	return(z[[1]])
+	if (length(x@z) == 0) {
+		return(NULL)
+	} else {
+		return(x@z[[1]])
+	}
 }
 
 

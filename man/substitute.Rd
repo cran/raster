@@ -5,10 +5,10 @@
 \alias{subs}
 \alias{subs,Raster,data.frame-method}
 
-\title{ Substitute values in a RasterLayer }
+\title{ Substitute values in a Raster* object}
 
 \description{
-Substitute (replace) values in a RasterLayer with values in a \code{data.frame}. The \code{data.frame} should have a column to identify the key (ID) to match with the values of the RasterLayer, and a column with the replacement values. By default these are the first and second column but you can specify other columns with arguments \code{by} and \code{which} (see under Methods).
+Substitute (replace) values in a Raster* object with values in a \code{data.frame}. The \code{data.frame} should have a column to identify the key (ID) to match with the cell values of the Raster* object, and one or more columns with replacement values. By default these are the first and second column but you can specify other columns with arguments \code{by} and \code{which}.
 }
 
 \usage{
@@ -19,7 +19,7 @@ Substitute (replace) values in a RasterLayer with values in a \code{data.frame}.
 \arguments{
   \item{x}{Raster* object}
   \item{y}{data.frame}
-  \item{by}{The column number or name that is the key (ID) to match a the \code{data.frame} row to a value of the RasterLayer. Default is 1}
+  \item{by}{The column number or name that is the key (ID) to match a the \code{data.frame} row to a value of the Raster object. Default is 1}
   \item{which}{The column number or name that has the new (replacement) values. Default is 2}
   \item{subsWithNA}{Logical. If \code{TRUE} values that are not matched become NA. If \code{FALSE}, they retain their original value (which could also be NA. This latter option is handy when you want to replace only one or a few values}
   \item{filename}{Character. output filename}
@@ -34,7 +34,7 @@ You can also replace values using a fitted model. E.g. fit a model to \code{glm}
 }
 
 \value{
-A new RasterLayer object, and in some cases, the side effect of a new file on disk.
+A new Raster object, and in some cases, the side effect of a new file on disk.
 }
 
 \author{Robert J. Hijmans}
@@ -52,7 +52,7 @@ df$v2 <- df$v * 10
 x3 <- subs(r, df, which=2:3)
 
 s <- stack(r, r*3)
-layerNames(s) <- c('first', 'second')
+names(s) <- c('first', 'second')
 x4 <- subs(s, df)
 x5 <- subs(s, df, which=2:3)
 }

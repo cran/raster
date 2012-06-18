@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date : December 2009
 # Version 0.9
 # Licence GPL v3
@@ -45,7 +45,7 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, ..
 	}
 	
 	rr <- raster(x)
-	cn <- layerNames(x)
+	cn <- names(x)
 	
 	pb <- pbCreate(nlns, ...)
 	
@@ -130,7 +130,7 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, ..
 		if (nlayers(x) > 1) {
 			j <- matrix(ncol=nlayers(x), nrow=length(res))
 			j[!i] <- t(sapply(res[!i], function(x) apply(x, 2, fun, na.rm=na.rm)))
-			colnames(j) <- layerNames(x)
+			colnames(j) <- names(x)
 		} else {
 			j <- vector(length=length(i))
 			j[i] <- NA
@@ -141,15 +141,22 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, ..
 	
 	if (df) {
 		if (!is.list(res)) {
-			res <- cbind(1:NROW(res), res)
+			res <- data.frame(ID=1:NROW(res), res)
 		} else {
 			res <- data.frame( do.call(rbind, sapply(1:length(res), function(x) if (!is.null(res[[x]])) cbind(x, res[[x]]))) )
-		}
+		}		
 
-		if (ncol(res) == 2) {
-			colnames(res) <- c('ID', 'value')
-		} else {
-			colnames(res)[1] <- 'ID'
+		lyrs <- layer:(layer+nl-1)
+		colnames(res) <- c('ID', names(x)[lyrs])
+		
+		if (any(is.factor(x))) {
+			v <- res[, -1, drop=FALSE]
+			if (ncol(v) == 1) {
+				v <- data.frame(factorValues(x, v[,1], layer))
+			} else {
+				v <- .insertFacts(x, v, lyrs)
+			}
+			res <- data.frame(res[,1,drop=FALSE], v)
 		}
 	}
 	res

@@ -59,7 +59,7 @@ setMethod('getValuesBlock', signature(x='RasterStack', row='numeric'),
 			}
 		}
 		
-		colnames(res) <- layerNames(x)
+		colnames(res) <- names(x)
 		res
 	}
 )
@@ -112,7 +112,7 @@ setMethod('getValuesBlock', signature(x='RasterBrick', row='numeric'),
 			}
 		} else {
 			res <- ( matrix(rep(NA, nrows * ncols * nlyrs), ncol=nlyrs) )
-			colnames(res) <- layerNames(x)[lyrs]
+			colnames(res) <- names(x)[lyrs]
 		}
 		return(res)
 	}

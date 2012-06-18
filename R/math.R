@@ -145,7 +145,7 @@ setMethod("log", signature(x='Raster'),
 		} else {
 			tr <- blockSize(x)
 			pb <- pbCreate(tr$n)			
-			r <- writeStart(r, overwrite=TRUE )
+			r <- writeStart(r, '', overwrite=TRUE )
 			for (i in 1:tr$n) {
 				v <- log( getValues(x, row=tr$row[i], nrows=tr$nrows[i]), base=base )
 				r <- writeValues(r, v, tr$row[i])

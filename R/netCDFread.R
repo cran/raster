@@ -78,7 +78,7 @@
 		nn <- lyrs[length(lyrs)] - lyrs[1] + 1
 	}
 	alyrs <- lyrs - lyrs[1] + 1
-	lns <- layerNames(x)[lyrs]
+	lns <- names(x)[lyrs]
 	
 	nrows <- min(round(nrows), x@nrows-row+1)
 	ncols <- min((x@ncols-col+1), ncols)

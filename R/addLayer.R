@@ -56,7 +56,7 @@ function(x, ...) {
 	}
 
 	x@layers <- c(x@layers, rasters)
-	layerNames(x) <- sapply(x@layers, layerNames)
+	names(x) <- sapply(x@layers, names)
 
 	return(x)
 }	

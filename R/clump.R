@@ -35,8 +35,8 @@ setMethod('clump', signature(x='RasterLayer'),
 
 function(x, filename='', directions=8, gaps=TRUE, ...) {
 
-	if( !require(igraph)) {
-		stop('you need to install the igraph package to be able to use this function')
+	if( !require(igraph0)) {
+		stop('you need to install the igraph0 package to be able to use this function')
 	}
 
 	if (! directions %in% c(4,8)) { stop('directions should be 4 or 8') }

@@ -14,6 +14,7 @@ Cross-tabulate two RasterLayer objects, or mulitiple layers in a RasterStack or 
 
 \usage{
 \S4method{crosstab}{RasterLayer,RasterLayer}(x, y, digits=0, long=FALSE, progress, ...)
+
 \S4method{crosstab}{RasterStackBrick,missing}(x, digits=0, long=FALSE, progress, ...)
 }
 

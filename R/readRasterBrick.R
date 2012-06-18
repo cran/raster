@@ -185,7 +185,7 @@
 		result <- result * object@data@gain + object@data@offset
 	}
 
-	colnames(result) <- layerNames(object)
+	colnames(result) <- names(object)
 	return(result)
 }
 

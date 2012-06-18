@@ -8,7 +8,7 @@
 \title{Spatial model predictions}
 
 \description{
-Make a Raster* object with predictions based on a a fitted model object. The first argument is a Raster* object with the independent variables. The layerNames in the RasterStack should exactely match those expected by the model. This will be the case if the same Raster* object was used (via \code{extract}) to obtain the values to fit the model (see the example). Any type of model (e.g. glm. gam, randomForest) for which a predict method has been implemented (or can be implemented) can be used. 
+Make a Raster* object with predictions based on a a fitted model object. The first argument is a Raster* object with the independent variables. The \code{\link{names}} in the RasterStack should exactely match those expected by the model. This will be the case if the same Raster* object was used (via \code{extract}) to obtain the values to fit the model (see the example). Any type of model (e.g. glm. gam, randomForest) for which a predict method has been implemented (or can be implemented) can be used. 
 }
 
 \usage{
@@ -49,7 +49,7 @@ RasterLayer or RasterBrick
 
 # create a RasterStack or RasterBrick with with a set of predictor layers
 logo <- brick(system.file("external/rlogo.grd", package="raster"))
-layerNames(logo)
+names(logo)
 
 \dontrun{
 # the predictor variables
@@ -66,7 +66,7 @@ p <- matrix(c(48, 48, 48, 53, 50, 46, 54, 70, 84, 85, 74, 84, 95, 85, 66, 42, 26
 # 
 a <- cbind(runif(250)*(xmax(logo)-xmin(logo))+xmin(logo), runif(250)*(ymax(logo)-ymin(logo))+ymin(logo))
 
-#extract values for points from stack
+#extract values for points
 xy <- rbind(cbind(1, p), cbind(0, a))
 v <- data.frame(cbind(xy[,1], extract(logo, xy[,2:3])))
 colnames(v)[1] <- 'pa'
@@ -75,7 +75,7 @@ colnames(v)[1] <- 'pa'
 model <- glm(formula=pa~., data=v)
 
 #predict to a raster
-r1 <- predict(logo, model, progress='window')
+r1 <- predict(logo, model, progress='text')
 
 plot(r1)
 points(p, bg='blue', pch=21)

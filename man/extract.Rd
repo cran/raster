@@ -77,7 +77,7 @@ If \code{x} is a RasterStack or RasterBrick object, there are these two addition
 
 
 \value{
-A vector for RasterLayer objects, and a matrix for a RasterStack or RasterBrick object. A list or data.frame {\code{df=TURE}} if \code{y} is a SpatialPolygons* or SpatialLines* object or if a \code{buffer} argument is used (but not a \code{fun} argument).
+A vector for RasterLayer objects, and a matrix for a RasterStack or RasterBrick object. A list or data.frame {\code{df=TRUE}} if \code{y} is a SpatialPolygons* or SpatialLines* object or if a \code{buffer} argument is used (but not a \code{fun} argument).
 }
 
 

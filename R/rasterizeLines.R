@@ -105,7 +105,7 @@
 }
 
 
-.linesToRaster <- function(lns, raster, field, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue="all", filename="", ...) {
+.linesToRaster <- function(lns, x, field, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue="all", filename="", ...) {
 
 	dots <- list(...)
 	if (!is.null(dots$overlap)) { stop('argument "overlap" is no longer available. Use "fun"') } 
@@ -117,11 +117,7 @@
 	if (mask & update) { 
 		stop('use either "mask=TRUE" OR "update=TRUE" (or neither)')
 	}
-	if (mask) { 
-		oldraster <- raster 
-	}
 	if (update) {
-		oldraster <- raster 
 		if (!is.numeric(updateValue)) {
 			if (is.na(updateValue)) {
 				updateValue <- 'NA'
@@ -141,9 +137,9 @@
 		doFun <- TRUE
 	}
 	
-	raster <- raster(raster)
+	rstr <- raster(x)
 	if (projection(lns) != "NA") {
-		projection(raster) = projection(lns)
+		projection(rstr) = projection(lns)
 	}
 	
 	if (inherits(lns, 'SpatialPolygons')) {
@@ -155,40 +151,47 @@
 
 # check if bbox of raster and lns overlap
 	spbb <- bbox(lns)
-	rsbb <- bbox(raster)
+	rsbb <- bbox(rstr)
 	if (spbb[1,1] > rsbb[1,2] | spbb[2,1] > rsbb[2,2]) {
 		stop('lines and raster have no overlapping areas')
 	}
 	nline <- length(lns@lines)
 	info <- matrix(NA, nrow=nline, ncol=4)
 	info[,4] <- 1:nrow(info)
-	info[,1] <- sapply(lns@lines, function(x) length(x@Lines))
+	info[,1] <- sapply(lns@lines, function(i) length(i@Lines))
 	for (i in 1:nline) {
-		r <- range(sapply( lns@lines[[i]]@Lines, function(x) range(x@coords[,2])))
+		r <- range(sapply( lns@lines[[i]]@Lines, function(j) range(j@coords[,2])))
 		info[i,2] <- r[1]
 		info[i,3] <- r[2]
 	}
 	
 	
-	lxmin <- min(spbb[1,1], rsbb[1,1]) - 0.5 * xres(raster)
-	lxmax <- max(spbb[1,2], rsbb[1,2]) + 0.5 * xres(raster)
+	lxmin <- min(spbb[1,1], rsbb[1,1]) - 0.5 * xres(rstr)
+	lxmax <- max(spbb[1,2], rsbb[1,2]) + 0.5 * xres(rstr)
 	
 
-	putvals <- .getPutVals(lns, field, nline, mask)
+	pvals <- .getPutVals(lns, field, nline, mask)
+	putvals <- pvals[[1]]
+	if (!is.na(pvals[[2]][1])) {
+		rstr@data@isfactor <- TRUE
+		rstr@data@attributes <- list(pvals[[2]])
+	}
+	
+	
 	
 	if (filename == "") {
-		v <- matrix(NA, ncol=nrow(raster), nrow=ncol(raster))
+		v <- matrix(NA, ncol=nrow(rstr), nrow=ncol(rstr))
 	} else {
-		raster <- writeStart(raster, filename=filename, ...)
+		rstr <- writeStart(rstr, filename=filename, ...)
 	}
-	rv1 <- rep(NA, ncol(raster))
+	rv1 <- rep(NA, ncol(rstr))
 	lst1 <- vector(length=length(rv1), mode='list')
 
-	yrs <- yres(raster)
+	yrs <- yres(rstr)
 	
-	pb <- pbCreate(nrow(raster), ...)
-	for (r in 1:nrow(raster)) {
-		ly <- yFromRow(raster, r)
+	pb <- pbCreate(nrow(rstr), ...)
+	for (r in 1:nrow(rstr)) {
+		ly <- yFromRow(rstr, r)
 		uly <- ly + 0.51 * yrs
 		lly <- ly - 0.51 * yrs
 
@@ -212,7 +215,7 @@
 					} else {
 						aline <- lns@lines[[i]]@Lines[[j]]@coords
 						#cat(i, "\n"); flush.console();
-						colnrs <- .getCols(raster, r, aline, line1, line2)
+						colnrs <- .getCols(rstr, r, aline, line1, line2)
 						if ( length(colnrs) > 0 ) {	
 							rvtmp <- rv1
 							rvtmp[colnrs] <- putvals[i]
@@ -260,12 +263,12 @@
 		}
 		
 		if (mask) {
-			oldvals <- getValues(oldraster, r)
+			oldvals <- getValues(x, r)
 			ind <- which(is.na(rv))
 			oldvals[ind] <- NA
 			rv <- oldvals
 		} else if (update) {
-			oldvals <- getValues(oldraster, r)
+			oldvals <- getValues(x, r)
 			if (is.numeric(updateValue)) {
 				ind <- which(oldvals == updateValue & !is.na(rv))
 			} else if (updateValue == "all") {
@@ -285,7 +288,7 @@
 		if (filename == "") {
 			v[,r] <- rv
 		} else {
-			raster <- writeValues(raster, rv, r)
+			rstr <- writeValues(rstr, rv, r)
 		}
 		
 		pbStep(pb, r)
@@ -293,11 +296,11 @@
 	pbClose(pb)
 
 	if (filename == "") {
-		raster <- setValues(raster, as.vector(v))
+		rstr <- setValues(rstr, as.vector(v))
 	} else {
-		raster <- writeStop(raster)
+		rstr <- writeStop(rstr)
 	}
 
-	return(raster)
+	return(rstr)
 }
 

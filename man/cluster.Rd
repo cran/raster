@@ -17,7 +17,7 @@ endCluster closes the cluster and removes the object.
 
 The use of the cluster is automatic in these functions: \code{ \link{predict}, \link{projectRaster}, \link{resample}} and in \code{\link{extract}} when using polygons.
 
-\code{clusterR} is a flexible interface for using cluster with other functions. This function only works with functions from the raster package that return Raster* objects that operate on a cell by cell basis and return an object with the same number of cells as the input raster object(s). Among other functions, it does _not_ work with mrege, crop, mosaic, (dis)aggregate, resample, projectRaster, focal, distance, direction.
+\code{clusterR} is a flexible interface for using cluster with other functions. This function only works with functions from the raster package that return Raster* objects that operate on a cell by cell basis and return an object with the same number of cells as the input raster object(s). Among other functions, it does _not_ work with merge, crop, mosaic, (dis)aggregate, resample, projectRaster, focal, distance, buffer, direction.
 }
 
 \usage{

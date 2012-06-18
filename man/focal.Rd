@@ -31,7 +31,7 @@ Calculate focal ("moving window") values for the neighborhood of focal cells usi
  
 \item{NAonly}{logical. If \code{TRUE}, only cell values that are \code{NA} are replaced with the computed focal values}
  
-\item{...}{additional arguments. See Details.}  
+\item{...}{Additional arguments as for \code{\link{writeRaster}}}
 }
 
 \details{
@@ -46,14 +46,6 @@ There is, however, a difference if \code{NA} values are considered. One can use 
 Laplacian filter: \code{filter=matrix(c(0,1,0,1,-4,1,0,1,0), nrow=3)}
 
 Sobel filter: \code{filter=matrix(c(1,2,1,0,0,0,-1,-2,-1) / 4, nrow=3)}
-
-The following additional arguments can be passed, to replace default values for this function
-\tabular{rll}{
-\tab \code{overwrite} \tab Logical. If \code{TRUE}, "filename" will be overwritten if it exists \cr
-\tab \code{format} \tab Character. Output file type. See \link[raster]{writeRaster} \cr
-\tab \code{datatype} \tab Character. Output data type. See \link[raster]{dataType} \cr
-\tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
-}
 }
 
 \value{
@@ -102,6 +94,42 @@ rm <- focal(r, w=f, fun=max)
 # global lon/lat data: no 'edge effect' for the columns
 xmin(r) <- -180
 r3g <- focal(r, w=matrix(1/9,nrow=3,ncol=3)) 
+
+
+
+\dontrun{
+## focal can be used to create a cellular automaton
+
+# Conway's Game of Life 
+w <- matrix(c(1,1,1,1,0,1,1,1,1), nr=3,nc=3)
+gameOfLife <- function(x) {
+	f <- focal(x, w=w, pad=TRUE, padValue=0)
+	# cells with less than two or more than three live neighbours die
+	x[f<2 | f>3] <- 0
+	# cells with three live neighbours become alive
+	x[f==3] <- 1
+	x
+}
+
+# simulation function
+sim <- function(x, fun, n=100, pause=0.25) {
+	for (i in 1:n) {
+		x <- fun(x)
+		plot(x, legend=FALSE, asp=NA, main=i)
+		dev.flush()
+		Sys.sleep(pause)
+	}
+	invisible(x)
+}
+
+# Gosper glider gun
+m <- matrix(0, nc=48, nr=34)
+m[c(40, 41, 74, 75, 380, 381, 382, 413, 417, 446, 452, 480, 486, 517, 549, 553, 584, 585, 586, 619, 718, 719, 720, 752, 753, 754, 785, 789, 852, 853, 857, 858, 1194, 1195, 1228, 1229)] <- 1
+init <- raster(m)
+
+# run the model
+sim(init, gameOfLife, n=100)
+}
 
 }
 

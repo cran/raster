@@ -51,7 +51,7 @@ function(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename="", ...)  {
 	}
 	extent(out) <- extent(xmin(x), xmx, ymn, ymax(x))
 	dim(out) <- c(rsteps, csteps) 
-	layerNames(out) <- layerNames(x)
+	names(out) <- names(x)
 
 	if (! hasValues(x) ) {	return(out) }	
 	

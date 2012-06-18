@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date : June 2008
 # Version 0.9
 # Licence GPL v3
@@ -11,7 +11,7 @@ if (!isGeneric("sampleRandom")) {
 
 
 setMethod('sampleRandom', signature(x='Raster'), 
-function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, sp=FALSE, asRaster=FALSE, ...) {
+function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=FALSE, asRaster=FALSE, ...) {
 
 	if (!hasValues(x)) {
 		stop('No values associated with the Raster object')
@@ -41,10 +41,10 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, sp=FALSE, asR
 	stopifnot(size <= ncell(x))
 	
 	r <- raster(x)
-	layn <- layerNames(x)
+	layn <- names(x)
 
-	
-	if (sp | rowcol) {
+	removeCells <- FALSE
+	if (sp | rowcol | xy) {
 		removeCells <- ! cells
 		cells <- TRUE
 	}
@@ -165,23 +165,22 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, sp=FALSE, asR
 		}
 	}
 	
-	if (rowcol) {
-		rc <- rowColFromCell(r, x[,-1])
-		if (sp | !removeCells) {
-			x <- cbind(x[,1], rc, x[,2:ncol(x)])
-			colnames(x) <- c('cell', 'row', 'col', layn)
-		} else {
-			x <- cbind(rc, x[,2:ncol(x)])
-			colnames(x)[3:ncol(x)] <- layn
-		}
+	if (xy) {
+		xy <- xyFromCell(r, x[,1])
+		x <- cbind(x[,1,drop=FALSE], xy, x[,2:ncol(x),drop=FALSE])
 	}
-	
+	if (rowcol) {
+		x <- cbind(x[,1,drop=FALSE], rc, x[,2:ncol(x), drop=FALSE])
+	}
 	if (sp) {
 		xy <- data.frame(xyFromCell(r, x[,1]))
 		if (removeCells) {
 			x <- x[,-1,drop=FALSE]
 		}
-		x <- SpatialPointsDataFrame(xy, data=data.frame(x))
+		x <- SpatialPointsDataFrame(xy, data=data.frame(x), proj4string=projection(r, asText=FALSE))
+		
+	} else if (removeCells) {
+		x <- x[,-1,drop=FALSE]	
 	}
 	
 	return(x)

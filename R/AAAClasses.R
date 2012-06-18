@@ -49,20 +49,14 @@ setClass ('BasicRaster',
 		nrows ='integer',
 		crs = 'CRS',
 		layernames = 'vector',
-		z = 'list',
-		zname='character',
-		zvalue='vector',
-		unit = 'vector'
+		z = 'list'
 	),
 	prototype (	
 		rotated = FALSE,
 		ncols= as.integer(1),
 		nrows= as.integer(1),
 		layernames=c(""),
-		unit=c(""),
 		z = list(),
-		zname='',
-		zvalue='',
 		crs = CRS(as.character(NA))
 	),
 	validity = function(object) {
@@ -123,10 +117,12 @@ setClass('.SingleLayerData',
 		
 		isfactor = 'logical',
 		attributes = 'list',
+		
 		haveminmax = 'logical',
 		min = 'vector',
 		max = 'vector',
-		band = 'integer'
+		band = 'integer',
+		unit = 'character'
 		),
 	prototype (	
 		values=vector(),
@@ -142,7 +138,8 @@ setClass('.SingleLayerData',
 		haveminmax = FALSE,
 		min = c(Inf),
 		max = c(-Inf),
-		band = as.integer(1)		
+		band = as.integer(1),
+		unit = ''
 	),	
 	validity = function(object) {
 	}
@@ -217,7 +214,8 @@ setClass('.MultipleRasterData',
 		attributes = 'list',
 		haveminmax = 'logical',
 		min = 'vector',
-		max = 'vector'
+		max = 'vector',
+		unit = 'vector'
 		),
 	prototype (	
 		values=matrix(NA,0,0),
@@ -232,7 +230,8 @@ setClass('.MultipleRasterData',
 		attributes = list(),
 		haveminmax = FALSE,
 		min = c(Inf),
-		max = c(-Inf)
+		max = c(-Inf),
+		unit = c('')
 	),	
 	validity = function(object) {
 	}
@@ -305,7 +304,7 @@ setClass ('RasterStack',
 		),
 	validity = function(object) {
 		if (length(object@layers) > 1) {
-			cond <- compare(object@layers[[1]], object@layers, extent=TRUE, rowcol=TRUE, tolerance=0.05, stopiffalse=FALSE, showwarning=FALSE) 
+			cond <- compare(object@layers, extent=TRUE, rowcol=TRUE, tolerance=0.05, stopiffalse=FALSE, showwarning=FALSE) 
 		} else {
 			cond <- TRUE
 		}

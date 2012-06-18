@@ -22,7 +22,7 @@ setMethod('interpolate', signature(object='Raster'),
 		}
 		ncols <- ncol(predrast)
 			
-		lyrnames <- layerNames(object)
+		lyrnames <- names(object)
 		xylyrnames <- c('x', 'y', lyrnames)
 
 		haveFactor <- FALSE

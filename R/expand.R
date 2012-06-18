@@ -63,7 +63,7 @@ function(x, y, value=NA, filename='', ...) {
 		out <- brick(x, values=FALSE)	
 		leg <- new('.RasterLegend')
 	}
-	out@layernames <- layerNames(x)
+	out@layernames <- names(x)
 	out <- setExtent(out, y, keepres=TRUE)
 	
 	if (nrow(x) == nrow(out) & ncol(x) == ncol(out)) {

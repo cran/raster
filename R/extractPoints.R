@@ -1,5 +1,4 @@
 # Author: Robert J. Hijmans
-# contact: r.hijmans@gmail.com
 # Date : November 2008
 # Version 1.0
 # Licence GPL v3
@@ -27,21 +26,21 @@
 		if (method != 'simple') { 
 			warning('method argument is ignored when a buffer is used') 
 		}
-		value <- .xyvBuf(object, xy, buffer, fun, na.rm, layer=layer, nl=nl, cellnumbers=cellnumbers) 		
+		res <- .xyvBuf(object, xy, buffer, fun, na.rm, layer=layer, nl=nl, cellnumbers=cellnumbers) 		
 		
 	} else if (method == 'bilinear') {
-		value <- .bilinearValue(object, xy, layer=layer, n=nl) 
+		res <- .bilinearValue(object, xy, layer=layer, n=nl) 
 		if (cellnumbers) {
 			warning("'cellnumbers' does not apply for bilinear values")
 		}
 
 	} else if (method=='simple') {
 		cells <- cellFromXY(object, xy)
-		value <-  .cellValues(object, cells, layer=layer, nl=nl) 
+		res <-  .cellValues(object, cells, layer=layer, nl=nl) 
 		if (cellnumbers) {			
-			value <- cbind(cells, value)
-			if (ncol(value) == 2) {
-				colnames(value)[2] <- layerNames(object)[layer]
+			res <- cbind(cells, res)
+			if (ncol(res) == 2) {
+				colnames(res)[2] <- names(object)[layer]
 			} 
 		}
 			
@@ -50,15 +49,28 @@
 	}
 	
 	if (df) {
-		if (is.list(value)) {
-			value <- data.frame( do.call(rbind, 
-				lapply(1:length(value), function(x) if (!is.null(value[[x]])) cbind(ID=x, value[[x]]))) )
+		if (is.list(res)) {
+			res <- lapply(1:length(res), function(x) if (length(res[[x]]) > 0) cbind(ID=x, res[[x]]))
+			res <- do.call(rbind, res)
+			rownames(res) <- NULL
 		} else {
-			value <- data.frame(cbind(ID=1:NROW(value), value))
+			res <- data.frame(cbind(ID=1:NROW(res), res))
+		}
+		lyrs <- layer:(layer-1+nl)
+		colnames(res) <- c('ID', names(object)[lyrs])
+
+		if (any(is.factor(object))) {
+			v <- res[, -1, drop=FALSE]
+			if (ncol(v) == 1) {
+				v <- data.frame(factorValues(object, v[,1], layer))
+			} else {
+				v <- .insertFacts(object, v, lyrs)
+			}
+			res <- data.frame(res[,1,drop=FALSE], v)
 		}
 	}
 	
-	value
+	res
 }
 
 

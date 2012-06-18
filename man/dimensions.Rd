@@ -1,5 +1,6 @@
 \name{dim}
 
+\alias{dim}
 \alias{dim,RasterStackBrick-method}
 \alias{dim,BasicRaster-method}
 \alias{dim<-,BasicRaster-method}
@@ -21,8 +22,6 @@ Get (or set) the number of rows, columns, and layers of a Raster* object. You ca
 \code{dim(x)}
 
 If \code{x} is a Raster* object
-
-
 
 \code{dim(x) <- value}
 

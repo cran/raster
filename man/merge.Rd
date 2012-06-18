@@ -7,7 +7,7 @@
 \alias{merge,Extent,ANY-method}
 
 \title{ 
-Merge
+Merge Raster* objects
 }
 
 \description{

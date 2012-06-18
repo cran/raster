@@ -50,9 +50,11 @@ vector or matrix of raster values
 \author{Robert J. Hijmans}
 \examples{
 r <- raster(system.file("external/test.grd", package="raster"))
-getValues(r)
+r
+v <- getValues(r)
+length(v)
+head(v)
 getValues(r, row=10)
-
 }
 
 \keyword{spatial}

@@ -35,7 +35,7 @@
 	
 	if (missing(zunit))  zunit <- 'unknown'
 	if (missing(zname))  zname <- 'value'
-	x@zname <- zname
+#	x@zname <- zname
 	if (missing(varname))  varname <- 'variable'
 	x@title <- varname
 	if (missing(varunit))  varunit <- ''
@@ -46,10 +46,11 @@
 	ydim <- dim.def.ncdf( yname, yunit, yFromRow(x, 1:nrow(x)) )
 	if (inherits(x, 'RasterBrick')) {
 		zv <- 1:nlayers(x)
-		zv[] <- as.numeric(x@zvalue)
-		if (any(is.na(zv))) {
-			zv <- 1:nlayers(x)
+		z <- getZ(x)
+		if (!is.null(z)) {
+			zv[] <- as.numeric(z)
 		}
+
 		zdim <- dim.def.ncdf( zname, zunit, zv, unlim=TRUE )
 		vardef <- var.def.ncdf( varname, varunit, list(xdim,ydim,zdim), NAvalue(x), prec = datatype )
 		#vardef <- var.def.ncdf( varname, varunit, list(xdim,ydim,zdim), -3.4e+38 )
@@ -202,7 +203,7 @@
 #library(raster)
 #r = raster(ncol=10, nrow=5)
 #r[] = c(1:49, NA)
-#layerNames(r) = 'hello world'
+#names(r) = 'hello world'
 #a = raster:::.rasterSaveAsNetCDF(r, 'test.nc', overwrite=TRUE)
 #plot(a)
 #print(a)

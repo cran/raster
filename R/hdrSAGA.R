@@ -8,7 +8,7 @@
 	hdrfile <- .setFileExtensionHeader(hdrfile, 'SAGA')
 	
 	thefile <- file(hdrfile, "w")  # open an txt file connectionis
-	cat("NAME\t=",  layerNames(raster), "\n", file = thefile)
+	cat("NAME\t=",  names(raster), "\n", file = thefile)
 	cat("DESCRIPTION\t= \n", file = thefile)
 	cat("UNIT\t= \n", file = thefile)
 	

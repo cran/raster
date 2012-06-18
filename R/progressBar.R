@@ -7,10 +7,11 @@
 pbCreate <- function(nsteps, progress, style=3, ...) {
 
 	if (missing(progress)) {
-		progress <- list(...)$type  # backwards compatability
-		if (is.null(progress)) {
-			progress <- .progress()
-		}
+		progress <- .progress()
+	}
+
+	if (is.null(progress)) {
+		progress <- .progress()
 	}
 	
 	if (progress=='text') {
