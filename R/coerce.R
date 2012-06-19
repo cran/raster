@@ -106,13 +106,13 @@ setAs('RasterLayer', 'SpatialPolygonsDataFrame',
 
 setAs('Raster', 'SpatialPoints', 
 	function(from) { 
-		return( SpatialPoints(rasterToPoints(from, spatial=FALSE)[,1:2]) )
+		SpatialPoints(rasterToPoints(from, spatial=FALSE)[,1:2], proj4string=projection(from, FALSE))
 	}
 )
 
 setAs('Raster', 'SpatialPointsDataFrame', 
 	function(from) { 
-		return( rasterToPoints(from, spatial=TRUE) ) 
+		rasterToPoints(from, spatial=TRUE)
 	}
 )
 

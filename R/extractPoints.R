@@ -5,7 +5,7 @@
 
 
 	
-.xyValues <- function(object, xy, method='simple', cellnumbers=FALSE, buffer=NULL, fun=NULL, na.rm=TRUE, layer, nl, df=FALSE, ...) { 
+.xyValues <- function(object, xy, method='simple', cellnumbers=FALSE, buffer=NULL, fun=NULL, na.rm=TRUE, layer, nl, df=FALSE, factors=FALSE, ...) { 
 
 	nlyrs <- nlayers(object)
 	if (nlyrs > 1) {
@@ -59,7 +59,7 @@
 		lyrs <- layer:(layer-1+nl)
 		colnames(res) <- c('ID', names(object)[lyrs])
 
-		if (any(is.factor(object))) {
+		if (any(is.factor(object)) & factors) {
 			v <- res[, -1, drop=FALSE]
 			if (ncol(v) == 1) {
 				v <- data.frame(factorValues(object, v[,1], layer))

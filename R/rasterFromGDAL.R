@@ -142,7 +142,9 @@
 		}
 		r@data@band <- as.integer(band)
 		ct <- getColorTable( x )
-		if (! is.null(ct)) { r@legend@colortable <- ct }
+		if (! is.null(ct)) { 
+			r@legend@colortable <- ct 
+		}
 		nbands <-1 
 	}
 	if (rotated) {
@@ -251,7 +253,27 @@
 		for (i in 1:length(RATlist)) {
 			if (! is.null(RATlist[[i]])) {
 				dr <- data.frame(RATlist[[i]], stringsAsFactors=FALSE)
-				colnames(dr)[1] <- 'ID'
+				
+				if (colnames(dr)[1] == 'VALUE') {
+					colnames(dr)[1] <- 'ID'
+				} else {
+					if (all((colnames(dr) %in% c('Red', 'Green', 'Blue', 'Opacity', 'Histogram')))) {
+						# this is really a color table
+						rats[i] <- FALSE
+						if (is.null(ct)) { 
+							r@legend@colortable <- rgb(dr$Red, dr$Green, dr$Blue, dr$Opacity)
+						}
+						next
+					} else {
+						j <- which(colnames(dr) == 'Histogram')
+						if (isTRUE(j>0)) {
+							dr <- data.frame(ID=0:(nrow(dr)-1), COUNT=dr[,j], dr[,-j])
+						} else {
+							dr <- data.frame(ID=0:(nrow(dr)-1), dr)
+						}
+					}
+				}
+				
 				att[[i]] <- dr
 				if (! silent) {
 					usage <- attr(RATlist[[i]], 'GFT_usage')
@@ -274,4 +296,3 @@
 #oblique.x   0  #oblique.y   0 
 	return(r)
 }
-

@@ -12,11 +12,12 @@ rasterToPoints <- function(x, fun=NULL, spatial=FALSE, ...) {
 			stop('you can only supply a fun argument if "x" has a single layer')		
 		}
 	}
-	crs <- projection(x, asText=FALSE)
+	
 	
 	if (! inherits(x, 'RasterStack' )) {
 		if ( ! fromDisk(x) & ! inMemory(x) ) {
 			if (spatial) {
+				crs <- projection(x, asText=FALSE)
 				return(SpatialPoints(coords=xyFromCell(x, 1:ncell(x)), proj4string=crs) )
 			} else {
 				return(xyFromCell(x, 1:ncell(x)))
@@ -80,8 +81,9 @@ rasterToPoints <- function(x, fun=NULL, spatial=FALSE, ...) {
 	}
 	
 	if (spatial) {
-		v = data.frame(xyv[ ,-c(1:2), drop=FALSE])
+		v <- data.frame(xyv[ ,-c(1:2), drop=FALSE])
 		colnames(v) <- laynam
+		crs <- projection(x, asText=FALSE)
 		return( SpatialPointsDataFrame(coords=xyv[,1:2], data=v, proj4string=crs ) )
 		
 	} else {

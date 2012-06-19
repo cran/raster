@@ -3,11 +3,15 @@
 # Version 1.0
 # Licence GPL v3
 
-ratify <- function(x, filename='', ...) {
+ratify <- function(x, filename='', count=FALSE, ...) {
 	stopifnot(nlayers(x) == 1)
-	f <- freq(x, useNA='no')
-	f <- data.frame(f)
-	colnames(f) <- c('ID', 'COUNT')
+	if (count) {
+		f <- freq(x, useNA='no')
+		f <- data.frame(f)
+		colnames(f) <- c('ID', 'COUNT')
+	} else {
+		f <- data.frame(ID=unique(x))
+	}
 	x@data@isfactor <- TRUE
 	x@data@attributes <- list(f)
 	if (filename != '') {
@@ -95,7 +99,7 @@ deratify <- function(x, att=NULL, layer=1, complete=FALSE, drop=TRUE, fun='mean'
 		return(x)
 	}
 	
-	if (ncol(RAT) <= 3) {
+	if (ncol(RAT) <= 2) {
 		if (weighted & ncol(RAT)==3) {
 			levels(x) <- .unweightRAT(RAT, fun)
 		} else {
@@ -113,9 +117,7 @@ deratify <- function(x, att=NULL, layer=1, complete=FALSE, drop=TRUE, fun='mean'
 			}
 		}
 		RAT <- RAT[ , c(1, att), drop=FALSE]
-	} else {
-		RAT <- RAT[, -2]
-	}
+	} 
 	
 	cc <- 2:ncol(RAT)
 	if (weighted) {
