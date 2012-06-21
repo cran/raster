@@ -12,7 +12,8 @@
 \alias{levels,RasterStack-method}
 \alias{levels<-}
 \alias{levels<-,Raster-method}
-   
+\alias{asFactor}
+\alias{asFactor,RasterLayer-method}
       
 \alias{factorValues}
 \alias{ratify}
@@ -22,7 +23,7 @@
 
 \description{
 
-These functions allow for defining a layer as a categorical variable. This creates a layer with integer values that are linked to other values via a "Raster Attribute Table" (RAT). Thus the cell values are an index, whereas the actual values of interest are in the RAT. The RAT is a data.frame with three or more columns. The first two columns in the RAT table, ID and COUNT, are fixed and should not be changed. The other columns can be of any basic type (factor, character, integer, numeric or logical). You can use multiple factor variables in a single RAT (to store multiple attributes for raster 'zones'). However, in the context of the raster package it is not recommended to do that. The functions documented here are mainly availbe such that files with a RAT can be read and processed. 
+These functions allow for defining a layer as a categorical variable. This creates a layer with integer values that are linked to other values via a "Raster Attribute Table" (RAT). Thus the cell values are an index, whereas the actual values of interest are in the RAT. The RAT is a data.frame with three or more columns. The first column in the RAT ("ID") has the unique cell values of the layer; this column should normally not be changed. The other columns can be of any basic type (factor, character, integer, numeric or logical). You can use multiple factor variables in a single RAT (to store multiple attributes for raster 'zones'). However, in the context of the raster package it is not recommended to do that. The functions documented here are mainly availbe such that files with a RAT can be read and processed. 
 
 Function 'levels' returns the RAT for inspection. It can be modfied and set using \code{levels <- value}  (but use caution as it is easy to mess things up). 
 
@@ -38,8 +39,10 @@ levels(x)
 
 factorValues(x, v, layer=1, att=NULL, append.names=FALSE)
 
-ratify(x, filename='', ...)
+ratify(x, filename='', count=FALSE, ...)
 deratify(x, att=NULL, layer=1, complete=FALSE, drop=TRUE, fun='mean', filename='', ...) 
+
+asFactor(x, ...)
 }
 
 
@@ -50,6 +53,7 @@ deratify(x, att=NULL, layer=1, complete=FALSE, drop=TRUE, fun='mean', filename='
   \item{att}{numeric or character. Which variable(s) in the RAT table should be used. If \code{NULL}, all variables are extracted. If using a numeric, skip the first two default columns}
   \item{append.names}{logical. Should names of data.frame returned by a combination of the name of the layer and the RAT variables? (can be useful for multilayer objects}
   \item{filename}{character. Optional}  
+  \item{count}{logical. If \code{TRUE}, a columns with frequencies is added}  
   \item{...}{additional arguments as for \code{\link{writeRaster}}}    
   \item{complete}{logical. If \code{TRUE}, the layer returned is no longer a factor}  
   \item{drop}{logical. If \code{TRUE} a factor is converted to a numerical value if possible}  
@@ -61,6 +65,7 @@ deratify(x, att=NULL, layer=1, complete=FALSE, drop=TRUE, fun='mean', filename='
 Raster* object; list (levels); boolean (is.factor); matrix (factorValues)
 }
 
+\note{asFactor is depracated and should not be used}
 
 \author{Robert J. Hijmans}
 

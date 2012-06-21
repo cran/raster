@@ -13,11 +13,10 @@ factorValues <- function(x, v, layer=1, att=NULL, append.names=FALSE) {
 	}
 	if (colnames(rat)[2]=='WEIGHT') {
 		i <- which(match(rat$ID, round(v))==1)
-		r <- rat[i, -1, drop=FALSE]
 	} else {
 		i <- match(round(v), rat$ID)
-		r <- rat[i, -c(1:2), drop=FALSE]
 	}
+	r <- rat[i, -1, drop=FALSE]
 
 	rownames(r) <- NULL
 	if (!is.null(att)) {
@@ -108,8 +107,8 @@ setMethod('levels', signature(x='Raster'),
 	if (! is.data.frame(newv)) { 
 		stop('new raster attributes (factor values) should be in a data.frame (inside a list)')
 	}
-	if (! ncol(newv) > 2) {
-		stop('the number of columns in the raster attributes (factors) data.frame should be > 2')
+	if (! ncol(newv) > 1) {
+		stop('the number of columns in the raster attributes (factors) data.frame should be > 1')
 	}
 	if (! colnames(newv)[1] == c('ID')) {
 		stop('the first column name of the raster attributes (factors) data.frame should be "ID"')
@@ -134,13 +133,9 @@ setMethod('levels', signature(x='Raster'),
 			}
 		}
 	}
-	
+	newv[, 1] <- as.integer(newv[, 1])
 	if (colnames(newv)[2] == 'WEIGHT') {
-		newv[, 1] <- as.integer(newv[, 1])
 		newv[, 2] <- as.numeric(newv[, 2])
-	} else {
-		newv[, 1] <- as.integer(newv[, 1])
-		newv[, 2] <- as.integer(newv[, 2])
 	}
 	newv
 }
@@ -194,3 +189,23 @@ setMethod('as.factor', signature(x='RasterLayer'),
 	}
 )
 
+
+
+if (!isGeneric("asFactor")) {
+	setGeneric("asFactor", function(x, ...)
+		standardGeneric("asFactor"))
+}
+
+setMethod('asFactor', signature(x='RasterLayer'), 
+	function(x, value=NULL, ...) {
+		#warning("please use as.factor")
+		x@data@isfactor <- TRUE
+		if (is.null(value) ) {
+			#x <- round(x) #this makes slot isfactor FALSE again
+			x@data@attributes <- list(data.frame(VALUE=unique(x)))
+		} else {
+			x@data@attributes <- value
+		}	
+		return(x)
+	}
+)

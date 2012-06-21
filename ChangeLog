@@ -1,7 +1,7 @@
-To do:
-focal for multi-layer objects
-
 --- Development version
+To do: focal for multi-layer objects
+
+--- 17-June-2012, version 2.0-04
 More support for factors and (related) Raster Attribute Tables (functions ratify, deratify)
 z-values are saved to file (native format only)
 Old slot @zvalue removed (in favor of slot @z)

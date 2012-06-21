@@ -171,10 +171,10 @@
 	
 
 	pvals <- .getPutVals(lns, field, nline, mask)
-	putvals <- pvals[[1]]
-	if (!is.na(pvals[[2]][1])) {
+	putvals <- pvals[,1]
+	if (ncol(pvals) > 1) {
 		rstr@data@isfactor <- TRUE
-		rstr@data@attributes <- list(pvals[[2]])
+		rstr@data@attributes <- list(pvals)
 	}
 	
 	

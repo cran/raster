@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 	
-.cellValues <- function(x, cells, layer, nl, df=FALSE) { 
+.cellValues <- function(x, cells, layer, nl, df=FALSE, factors=FALSE) { 
 
 	if (inherits(x, 'RasterLayer')) {
 		result <- .readCells(x, cells, 1)
@@ -57,7 +57,7 @@
 		result <- data.frame(ID=1:NROW(result), result)
 		
 		facts <- is.factor(x)[lyrs]
-		if (any(facts)) {
+		if (any(facts) & factors) {
 			if (ncol(result) == 2) {
 				# possibly multiple columns added
 				result <- cbind(result[,1,drop=FALSE], factorValues(x, result[,2], layer))

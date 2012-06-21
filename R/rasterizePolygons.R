@@ -1,19 +1,19 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date : January 2009
-# Version 0.9
+# Version 2.0
 # Licence GPL v3
 
 
 .getPutVals <- function(obj, field, n, mask) {
 	lvs <- NA
 	if (mask) {
-		putvals <- rep(1, length=n)
+		putvals <- data.frame(rep(1, length=n))
 	
 	} else if (missing(field)) {
-		putvals <- as.integer(1:n)
+		putvals <- data.frame(as.integer(1:n))
 		
 	} else if (isTRUE (is.na(field))) { 
-		putvals <- rep(NA, n)
+		putvals <- data.frame(rep(NA, n))
 		
 	} else if (!is.numeric(field) ) {
 		if (! .rasterHasSlot(obj, 'data')) {
@@ -31,10 +31,11 @@
 			options('warn'=-1) 
 			pvals <- as.numeric(as.character(putvals))
 			if (all(is.na(pvals) == is.na(putvals))) {
-				putvals <- pvals
+				putvals <- data.frame(pvals)
 			} else {
 				lvs <- levels(putvals)
-				putvals <- as.integer(putvals)
+				putvals <- data.frame(ID=as.integer(putvals), value=lvs)
+				colnames(putvals)[2] <- colnames(obj@data)[[field]]
 			}
 		}
 		if (class(putvals) == 'character') {
@@ -44,29 +45,34 @@
 			options('warn'=-1) 
 			pvals <- as.numeric(putvals)
 			if (all(is.na(pvals) == is.na(putvals))) {
-				putvals <- pvals
+				putvals <- data.frame(pvals)
 			} else {
 				putvals <- as.factor(putvals)
 				lvs <- levels(putvals)
-				putvals <- as.integer(putvals)
+				putvals <- data.frame(ID=as.integer(putvals), value=lvs)
+				colnames(putvals)[2] <- colnames(obj@data)[[field]]
 			}
-		}		
+		} else {
+			putvals <- data.frame(putvals)
+		}
 		
 	} else {
 		if (length(field) > 1) { 
 			if (NROW(field) == n) {  # multiple fields at once?
 #			if (length(field) == n) {
-				putvals <- field
+				putvals <- data.frame(field)
 			} else {
 				stop('field should be a single value or equal the number of spatial features') 
 			}
 		} else {
 			putvals <- vector(length=n)
 			putvals[] <- field
+			putvals <- data.frame(putvals)
 		}
 	}
-	list(putvals, lvs)
+	putvals
 }
+
 
 .intersectSegments <- function(x1, y1, x2, y2, x3, y3, x4, y4) {
 # Translated by RH from LISP code by Paul Reiners
@@ -76,29 +82,30 @@
     ua_num  <- ((x4 - x3) *(y1 - y3)) - ((y4 - y3) * (x1 - x3))
     ub_num  <- ((x2 - x1) *(y1 - y3)) - ((y2 - y1) * (x1 - x3))
 # If the denominator and numerator for the equations for ua and ub are 0 then the two lines are coincident.
-    if ( denom == 0 & ua_num == 0 & ub_num == 0) {
-#		return(c(x1, y1))
-		xmin <- max(x1, x3)
-		if (xmin==x1) {ymin <- y1} else {ymin <- y3}
-		xmax <- min(x2, x4)
-		if (xmax==x2) {ymax <- y2} else {ymax <- y4}
-# RH: for coincident line (segments) returning two intersections : start and end
-		return(rbind(c(xmin, ymin),
-					 c(xmax, ymax)))
-	}	
+    if ( denom == 0 ) {
+		if (ua_num == 0 & ub_num == 0) {
+			xmin <- max(x1, x3)
+			if (xmin==x1) {ymin <- y1} else {ymin <- y3}
+			xmax <- min(x2, x4)
+			if (xmax==x2) {ymax <- y2} else {ymax <- y4}
+		# RH: for coincident line (segments) returning two intersections : start and end
+			return(rbind(c(xmin, ymin),
+							 c(xmax, ymax)))
+		} #else {	
 # If the denominator for the equations for ua and ub is 0 then the two lines are parallel.
-    if (denom == 0) {
-		return(c(NA, NA))
-	}
- 	ua <- round(ua_num / denom, 12)
-    ub <- round(ub_num / denom, 12)
-	if ((ua >= 0 & ua <= 1) & (ub >= 0 & ub <= 1) ) {
-        x <- x1 + ua * (x2 - x1)
-        y <- y1 + ua * (y2 - y1) 
-		return(c(x, y))
+#			return(c(NA, NA))
+#		}
 	} else {
-		return(c(NA, NA))
-	}
+		ua <- round(ua_num / denom, 12)
+		ub <- round(ub_num / denom, 12)
+		if ((ua >= 0 & ua <= 1) & (ub >= 0 & ub <= 1) ) {
+			x <- x1 + ua * (x2 - x1)
+			y <- y1 + ua * (y2 - y1) 
+			return(c(x, y))
+		}
+	} 
+	
+	return(c(NA, NA))
 }
 
 
@@ -181,13 +188,14 @@
 	
 	npol <- length(p@polygons)
 	pvals <- .getPutVals(p, field, npol, mask)
-	putvals <- pvals[[1]]
-	if (!is.na(pvals[[2]][1])) {
+	putvals <- pvals[,1]
+	if (ncol(pvals) > 1) {
 		rstr@data@isfactor <- TRUE
-		rstr@data@attributes <- list(pvals[[2]])
+		rstr@data@attributes <- list(pvals)
 	}
 
 	polinfo <- matrix(NA, nrow=npol * 2, ncol=6)
+	colnames(polinfo) <- c('part', 'miny', 'maxy', 'value', 'hole', 'object')
 	addpol <- matrix(NA, nrow=500, ncol=6)
 
 	pollist <- list()

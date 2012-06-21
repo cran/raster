@@ -59,12 +59,12 @@
 	points <- .pointsToMatrix(xy)
 
 	pvals <- .getPutVals(xy, field, nrow(points), mask)
-	field <- pvals[[1]]
-	if (!is.na(pvals[[2]][1])) {
+	field <- pvals[,1]
+	if (ncol(pvals) > 1) {
 		rs@data@isfactor <- TRUE
-		rs@data@attributes <- list(pvals[[2]])
+		rs@data@attributes <- list(pvals)
 	}
-
+	
 	xy <- points
 	
 	nres <- max(length(fun(1)), length(fun(1:5)))

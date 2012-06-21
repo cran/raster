@@ -6,7 +6,7 @@
 
 
 setMethod('extract', signature(x='Raster', y='SpatialPolygons'), 
-function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, df=FALSE, layer, nl, ...){ 
+function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, df=FALSE, layer, nl, factors=FALSE, ...){ 
 
 	px <- projection(x, asText=FALSE)
 	comp <- .compareCRS(px, projection(y), unknown=TRUE)
@@ -259,7 +259,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 		lyrs <- layer:(layer+nl-1)
 		colnames(res) <- c('ID', names(x)[lyrs])
 		
-		if (any(is.factor(x))) {
+		if (any(is.factor(x)) & factors) {
 			v <- res[, -1, drop=FALSE]
 			if (ncol(v) == 1) {
 				v <- data.frame(factorValues(x, v[,1], layer))
