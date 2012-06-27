@@ -55,9 +55,9 @@ setClass ('BasicRaster',
 		rotated = FALSE,
 		ncols= as.integer(1),
 		nrows= as.integer(1),
+		crs = CRS(as.character(NA)),
 		layernames=c(""),
-		z = list(),
-		crs = CRS(as.character(NA))
+		z = list()
 	),
 	validity = function(object) {
 		validObject(extent(object))

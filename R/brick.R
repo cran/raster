@@ -44,7 +44,7 @@ setMethod('brick', signature(x='character'),
 setMethod('brick', signature(x='RasterLayer'), 
 	function(x, ..., values=TRUE, filename='', format,  datatype, overwrite, progress, nl=1) {
 		nl <- max(round(nl), 0)
-		if (nl != 1) {
+		if (nl != 1 | !hasValues(x)) {
 			values <- FALSE
 		}
 		if (!values) {

@@ -8,7 +8,7 @@
 \title{ Substitute values in a Raster* object}
 
 \description{
-Substitute (replace) values in a Raster* object with values in a \code{data.frame}. The \code{data.frame} should have a column to identify the key (ID) to match with the cell values of the Raster* object, and one or more columns with replacement values. By default these are the first and second column but you can specify other columns with arguments \code{by} and \code{which}.
+Substitute (replace) values in a Raster* object with values in a \code{data.frame}. The \code{data.frame} should have a column to identify the key (ID) to match with the cell values of the Raster* object, and one or more columns with replacement values. By default these are the first and second column but you can specify other columns with arguments \code{by} and \code{which}. It is possible to match one table to multiple layers, or to use mulitple layers as a single key, but not both.
 }
 
 \usage{
@@ -19,11 +19,11 @@ Substitute (replace) values in a Raster* object with values in a \code{data.fram
 \arguments{
   \item{x}{Raster* object}
   \item{y}{data.frame}
-  \item{by}{The column number or name that is the key (ID) to match a the \code{data.frame} row to a value of the Raster object. Default is 1}
-  \item{which}{The column number or name that has the new (replacement) values. Default is 2}
-  \item{subsWithNA}{Logical. If \code{TRUE} values that are not matched become NA. If \code{FALSE}, they retain their original value (which could also be NA. This latter option is handy when you want to replace only one or a few values}
-  \item{filename}{Character. output filename}
-  \item{...}{Additional arguments as for \code{\link{writeRaster}}}  
+  \item{by}{column number(s) or name(s) identifying the key (ID) to match rows in data.frame \code{y} to values of the Raster object}
+  \item{which}{column number or name that has the new (replacement) values}
+  \item{subsWithNA}{logical. If \code{TRUE} values that are not matched become NA. If \code{FALSE}, they retain their original value (which could also be NA. This latter option is handy when you want to replace only one or a few values. It cannot be used when \code{x} has multiple layers}
+  \item{filename}{character. Optional output filename}
+  \item{...}{additional arguments as for \code{\link{writeRaster}}}  
 }
 
 
@@ -34,7 +34,7 @@ You can also replace values using a fitted model. E.g. fit a model to \code{glm}
 }
 
 \value{
-A new Raster object, and in some cases, the side effect of a new file on disk.
+Raster object
 }
 
 \author{Robert J. Hijmans}

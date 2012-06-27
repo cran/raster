@@ -25,7 +25,7 @@
 }
 
 
-rasterTmpFile <- function(prefix='raster_tmp_')  {
+.old_rasterTmpFile <- function(prefix='raster_tmp_')  {
 	f <- getOption('rasterTmpFile')
 	if (!is.null(f)) {
 		f <- trim(f)
@@ -45,6 +45,35 @@ rasterTmpFile <- function(prefix='raster_tmp_')  {
 	}
 	if (getOption('verbose')) { cat('writing raster to:', d) }
 	return(d)
+}
+
+
+
+
+rasterTmpFile <- function(prefix='raster_tmp_')  {
+	f <- getOption('rasterTmpFile')
+	if (!is.null(f)) {
+		f <- trim(f)
+		if (! f == '' ) {
+			options('rasterTmpFile' = NULL)
+			return(f)
+		}
+	}
+
+	extension <- .defaultExtension(.filetype())
+	d <- .tmpdir()
+	dir.create(d,  showWarnings = FALSE)
+
+	while(TRUE) {
+		f <- paste(gsub(' ', '_', gsub(':', '', as.character(Sys.time()))), '_', paste(round(runif(5)*10), collapse=""), sep='')
+		tmpf <- paste(d, prefix, f, extension, sep="")
+		if (! file.exists(tmpf)) break
+	}
+	
+	if (getOption('verbose')) { 
+		cat('writing raster to:', tmpf) 
+	}
+	return(tmpf)
 }
 
 

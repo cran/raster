@@ -46,7 +46,7 @@ setMethod('readAll', signature(object='RasterStack'),
 setMethod('readAll', signature(object='RasterBrick'), 
 	function(object){ 
 		if (! object@data@fromdisk)  {
-			stop('cannot read values; there is no file associated with this RasterLayer')
+			stop('cannot read values; there is no file associated with this RasterBrick')
 		}
 		object@data@inmemory <- TRUE
 		object@data@values <- .readRasterBrickValues(object, 1, object@nrows)

@@ -1,8 +1,9 @@
-\name{saverasterstack}
+\name{stackSave}
+
 \alias{stackSave}
 \alias{stackOpen}
 
-\title{ Save or open a RasterStack file }
+\title{Save or open a RasterStack file}
 
 \description{
 A RasterStack is a collection of RasterLayers with the same spatial extent and resolution. They can be crated from RasterLayer objects,

@@ -26,7 +26,7 @@
 	cat("bandorder=",  x@file@bandorder, "\n", file = thefile)
 
 	fact <- x@data@isfactor
-	cat("categorical=",  fact, "\n", file = thefile)
+	cat("categorical=", paste(fact, collapse=':'), "\n", file = thefile)
 	if (any(fact)) {
 		# currently only for first layer!
 		r <- x@data@attributes[[1]]

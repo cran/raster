@@ -1,6 +1,6 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # September 2009
-# Version 0.9
+# Version 2.0
 # Licence GPL v3
 
 .removeRasterOptions <- function(x) {
@@ -24,6 +24,7 @@ showOptions <- function() {
 	cat('chunksize    :', .chunksize(), '\n')
 	cat('maxmemory    :', .maxmemory(), '\n')
 	cat('tmpdir       :', .tmpdir(), '\n')
+	cat('tmptime      :', .tmptime(), '\n')
 	cat('setfileext   :', .setfileext(), '\n')
 	cat('tolerance    :', .tolerance(), '\n')
 	cat('standardnames:', .standardnames(), '\n')
@@ -44,6 +45,7 @@ clearOptions <- function() {
 	options(rasterMaxMemory = 10000000)
 	options(setfileext = TRUE)
 	options(rasterTmpDir = .tmpdir())
+	options(rasterTmpTime = 24*7)
 	options(rasterTolerance = 0.1)
 	options(rasterStandardNames = TRUE)
 		
@@ -77,9 +79,11 @@ saveOptions <- function() {
 	lst <- c(lst, paste("options(rasterMaxMemory=", .maxmemory(), ")", sep=''))
 	lst <- c(lst, paste("options(rasterSetFileExt=", .setfileext(), ')', sep=''))
 	lst <- c(lst, paste("options(rasterTmpDir='", .tmpdir(), "')", sep=''))
+	lst <- c(lst, paste("options(rasterTmpTime='", .tmptime(), "')", sep=''))
 	lst <- c(lst, paste("options(rasterTolerance=", .tolerance(), ')', sep=''))
 	lst <- c(lst, paste("options(rasterStandardNames=", .standardnames(), ')', sep=''))
 
 	r <- try( write(unlist(lst), fn), silent = TRUE )
 #	if (class(r) == "try-error") { cat('Cannot save options. No write access to: ', fn, '\n')	}
 }
+

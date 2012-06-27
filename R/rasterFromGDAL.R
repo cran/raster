@@ -253,8 +253,11 @@
 		for (i in 1:length(RATlist)) {
 			if (! is.null(RATlist[[i]])) {
 				dr <- data.frame(RATlist[[i]], stringsAsFactors=FALSE)
-				
-				if (colnames(dr)[1] == 'VALUE') {
+				wv <- which(colnames(dr)=='VALUE')
+				if (length(wv) > 0) {
+					if (wv != 1) {
+						dr <- data.frame(dr[,wv,drop=FALSE], dr[,-wv,drop=FALSE])
+					}
 					colnames(dr)[1] <- 'ID'
 				} else {
 					if (all((colnames(dr) %in% c('Red', 'Green', 'Blue', 'Opacity', 'Histogram')))) {

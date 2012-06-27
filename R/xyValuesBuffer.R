@@ -1,11 +1,10 @@
 # Author: Robert J. Hijmans
-# contact: r.hijmans@gmail.com
 # Date : December 2009
 # Version 0.9
 # Licence GPL v3
 
 
-.xyvBuf <- function(object, xy, buffer, fun=NULL, na.rm=TRUE, layer, nl, cellnumbers=FALSE) { 
+.xyvBuf <- function(object, xy, buffer, fun=NULL, na.rm=TRUE, layer, nl, cellnumbers=FALSE, small=FALSE) { 
 
 	buffer <- abs(buffer)
 	if (length(buffer == 1)) {
@@ -15,7 +14,9 @@
 	}
 	buffer[is.na(buffer)] <- 0
 
-	if (! is.null(fun)) { cellnumbers <- FALSE }
+	if (! is.null(fun)) { 
+		cellnumbers <- FALSE 
+	}
 	
 	cv <- list()
 	obj <- raster(object) 
@@ -187,6 +188,23 @@
 		}
 	}
 
+	if (small) {
+		i <- sapply(cv, function(x) length(x)==0)
+		if (any(i)) { 
+			i <- which(i)
+			vv <- extract(object, xy[i, ,drop=FALSE], na.rm=na.rm, layer=layer, nl=nl, cellnumbers=cellnumbers)
+			if (NCOL(vv) > 1) {
+				for (j in 1:length(i)) {
+					cv[[ i[j] ]] <- vv[j, ]
+				}			
+			} else {
+				for (j in 1:length(i)) {
+					cv[[ i[j] ]] <- vv[j]
+				}
+			}
+		}
+	}
+	
 	nls <- nlayers(object)
 	nms <- names(object)
 	if (nls > 1) {

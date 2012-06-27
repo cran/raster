@@ -40,8 +40,11 @@ function(x, y, filename='', snap='near', datatype=NULL, ...) {
 		return(out)
 	}
 
-	out@data@isfactor <- x@data@isfactor
-	out@data@attributes <- x@data@attributes
+	fx <- is.factor(x)
+	if (isTRUE(any(fx))) {
+		out@data@isfactor <- fx
+		out@data@attributes <- levels(x)
+	}
 	
 	col1 <- colFromX(x, xmin(out)+0.5*xres(out))
 	col2 <- colFromX(x, xmax(out)-0.5*xres(out))
