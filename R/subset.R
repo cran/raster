@@ -92,7 +92,7 @@ function(x, subset, drop=TRUE, ...) {
 			x@data@max <- x@data@max[subset]
 		}	
 		x@layernames <- x@layernames[subset]
-		if (length(x@z[[1]]) > 1) {
+		if (length(x@z) > 0) {
 			x@z[[1]] <- x@z[[1]][subset]
 		}
 		x@data@nlayers <- as.integer(length(subset))

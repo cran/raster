@@ -9,23 +9,25 @@
 \title{Unique values}
 
 \description{
-This function returns the unique values in a RasterLayer
+This function returns the unique values in a RasterLayer, or the unique combinations of values in a multi-layer raster object.
 }
 
 \usage{
-unique(x, incomparables=FALSE, ...) 
+\S4method{unique}{RasterLayer,missing}(x, incomparables=FALSE, ...) 
+
+\S4method{unique}{RasterStackBrick,missing}(x, incomparables=FALSE, ...) 
 }
 
 \arguments{
-  \item{x}{A RasterLayer object}
-  \item{incomparables}{Ignored. Must be missing}
-  \item{...}{Ignored. Must be missing}
+  \item{x}{Raster object}
+  \item{incomparables}{ignored. Must be missing}
+  \item{...}{additional arguments. One implemented: \code{progress}, as in \code{\link{writeRaster}}}  
 }
 
 \seealso{ \code{\link[base]{unique}} }
 
 \value{
-a vector
+vector or matrix
 }
 
 \author{Robert J.Hijmans}
@@ -34,6 +36,7 @@ a vector
 r <- raster(ncol=10, nrow=10)
 r[] <- round(runif(ncell(r))*10)
 unique(r)
+unique(stack(r, round(r/2)))
 }
 
 \keyword{spatial}

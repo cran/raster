@@ -50,7 +50,7 @@ b2 <- b1 * 10
 # recycling by layer
 b3 <- b1 + c(1, 5, 10)
 
-# adding twoh RasterBrick objects
+# addition of the cell-values of two RasterBrick objects
 b3 <- b2 + b1
 
 # summing two RasterBricks and one RasterLayer. The RasterLayer is 'recycled'

@@ -4,7 +4,7 @@
 \alias{shapefile}
 
 \title{
-Read a shapefile
+Read or write a shapefile
 }
 
 \description{

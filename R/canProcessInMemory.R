@@ -6,14 +6,15 @@
 
 canProcessInMemory <- function(x, n=4) {
 
+# used for testing:
 #	setOptions(overwrite=TRUE)
 #	setOptions(format='GTiff')
 #	return(FALSE)
-	
 	if (.toDisk()) { 
 		return(FALSE) 
 	} 
-	n <- n + (nlayers(x) - 1)
+	
+	n <- n + nlayers(x) - 1
 	cells <- round( 1.1 * ncell(x) ) * n
 
 	if ( cells > .maxmemory() ) {
@@ -21,15 +22,13 @@ canProcessInMemory <- function(x, n=4) {
 	} else {
 		return(TRUE)
 	}
+}
 
-# the below is currently never reached.	
-
-	if (cells > .maxmemory()) {
-		return(FALSE) 
-		
-	} else if ( cells < 1000000 ) {
-		return(TRUE)
-	} else {
+#	if (cells > .maxmemory()) {
+#		return(FALSE) 
+#	} else if ( cells < 1000000 ) {
+#		return(TRUE)
+#	} else {
 #		return(TRUE)
 #	}
 	
@@ -52,18 +51,13 @@ canProcessInMemory <- function(x, n=4) {
 ## Memory in KB, from: http://stackoverflow.com/questions/2441046/how-to-get-physical-memory-in-bash
 #	mem <- as.numeric(system("grep MemTotal /proc/meminfo | awk '{print $2}'",intern=TRUE))
 
-	w <- getOption('warn')
-	on.exit(options('warn'= w))
-	options('warn'=-1) 
-	r <- try( matrix(0.1, ncol=n, nrow=cells), silent=TRUE )
+#	w <- getOption('warn')
+#	on.exit(options('warn'= w))
+#	options('warn'=-1) 
+#	r <- try( matrix(0.1, ncol=n, nrow=cells), silent=TRUE )
 
-	if (class(r) == "try-error") {
-		return( FALSE )
-	} else {
-		rm(r)
-		g <- gc()
-		return( TRUE ) 
-	}
-}
-
-}
+#	if (class(r) == "try-error") {
+#		return( FALSE )
+#		g <- gc()
+#		return( TRUE ) 
+#	}

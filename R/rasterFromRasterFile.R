@@ -96,10 +96,10 @@
 		x@data@max <- maxval[band]
 	}
 	
-	x@data@isfactor = isCat
-	if (isCat) {
+	if (isTRUE(any(isCat))) {
+		x@data@isfactor = isCat
 	
-	# only for a single layer!
+	# currently only for a single layer!
 	
 		rat <- data.frame(matrix(ratvalues, nrow=length(ratvalues) / length(ratnames)), stringsAsFactors=FALSE)
 		colnames(rat) <- ratnames

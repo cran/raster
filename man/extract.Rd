@@ -54,12 +54,12 @@ If \code{y} represents points, \code{extract} returns the values of a Raster* ob
 
 2) \code{buffer}. The radius of a buffer around each point for which to extract cell values. If the distance between the sampling point and the center of a cell is less than or equal to the buffer, the cell is included. The buffer can be specified as a single value, or as a vector of the length of the number of points.  If the data are not projected (latitude/longitude), the unit should be meters. Otherwise it should be in map-units (typically also meters).  
 
+3) \code{small}. If a \code{buffer} argument is used, should the function always return a number, also when the buffer does not include the center of a single cell? Default is \code{FALSE}.  If \code{TRUE}, the value of the cell in which the point falls is returned if no cell center is within the buffer. 
+
 
 \bold{= polygons =}
 
-1) \code{small}. Logical. Default is \code{FALSE}. If \code{TRUE} a value is also returned for relatively small polygons (e.g. those smaller than a single cell of the Raster* object), 
-or polygons with an odd shape, for which otherwise no values are returned because they do not cover any Raster* object's cell centers. In some cases, you could use alternatively 
-use the centroids of such polygons, for example using \code{extract(x, coordinates(y))} or \code{extract(x, coordinates(y), method='bilinear')}. 
+1) \code{small}. Logical. Default is \code{FALSE}. If \code{TRUE} a value is also returned for relatively small polygons (e.g. those smaller than a single cell of the Raster* object), or polygons with an odd shape, for which otherwise no values are returned because they do not cover any Raster* object's cell centers. In some cases, you could use alternatively use the centroids of such polygons, for example using \code{extract(x, coordinates(y))} or \code{extract(x, coordinates(y), method='bilinear')}. 
 
 2) \code{weights}. If \code{TRUE}, the function returns, for each polygon, a matrix with the cell values and the approximate fraction
  of each cell that is covered by the polygon(rounded to 1/100). The weights can be used for averaging; see examples. 

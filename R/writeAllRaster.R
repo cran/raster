@@ -3,9 +3,9 @@
 # Version 0.9
 # Licence GPL v3
 
-.writeRasterAll <- function(raster, filename, NAflag, filetype, ... ) {
+.writeRasterAll <- function(x, filename, NAflag, filetype, ... ) {
 
-	raster@file@driver <- filetype
+	x@file@driver <- filetype
  	filename <- trim(filename)
 	fnamevals <- .setFileExtensionValues(filename, filetype)
 	fnamehdr <- .setFileExtensionHeader(filename, filetype)
@@ -14,58 +14,61 @@
 	} else {
 		filename <- fnamevals
 	}
-	raster@file@name <- filename
+	x@file@name <- filename
 	
 	overwrite <- .overwrite(...)
 	if (!overwrite & (file.exists(fnamehdr) | file.exists(fnamevals))) {
 		stop(paste(filename,"exists. Use 'overwrite=TRUE' if you want to overwrite it")) 
 	}
 	
-	raster@data@values[is.nan(raster@data@values)] <- NA
-	raster@data@values[is.infinite(raster@data@values)] <- NA
-	raster <- setMinMax(raster)
+	na <- is.nan(x@data@values) | is.infinite(x@data@values)
+	if (any(na)) {
+		x@data@values[na] <- NA
+	}
+	x <- setMinMax(x)
 
 	datatype <- .datatype(...)
 	dtype <- .shortDataType(datatype)
-	dataType(raster) <- datatype
+	dataType(x) <- datatype
 	
-	mn <- minValue(raster)
-	mx <- maxValue(raster)
+	mn <- minValue(x)
+	mx <- maxValue(x)
 	if (dtype == 'INT' ) {
 		datatype <- .checkIntDataType(mn, mx, datatype)
-		dataType(raster) <- datatype
+		dataType(x) <- datatype
 		if (substr(datatype, 5 , 5) == 'U') { 
-			raster@data@values[raster@data@values < 0] <- NA
+			x@data@values[x@data@values < 0] <- NA
 			if (datatype == 'INT4U') { 
-				raster@data@values[is.na(raster@data@values)] <- raster@file@nodatavalue
-				i <- raster@data@values > 2147483647 & !is.na(raster@data@values)
-				raster@data@values[i] <- 2147483647 - raster@data@values[i]
+				x@data@values[is.na(x@data@values)] <- x@file@nodatavalue
+				i <- x@data@values > 2147483647 & !is.na(x@data@values)
+				x@data@values[i] <- 2147483647 - x@data@values[i]
 			} else {
-				raster@data@values[is.na(raster@data@values)] <- raster@file@nodatavalue
+				x@data@values[is.na(x@data@values)] <- x@file@nodatavalue
 			}
 		} else {
-			raster@data@values[is.na(raster@data@values)] <- raster@file@nodatavalue
+			x@data@values[is.na(x@data@values)] <- x@file@nodatavalue
 		}
-		raster@data@values <- as.integer(round(raster@data@values ))
-		raster@data@min <- round(raster@data@min)
-		raster@data@max <- round(raster@data@max)
+		x@data@values <- as.integer(round(x@data@values ))
+		x@data@min <- round(x@data@min)
+		x@data@max <- round(x@data@max)
 		
 	} else if ( dtype =='FLT') {
-		raster@data@values <- as.numeric(raster@data@values)
+		x@data@values <- as.numeric(x@data@values)
 	} else if ( dtype =='LOG') {
-		raster@data@values <- as.integer(raster@data@values)
-		raster@data@values[is.na(raster@data@values)] <- as.integer(raster@file@nodatavalue)
+		x@data@values <- as.integer(x@data@values)
+		x@data@values[is.na(x@data@values)] <- as.integer(x@file@nodatavalue)
 	}
 	
 
 	if (! missing(NAflag) ) {
-		raster@file@nodatavalue <- NAflag
+		x@file@nodatavalue <- NAflag
 	}
-	dsize <- dataSize(raster@file@datanotation)
+	dsize <- dataSize(x@file@datanotation)
 	filecon <- file(fnamevals, "wb")
-	writeBin(raster@data@values , filecon, size = dsize ) 
+	writeBin(x@data@values , filecon, size = dsize ) 
 	close(filecon)
-	hdr(raster, filetype) 
+	
+	hdr(x, filetype) 
 
 	return(raster(filename, native=TRUE))
 }

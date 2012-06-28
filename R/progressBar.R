@@ -27,7 +27,7 @@ pbCreate <- function(nsteps, progress, style=3, ...) {
 	} else {
 		pb <- 'none'
 	}
-	attr(pb, "starttime") <- proc.time()
+	attr(pb, "starttime") <- Sys.time()
 	return(pb)
 }
 
@@ -59,7 +59,9 @@ pbClose <- function(pb, timer) {
 		timer <- .timer()		
 	}
 	if (timer) {
-		elapsed <- (proc.time() - 	attr(pb, "starttime"))[3]
-		cat(elapsed, 'seconds\n')
+		elapsed <- (Sys.time() - attr(pb, "starttime"))[3]
+		cat(as.numeric(elapsed), 'seconds\n')
 	}
 }
+
+

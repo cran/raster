@@ -375,7 +375,7 @@ r[] <- runif(ncell(r))
 cellStats(r, mean)
 s = r
 s[] <- round(runif(ncell(r)) * 5)
-zonal(r,s,median)
+zonal(r, s, 'mean')
 freq(s)
 count(s, 3)
 crosstab(r*3, s)

@@ -1,10 +1,10 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # September 2009
-# Version 0.9
+# Version 2.0
 # Licence GPL v3
 
 
-setOptions <- function(format, overwrite, datatype, tmpdir, progress, timer, chunksize, maxmemory, todisk, setfileext, tolerance, standardnames) {
+setOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress, timer, chunksize, maxmemory, todisk, setfileext, tolerance, standardnames) {
 	
 	setFiletype <- function(format) {
 		if (.isSupportedFormat(format)) {	options(rasterFiletype = format)	
@@ -45,6 +45,18 @@ setOptions <- function(format, overwrite, datatype, tmpdir, progress, timer, chu
 		}
 	}
 	
+	setTmpTime <- function(tmptime) {
+		if (is.numeric(tmptime)) {
+			if (tmptime > 1) {
+				options(rasterTmpTime = tmptime)
+			} else {
+				warning(paste('Could not set tmptime. It must be > 1'))	
+			}
+		} else {
+			warning(paste('Could not set tmptime. It must be a numerical value'))	
+		}
+	}
+
 	setProgress <- function(progress) {
 		if (is.character(progress)) {
 			progress <- tolower(trim(progress))
@@ -112,6 +124,7 @@ setOptions <- function(format, overwrite, datatype, tmpdir, progress, timer, chu
 	if (!missing(progress)) { setProgress(progress) }
 	if (!missing(timer)) { setTimer(timer) }
 	if (!missing(tmpdir)) { setTmpdir(tmpdir) }
+	if (!missing(tmptime)) { setTmpTime(tmptime) }
 	if (!missing(todisk)) { setToDisk(todisk) }
 	if (!missing(setfileext)) { setFileExt(setfileext) }
 	if (!missing(maxmemory)) { setMaxMemorySize(maxmemory) }

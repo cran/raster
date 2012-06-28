@@ -13,7 +13,7 @@
 \alias{stack,kasc-method}
 
 
-\title{ Create a RasterStack object}
+\title{Create a RasterStack object}
 
 \description{
 A RasterStack is a collection of RasterLayer objects with the same spatial extent and resolution. A RasterStack can be created from RasterLayer objects, or from raster files, or both. It can also be created from SpatialPixels or SpatialGrid objects.

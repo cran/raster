@@ -64,6 +64,23 @@
 }	
 
 
+
+.tmptime <- function() {
+	d <- getOption('rasterTmpTime')
+	if (is.null(d)) {
+		d <- 24 * 7
+	} else {
+		d <- as.numeric(d)
+		if (d < 0) {
+			d <- 24 * 7
+		}
+	}
+	return(d)
+}	
+
+
+
+
 .maxmemory <- function() {
 	default <- 1e+08
 	d <- getOption('rasterMaxMemory')

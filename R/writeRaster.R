@@ -43,6 +43,9 @@ function(x, filename, format, ...) {
 			r <- writeValues(r, v, tr$row[i])
 			pbStep(pb, i) 			
 		}
+		if (isTRUE(any(is.factor(x)))) {
+			levels(r) <- levels(x)
+		}
 		r <- writeStop(r)
 		pbClose(pb)
 		return(r)
