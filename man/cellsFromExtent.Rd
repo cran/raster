@@ -6,7 +6,7 @@
 \title{Cells from Extent}
 
 \description{
-This function returns the cell numbers for a Raster* object that are within a specfied extent (rectangular area), supply either an object of class Extent, or another Raster* object.
+This function returns the cell numbers for a Raster* object that are within a specfied extent (rectangular area), supply an object of class Extent, or another Raster* object.
 }
 
 \usage{

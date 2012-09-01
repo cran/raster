@@ -98,12 +98,12 @@
 			} else {
 				v[v == x@file@nodatavalue] <- NA 			
 			}		
-			thisrow <- subset(colrow, colrow[,2] == rows[i])
+			thisrow <- colrow[colrow[,2] == rows[i], , drop=FALSE]
 			colrow[colrow[,2]==rows[i], 3] <- v[thisrow[,1]]
 		}
 	} else {
 		for (i in 1:length(rows)) {
-			thisrow <- subset(colrow, colrow[,2] == rows[i])
+			thisrow <- colrow[colrow[,2] == rows[i], , drop=FALSE]
 			if (nrow(thisrow) == 1) {
 				offs <- c(rows[i]-1, thisrow[,1]-1)
 				v <- as.vector( getRasterData(con, offset=offs, region.dim=c(1, 1)) )

@@ -6,7 +6,9 @@
 if (!isGeneric("stack")) {
 	setGeneric("stack", function(x, ...)
 		standardGeneric("stack"))
-}	
+}
+
+
 
 setMethod("stack", signature(x='missing'), 
 function(x) {
@@ -14,10 +16,22 @@ function(x) {
 	}
 )
 
+
+
 setMethod("stack", signature(x='Raster'), 
-function(x, ...) {
-	rlist <- .makeRasterList(x, ...)
-	return( stack(rlist) )
+	function(x, ...) {
+		rlist <- list(x, ...)
+		if ( length(rlist) == 1 ) {
+			if (inherits(x, 'RasterLayer')) {
+				stack(rlist)
+			} else if (inherits(x, 'RasterBrick')) {
+				return( .stackFromBrick(x) )
+			} else {
+				return(x)
+			}
+		} else {
+			stack( .makeRasterList(rlist) )
+		} 
 	}
 )
 
@@ -25,28 +39,39 @@ function(x, ...) {
 
 setMethod("stack", signature(x='character'), 
 function(x, ..., bands=NULL, varname="", native=FALSE, quick=FALSE) {
+
 	rlist <- c(x, list(...))
+
     if ( varname != "") {
 		if (length(rlist) == 1) {
 			return(.stackCDF(x, varname=varname, bands=bands))
 		} else {
 			s <- stack(sapply(rlist, function(x) .stackCDF(x, varname=varname, bands=bands)))
 		}
+		
 	} else {
-		if (quick) {
+		
+		if (length(rlist) == 1) {
+			
+			return(.quickStackOneFile(x, bands=bands, native=native))
+			
+		} else if (quick) {
 			if (!is.null(bands)) {
 				stop("cannot do 'quick' if bands is not NULL")
 			}
 			return(.quickStack(rlist, native=native))
 		}
+		
 		return(stack(rlist, bands=bands, native=native))
 	}
 } )
 
 
+
 setMethod("stack", signature(x='list'), 
 function(x, bands=NULL, native=FALSE, ...) {
-	if (class(x) == 'data.frame') {
+
+	if (inherits(x, 'data.frame')) {
 		return(utils::stack(x, ...))
 	}
 
@@ -61,6 +86,7 @@ function(x, bands=NULL, native=FALSE, ...) {
 	# first try simplest case, all RasterLayer objects
 	cls <- sapply(x, function(i) inherits(i, 'RasterLayer'))
 	if (all(cls)) {
+		
 		hd <- sapply(x, function(i) hasValues(i) )
 		if (!all(hd)) {
 			if (sum(hd) == 0) {
@@ -174,7 +200,6 @@ function(x, bands=NULL, native=FALSE, ...) {
 			x@ncols <- r@ncols
 			x@extent <- r@extent
 			x@crs <- r@crs
-			x@layernames <- r@layernames
 			if(rotated(r)) {
 				x@rotated = r@rotated
 				x@rotation = r@rotation
@@ -188,6 +213,7 @@ function(x, bands=NULL, native=FALSE, ...) {
 )
 
 
+
 setMethod("stack", signature(x='SpatialGridDataFrame'), 
 	function(x) {
 		stk <- new("RasterStack")
@@ -198,6 +224,7 @@ setMethod("stack", signature(x='SpatialGridDataFrame'),
 		return(stk)
 	}
 )
+
 	
 
 setMethod("stack", signature(x='SpatialPixelsDataFrame'), 
@@ -206,6 +233,7 @@ setMethod("stack", signature(x='SpatialPixelsDataFrame'),
 		return(stack(x))
 	}
 )
+
 
 
 setMethod('stack', signature(x='kasc'), 

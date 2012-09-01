@@ -119,7 +119,6 @@ projectExtent <- function(object, crs) {
 projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ...)  {
 
 	.requireRgdal()
-
 	validObject(projection(from, asText=FALSE))
 	projfrom <- projection(from)
 	if (projfrom == "NA") { stop("input projection is NA") }
@@ -182,6 +181,12 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 	if (identical(projfrom, projto)) {
 		stop('projections of "from" and "to" are the same')
 	}	
+	if (lonlat) {
+		projto_int <- paste(projto, "+over")
+	} else {
+		projto_int <- projto	
+	}
+	
 
 #	pbb <- projectExtent(to, projection(from))
 #	bb <- intersect(extent(pbb), extent(from))
@@ -231,7 +236,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 			v <- matrix(nrow=length(cells), ncol=nl)
 			if (nrow(xy) > 0) {
 				ci <- match(cellFromXY(to, xy), cells)
-				xy <- .Call("transform", projto, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
+				xy <- .Call("transform", projto_int, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
 				xy <- cbind(xy[[1]], xy[[2]])
 				v[ci, ] <- .xyValues(from, xy, method=method)
 			} 
@@ -296,7 +301,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 			xy <- coordinates(to) 
 			xy <- subset(xy, xy[,1] > e@xmin & xy[,1] < e@xmax)
 			cells <- cellFromXY(to, xy)
-			xy <- .Call("transform", projto, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
+			xy <- .Call("transform", projto_int, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
 			xy <- cbind(xy[[1]], xy[[2]])
 			to[cells] <- .xyValues(from, xy, method=method)
 			
@@ -316,7 +321,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 				xy <- subset(xy, xy[,1] > e@xmin & xy[,1] < e@xmax)
 				if (nrow(xy) > 0) {
 					ci <- match(cellFromXY(to, xy), cells)
-					xy <- .Call("transform", projto, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
+					xy <- .Call("transform", projto_int, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
 					xy <- cbind(xy[[1]], xy[[2]])
 					v <- matrix(nrow=length(cells), ncol=nl)
 					v[ci, ] <- raster:::.xyValues(from, xy, method=method)

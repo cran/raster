@@ -9,7 +9,7 @@
 \title{ Replace NA values with values of other layers }
 
 \description{
-Replace \code{NA} values in the first Raster object (\code{x}) with the values of the second (\code{y}), and so forth for additional Rasters. If \code{x} has mutliple layers, the subsequent Raster objects should have the same number of layers, or have a single layer only (which will be recycled).
+Replace \code{NA} values in the first Raster object (\code{x}) with the values of the second (\code{y}), and so forth for additional Rasters. If \code{x} has multiple layers, the subsequent Raster objects should have the same number of layers, or have a single layer only (which will be recycled).
 }
 
 \usage{

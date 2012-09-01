@@ -76,7 +76,7 @@ bp
 			axis.args <- c(list(side = ifelse(horizontal, 1, 4), mgp = c(3, 1, 0), las = ifelse(horizontal, 0, 2), at = breaks, labels = lab.breaks), axis.args)			
 		} else {
 			if (legend.at == 'quantile') {
-				z <- subset(z, is.finite(z))
+				z <- z[is.finite(z)]
 				at = quantile(z, names=F, na.rm=TRUE)
 				axis.args <- c(list(side = ifelse(horizontal, 1, 4), mgp = c(3, 1, 0), las = ifelse(horizontal, 0, 2), at=at), axis.args)				
 #				at <- c(0, 1:5 * (1/5))

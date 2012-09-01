@@ -36,9 +36,9 @@ if (!isGeneric("as.data.frame")) {
 
 
 setMethod('as.data.frame', signature(x='Raster'), 
-	function(x, row.names = NULL, optional = FALSE, ...) {
+	function(x, row.names = NULL, optional = FALSE, xy=FALSE, ...) {
 
-		v <- as.data.frame(values(x), row.names=row.names, optional=optional, ...)
+		v <- as.data.frame(values(x), row.names=row.names, optional=optional, xy=FALSE, ...)
 		colnames(v) <- names(x)  # for nlayers = 1
 		
 		i <- is.factor(x)
@@ -49,6 +49,12 @@ setMethod('as.data.frame', signature(x='Raster'),
 				v <- .insertFacts(x, v, 1:nlayers(x))
 			}
 		}
+		
+		if (xy) {
+			xy <- data.frame(xyFromCell(x, 1:ncell(x)))
+			v <- cbind(xy, v)
+		}
+		
 		v
 	}
 )
@@ -178,25 +184,25 @@ setMethod('as.data.frame', signature(x='SpatialLines'),
 
 
 
-setMethod('as.data.frame', signature(x='SpatialPoints'), 
-	function(x, row.names=NULL, optional=FALSE, xy=FALSE, ...) {
-		
-		if (!xy) {
-			if (.hasSlot(x, 'data')) {
-				return( x@data )
-			} else {
-				return(NULL)
-			}
-		} else {
-			xy <- coordinates(x)
-			xy <- cbind(1:nrow(xy), xy)
-			colnames(xy) <- c('object', 'x', 'y')
-			xy <- as.data.frame(xy, row.names=row.names, optional=optional, ...)
-			if (.hasSlot(x, 'data')) {
-				xy <- data.frame(xy, x@data )
-			} 
-			return(xy)
-		}
-	}
-)
+#setMethod('as.data.frame', signature(x='SpatialPoints'), 
+#	function(x, row.names=NULL, optional=FALSE, xy=TRUE, ...) {
+#		
+#		if (!xy) {
+#			if (.hasSlot(x, 'data')) {
+#				return( x@data )
+#			} else {
+#				return(NULL)
+#			}
+#		} else {
+#			xy <- coordinates(x)
+#			xy <- cbind(1:nrow(xy), xy)
+#			colnames(xy) <- c('object', 'x', 'y')
+#			xy <- as.data.frame(xy, row.names=row.names, optional=optional, ...)
+#			if (.hasSlot(x, 'data')) {
+#				xy <- data.frame(xy, x@data )
+#			} 
+#			return(xy)
+#		}
+#	}
+#)
 		

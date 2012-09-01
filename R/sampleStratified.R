@@ -36,9 +36,9 @@ function(x, size, exp=10, na.rm=TRUE, xy=FALSE, ext=NULL, sp=FALSE, ...) {
 		ys <- list()
 		for (i in 1:nrow(f)) {
 			if (is.na(f[i,1])) {
-				y <- subset(v, is.na(v[, 2]))
+				y <- v[is.na(v[, 2]),  ,drop=FALSE]
 			} else {
-				y <- subset(v, v[, 2] == f[i,1])
+				y <- v[v[, 2] == f[i,1], ,drop=FALSE]
 			}
 			if (nrow(y) < size) {
 				warning("only ", nrow(y), " cells found for stratum ", f[i,1])
@@ -74,7 +74,7 @@ function(x, size, exp=10, na.rm=TRUE, xy=FALSE, ext=NULL, sp=FALSE, ...) {
 	
 		ys <- list()
 		for (i in f[,1]) {
-			y <- subset(sr, sr[, 2] == i)
+			y <- sr[sr[, 2] == i, ,drop=FALSE]
 			if (nrow(y) == 0) {
 				warning("no samples found for value: ", i, ". Perhaps increase the value of 'ext'")
 			} else {

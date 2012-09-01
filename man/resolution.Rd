@@ -45,7 +45,7 @@ yres(r)
 res(r)
 
 res(r) <- 1/120
-# set yres diffrently
+# set yres differently
 res(r) <- c(1/120, 1/60)
 
 

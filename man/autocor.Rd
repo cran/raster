@@ -8,7 +8,7 @@
 \title{Spatial autocorrelation}
 
 \description{
-Compute Moran's I or Geary's C measuers of global spatial autocorrelation in a RasterLayer, or compute the the local Moran or Geary index (Anselin, 1995).
+Compute Moran's I or Geary's C measures of global spatial autocorrelation in a RasterLayer, or compute the the local Moran or Geary index (Anselin, 1995).
 }
 
 \usage{
@@ -29,7 +29,7 @@ A single value (Moran's I or Geary's C) or a RasterLayer (Local Moran or Geary v
 }
 
 \details{
-The default setting uses a 3x3 neighborhoud to compute "Queen's case" indices. You can use a filter (weights matrix) to do other things, such as "Rook's case", or different lags. 
+The default setting uses a 3x3 neighborhood to compute "Queen's case" indices. You can use a filter (weights matrix) to do other things, such as "Rook's case", or different lags. 
 }
 
 \seealso{

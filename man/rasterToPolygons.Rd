@@ -14,7 +14,7 @@ rasterToPolygons(x, fun=NULL, n=4, na.rm=TRUE, digits=12, dissolve=FALSE)
 
 \arguments{
  \item{x}{ a Raster* object }
- \item{fun}{ function to select a subset of raster values (only allowed if \code{x} has a single layer}
+ \item{fun}{ function to select a subset of raster values (only allowed if \code{x} has a single layer)}
  \item{n}{ The number of nodes for each polygon. Only 4, 8, and 16 are allowed }
  \item{na.rm}{ If \code{TRUE}, cells with \code{NA} values in all layers are ignored }
  \item{digits}{ number of digits to round the coordinates to }

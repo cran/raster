@@ -23,14 +23,15 @@
 }
 
 
-.stopGDALwriting <- function(x) {
+.stopGDALwriting <- function(x, stat=cbind(NA,NA)) {
 
 	nl <- nlayers(x)
 
-	statistics <- cbind(x@data@min, x@data@max, 0, 0)
+	statistics <- cbind(x@data@min, x@data@max)
 	if (substr(x@file@datanotation, 1, 1) != 'F') {
 		statistics <- round(statistics)
 	}
+	statistics <- cbind(statistics, stat[,1], stat[,2])
 
 	for (i in 1:nl) {
 		b <- new("GDALRasterBand", x@file@transient, i)
@@ -52,8 +53,8 @@
 	}
 	
 	if (! out@data@haveminmax ) {
-		out@data@min <- statistics[1]
-		out@data@max <- statistics[2]
+		out@data@min <- statistics[, 1]
+		out@data@max <- statistics[, 2]
 		out@data@haveminmax <- TRUE
 	}
 

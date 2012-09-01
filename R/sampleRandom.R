@@ -41,6 +41,8 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 	stopifnot(size <= ncell(x))
 	
 	r <- raster(x)
+	nc <- ncell(r)
+	
 	layn <- names(x)
 
 	removeCells <- FALSE
@@ -60,9 +62,9 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 		
 		if (cells) {
 			if (is.null(ext)) {
-				x <- cbind(cell=1:ncell(r), value=x)			
+				x <- cbind(cell=1:nc, value=x)			
 			} else {
-				xy <- xyFromCell(r, 1:ncell(r))
+				xy <- xyFromCell(r, 1:nc)
 				cell <- cellFromXY(r, xy)
 				x <- cbind(cell, value=x)
 			}
@@ -91,19 +93,19 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 			r <- crop(r, ext)
 		}
 			
-		if (size >= ncell(r)) {
+		if (size >= nc) {
 			
 			if (is.null(ext)) {
-				x <- cbind(1:ncell(r), getValues(x))
+				x <- cbind(1:nc, getValues(x))
 			} else {
-				x <- cbind(1:ncell(r), getValues(crop(x, ext)))			
+				x <- cbind(1:nc, getValues(crop(x, ext)))			
 			}
 			
 			if (cells) {
 				if (is.null(ext)) {
-					x <- cbind(cell=1:ncell(r), value=x)
+					x <- cbind(cell=1:nc, value=x)
 				} else {
-					xy <- xyFromCell(r, 1:ncell(r))
+					xy <- xyFromCell(r, 1:nc)
 					cell <- cellFromXY(x, xy)
 					x <- cbind(cell, value=x)
 				}
@@ -125,8 +127,9 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 			} else {
 				N <- size 
 			}	
-
-			rcells <- sampleInt(ncell(r), N)
+			
+			N <- min(N, nc)
+			rcells <- sampleInt(nc, N)
 			
 			if (!is.null(ext)) {
 				xy <- xyFromCell(r, rcells)

@@ -48,7 +48,7 @@ terrain <- function(x, opt='slope', unit='radians', neighbors=8, filename='', ..
 			nopt[7] <- 1
 		}
 	} 
-	if ('flowdirection' %in% opt) {
+	if ('flowdir' %in% opt) {
 		nopt[8] <- 1
 	}
 	

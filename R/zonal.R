@@ -59,7 +59,9 @@ setMethod('zonal', signature(x='Raster', z='RasterLayer'),
 		
 			for (i in 1:tr$n) {
 				d <- cbind(getValues(x, row=tr$row[i], nrows=tr$nrows[i]),   
-						round(getValues(z, row=tr$row[i], nrows=tr$nrows[i]), digits=digits))
+					 round(getValues(z, row=tr$row[i], nrows=tr$nrows[i]), digits=digits))
+				#cat(i, '\n')
+				#flush.console()
 				alltab <- rbind(alltab, aggregate(d[,1:(ncol(d)-1)], by=list(d[,ncol(d)]), FUN=fun, na.rm=na.rm)) 
 				if (counts) {
 					if (na.rm) {

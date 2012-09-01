@@ -5,6 +5,7 @@
 \alias{names}
 \alias{names<-}
 \alias{names,Raster-method}
+\alias{names,RasterStack-method}
 \alias{names<-,Raster-method}
 
   
@@ -13,7 +14,7 @@
 \description{
 Get or set the names of the layers of a Raster* object
 
-Function \code{layerNames} is deprecated. Use \code{names} in stead. 
+Function \code{layerNames} is deprecated. Use \code{names} instead. 
 }
 
 \usage{

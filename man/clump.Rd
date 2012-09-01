@@ -6,7 +6,7 @@
 \title{Detect clumps}
 
 \description{
-Detect clumps (patches) of connected cells. Each clump gets a unique ID. NA and zero are used as background values (i.e. these values are used to seperate clumps). You can use queen's or king's case, using the \code{directions} argument. For larger files that are processed in chunks, the highest clump number is not necessarily equal to the number of clumps (unless you use argument \code{gaps=FALSE}).
+Detect clumps (patches) of connected cells. Each clump gets a unique ID. NA and zero are used as background values (i.e. these values are used to separate clumps). You can use queen's or rook's case, using the \code{directions} argument. For larger files that are processed in chunks, the highest clump number is not necessarily equal to the number of clumps (unless you use argument \code{gaps=FALSE}).
 }
 
 \usage{

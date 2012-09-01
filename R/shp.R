@@ -9,7 +9,9 @@ shapefile <- function(filename, object=NULL, overwrite=FALSE, verbose=FALSE) {
 		stop('This function requires the rgdal package; please install it')
 	}
 	if (is.null(object)) {
-	
+		stopifnot(file.exists(extension(filename, '.shp')))
+		stopifnot(file.exists(extension(filename, '.shx')))
+		stopifnot(file.exists(extension(filename, '.dbf')))
 		fn <- basename(filename) 
 		extension(fn) <- ''
 		readOGR(dirname(filename), fn, stringsAsFactors=FALSE, verbose=verbose) 
@@ -23,6 +25,15 @@ shapefile <- function(filename, object=NULL, overwrite=FALSE, verbose=FALSE) {
 		}
 		layer <- basename(filename)
 		extension(layer) <- ''
+		if (!.hasSlot(object, 'data')) {
+			if (inherits(object, 'SpatialPolygons')) {
+				object <- SpatialPolygonsDataFrame(object, data.frame(ID=1:length(row.names(object))))
+			} else if (inherits(object, 'SpatialLines')) {
+				object <- SpatialLinesDataFrame(object, data.frame(ID=1:length(row.names(object))))
+			} else if (inherits(object, 'SpatialPoints')) {
+				object <- SpatialPointsDataFrame(object, data.frame(ID=1:length(row.names(object))))
+			}
+		}
 		writeOGR(object, filename, layer, driver='ESRI Shapefile', verbose=verbose, overwrite_layer=overwrite)
 	}
 }

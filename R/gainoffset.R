@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date : September 2010
 # Version 1.0
 # Licence GPL v3
@@ -7,9 +7,22 @@
 'gain<-' <- function(x, value) {
 	value <- as.numeric(value[1])
 	if (inherits(x, 'RasterStack')) {
-		x@layers <- lapply( x@layers, function(z) { z@data@gain = value; return(z)} )
+		x@layers <- lapply( x@layers, 
+			function(z) {
+				if (fromDisk(x)) {
+					z@data@gain <- value
+				} else {
+					z <- z * value
+				}
+				return(z)
+			} 
+		)
 	} else {
-		x@data@gain <- value
+		if (fromDisk(x)) {
+			x@data@gain <- value
+		} else {
+			x <- x * value
+		}
 	}
 	return(x)
 }
@@ -19,7 +32,7 @@ gain <- function(x) {
 	if (inherits(x, 'RasterStack')) {
 		r <- sapply( x@layers, function(z) { z@data@gain } )
 	} else {
-		r <- x@data@gain 
+		r <- x@data@gain 		
 	}
 	return(r)
 }
@@ -28,9 +41,25 @@ gain <- function(x) {
 'offs<-' <- function(x, value) {
 	value <- as.numeric(value[1])
 	if (inherits(x, 'RasterStack')) {
-		x@layers <- lapply( x@layers, function(z) { z@data@offset = value; return(z) } )
+	
+		x@layers <- lapply( x@layers, 
+			function(z) { 
+		
+				if (fromDisk(z)) {
+					z@data@offset <- value
+				} else {
+					z <- z + offset
+				}
+				return(z) 
+			} 
+		)
+			
 	} else {
-		x@data@offset <- value
+		if (fromDisk(x)) {
+			x@data@offset <- value	
+		} else {
+			x <- x + value
+		}
 	}
 	return(x)
 }

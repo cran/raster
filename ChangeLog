@@ -1,5 +1,17 @@
 To do: focal for multi-layer objects
 
+--- 1-September-2012, version 2.0-12
+fixed bug in summary reported by Agustin Lobo
+fixed bug in terrain/flowdir reported by Marie Morfin
+zlim (argument to plot) did not function properly when used to extend the values range (reported by Bart)
+writeRaster now honours the value of the NAvalue argument when writing a ncdf file (requested by Thiago Veloso)
+added support for the ncdf4 library
+fixed many spelling mistakes in the documentation reported by Phil Heilman
+function fourCellsFromXY is now visible.
+method 'freq' implemented for 'RasterStackBrick'
+new function 'layerize'
+function 'reclassify' replaces identical 'reclass' (still available but with deprecation warning) to avoid hiding xts::reclass
+
 --- 27-June-2012, version 2.0-08
 bug fixes (both introduced in version 2.0-04):
 multilayer files of the 'raster' format have a corrupt header file (reported by Jonathan Greenberg)

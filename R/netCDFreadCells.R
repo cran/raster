@@ -31,22 +31,30 @@
 	colrow[,2] <- rowFromCell(x, cells)
 	colrow[,3] <- NA
 	rows <- sort(unique(colrow[,2]))
-	readrows = rows
+	readrows <- rows
 	if ( x@file@toptobottom ) { readrows <- x@nrows - readrows + 1	}
 
 	zvar = x@data@zvar
 	time = x@data@band
 	
-	nc <- open.ncdf(x@file@name)
-	on.exit( close.ncdf(nc) )
+	if (isTRUE(getOption('rasterNCDF4'))) {
+		nc <- ncdf4::nc_open(x@file@name)
+		on.exit( ncdf4::nc_close(nc) )		
+		getfun <- ncdf4::ncvar_get
 	
+	} else {
+		nc <- open.ncdf(x@file@name)
+		on.exit( close.ncdf(nc) )
+		getfun <- get.var.ncdf
+	}
 	
-#####			
+#####		
+	
 	if (nc$var[[zvar]]$ndims == 2) {
 		count <- c(x@ncols, 1)
 		for (i in 1:length(rows)) {
 			start <- c(1, readrows[i])
-			v <- as.vector(get.var.ncdf(nc, varid=zvar, start=start, count=count))
+			v <- as.vector(getfun(nc, varid=zvar, start=start, count=count))
 			thisrow <- subset(colrow, colrow[,2] == rows[i])
 			colrow[colrow[,2]==rows[i], 3] <- v[thisrow[,1]]
 		}	
@@ -54,7 +62,7 @@
 		count <- c(x@ncols, 1, 1)
 		for (i in 1:length(rows)) {
 			start <- c(1, readrows[i], time)
-			v <- as.vector(get.var.ncdf(nc, varid=zvar, start=start, count=count))
+			v <- as.vector(getfun(nc, varid=zvar, start=start, count=count))
 			thisrow <- subset(colrow, colrow[,2] == rows[i])
 			colrow[colrow[,2]==rows[i], 3] <- v[thisrow[,1]]
 		}	
@@ -63,7 +71,7 @@
 			count <- c(x@ncols, 1, 1, 1)
 			for (i in 1:length(rows)) {
 				start <- c(1, readrows[i], x@data@level, time)
-				v <- as.vector(get.var.ncdf(nc, varid=zvar, start=start, count=count))
+				v <- as.vector(getfun(nc, varid=zvar, start=start, count=count))
 				thisrow <- subset(colrow, colrow[,2] == rows[i])
 				colrow[colrow[,2]==rows[i], 3] <- v[thisrow[,1]]
 			}
@@ -71,7 +79,7 @@
 			count <- c(x@ncols, 1, 1, 1)
 			for (i in 1:length(rows)) {
 				start <- c(1, readrows[i], time, x@data@level)
-				v <- as.vector(get.var.ncdf(nc, varid=zvar, start=start, count=count))
+				v <- as.vector(getfun(nc, varid=zvar, start=start, count=count))
 				thisrow <- subset(colrow, colrow[,2] == rows[i])
 				colrow[colrow[,2]==rows[i], 3] <- v[thisrow[,1]]
 			}
@@ -109,8 +117,17 @@
 	rows <- rowFromCell(x, cells)
 	if ( x@file@toptobottom ) { rows <- x@nrows - rows + 1 }
 		
-	nc <- open.ncdf(x@file@name)
-	on.exit( close.ncdf(nc) )
+
+	if (getOption('rasterNCDF4')) {
+		nc <- ncdf4::nc_open(x@file@name)
+		on.exit( ncdf4::nc_close(nc) )		
+		getfun <- ncdf4::ncvar_get
+	
+	} else {
+		nc <- open.ncdf(x@file@name)
+		on.exit( close.ncdf(nc) )
+		getfun <- get.var.ncdf
+	}
 	
 	
 	if (nc$var[[zvar]]$ndims == 2) {
@@ -118,14 +135,14 @@
 		res <- matrix(nrow=length(cells), ncol=1)
 		for (i in 1:length(cells)) {
 			start <- c(cols[i], rows[i])
-			res[i] <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
+			res[i] <- getfun(nc, varid=zvar, start=start, count=count)
 		}	
 	} else if (nc$var[[zvar]]$ndims == 3) {
 		count <- c(1, 1, nl)
 		res <- matrix(nrow=length(cells), ncol=nl)
 		for (i in 1:length(cells)) {
 			start <- c(cols[i], rows[i], layer)
-			res[i,] <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
+			res[i,] <- getfun(nc, varid=zvar, start=start, count=count)
 		}	
 	} else {
 		if (x@data@dim3 == 4) {
@@ -133,14 +150,14 @@
 			res <- matrix(nrow=length(cells), ncol=nl)
 			for (i in 1:length(cells)) {
 				start <- c(cols[i], rows[i], x@data@level, layer)
-				res[i,] <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
+				res[i,] <- getfun(nc, varid=zvar, start=start, count=count)
 			}	
 		} else {
 			count <- c(1, 1, nl, 1)
 			res <- matrix(nrow=length(cells), ncol=nl)
 			for (i in 1:length(cells)) {
 				start <- c(cols[i], rows[i], layer, 1)
-				res[i,] <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
+				res[i,] <- getfun(nc, varid=zvar, start=start, count=count)
 			}	
 		}
 	}

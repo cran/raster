@@ -16,27 +16,35 @@ When writing a file to disk, the file format is determined by the 'format=' argu
 \usage{
 \S4method{writeRaster}{RasterLayer,character}(x, filename, format, ...)
 
-\S4method{writeRaster}{RasterStackBrick,character}(x, filename, format, ...)
+\S4method{writeRaster}{RasterStackBrick,character}(x, filename, format, bylayer, suffix='numbers', ...)
 }
 
 \arguments{
-  \item{x}{Raster* object}
-  \item{filename}{Output filename}
-  \item{format}{Character. Output file type. See \code{\link[raster]{writeFormats}}. If this argument is not provided, it is attempted to infer it from the filename extension. If that fails, the default format is used. The default format is 'raster', but this can be changed using \code{\link[raster]{setOptions}}}
-  \item{...}{Additional arguments: 
+\item{x}{Raster* object}
+\item{filename}{Output filename}
+\item{format}{Character. Output file type. See \code{\link[raster]{writeFormats}}. If this argument is not provided, it is attempted to infer it from the filename extension. If that fails, the default format is used. The default format is 'raster', but this can be changed using \code{\link[raster]{setOptions}}}
+\item{...}{Additional arguments: 
   		
-	\code{datatype}{Character. Output data type (e.g. 'INT2S' or 'FLT4S'). See \code{\link{dataType}}. If no datatype is specified, 'FLT4S' is used, unless this default value was changed with \code{\link{setOptions}}}
+\code{datatype}{Character. Output data type (e.g. 'INT2S' or 'FLT4S'). 
+See \code{\link{dataType}}. If no datatype is specified, 'FLT4S' is used,
+unless this default value was changed with \code{\link{setOptions}}}
 	
-	\code{overwrite}: Logical. If TRUE, "filename" will be overwritten if it exists
+\code{overwrite}: Logical. If TRUE, "filename" will be overwritten if it exists
 	
-	\code{NAflag}: Numeric. To overwrite the default value used to represent \code{NA} in a file 
+\code{NAflag}: Numeric. To overwrite the default value used to represent \code{NA} in a file 
 	
-	\code{bandorder}: Character. 'BIL', 'BIP', or 'BSQ'. For 'native' file formats only. For some other formats you can use the 'options' argument (see below)
+\code{bandorder}: Character. 'BIL', 'BIP', or 'BSQ'. For 'native' file formats only.
+For some other formats you can use the 'options' argument (see below)
 	
-	\code{options}: Character. File format specific GDAL options. E.g., when writing a geotiff file: \code{options=c("COMPRESS=NONE", "TFW=YES")}
+\code{options}: Character. File format specific GDAL options. E.g., when
+writing a geotiff file: \code{options=c("COMPRESS=NONE", "TFW=YES")}
 
-	NetCDF files have the following additional, optional, arguments: \code{varname, varunit, longname, xname, yname, zname, zunit}.
-	}
+NetCDF files have the following additional, optional, arguments: 
+\code{varname, varunit, longname, xname, yname, zname, zunit}
+}
+
+\item{bylayer}{if \code{TRUE}, write a seperate file for each layer}
+\item{suffix}{'numbers' or 'names' to determine the suffix that each file gets when \code{bylayer=TRUE}; either a number between \code{1} and \code{nlayers(x)} or \code{names(x)}}
 }
 
 

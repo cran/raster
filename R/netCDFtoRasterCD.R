@@ -1,10 +1,43 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date: Aug 2009
 # Version 0.9
 # Licence GPL v3
+# Aug 2011, adapted for use with ncdf4 (or ncdf) libraries
 
 
-.doTime <- function(x, nc, zvar, dim3) {
+.NCDFversion4 <- function() {
+
+
+	loadNCDF <- function() {
+		if (!require(ncdf)) {
+			stop('To open ncdf files, you need to first install package "ncdf" or "ncdf4"') 
+		}
+		options(rasterNCDF4 = FALSE)
+		return(FALSE)
+	}
+	
+	ncdf4 <- getOption('rasterNCDF4')
+
+	if (is.null(ncdf4)) {
+		if (length(find.package("ncdf4", quiet=TRUE)) > 0) {
+			if (require(ncdf4, quietly=TRUE)) {
+				options(rasterNCDF4 = TRUE)
+				ncdf4 <- TRUE
+				
+			} else {
+				ncdf4 <- loadNCDF()
+			}
+			
+		} else {
+			ncdf4 <- loadNCDF()
+		}
+	}
+	return(ncdf4)
+}
+
+
+
+.doTime <- function(x, nc, zvar, dim3, ncdf4) {
 	dodays <- TRUE
 	dohours <- FALSE
 	
@@ -29,24 +62,38 @@
 	}
 	if (dodays) {
 		# cal = nc$var[[zvar]]$dim[[dim3]]$calendar ?
-		cal = att.get.ncdf(nc, "time", "calendar")$value
+		if (ncdf4) {
+			cal <- ncdf4::ncatt_get(nc, "time", "calendar")$value
+		} else {
+			cal <- att.get.ncdf(nc, "time", "calendar")$value		
+		}
+
+		
+		
 		if (cal =='gregorian' | cal =='proleptic_gregorian' | cal=='standard') {
 			greg <- TRUE
 		} else if (cal == 'noleap' | cal == '365 day' | cal == '365_day') { 
 			greg <- FALSE
+			nday <- 365
+		} else if (cal == '360_day') { 
+			greg <- FALSE
+			nday <- 360
 		} else {
 			greg <- TRUE
-			warning('assuming a standard calender')
+			warning('assuming a standard calender:', cal)
 		}
 
 		time <- getZ(x)
 		if (greg) {
 			time <- as.Date(time, origin=startDate)
 		} else {
-			a <- as.numeric(time)/365
-			year <- trunc(a)
-			doy <- (time - (year * 365))
-			time <- as.Date(doy, origin=paste(year, "-1-1", sep='')) - 1
+			startyear <-  as.numeric( format(startDate, "%Y") )
+			startmonth <- as.numeric( format(startDate, "%m") )
+			startday <- as.numeric( format(startDate, "%d") )
+			year <- trunc( as.numeric(time)/nday )
+			doy <- (time - (year * nday))
+			origin <- paste(year+startyear, "-", startmonth, "-", startday, sep='')
+			time <- as.Date(doy, origin=origin)		
 		}
 		x@z <- list(time)
 		names(x@z) <- as.character('Date')
@@ -88,10 +135,11 @@
 			varname <- vars
 		} else {
 			# should also check its dimensions with those of x and y 
-			a=NULL
+			a <- NULL
 			for (i in 1:nv) { 
-				a = c(a, nc$var[[i]]$ndims) 
+				a <- c(a, nc$var[[i]]$ndims) 
 			}
+			
 			varname <- vars[which.max(a)]
 			if (warn) {
 				warning('varname used is: ', varname, '\nIf that is not correct, set it to one of: ', paste(vars, collapse=", ") )
@@ -109,16 +157,27 @@
 
 .rasterObjectFromCDF <- function(filename, varname='', band=NA, type='RasterLayer', lvar=3, level=0, warn=TRUE, ...) {
 
-	if (!require(ncdf)) { stop('You need to install the ncdf package first') }
-	nc <- open.ncdf(filename)
-	on.exit( close.ncdf(nc) )
+	ncdf4 <- .NCDFversion4()
+
+	if (ncdf4) {
+		options(rasterNCDF4 = TRUE)
+		nc <- ncdf4::nc_open(filename)
+		on.exit( ncdf4::nc_close(nc) )		
+		conv <- ncdf4::ncatt_get(nc, 0, "Conventions")
+		
+	} else {
+		options(rasterNCDF4 = FALSE)
+		nc <- open.ncdf(filename)
+		on.exit( close.ncdf(nc) )		
+		conv <- att.get.ncdf(nc, 0, "Conventions")
+	} 
 	
-	conv <- att.get.ncdf(nc, 0, "Conventions")
+	
 	# assuming "CF-1.0"
 	
-	zvar <- raster:::.varName(nc, varname, warn=warn)
+	zvar <- .varName(nc, varname, warn=warn)
 	
-	datatype <- raster:::.getRasterDTypeFromCDF( nc$var[[zvar]]$prec )
+	datatype <- .getRasterDTypeFromCDF( nc$var[[zvar]]$prec )
 	
 	dim3 <- 3
 	dims <- nc$var[[zvar]]$ndims
@@ -184,12 +243,29 @@
 	long_name <- zvar
 	projection <- NA
 	unit <- ''
-	a <- att.get.ncdf(nc, zvar, "long_name")
-	if (a$hasatt) { long_name <- a$value }
-	a <- att.get.ncdf(nc, zvar, "units")
-	if (a$hasatt) { unit <- a$value }
-	a <- att.get.ncdf(nc, zvar, "grid_mapping")
-	if ( a$hasatt ) { projection  <- a$value }
+	
+	
+	if (ncdf4) {
+		a <- ncdf4::ncatt_get(nc, zvar, "long_name")
+		if (a$hasatt) { long_name <- a$value }
+		a <- ncdf4::ncatt_get(nc, zvar, "units")
+		if (a$hasatt) { unit <- a$value }
+		a <- ncdf4::ncatt_get(nc, zvar, "grid_mapping")
+		if ( a$hasatt ) { projection  <- a$value }
+		natest <- ncdf4::ncatt_get(nc, zvar, "_FillValue")
+		natest2 <- ncdf4::ncatt_get(nc, zvar, "missing_value")		
+		
+	} else {
+		a <- att.get.ncdf(nc, zvar, "long_name")
+		if (a$hasatt) { long_name <- a$value }
+		a <- att.get.ncdf(nc, zvar, "units")
+		if (a$hasatt) { unit <- a$value }
+		a <- att.get.ncdf(nc, zvar, "grid_mapping")
+		if ( a$hasatt ) { projection  <- a$value }
+		natest <- att.get.ncdf(nc, zvar, "_FillValue")
+		natest2 <- att.get.ncdf(nc, zvar, "missing_value")		
+	}
+
 	prj <- list()
 	if (!is.na(projection)) {
 		att <- nc$var[[projection]]
@@ -197,7 +273,6 @@
 		# now parse .....
 		# projection(r) <- ...
 	}
-
 	
 	if (((tolower(substr(nc$var[[zvar]]$dim[[1]]$name, 1, 3)) == 'lon')  &
 		(tolower(substr(nc$var[[zvar]]$dim[[2]]$name, 1, 3)) == 'lat')) | 
@@ -240,14 +315,10 @@
 	attr(r, "prj") <- prj 
 	r@file@driver <- "netcdf"	
 	
-	natest <- att.get.ncdf(nc, zvar, "_FillValue")
 	if (natest$hasatt) { 
 		r@file@nodatavalue <- as.numeric(natest$value)
-	} else {
-		natest <- att.get.ncdf(nc, zvar, "missing_value")
-		if (natest$hasatt) { 
-			r@file@nodatavalue <- as.numeric(natest$value)
-		}
+	} else if (natest2$hasatt) { 
+		r@file@nodatavalue <- as.numeric(natest2$value)
 	}
 	r@data@fromdisk <- TRUE
 	
@@ -257,7 +328,7 @@
 		r@file@nbands <- nc$var[[zvar]]$dim[[dim3]]$len
 		r@z <- list( nc$var[[zvar]]$dim[[dim3]]$vals )
 		if ( nc$var[[zvar]]$dim[[dim3]]$name == 'time' ) {
-			try( r <- .doTime(r, nc, zvar, dim3) )
+			try( r <- .doTime(r, nc, zvar, dim3, ncdf4) )
 		} else {
 			names(r@z) <- nc$var[[zvar]]$dim[[dim3]]$units
 		}

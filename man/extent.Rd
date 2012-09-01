@@ -37,7 +37,7 @@ When \code{x} is a Raster* object, you can pass four additional arguments to cro
 An Extent object
 }
   
-\author{Robert J. Hijmans; Etienne Racine write the extent function for a list}
+\author{Robert J. Hijmans; Etienne Racine wrote the extent function for a list}
 
 \seealso{ \code{\link[raster]{extent}}, \code{\link[raster]{drawExtent}} }
 

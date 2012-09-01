@@ -4,19 +4,19 @@
 # Licence GPL v3
 
  
-.writeHdrENVI <- function(raster) {
-	hdrfile <- filename(raster)
+.writeHdrENVI <- function(r) {
+	hdrfile <- filename(r)
 	extension(hdrfile) <- ".hdr"
 	thefile <- file(hdrfile, "w") 
 	cat("ENVI\n", file = thefile)
-	cat("description = {", raster@layernames, "}", "\n", file = thefile)
-	cat("samples = ", ncol(raster), "\n", file = thefile)		
-	cat("lines = ", nrow(raster), "\n", file = thefile)		
-	cat("bands = ", raster@file@nbands, "\n", file = thefile)		
+	cat("description = {", names(r), "}", "\n", file = thefile)
+	cat("samples = ", ncol(r), "\n", file = thefile)		
+	cat("lines = ", nrow(r), "\n", file = thefile)		
+	cat("bands = ", r@file@nbands, "\n", file = thefile)		
 	cat("header offset = 0\n", file = thefile)		
 	cat("file type = ENVI Standard\n", file = thefile)		
-	dsize <- dataSize(raster@file@datanotation)
-	if (.shortDataType(raster@file@datanotation) == 'INT') {
+	dsize <- dataSize(r@file@datanotation)
+	if (.shortDataType(r@file@datanotation) == 'INT') {
 		if (dsize == 1) { dtype <- 1
 		} else if (dsize == 2) { dtype <- 2
 		} else if (dsize == 4) { dtype <- 3
@@ -41,13 +41,13 @@
 	} else { btorder <- 1 }
 	cat("byte order = ", btorder, "\n",file = thefile)		
 
-	if (.couldBeLonLat(raster)) {
-		cat("map info = {Geographic Lat/Lon, 1, 1,", xmin(raster),", ", ymax(raster),", ", xres(raster),", ", yres(raster), "}\n", file = thefile)
+	if (.couldBeLonLat(r)) {
+		cat("map info = {Geographic Lat/Lon, 1, 1,", xmin(r),", ", ymax(r),", ", xres(r),", ", yres(r), "}\n", file = thefile)
 		} else {
-		cat("map info = {projection, 1, 1,", xmin(raster),", ", ymax(raster),", ", xres(raster),", ", yres(raster), "}\n", file = thefile)
+		cat("map info = {projection, 1, 1,", xmin(r),", ", ymax(r),", ", xres(r),", ", yres(r), "}\n", file = thefile)
 	}
-    cat("projection info =", projection(raster), "\n", file = thefile) 
-	cat("z plot range = {", minValue(raster),", ", maxValue(raster), "}\n", file = thefile) 
+    cat("projection info =", projection(r), "\n", file = thefile) 
+	cat("z plot range = {", minValue(r),", ", maxValue(r), "}\n", file = thefile) 
 	close(thefile)	
 }
 

@@ -7,7 +7,7 @@
 \title{Stratified random sample}
 
 \description{
-Take a stratified random sample from the cell values of a Raster* object (without replacement). It is attempted to sample \code{size} cells from each stratum. The values in the RasterLayer \code{x} are rounded to integers; with each value representing a stratum.
+Take a stratified random sample from the cell values of a Raster* object (without replacement). An attempt is made to sample \code{size} cells from each stratum. The values in the RasterLayer \code{x} are rounded to integers; with each value representing a stratum.
 }
 
 \usage{
@@ -18,7 +18,7 @@ Take a stratified random sample from the cell values of a Raster* object (withou
 \arguments{
   \item{x}{Raster* object, with values (rounded to integers) representing strata}
   \item{size}{positive integer giving the number of items to choose} 
-  \item{exp}{numeric >= 1. 'Expansion factor' that is mulitplied with size to get an intial sample. Can be increased when you get an insuficient number of samples for small strata}
+  \item{exp}{numeric >= 1. 'Expansion factor' that is multiplied with size to get an intial sample. Can be increased when you get an insufficient number of samples for small strata}
   \item{na.rm}{logical. If \code{TRUE} (the default), \code{NA} values are removed from random sample}
   \item{xy}{logical. Return coordinates of cells rather than cell numbers}
   \item{ext}{Extent object. To limit regular sampling to the area within the extent}

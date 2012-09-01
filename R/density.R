@@ -9,21 +9,22 @@ if (!isGeneric("density")) {
 		standardGeneric("density"))
 }	
 
-setMethod('density', signature(x='RasterLayer'), 
-	function(x, maxpixels=100000, plot=TRUE, main='', ...) {
-		d = sampleRegular(x, maxpixels, useGDAL=TRUE)
-		x = density(na.omit(d))
-		if (plot) {
-			plot(x, main=main, ...)
-			return(invisible(x))
-		} else {
-			return(x)
-		}
-	}
-)
- 
-setMethod('density', signature(x='RasterStackBrick'), 
+setMethod('density', signature(x='Raster'), 
 	function(x, layer, maxpixels=100000, plot=TRUE, main, ...) {
+
+		if (nlayers==1) {
+			d = sampleRegular(x, maxpixels, useGDAL=TRUE)
+			x = density(na.omit(d))
+			if (plot) {
+				if (missing(main)) {
+					main=''
+				}
+				plot(x, main=main, ...)
+				return(invisible(x))
+			} else {
+				return(x)
+			}
+		}
 		
 		if (missing(layer)) y = 1:nlayers(x)
 		else if (is.character(layer)) {
@@ -33,7 +34,7 @@ setMethod('density', signature(x='RasterStackBrick'),
 		}
 		y <- unique(as.integer(round(y)))
 		y <- na.omit(y)
-		y <- subset(y, y >= 1 & y <= nlayers(x))
+		y <- y[ y >= 1 & y <= nlayers(x) ]
 		nl <- length(y)
 		if (nl == 0) {stop('no existing layers selected')}
 		

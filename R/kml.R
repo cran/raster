@@ -1,6 +1,6 @@
 # Derived, with only minor changes, from functions GE_SpatialGrid and kml Overlay 
 # in the maptools package. These were written by Duncan Golicher, David Forrest and Roger Bivand 
-# Adaptation for the raster packcage by Robert J. Hijmans, r.hijmans@gmail.com
+# Adaptation for the raster packcage by Robert J. Hijmans, 
 # Date : March 2009
 # Version 0.9
 # Licence GPL v3
@@ -11,10 +11,36 @@ if (!isGeneric("KML")) {
 		standardGeneric("KML"))
 }	
 
+setMethod('KML', signature(x='Spatial'), 
+	function (x, filename, zip='', overwrite=FALSE, ...) {
+		.requireRgdal()
+		if (projection(x) != 'NA') {
+			if (!isLonLat(x)) {
+				warning('transforming data to longitude/latitude')
+				spTransform(x, CRS('+proj=longlat +datum=WGS84'))
+			}
+		}
+		extension(filename) <- '.kml'
+		if (file.exists(filename)) {
+			if (overwrite) {
+				file.remove(filename)
+			} else {
+				stop('file exists, use "overwrite=TRUE" to overwrite it')
+			}
+		}
+		
+		name <- deparse(substitute(x))
+		writeOGR(x, filename, name, 'KML')
+		.zipKML(filename, '', zip) 
+	}
+)
+	
 
+
+	
 setMethod('KML', signature(x='RasterLayer'), 
 
-function (x, filename, col=rev(terrain.colors(255)), colNA=NA, maxpixels=100000, blur=1, zip='', ...) {
+function (x, filename, col=rev(terrain.colors(255)), colNA=NA, maxpixels=100000, blur=1, zip='', overwrite=FALSE, ...) {
 
     if (! .couldBeLonLat(x)) { 
         stop("CRS of x must be longitude / latitude")
@@ -33,8 +59,18 @@ function (x, filename, col=rev(terrain.colors(255)), colNA=NA, maxpixels=100000,
 
 	imagefile <- filename
 	extension(imagefile) <- '.png'
-	kmlfile <- filename
+	kmlfile <- kmzfile <- filename
 	extension(kmlfile) <- '.kml'
+	
+	if (file.exists(kmlfile)) {
+		if (overwrite) {
+			file.remove(kmlfile)
+		} else {
+			stop('kml file exists, use "overwrite=TRUE" to overwrite it')
+		}
+	}
+	
+	
 
 	png(filename = imagefile, width=max(480, blur*ncol(x)), height=max(480,blur*nrow(x)), bg="transparent")
 	if (!is.na(colNA)) {
@@ -58,9 +94,6 @@ function (x, filename, col=rev(terrain.colors(255)), colNA=NA, maxpixels=100000,
 	
     cat(paste(kml, sep="", collapse="\n"), file=kmlfile, sep="")
 	
-	.zipKML(kmlfile, imagefile, zip)
+	.zipKML(kmlfile, imagefile, zip, overwrite=overwrite)
 }
 )
-
-
-

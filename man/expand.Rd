@@ -20,7 +20,7 @@ There is also an expand method for extent objects to enlarge (or reduce) an Exte
 
 \arguments{
   \item{x}{Raster or Extent object}
-  \item{y}{If \code{x} is a Raster object, \code{y} should be an Extent object, or any object that is or has an Extent object, or an object from which it can be extracted (such as sp objects). Alternatively, you can provide a vector of lenght 2 with the number indicating the amount of rows and columns that need to be added (or a single number when the number of rows and columns is equal)
+  \item{y}{If \code{x} is a Raster object, \code{y} should be an Extent object, or any object that is or has an Extent object, or an object from which it can be extracted (such as sp objects). Alternatively, you can provide a vector of length 2 with the number indicating the amount of rows and columns that need to be added (or a single number when the number of rows and columns is equal)
   
   If \code{x} is an Extent object, \code{y} should be a numeric vector of 1, 2, or 4 elements}
   \item{value}{value to assign to new cells}  

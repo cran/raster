@@ -9,7 +9,7 @@
 \title{Read values from disk}
 
 \description{
-Read all values from a raster file associated with a Raster* object into memory. This function should normally not be used. In most cases \code{\link[raster]{getValues}} or \code{\link[raster]{getValuesBlock}} is more approprate as readAll will fail when there is no file associated with the RasterLayer (values may only exist on memory). 
+Read all values from a raster file associated with a Raster* object into memory. This function should normally not be used. In most cases \code{\link[raster]{getValues}} or \code{\link[raster]{getValuesBlock}} is more appropriate as \code{readAll} will fail when there is no file associated with the RasterLayer (values may only exist in memory). 
 }
 
 

@@ -18,7 +18,7 @@ Before using resample, you may want to consider using these other functions inst
 
 \arguments{
   \item{x}{Raster* object to be resampled}
-  \item{y}{Raster* object with parameters that \code{x} should be resample to}
+  \item{y}{Raster* object with parameters that \code{x} should be resampled to}
   \item{method}{method used to compute values for the new RasterLayer, should be \code{"bilinear"} for bilinear interpolation, or \code{"ngb"} for using the nearest neighbor}
   \item{filename}{character. Output filename (optional) }
   \item{...}{Additional arguments as for \code{\link{writeRaster}}}  

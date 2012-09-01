@@ -5,34 +5,9 @@
 # version 1.0
 
 
+
 .bilinearValue <- function(raster, xyCoords, layer, n) {
 
-
-	fourCellsFromXY <- function(raster, xy) {
-	# should have a variant for global lon/lat data
-		cells <- cellFromXY(raster, xy)
-		row <- rowFromCell(raster, cells)
-		col <- colFromCell(raster, cells)
-		cellsXY <- xyFromCell(raster, cells)
-
-		pos <- matrix(-1, ncol=ncol(xy), nrow=nrow(xy))
-		pos[ xy[,1] > cellsXY[,1], 1 ] <- 1
-		pos[ xy[,2] < cellsXY[,2], 2 ] <- 1
-
-		poscol <- col + pos[,1]
-		poscol[poscol==0] <- 2
-		poscol[poscol==ncol(raster)+1] <- ncol(raster) - 1
-		posrow <- row + pos[,2]
-		posrow[posrow==0] <- 2
-		posrow[posrow==nrow(raster)+1] <- nrow(raster) - 1
-
-		four <- matrix(ncol=4, nrow=nrow(xy))
-		four[,1] <- cells
-		four[,2] <- cellFromRowCol(raster, posrow, col)
-		four[,3] <- cellFromRowCol(raster, posrow, poscol)
-		four[,4] <- cellFromRowCol(raster, row, poscol)
-		return(four)
-	}
 	
 	bilinear_old <- function(x, y, x1, x2, y1, y2, v) {
 		v <- v / ((x2-x1)*(y2-y1))
@@ -50,7 +25,8 @@
 	r <- raster(raster)
 	nls <- nlayers(raster)
 	
-	four <- fourCellsFromXY(r, xyCoords)
+	four <- fourCellsFromXY(r, xyCoords, duplicates=FALSE)
+	
 	xy4 <- matrix(xyFromCell(r, as.vector(four)), ncol=8)
 	x <- apply(xy4[,1:4,drop=FALSE], 1, range)
 	y <- apply(xy4[,5:8,drop=FALSE], 1, range)
@@ -69,7 +45,7 @@
 		}
 	}
 	
-	nrows <- row1 - 1 + rowFromCell(r, max(cells, na.rm=TRUE))
+	nrows <- rowFromCell(r, max(cells, na.rm=TRUE)) - row1 + 1
 	offs <- cellFromRowCol(r, row1, 1) - 1
 	cells <- cells - offs
 	

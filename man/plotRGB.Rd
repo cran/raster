@@ -14,7 +14,8 @@ Make a Red-Green-Blue plot based on three layers (in a RasterBrick or RasterStac
 
 
 \usage{
-\S4method{plotRGB}{RasterStackBrick}(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, interpolate=FALSE, bgcol='white', alpha, bgalpha, ...)
+\S4method{plotRGB}{RasterStackBrick}(x, r=1, g=2, b=3, scale, maxpixels=500000, 
+    stretch=NULL, ext=NULL, interpolate=FALSE, bgcol='white', alpha, bgalpha, ...)
 }
 
 \arguments{
@@ -25,11 +26,11 @@ Make a Red-Green-Blue plot based on three layers (in a RasterBrick or RasterStac
   \item{scale}{Integer. Maximum (possible) value in the three channels. Defaults to 255 or to the maximum value of \code{x} if that is known and larger than 255}
   \item{maxpixels}{Maximum number of pixels to use}
   \item{stretch}{Option to stretch the values to increase the contrast of the image: "lin" or "hist"}
-  \item{ext}{An \code{\link{Extent}} object to zoom in to a region of interest (see \code{\link{drawExtent}}}
+  \item{ext}{An \code{\link{Extent}} object to zoom in to a region of interest (see \code{\link{drawExtent}})}
   \item{interpolate}{interpolate the image when drawing}
   \item{bgcol}{Background (NA) color. Default is 'white'}
-  \item{alpha}{transparancy. Integer between 0 (transparant) and 255 (opaque)}
-  \item{bgalpha}{Background transparancy. Integer between 0 (transparant) and 255 (opaque)}
+  \item{alpha}{transparency. Integer between 0 (transparent) and 255 (opaque)}
+  \item{bgalpha}{Background transparency. Integer between 0 (transparent) and 255 (opaque)}
   \item{...}{graphical parameters as in \code{\link{rasterImage}}}
 }
 

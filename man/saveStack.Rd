@@ -6,7 +6,7 @@
 \title{Save or open a RasterStack file}
 
 \description{
-A RasterStack is a collection of RasterLayers with the same spatial extent and resolution. They can be crated from RasterLayer objects,
+A RasterStack is a collection of RasterLayers with the same spatial extent and resolution. They can be created from RasterLayer objects,
 or from file names. These two functions allow you to save the references to raster files and recreate a rasterStack object later. They only work if the RasterStack points to layers that have their values on disk. The values are not saved, only the references to the files.
 }
 

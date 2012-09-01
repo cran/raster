@@ -25,7 +25,7 @@
 		}		
 	}
 	
-	asRaster <- function(x, col, breaks=NULL, fun=NULL) {
+	asRaster <- function(x, col, breaks=NULL, fun=NULL, r=NULL) {
 		if (!is.null(breaks)) {
 			x[] <- as.numeric(cut(x, breaks, include.lowest=TRUE))
 			
@@ -33,7 +33,9 @@
 			if (is.function(fun)) {
 				x[] <- fun(x)
 			}
-			r <- range(x, na.rm=TRUE)
+			if (is.null(r)) {
+				r <- range(x, na.rm=TRUE)
+			}
 			if (r[1] == r[2]) {
 				r[1] <- r[1] - 0.001
 				r[2] <- r[2] + 0.001
@@ -66,7 +68,7 @@
 	if (! is.finite(zrange[1])) {
 		legend <- FALSE 
 	} else {
-		x <- asRaster(x, col, breaks, fun)
+		x <- asRaster(x, col, breaks, fun, zrange)
 	}
 	
     old.par <- par(no.readonly = TRUE)

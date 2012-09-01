@@ -6,7 +6,7 @@
 
 
 setMethod("modal", signature(x='Raster'),
-	function(x, ..., ties='random', na.rm=FALSE){
+	function(x, ..., ties='random', na.rm=FALSE, freq=FALSE){
 
 		dots <- list(...)
 		if (length(dots) > 0) {
@@ -18,16 +18,16 @@ setMethod("modal", signature(x='Raster'),
 		
 		nl <- nlayers(x)
 		if (nl < 2) {
-			return(x)
+			stop('there is not much point in computing a modal value for a single layer')
 		} else if (nl == 2) {
-			warning('running modal with only two layers')
+			warning('running modal with only two layers!')
 		}
 		
 		out <- raster(x)
 		
 		if (canProcessInMemory(x)) {
 			x <- cbind(getValues(x), add)
-			x <- setValues(out, apply(x, 1, modal, ties=ties, na.rm=na.rm))
+			x <- setValues(out, apply(x, 1, modal, ties=ties, na.rm=na.rm, freq=freq))
 			return(x)
 		}
 
@@ -36,7 +36,7 @@ setMethod("modal", signature(x='Raster'),
 		out <- writeStart(out, filename="")
 		for (i in 1:tr$n) {
 			v <- cbind( getValues( x, row=tr$row[i], nrows=tr$nrows[i] ), add)
-			v <- apply(v, 1, modal, ties=ties, na.rm=na.rm)
+			v <- apply(v, 1, modal, ties=ties, na.rm=na.rm, freq=freq)
 			out <- writeValues(out, v, tr$row[i])
 			pbStep(pb, i)
 		}

@@ -59,9 +59,9 @@ setMethod('crosstab', signature(x='RasterStackBrick', y='missing'),
 		}
 		
 		if (long) {
-			res <- as.data.frame(res)
+			res <- data.frame(res)
 			colnames(res) <- c(nms, 'Freq')	
-			res <- subset(res, Freq > 0)
+			res <- res[res$Freq > 0,  ,drop=FALSE]
 		} 
 		return(res)
 	}

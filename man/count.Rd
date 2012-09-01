@@ -17,7 +17,7 @@ Count the frequency of a single value in a Raster object.
   \item{x}{Raster* object}
   \item{value}{The value to be counted, can be a number, a logical value, or NA}  
   \item{digits}{Non-negative integer. The number of digits for rounding the values, default is 0, i.e. numbers are compared as integers}
-  \item{progress}{Character to specify a progres bar. Choose from 'text', 'window', or '' (the default, no progress bar)}
+  \item{progress}{Character to specify a progress bar. Choose from 'text', 'window', or '' (the default, no progress bar)}
   \item{...}{Additional arguments. None implemented}
 }
 

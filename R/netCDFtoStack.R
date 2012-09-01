@@ -6,13 +6,18 @@
 
 .stackCDF <- function(filename, varname='', bands='') {
 
-	if (!require(ncdf)) { stop('You need to install the ncdf package first') }
+	ncdf4 <- .NCDFversion4()
 
-	nc <- open.ncdf(filename)
-	on.exit( close.ncdf(nc) )
+	if (ncdf4) {
+		nc <- ncdf4::nc_open(filename)
+		on.exit( ncdf4::nc_close(nc) )		
+		
+	} else {
+		nc <- open.ncdf(filename)
+		on.exit( close.ncdf(nc) )		
+	} 
 
 	zvar <- .varName(nc, varname)
-
 	dims <- nc$var[[zvar]]$ndims	
 	
 	dim3 <- 3
@@ -30,20 +35,19 @@
 		}
 		r <- raster(filename, varname=zvar, band=bands[1])
 		st <- stack( r )
-		st@title <- r@layernames
+		st@title <- names(r)
 
 		if (length(bands) > 1) {
 			names(st@z) <- nc$var[[zvar]]$dim[[dim3]]$units[bands]
 			st@z <- list( nc$var[[zvar]]$dim[[dim3]]$vals[bands] )
 			if ( nc$var[[zvar]]$dim[[dim3]]$name == 'time' ) {	
-				st <- try( .doTime(st, nc, zvar, dim3)  )
+				st <- try( .doTime(st, nc, zvar, dim3, ncdf4)  )
 			}
-			st@layers = lapply(list(bands), function(x){
-												r@data@band <- x; 
-												r@layernames <- st@z[[1]][x]; 
+			st@layers <- lapply(list(bands), function(x){
+												r@data@band <- x;
+												r@data@names <- st@z[[1]][x];
 												return(r)} 
 											)
-			st@layernames <- getZ(st)
 		} 
 		return( st )
 	}

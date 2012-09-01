@@ -23,7 +23,7 @@ SEXP solradiat(SEXP elev, SEXP s, SEXP a, SEXP lat, SEXP ref, SEXP days, SEXP di
 
 	R_len_t i, j, h;
 	SEXP rad;
-	double *dem, *slope, *aspect, *srad, *latitude, r;
+	double *slope, *aspect, *srad, *latitude, r;
 	int *day;
 	int nrow, ncol, n, nd, d;
 	double L, sinL, cosL, tanL, sinSlop, sinSlop2, cosSlop, cosSlop2, sinAsp, cosAsp, term1, term2, term3; 
@@ -44,7 +44,7 @@ SEXP solradiat(SEXP elev, SEXP s, SEXP a, SEXP lat, SEXP ref, SEXP days, SEXP di
 	n = nrow * ncol;
 	Rprintf(" n: %d \n", n); 
 
-	dem = REAL(elev);
+	//dem = REAL(elev);
 	slope = REAL(s);
 	aspect = REAL(a);
 	latitude = REAL(lat);

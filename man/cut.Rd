@@ -24,7 +24,7 @@ cut(x, ...)
 Raster* object
 }
 
-\seealso{ \code{ \link{subs}, \link{reclass}, \link{calc}} } 
+\seealso{ \code{ \link{subs}, \link{reclassify}, \link{calc}} } 
 
 
 \author{Robert J. Hijmans}

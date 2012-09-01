@@ -80,14 +80,15 @@ setMethod('click', signature(x='SpatialPixels'),
 setMethod('click', signature(x='Raster'), 
 	function(x, n=1, id=FALSE, xy=FALSE, cell=FALSE, type="n", ...) {
 	
-	cells <- .getCellFromClick(x, n, type, id, ...)
+	cells <- raster:::.getCellFromClick(x, n, type, id, ...)
 	value <- .cellValues(x, cells)
-	if (is.vector(value) == 1)  {
+	
+	if (is.null(dim(value))) { 
 		value <- matrix(value)
 		colnames(value) <- names(x)
 	}
 	if (cell) {
-		value <- data.frame(cells, value)
+		value <- data.frame(cell=cells, value)
 	}
 	if (xy) { 
 		xyCoords <- xyFromCell(x, cells)

@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans,  r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date : January 2009
 # Version 0.9
 # Licence GPL v3
@@ -12,13 +12,20 @@ if (!isGeneric("shift")) {
 
 setMethod('shift', signature(object='Raster'), 
 	function(object, x=0, y=0, filename='', ...) {
-		object@extent@xmin <- object@extent@xmin + x
-		object@extent@ymin <- object@extent@ymin + y
-		object@extent@xmax <- object@extent@xmax + x
-		object@extent@ymax <- object@extent@ymax + y
+		x <- as.numeric(x[1])
+		y <- as.numeric(y[1])
+		stopifnot(!is.na(x) | !is.na(y))
+		e <- object@extent
+		e@xmin <- e@xmin + x
+		e@ymin <- e@ymin + y
+		e@xmax <- e@xmax + x
+		e@ymax <- e@ymax + y
+		object@extent <- e
 		if (filename != '') {
 			object <- writeRaster(object, filename=filename, ...)
 		}
 		return(object)
 	}
 )
+
+

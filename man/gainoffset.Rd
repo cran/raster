@@ -9,13 +9,13 @@
 
 
 \description{
-These functions can be used to get or set the gain and offset parameters used to transform values when reading from a file (currently these are ignored when writing a file). The gain and offset parameters are applied to the raw values using the formula below: 
+These functions can be used to get or set the gain and offset parameters used to transform values when reading them from a file. The gain and offset parameters are applied to the raw values using the formula below: 
 
 \code{value <- value * gain + offset}
 
 The default value for gain is 1 and for offset is 0. 'gain' is sometimes referred to as 'scale'.
 
-Note that setting gain and/or offset only affects reading of values from a file, it does not change values that are already (or only) in memory.
+Note that setting gain and/or offset are intended to be used with values that are stored in a file. For a Raster* object with values in memory, assigning gain or offset values will lead to the inmediate computation of new values; in such cases it would be clearer to use \code{\link[raster]{Arith-methods}}.
 }
 
 \usage{

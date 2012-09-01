@@ -7,7 +7,7 @@
 \description{
 Compute hill shade from slope and aspect layers (both in radians). Slope and aspect can be computed with function \code{\link{terrain}}. 
 
-A hill shade layer is often used as a backdrop on top of which another, semi-transparant, layer is drawn.
+A hill shade layer is often used as a backdrop on top of which another, semi-transparent, layer is drawn.
 }
 
 \usage{

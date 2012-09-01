@@ -16,10 +16,7 @@
 \description{
 Extract data from a Raster object for the locations of other spatial data (i.e., a spatial query). You can use coordinates (points), lines, polygons or an Extent (rectangle) object. You can also use cell numbers. 
 
-If \code{y} represents lines, the \code{extract} method returns the values of the cells of a Raster* object that are touched by a line.
-if \code{y} represents polygons, the \code{extract} method returns the values of the cells of a Raster* object that is covered by a polygon. 
-A cell is covered if its center is inside the polygon (but see the \code{weights} option for considering partly covered cells; 
-and argument \code{small} for getting values for small polygons anyway).
+If \code{y} represents lines, the \code{extract} method returns the values of the cells of a Raster* object that are touched by a line. If \code{y} represents polygons, the \code{extract} method returns the values of the cells of a Raster* object that are covered by a polygon. A cell is covered if its center is inside the polygon (but see the \code{weights} option for considering partly covered cells; and argument \code{small} for getting values for small polygons anyway).
 }
 
 \usage{
@@ -37,9 +34,9 @@ Below are additional arguments that can be used, depending on the type of object
 
 \bold{= all objects =}
 
-1) \code{fun}. Function to summarize the values (e.g. \code{mean}). The function should take a single numeric vector as argument and return a single values (e.g. mean, min or max), and accept a \code{na.rm} argument. Thus, standard R functions not including an na.rm argument must be wrapped as in this example: fun=function(x,...)length(x). If \code{y} represents points, \code{fun} is only used when a buffer is used (and hence multiple values per spatial feature would otherwise be returned). 
+1) \code{fun}. Function to summarize the values (e.g. \code{mean}). The function should take a single numeric vector as argument and return a single value (e.g. mean, min or max), and accept a \code{na.rm} argument. Thus, standard R functions not including an na.rm argument must be wrapped as in this example: fun=function(x,...)length(x). If \code{y} represents points, \code{fun} is only used when a buffer is used (and hence multiple values per spatial feature would otherwise be returned). 
 
-2) \code{na.rm}. Only useful when an argument \code{fun} is supplied. If \code{na.rm=TRUE} (the default value), NA values are removed before fun is applied. This argument may be ignored if the function used has a \code{...} argument and ignres an additional \code{na.rm} argument. 
+2) \code{na.rm}. Only useful when an argument \code{fun} is supplied. If \code{na.rm=TRUE} (the default value), NA values are removed before fun is applied. This argument may be ignored if the function used has a \code{...} argument and ignores an additional \code{na.rm} argument. 
 
 3) \code{cellnumbers}. Logical. If \code{cellnumbers=TRUE}, cell-numbers will also be returned (if no \code{fun} argument is  supplied, and when extracting values with points, if \code{buffer} is \code{NULL}).
 
@@ -48,18 +45,18 @@ Below are additional arguments that can be used, depending on the type of object
 
 \bold{= points =}
 
-If \code{y} represents points, \code{extract} returns the values of a Raster* object for the cells in which a set of points fall. Additional arguments that can be suplied to this function if \code{y} represents points:
+If \code{y} represents points, \code{extract} returns the values of a Raster* object for the cells in which a set of points fall. Additional arguments that can be supplied to this function if \code{y} represents points:
 
 1) \code{method}. If \code{method='simple'} (the default), values for the cell a point falls in are returned. The alternative is \code{method='bilinear'}, in which case the returned values are interpolated from the values of the four nearest raster cells.
 
-2) \code{buffer}. The radius of a buffer around each point for which to extract cell values. If the distance between the sampling point and the center of a cell is less than or equal to the buffer, the cell is included. The buffer can be specified as a single value, or as a vector of the length of the number of points.  If the data are not projected (latitude/longitude), the unit should be meters. Otherwise it should be in map-units (typically also meters).  
+2) \code{buffer}. The radius of a buffer around each point from which to extract cell values. If the distance between the sampling point and the center of a cell is less than or equal to the buffer, the cell is included. The buffer can be specified as a single value, or as a vector of the length of the number of points.  If the data are not projected (latitude/longitude), the unit should be meters. Otherwise it should be in map-units (typically also meters).  
 
 3) \code{small}. If a \code{buffer} argument is used, should the function always return a number, also when the buffer does not include the center of a single cell? Default is \code{FALSE}.  If \code{TRUE}, the value of the cell in which the point falls is returned if no cell center is within the buffer. 
 
 
 \bold{= polygons =}
 
-1) \code{small}. Logical. Default is \code{FALSE}. If \code{TRUE} a value is also returned for relatively small polygons (e.g. those smaller than a single cell of the Raster* object), or polygons with an odd shape, for which otherwise no values are returned because they do not cover any Raster* object's cell centers. In some cases, you could use alternatively use the centroids of such polygons, for example using \code{extract(x, coordinates(y))} or \code{extract(x, coordinates(y), method='bilinear')}. 
+1) \code{small}. Logical. Default is \code{FALSE}. If \code{TRUE} a value is also returned for relatively small polygons (e.g. those smaller than a single cell of the Raster* object), or polygons with an odd shape, for which otherwise no values are returned because they do not cover any Raster* object's cell centers. In some cases, you could alternatively use the centroids of such polygons, for example using \code{extract(x, coordinates(y))} or \code{extract(x, coordinates(y), method='bilinear')}. 
 
 2) \code{weights}. If \code{TRUE}, the function returns, for each polygon, a matrix with the cell values and the approximate fraction
  of each cell that is covered by the polygon(rounded to 1/100). The weights can be used for averaging; see examples. 

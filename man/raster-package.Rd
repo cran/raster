@@ -40,7 +40,7 @@ Below is a list of functions grouped by theme. See the vignette for more informa
 
 \section{I. Creating Raster* objects}{
 
-Raster* objects can be created, from scracth, files, or from objects of other classes, with the following functions:
+Raster* objects can be created, from scratch, files, or from objects of other classes, with the following functions:
   \tabular{ll}{
     \code{\link{raster}}\tab To create a RasterLayer \cr
     \code{\link{stack}} \tab To create a RasterStack (multiple layers)\cr
@@ -94,8 +94,8 @@ RasterLayer, RasterStack, and RasterBrick objects are, as a group, referred to a
     \code{\link{cover}} \tab First layer covers second layer except where the first layer is NA \cr
     \code{\link{mask}} \tab Use values from first Raster except where cells of the mask Raster are NA (these become NA)\cr
     \code{\link{cut}} \tab Reclassify values using ranges \cr
-    \code{\link{subs}} \tab Reclassify values using a 'is-becomes' matrix \cr	
-    \code{\link{reclass}} \tab Reclassify using a 'from-to-becomes' matrix \cr
+    \code{\link{subs}} \tab Reclassify values using an 'is-becomes' matrix \cr	
+    \code{\link{reclassify}} \tab Reclassify using a 'from-to-becomes' matrix \cr
     \code{\link{init}} \tab Initialize cells with new values \cr	
     \code{\link{stackApply}} \tab Computations on groups of layers in Raster* object \cr
     \code{\link{stackSelect}} \tab Select cell values from different layers using an index RasterLayer\cr
@@ -153,7 +153,7 @@ You can coerce Raster* objects to Spatial* objects using \code{as}, as in \code{
     \code{\link{summary}} \tab Summary of the values of a Raster* object (quartiles and mean) \cr
     \code{\link{freq}} \tab Frequency table of Raster cell values \cr
     \code{\link{count}} \tab Count the frequency of a single (range of) value(s) \cr
-    \code{\link{crosstab}} \tab Cross-tabulate two RasterLayer objects, or mulitple layers in a RasterStack/Brick \cr
+    \code{\link{crosstab}} \tab Cross-tabulate two RasterLayer objects, or multiple layers in a RasterStack/Brick \cr
     \code{\link{unique}} \tab Get the unique values in a Raster* object \cr
     \code{\link{zonal}} \tab Summarize a Raster* object by zones in a RasterLayer \cr
   }
@@ -226,8 +226,8 @@ Basic parameters of existing Raster* objects can be obtained, and in most cases 
     \code{\link{yres}} \tab The y resolution (can be set with res)\cr
     \code{\link{xmin}} \tab The minimum x coordinate (or longitude) \cr
     \code{\link{xmax}} \tab The maximum x coordinate (or longitude) \cr
-    \code{\link{ymin}} \tab The minimum y coordinate (or latitute) \cr
-    \code{\link{ymax}} \tab The maximum y coordinate (or latitute) \cr
+    \code{\link{ymin}} \tab The minimum y coordinate (or latitude) \cr
+    \code{\link{ymax}} \tab The maximum y coordinate (or latitude) \cr
 	\code{\link{extent}} \tab The extent (minimum and maximum x and y coordinates) \cr
 	\code{\link{origin}} \tab The origin of a Raster* object\cr
     \code{\link{projection}} \tab The coordinate reference system (map projection) \cr	
@@ -239,13 +239,13 @@ Basic parameters of existing Raster* objects can be obtained, and in most cases 
     \code{\link{NAvalue}} \tab Get or set the \code{NA} value (for reading from file; see \link{writeRaster} for setting it when writing a file) \cr
 }
 
-If there are values associated with a RasterLayer object (either in memory or via a link to a file) these are lost when you change the number of columns or rows or the resolution. This is not the case when the extent is changed (as the number of columns and rows will not be affected). Simlarly, with \bold{projection} you can set the projection, but this does not transform the data (see \link{projectRaster} for that).   
+If there are values associated with a RasterLayer object (either in memory or via a link to a file) these are lost when you change the number of columns or rows or the resolution. This is not the case when the extent is changed (as the number of columns and rows will not be affected). Similarly, with \bold{projection} you can set the projection, but this does not transform the data (see \link{projectRaster} for that).   
 }
 
 
 \section{XII. Computing row, column, cell numbers and coordinates}{
 
-Cell numbers start at 1 in the upper-left corner. They increase within rows, from left to right, and then row by row from top to bottom. Likewise, row numbers start at 1 at the top of the raster, and column numbrers start at 1 at the left side of the raster. 
+Cell numbers start at 1 in the upper-left corner. They increase within rows, from left to right, and then row by row from top to bottom. Likewise, row numbers start at 1 at the top of the raster, and column numbers start at 1 at the left side of the raster. 
 
   \tabular{ll}{
     \code{\link{xFromCol}} \tab x-coordinates from column numbers \cr
@@ -253,8 +253,8 @@ Cell numbers start at 1 in the upper-left corner. They increase within rows, fro
     \code{\link{xFromCell}} \tab x-coordinates from row numbers \cr
     \code{\link{yFromCell}} \tab y-coordinates from cell numbers \cr
     \code{\link{xyFromCell}} \tab x and y coordinates from cell numbers \cr
-    \code{\link{colFromX}} \tab Column numbers from x-coordinates (or longitute) \cr
-    \code{\link{rowFromY}} \tab Row numbers from y-coordinates (or latitute) \cr
+    \code{\link{colFromX}} \tab Column numbers from x-coordinates (or longitude) \cr
+    \code{\link{rowFromY}} \tab Row numbers from y-coordinates (or latitude) \cr
     \code{\link{cellFromXY}} \tab Cell numbers from x and y coordinates \cr
     \code{\link{cellFromRowCol}} \tab Cell numbers from row and column numbers \cr
     \code{\link{cellsFromExtent}} \tab Cell numbers from extent object \cr

@@ -23,7 +23,6 @@
 	minval <- Inf
 	maxval <- -Inf
 	nodataval <- -Inf
-	layernames <- ''
 	pixtype <- ''
 	gaps <- 0
 	xx <- xn <- xd <- yx <- yn <- yd <- NULL

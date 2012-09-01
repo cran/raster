@@ -5,7 +5,7 @@
 \title{Slope and aspect}
 
 \description{
-This is a depracated function. Use \code{\link{terrain}} in stead. 
+This is a deprecated function. Use \code{\link{terrain}} instead. 
 }
 
 \usage{

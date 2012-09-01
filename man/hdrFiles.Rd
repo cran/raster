@@ -22,7 +22,7 @@ hdr(x, format, extension='.wld')
 The RasterLayer object must be associated with a file on disk.
 
 You can use \code{\link{writeRaster}} to save a existing file in another format. But if you have a file in a 'raster' format (or similar), you can also only export a header file, 
-and use the data file (.gri) that already exists. writeHeader can write a VRT (GDAL virtual raster) header (.vrt); an ENVI or BIL header (.hdr) file; an Erdas Raw (.raw) header file; an IDRISI (.rdc) or SAGA (.sgrd). 
+and use the data file (.gri) that already exists. The function can write a VRT (GDAL virtual raster) header (.vrt); an ENVI or BIL header (.hdr) file; an Erdas Raw (.raw) header file; an IDRISI (.rdc) or SAGA (.sgrd). 
 This (hopefully) allows for reading the binary data (.gri), perhaps after changing the file extension, in other programs such as ENVI or ArcGIS.
 }
 

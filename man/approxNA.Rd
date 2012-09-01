@@ -20,7 +20,7 @@ approxNA(x, ...)
 \arguments{
   \item{x}{RasterStack or RasterBrick object}
   \item{...}{additional arguments as in \link[stats]{approxfun} (except for \code{x}, \code{y}, which cannot be used)
-and an additional argument 'z' to indicated the distance between layers (e.g., time, depth)  }  
+and an additional argument 'z' to indicate the distance between layers (e.g., time, depth)  }  
 }
 
 \value{

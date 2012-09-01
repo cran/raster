@@ -24,7 +24,7 @@ tail(x, ...)
 
 \arguments{
   \item{x}{Raster* object}
-  \item{...}{Additional arguments: \code{rows=10} and \code{cols=20}, to set the maximum number of rows and columns that is shown. For RasterStack and RasterBrick objects there is an additional argument \code{lyrs} }
+  \item{...}{Additional arguments: \code{rows=10} and \code{cols=20}, to set the maximum number of rows and columns that are shown. For RasterStack and RasterBrick objects there is an additional argument \code{lyrs} }
 }
 
 \value{

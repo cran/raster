@@ -41,12 +41,12 @@
 				
 			}  else {
 				result <-  .readCells(x, cells, lyrs) 
-				if (is.null(dim(result))) { 
-						# single layer of brick returns vector perhaps should be fixed in readCells
-						# only an issue with a single layer?
-					names(result) <- names(x)[lyrs]
-				}
 			}
+			
+			if (is.null(dim(result))) { 
+				result <- matrix(result, nrow=1)
+			}
+			colnames(result) <- names(x)[lyrs]
 		}
 	}
 	if (df) {

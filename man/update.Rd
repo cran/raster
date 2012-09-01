@@ -13,7 +13,7 @@ Update cell values of a file (i.e., cell values on disk) associated with a Raste
 
 User beware: this function _will_ make changes to your file (first make a copy if you are not sure what you are doing).
 
-Writing starts at a cell number \code{cell}. You can write a vector of values (in cell order), or a matrix. You can also provide a vector of cell numbers (of the same lenght as vector \code{v}) to update individual cells.
+Writing starts at a cell number \code{cell}. You can write a vector of values (in cell order), or a matrix. You can also provide a vector of cell numbers (of the same length as vector \code{v}) to update individual cells.
 
 See \code{\link{writeFormats}} for supported formats. 
 }
@@ -28,7 +28,7 @@ update(object, ...)
   
   \code{v} - vector or matrix with new values 
   
-  \code{cell} - cell from where to start writing. Or a vector of cell numbers if v is a vector of the same lenght.
+  \code{cell} - cell from where to start writing. Or a vector of cell numbers if v is a vector of the same length.
 
   \code{band} - band (layer) to update (for RasterBrick objects).
   }  

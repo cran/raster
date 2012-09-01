@@ -5,6 +5,7 @@
 \alias{BasicRaster-class}
 \alias{Raster-class}
 \alias{RasterLayer-class}
+\alias{RasterLayerSparse-class}
 \alias{RasterStack-class}
 \alias{RasterBrick-class}
 \alias{RasterStackBrick-class}
@@ -26,7 +27,7 @@ A raster is a database organized as a rectangular grid that is sub-divided into 
 
 The main user level classes are \code{RasterLayer}, \code{RasterStack} and \code{RasterBrick}. They all inherit from \code{BasicRaster} and can contain values for the raster cells.
 
-An object of the \code{RasterLayer} class refers to a single layer (variable) of raster data. The object can point to a file on disk that holds the values the raster cells, or hold these values in memory. Or it can not have any associated values at all.
+An object of the \code{RasterLayer} class refers to a single layer (variable) of raster data. The object can point to a file on disk that holds the values of the raster cells, or hold these values in memory. Or it can not have any associated values at all.
 
 A \code{RasterStack} represents a collection of \code{RasterLayer} objects with the same extent and resolution. Organizing \code{RasterLayer} objects in a \code{RasterStack} can be practical when dealing with multiple layers; for example to summarize their values (see \code{\link[raster]{calc}}) or in spatial modeling (see \code{\link[raster]{predict}}). 
 
@@ -34,8 +35,7 @@ An object of class \code{RasterBrick} can also contain multiple layers of raster
  
 Objects can be created from file or from each other with the following functions: \code{\link[raster]{raster}, \link[raster]{brick}} and \link[raster]{stack}.
  
-\code{Raster*} objects can also be created from SpatialPixels* and SpatialGrid* objects from the sp package using \code{as}, or the simply with the function \code{\link[raster]{raster}}, \code{\link[raster]{brick}}, or \code{\link[raster]{stack}}. 
-Vice versa, \code{Raster*} objects can be coerced into a sp type object with \code{as( , )}, e.g. \code{as(x, 'SpatialGridDataFrame')} . 
+\code{Raster*} objects can also be created from SpatialPixels* and SpatialGrid* objects from the sp package using \code{as}, or simply with the function \code{\link[raster]{raster}}, \code{\link[raster]{brick}}, or \code{\link[raster]{stack}}. Vice versa, \code{Raster*} objects can be coerced into a sp type object with \code{as( , )}, e.g. \code{as(x, 'SpatialGridDataFrame')} . 
  
 Common generic methods implemented for these classes include: 
  
@@ -44,11 +44,11 @@ Common generic methods implemented for these classes include:
 \code{[} is implemented for RasterLayer. 
  
 
-The classes described above inherit from the \code{BasicRaster} class which inherits from \code{BasicRaster}. The \code{BasicRaster} class describes the main properties of a raster such as the number of columns and rows, and it contains an object of the \code{link[raster]{Extent-class}} to describe its spatial extent (coordinates). It also holds the 'coordinate reference system' in a slot of class  \code{\link[sp]{CRS-class}} defined in the \code{sp} package. A \code{BasicRaster} cannot contain any raster cell values is therefore seldomly used.
+The classes described above inherit from the \code{BasicRaster} class which inherits from \code{BasicRaster}. The \code{BasicRaster} class describes the main properties of a raster such as the number of columns and rows, and it contains an object of the \code{link[raster]{Extent-class}} to describe its spatial extent (coordinates). It also holds the 'coordinate reference system' in a slot of class  \code{\link[sp]{CRS-class}} defined in the \code{sp} package. A \code{BasicRaster} cannot contain any raster cell values and is therefore seldomly used.
 
-The \code{Raster*} class inherits from \code{BasicRaster}. It is is a virtual class; which means that you cannot create an object of this class. It is used only to define methods for all the classes that inherit from it (\code{RasterLayer}, \code{RasterStack} and \code{RasterBrick}). Another virtual class is the \code{RasterStackBrick} class. It is formed by a class union of \code{RasterStack} and \code{RasterBrick}. You cannot make objects of it, but methods defined for objects of this class as arguments will accept objects of the \code{RasterLayer} and \code{RasterStack} as that argument.
+The \code{Raster*} class inherits from \code{BasicRaster}. It is a virtual class; which means that you cannot create an object of this class. It is used only to define methods for all the classes that inherit from it (\code{RasterLayer}, \code{RasterStack} and \code{RasterBrick}). Another virtual class is the \code{RasterStackBrick} class. It is formed by a class union of \code{RasterStack} and \code{RasterBrick}. You cannot make objects of it, but methods defined for objects of this class as arguments will accept objects of the \code{RasterLayer} and \code{RasterStack} as that argument.
 
-Classes \code{RasterLayer} and \code{RasterBrick} have a slot with an object of class \code{RasterFile} that describes the properties of the file they point to (if they do).  \code{RasterLayer} has a slot with an object of class \code{SingleLayerData}, and the \code{RasterBrick} class has a slot with an object of class \code{MultipleLayerData}. These 'datalayer' classes can contain (some of) the values of the raster cells
+Classes \code{RasterLayer} and \code{RasterBrick} have a slot with an object of class \code{RasterFile} that describes the properties of the file they point to (if they do).  \code{RasterLayer} has a slot with an object of class \code{SingleLayerData}, and the \code{RasterBrick} class has a slot with an object of class \code{MultipleLayerData}. These 'datalayer' classes can contain (some of) the values of the raster cells.
  
 These classes are not further described here because users should not need to directly access these slots. The 'setter' functions such as \code{setValues} should be used instead. Using such 'setter' functions is much safer because a change in one slot should often affect the values in other slots. 
 }
@@ -59,11 +59,11 @@ Objects can be created by calls of the form \code{new("RasterLayer", ...)}, or w
 }
 
 \section{Slots}{
-Slots for Raster* objects
+Slots for RasterLayer and RasterBrick objects
 	\describe{
     \item{\code{title}:}{Character} 
     \item{\code{file}:}{Object of class \code{".RasterFile"} }
-    \item{\code{data}:}{Object of class \code{".SingleLayerData"} or \code{".MulitpleLayerData"}. Not in \code{RasterStack} objects}
+    \item{\code{data}:}{Object of class \code{".SingleLayerData"} or \code{".MultipleLayerData"}}
     \item{\code{history}:}{To record processing history, not yet in use }
     \item{\code{legend}:}{Object of class \code{.RasterLegend}, Default legend. Should store preferences for plotting. Not yet implemented except that it stores the color table of images, if available}
     \item{\code{extent}:}{Object of \code{\link{Extent-class}} }

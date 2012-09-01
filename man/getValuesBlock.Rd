@@ -2,6 +2,7 @@
 
 \alias{getValuesBlock}
 \alias{getValuesBlock,RasterLayer,numeric-method}
+\alias{getValuesBlock,RasterLayerSparse,numeric-method}
 \alias{getValuesBlock,RasterStack,numeric-method}
 \alias{getValuesBlock,RasterBrick,numeric-method}
   

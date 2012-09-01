@@ -100,8 +100,8 @@ setMethod('subs', signature(x='Raster', y='data.frame'),
 			}
 			if (cls[i] == 'factor') {
 				uny <- unique(y[,i])
-				lv <- data.frame(ID=1:length(uny), COUNT=NA, uny)
-				colnames(lv)[3] <- colnames(y)[i]
+				lv <- data.frame(ID=1:length(uny), uny)
+				colnames(lv)[2] <- colnames(y)[i]
 				levs[[i-1]] <- lv
 				hasfactor[i-1] <- TRUE
 				m <- match(y[,i], uny)

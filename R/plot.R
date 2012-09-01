@@ -19,8 +19,13 @@ setMethod("plot", signature(x='Raster', y='ANY'),
 			alpha <- paste(rep(a, each=16), rep(a, times=16), sep='')[alpha]
 			col <- paste(substr(col, 1, 7), alpha, sep="")
 		}
+		
+		nl <- nlayers(x)
+		if (nl == 0) {
+			stop('Raster object has no cell values')
+		}
 
-		if (nlayers(x) == 1) {
+		if (nl == 1) {
 			if (!missing(y)) {
 				if (is.character(y)) {
 					if (is.factor(x)) {
@@ -49,7 +54,7 @@ setMethod("plot", signature(x='Raster', y='ANY'),
 		}
 	
 		if (missing(y)) {
-			y <- 1:nlayers(x)
+			y <- 1:nl
 			if (length(y) > maxnl) {
 				y <- 1:maxnl
 			}
@@ -66,10 +71,13 @@ setMethod("plot", signature(x='Raster', y='ANY'),
 		}
 		
 		if (length(y) == 1) {
-			if (useRaster) {
-				.plotraster2(raster(x, y), col=col, colNA=colNA, maxpixels=maxpixels, main=main[y], ext=ext, interpolate=interpolate, ...) 
+			x <- raster(x, y)
+			if (length(x@legend@colortable) > 0) {
+				.plotCT(x, maxpixels=maxpixels, ext=ext, interpolate=interpolate, main=main, ...)
+			} else if (useRaster) {
+				.plotraster2(x, col=col, colNA=colNA, maxpixels=maxpixels, main=main[y], ext=ext, interpolate=interpolate, ...) 
 			} else {
-				.plotraster(raster(x, y), col=col, maxpixels=maxpixels, main=main[y], ext=ext, interpolate=interpolate, ...) 
+				.plotraster(x, col=col, maxpixels=maxpixels, main=main[y], ext=ext, interpolate=interpolate, ...) 
 			}
 		} else {
 
@@ -101,12 +109,16 @@ setMethod("plot", signature(x='Raster', y='ANY'),
 				}
 				if (rown==nr) xa='s'
 				if (coln==1) ya='s' else ya='n'
-				if (useRaster) {
-					.plotraster2(raster(x, y[i]), col=col, maxpixels=maxpixels, xaxt=xa, yaxt=ya, main=main[y[i]], 
-					 ext=ext, interpolate=interpolate, colNA=colNA, ...) 
+				
+				obj <- raster(x, y[i])
+				if (length(obj@legend@colortable) > 0) {
+					.plotCT(obj, maxpixels=maxpixels, ext=ext, interpolate=interpolate, main=main, ...)
+				} else if (useRaster) {
+					.plotraster2(obj, col=col, maxpixels=maxpixels, xaxt=xa, yaxt=ya, main=main[y[i]], 
+						ext=ext, interpolate=interpolate, colNA=colNA, ...) 
 				} else {
-					.plotraster(raster(x, y[i]), col=col, maxpixels=maxpixels, xaxt=xa, yaxt=ya, main=main[y[i]], 
-					ext=ext, interpolate=interpolate, ...) 
+					.plotraster(obj, col=col, maxpixels=maxpixels, xaxt=xa, yaxt=ya, main=main[y[i]], 
+						ext=ext, interpolate=interpolate, ...) 
 				}
 			}		
 		}

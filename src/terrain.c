@@ -341,11 +341,12 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 		
 		add++;
 		
-	} else if (option[7]) { // flow direction
+	} else if (option[7]) { 
+	  // flow direction
 		addn = add * n;
 
 		double d[8] = {0,0,0,0,0,0,0,0};
-		double p[8] = {1,2,4,16,32,64,128,256}; // pow(2, j)
+		double p[8] = {1,2,4,8,16,32,64,128}; // pow(2, j)
 		double dxy = sqrt(dx * dx + dy * dy);
 		double dmin;
 		GetRNGstate();

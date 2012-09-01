@@ -15,7 +15,7 @@ Disaggregate a RasterLayer to create a new RasterLayer with a higher resolution 
 
 \arguments{
   \item{x}{a Raster object}
-  \item{fact}{integer. amount of disaggregation expressed as number of cells (horizontally and vertically). This can be a single integer or two integers c(x,y), in which case the first one is the horizontal disaggregation factor and y the vertical disaggreation factor. If a single integer values is supplied, cells are disaggregated with the same factor in x and y direction}
+  \item{fact}{integer. amount of disaggregation expressed as number of cells (horizontally and vertically). This can be a single integer or two integers c(x,y), in which case the first one is the horizontal disaggregation factor and y the vertical disaggreation factor. If a single integer value is supplied, cells are disaggregated with the same factor in x and y direction}
   \item{method}{Character. '' or 'bilinear'. If 'bilinear', values are locally interpolated (using the \code{\link[raster]{resample}} function}
   \item{filename}{Character. Output filename (optional)}
   \item{...}{Additional arguments as for \code{\link{writeRaster}}}

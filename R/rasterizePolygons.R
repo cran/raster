@@ -16,7 +16,7 @@
 		putvals <- data.frame(rep(NA, n))
 		
 	} else if (!is.numeric(field) ) {
-		if (! .rasterHasSlot(obj, 'data')) {
+		if (! .hasSlot(obj, 'data')) {
 			stop("field name is not numeric, and vector object has no data.frame")
 		}
 		field <- which(colnames(obj@data) == field)[1]

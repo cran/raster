@@ -14,10 +14,10 @@ rasterFromXYZ(xyz, res=c(NA,NA), crs=NA, digits=5)
 }
 
 \arguments{
-\item{xyz}{Matrix or data.frame with three colomns: x and y coordinates, and value z}
-\item{res}{The x and y cell resolutin (optional)}
+\item{xyz}{Matrix or data.frame with three columns: x and y coordinates, and value z}
+\item{res}{The x and y cell resolution (optional)}
 \item{crs}{A CRS object or a character string describing a projection and datum in PROJ.4 format}
-\item{digits}{Precision for detecting wether points are on a regular grid (i.e., a low number of digits is a low precision)}
+\item{digits}{Precision for detecting whether points are on a regular grid (i.e., a low number of digits is a low precision)}
 }
 
 \value{

@@ -7,7 +7,7 @@
 
 \description{
 
-use \code{round(x, digits=0)} to round the coordinates of an Extent object to the number of digits specified. This can be useful when dealing with a small inprecision in the data (e.g. 179.9999 instead of 180). \code{floor} and \code{ceiling} move the coordiantes to the outer or inner whole integer numbers.
+use \code{round(x, digits=0)} to round the coordinates of an Extent object to the number of digits specified. This can be useful when dealing with a small imprecision in the data (e.g. 179.9999 instead of 180). \code{floor} and \code{ceiling} move the coordiantes to the outer or inner whole integer numbers.
 
 It is also possible to use Arithmetic functions with Extent objects (but these work perhaps unexpectedly!)
 

@@ -10,16 +10,30 @@ setGeneric("modal", function(x, ...)
 	
 
 setMethod('modal', signature(x='ANY'), 
-function(x, ..., ties='random', na.rm=FALSE) {
+function(x, ..., ties='random', na.rm=FALSE, freq=FALSE) {
 #partly based on http://wiki.r-project.org/rwiki/doku.php?id=tips:stats-basic:modalvalue
+	x <- c(x, ...)
+	z <- x[!is.na(x)]
+	
+	if (freq) {
+	
+		if (length(z) == 0) { 
+			return(NA) 
+		} else if (!na.rm & length(z) < length(x)) { 
+			return(NA)	 
+		} else if (length(z) == 1) {
+			return(1)
+		} else {
+			return(max( table(z) ))
+		}
+	}  # else ....
 	
 	if (!ties %in% c('lowest', 'highest', 'NA', 'random')) {
 		stop("the value of 'ties' should be 'lowest', 'highest', 'NA', or 'random'")
 	}
 	
-	x <- c(x, ...)
-	z <- x[!is.na(x)]
-	if (length(z) == 0) { return(NA) 
+	if (length(z) == 0) { 
+		return(NA) 
 	} else if (!na.rm & length(z) < length(x)) { 
 		return(NA)	 
 	} else if (length(z) == 1) {
