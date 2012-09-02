@@ -8,23 +8,24 @@
 \title{Spatial model predictions}
 
 \description{
-Make a Raster* object with predictions based on a a fitted model object. The first argument is a Raster* object with the independent variables. The \code{\link{names}} in the RasterStack should exactely match those expected by the model. This will be the case if the same Raster* object was used (via \code{extract}) to obtain the values to fit the model (see the example). Any type of model (e.g. glm. gam, randomForest) for which a predict method has been implemented (or can be implemented) can be used. 
+Make a Raster object with predictions from a fitted model object (for example, obtained with \code{lm}, \code{glm}). The first argument is a Raster object with the independent (predictor) variables. The \code{\link{names}} in the Raster object should exactly match those expected by the model. This will be the case if the same Raster object was used (via \code{extract}) to obtain the values to fit the model (see the example). Any type of model (e.g. glm, gam, randomForest) for which a predict method has been implemented (or can be implemented) can be used. 
 }
 
 \usage{
-\S4method{predict}{Raster}(object, model, filename="", fun=predict, ext=NULL, const=NULL, index=1, na.rm=TRUE, format, datatype, overwrite=FALSE, progress='', ...)
+\S4method{predict}{Raster}(object, model, filename="", fun=predict, ext=NULL, const=NULL, 
+          index=1, na.rm=TRUE, format, datatype, overwrite=FALSE, progress='', ...)
 }
 
 
 \arguments{
-  \item{object}{Raster* object. Typcially a multi-layer type (RasterStack or RasterBrick)}
+  \item{object}{Raster* object. Typicially a multi-layer type (RasterStack or RasterBrick)}
   \item{model}{A fitted model of any class that has a 'predict' method (or for which you can supply a similar method as \code{fun} argument. E.g. glm, gam, or randomForest }
   \item{filename}{Optional output filename }
   \item{fun}{Function. Default value is 'predict', but can be replaced with e.g. predict.se (depending on the type of model), or your own custom function.}
   \item{ext}{An Extent object to limit the prediction to a sub-region of \code{x} }
-  \item{const}{data.frame. Can be used to add a constant for which there is no Raster object for model predictions. Particulalry useful if the constant is a character-like factor value for which it is currently not possible to make a RasterLayer }
+  \item{const}{data.frame. Can be used to add a constant for which there is no Raster object for model predictions. Particularly useful if the constant is a character-like factor value for which it is currently not possible to make a RasterLayer }
   \item{index}{Integer. To select the column if predict.'model' returns a matrix with multiple columns }
-  \item{na.rm}{Logical. Remove cells with \code{NA} values in the predictors before solving the model (and return a \code{NA} value for those cells). This option prevents errors with models that cannot handle \code{NA} values. In most other cases this will not affect the output. An exception is when predicting with a boosted regression trees model because these return predicted value even if some (or all!) variables are \code{NA} }
+  \item{na.rm}{Logical. Remove cells with \code{NA} values in the predictors before solving the model (and return a \code{NA} value for those cells). This option prevents errors with models that cannot handle \code{NA} values. In most other cases this will not affect the output. An exception is when predicting with a boosted regression trees model because these return predicted values even if some (or all!) variables are \code{NA} }
  \item{format}{Character. Output file type. See \link[raster]{writeRaster} (optional) }
  \item{datatype}{Character. Output data type. See \link[raster]{dataType} (optional) }
  \item{overwrite}{Logical. If TRUE, "filename" will be overwritten if it exists }
@@ -62,9 +63,12 @@ par(mfrow=c(1,1))
 }
 
 #get presence and pseudo-absence points
-p <- matrix(c(48, 48, 48, 53, 50, 46, 54, 70, 84, 85, 74, 84, 95, 85, 66, 42, 26, 4, 19, 17, 7, 14, 26, 29, 39, 45, 51, 56, 46, 38, 31, 22, 34, 60, 70, 73, 63, 46, 43, 28), ncol=2)
+p <- matrix(c(48, 48, 48, 53, 50, 46, 54, 70, 84, 85, 74, 84, 95, 85, 
+   66, 42, 26, 4, 19, 17, 7, 14, 26, 29, 39, 45, 51, 56, 46, 38, 31, 
+   22, 34, 60, 70, 73, 63, 46, 43, 28), ncol=2)
 # 
-a <- cbind(runif(250)*(xmax(logo)-xmin(logo))+xmin(logo), runif(250)*(ymax(logo)-ymin(logo))+ymin(logo))
+a <- cbind(runif(250)*(xmax(logo)-xmin(logo))+xmin(logo), 
+           runif(250)*(ymax(logo)-ymin(logo))+ymin(logo))
 
 #extract values for points
 xy <- rbind(cbind(1, p), cbind(0, a))
@@ -107,7 +111,8 @@ plot(x)
 require(randomForest)
 rfmod <- randomForest(pa ~., data=v)
 
-## note the additional argument "type='response'" that is passed to predict.randomForest
+## note the additional argument "type='response'" that is 
+## passed to predict.randomForest
 r3 <- predict(logo, rfmod, type='response', progress='window')
 
 ## get a RasterBrick with class membership probabilities
@@ -117,7 +122,6 @@ r4 <- predict(logo, rfmod2, type='prob', index=1:2)
 spplot(r4)
 
 }
-
 }
 
 \keyword{methods}

@@ -5,13 +5,13 @@
 
 
 if (!isGeneric('setValues')) {
-	setGeneric('setValues', function(x, values, layer=-1)
+	setGeneric('setValues', function(x, values, ...)
 		standardGeneric('setValues')) 
 	}	
 
 	
 setMethod('setValues', signature(x='RasterLayer'), 
-function(x, values) {
+function(x, values, ...) {
 
 	if (is.matrix(values)) { 
 		if (ncol(values) == x@ncols & nrow(values) == x@nrows) {
@@ -51,7 +51,7 @@ function(x, values) {
 	
 
 setMethod('setValues', signature(x='RasterStack'), 
-	function(x, values, layer=-1) {
+	function(x, values, layer=-1, ...) {
 		if (layer > 0) {
 			stopifnot(layer <= nlayers(x))
 			x[[layer]] <- setValues(x[[layer]], values)
@@ -67,7 +67,7 @@ setMethod('setValues', signature(x='RasterStack'),
 
 	
 setMethod('setValues', signature(x='RasterBrick'), 
-	function(x, values, layer=-1) {
+	function(x, values, layer=-1, ...) {
 	
 	layer <- layer[1]
 	
@@ -190,5 +190,36 @@ setMethod('setValues', signature(x='RasterBrick'),
 	}
 	return(x)
 }
+)
+
+
+
+setMethod('setValues', signature(x='RasterLayerSparse'), 
+
+	function(x, values, index=NULL, ...) {
+	
+		stopifnot(is.vector(values)) 
+		if (!(is.numeric(values) | is.integer(values) | is.logical(values))) {
+			stop('values must be numeric, integer or logical.')	
+		}		
+		if (is.null(index)) {
+			if (! hasValues(x)) {
+				stop('you must supply an index argument if the RasterLayerSparse does not have values')
+			}
+			stopifnot(length(x@index) == length(values)) 
+		} else {
+			stopifnot(is.vector(index))
+			stopifnot(length(index) == length(values)) 
+			stopifnot(all(index > 0 | index <= ncell(x)))
+			x@index <- index
+		}
+		x@data@inmemory <- TRUE
+		x@data@fromdisk <- FALSE
+		x@file@name <- ""
+		x@file@driver <- ""
+		x@data@values <- values
+		x <- setMinMax(x)
+		return(x)
+	}
 )
 

@@ -10,7 +10,7 @@
 \title{Is this longitude/latitude data?}
 
 \description{
- Test whether a Raster* object has the a longitude/latitude coordinate reference system.
+ Test whether a Raster* object has a longitude/latitude coordinate reference system.
 }
 
 \usage{

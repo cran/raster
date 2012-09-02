@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date : December 2010
 # Version 0.9
 # Licence GPL v3
@@ -270,6 +270,11 @@ function(object, v, cell, band) {
 
 
 .updateNCDF <- function(object, v, cell, band) {
+		
+		if (isTRUE(getOption('rasterNCDF4'))) {
+			stop('update is currently only supported with the ncdf library, not with the ncdf4 library')
+		}
+
 		nc <- open.ncdf(object@file@name, write=TRUE)
 		on.exit( close.ncdf(nc) )
 		zvar <- object@data@zvar

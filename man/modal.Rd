@@ -11,16 +11,17 @@ Compute the mode for a vector of numbers, or across raster layers. The mode, or 
 }
 
 \usage{
-\S4method{modal}{ANY}(x, ..., ties='random', na.rm = FALSE)
+\S4method{modal}{ANY}(x, ..., ties='random', na.rm=FALSE, freq=FALSE)
 
-\S4method{modal}{Raster}(x, ..., ties='random', na.rm = FALSE)
+\S4method{modal}{Raster}(x, ..., ties='random', na.rm=FALSE, freq=FALSE)
 }
 
 \arguments{
-  \item{x}{A vector of numbers (typically integers for modal), or a Raster* object}
+  \item{x}{vector of numbers (typically integers for modal), or a Raster* object}
   \item{...}{additional (vectors of) numbers, or additional Raster* objects}
   \item{ties}{character. Indicates how to treat ties. Either 'random', 'lowest', 'highest', or 'NA'}
-  \item{na.rm}{Remove (ignore) NA values}
+  \item{na.rm}{remove (ignore) NA values}
+  \item{freq}{return the frequency of the modal value, instead of the modal value}
 }
 
 \value{

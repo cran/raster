@@ -307,7 +307,7 @@ With {\bf overlay} you can combine multiple Raster objects (e.g. multiply them).
 
 
 \subsection{Reclassify}
-You can use {\bf cut} or {\bf reclass} to replace ranges of values with single values, or {\bf subs} to substitute (replace) single values with other values. 
+You can use {\bf cut} or {\bf reclassify} to replace ranges of values with single values, or {\bf subs} to substitute (replace) single values with other values. 
 
 <<raster-6>>=
 r <- raster(ncol=5, nrow=1)
@@ -323,7 +323,7 @@ v = u==s
 as.matrix(v)
 w <- cover(t, r)
 as.matrix(w)
-x <- reclass(w, c(0,2,1,  2,5,2, 4,10,3))
+x <- reclassify(w, c(0,2,1,  2,5,2, 4,10,3))
 as.matrix(x)
 y <- subs(x, data.frame(id=c(2,3), v=c(40,50)))
 as.matrix(y)

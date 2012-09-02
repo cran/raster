@@ -57,8 +57,8 @@
 	rows <- na.omit(unique(colrow[order(colrow[,2]), 2]))
 	for (i in 1:length(rows)) {
 		v <- .readRowsAscii(raster, rows[i], 1, 1, raster@ncols)
-		thisrow <- subset(colrow, colrow[,2] == rows[i])
-		colrow[colrow[,2]==rows[i],4] <- v[thisrow[,1]]
+		thisrow <- colrow[colrow[,2] == rows[i], , drop=FALSE]
+		colrow[colrow[,2] == rows[i],4] <- v[thisrow[,1]]
 	}
 	return(colrow[,4]) 
 }

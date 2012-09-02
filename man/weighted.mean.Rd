@@ -9,7 +9,7 @@
 
 
 \description{
-Comptues the weighted mean for each cell of a number or raster layers. The weights can be spatially variable or not.
+Computes the weighted mean for each cell of a number or raster layers. The weights can be spatially variable or not.
 }
 
 
@@ -25,7 +25,7 @@ Comptues the weighted mean for each cell of a number or raster layers. The weigh
 
   \item{w}{A vector of weights (one number for each layer), or for spatially variable weights, a RasterStack or RasterBrick with weights (should have the same extent, resolution and number of layers as x)}
 
-  \item{na.rm}{Logial. Should missing values be removed?}
+  \item{na.rm}{Logical. Should missing values be removed?}
 
   \item{filename}{Character. Output filename (optional)}
   

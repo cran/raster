@@ -179,12 +179,14 @@
 			#Bsd[i] <- statsi[4]
 		}
 		if (RAT) {
-			RATi <- .Call("RGDAL_GetRAT", rstband, PACKAGE = "rgdal")
+			RATi <- NULL
+			try( RATi <- .Call("RGDAL_GetRAT", rstband, PACKAGE = "rgdal") )
 			if (!is.null(RATi)) {
 				RATlist[[i]] <- RATi
 			}
 
-			CATi <- .Call("RGDAL_GetCategoryNames", rstband, PACKAGE = "rgdal")
+			CATi <- NULL
+			try( CATi <- .Call("RGDAL_GetCategoryNames", rstband, PACKAGE = "rgdal") )
 			if (!is.null(CATi)) {
 				CATlist[[i]] <- CATi
 			}

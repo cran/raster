@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  June 2008
 # Version 0.9
 # Licence GPL v3
@@ -11,7 +11,7 @@ if (!isGeneric("getValues")) {
 setMethod("getValues", signature(x='RasterLayer', row='missing', nrows='missing'), 
 function(x, format='') {
 	
-	xx <- c(x@ncols, x@nrows)
+	cr <- c(x@ncols, x@nrows)
 #	f <- is.factor(x)
 #	if (f) {
 #		labs <- labels(x)
@@ -26,7 +26,7 @@ function(x, format='') {
 	}
 
 	if (format=='matrix') { 
-		x <- matrix(x, ncol=xx[1], nrow=xx[2], byrow=TRUE) 
+		return ( matrix(x, ncol=cr[1], nrow=cr[2], byrow=TRUE) )
 #	} else if (f) {
 #		x <- factor(x)
 		# set labels?
@@ -61,6 +61,32 @@ function(x) {
 		m[,i] <- getValues(x@layers[[i]])
 	}
 	m
+}
+)
+
+
+setMethod("getValues", signature(x='RasterLayerSparse', row='missing', nrows='missing'), 
+function(x, format='') {
+	
+	cr <- c(x@ncols, x@nrows)
+	
+	if ( inMemory(x) ) {
+		i <- x@index
+		v <- x@data@values
+		x <- rep(NA, ncell(x))
+		x[i] <- v
+	} else if ( fromDisk(x) ) {
+		# not yet implemented
+		### x <- .readRasterLayerValues(x, 1, x@nrows)
+	} else {
+		x <- rep(NA, ncell(x))
+	}
+
+	if (format=='matrix') { 
+		x <- matrix(x, ncol=cr[1], nrow=cr[2], byrow=TRUE) 
+	}	
+
+	return( x ) 
 }
 )
 

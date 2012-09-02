@@ -12,7 +12,7 @@ if (!isGeneric("spplot")) {
 
 setMethod("spplot", signature(obj='Raster'), 
 	function(obj, ..., maxpixels=50000, as.table=TRUE, zlim)  {
-		obj <- sampleRegular(obj, maxpixels, asRaster=T, useGDAL=TRUE)
+		obj <- sampleRegular(obj, maxpixels, asRaster=TRUE, useGDAL=TRUE)
 		if (!missing(zlim)) {
 			if (length(zlim) != 2) {
 				warning('zlim should be a vector of two elements')

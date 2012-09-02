@@ -8,7 +8,7 @@
 \title{Use spplot to plot a Raster* object}
 
 \description{
-A wrapper functions around \link[sp]{spplot} (sp package). With spplot it is easy to map several layers with a single legend for all maps. ssplot is itself a wrapper around the \link[lattice]{levelplot} function in the lattice package, and see the help for these functions for additional options.
+A wrapper function around \link[sp]{spplot} (sp package). With spplot it is easy to map several layers with a single legend for all maps. ssplot is itself a wrapper around the \link[lattice]{levelplot} function in the lattice package, and see the help for these functions for additional options.
 
 One of the advantages of these wrapper functions is the additional \code{maxpixels} argument to sample large Raster objects for faster drawing.
 }

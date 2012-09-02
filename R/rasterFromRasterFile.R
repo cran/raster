@@ -97,7 +97,7 @@
 	}
 	
 	if (isTRUE(any(isCat))) {
-		x@data@isfactor = isCat
+		x@data@isfactor <- isCat
 	
 	# currently only for a single layer!
 	

@@ -11,7 +11,8 @@ Take a random sample from the cell values of a Raster* object (without replaceme
 }
 
 \usage{
-\S4method{sampleRandom}{Raster}(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=FALSE, asRaster=FALSE, ...)
+\S4method{sampleRandom}{Raster}(x, size, na.rm=TRUE, ext=NULL, 
+    cells=FALSE, rowcol=FALSE, xy=FALSE, sp=FALSE, asRaster=FALSE, ...)
 }
 
 \arguments{

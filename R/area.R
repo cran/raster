@@ -4,6 +4,22 @@
 # Licence GPL v3
 
 
+
+.cellArea <- function(x, r=6378137) {
+# currently not used
+	dlonR2 <- xres(x) * (pi / 180) * r^2
+	lat <- yFromRow(x, 1:nrow(x))
+	lat <- cbind(lat, lat)
+
+	dlat <- yres(x) 
+	lat[,1] <- lat[,1] + 0.5 * dlat
+	lat[,2] <- lat[,2] - 0.5 * dlat
+	lat <- sin(lat * (pi / 180) )
+	# for one column:
+	abs(lat[,2] - lat[,1]) * dlonR2
+}
+
+
 if (!isGeneric("area")) {
 	setGeneric("area", function(x, ...)
 		standardGeneric("area"))

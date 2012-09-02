@@ -73,7 +73,7 @@ function(x, filename, format, ...) {
 
 
 setMethod('writeRaster', signature(x='RasterStackBrick', filename='character'), 
-function(x, filename, format, ...) {
+function(x, filename, format, bylayer=FALSE, suffix='numbers', ...) {
 
 	stopifnot(hasValues(x))
 	filename <- trim(filename)
@@ -81,6 +81,24 @@ function(x, filename, format, ...) {
 	filename <- .fullFilename(filename, expand=TRUE)
 	filetype <- .filetype(format, filename=filename)
 	filename <- .getExtension(filename, filetype)
+	
+	if (bylayer) {
+		nl <- nlayers(x)
+		ext <- extension(filename)
+		fn <- extension(filename, '')
+		if (suffix[1] == 'numbers') {
+			fn <- paste(fn, '_', 1:nl, ext, sep='')
+		} else {
+			fn <- paste(fn, '_', names(x), ext, sep='')
+		}
+		if (inherits(x, 'RasterBrick')) {
+			x <- stack(x)
+		}
+		layers <- lapply(1:nl, function(i) writeRaster(x[[i]], filename=fn[i], format=filetype, ...))	
+		
+		return(stack(layers))
+	}
+	
 
 	if (filetype == 'KML') {
 		KML(x, filename, ...) 
@@ -136,7 +154,6 @@ function(x, filename, format, ...) {
 		
 		b <- brick(x, values=FALSE)
 		if (filetype=='CDF') {
-			b@zname  <- x@zname
 			b@z  <- x@z
 		}
 

@@ -3,10 +3,6 @@
 # Version 1.0
 # Licence GPL v3
 
-.rasterHasSlot <- function(object, slot) {
-# for older versions of the methods package that does not have the .hasSlot function
-	isTRUE(try(.hasSlot(object, slot), silent=TRUE))
-}
 
 
 if ( !isGeneric("raster") ) {
@@ -102,8 +98,7 @@ setMethod('raster', signature(x='character'),
 
 setMethod('raster', signature(x='BasicRaster'), 
 	function(x) {
-		e <- x@extent
-		r <- raster(xmn=e@xmin, xmx=e@xmax, ymn=e@ymin, ymx=e@ymax, nrows=x@nrows, ncols=x@ncols, crs=x@crs)
+		r <- raster(x@extent, nrows=x@nrows, ncols=x@ncols, crs=x@crs)
 		if (rotated(x)) {
 			r@rotated <- TRUE
 			r@rotation <- x@rotation
@@ -114,15 +109,25 @@ setMethod('raster', signature(x='BasicRaster'),
 
 setMethod('raster', signature(x='RasterLayer'), 
 	function(x) {
-		e <- x@extent
-		r <- raster(xmn=e@xmin, xmx=e@xmax, ymn=e@ymin, ymx=e@ymax, nrows=x@nrows, ncols=x@ncols, crs=x@crs)
-
+		r <- raster(x@extent, nrows=x@nrows, ncols=x@ncols, crs=x@crs)
 		r@rotated <- x@rotated
 		r@rotation <- x@rotation
-		
 		r@file@blockrows <- x@file@blockrows
 		r@file@blockcols <- x@file@blockcols
 		return(r)
+	}
+)
+
+setMethod('raster', signature(x='RasterLayerSparse'), 
+	function(x) {
+		r <- raster(x@extent, nrows=x@nrows, ncols=x@ncols, crs=x@crs)
+		if (length(na.omit(x@data@values)) > 0) {
+			v <- rep(NA, ncell(r))
+			v[x@index] <- x@data@values
+			setValues(r, v)
+		} else {
+			r
+		}
 	}
 )
 
@@ -163,7 +168,7 @@ setMethod('raster', signature(x='RasterStack'),
 
 setMethod('raster', signature(x='RasterBrick'), 
 	function(x, layer=0){
-		newindex = -1
+		newindex <- -1
 		if (nlayers(x) > 0) {
 			if (!is.numeric(layer)) {
 				newindex <- which(names(x) == layer)[1]
@@ -184,10 +189,8 @@ setMethod('raster', signature(x='RasterBrick'),
 				r <- raster(extent(x), nrows=nrow(x), ncols=ncol(x), crs=projection(x))	
 				r@file <- x@file
 
-				if (.rasterHasSlot(x@file, 'blockrows')) {  # old objects may not have this slot
-					r@file@blockrows <- x@file@blockrows
-					r@file@blockcols <- x@file@blockcols
-				}
+				r@file@blockrows <- x@file@blockrows
+				r@file@blockcols <- x@file@blockcols
 				
 				r@data@offset <- x@data@offset
 				r@data@gain <- x@data@gain
@@ -198,8 +201,8 @@ setMethod('raster', signature(x='RasterBrick'),
 				r@data@band <- dindex
 				r@data@min <- x@data@min[dindex]
 				r@data@max <- x@data@max[dindex]
-				ln <- x@layernames[dindex]
-				if (! is.na(ln) ) { r@layernames <- ln }
+				ln <- x@data@names[dindex]
+				if (! is.na(ln) ) { r@data@names <- ln }
 				zv <- unlist(x@z[1])[dindex]
 				if (! is.null(zv) ) { 
 					r@z <- list(zv)
@@ -207,6 +210,8 @@ setMethod('raster', signature(x='RasterBrick'),
 				if ( x@data@inmemory ) {
 					r@data@values <- x@data@values[,dindex]
 				}
+				
+				# ncdf files
 				zvar <- try(slot(x@data, 'zvar'), silent=TRUE)
 				if (class(zvar) != 'try-error') {
 					attr(r@data, "zvar") <- zvar
@@ -224,11 +229,14 @@ setMethod('raster', signature(x='RasterBrick'),
 				if ( inMemory(x) ) {
 					if ( dindex != layer ) { warning(paste("layer was changed to", dindex)) }
 					r <- setValues(r, x@data@values[,dindex])
-					r@layernames <- names(x)[dindex]
+					r@data@names <- names(x)[dindex]
 				}
 			}
-			r@data@isfactor <- x@data@isfactor[dindex]
-			r@data@attributes <- x@data@attributes[dindex]
+			isf <- is.factor(r)[dindex]
+			if (isTRUE(isf)) {
+				r@data@isfactor <- TRUE
+				r@data@attributes <- levels(x)[[dindex]]
+			}
 			
 		} else {
 			r <- raster(extent(x), nrows=nrow(x), ncols=ncol(x), crs=projection(x))	

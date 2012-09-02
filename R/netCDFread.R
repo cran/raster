@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date: June 2010
 # Version 1.0
 # Licence GPL v3
@@ -10,30 +10,53 @@
 		row <- x@nrows - row - nrows + 2 
 	}
 	
-	nc <- open.ncdf(x@file@name)
-	on.exit( close.ncdf(nc) )
+	if (isTRUE(getOption('rasterNCDF4'))) {
+		nc <- ncdf4::nc_open(x@file@name)
+		on.exit( ncdf4::nc_close(nc) )		
+		ncdf4 <- TRUE
+	
+	} else {
+		nc <- open.ncdf(x@file@name)
+		on.exit( close.ncdf(nc) )
+		ncdf4 <- FALSE
+	}
 	
 	zvar <- x@data@zvar
 		
 	if (nc$var[[zvar]]$ndims == 2) {
 		start <- c(col, row)
 		count <- c(ncols, nrows)
-		d <- get.var.ncdf( nc,  varid=zvar,  start=start, count=count )
-
+		if (ncdf4) {
+			d <- ncdf4::ncvar_get( nc, varid=zvar,  start=start, count=count )		
+		} else {
+			d <- get.var.ncdf( nc,  varid=zvar,  start=start, count=count )
+		}
 	} else if (nc$var[[zvar]]$ndims == 3) {
 		start <- c(col, row, x@data@band)
 		count <- c(ncols, nrows, 1)
-		d <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
+		if (ncdf4) {
+			d <- ncdf4::ncvar_get(nc, varid=zvar, start=start, count=count)
+		} else {
+			d <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
+		}
 		
 	} else {
 		if (x@data@dim3 == 4) {
 			start <- c(col, row, x@data@level, x@data@band)
 			count <- c(ncols, nrows, 1, 1)
-			d <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
+			if (ncdf4) {
+				d <- ncdf4::ncvar_get(nc, varid=zvar, start=start, count=count)
+			} else {
+				d <- get.var.ncdf(nc, varid=zvar, start=start, count=count)			
+			}
 		} else {
 			start <- c(col, row, x@data@band, x@data@level)
 			count <- c(ncols, nrows, 1, 1)
-			d <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
+			if (ncdf4) {
+				d <- ncdf4::ncvar_get(nc, varid=zvar, start=start, count=count)
+			} else {
+				d <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
+			}
 		}
 	}
 	
@@ -85,11 +108,18 @@
 	stopifnot(nrows > 0)
 	stopifnot(ncols > 0)
 
+	if (getOption('rasterNCDF4')) {
+		nc <- ncdf4::nc_open(x@file@name)
+		on.exit( ncdf4::nc_close(nc) )		
+		ncdf4 <- TRUE
 	
-	nc <- open.ncdf(x@file@name)
-	on.exit( close.ncdf(nc) )
-
-	zvar = x@data@zvar
+	} else {
+		nc <- open.ncdf(x@file@name)
+		on.exit( close.ncdf(nc) )
+		ncdf4 <- FALSE
+	}
+	
+	zvar <- x@data@zvar
 	
 	if (nc$var[[zvar]]$ndims == 4) {
 		if (x@data@dim3 == 4) {
@@ -103,7 +133,12 @@
 		start <- c(col, row, layer)
 		count <- c(ncols, nrows,  nn)
 	}
-	d <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
+	
+	if (ncdf4) {
+		d <- ncdf4::ncvar_get(nc, varid=zvar, start=start, count=count)	
+	} else {
+		d <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
+	}
 	
 
 	#if (!is.na(x@file@nodatavalue)) { 	d[d==x@file@nodatavalue] <- NA	}

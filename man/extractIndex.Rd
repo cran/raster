@@ -20,7 +20,7 @@
 
 \description{
 
-These are shorthand methods that call other methods that should normally be used, such as \code{\link{getValues}, \link{extract}, \link{crop}}. 
+These are shorthand methods that call other methods that should normally be used, such as \code{\link{getValues}}, \code{\link{extract}}, \code{\link{crop}}. 
 
 \code{object[i]} can be used to access values of a Raster* object, using cell numbers. You can also use row and column numbers as index, using \code{object[i,j]} or \code{object[i,]} or \code{object[,j]}. In addition you can supply an Extent, SpatialPolygons, SpatialLines or SpatialPoints object. 
 

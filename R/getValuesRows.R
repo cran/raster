@@ -88,3 +88,47 @@ function(x, row, nrows) {
 	res
 }
 )
+
+
+
+setMethod('getValues', signature(x='RasterLayerSparse', row='numeric', nrows='missing'), 
+	function(x, row, nrows) {
+		getValues(x, row=row, nrows=1)
+	}
+)
+
+
+setMethod('getValues', signature(x='RasterLayerSparse', row='numeric', nrows='numeric'), 
+function(x, row, nrows, format='') {
+	row <- round(row)
+	nrows <- round(nrows)
+	stopifnot(validRow(x, row))
+	stopifnot(nrows > 0)
+	row <- min(x@nrows, max(1, row))
+	endrow <- max(min(x@nrows, row+nrows-1), row)
+	nrows <- endrow - row + 1
+	
+	if (inMemory(x)){
+		i <- which(x@index >= startcell & x@index <= lastcell)
+		if (length(i) > 0) {
+			v <- cellFromRowColCombine(x, row:lastrow, col:lastcol)
+			m <- match(i, v)
+			v[] <- NA
+			v[m] <- x@data@values[i]	
+		} else {
+			v <- rep(NA, nrows * x@ncols) 
+		}
+	} else if ( fromDisk(x) ) {
+		# not yet implemented
+		## v <- .readRasterLayerValues(x, row, nrows) 
+	} else {
+		v <- rep(NA, nrows * x@ncols) 
+	}
+	if (format=='matrix') { 
+		v <- matrix(v, nrow=nrows, byrow=TRUE) 
+		rownames(v) <- row:(row+nrows-1)
+		colnames(v) <- 1:ncol(v)
+	} 
+	return(v)
+}
+)

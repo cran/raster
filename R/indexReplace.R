@@ -63,7 +63,7 @@ setReplaceMethod("[", c("RasterLayer","missing","missing"),
 	}
 
 	if (allLayers) {
-		i <- subset(i, i >= 1 & i <= ncell(x) )
+		i <- i[ i > 0 & i <= ncell(x) ]
 		nl <- nlayers(x)
 		if (nl > 1) {
 			add <- ncell(x) * 0:(nl-1)

@@ -1,4 +1,4 @@
-# Authors: Robert J. Hijmans, r.hijmans@gmail.com 
+# Authors: Robert J. Hijmans
 # Date :  August 2009
 # Version 1.0
 # Licence GPL v3
@@ -10,9 +10,8 @@ if (!isGeneric('subset')) {
 		standardGeneric('subset')) 
 }
 
-
 setMethod('subset', signature(x='RasterStack'), 
-function(x, subset, drop=TRUE, ...) {
+function(x, subset, drop=TRUE, filename='', ...) {
 	if (is.character(subset)) {
 		i <- na.omit(match(subset, names(x)))
 		if (length(i)==0) {
@@ -30,23 +29,26 @@ function(x, subset, drop=TRUE, ...) {
 		x <- x@layers[[subset]]
 	} else {
 		x@layers <- x@layers[subset]
-		x@layernames <- x@layernames[subset]
 		if (length(x@z)>0) {
 			x@z <- lapply(x@z, function(x) x[subset])
 		}
+	}
+	if (filename != '') {
+		x <- writeRaster(x, filename, ...)
 	}
 	return(x)	
 } )
 
 
-setMethod('subset', signature(x='RasterLayer'),
-function(x, subset, ...) {
-	return(x)
-}
-)
+setMethod('subset', signature(x='Raster'),
+function(x, subset, drop=TRUE, filename='', ...) {
 
-setMethod('subset', signature(x='RasterBrick'),
-function(x, subset, drop=TRUE, ...) {
+	if (inherits(x, 'RasterLayer')) {
+		if (filename != '') {
+			x <- writeRaster(x, filename, ...)
+		}
+		return(x)
+	}
 
 	if (is.character(subset)) {
 		i <- na.omit(match(subset, names(x)))
@@ -68,22 +70,28 @@ function(x, subset, drop=TRUE, ...) {
 	}
 	
 	varname <- attr(x@data, "zvar")
-	if (is.null(varname)) { varname <- "" }
+	if (is.null(varname)) { 
+		varname <- "" 
+	}
 
+	nav <- NAvalue(x)
 	
 	if (fromDisk(x)) {
 		if (drop & length(subset)==1) {
-			return( raster(filename(x), band=subset, varname=varname) )
+			x <- raster(filename(x), band=subset, varname=varname)
 		} else {
-			return( stack(filename(x), bands=subset, varname=varname) )
+			x <- stack(filename(x), bands=subset, varname=varname)
 		}
+		NAvalue(x) <- nav
 	} else {
 		if (drop & length(subset)==1) {
 			if (hasValues(x)) {
-				return(raster(x, subset))
+				x <- raster(x, subset)
 			} else {
-				return(raster(x))			
+				x <- raster(x)
 			}
+			NAvalue(x) <- nav
+			return(x)	
 		}
 	
 		if (hasValues(x)) {
@@ -91,13 +99,16 @@ function(x, subset, drop=TRUE, ...) {
 			x@data@min <- x@data@min[subset]
 			x@data@max <- x@data@max[subset]
 		}	
-		x@layernames <- x@layernames[subset]
+		x@data@names <- x@data@names[subset]
 		if (length(x@z) > 0) {
 			x@z[[1]] <- x@z[[1]][subset]
 		}
 		x@data@nlayers <- as.integer(length(subset))
-		return(x)
 	}
+	if (filename != '') {
+		x <- writeRaster(x, filename, ...)
+	}
+	x
 } )
 
 

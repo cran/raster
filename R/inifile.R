@@ -53,7 +53,7 @@ readIniFile <- function(filename, token='=', commenttoken=';', aslist=FALSE, cas
 	ini <- lapply(Lines, strsp) 
 	
  	ini <- matrix(unlist(ini), ncol=2, byrow=TRUE)
-	ini <- subset(ini, ini[,1] != "")
+	ini <- ini[ ini[,1] != "", , drop=FALSE]
 
 	ns <- length(which(is.na(ini[,2])))
 	if (ns > 0) {

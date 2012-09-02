@@ -25,7 +25,7 @@ layerStats(x, stat, w, asSample=TRUE, na.rm=FALSE, ...)
 
   \item{asSample}{Logical. If \code{TRUE}, the statistic for a sample (denominator is \code{n-1}) is computed, rather than for the population (denominator is \code{n})}
     
-  \item{na.rm}{Logial. Should missing values be removed?}
+  \item{na.rm}{Logical. Should missing values be removed?}
   
   \item{...}{Additional arguments (none implemetned)} 
 }

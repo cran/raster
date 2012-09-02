@@ -9,34 +9,27 @@
 
 \docType{methods}
 
-
 \title{Dimensions of a Raster* object}
 
 \description{
-Get (or set) the number of rows, columns, and layers of a Raster* object. You cannot use this function to set the dimentions of a RasterStack object.
+Get or set the number of rows, columns, and layers of a Raster* object. You cannot use this function to set the dimensions of a RasterStack object.
+
+When setting the dimensions, you can provide a row number, or a vector with the row and the column number (for a RasterLayer and a RasterBrick),  
+
+or a row and column number and the number of layers (only for a RasterBrick)
 }
 
-\section{Methods}{
-\describe{
-
-\code{dim(x)}
-
-If \code{x} is a Raster* object
-
-\code{dim(x) <- value}
-
-\tabular{rll}{
-\tab \code{x} \tab RasterLayer or RasterBrick) \cr
-\tab \code{value} \tab row number, or row _and_ column number (for a RasterLayer and a RasterBrick); 
-
-or a row and column number _and_ the number of layers (only for a RasterBrick)  \cr
+\usage{
+\S4method{dim}{BasicRaster}(x)
 }
-}}
+
+\arguments{
+ \item{x}{a Raster object}
+}
 
 \value{
-Integer
+Integer or Raster* object
 }
-
 \seealso{ \code{ \link{ncell}, \link{extent}, \link{res} } } 
 
 \author{ Robert J. Hijmans }

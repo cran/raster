@@ -135,24 +135,69 @@ setMethod('getValuesBlock', signature(x='RasterLayer', row='numeric'),
 
 		if (!(validRow(x, row))) {	stop(paste(row, 'is not a valid rownumber')) }
 	
-		if (!  inMemory(x) ) {
-			
-			if (! fromDisk(x)) {
-				return(rep(NA, times=(lastcell-startcell+1)))
-			}
-			
-			res <- .readRasterLayerValues(x, row, nrows, col, ncols)
-			
-		} else  {
-		
+		if ( inMemory(x) ) {
 			if (col==1 & ncols==ncol(x)) {
 				res <- x@data@values[startcell:lastcell]
 			} else {
 				cells <- cellFromRowColCombine(x, row:lastrow, col:lastcol)
 				res <- x@data@values[cells]
 			}
+		} else if ( fromDisk(x)) {
+			res <- .readRasterLayerValues(x, row, nrows, col, ncols)
 			
+		} else  { # no values
+			res <- rep(NA, nrows * ncols)			
+		}
+	
+		if (format=='matrix') {
+			res = matrix(res, nrow=nrows , ncol=ncols, byrow=TRUE )
+			colnames(res) <- col:lastcol
+			rownames(res) <- row:lastrow
+		}
+		res
+	}
+	
+)
+
+
+
+
+setMethod('getValuesBlock', signature(x='RasterLayerSparse', row='numeric'), 
+ 	function(x, row, nrows=1, col=1, ncols=(ncol(x)-col+1), format='') {
+		
+		row <- max(1, min(x@nrows, round(row[1])))
+		lastrow <- min(x@nrows, row + round(nrows[1]) - 1)
+		nrows <- lastrow - row + 1
+		col <- max(1, min(x@ncols, round(col[1])))
+		lastcol <- col + round(ncols[1]) - 1
+		ncols <- lastcol - col + 1
+		
+		startcell <- cellFromRowCol(x, row, col)
+		lastcell <- cellFromRowCol(x, lastrow, lastcol)
+
+		if (!(validRow(x, row))) {	stop(paste(row, 'is not a valid rownumber')) }
+	
+		if ( inMemory(x) ) {
+			i <- which(x@index >= startcell & x@index <= lastcell)
+			if (length(i) > 0) {
+				res <- cellFromRowColCombine(x, row:lastrow, col:lastcol)
+				m <- match(i, res)
+				res[] <- NA
+				res[m] <- x@data@values[i]
+			} else {
+				res <- rep(NA, nrows * ncols)
+			}	
+		} else if ( fromDisk(x) ) {
+			# not yet implemented
+			#if (! fromDisk(x)) {
+			#	return(rep(NA, times=(lastcell-startcell+1)))
+			#}
+			#res <- .readRasterLayerValues(x, row, nrows, col, ncols)
+			
+		} else  {
+			res <- rep(NA, nrows * ncols)			
 		} 
+			
 	
 		if (format=='matrix') {
 			res = matrix(res, nrow=nrows , ncol=ncols, byrow=TRUE )

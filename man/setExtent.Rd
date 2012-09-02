@@ -3,7 +3,7 @@
 \alias{setExtent}
 \alias{extent<-}
   
-\title{Set the extent of a RasteLayer}
+\title{Set the extent of a RasterLayer}
 
 \description{
 setExtent sets the extent of a Raster* object. Either by providing a new Extent object or by setting the extreme

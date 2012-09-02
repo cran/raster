@@ -39,7 +39,7 @@ returnCluster()
   \item{nsteps}{Integer. Number of steps the progress bar will make from start to end (e.g. nrow(raster)) }
   \item{progress}{Character. 'text', 'window', or ''}
   \item{style}{style for text progress bar. See \code{\link[utils]{txtProgressBar}} }
-  \item{...}{additinal arguments}
+  \item{...}{additional arguments}
   \item{pb}{a progress bar object created with pbCreate }
   \item{step}{which step is this ( 1 <= step <= nsteps ). If step is \code{NULL}, a single step is taken }
   \item{label}{label for the non-text progress bars}

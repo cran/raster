@@ -49,7 +49,7 @@
 	}
 	id = as.vector(idx)
 	id = cbind(rep(1:cols, each=nrow(idx)), id)
-	id = subset(id, id[,2]>0)
+	id <- id[id[,2]>0, ,drop=FALSE]
 
 	nls <- nlayers(x)
 	

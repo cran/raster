@@ -28,8 +28,8 @@ nrow(x) <- value
 
 
 \arguments{
- \item{x}{a Raster object}
- \item{value}{row or column number (integer > 0)}  
+\item{x}{a Raster object}
+\item{value}{row or column number (integer > 0)}  
 }
 
 \value{

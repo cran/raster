@@ -35,7 +35,7 @@ rasterize(x, y, ...)
 
 \bold{= all cases =}
 
-\item{\code{field}}{ The value(s) to be transferred. This can be a single number, or a vector of numbers that has the same length as the number of spatial features (points, lines, polygons. If \code{x} is a Spatial*DataFrame, this can be the column name of the variable to be transfered. If missing, the attribute index is used (i.e. numbers from 1 to the number of features). You can also provide a vector with the same length as the number of spatial features, or a matrix where the number of rows matches the number of spatial features}
+\item{\code{field}}{The value(s) to be transferred. This can be a single number, or a vector of numbers that has the same length as the number of spatial features (points, lines, polygons). If \code{x} is a Spatial*DataFrame, this can be the column name of the variable to be transferred. If missing, the attribute index is used (i.e. numbers from 1 to the number of features). You can also provide a vector with the same length as the number of spatial features, or a matrix where the number of rows matches the number of spatial features}
 
 \item{\code{fun}}{Determine what values to assign to cells that are covered by multiple spatial features. You can use functions such as \code{min, max}, or \code{mean}, or one of the following character values: \code{'first', 'last', 'sum', 'min'}, or \code{'max'}. The default value is \code{'last'}}
 
@@ -49,16 +49,18 @@ rasterize(x, y, ...)
 
 \item{\code{filename}}{Character. Output filename (optional)}
 
-Further optional arguments as for \code{\link{writeRaster}}
+\item{\code{...}}{Further optional arguments as for \code{\link{writeRaster}}}
+
 
 
 \bold{= points =}
 
 The value of a grid cell is determined by the values associated with the points and function \code{fun}.
 
-If \code{x} represents points, each point is assinged to a grid cell. 
+If \code{x} represents points, each point is assigned to a grid cell. 
 
-If you want to know the number of points in each grid cell, use \code{fun=function(x,...){length(x)}}. I.e., for each cell it computes the length of the vector of points. You can also use \code{fun=sum}, because the default 'field' value of a point is 1. For the number of unique values use \code{fun=function(x, ...){ length(unique(na.rm(x)))}}
+If you want to know the number of points in each grid cell, use \code{fun=function(x,...){length(x)}}. I.e., for each cell it computes the length of the vector of points. You can also use \code{fun=sum}, because the default 'field' value of a point is 1. For the number of unique values use 
+\code{fun=function(x, ...){ length(unique(na.rm(x)))}}
 
 There is one additional argument:
 
@@ -66,7 +68,8 @@ There is one additional argument:
 
 Because of this argument, all functions \code{fun} must accept an \code{na.rm} argument, either explicitly or through 'dots'. This means that \code{fun=length} fails, but \code{fun=function(x,...)length(x)} works, although it ignores the \code{na.rm} argument. To use the \code{na.rm} argument you can use a function like this \code{fun=function(x, na.rm){if (na.rm) length(na.omit(x)) else (length(x)}}, or use a function that removes NA values in all cases, like this function to compute the number of unique values "richness": \code{fun=function(x, ...){length(unique(na.omit(x)))}}. 
 
-You can also pass multiple functions using a statement like \code{fun=function(x)c(lenght(x),mean(x))}, in which case the returned object is a RasterBrick (multiple layers).
+You can also pass multiple functions using a statement like \code{fun=function(x)c(length(x),mean(x))}, in which case the returned object is a RasterBrick (multiple layers).
+
 
 
 \bold{= polygons and Extent =}
@@ -96,8 +99,10 @@ n <- 1000
 x <- runif(n) * 360 - 180
 y <- runif(n) * 180 - 90
 xy <- cbind(x, y)
-# point or not?
-r1 <- rasterize(xy, r)
+# get the (last) indices
+r0 <- rasterize(xy, r)
+# prensence/absensce (NA) (is there a point or not?)
+r1 <- rasterize(xy, r, field=1)
 # how many points?
 r2 <- rasterize(xy, r, fun=sum)
 vals <- runif(n)
@@ -119,7 +124,8 @@ cds1 <- rbind(c(-180,-20), c(-140,55), c(10, 0), c(-140,-60))
 cds2 <- rbind(c(-10,0), c(140,60), c(160,0), c(140,-55))
 cds3 <- rbind(c(-125,0), c(0,60), c(40,5), c(15,-45))
 
-lines <- SpatialLines(list(Lines(list(Line(cds1)), "1"), Lines(list(Line(cds2)), "2"), Lines(list(Line(cds3)), "3") ))
+lines <- SpatialLines(list(Lines(list(Line(cds1)), "1"), 
+     Lines(list(Line(cds2)), "2"), Lines(list(Line(cds3)), "3") ))
 
 r <- raster(ncols=90, nrows=45)
 r <- rasterize(lines, r)
@@ -148,7 +154,8 @@ p1 <- rbind(c(-180,-20), c(-140,55), c(10, 0), c(-140,-60), c(-180,-20))
 hole <- rbind(c(-150,-20), c(-100,-10), c(-110,20), c(-150,-20))
 p2 <- rbind(c(-10,0), c(140,60), c(160,0), c(140,-55), c(-10,0))
 p3 <- rbind(c(-125,0), c(0,60), c(40,5), c(15,-45), c(-125,0))
-pols <- SpatialPolygons( list(  Polygons(list(Polygon(p1), Polygon(hole)), 1), Polygons(list(Polygon(p2)), 2), Polygons(list(Polygon(p3)), 3)))
+pols <- SpatialPolygons( list(  Polygons(list(Polygon(p1), Polygon(hole)), 1),
+      Polygons(list(Polygon(p2)), 2), Polygons(list(Polygon(p3)), 3)))
 pols@polygons[[1]]@Polygons[[2]]@hole <- TRUE
 
 r <- raster(ncol=180, nrow=90)
@@ -159,7 +166,8 @@ plot(r)
 plot(pols, add=T)
 
 # add a polygon
-p5 <- rbind(c(-180,10), c(0,90), c(40,90), c(145,-10),  c(-25, -15), c(-180,0), c(-180,10))
+p5 <- rbind(c(-180,10), c(0,90), c(40,90), c(145,-10),  
+            c(-25, -15), c(-180,0), c(-180,10))
 addpoly <- SpatialPolygons(list(Polygons(list(Polygon(p5)), 1)))
 addpoly <- as(addpoly, "SpatialPolygonsDataFrame")
 addpoly@data[1,1] <- 10

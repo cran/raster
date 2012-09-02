@@ -10,7 +10,7 @@ Merge Raster* objects, using a function to compute cell value for overlapping ar
 }
 
 \description{
-Mosaic Raster* objects to form a new object with a larger spatial extent. A functions is used to compute cell values in areas where layers overlap (in contrast to the \code{\link[raster]{merge}} function  which uses the values of the 'upper' layer). All objects must have the same origin, resolution, and coordinate reference system.
+Mosaic Raster* objects to form a new object with a larger spatial extent. A function is used to compute cell values in areas where layers overlap (in contrast to the \code{\link[raster]{merge}} function  which uses the values of the 'upper' layer). All objects must have the same origin, resolution, and coordinate reference system.
 }
 
 \usage{
@@ -22,7 +22,7 @@ Mosaic Raster* objects to form a new object with a larger spatial extent. A func
   \item{y}{Raster* object}
   \item{...}{Additional Raster or Extent objects (and/or arguments for writing files as in \code{\link{writeRaster})}}
   \item{fun}{Function. E.g. mean, min, or max. Must be a function that accepts a 'na.rm' argument}
-  \item{tolerance}{Numeric. Permissable difference in origin (relative to the cell resolution). See \code{\link[base]{all.equal}}}
+  \item{tolerance}{Numeric. permissible difference in origin (relative to the cell resolution). See \code{\link[base]{all.equal}}}
   \item{filename}{Character. Output filename (optional)}
 }
 

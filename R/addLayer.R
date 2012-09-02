@@ -42,7 +42,6 @@ function(x, ...) {
 		x@nrows <- r@nrows
 		x@ncols <- r@ncols
 		x@extent <- r@extent
-		x@layernames <- r@layernames
 		x@crs <- r@crs
 		if (rotated(r)) {
 			x@rotated = r@rotated

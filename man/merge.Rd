@@ -4,6 +4,7 @@
 
 \alias{merge}
 \alias{merge,Raster,Raster-method}
+\alias{merge,RasterStackBrick,missing-method}
 \alias{merge,Extent,ANY-method}
 
 \title{ 
@@ -17,17 +18,18 @@ Merge Raster* objects to form a new Raster object with a larger spatial extent. 
 \usage{
 \S4method{merge}{Raster,Raster}(x, y, ..., tolerance=0.05, filename="", overlap=TRUE, ext=NULL)
 
-\S4method{merge}{Extent,ANY}(x, y, ...)
+\S4method{merge}{RasterStackBrick,missing}(x, ..., tolerance=0.05, filename="", ext=NULL)
 
+\S4method{merge}{Extent,ANY}(x, y, ...)
 }
 
 \arguments{
   \item{x}{Raster* or Extent object}
-  \item{y}{Raster* if \code{x} is a Raster* object. If \code{x} is an Extent, \code{y} can be an Extent or object from wich an Extent can be extracted}
-  \item{...}{Additional Raster or Extent objects (and/or arguments for writing files as in \code{\link{writeRaster})}}
-  \item{tolerance}{Numeric. Permissable difference in origin (relative to the cell resolution). See \code{\link[base]{all.equal}}}
-  \item{filename}{Character. Output filename (optional)}
-  \item{overlap}{Logical. If \code{FALSE} values of overlapping objects are based on the first layer, even if they are \code{NA}}
+  \item{y}{Raster* if \code{x} is a Raster* object (or missing). If \code{x} is an Extent, \code{y} can be an Extent or object from which an Extent can be extracted}
+  \item{...}{additional Raster or Extent objects (and/or arguments for writing files as in \code{\link{writeRaster})}}
+  \item{tolerance}{numeric. permissible difference in origin (relative to the cell resolution). See \code{\link[base]{all.equal}}}
+  \item{filename}{character. Output filename (optional)}
+  \item{overlap}{logical. If \code{FALSE} values of overlapping objects are based on the first layer, even if they are \code{NA}}
   \item{ext}{Extent object (optional) to limit the output to that extent}
 } 
 

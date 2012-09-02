@@ -25,10 +25,11 @@
 	cat("nbands=",  nlayers(x), "\n", file = thefile)
 	cat("bandorder=",  x@file@bandorder, "\n", file = thefile)
 
-	fact <- x@data@isfactor
+
+	# currently only for first layer!
+	fact <- is.factor(x)[1]
 	cat("categorical=", paste(fact, collapse=':'), "\n", file = thefile)
 	if (any(fact)) {
-		# currently only for first layer!
 		r <- x@data@attributes[[1]]
 		cat("ratnames=", paste(colnames(r), collapse=':'), "\n", file = thefile)
 		cat("rattypes=", paste(sapply(r, class), collapse=':'), "\n", file = thefile)

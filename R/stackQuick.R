@@ -5,7 +5,7 @@
 
 
 .quickStack <- function(files, nbands=1, band=1, native=FALSE) {
-	r <- raster(files[1], native=native)
+	r <- raster(files[[1]], native=native)
 	if (length(nbands) == 1) {
 		nbands <- rep(nbands, length(files))
 	} else {
@@ -29,11 +29,56 @@
 				r@file@name <-  files[i]
 				r@file@nbands <- nbands[i]
 				r@data@band <-  band[i]
-				r@layernames <- ln[i]
+				r@data@names <- ln[i]
 				r
 			}
 		)
-	s@layernames <- ln
 	s
 }
 
+
+
+
+.quickStackOneFile <- function(filename, bands=NULL, native=FALSE) {
+
+	b <- brick(filename, native=native)
+	.stackFromBrick(b, bands=bands)
+
+}
+
+
+ 
+.stackFromBrick <- function(b, bands=NULL) {
+		
+	nbands <- nlayers(b)
+	if (is.null(bands)) {
+		bands <- 1:nbands
+	}
+	
+	havemnmx <- b@data@haveminmax
+	if (havemnmx) {
+		mn <- minValue(b)
+		mx <- maxValue(b)
+	}
+	ln <- names(b)
+	
+	r <- raster(b, bands[1])
+	s <- stack(r)
+	
+	if (havemnmx) {
+		s@layers <- sapply(bands, function(i){ 
+				r@data@band <- i
+				r@data@names <- ln[i]
+				r@data@min <- mn[i]
+				r@data@max <- mx[i]
+				r
+				})
+	} else {
+		s@layers <- sapply(bands, function(i){ 
+				r@data@band <-  i
+				r@data@names <- ln[i]
+				r
+				})
+	}
+	s
+}

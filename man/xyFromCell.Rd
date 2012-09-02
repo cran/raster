@@ -31,8 +31,8 @@ yFromCell(object, cell)
 }
   
 \details{
-  Cell numbers start at 1 in the upper left corner, and increase from left to right, and then from top to bottom
-  The last cell number equals the number of cells of the Raster* object.
+Cell numbers start at 1 in the upper left corner, and increase from left to right, and then from top to bottom.
+The last cell number equals the number of cells of the Raster* object.
 }
 
 \value{

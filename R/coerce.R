@@ -190,14 +190,41 @@ setAs('SpatialPixels', 'RasterStack',
 # to RasterBrick
 
 setAs('SpatialGrid', 'RasterBrick',
-	function(from){ return(brick(from)) }
+	function(from){ 
+		return(brick(from)) 
+	}
 )
 
 
 setAs('SpatialPixels', 'RasterBrick', 
-	function(from){ return(brick(from)) }
+	function(from){ 
+		return(brick(from)) 
+	}
 )
 
+
+
+setAs('STFDF', 'RasterBrick', 
+	function(from) {
+		time <- from@time
+		nc <- ncol(from@data)
+		r <- raster(from@sp)
+		b <- brick(r, nl=length(time) * nc)
+		b <- setZ(b, rep(time, nc)) # rep changes some time formats
+		names(b) <- paste(rep(colnames(from@data), each=length(time)), as.character(time), sep='')
+		# need to imprive this for character, factor variables
+		m <- as.numeric(as.matrix(from@data))
+		setValues(b, m)
+	}
+)
+
+
+setAs('STSDF', 'RasterBrick', 
+	function(from) {
+		from <- as(from, 'STFDF')
+		as(from, 'RasterBrick')
+	}
+)
 
 
 
@@ -225,6 +252,20 @@ setAs('matrix', 'RasterLayer',
 
 setAs('RasterLayer', 'matrix',
 	function(from){ return( getValues(from, format='matrix')) }
+)
+
+setAs('RasterLayer', 'RasterLayerSparse', 
+	function(from){ 
+		x <- new('RasterLayerSparse', from)
+		v <- na.omit(cbind(1:ncell(from), getValues(from)))
+		setValues(x, v[,2], v[,1])
+	}
+)
+
+setAs('RasterLayerSparse', 'RasterLayer', 
+	function(from){
+		raster(from)
+	}
 )
 
 

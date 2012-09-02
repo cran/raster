@@ -28,7 +28,7 @@ If a single mutli-layer object is provided, its layers are treated as individual
   \item{x}{Raster* object}
   \item{y}{Raster* object, or missing (only useful if \code{x} has multiple layers)}
   \item{...}{Additional Raster objects (and/or arguments for writing files as in \code{\link{writeRaster})}}    
-  \item{fun}{Function to be applied. When using RasterLayer objects, the number of arguments of the function should match the number of Raster objects, or it should take any number of arguments. When using mult-layer objects the function should match the number of layers of the RasterStack/Brick object (unless unstack=FALSE) }
+  \item{fun}{Function to be applied. When using RasterLayer objects, the number of arguments of the function should match the number of Raster objects, or it should take any number of arguments. When using multi-layer objects the function should match the number of layers of the RasterStack/Brick object (unless unstack=FALSE) }
   \item{filename}{Character. Output filename (optional) }
   \item{recycle}{Logical. Should layers from Raster objects with fewer layers be recycled?}  
   \item{unstack}{Logical. Should layers be ustacked before computation (i.e. does the \code{fun} refer to individual layers in a multilayer object)?}  
@@ -36,9 +36,9 @@ If a single mutli-layer object is provided, its layers are treated as individual
 
 
 \details{
-Instead of the overlay function you can also use aritmethic functions such as \code{*, /, +, -} with Raster objects (see examples). In that case you cannot specifiy an output filename. Moreover, the overlay function should be more efficient when using large data files that cannot be loaded into memory, as the use of the complex arithmetic functions might lead to the creation of many temporary files.
+Instead of the overlay function you can also use aritmetic functions such as \code{*, /, +, -} with Raster objects (see examples). In that case you cannot specifiy an output filename. Moreover, the overlay function should be more efficient when using large data files that cannot be loaded into memory, as the use of the complex arithmetic functions might lead to the creation of many temporary files.
 
-While you can supply functions such as \code{sum} or \code{mean}, it would be more direct to use the Raster* objects are arguments to those functions (e.g. \code{sum(r1,r2,r3)})  
+While you can supply functions such as \code{sum} or \code{mean}, it would be more direct to use the Raster* objects as arguments to those functions (e.g. \code{sum(r1,r2,r3)})  
 
 See \code{\link{rasterize}} and \code{\link{extract}} for "overlays" involving Raster* objects and polygons, lines, or points.
 }

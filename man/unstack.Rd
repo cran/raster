@@ -7,7 +7,7 @@
 \title{ Unstack }
 
 \description{
-Create or list of RasterLayer objects from a RasterStack or RasterBrick
+Create a list of RasterLayer objects from a RasterStack or RasterBrick
 }
 
 \usage{

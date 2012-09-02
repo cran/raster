@@ -93,7 +93,7 @@ removeTmpFiles <- function(h=24) {
 	tmpdir <- .tmpdir(create=FALSE)
 	if (!is.na(tmpdir)) {
 	
-		d <- .removeTrailingSlash(.tmpdir())
+		d <- .removeTrailingSlash(tmpdir)
 		f <- list.files(path=d, pattern='raster_tmp*', full.names=TRUE)
 		fin <- file.info(f)
 		dif <- Sys.time() - fin$mtime
@@ -102,7 +102,7 @@ removeTmpFiles <- function(h=24) {
 		dif[is.na(dif)] <- h + 1
 		f <- f[dif > h]
 		if (length(f) > 1) {
-			file.remove(f)
+			unlink(f)
 		}
 	#	if (file.exists(d)) {
 	#		unlink(paste(d, "/raster_tmp_*", sep=""), recursive = FALSE)

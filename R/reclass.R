@@ -13,6 +13,8 @@ if (!isGeneric("reclass")) {
 setMethod('reclass', signature(x='Raster', rcl='ANY'), 
 function(x, rcl, filename='', include.lowest=FALSE, right=TRUE, ...) {
 	
+	warning('raster function "reclass" has been deprecated and will be removed from the package;\nPlease use "reclassify" instead')
+	
 	filename <- trim(filename)
 
 	if ( is.null(dim(rcl)) ) { 

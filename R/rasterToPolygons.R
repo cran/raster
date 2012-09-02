@@ -24,12 +24,13 @@ rasterToPolygons <- function(x, fun=NULL, n=4, na.rm=TRUE, digits=12, dissolve=F
 	if (! fromDisk(x) & ! inMemory(x)) {
 		xyv <- xyFromCell(x, 1:ncell(x))
 		xyv <- cbind(xyv, NA)
+		
 	} else if ( !(na.rm) | inMemory(x) | canProcessInMemory(x) ) {
 		xyv <- cbind(xyFromCell(x, 1:ncell(x)), getValues(x))
 		x <- clearValues(x)
 		if (na.rm) {
 			nas <- apply(xyv[,3:ncol(xyv), drop=FALSE], 1, function(x)all(is.na(x)))
-			xyv <- xyv[!nas, ]
+			xyv <- xyv[!nas,  ,drop=FALSE]
 		}
 		if (!is.null(fun)) {
 			xyv <- subset(xyv, fun(xyv[,3]))
@@ -103,7 +104,7 @@ rasterToPolygons <- function(x, fun=NULL, n=4, na.rm=TRUE, digits=12, dissolve=F
 	} else {
 		sp <- SpatialPolygonsDataFrame(sp, data.frame(xyv[,3:ncol(xyv)]), match.ID=FALSE)
 		if (dissolve) {
-			warning('sorry, I cannot dissolve multi-layer objects yet\n')
+			warning('this function can only dissolve single-layer objects\n')
 		}
 	}
 	sp

@@ -7,7 +7,10 @@
 rasterFromCells <- function(x, cells, values=TRUE) {
 	x <- raster(x)
 	u <- unique(cells)
-	u <- subset(u, u > 0 & u <= ncell(x))
+	u <- u[ u > 0 & u <= ncell(x) ]
+	if (length(u) == 0) {
+		stop('no valid cells')
+	}
 	cols <- colFromCell(x, u)
 	rows <- rowFromCell(x, u)
 	res <- res(x)

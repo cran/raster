@@ -39,7 +39,7 @@
 	}
 	id <- as.vector(idx)
 	id <- cbind(rep(1:ncol(out), each=nrow(idx)), id)
-	id <- subset(id, id[,2]>0)
+	id <- id[ id[,2] > 0 , , drop=FALSE ]
 	
 
 	filename <- trim(filename)
@@ -80,7 +80,7 @@
 			ids <- ids[1:rr, ]
 			ids <- matrix(as.vector(ids), ncol=ncol(out))
 			ids <- cbind(rep(1:ncol(out), each=nrow(ids)), as.vector(ids))
-			ids <- subset(ids, ids[,2]>0)
+			ids <- ids[ids[,2]>0, , drop=FALSE]
 			vv  <- tapply(as.vector(ngbdata)[ids[,2]], ids[,1], fun, na.rm=na.rm)
 			
 		} else if (r <= (nrow(out)-row1)) {
@@ -96,7 +96,7 @@
 			ids <- ids[1:nrows, ]
 			ids <- matrix(as.vector(ids), ncol=ncol(out))
 			ids <- cbind(rep(1:ncol(out), each=nrow(ids)), as.vector(ids))
-			ids <- subset(ids, ids[,2]>0)
+			ids <- ids[ ids[,2]>0, , drop=FALSE]
 			vv  <- tapply(as.vector(ngbdata)[ids[,2]], ids[,1], fun, na.rm=na.rm)
 		}
 		if (inMem) {

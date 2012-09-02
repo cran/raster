@@ -28,7 +28,7 @@ Plots labels, that is a textual (rather than color) representation of values, on
   \item{x}{Raster*, SpatialPoints* or SpatialPolygons* object}
   \item{labels}{Character. Optional. Vector of labels with \code{length(x)} or a variable name from \code{names(x)}}
   \item{digits}{Integer. how many digits should be used?}
-  \item{fun}{Function to subset the values plotted (as in \code{\link{rasterToPoints}}}
+  \item{fun}{Function to subset the values plotted (as in \code{\link{rasterToPoints}})}
   \item{...}{Additional arguments to pass to graphics function \code{\link[graphics]{text}} }
 }
 

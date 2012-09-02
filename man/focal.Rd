@@ -37,9 +37,9 @@ Calculate focal ("moving window") values for the neighborhood of focal cells usi
 \details{
 \code{focal} uses a matrix of weights for the neighborhood of the focal cells. The default function is \code{sum}. It is computationally much more efficient to adjust the weights-matrix than to use another function through the \code{fun} argument. Thus while the following two statements are equivalent (if there are no \code{NA} values), the first one is faster than the second one:
 
-\code{a <- focal2(x, w=matrix(1/9, nc=3, nc=3))}
+\code{a <- focal(x, w=matrix(1/9, nc=3, nc=3))}
 
-\code{b <- focal2(x, w=3, fun=mean)}
+\code{b <- focal(x, w=3, fun=mean)}
 
 There is, however, a difference if \code{NA} values are considered. One can use the \code{na.rm=TRUE} option which may make sense when using a function like \code{mean}. However, the results would be wrong when using a weights matrix.
 
@@ -124,13 +124,14 @@ sim <- function(x, fun, n=100, pause=0.25) {
 
 # Gosper glider gun
 m <- matrix(0, nc=48, nr=34)
-m[c(40, 41, 74, 75, 380, 381, 382, 413, 417, 446, 452, 480, 486, 517, 549, 553, 584, 585, 586, 619, 718, 719, 720, 752, 753, 754, 785, 789, 852, 853, 857, 858, 1194, 1195, 1228, 1229)] <- 1
+m[c(40, 41, 74, 75, 380, 381, 382, 413, 417, 446, 452, 480, 
+  486, 517, 549, 553, 584, 585, 586, 619, 718, 719, 720, 752, 
+  753, 754, 785, 789, 852, 853, 857, 858, 1194, 1195, 1228, 1229)] <- 1
 init <- raster(m)
 
 # run the model
-sim(init, gameOfLife, n=100)
+sim(init, gameOfLife, n=150, pause=0.05)
 }
-
 }
 
 

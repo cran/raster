@@ -9,14 +9,15 @@ Identify cells that are adjacent to a set of cells on a raster. See \code{\link{
 }
 
 \usage{
-adjacent(x, cells, directions=4, pairs=FALSE, target=NULL, sorted=FALSE, include=FALSE, id=FALSE) 
+adjacent(x, cells, directions=4, pairs=FALSE, target=NULL, sorted=FALSE, 
+         include=FALSE, id=FALSE) 
 }
 
 \arguments{
   \item{x}{Raster* object}
   \item{cells}{vector of cell numbers for which adjacent cells should be found}
   \item{directions}{the number of directions in which cells should be connected: 4 (rook's case), 8 (queen's case), 16, or 'bishop'. Or a neigborhood matrix (see Details)}
-  \item{pairs}{logical. If \code{TRUE}, a matrix of pairs of adjacent cells is returned. If \code{FAlSE}, a vector of cells adjacent to \code{cells} is returned}
+  \item{pairs}{logical. If \code{TRUE}, a matrix of pairs of adjacent cells is returned. If \code{FALSE}, a vector of cells adjacent to \code{cells} is returned}
   \item{target}{optional vector of target cell numbers that should be considered. All other adjacent cells are ignored}
   \item{sorted}{logical. Should the results be sorted? }
   \item{include}{logical. Should the focal cells be included in the result? }

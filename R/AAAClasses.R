@@ -48,16 +48,16 @@ setClass ('BasicRaster',
 		ncols ='integer',
 		nrows ='integer',
 		crs = 'CRS',
-		layernames = 'vector',
-		z = 'list'
+		z = 'list',
+		layernames = 'character'
 	),
 	prototype (	
 		rotated = FALSE,
 		ncols= as.integer(1),
 		nrows= as.integer(1),
 		crs = CRS(as.character(NA)),
-		layernames=c(""),
-		z = list()
+		z = list(),
+		layernames = "Do not use the layernames slot (it is obsolete and will be removed)\nUse function 'names'"
 	),
 	validity = function(object) {
 		validObject(extent(object))
@@ -122,7 +122,8 @@ setClass('.SingleLayerData',
 		min = 'vector',
 		max = 'vector',
 		band = 'integer',
-		unit = 'character'
+		unit = 'character',
+		names = 'vector'
 		),
 	prototype (	
 		values=vector(),
@@ -139,23 +140,14 @@ setClass('.SingleLayerData',
 		min = c(Inf),
 		max = c(-Inf),
 		band = as.integer(1),
-		unit = ''
+		unit = '',
+		names=c("")
+		
 	),	
 	validity = function(object) {
 	}
 )
 
-
-
-setClass('.SingleLayerDataSparse', 
-	contains = '.SingleLayerData',
-	representation (
-		indices = 'vector'
-	),
-	prototype (	
-		indices = vector(mode='numeric')
-	)
-)
 
 
 
@@ -187,19 +179,6 @@ setClass ('RasterLayer',
 	)
 
 
-setClass ('.RasterLayerSparse',
-	contains = 'Raster',
-	representation (
-		file = '.RasterFile',
-		data = '.SingleLayerData',
-		legend = '.RasterLegend',
-		history = 'list'
-		),
-	prototype (
-		history = list()
-		)
-	)
-	
 
 setClass('.MultipleRasterData', 
 	representation (
@@ -215,7 +194,9 @@ setClass('.MultipleRasterData',
 		haveminmax = 'logical',
 		min = 'vector',
 		max = 'vector',
-		unit = 'vector'
+		unit = 'vector',
+		names= 'vector'
+		
 		),
 	prototype (	
 		values=matrix(NA,0,0),
@@ -231,7 +212,8 @@ setClass('.MultipleRasterData',
 		haveminmax = FALSE,
 		min = c(Inf),
 		max = c(-Inf),
-		unit = c('')
+		unit = c(''),
+		names = c('')
 	),	
 	validity = function(object) {
 	}
@@ -251,42 +233,6 @@ setClass ('RasterBrick',
 		),
 	validity = function(object)
 	{
-	}
-)
-
-
-setClass('.QuadRasterData', 
-	representation (
-		values='array',
-		offset='numeric',
-		gain='numeric',
-		inmemory='logical',
-		fromdisk='logical',
-		nlayers='integer',
-		nsteps='integer',
-		dropped = 'vector',
-		isfactor = 'logical',
-		attributes = 'list',
-		haveminmax = 'logical',
-		min = 'vector',
-		max = 'vector'
-		),
-	prototype (	
-		values=array(NA,c(0,0,0)),
-		offset=0,
-		gain=1,
-		#indices =vector(mode='numeric'),
-		inmemory=FALSE,
-		fromdisk=FALSE,
-		nlayers=as.integer(0),
-		dropped=NULL,
-		isfactor = FALSE,
-		attributes = list(),
-		haveminmax = FALSE,
-		min = c(Inf),
-		max = c(-Inf)
-	),	
-	validity = function(object) {
 	}
 )
 
@@ -332,32 +278,46 @@ setClass ('.RasterList',
 )
 
 
+setClass ('RasterLayerSparse',
+	contains = 'RasterLayer',
+	representation (
+		index = 'vector'
+	),
+	prototype (
+		index = vector(mode='numeric')
+	)
+)	
 
-setClass ('.RasterQuadBrick',
+setClass ('.RasterBrickSparse',
 	contains = 'RasterBrick',
 	representation (
-		nlevels = 'integer',
-		nsteps = 'integer'
-	) ,
+		index = 'vector'
+	),
 	prototype (
-		nlevels = as.integer(0),
-		nsteps = as.integer(0)
+		index = vector(mode='numeric')
 	)
-)
+)	
 
-setClass ('.RasterQuadStack',
-	contains = 'RasterStack',
+
+setClass ('.RasterQuad',
+	contains = 'Raster',
 	representation (
-		nlevels = 'integer',
-		nsteps = 'integer'
-	) ,
+	    filename ='character',
+		bricks ='list'
+		),
 	prototype (
-		nlevels = as.integer(0),
-		nsteps = as.integer(0)
-	)
+		filename='',
+		bricks = list()
+		),
+	validity = function(object) {
+		if (length(object@bricks) > 1) {
+			test <- compare(object@bricks, extent=TRUE, rowcol=TRUE, tolerance=0.05, stopiffalse=FALSE, showwarning=FALSE) 
+		} else {
+			test <- TRUE
+		}
+		return(test)
+	}
 )
-
-
 
 
 #setClassUnion("RasterStackBrickList", c("RasterStack", "RasterBrick", "RasterList"))

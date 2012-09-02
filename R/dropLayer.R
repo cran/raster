@@ -29,7 +29,6 @@ function(x, i, ...) {
 	i <- i[i > 0 & i <= nlayers(x)]
 	if (length(i) > 0) {
 		x@layers <- x@layers[-i]
-		x@layernames <- x@layernames[-i]
 	}
 	return(x)
 }
