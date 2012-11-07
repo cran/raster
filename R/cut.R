@@ -56,7 +56,7 @@ function(x, breaks, ..., filename='', format, datatype='INT2S', overwrite, progr
 		
 		out <- writeStart(out, filename=filename, format=format, datatype=datatype, overwrite=overwrite, progress=progress )
 		tr <- blockSize(out)
-		pb <- pbCreate(tr$n, progress=progress)
+		pb <- pbCreate(tr$n, progress=progress, label='cut')
 
 		if (nl > 1) {
 			for (i in 1:tr$n) {

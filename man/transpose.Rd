@@ -26,7 +26,7 @@ RasterLayer or RasterBrick
 
 \seealso{ transpose: \code{\link{flip}, \link[raster]{rotate}} }
 
-\author{Robert J. Hijmans }
+
 
 \examples{
 r <- raster(nrow=18, ncol=36)

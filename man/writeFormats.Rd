@@ -7,7 +7,7 @@
 \description{
 List supported file types for writing RasterLayer values to disk.
 
-When a function writes a file to disk, the file format is determined by the 'format=' argument if supplied, or else by the file extension (if the extension is known). If other cases the default format is used. The 'factory-fresh' default format is 'raster', but this can be changed using \code{\link[raster]{setOptions}}.
+When a function writes a file to disk, the file format is determined by the 'format=' argument if supplied, or else by the file extension (if the extension is known). If other cases the default format is used. The 'factory-fresh' default format is 'raster', but this can be changed using \code{\link{rasterOptions}}.
 }
 
 \usage{
@@ -34,7 +34,7 @@ Supported formats include:
 }
 }
 
-\author{Robert J. Hijmans}
+
 
 \seealso{ \code{\link[rgdal]{GDALDriver-class}} }  
 

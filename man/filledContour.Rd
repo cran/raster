@@ -21,9 +21,9 @@ filledContour(x, y=1, maxpixels=100000, ...)
 
 \seealso{ \code{\link[graphics]{filled.contour}}, \code{\link[raster]{persp}}, \code{\link[raster]{plot}} }
 
-\author{ Robert J. Hijmans }
 
-\examples{ 
+
+\examples{
 r <- raster(system.file("external/test.grd", package="raster"))
 filledContour(r)
 }

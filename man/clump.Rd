@@ -14,7 +14,7 @@ Detect clumps (patches) of connected cells. Each clump gets a unique ID. NA and 
 }
 
 \arguments{
-  \item{x}{RasterLayer object}
+  \item{x}{RasterLayer}
   \item{filename}{Character. Filename for the output RasterLayer (optional)}  
   \item{directions}{Integer. Which cells are considered adjacent? Should be 8 (Queen's case) or 4 (Rook's case) }
   \item{gaps}{Logical. If \code{TRUE} (the default), there may be 'gaps' in the chunk numbers (e.g. you may have clumps with IDs 1, 2, 3 and 5, but not 4). If it is \code{FALSE}, these numbers will be recoded from 1 to n (4 in this example)}  
@@ -33,10 +33,11 @@ RasterLayer
 
 \examples{
 r <- raster(ncols=12, nrows=12)
-r[] <- round(runif(ncell(r))*0.6 )
+set.seed(0)
+r[] <- round(runif(ncell(r))*0.7 )
 rc <- clump(r) 
 freq(rc)
-#plot(rc)
+plot(rc)
 }
 \keyword{spatial}
 

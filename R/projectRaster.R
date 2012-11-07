@@ -63,7 +63,7 @@ projectExtent <- function(object, crs) {
 	
 
 	
-	res <- .Call("transform", projfrom, projto, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
+	res <- .gd_transform( projfrom, projto, nrow(xy), xy[,1], xy[,2] )
 	
 	x <- res[[1]]
 	y <- res[[2]]
@@ -100,7 +100,7 @@ projectExtent <- function(object, crs) {
 	y1 <- y - 0.5 * res[2]
 	y2 <- y + 0.5 * res[2]
 	xy <- cbind(c(x1, x2, x, x), c(y, y, y1, y2))
-	pXY <- .Call("transform", projection(raster), crs, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
+	pXY <- .gd_transform( projection(raster), crs, nrow(xy), xy[,1], xy[,2] )
 	pXY <- cbind(pXY[[1]], pXY[[2]])
 	out <- c((pXY[2,1] - pXY[1,1]), (pXY[4,2] - pXY[3,2]))
 	if (any(is.na(res))) {
@@ -116,12 +116,24 @@ projectExtent <- function(object, crs) {
 }
 
 
-projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ...)  {
+.getAlignedRaster <- function(x,y) {
+	x <- raster(x)
+	y <- raster(y)
+	p <- projectRaster(x, crs=projection(y))
+	m <- merge(extent(y), extent(p))
+	rx <- extend(y, m)
+	crop(rx, p)
+}
+
+
+projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE, over=FALSE, filename="", ...)  {
 
 	.requireRgdal()
-	validObject(projection(from, asText=FALSE))
+	validObject( projection(from, asText=FALSE) )
 	projfrom <- projection(from)
-	if (projfrom == "NA") { stop("input projection is NA") }
+	if (projfrom == "NA") { 
+		stop("input projection is NA") 
+	}
 	lonlat <- isLonLat(projfrom)
 	
 	if (missing(to)) {
@@ -150,7 +162,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 			e@ymin <- max(-90, e@ymin)
 			e@ymax <- min(90, e@ymax)
 		}
-		to <- expand(to, e)
+		to <- extend(to, e)
 	} else {
 		projto <- projection(to)
 		if (projto == "NA") { 
@@ -171,29 +183,35 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 			e@xmax <- min(180, e@xmax)
 			e@ymin <- max(-90, e@ymin)
 			e@ymax <- min(90, e@ymax)
-		}
-		
+		}	
 	}
-
+	
 	validObject(to)
 	validObject(projection(to, asText=FALSE))
 
 	if (identical(projfrom, projto)) {
 		stop('projections of "from" and "to" are the same')
 	}	
-	if (lonlat) {
+	if (lonlat & over) {
 		projto_int <- paste(projto, "+over")
 	} else {
 		projto_int <- projto	
 	}
-	
 
+	if (alignOnly) {
+		to <- .getAlignedRaster(to, from)
+	}
+	
 #	pbb <- projectExtent(to, projection(from))
 #	bb <- intersect(extent(pbb), extent(from))
 #	validObject(bb)
 
-	if (!method %in% c('bilinear', 'ngb')) { stop('invalid method') }
-	if (method=='ngb') { method <- 'simple' } # for extract (.xyValues)
+	if (!method %in% c('bilinear', 'ngb')) { 
+		stop('invalid method') 
+	}
+	if (method=='ngb') { 
+		method <- 'simple' # for extract (.xyValues)
+	} 
 
 	nl <- nlayers(from)
 	if ( nl == 1) {
@@ -225,8 +243,10 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 		flush.console()
 		
 		tr <- blockSize(to, minblocks=nodes)
-		pb <- pbCreate(tr$n, ...)
+		pb <- pbCreate(tr$n, label='projectRaster', ...)
 
+		clusterExport(cl, c('tr', 'to', 'from', 'e', 'nl', 'projto_int', 'projfrom', 'method'), envir=environment())
+		
 		clFun <- function(i) {
 			start <- cellFromRowCol(to, tr$row[i], 1)
 			end <- start + tr$nrows[i] * ncol(to) - 1
@@ -237,16 +257,18 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 			if (nrow(xy) > 0) {
 				ci <- match(cellFromXY(to, xy), cells)
 				xy <- .Call("transform", projto_int, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
+				#xy <- .gd_transform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
 				xy <- cbind(xy[[1]], xy[[2]])
 				v[ci, ] <- .xyValues(from, xy, method=method)
 			} 
 			return(v)
 		}
 	
+	
 		# for debugging
 		# clusterExport(cl,c("tr", "projto", "projfrom", "method", "from", "to"))
         for (i in 1:nodes) {
-			sendCall(cl[[i]], clFun, i, tag=i)
+			sendCall(cl[[i]], clFun, list(i), tag=i)
 		}
 		        
 		if (inMemory) {
@@ -256,6 +278,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 				pbStep(pb, i)
 				d <- recvOneData(cl)
 				if (! d$value$success) {
+					print(d)
 					stop('cluster error')
 				}
 				start <- cellFromRowCol(to, tr$row[d$value$tag], 1)
@@ -263,7 +286,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 				v[start:end, ] <- d$value$value
 				ni <- nodes+i
 				if (ni <= tr$n) {
-					sendCall(cl[[d$node]], clFun, ni, tag=ni)
+					sendCall(cl[[d$node]], clFun, list(ni), tag=ni)
 				}
 			}
 			
@@ -271,6 +294,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 			if (filename != '') {
 				to <- writeRaster(to, filename, ...)
 			}
+			pbClose(pb)
 			return(to)
 			
 		} else {
@@ -279,17 +303,21 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 			for (i in 1:tr$n) {
 				pbStep(pb, i)
 				d <- recvOneData(cl)
-				if (! d$value$success ) { stop('cluster error') }
+				if (! d$value$success ) { 
+					print(d)
+					stop('cluster error') 
+				}
 				to <- writeValues(to, d$value$value, tr$row[d$value$tag])
 				ni <- nodes+i
 				if (ni <= tr$n) {
-					sendCall(cl[[d$node]], clFun, ni, tag=ni)
+					sendCall(cl[[d$node]], clFun, list(ni), tag=ni)
 				}
 			}
 			pbClose(pb)
 			to <- writeStop(to)	
 			return(to)
 		}	
+
 		
 	} else {
 		# this seems to need smaller chunks
@@ -301,7 +329,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 			xy <- coordinates(to) 
 			xy <- subset(xy, xy[,1] > e@xmin & xy[,1] < e@xmax)
 			cells <- cellFromXY(to, xy)
-			xy <- .Call("transform", projto_int, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
+			xy <- .gd_transform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
 			xy <- cbind(xy[[1]], xy[[2]])
 			to[cells] <- .xyValues(from, xy, method=method)
 			
@@ -313,7 +341,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 		} else {
 		
 			tr <- blockSize(to, n=nlayers(to)*4)
-			pb <- pbCreate(tr$n, ...)	
+			pb <- pbCreate(tr$n, label='projectRaster', ...)	
 			to <- writeStart(to, filename=filename, ...)
 			for (i in 1:tr$n) {
 				cells <- cellFromRowCol(to, tr$row[i], 1):cellFromRowCol(to, tr$row[i]+tr$nrows[i]-1, ncol(to))
@@ -321,10 +349,10 @@ projectRaster <- function(from, to, res, crs, method="bilinear", filename="", ..
 				xy <- subset(xy, xy[,1] > e@xmin & xy[,1] < e@xmax)
 				if (nrow(xy) > 0) {
 					ci <- match(cellFromXY(to, xy), cells)
-					xy <- .Call("transform", projto_int, projfrom, nrow(xy), xy[,1], xy[,2], PACKAGE="rgdal")
+					xy <- .gd_transform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
 					xy <- cbind(xy[[1]], xy[[2]])
 					v <- matrix(nrow=length(cells), ncol=nl)
-					v[ci, ] <- raster:::.xyValues(from, xy, method=method)
+					v[ci, ] <- .xyValues(from, xy, method=method)
 					to <- writeValues(to, v, tr$row[i])
 				}	
 				pbStep(pb)

@@ -20,15 +20,16 @@ rasterToPoints(x, fun=NULL, spatial=FALSE, ...)
 }
 
 \details{
-\code{fun} should be a simple function returning a logical value
-e.g.: \code{fun=function(x){x==1}} or  \code{fun=function(x){x>3}}
+\code{fun} should be a simple function returning a logical value. 
+
+E.g.: \code{fun=function(x){x==1}} or  \code{fun=function(x){x>3}}
 }
 
 \value{
 A matrix with three columns: x, y, and v (value), or a SpatialPointsDataFrame object
 }
 
-\author{Robert J. Hijmans}
+
 
 \examples{ 
 r <- raster(nrow=18, ncol=36)

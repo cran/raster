@@ -13,81 +13,67 @@
 \title{Rasterize points, lines, or polygons}
 
 \description{
-Transfer values associated with 'vector' type spatial data (points, lines, polygons) to spatially overlapping raster cells. 
+Transfer values associated with 'object' type spatial data (points, lines, polygons) to raster cells. 
 
-For polygons, 'spatially overlapping' means that the polygon must cover the center of a raster cell. For lines, all cells that are touched by a line are considered to be overlapping. You can combine this behaviour by rasterizing polygons as lines first and then as polygons. 
+For polygons, values are transferred if the polygon covers the center of a raster cell. For lines, values are transferred to all cells that are touched by a line. You can combine this behaviour by rasterizing polygons as lines first and then as polygons. 
 
-Points that fall on a border between cells are placed in the cell to the right and/or in the cell below.
+If \code{x} represents points, each point is assigned to a grid cell. Points that fall on a border between cells are placed in the cell to the right and/or in the cell below. The value of a grid cell is determined by the values associated with the points and function \code{fun}. 
 }
 
 \usage{
-rasterize(x, y, ...) 
+\S4method{rasterize}{matrix,Raster}(x, y, field, fun='last', background=NA, 
+    mask=FALSE, update=FALSE, updateValue='all', filename="", na.rm=TRUE, ...)
+	
+\S4method{rasterize}{SpatialPoints,Raster}(x, y, field, fun='last', background=NA, 
+    mask=FALSE, update=FALSE, updateValue='all', filename="", na.rm=TRUE, ...)
+	
+\S4method{rasterize}{SpatialLines,Raster}(x, y, field, fun='last', background=NA, 
+    mask=FALSE, update=FALSE, updateValue='all', filename="", ...)
+	
+\S4method{rasterize}{SpatialPolygons,Raster}(x, y, field, fun='last', background=NA, 
+    mask=FALSE, update=FALSE, updateValue='all', filename="", getCover=FALSE, silent=FALSE, ...)
 }
 
 \arguments{
-  \item{x}{points (a SpatialPoints* object, or a two-column matrix), SpatialLines*, SpatialPolygons*, or an Extent object }
-  \item{y}{Raster* object}
-  \item{...}{Additional arguments, see under Details}  
+\item{x}{points (a SpatialPoints* object, or a two-column matrix (or data.frame)), SpatialLines*, SpatialPolygons*, or an Extent object }
+
+\item{y}{Raster* object}
+
+\item{field}{numeric or character. The value(s) to be transferred. This can be a single number, or a vector of numbers that has the same length as the number of spatial features (points, lines, polygons). If \code{x} is a Spatial*DataFrame, this can be the column name of the variable to be transferred. If missing, the attribute index is used (i.e. numbers from 1 to the number of features). You can also provide a vector with the same length as the number of spatial features, or a matrix where the number of rows matches the number of spatial features}
+
+\item{fun}{function or character. To determine what values to assign to cells that are covered by multiple spatial features. You can use functions such as \code{min, max}, or \code{mean}, or one of the following character values: \code{'first'}, \code{'last'}, \code{count}, \code{'sum'}, \code{'min'} or \code{'max'}. The default value is \code{'last'}. 
+
+
+If \code{x} represents points, \code{fun} must accept a \code{na.rm} argument, either explicitly or through 'dots'. This means that \code{fun=length} fails, but \code{fun=function(x,...)length(x)} works, although it ignores the \code{na.rm} argument. To use the \code{na.rm} argument you can use a function like this: fun=function(x, na.rm){if (na.rm) length(na.omit(x)) else (length(x)}, or use a function that removes \code{NA} values in all cases, like this function to compute the number of unique values "richness": fun=function(x, ...){length(unique(na.omit(x)))}. 
+
+If you want to know the number of points in each grid cell, you can use \code{ fun='count'} or  \code{fun=function(x,...){length(x)}}. For the number of unique values per grid cell you can use: \code{fun=function(x, ...){ length(unique(na.rm(x)))}}. You can also pass multiple functions using a statement like fun=function(x)c(length(x),mean(x)), in which case the returned object is a RasterBrick (multiple layers).
 }
 
-\section{Methods}{
-\describe{
+\item{background}{numeric. Value to put in the cells that are not covered by any of the features of \code{x}. Default is \code{NA}}
 
-\bold{= all cases =}
+\item{mask}{logical. If \code{TRUE} the values of the input Raster object are 'masked' by the spatial features of \code{x}. That is, cells that spatially overlap with the spatial features retain their values, the other cells become \code{NA}. Default is \code{FALSE}. This option cannot be used when \code{update=TRUE}}
 
-\item{\code{field}}{The value(s) to be transferred. This can be a single number, or a vector of numbers that has the same length as the number of spatial features (points, lines, polygons). If \code{x} is a Spatial*DataFrame, this can be the column name of the variable to be transferred. If missing, the attribute index is used (i.e. numbers from 1 to the number of features). You can also provide a vector with the same length as the number of spatial features, or a matrix where the number of rows matches the number of spatial features}
+\item{update}{logical. If \code{TRUE}, the values of the Raster* object are updated for the cells that overlap the spatial features of \code{x}. Default is \code{FALSE}. Cannot be used when \code{mask=TRUE}}
 
-\item{\code{fun}}{Determine what values to assign to cells that are covered by multiple spatial features. You can use functions such as \code{min, max}, or \code{mean}, or one of the following character values: \code{'first', 'last', 'sum', 'min'}, or \code{'max'}. The default value is \code{'last'}}
+\item{updateValue}{numeric (normally an integer), or character. Only relevant when \code{update=TRUE}. Select, by their values, the cells to be updated with the values of the spatial features. Valid character values are \code{'all'}, \code{'NA'}, and \code{'!NA'}. Default is \code{'all'}}
 
-\item{\code{background}}{Value to put in the cells that are not covered by any of the features of \code{x}. Default is \code{NA}}
+\item{filename}{character. Output filename (optional)}
 
-\item{\code{mask}}{Logical. If \code{TRUE} the values of the input Raster object are 'masked' by the spatial features of \code{x}. That is, cells that spatially overlap with the spatial features retain their values, the other cells become \code{NA}. Default is \code{FALSE}. This option cannot be used when \code{update=TRUE}}
+\item{na.rm}{If \code{TRUE}, \code{NA} values are removed if \code{fun} honors the \code{na.rm} argument}
 
-\item{\code{update}}{Logical. If \code{TRUE}, the values of the Raster* object are updated for the cells that overlap the spatial features of \code{x}. Default is \code{FALSE}. Cannot be used when \code{mask=TRUE}}
+\item{getCover}{logical. If \code{TRUE}, the fraction of each grid cell that is covered by the polygons is returned (and the values of \code{field, fun, mask}, and \code{update} are ignored. The fraction covered is estimated by dividing each cell into 100 subcells and determining presence/absence of the polygon in the center of each subcell}
 
-\item{\code{updateValue}}{Numeric (normally an integer), or character. Only relevant when \code{update=TRUE}. Select, by their values, the cells to be updated with the values of the spatial features. Valid character values are \code{'all'}, \code{'NA'}, and \code{'!NA'}. Default is \code{'all'}}
+\item{silent}{Logical. If \code{TRUE}, feedback on the polygon count is suppressed. Default is \code{FALSE}}
 
-\item{\code{filename}}{Character. Output filename (optional)}
+\item{...}{Additional arguments for file writing as for \code{\link{writeRaster}}}
+}
 
-\item{\code{...}}{Further optional arguments as for \code{\link{writeRaster}}}
-
-
-
-\bold{= points =}
-
-The value of a grid cell is determined by the values associated with the points and function \code{fun}.
-
-If \code{x} represents points, each point is assigned to a grid cell. 
-
-If you want to know the number of points in each grid cell, use \code{fun=function(x,...){length(x)}}. I.e., for each cell it computes the length of the vector of points. You can also use \code{fun=sum}, because the default 'field' value of a point is 1. For the number of unique values use 
-\code{fun=function(x, ...){ length(unique(na.rm(x)))}}
-
-There is one additional argument:
-
-\item{\code{na.rm}}{If \code{TRUE}, \code{NA} values are removed if \code{fun} honors the \code{na.rm} argument}
-
-Because of this argument, all functions \code{fun} must accept an \code{na.rm} argument, either explicitly or through 'dots'. This means that \code{fun=length} fails, but \code{fun=function(x,...)length(x)} works, although it ignores the \code{na.rm} argument. To use the \code{na.rm} argument you can use a function like this \code{fun=function(x, na.rm){if (na.rm) length(na.omit(x)) else (length(x)}}, or use a function that removes NA values in all cases, like this function to compute the number of unique values "richness": \code{fun=function(x, ...){length(unique(na.omit(x)))}}. 
-
-You can also pass multiple functions using a statement like \code{fun=function(x)c(length(x),mean(x))}, in which case the returned object is a RasterBrick (multiple layers).
-
-
-
-\bold{= polygons and Extent =}
-
-A polygon value is transferred to a raster-cell if it covers the center of the cell. Either values associated with each polygon, or a polygon ID is transferred. Holes in polygons are recognized if they are correctly specified. The following additional arguments are available:
-
-\item{\code{getCover}}{Logical. If \code{TRUE}, the fraction of each grid cell that is covered by the polygons is returned (and the values of \code{field, fun, mask}, and \code{update} are ignored. The fraction covered is estimated by dividing each cell into 100 subcells and determining presence/absence of the polygon in the center of each subcell}
-
-\item{\code{silent}}{Logical. If \code{TRUE}, feedback on the polygon count is suppressed. Default is \code{FALSE}}
-}}
 
 \value{
 RasterLayer or RasterBrick
 }
 
 \seealso{ \code{\link{extract}} }
-
-\author{Robert J. Hijmans}
 
 \examples{
 
@@ -104,7 +90,7 @@ r0 <- rasterize(xy, r)
 # prensence/absensce (NA) (is there a point or not?)
 r1 <- rasterize(xy, r, field=1)
 # how many points?
-r2 <- rasterize(xy, r, fun=sum)
+r2 <- rasterize(xy, r, fun=function(x,...)length(x))
 vals <- runif(n)
 # sum of the values associated with the points
 r3 <- rasterize(xy, r, vals, fun=sum)
@@ -161,7 +147,9 @@ pols@polygons[[1]]@Polygons[[2]]@hole <- TRUE
 r <- raster(ncol=180, nrow=90)
 r <- rasterize(pols, r, fun='sum')
 
+
 \dontrun{
+
 plot(r)
 plot(pols, add=T)
 

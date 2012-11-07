@@ -12,7 +12,7 @@ if (!isGeneric("zonal")) {
 setMethod('zonal', signature(x='Raster', z='RasterLayer'), 
 	function(x, z, stat='mean', digits=0, na.rm=TRUE, ...) {
 
-		compare(c(x, z))
+		compareRaster(c(x, z))
 		stopifnot(hasValues(z))
 		stopifnot(hasValues(x))
 	
@@ -25,7 +25,7 @@ setMethod('zonal', signature(x='Raster', z='RasterLayer'),
 		}
 	
 		if (inmem) {
-			pb <- pbCreate(2, ...)		
+			pb <- pbCreate(2, label='zonal', ...)		
 			fun <- match.fun(stat)
 			x <- getValues(x)
 			x <- cbind(x, round(getValues(z), digits=digits))
@@ -37,56 +37,77 @@ setMethod('zonal', signature(x='Raster', z='RasterLayer'),
 		} else {
 		
 			if (class(stat) != 'character') {
-				stop("RasterLayers cannot be processed in memory.\n You can use stat='sum', 'mean', 'min', or 'max', but not a function")
+				stop("RasterLayers cannot be processed in memory.\n You can use stat='sum', 'mean', 'sd', 'min', or 'max', but not a function")
 			}
-			if (! stat %in% c('sum', 'mean', 'min', 'max')) {
-				stop("stat can be 'sum', 'mean', 'min', or 'max'")
+			if (! stat %in% c('sum', 'mean', 'sd', 'min', 'max')) {
+				stop("stat can be 'sum', 'mean', 'sd', 'min', or 'max'")
 			}
-		
+			sdtab <- FALSE
 			fun <- match.fun(stat)
-			if ( stat == 'mean') {
+			if ( stat == 'mean' | stat == 'sd') {
 				fun <- sum
 				counts <- TRUE
+				if (stat == 'sd') {
+					sdtab <- TRUE
+				}
 			} else {
 				counts <- FALSE		
 			}
 
 			alltab <- array(dim=0)
-			cnttab <- alltab
+			sqtab <- cnttab <- alltab
 	
 			tr <- blockSize(x, n=2)
-			pb <- pbCreate(tr$n, ...)
+			pb <- pbCreate(tr$n, label='zonal', ...)
 		
+			nc <- nlayers(x)
+			nc1 <- nc + 1
+			nc2 <- 2:nc1
+			
 			for (i in 1:tr$n) {
 				d <- cbind(getValues(x, row=tr$row[i], nrows=tr$nrows[i]),   
 					 round(getValues(z, row=tr$row[i], nrows=tr$nrows[i]), digits=digits))
 				#cat(i, '\n')
 				#flush.console()
-				alltab <- rbind(alltab, aggregate(d[,1:(ncol(d)-1)], by=list(d[,ncol(d)]), FUN=fun, na.rm=na.rm)) 
+				alltab <- rbind(alltab, aggregate(d[,1:nc], by=list(d[,nc1]), FUN=fun, na.rm=na.rm)) 
 				if (counts) {
 					if (na.rm) {
-						cnttab <- rbind(cnttab, aggregate(d[,1:(ncol(d)-1)], by=list(d[,ncol(d)]), FUN=function(x)length(na.omit(x))))
+						cnttab <- rbind(cnttab, aggregate(d[,1:nc], by=list(d[,nc1]), FUN=function(x)length(na.omit(x))))
+						if (sdtab) {
+							sqtab <- rbind(sqtab, aggregate( (d[,1:nc])^2, by=list(d[,nc1]), FUN=function(x)sum(na.omit(x))))
+						}
 					} else {
-						cnttab <- rbind(cnttab, aggregate(d[,1:(ncol(d)-1)], by=list(d[,ncol(d)]), FUN=length))				
+						cnttab <- rbind(cnttab, aggregate(d[,1:nc], by=list(d[,nc1]), FUN=length))				
+						if (sdtab) {
+							sqtab <- rbind(sqtab, aggregate( (d[,1:nc])^2, by=list(d[,nc]), FUN=sum))
+						}
 					}
 				}
 				if (length(alltab) > 10000) {
-					alltab <- aggregate(alltab[,2:ncol(alltab)], by=list(alltab[,1]), FUN=fun, na.rm=na.rm) 
+					alltab <- aggregate(alltab[,nc2], by=list(alltab[,1]), FUN=fun, na.rm=na.rm) 
 					if (counts) {
-						cnttab <- aggregate(cnttab[,2:ncol(cnttab)], by=list(cnttab[,1]), FUN=sum, na.rm=na.rm) 
+						cnttab <- aggregate(cnttab[,nc2], by=list(cnttab[,1]), FUN=sum, na.rm=na.rm) 
+						if (sdtab) {
+							sqtab <- aggregate(sqtab[,nc2], by=list(sqtab[,1]), FUN=sum, na.rm=na.rm) 
+						}
 					}
 				}
 				pbStep(pb, i)
 			}
 			
-			alltab <- aggregate(alltab[,2:ncol(alltab)], by=list(alltab[,1]), FUN=fun, na.rm=na.rm) 	
+			alltab <- aggregate(alltab[,nc2], by=list(alltab[,1]), FUN=fun, na.rm=na.rm) 	
 			if (counts) {
-				cnttab <- aggregate(cnttab[,2:ncol(cnttab)], by=list(cnttab[,1]), FUN=sum) 
-				alltab[2:ncol(alltab)] <- alltab[2:ncol(alltab)] / cnttab[2:ncol(alltab)]
+				cnttab <- aggregate(cnttab[,nc2], by=list(cnttab[,1]), FUN=sum) 
+				alltab[nc2] <- alltab[nc2] / cnttab[nc2]
+				if (sdtab) {
+					sqtab <- aggregate(sqtab[,nc2], by=list(sqtab[,1]), FUN=sum, na.rm=na.rm) 
+					alltab[nc2] <- sqrt(( (sqtab[,nc2] / cnttab[,nc2]) - (alltab[nc2])^2 ) * (cnttab[,nc2]/(cnttab[,nc2]-1)))
+				}
+				
 			}
 		}
 	
-		alltab = as.matrix(alltab)
+		alltab <- as.matrix(alltab)
 		colnames(alltab)[1] <- 'zone'
 		if (ncol(alltab) > 2) {
 			colnames(alltab)[2:ncol(alltab)] <- layernames
@@ -98,3 +119,7 @@ setMethod('zonal', signature(x='Raster', z='RasterLayer'),
 		return(alltab)
 	}
 )
+
+#zonal(r, z, 'sd')
+
+

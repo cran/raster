@@ -57,7 +57,7 @@ SEXP focal_sum(SEXP d, SEXP w, SEXP dim, SEXP rmNA, SEXP NAonly) {
 			}
 
 			for (i = ncol*wr; i < ncol * (nrow-wr); i++) {
-				if (R_FINITE(xd[i])) {
+				if (R_IsNA(xd[i])) {
 					xval[i] = xd[i];
 				} else {
 					col = i % ncol;
@@ -70,7 +70,7 @@ SEXP focal_sum(SEXP d, SEXP w, SEXP dim, SEXP rmNA, SEXP NAonly) {
 						for (j = -wr; j <= wr; j++) {
 							for (k = -wc; k <= wc; k++) {
 								a = xd[j * ncol + k + i];
-								if ( R_FINITE(a) ) {
+								if ( !R_IsNA(a) ) {
 									xval[i] += a * xw[q];
 									p++;
 								}
@@ -107,7 +107,7 @@ SEXP focal_sum(SEXP d, SEXP w, SEXP dim, SEXP rmNA, SEXP NAonly) {
 					for (j = -wr; j <= wr; j++) {
 						for (k = -wc; k <= wc; k++) {
 							a = xd[j * ncol + k + i];
-							if ( R_FINITE(a) ) {
+							if ( !R_IsNA(a) ) {
 								xval[i] += a * xw[q];
 								p++;
 							}

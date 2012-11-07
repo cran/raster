@@ -24,7 +24,7 @@ Note that the distance unit of the buffer \code{width} parameter is meters if th
 }
 
 
-\author{Robert J. Hijmans }
+
 
 \value{RasterLayer}
 

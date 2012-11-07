@@ -23,7 +23,7 @@ unstack(x, ...)
 A list of RasterLayer objects
 }
 
-\author{Robert J. Hijmans}
+
 
 \seealso{ \code{\link[raster]{stack}}}
 

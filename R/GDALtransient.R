@@ -58,13 +58,13 @@
 		options <- c(options, "COMPRESS=LZW")
 	}
 
-	driver = new("GDALDriver", gdalfiletype)
+	driver <- new("GDALDriver", gdalfiletype)
 	
-    transient = new("GDALTransientDataset", driver=driver, rows=r@nrows, cols=r@ncols, bands=nbands, type=dataformat, fname=filename, options=options, handle=NULL)
+    transient <- new("GDALTransientDataset", driver=driver, rows=r@nrows, cols=r@ncols, bands=nbands, type=dataformat, fname=filename, options=options, handle=NULL)
  
 	for (i in 1:nbands) {
 		b <- new("GDALRasterBand", transient, i)
-		.Call("RGDAL_SetNoDataValue", b, as.double(NAflag), PACKAGE = "rgdal")
+		.gd_SetNoDataValue(b, NAflag)
 	}
 
 	if (rotated(r)) {
@@ -78,8 +78,8 @@
 		#}
 	}
 	
-    .Call("RGDAL_SetGeoTransform", transient, gt, PACKAGE = "rgdal")
-    .Call("RGDAL_SetProject", transient, projection(r), PACKAGE = "rgdal")
+    .gd_SetGeoTransform(transient, gt)
+	.gd_SetProject(transient, projection(r))
 
 	if (is.null(options)) options <- ''
 	return(list(transient, NAflag, options, dataformat))

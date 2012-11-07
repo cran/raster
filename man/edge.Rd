@@ -29,7 +29,7 @@ RasterLayer. Cell values are either 1 (and edge) or 0 (not an edge), or \code{NA
 \seealso{ \code{\link{focal}}, \code{\link{clump}} }
 
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 r <- raster(nrow=18, ncol=36, xmn=0)

@@ -33,7 +33,7 @@ If \code{x} has multiple layers, a list of such matrices (one list element / mat
 
 \seealso{ \code{\link{getValues}, \link{focal}} }
 
-\author{Robert J. Hijmans}
+
 \examples{
 r <- raster(nr=5, nc=5, crs='+proj=utm +zone=12')
 r[] <- 1:25

@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  January 2009
 # Version 0.9
 # Licence GPL v3
@@ -38,10 +38,10 @@ function(x, y, method="bilinear", filename="", ...)  {
 		warning('you are resampling y a raster with a much larger cell size, perhaps you should use "aggregate" first')
 	}
 	
-	e <- intersectExtent(x, y, validate=TRUE)
+	e <- .intersectExtent(x, y, validate=TRUE)
 	
 	filename <- trim(filename)
-	if (canProcessInMemory(y, 3*nl)) {
+	if (canProcessInMemory(y, 4*nl)) {
 		inMemory <- TRUE
 		v <- matrix(NA, nrow=ncell(y), ncol=nlayers(x))
 	} else {
@@ -60,17 +60,19 @@ function(x, y, method="bilinear", filename="", ...)  {
 		cat('Using cluster with', nodes, 'nodes\n')
 		flush.console()
 		
-		tr <- blockSize(y, minblocks=nodes)
-		pb <- pbCreate(tr$n, ...)
+		tr <- blockSize(y, minblocks=nodes, n=nl*4)
+		pb <- pbCreate(tr$n, label='resample', ...)
 
 		clFun <- function(i) {
 			#r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
 			xy <- xyFromCell(y, cellFromRowCol(y, tr$row[i], 1) : cellFromRowCol(y, tr$row[i]+tr$nrows[i]-1, ncol(y)) ) 
 			.xyValues(x, xy, method=method)
 		}
+
+		clusterExport(cl, c('x', 'y', 'tr', 'method'), envir=environment())
 		
         for (ni in 1:nodes) {
-			sendCall(cl[[ni]], clFun, ni, tag=ni)
+			sendCall(cl[[ni]], clFun, list(ni), tag=ni)
 		}
 
 		if (inMemory) {
@@ -85,7 +87,7 @@ function(x, y, method="bilinear", filename="", ...)  {
 
 				ni <- ni + 1
 				if (ni <= tr$n) {
-					sendCall(cl[[d$node]], clFun, ni, tag=ni)
+					sendCall(cl[[d$node]], clFun, list(ni), tag=ni)
 				}
 				pbStep(pb)
 			}
@@ -101,7 +103,7 @@ function(x, y, method="bilinear", filename="", ...)  {
 				y <- writeValues(y, d$value$value, tr$row[d$value$tag])
 				ni <- ni + 1
 				if (ni <= tr$n) {
-					sendCall(cl[[d$node]], clFun, ni, tag=ni)
+					sendCall(cl[[d$node]], clFun, list(ni), tag=ni)
 				}
 				pbStep(pb)
 			}
@@ -110,8 +112,8 @@ function(x, y, method="bilinear", filename="", ...)  {
 		
 	} else {
 	
-		tr <- blockSize(y)
-		pb <- pbCreate(tr$n, ...)
+		tr <- blockSize(y, n=nl*4)
+		pb <- pbCreate(tr$n, label='resample', ...)
 		
 		if (inMemory) {
 			for (i in 1:tr$n) {

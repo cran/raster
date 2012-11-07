@@ -56,7 +56,7 @@ SEXP focal_fun(SEXP d, SEXP w, SEXP dim, SEXP fun, SEXP NAonly, SEXP rho) {
 			xans[i] = xd[i];
 		}
 		for (i = ncol*wr; i < ncol * (nrow-wr); i++) {
-			if (R_FINITE(xd[i])) {
+			if (!R_IsNA(xd[i])) {
 				xans[i] = xd[i];
 			} else {
 				col = i % ncol;

@@ -54,7 +54,7 @@ function(x, y, ..., tolerance=0.05, filename="", overlap=TRUE, ext=NULL) {
 	dotargs <- x[ !isRast ]
 	x <- x[ isRast ]
 	
-	compare(x, extent=FALSE, rowcol=FALSE, orig=TRUE, res=TRUE, tolerance=tolerance)
+	compareRaster(x, extent=FALSE, rowcol=FALSE, orig=TRUE, res=TRUE, tolerance=tolerance)
 	
 	if (is.null(dotargs$datatype)) {
 		dotargs$datatype <- .commonDataType(sapply(x, dataType))  
@@ -63,18 +63,22 @@ function(x, y, ..., tolerance=0.05, filename="", overlap=TRUE, ext=NULL) {
 	dotargs$filename <- filename
 	
 	nl <- max(unique(sapply(x, nlayers)))
-	bb <- .unionExtent(x)
+	bb <- raster:::.unionExtent(x)
 	if (nl > 1) {
 		out <- brick(x[[1]], values=FALSE, nl=nl)
 	} else {
 		out <- raster(x[[1]])
 	}
 	out <- setExtent(out, bb, keepres=TRUE, snap=FALSE)
-	
+
+	hasV <- sapply(x, hasValues)
+	if (!any(hasV)) {
+		return(out)
+	}
 
 	if (!is.null(ext)) {
 		ext <- extent(ext)
-		out1 <- expand(out, union(ext, extent(out)))
+		out1 <- extend(out, union(ext, extent(out)))
 		out1 <- crop(out1, ext)
 
 		test <- try( intersect(extent(out), extent(out1)) )
@@ -86,7 +90,8 @@ function(x, y, ..., tolerance=0.05, filename="", overlap=TRUE, ext=NULL) {
 	}
 			
 
-
+	
+			
 	if ( canProcessInMemory(out, 3) ) {
 	
 		if (!is.null(ext)) {
@@ -117,13 +122,13 @@ function(x, y, ..., tolerance=0.05, filename="", overlap=TRUE, ext=NULL) {
 						xy2 <- xyFromCell(x[[i]], ncell(x[[i]]) ) 
 						if (xy1[2] > ymin(out) & xy2[2] < ymax(out) & xy1[1] < xmax(out) & xy2[1] > xmin(out)) {		
 							cells <- cellsFromExtent( out, extent(x[[i]]) )
-							d <- extract(x[[i]])
+							xy <- xyFromCell(out, cells)
+							d <- extract(x[[i]], xy)
 							j <- !is.na(d)
 							v[cells[j]] <- d[j]
 						}
 					}
 				}
-				rm(vv)
 				out <- setValues(out, v)
 				if (filename != '') {
 					dotargs$x <- out
@@ -222,7 +227,7 @@ function(x, y, ..., tolerance=0.05, filename="", overlap=TRUE, ext=NULL) {
 	#	tr$nrows <- c(tr$row[-1], nrow(out)+1) - c(tr$row)
 	#	tr$n <- length(tr$row)
 
-		pb <- pbCreate(tr$n, dotargs$progress)
+		pb <- pbCreate(tr$n, dotargs$progress, label='merge')
 		dotargs$x <- out
 		out <- do.call(writeStart, dotargs)
 		
@@ -346,7 +351,7 @@ function(x, y, ..., tolerance=0.05, filename="", overlap=TRUE, ext=NULL) {
 	#	tr$nrows <- c(tr$row[-1], nrow(out)+1) - c(tr$row)
 	#	tr$n <- length(tr$row)
 
-		pb <- pbCreate(tr$n, dotargs$progress)
+		pb <- pbCreate(tr$n, dotargs$progress, label='merge')
 		dotargs$x <- out
 		out <- do.call(writeStart, dotargs)
 

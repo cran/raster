@@ -48,7 +48,7 @@ setMethod('weighted.mean', signature(x='RasterStackBrick', w='RasterStackBrick')
 		} else {
 			
 			tr <- blockSize(x, n=nlx*2)
-			pb <- pbCreate(tr$n, ...)
+			pb <- pbCreate(tr$n, , label='weighted.mean', ...)
 			out <- writeStart(out, filename=filename, ...)
 			for (i in 1:tr$n) {
 				ww <- getValues(w, row=tr$row[i], nrows=tr$nrows[i])

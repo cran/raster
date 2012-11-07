@@ -22,7 +22,7 @@ rotated(x)
 Logical value
 }
   
-\author{Robert J. Hijmans}
+
 
 \seealso{ \code{\link{rectify}}}
 

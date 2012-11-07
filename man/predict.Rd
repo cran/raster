@@ -13,7 +13,7 @@ Make a Raster object with predictions from a fitted model object (for example, o
 
 \usage{
 \S4method{predict}{Raster}(object, model, filename="", fun=predict, ext=NULL, const=NULL, 
-          index=1, na.rm=TRUE, format, datatype, overwrite=FALSE, progress='', ...)
+   index=1, na.rm=TRUE, inf.rm=FALSE, format, datatype, overwrite=FALSE, progress='', ...)
 }
 
 
@@ -26,6 +26,7 @@ Make a Raster object with predictions from a fitted model object (for example, o
   \item{const}{data.frame. Can be used to add a constant for which there is no Raster object for model predictions. Particularly useful if the constant is a character-like factor value for which it is currently not possible to make a RasterLayer }
   \item{index}{Integer. To select the column if predict.'model' returns a matrix with multiple columns }
   \item{na.rm}{Logical. Remove cells with \code{NA} values in the predictors before solving the model (and return a \code{NA} value for those cells). This option prevents errors with models that cannot handle \code{NA} values. In most other cases this will not affect the output. An exception is when predicting with a boosted regression trees model because these return predicted values even if some (or all!) variables are \code{NA} }
+  \item{inf.rm}{Logical. Remove cells with values that are not finite (some models will fail with -Inf/Inf values). This option is ignored when \code{na.rm=FALSE}}
  \item{format}{Character. Output file type. See \link[raster]{writeRaster} (optional) }
  \item{datatype}{Character. Output data type. See \link[raster]{dataType} (optional) }
  \item{overwrite}{Logical. If TRUE, "filename" will be overwritten if it exists }
@@ -41,12 +42,12 @@ Use \code{\link[raster]{interpolate}} if your model has 'x' and 'y' as implicit 
 RasterLayer or RasterBrick
 }
 
-\author{ Robert J. Hijmans}
+
 
 \examples{
 # A simple model to predict the location of the R in the R-logo using 20 presence points 
-# and 50 (random) pseudo-absence points. This type of model is often used to predict species distributions
-# see the dismo package for more of that.
+# and 50 (random) pseudo-absence points. This type of model is often used to predict
+# species distributions. See the dismo package for more of that.
 
 # create a RasterStack or RasterBrick with with a set of predictor layers
 logo <- brick(system.file("external/rlogo.grd", package="raster"))

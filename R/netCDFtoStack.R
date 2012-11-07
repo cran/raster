@@ -6,7 +6,7 @@
 
 .stackCDF <- function(filename, varname='', bands='') {
 
-	ncdf4 <- .NCDFversion4()
+	ncdf4 <- raster:::.NCDFversion4()
 
 	if (ncdf4) {
 		nc <- ncdf4::nc_open(filename)
@@ -38,8 +38,8 @@
 		st@title <- names(r)
 
 		if (length(bands) > 1) {
-			names(st@z) <- nc$var[[zvar]]$dim[[dim3]]$units[bands]
 			st@z <- list( nc$var[[zvar]]$dim[[dim3]]$vals[bands] )
+			names(st@z) <- nc$var[[zvar]]$dim[[dim3]]$units
 			if ( nc$var[[zvar]]$dim[[dim3]]$name == 'time' ) {	
 				st <- try( .doTime(st, nc, zvar, dim3, ncdf4)  )
 			}

@@ -1,18 +1,11 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date : March 2009
 # Version 0.9
 # Licence GPL v3
 
 
-if (!isGeneric("count")) {
-	setGeneric("count", function(x, value, ...)
-		standardGeneric("count"))
-}	
+.count <- function(x, value, digits=0, progress='', ...) {
 
-setMethod('count', signature(x='Raster', value='ANY'), 
-function(x, value, digits=0, progress='', ...) {
-
-	if (missing(value)) { stop("'value' is missing") }
 	value <- value[1]
 	
 	if (nlayers(x) > 1) {
@@ -26,7 +19,7 @@ function(x, value, digits=0, progress='', ...) {
 			}
 		} else {
 			tr <- blockSize(x, n=2)
-			pb <- pbCreate(tr$n, progress=progress)
+			pb <- pbCreate(tr$n, label='count', progress=progress)
 			v <- 0
 			for (i in 1:tr$n) {
 				vv <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
@@ -54,7 +47,7 @@ function(x, value, digits=0, progress='', ...) {
 			return(x)
 		} else {
 			tr <- blockSize(x, n=2)
-			pb <- pbCreate(tr$n, progress=progress)
+			pb <- pbCreate(tr$n, label='count', progress=progress)
 			r <- 0
 			for (i in 1:tr$n) {
 				v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
@@ -70,6 +63,6 @@ function(x, value, digits=0, progress='', ...) {
 			return(r)
 		}
 	}
-} )
+}
 
 

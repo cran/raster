@@ -32,7 +32,7 @@ A new Raster* object, and in some cases the side effect of a new file on disk.
 
 \seealso{\code{\link{calc}, \link{stackSelect}}}
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 r <- raster(ncol=10, nrow=10)

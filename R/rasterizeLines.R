@@ -189,7 +189,7 @@
 
 	yrs <- yres(rstr)
 	
-	pb <- pbCreate(nrow(rstr), ...)
+	pb <- pbCreate(nrow(rstr), label='rasterize', ...)
 	for (r in 1:nrow(rstr)) {
 		ly <- yFromRow(rstr, r)
 		uly <- ly + 0.51 * yrs

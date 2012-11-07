@@ -35,7 +35,7 @@ The last cell number equals the number of cells of the Raster* object.
 \seealso{ \code{\link[raster]{cellFrom}} }
 
 
-\author{Robert J. Hijmans }
+
 
 \examples{
 r <- raster(ncols=10, nrows=10)

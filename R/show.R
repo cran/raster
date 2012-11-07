@@ -58,25 +58,41 @@ setMethod ('show' , 'RasterLayer',
 		if (is.factor(object)) {
 		
 			x <- object@data@attributes[[1]]
-			nc <- ncol(x)
+			nc <- NCOL(x)
+			if (nc == 1) { # this should never happen
+				x <- data.frame(value=x)
+			}
 			maxnl <- 12
 			if (nc > maxnl) {
 				x <- x[, 1:maxnl]
 			}
 			
-			cat('Raster Attribute Table\n') 
 	
 			#nfact <- sapply(1:ncol(x), function(i) is.numeric(x[,i]))
-			r <- apply(x, 2, range, na.rm=TRUE)
-			r <- data.frame(r)
-			r <- data.frame(x=c('min :','max :'), r)
-			colnames(r) <- c('    fields :', colnames(x))
-			rownames(r) <- NULL
-			if (nc > maxnl) {
-				r <- cbind(r, '...'=rbind('...', '...'))
+			if (nrow(x) > 5) {
+				cat('attributes\n') 
+				w <- getOption('warn')
+				on.exit(options('warn' = w))
+				options('warn'=-1) 
+				r <- apply(x, 2, range, na.rm=TRUE)
+				r[is.numeric(r) & !is.finite(r)] <- NA
+				options('warn' = w)
+				r <- data.frame(r)
+				r <- data.frame(x=c('min :','max :'), r)
+				a <- colnames(x)
+			
+				
+				colnames(r) <- c('    fields :', a)
+				rownames(r) <- NULL
+				if (nc > maxnl) {
+					r <- cbind(r, '...'=rbind('...', '...'))
+				}
+				print(r, row.names=FALSE)
+			} else {
+				cat('attributes  :\n') 
+				print(x, row.names=FALSE)
 			}
 			
-			print(r, row.names=FALSE)
 			
 		} else {
 				
@@ -132,24 +148,39 @@ setMethod ('show' , 'RasterBrick',
 				cat('data source : in memory\n')			
 			}
 			
-			cat('names       :', paste(ln, collapse=', '), '\n')
-
 			if (object@data@haveminmax) {
-				minv <- format(minValue(object), digits=2)
-				maxv <- format(maxValue(object), digits=2)
+				minv <- format(minValue(object))
+				maxv <- format(maxValue(object))
 				minv <- gsub('Inf', '?', minv)
 				maxv <- gsub('-Inf', '?', maxv)
 				if (nl > mnr) {
 					minv <- c(minv[1:mnr], '...')
 					maxv <- c(maxv[1:mnr], '...')
 				}
-				cat('min values  :', paste(trim(minv), collapse=', '), '\n')
-				cat('max values  :', paste(trim(maxv), collapse=', '), '\n')
+				
+				
+				n <- nchar(ln)
+				if (nl > 5) {
+					b <- n > 26
+					if (any(b)) {
+						mid <- floor(n/2)
+						ln[b] <- paste(substr(ln[b], 1, 9), '//', substr(ln[b], nchar(ln[b])-9, nchar(ln[b])), sep='')
+					}
+				}
+				
+				w <- pmax(nchar(ln), nchar(minv), nchar(maxv))
+				m <- rbind(ln, minv, maxv)
+				# a loop because 'width' is not recycled by format
+				for (i in 1:ncol(m)) {
+					m[,i]   <- format(m[,i], width=w[i], justify="right")
+				}
+				cat('names       :', paste(m[1,], collapse=', '), '\n')
+				cat('min values  :', paste(m[2,], collapse=', '), '\n')
+				cat('max values  :', paste(m[3,], collapse=', '), '\n')
 
-#			} else {
-#				minv <- rep('?', min(nl, 10))
-#				maxv <- rep('?', min(nl, 10))
-			}
+			} else {
+				cat('names       :', paste(ln, collapse=', '), '\n')
+			}			
 		} 
 
 		z <- getZ(object)
@@ -206,19 +237,32 @@ setMethod ('show' , 'RasterStack',
 			if (nl > mnr) {
 				ln <- c(ln[1:mnr], '...')
 			}
-			cat('names       :', paste(ln, collapse=', '), '\n')
+			n <- nchar(ln)
+			if (nl > 5) {
+				b <- n > 26
+				if (any(b)) {
+					ln[b] <- paste(substr(ln[b], 1, 9), '//', substr(ln[b], nchar(ln[b])-9, nchar(ln[b])), sep='')
+				}
+			}
 			
-			minv <- format(minValue(object), digits=2)
-			maxv <- format(maxValue(object), digits=2)
+			
+			minv <- format(minValue(object))
+			maxv <- format(maxValue(object))
 			minv <- gsub('Inf', '?', minv)
 			maxv <- gsub('-Inf', '?', maxv)
 			if (nl > mnr) {
 				minv <- c(minv[1:mnr], '...')
 				maxv <- c(maxv[1:mnr], '...')
 			}
-			cat('min values  :', paste(trim(minv), collapse=', '), '\n')
-			cat('max values  :', paste(trim(maxv), collapse=', '), '\n')
-			
+			w <- pmax(nchar(ln), nchar(minv), nchar(maxv))
+			m <- rbind(ln, minv, maxv)
+				# a loop because 'width' is not recycled by format
+			for (i in 1:ncol(m)) {
+				m[,i]   <- format(m[,i], width=w[i], justify="right")
+			}
+			cat('names       :', paste(m[1,], collapse=', '), '\n')
+			cat('min values  :', paste(m[2,], collapse=', '), '\n')
+			cat('max values  :', paste(m[3,], collapse=', '), '\n')
 		}
 		
 		

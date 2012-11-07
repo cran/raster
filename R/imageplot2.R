@@ -8,12 +8,10 @@
 
 
 .rasterImagePlot <- function(x, col, add=FALSE, legend=TRUE, horizontal = FALSE, 
-    legend.shrink = 0.5, legend.width = 0.6, legend.mar = ifelse(horizontal, 3.1, 5.1),
-	legend.lab = NULL, graphics.reset = FALSE, 
-    bigplot = NULL, smallplot = NULL, legend.only = FALSE, 
-    lab.breaks = NULL, axis.args = NULL, legend.args = NULL, 
-	interpolate=FALSE, box=TRUE, breaks=NULL, zlim=NULL, fun=NULL, asp, 
-	colNA = NA, ...) {
+    legend.shrink=0.5, legend.width=0.6, legend.mar = ifelse(horizontal, 3.1, 5.1),
+	legend.lab=NULL, graphics.reset=FALSE, bigplot = NULL, smallplot = NULL, legend.only = FALSE, 
+    lab.breaks=NULL, axis.args=NULL, legend.args = NULL, interpolate=FALSE, box=TRUE, breaks=NULL, 
+	zlim=NULL, zlimcol=NULL, fun=NULL, asp, colNA = NA, ...) {
 
 
  	if (missing(asp)) {
@@ -21,13 +19,16 @@
 			ym <- mean(c(x@extent@ymax, x@extent@ymin))
 			asp <- 1/cos((ym * pi)/180)
 		} else {
-			asp = 1
+			asp <- 1
 		}		
 	}
 	
 	asRaster <- function(x, col, breaks=NULL, fun=NULL, r=NULL) {
 		if (!is.null(breaks)) {
-			x[] <- as.numeric(cut(x, breaks, include.lowest=TRUE))
+			if (is.logical(x)) {
+				x <- x * 1
+			}
+			x[] <- as.numeric(cut(as.vector(x), breaks, include.lowest=TRUE))
 			
 		} else {
 			if (is.function(fun)) {
@@ -55,8 +56,14 @@
 	x <- as.matrix(x)
 	x[is.infinite(x)] <- NA
 	if (!is.null(zlim)) {
-		x[x<zlim[1] | x>zlim[2]] <- NA
+		if (is.null(zlimcol)) {
+			x[ x<zlim[1] ] <- zlim[1]
+			x[ x>zlim[2] ] <- zlim[2]
+		} else { #if (is.na(zlimcol)) {
+			x[x<zlim[1] | x>zlim[2]] <- NA
+		} 
 	}
+	
 	w <- getOption('warn')
 	options('warn'=-1) 
 	if (is.null(breaks)) {

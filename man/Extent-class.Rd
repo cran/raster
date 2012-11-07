@@ -31,7 +31,7 @@ You can use the \code{\link{extent}} function to create Extent objects, or to ex
  }
 }
 
-\author{ Robert J. Hijmans}
+
 
 
 \seealso{ \code{\link{extent}}, \code{\link[raster]{setExtent}} }

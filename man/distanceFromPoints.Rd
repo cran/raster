@@ -26,7 +26,7 @@ distanceFromPoints(object, xy, filename='', ...)
 
 \seealso{ \code{\link[raster]{distance}},  \code{\link[raster]{gridDistance}},  \code{\link[raster]{pointDistance}}  }
 
-\author{Robert J. Hijmans }
+
 
 
 \examples{

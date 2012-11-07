@@ -39,7 +39,7 @@ Integer
 \seealso{ \code{\link{dim}, \link{extent}}, \link{res} }
 
 
-\author{ Robert J. Hijmans }
+
 
 
 \examples{

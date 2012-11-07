@@ -54,6 +54,7 @@
 	if (is.null(bands)) {
 		bands <- 1:nbands
 	}
+	bands <- bands[bands %in% 1:nbands]
 	
 	havemnmx <- b@data@haveminmax
 	if (havemnmx) {
@@ -64,21 +65,23 @@
 	
 	r <- raster(b, bands[1])
 	s <- stack(r)
-	
-	if (havemnmx) {
-		s@layers <- sapply(bands, function(i){ 
-				r@data@band <- i
-				r@data@names <- ln[i]
-				r@data@min <- mn[i]
-				r@data@max <- mx[i]
-				r
-				})
-	} else {
-		s@layers <- sapply(bands, function(i){ 
-				r@data@band <-  i
-				r@data@names <- ln[i]
-				r
-				})
+	if (length(bands) > 1) {
+		
+		if (havemnmx) {
+			s@layers <- sapply(bands, function(i){ 
+					r@data@band <- i
+					r@data@names <- ln[i]
+					r@data@min <- mn[i]
+					r@data@max <- mx[i]
+					r
+					})
+		} else {
+			s@layers <- sapply(bands, function(i){ 
+					r@data@band <-  i
+					r@data@names <- ln[i]
+					r
+					})
+		}
 	}
 	s
 }

@@ -19,8 +19,9 @@ if (!isGeneric("calc")) {
 			} else if (test == '.Primitive(\"max\")') { fun <- 'max' 
 			}
 		} else {
-			test <- try( deparse(fun)[2] == 'UseMethod(\"mean\")', silent=TRUE)
-			if (isTRUE(test)) { 
+			test1 <- isTRUE(try( deparse(fun)[2] == 'UseMethod(\"mean\")', silent=TRUE))
+			test2 <- isTRUE(try( fun@generic == 'mean', silent=TRUE))
+			if (test1 | test2) { 
 				fun <- 'mean' 
 			}
 		} 
@@ -36,6 +37,17 @@ if (!isGeneric("calc")) {
 	} else if (fun == 'max') { return(.rowMax)
 	} else { stop('unknown fun') }
 }
+
+
+
+.getColFun <- function(fun) {
+	if (fun == 'mean') { return(colMeans)
+	} else if (fun == 'sum') { return(colSums)
+	} else if (fun == 'min') { return(.colMin)
+	} else if (fun == 'max') { return(.colMax)
+	} else { stop('unknown fun') }
+}
+
 
 
 .calcTest <- function(tstdat, fun, na.rm, forcefun=FALSE, forceapply=FALSE) {
@@ -214,7 +226,7 @@ function(x, fun, filename='', na.rm, forcefun=FALSE, forceapply=FALSE, ...) {
 	
 	out <- writeStart(out, filename=filename, ...)
 	tr <- blockSize(out)
-	pb <- pbCreate(tr$n, ...)			
+	pb <- pbCreate(tr$n, label='calc', ...)			
 
 	if (missing(na.rm)) {
 		for (i in 1:tr$n) {

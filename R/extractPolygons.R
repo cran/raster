@@ -57,7 +57,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 	
 	rr <- raster(x)
 	
-	pb <- pbCreate(npol, ...)
+	pb <- pbCreate(npol, label='extract', ...)
 	
 	if (.doCluster()) {
 		cl <- getCluster()
@@ -66,8 +66,9 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 		cat('Using cluster with', nodes, 'nodes\n')
 		flush.console()
 
-		clFun <- function(i) {
-			pp <- y[i,]
+		
+		clusterExport(cl, c('rsbb', 'rr', 'weights', 'addres', 'cellnumbers', 'small'), envir=environment())
+		clFun <- function(i, pp) {
 			spbb <- bbox(pp)
 		
 			if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
@@ -131,7 +132,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 		}
 		
         for (ni in 1:nodes) {
-			sendCall(cl[[ni]], clFun, ni, tag=ni)
+			sendCall(cl[[ni]], clFun, list(ni, y[ni,]), tag=ni)
 		}
 		
 		for (i in 1:npol) {
@@ -142,7 +143,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 			res[[d$value$tag]] <- d$value$value
 			ni <- ni + 1
 			if (ni <= npol) {
-				sendCall(cl[[d$node]], clFun, ni, tag=ni)
+				sendCall(cl[[d$node]], clFun, list(ni, y[ni,]), tag=ni)
 			}
 			pbStep(pb, i)
 		}
@@ -253,7 +254,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 		if (!is.list(res)) {
 			res <- data.frame(ID=1:NROW(res), res)
 		} else {
-			res <- data.frame( do.call(rbind, sapply(1:length(res), function(x) if (!is.null(res[[x]])) cbind(x, res[[x]]))) )
+			res <- data.frame( do.call(rbind, lapply(1:length(res), function(x) if (!is.null(res[[x]])) cbind(x, res[[x]]))) )
 		}		
 
 		lyrs <- layer:(layer+nl-1)

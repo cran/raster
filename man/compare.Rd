@@ -1,16 +1,22 @@
-\name{compare}
+\name{compareRaster}
 
+\alias{compareRaster}
 \alias{compare}
   
-\title{Compare}
+\title{Compare Raster objects}
 
 \description{
-Evaluate whether a two or more rasters have the same extent, number of rows and columns, projection, resolution, and origin (or a subset of these comparisons). Cell values are not compared by this function. 
+Evaluate whether a two or more Raster* objects have the same extent, number of rows and columns, projection, resolution, and origin (or a subset of these comparisons). Cell values are not compared by this function. 
+
+compare is an obsolete function that will be removed from the package. It is equivalent to compareRaster.
 }
 
 \usage{
-compare(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE, orig=FALSE, 
+compareRaster(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE, orig=FALSE, 
 			rotation=TRUE, tolerance, stopiffalse=TRUE, showwarning=FALSE) 
+
+compare(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE, orig=FALSE, 
+			rotation=TRUE, tolerance, stopiffalse=TRUE, showwarning=FALSE) 			
 }
 
 \arguments{
@@ -22,22 +28,23 @@ compare(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE, orig=FALSE,
   \item{res}{Logical. If \code{TRUE}, resolutions are compared (redundant when checking extent and rowcol)}
   \item{orig}{Logical. If \code{TRUE}, origins are compared}
   \item{rotation}{Logical. If \code{TRUE}, rotations are compared}  
-  \item{tolerance}{Numeric value between 0 and 0.5. If not supplied, the default value is used (see \code{\link{showOptions}}. It sets difference (relative to the cell resolution) that is permissible for objects to be considered 'equal', if they have a non-integer origin or resolution. See \link{all.equal}. }
+  \item{tolerance}{Numeric value between 0 and 0.5. If not supplied, the default value is used (see \code{\link{rasterOptions}}. It sets difference (relative to the cell resolution) that is permissible for objects to be considered 'equal', if they have a non-integer origin or resolution. See \link{all.equal}. }
   \item{stopiffalse}{Logical. If \code{TRUE}, an error will occur if the objects are not the same}
   \item{showwarning}{Logical. If \code{TRUE}, an warning will be given if objects are not the same. Only relevant when \code{stopiffalse} is \code{TRUE}}
  }
   
-\author{Robert J. Hijmans}
+
 
 \examples{
 r1 <- raster()
 r2 <- r1
 r3 <- r1
-compare(r1, r2, r3)
+compareRaster(r1, r2, r3)
 nrow(r3) <- 10
-# compare(r1, r3)
-compare(r1, r3, stopiffalse=FALSE)
-compare(r1, r3, rowcol=FALSE)
+
+# compareRaster(r1, r3)
+compareRaster(r1, r3, stopiffalse=FALSE)
+compareRaster(r1, r3, rowcol=FALSE)
 }
 
 \keyword{ spatial }

@@ -28,7 +28,7 @@ setMethod('minValue', signature(x='RasterLayer'),
 
 
 setMethod('minValue', signature(x='RasterBrick'), 
-	function(x, layer=-1) {
+	function(x, layer=-1, warn=FALSE) {
 		layer <- round(layer)
 		if (layer < 1) { 
 			if ( x@data@haveminmax ) {
@@ -54,7 +54,7 @@ setMethod('minValue', signature(x='RasterBrick'),
 
 
 setMethod('minValue', signature(x='RasterStack'), 
-	function(x, layer=-1) {
+	function(x, layer=-1, warn=FALSE) {
 		layer <- round(layer)
 		if (layer < 1) { 
 			minv <- vector()
@@ -92,7 +92,7 @@ setMethod('maxValue', signature(x='RasterLayer'),
 )
 
 setMethod('maxValue', signature(x='RasterBrick'), 
-	function(x, layer=-1) {
+	function(x, layer=-1, warn=FALSE) {
 		layer <- round(layer)
 		if (layer < 1) { 
 			if ( x@data@haveminmax ) {
@@ -114,7 +114,7 @@ setMethod('maxValue', signature(x='RasterBrick'),
 
 
 setMethod('maxValue', signature(x='RasterStack'), 
-	function(x, layer=-1) {
+	function(x, layer=-1, warn=FALSE) {
 		layer <- round(layer)
 		if (layer < 1) { 
 			maxv <- vector()

@@ -74,7 +74,9 @@ function(x, subset, drop=TRUE, filename='', ...) {
 		varname <- "" 
 	}
 
+	# these values may have been changed
 	nav <- NAvalue(x)
+	e <- extent(x)
 	
 	if (fromDisk(x)) {
 		if (drop & length(subset)==1) {
@@ -82,6 +84,7 @@ function(x, subset, drop=TRUE, filename='', ...) {
 		} else {
 			x <- stack(filename(x), bands=subset, varname=varname)
 		}
+		extent(x) <- e
 		NAvalue(x) <- nav
 	} else {
 		if (drop & length(subset)==1) {
@@ -90,6 +93,7 @@ function(x, subset, drop=TRUE, filename='', ...) {
 			} else {
 				x <- raster(x)
 			}
+			extent(x) <- e
 			NAvalue(x) <- nav
 			return(x)	
 		}
@@ -104,6 +108,11 @@ function(x, subset, drop=TRUE, filename='', ...) {
 			x@z[[1]] <- x@z[[1]][subset]
 		}
 		x@data@nlayers <- as.integer(length(subset))
+		f <- is.factor(x)
+		if (any(f)) {
+			x@data@attributes <- x@data@attributes[subset]
+			x@data@isfactor <- x@data@isfactor[subset]
+		}
 	}
 	if (filename != '') {
 		x <- writeRaster(x, filename, ...)

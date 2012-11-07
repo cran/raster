@@ -10,7 +10,8 @@ Take a systematic sample from a Raster* object.
 }
 
 \usage{
-\S4method{sampleRegular}{Raster}(x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, useGDAL=FALSE, ...)
+\S4method{sampleRegular}{Raster}(x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, 
+            sp=FALSE, useGDAL=FALSE, ...)
 
 }
 
@@ -32,7 +33,7 @@ A vector (single layer object), matrix (multi-layered object; or if \code{cells=
 
 \seealso{\code{\link{sampleRandom}}, \link{sampleStratified}}
 
-\author{Robert J. Hijmans}
+
 
 \examples{
  r <- raster(system.file("external/test.grd", package="raster"))

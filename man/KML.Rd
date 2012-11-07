@@ -16,10 +16,10 @@ See package plotKML for more advanced functionality
 
 \usage{
 \S4method{KML}{RasterLayer}(x, filename, col=rev(terrain.colors(255)), 
-  colNA=NA, maxpixels=100000, blur=1, zip='', overwrite=FALSE, ...)
+     colNA=NA, maxpixels=100000, blur=1, zip='', overwrite=FALSE, ...)
 
-\S4method{KML}{RasterStackBrick}(x, filename, time=NULL, 
-  col=rev(terrain.colors(255)), colNA=NA, maxpixels=100000, blur=1, zip='', overwrite=FALSE, ...)
+\S4method{KML}{RasterStackBrick}(x, filename, time=NULL, col=rev(terrain.colors(255)), 
+     colNA=NA, maxpixels=100000, blur=1, zip='', overwrite=FALSE, ...)
 
 \S4method{KML}{Spatial}(x, filename, zip='', overwrite=FALSE, ...)
 }
@@ -42,9 +42,7 @@ See package plotKML for more advanced functionality
 None. Used for the side-effect files written to disk. 
 }
 
-\author{
-This function was adapted for the raster package by Robert J. Hijmans, with ideas from Tony Fischbach, and based on functions in the maptools package by Duncan Golicher, David Forrest and Roger Bivand.
-}
+\author{This function was adapted for the raster package by Robert J. Hijmans, with ideas from Tony Fischbach, and based on functions in the maptools package by Duncan Golicher, David Forrest and Roger Bivand.}
 
 
 \examples{

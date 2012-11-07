@@ -80,7 +80,7 @@ setMethod('click', signature(x='SpatialPixels'),
 setMethod('click', signature(x='Raster'), 
 	function(x, n=1, id=FALSE, xy=FALSE, cell=FALSE, type="n", ...) {
 	
-	cells <- raster:::.getCellFromClick(x, n, type, id, ...)
+	cells <- .getCellFromClick(x, n, type, id, ...)
 	value <- .cellValues(x, cells)
 	
 	if (is.null(dim(value))) { 
@@ -99,3 +99,71 @@ setMethod('click', signature(x='Raster'),
 }
 )
 
+
+
+
+	
+setMethod('click', signature(x='SpatialPolygons'),
+	function(x, n=1, id=FALSE, xy=FALSE, type="n", ...) {
+		loc <- locator(n, type, ...)
+		xyCoords <- cbind(x=loc$x, y=loc$y)
+		if (id) {
+			text(xyCoords, labels=1:n)
+		}
+
+		xyCoords <- SpatialPoints(xyCoords)
+		xyCoords@proj4string <- x@proj4string
+		i <- which(!is.na(over(x, xyCoords)))
+		if (length(i) > 0) {
+			if (.hasSlot(x, 'data')) {
+				x <- x@data[i,]
+			} else {
+				x <- row.names(x)[i]
+			}
+		} else {
+			x <- NULL
+		}
+		
+		if (xy) {
+			x <- cbind(xyCoords, x)
+		}
+		return(x)
+	}
+)
+
+
+setMethod('click', signature(x='SpatialLines'), 
+	function(x, ...) {
+		e <- as(drawExtent(), 'SpatialPolygons')
+		e@proj4string <- x@proj4string
+		i <- which(!is.na(over(x, e)))
+		if (length(i) > 0) {
+			if (.hasSlot(x, 'data')) {
+				x <- x@data[i,]
+			} else {
+				x <- row.names(x)[i]
+			}
+		} else {
+			x <- NULL
+		}
+		x
+	}
+)
+
+setMethod('click', signature(x='SpatialPoints'), 
+	function(x, ...) {
+		e <- as(drawExtent(), 'SpatialPolygons')
+		e@proj4string <- x@proj4string
+		i <- which(!is.na(over(x, e)))
+		if (length(i) > 0) {
+			if (.hasSlot(x, 'data')) {
+				x <- x@data[i,]
+			} else {
+				x <- row.names(x)[i]
+			}
+		} else {
+			x <- NULL
+		}
+		x
+	}
+)

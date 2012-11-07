@@ -10,6 +10,7 @@ if (!isGeneric('setValues')) {
 	}	
 
 	
+
 setMethod('setValues', signature(x='RasterLayer'), 
 function(x, values, ...) {
 
@@ -22,12 +23,19 @@ function(x, values, ...) {
 			stop('cannot use a matrix with these dimensions')
 		}
 	}
-  
+	
 	if (!is.vector(values)) { 
-		stop('values must be a vector')
+		if (is.factor(values)) {
+			levs <- levels(values)
+			values <- as.integer(values)
+			x@data@isfactor <- TRUE
+			x@data@attributes <- list(data.frame(ID=1:length(levs), VALUE=levs))
+		} else {
+			stop('values must be a vector')
+		}
 	}
 	if (!(is.numeric(values) | is.integer(values) | is.logical(values))) {
-		stop('values must be numeric, integer or logical.')	}
+		stop('values must be numeric, integer, logical or factor')	}
 	
 
 	if (length(values) == 1) {	
@@ -127,23 +135,31 @@ setMethod('setValues', signature(x='RasterBrick'),
 		}
 		
 	} else {
-	
-		if (nlayers(x)==0) { 
+		nlx <- nlayers(x)
+		if (nlx==0) { 
 			x@data@nlayers <- 1
 		}
+		bind <- FALSE
 		layer <- round(layer)
-		if (layer > nlayers(x)) { 
-			stop('layer number too high') 
+		if (layer > nlx) { 
+			if (layer == nlx + 1) {
+				bind <- TRUE
+			} else {
+				stop('layer number too high') 
+			}
 		}
 		
 		if (length(values) == ncell(x)) { 
 			if ( inMemory(x) ) { 
-			
-				x@data@values[,layer] <- values
+				if (bind) {
+					x@data@values <- cbind(x@data@values, values)
+					x@data@nlayers <- as.integer(x@data@nlayers + 1)
+				} else {
+					x@data@values[,layer] <- values
+				}
 				rge <- range(values, na.rm=TRUE)
 				x@data@min[layer] <- rge[1]
 				x@data@max[layer] <- rge[2]
-				
 			} else {
 			
 				if (canProcessInMemory(x)) {
@@ -154,14 +170,18 @@ setMethod('setValues', signature(x='RasterBrick'),
 						x@data@inmemory <- TRUE
 						x@data@fromdisk <- FALSE						
 					} else {
-						nl <- nlayers(x)
-						x@data@values <- matrix(NA, nrow=ncell(x), ncol=nl)
-						x@data@min <- rep(Inf, nl)
-						x@data@max <- rep(-Inf, nl)
+						x@data@values <- matrix(NA, nrow=ncell(x), ncol=nlx)
+						x@data@min <- rep(Inf, nlx)
+						x@data@max <- rep(-Inf, nlx)
 						x@data@haveminmax <- TRUE
 						x@data@inmemory <- TRUE
 					}
-					x@data@values[,layer] <- values
+					if (bind) {
+						x@data@values <- cbind(x@data@values, values)
+						x@data@nlayers <- as.integer(x@data@nlayers + 1)
+					} else {
+						x@data@values[,layer] <- values
+					}
 					rge <- range(values, na.rm=TRUE)
 					x@data@min[layer] <- rge[1]
 					x@data@max[layer] <- rge[2]
@@ -169,15 +189,26 @@ setMethod('setValues', signature(x='RasterBrick'),
 				} else {
 				
 					tr <- blockSize(x)
-					pb <- pbCreate(tr$n)
-					r <- x
-					r <- writeStart(r, filename=rasterTmpFile(), format=.filetype(), overwrite=TRUE )
+					pb <- pbCreate(tr$n, label='setValues',)
+					r <- brick(x)
 					nc <- ncol(x)
-					for (i in 1:tr$n) {
-						v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
-						v[, layer] <- values[cellFromRowCol(x, tr$row[i], 1):cellFromRowCol(x, tr$row[i]+tr$nrows[i]-1, nc)]
-						r <- writeValues(r, v, tr$row[i])
-						pbStep(pb, i) 	
+					if (bind) {
+						r@data@nlayers <- as.integer(r@data@nlayers + 1)
+						r <- writeStart(r, filename=rasterTmpFile(), format=.filetype(), overwrite=TRUE )
+						for (i in 1:tr$n) {
+							v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
+							v <- cbind(v, values[cellFromRowCol(x, tr$row[i], 1):cellFromRowCol(x, tr$row[i]+tr$nrows[i]-1, nc)])
+							r <- writeValues(r, v, tr$row[i])
+							pbStep(pb, i) 
+						}
+					} else {
+						r <- writeStart(r, filename=rasterTmpFile(), format=.filetype(), overwrite=TRUE )
+						for (i in 1:tr$n) {
+							v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
+							v[, layer] <- values[cellFromRowCol(x, tr$row[i], 1):cellFromRowCol(x, tr$row[i]+tr$nrows[i]-1, nc)]
+							r <- writeValues(r, v, tr$row[i])
+							pbStep(pb, i) 
+						}
 					}
 					r <- writeStop(r)
 					pbClose(pb)

@@ -36,7 +36,7 @@ matrix of cell numbers (and optionally coordinates) by stratum
 
 \seealso{\code{\link{sampleRandom}, \link{sampleRegular}}}
 
-\author{Robert J. Hijmans}
+
 
 \examples{
  r <- raster(ncol=10, nrow=10)

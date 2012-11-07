@@ -28,7 +28,7 @@ Compute the mode for a vector of numbers, or across raster layers. The mode, or 
 vector or RasterLayer
 }
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 data <- c(0,1,2,3,3,3,3,4,4,4,5,5,6,7,7,8,9,NA)

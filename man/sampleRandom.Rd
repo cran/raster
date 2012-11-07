@@ -38,7 +38,7 @@ A vector, matrix (if \code{cells=TRUE} or \code{x} is a multi-layered object), o
 
 \seealso{\code{\link{sampleRegular}, \link{sampleStratified}}}
 
-\author{Robert J. Hijmans}
+
 
 \examples{
  r <- raster(system.file("external/test.grd", package="raster"))

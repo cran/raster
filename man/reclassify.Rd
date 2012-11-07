@@ -38,7 +38,7 @@ Raster* object
 \seealso{ \code{ \link{subs}, \link{cut}, \link{calc}} } 
 
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 

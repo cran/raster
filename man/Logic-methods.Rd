@@ -36,7 +36,7 @@ A Raster object with logical (\code{TRUE/FALSE} values)
 \seealso{ \code{\link[raster]{Math-methods}}, \code{\link[raster]{overlay}}, \code{\link[raster]{calc}} }
 
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 r <- raster(ncols=10, nrows=10)

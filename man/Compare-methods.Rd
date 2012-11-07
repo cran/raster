@@ -24,7 +24,7 @@ The following methods have been implemented for RasterLayer objects:
 A logical value or a RasterLayer object, and in some cases the side effect of a new file on disk.
 }
 
-\author{ Robert J. Hijmans }
+
 
 
 \examples{

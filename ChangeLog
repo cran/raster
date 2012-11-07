@@ -1,4 +1,27 @@
-To do: focal for multi-layer objects
+--- 7-November-2012, version 2.0-29
+new function 'select' for selecting spatial subsets by drawing on plot (map)
+new function 'barplot' for RasterLayer objects
+new function 'scale' for Raster* objects (suggested by Agustin Lobo)
+new functions to coerce to and from big.matrix objects: as(x, 'big.matrix') and raster(x) or brick(x)
+new implementation of aggregate that is _much_ faster with fun= min, max, mean or sum
+raster now uses 'igraph' instead of 'igraph0' (functions gridDistance and clump)
+renamed function 'compare' to 'compareRaster' (to avoid name hiding by the igraph package)
+renamed function 'expand' to 'extend' (to avoid name hiding by the Matrix package)
+functions setOptions, showOptions, saveOptions, and clearOptions have been replaced by new function "rasterOptions"
+incorporated function 'count' into 'freq' (via the 'value' argument) and 'count' is now hidden as '.count' (to avoid name hiding of count by the plyr package)
+new argument 'alignOnly' to projectRaster
+new option 'setStatistics=FALSE' for writing to some GDAL files (geoTiff in particular) to suppress writing band statistics (min, max, mean, sd). This is currently not documented. When TRUE, all statistics are written when all the values are in memory, but only min and max are written in other cases, leading to problems in QGIS (reported by Agustin Lobo)
+Added argument "gridded=TRUE" for plot(RasterLayer, RasterLayer), to show counts for intervals (suggested by Agustin Lobo)
+Added stat='sd' option to zonal (suggested by Christian Levers)
+improvement to rasterize with polygons. Polygons that cross a cell vertically and through the center are now inside (they were at the right side of a polygon, but not at the left side of a polygon). Reported by Jon Olav Skoien
+Fixed bug when cropping brick from ncdf file to a single cell (reported by Kapo Coulibaly)
+Fixed bug in sampleRandom with "rowcol=TRUE" (reported by Agustin Lobo)
+Fixed bug with RAT tables in native format (reported by Joseph Steward)
+Fixed corner case bug with extract/polygons df=TRUE (reported by Jon Olav Skoien)
+Added big.matrix as a "driver" (file format). This is experimental (and not documented).
+raster now attempts to interpret the CRS from netcdf files
+added support for the 360 day calander in netcdf files
+
 
 --- 1-September-2012, version 2.0-12
 fixed bug in summary reported by Agustin Lobo
@@ -10,7 +33,8 @@ fixed many spelling mistakes in the documentation reported by Phil Heilman
 function fourCellsFromXY is now visible.
 method 'freq' implemented for 'RasterStackBrick'
 new function 'layerize'
-function 'reclassify' replaces identical 'reclass' (still available but with deprecation warning) to avoid hiding xts::reclass
+function 'reclassify' replaces identical 'reclass' (still available but with deprecation warning) to avoid hiding by  xts::reclass
+added arguments to writeRaster to allow for writing layers to individual files
 
 --- 27-June-2012, version 2.0-08
 bug fixes (both introduced in version 2.0-04):
@@ -435,7 +459,7 @@ Minor bug fix in rasterToPoints with multi-layer objects (reported by Jon Olav S
 Minor bug fixes in crop (reported by Jon Olav Skoien) and in focalNA (reported by Matteo Mattiuzzi)
 Changes in gridDistance to avoid it (igraph) from crashing when using very complex grids.
 Added @data@gain and @data@offset slots to Raster* objects and use these when reading values from file
-v = v * r@gain + r@offset  (suggestion by Jonathan Greenberg)
+v = v * gain + offset  (suggestion by Jonathan Greenberg)
 It is now possible to do Arith (e.g. addition, multiplication) with a RasterStack or Brick using a vector argument of lenght that equals nlayers(object).
 E.g. you can mutliply a RasterStack with 5 layers with vector c(1,3,5,3,1), where indices are matched to layers.
 It is also possible to do Arith & Math with mutliple RasterStackBrick objects (as long as nlayers is the same) and with a RasterStack/Brick and a RasterLayer objects.
@@ -452,9 +476,7 @@ Not yet used in writing, or with other formats
 New clump function, now always using igraph (also for large rasters) & minor bug fix
 Fixes to subs function (needs more checking)
 To allow for better behaviour when using objects derived from Raster* objects (perhaps in other packages), replaced code like
-  if (class(x) == 'RasterLayer') 
-with
-  if (inherits(x, 'RasterLayer'))
+"if (class(x) == 'RasterLayer')" with "if (inherits(x, 'RasterLayer'))"
 Bug fix: error when indexing a RasterStack as in s[1]  (as reported by Kevin Ummel)
 
 --- 27-July-2010, version 1.3-4

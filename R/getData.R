@@ -41,7 +41,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 
 .ISO <- function() {
 	path <- paste(system.file(package="raster"), "/external", sep='')
-	d <- read.csv(paste(path, "/countries.csv", sep=""), header=T, quote = "!@!")
+	d <- read.csv(paste(path, "/countries.csv", sep=""), stringsAsFactors=FALSE, encoding="UTF-8")
 	return(as.matrix(d))
 }
 

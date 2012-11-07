@@ -74,23 +74,51 @@ setMethod('raster', signature(x='list'),
 
 
 setMethod('raster', signature(x='matrix'), 
-	function(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA) {
-		r <- raster(ncols=ncol(x), nrows=nrow(x), xmn=xmn, xmx=xmx, ymn=ymn, ymx=ymx, crs=crs)
+	function(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA, template=NULL) {
+		if (!is.null(template)) {
+			if (inherits(template, 'Extent')) {
+				r <- raster(template, crs=crs)
+			} else {
+				r <- raster(template)
+			}
+		} else {
+			r <- raster(ncols=ncol(x), nrows=nrow(x), xmn=xmn, xmx=xmx, ymn=ymn, ymx=ymx, crs=crs)
+		}
 		r <- setValues(r, as.vector(t(x)))
 		return(r)
 	}
 )
 
 
-setMethod('raster', signature(x='character'), 
-	function(x, band=1, crs=NULL, ...) {
-	
-		x <- .fullFilename(x)
-		
-		r <- .rasterObjectFromFile(x, band=band, objecttype='RasterLayer', ...)
-		if (! is.null(crs)) {
-			projection(r) = crs
+setMethod('raster', signature(x='big.matrix'), 
+	function(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA, template=NULL) {
+		if (!is.null(template)) {
+			if (inherits(template, 'Extent')) {
+				r <- raster(template, crs=crs)
+			} else {
+				r <- raster(template)
+			}
+		} else {
+			r <- raster(ncols=ncol(x), nrows=nrow(x), xmn=xmn, xmx=xmx, ymn=ymn, ymx=ymx, crs=crs)
 		}
+		
+		r@file@driver <- 'big.matrix'
+		if (is.filebacked(x)) {
+			r@file@name <- bigmemory:::file.name(x)
+		}
+		r@data@fromdisk <- TRUE
+		r@data@inmemory <- FALSE
+		attr(r@file, 'big.matrix') <- x
+		return(r)
+	}
+)
+
+
+
+setMethod('raster', signature(x='character'), 
+	function(x, band=1, ...) {
+		x <- .fullFilename(x)
+		r <- .rasterObjectFromFile(x, band=band, objecttype='RasterLayer', ...)
 		return(r)
 	}
 )
@@ -184,7 +212,11 @@ setMethod('raster', signature(x='RasterBrick'),
 			dindex <- as.integer(max(1, min(nlayers(x), layer)))
 			
 			if ( fromDisk(x) ) {
+			
 				if (dindex != layer) { warning(paste("layer was changed to", dindex))}
+				
+				# better raster(filename(x), band=dindex)  ?
+				# with zvar for ncdf files?
 				
 				r <- raster(extent(x), nrows=nrow(x), ncols=ncol(x), crs=projection(x))	
 				r@file <- x@file
@@ -194,8 +226,8 @@ setMethod('raster', signature(x='RasterBrick'),
 				
 				r@data@offset <- x@data@offset
 				r@data@gain <- x@data@gain
-				r@data@inmemory <- x@data@inmemory
-				r@data@fromdisk <- x@data@fromdisk
+				r@data@inmemory <- FALSE
+				r@data@fromdisk <- TRUE
 				r@data@haveminmax <- x@data@haveminmax
 
 				r@data@band <- dindex
@@ -206,9 +238,6 @@ setMethod('raster', signature(x='RasterBrick'),
 				zv <- unlist(x@z[1])[dindex]
 				if (! is.null(zv) ) { 
 					r@z <- list(zv)
-				}
-				if ( x@data@inmemory ) {
-					r@data@values <- x@data@values[,dindex]
 				}
 				
 				# ncdf files
@@ -229,13 +258,13 @@ setMethod('raster', signature(x='RasterBrick'),
 				if ( inMemory(x) ) {
 					if ( dindex != layer ) { warning(paste("layer was changed to", dindex)) }
 					r <- setValues(r, x@data@values[,dindex])
-					r@data@names <- names(x)[dindex]
+					r@data@names <- names(x)[dindex]	
 				}
 			}
-			isf <- is.factor(r)[dindex]
+			isf <- is.factor(x)[dindex]
 			if (isTRUE(isf)) {
 				r@data@isfactor <- TRUE
-				r@data@attributes <- levels(x)[[dindex]]
+				r@data@attributes <- levels(x)[dindex]
 			}
 			
 		} else {
@@ -314,15 +343,27 @@ setMethod('raster', signature(x='SpatialGrid'),
 
 
 setMethod('raster', signature(x='SpatialPixels'), 
-	function(x, layer=1){
+	function(x, layer=1, values=TRUE){
 		if (inherits(x, 'SpatialPixelsDataFrame')) {
 			x <- as(x[layer], 'SpatialGridDataFrame')
-			return(raster(x, 1))
+			return(raster(x, layer=layer, values=values))
 		} else {
 			x <- as(x, 'SpatialGrid')
 			return(raster(x))		
 		}
 		return(r)
+	}
+)
+
+
+
+setMethod('raster', signature(x='im'), 
+	function(x, crs) {
+		r <- as(x, 'RasterLayer')
+		if (!missing(crs)) {
+			projection(r) <- crs
+		}
+		r
 	}
 )
 

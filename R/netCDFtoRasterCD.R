@@ -1,40 +1,8 @@
 # Author: Robert J. Hijmans
 # Date: Aug 2009
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
-# Aug 2011, adapted for use with ncdf4 (or ncdf) libraries
-
-
-.NCDFversion4 <- function() {
-
-
-	loadNCDF <- function() {
-		if (!require(ncdf)) {
-			stop('To open ncdf files, you need to first install package "ncdf" or "ncdf4"') 
-		}
-		options(rasterNCDF4 = FALSE)
-		return(FALSE)
-	}
-	
-	ncdf4 <- getOption('rasterNCDF4')
-
-	if (is.null(ncdf4)) {
-		if (length(find.package("ncdf4", quiet=TRUE)) > 0) {
-			if (require(ncdf4, quietly=TRUE)) {
-				options(rasterNCDF4 = TRUE)
-				ncdf4 <- TRUE
-				
-			} else {
-				ncdf4 <- loadNCDF()
-			}
-			
-		} else {
-			ncdf4 <- loadNCDF()
-		}
-	}
-	return(ncdf4)
-}
-
+# Aug 2012, adapted for use with ncdf4 library 
 
 
 .doTime <- function(x, nc, zvar, dim3, ncdf4) {
@@ -59,30 +27,30 @@
 			x@z <- list(time)
 			names(x@z) <- as.character('Date/time')
 		}
-	}
-	if (dodays) {
+	} else if (dodays) {
 		# cal = nc$var[[zvar]]$dim[[dim3]]$calendar ?
 		if (ncdf4) {
-			cal <- ncdf4::ncatt_get(nc, "time", "calendar")$value
+			cal <- ncdf4::ncatt_get(nc, "time", "calendar")
 		} else {
-			cal <- att.get.ncdf(nc, "time", "calendar")$value		
+			cal <- att.get.ncdf(nc, "time", "calendar")		
 		}
-
-		
-		
-		if (cal =='gregorian' | cal =='proleptic_gregorian' | cal=='standard') {
+		if (! cal$hasatt ) {
 			greg <- TRUE
-		} else if (cal == 'noleap' | cal == '365 day' | cal == '365_day') { 
-			greg <- FALSE
-			nday <- 365
-		} else if (cal == '360_day') { 
-			greg <- FALSE
-			nday <- 360
 		} else {
-			greg <- TRUE
-			warning('assuming a standard calender:', cal)
+			cal <- cal$value
+			if (cal =='gregorian' | cal =='proleptic_gregorian' | cal=='standard') {
+				greg <- TRUE
+			} else if (cal == 'noleap' | cal == '365 day' | cal == '365_day') { 
+				greg <- FALSE
+				nday <- 365
+			} else if (cal == '360_day') { 
+				greg <- FALSE
+				nday <- 360
+			} else {
+				greg <- TRUE
+				warning('assuming a standard calender:', cal)
+			}
 		}
-
 		time <- getZ(x)
 		if (greg) {
 			time <- as.Date(time, origin=startDate)
@@ -96,8 +64,7 @@
 			time <- as.Date(doy, origin=origin)		
 		}
 		x@z <- list(time)
-		names(x@z) <- as.character('Date')
-		
+		names(x@z) <- 'Date'
 	}
 	return(x)
 }
@@ -118,11 +85,14 @@
 
 .varName <- function(nc, varname='', warn=TRUE) {
 	n <- nc$nvars
-	vars <- vector(length=n)
+	dims <- vars <- vector(length=n)
 	if (n > 0) {
 		for (i in 1:n) {
 			vars[i] <- nc$var[[i]]$name
+			dims[i] <- nc$var[[i]]$ndims
 		}
+		vars <- vars[dims > 1]
+		dims <- dims[dims > 1]
 	}
 
 	if (varname=='') { 
@@ -134,15 +104,12 @@
 		if (nv  == 1) {
 			varname <- vars
 		} else {
-			# should also check its dimensions with those of x and y 
-			a <- NULL
-			for (i in 1:nv) { 
-				a <- c(a, nc$var[[i]]$ndims) 
-			}
-			
-			varname <- vars[which.max(a)]
+			varname <- vars[which.max(dims)]
 			if (warn) {
-				warning('varname used is: ', varname, '\nIf that is not correct, set it to one of: ', paste(vars, collapse=", ") )
+				if (sum(dims == max(dims)) > 1) {
+					vars <- vars[dims==max(dims)]
+					warning('varname used is: ', varname, '\nIf that is not correct, you can set it to one of: ', paste(vars, collapse=", ") )
+				}
 			}
 		}
 	}
@@ -158,6 +125,7 @@
 .rasterObjectFromCDF <- function(filename, varname='', band=NA, type='RasterLayer', lvar=3, level=0, warn=TRUE, ...) {
 
 	ncdf4 <- .NCDFversion4()
+	
 
 	if (ncdf4) {
 		options(rasterNCDF4 = TRUE)
@@ -205,7 +173,7 @@
 			}
 		}
 	} else if (dims > 4) { 
-		warning(zvar, ' has more than 4 dimensions, I do not know what to do')
+		warning(zvar, ' has more than 4 dimensions, I do not know what to do with these data')
 	}
 	
 	ncols <- nc$var[[zvar]]$dim[[1]]$len
@@ -241,47 +209,66 @@
 	yrange[2] <- yrange[2] + 0.5 * resy
  
 	long_name <- zvar
-	projection <- NA
 	unit <- ''
 	
-	
+	crs <- NA
 	if (ncdf4) {
 		a <- ncdf4::ncatt_get(nc, zvar, "long_name")
 		if (a$hasatt) { long_name <- a$value }
 		a <- ncdf4::ncatt_get(nc, zvar, "units")
 		if (a$hasatt) { unit <- a$value }
 		a <- ncdf4::ncatt_get(nc, zvar, "grid_mapping")
-		if ( a$hasatt ) { projection  <- a$value }
+		if ( a$hasatt ) { 
+			gridmap  <- a$value 
+			atts <- ncdf4::ncatt_get(nc, gridmap)
+			try(crs <- .getCRSfromGridMap4(atts), silent=TRUE)
+		} else {
+			a <- ncdf4::ncatt_get(nc, zvar, "projection_format")
+			if ( a$hasatt ) { 
+				projection_format  <- a$value 
+				if (isTRUE(projection_format == "PROJ.4")) {
+					a <- ncdf4::ncatt_get(nc, zvar, "projection")
+					if ( a$hasatt ) { 
+						crs <- a$value 
+					}
+				}
+			}
+		}
 		natest <- ncdf4::ncatt_get(nc, zvar, "_FillValue")
 		natest2 <- ncdf4::ncatt_get(nc, zvar, "missing_value")		
+		
 		
 	} else {
 		a <- att.get.ncdf(nc, zvar, "long_name")
 		if (a$hasatt) { long_name <- a$value }
 		a <- att.get.ncdf(nc, zvar, "units")
 		if (a$hasatt) { unit <- a$value }
+
 		a <- att.get.ncdf(nc, zvar, "grid_mapping")
-		if ( a$hasatt ) { projection  <- a$value }
+		if ( a$hasatt ) { 
+			try(crs <- .getCRSfromGridMap3(nc, a$value), silent=TRUE)
+		} else {
+			a <- att.get.ncdf(nc, zvar, "projection")
+			if ( a$hasatt ) { projection  <- a$value }
+			a <- att.get.ncdf(nc, zvar, "projection_format")
+			if ( a$hasatt ) { 
+				projection_format  <- a$value 
+				if (isTRUE(projection_format == "PROJ.4")) {
+					crs <- projection
+				}
+			}
+		}
 		natest <- att.get.ncdf(nc, zvar, "_FillValue")
 		natest2 <- att.get.ncdf(nc, zvar, "missing_value")		
 	}
 
-	prj <- list()
-	if (!is.na(projection)) {
-		att <- nc$var[[projection]]
-		prj <- as.list(unlist(att))
-		# now parse .....
-		# projection(r) <- ...
-	}
-	
-	if (((tolower(substr(nc$var[[zvar]]$dim[[1]]$name, 1, 3)) == 'lon')  &
-		(tolower(substr(nc$var[[zvar]]$dim[[2]]$name, 1, 3)) == 'lat')) | 
-		(xrange[1] < -181 | xrange[2] > 181 | yrange[1] < -91 | yrange[2] > 91)) {
-			crs <- '+proj=longlat +datum=WGS84'
-	} else {
-		crs <- NA
-	}
-
+	if (is.na(crs)) {
+		if (((tolower(substr(nc$var[[zvar]]$dim[[1]]$name, 1, 3)) == 'lon')  &
+		    ( tolower(substr(nc$var[[zvar]]$dim[[2]]$name, 1, 3)) == 'lat' ) ) | 
+		    ( xrange[1] < -181 | xrange[2] > 181 | yrange[1] < -91 | yrange[2] > 91 )) {
+				crs <- '+proj=longlat +datum=WGS84'
+		}
+	} 
 		
 	if (type == 'RasterLayer') {
 		r <- raster(xmn=xrange[1], xmx=xrange[2], ymn=yrange[1], ymx=yrange[2], ncols=ncols, nrows=nrows, crs=crs)
@@ -312,7 +299,6 @@
 	attr(r@data, "dim3") <- dim3
 	attr(r@data, "level") <- level
 	
-	attr(r, "prj") <- prj 
 	r@file@driver <- "netcdf"	
 	
 	if (natest$hasatt) { 
@@ -364,5 +350,3 @@
 	return(r)
 }
 
-#f = "G:/cmip/ipcc/20c3m/atm/mo/pr/bccr_bcm2_0/run1/pr_A1_1.nc"
-#p = .rasterObjectFromCDF(f, zvar='pr', type='RasterLayer', time=10)

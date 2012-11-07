@@ -1,21 +1,28 @@
-\name{expand}
+\name{extend}
 
 \alias{expand}
 \alias{expand,Raster-method}
 \alias{expand,Extent-method}
 
-\title{Expand}
+\alias{extend}
+\alias{extend,Raster-method}
+\alias{extend,Extent-method}
+
+
+\title{Extend}
 
 \description{
-Expand returns an Raster* object with a larger spatial extent. The output Raster object has the outer minimum and maximum coordinates of the input Raster and Extent arguments. Thus, all of the cells of the original raster are included. See \code{\link[raster]{crop}} if you (also) want to remove rows or columns. 
+Extend returns an Raster* object with a larger spatial extent. The output Raster object has the outer minimum and maximum coordinates of the input Raster and Extent arguments. Thus, all of the cells of the original raster are included. See \code{\link[raster]{crop}} if you (also) want to remove rows or columns. 
 
-There is also an expand method for extent objects to enlarge (or reduce) an Extent. You can also use algebraic notation to do that (see examples)
+There is also an extend method for Extent objects to enlarge (or reduce) an Extent. You can also use algebraic notation to do that (see examples)
+
+This function, "extend" replaces the obsolete function "expand" (to avoid a name conflict with the Matrix package).
 }
 
 \usage{
-\S4method{expand}{Raster}(x, y, value=NA, filename='', ...) 
+\S4method{extend}{Raster}(x, y, value=NA, filename='', ...) 
 
-\S4method{expand}{Extent}(x, y, ...) 
+\S4method{extend}{Extent}(x, y, ...) 
 }
 
 \arguments{
@@ -34,7 +41,7 @@ RasterLayer or RasterBrick, or Extent
 }
 
 
-\author{Robert J. Hijmans and Etienne B. Racine (Extent method) }
+\author{Robert J. Hijmans and Etienne B. Racine (Extent method)}
 
 \seealso{\code{\link[raster]{crop}}, \code{\link[raster]{merge}}}
 
@@ -42,16 +49,16 @@ RasterLayer or RasterBrick, or Extent
 r <- raster(xmn=-150, xmx=-120, ymx=60, ymn=30, ncol=36, nrow=18)
 r[] <- 1:ncell(r)
 e <- extent(-180, 0, 0, 90)
-re <- expand(r, e)
+re <- extend(r, e)
 
 # expand with a number of rows and columns (at each side)
-re2 <- expand(r, c(2,10))
+re2 <- extend(r, c(2,10))
 
 # Extent object
 e <- extent(r)
 e
-expand(e, 10)
-expand(e, 10, -10, 0, 20)
+extend(e, 10)
+extend(e, 10, -10, 0, 20)
 e + 10
 e * 2
 }

@@ -8,7 +8,7 @@
 		r <- raster(r)
 		# or r <- unstack(stack(r, -1)) ???
 		if (compare & length(x)>0) { 
-			compare(x[[1]], r)  
+			compareRaster(x[[1]], r)  
 		}
 		return( c(x, r) )
 	} else if (! extends(class(r), 'Raster')) {
@@ -19,12 +19,12 @@
 		}
 	} else if (unstack & inherits(r, 'RasterStackBrick')) { 
 		if ( compare & length(x) > 0 ) { 
-			compare(x[[1]], r)  
+			compareRaster(x[[1]], r)  
 		}
 		return( c(x, unstack(r)) )
 	} else {
 		if (compare & length(x) > 0) { 
-			compare(x[[1]], r)  
+			compareRaster(x[[1]], r)  
 		}
 		return( c(x, r) )	
 	} 

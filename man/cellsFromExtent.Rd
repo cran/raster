@@ -25,7 +25,7 @@ cellsFromExtent(object, extent, expand=FALSE)
 a vector of cell numbers 
 }  
   
-\author{Robert J. Hijmans}
+
 
 \seealso{ 
  \code{\link[raster]{extent}}, \code{\link{cellFromXY}}

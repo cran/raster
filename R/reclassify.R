@@ -94,7 +94,7 @@ function(x, rcl, filename='', include.lowest=FALSE, right=TRUE, ...) {
 	} else {
 		
 		tr <- blockSize(out)
-		pb <- pbCreate(tr$n, ...)
+		pb <- pbCreate(tr$n, label='reclassify', ...)
 		out <- writeStart(out, filename=filename, ...)
 		
 		for (i in 1:tr$n) {

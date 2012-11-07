@@ -14,18 +14,21 @@ be adjusted (e.g. by setting its resolution) and used as a template \code{'to'} 
 }
 
 \usage{
-projectRaster(from, to, res, crs, method="bilinear", filename="", ...) 
+projectRaster(from, to, res, crs, method="bilinear", alignOnly=FALSE, over=FALSE, filename="", ...) 
+
 projectExtent(object, crs)
 }
 
 \arguments{
   \item{from}{Raster* object}
   \item{to}{Raster* object with the parameters to which 'from' should be projected}
-  \item{res}{Single or (vector of) two numerics. To, optionally, set the output resolution if 'to' is missing}
-  \item{crs}{Character or object of class 'CRS'. PROJ.4 description of the coordinate reference system. In projectRaster this is used to set the output CRS if 'to' is missing, or if 'to' has no valid CRS}
-  \item{method}{Method used to compute values for the new RasterLayer. Either 'ngb' (nearest neighbor), which is useful for categorical variables, or 'bilinear' (bilinear interpolation; the default value), which is appropriate for continuous variables.}
-  \item{filename}{Character. Output filename}  
-  \item{...}{Additional arguments as for \code{\link{writeRaster}}}  
+  \item{res}{single or (vector of) two numerics. To, optionally, set the output resolution if 'to' is missing}
+  \item{crs}{character or object of class 'CRS'. PROJ.4 description of the coordinate reference system. In projectRaster this is used to set the output CRS if 'to' is missing, or if 'to' has no valid CRS}
+  \item{method}{method used to compute values for the new RasterLayer. Either 'ngb' (nearest neighbor), which is useful for categorical variables, or 'bilinear' (bilinear interpolation; the default value), which is appropriate for continuous variables.}
+  \item{alignOnly}{logical. Use \code{to} or other parameters only to align the output (i.e. same origin and resolution), but use the projected extent from \code{from}}
+  \item{over}{logical. If \code{TRUE} wrapping around the date-line is turned off. This can be desirable for global data (to avoid mapping the same areas twice) but it is not desireable in other cases}
+  \item{filename}{character. Output filename}  
+  \item{...}{additional arguments as for \code{\link{writeRaster}}}  
   \item{object}{Raster* object}
 
 }
@@ -59,7 +62,7 @@ With such data you may need to adjust the returned object. E.g. do \code{ymax(ob
 RasterLayer or RasterBrick object.
 }
 
-\author{Robert J. Hijmans}
+
 
 \seealso{
 \code{\link{resample}}, \code{\link[rgdal]{CRS-class}}, \code{\link[rgdal]{projInfo}}, \code{\link[rgdal]{spTransform}}

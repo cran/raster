@@ -20,7 +20,7 @@ drawExtent(show=TRUE, col="red")
  an object of class Extent
 } 
 
-\author{ Robert J. Hijmans }
+
 
 \examples{
 \dontrun{

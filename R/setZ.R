@@ -6,6 +6,10 @@
 
 
 setZ <- function(x, z, name='time') {
+	if (is.null(z)) {
+		x@z <- list()
+		return(x)
+	}
 	if (is.list(z)) {
 		z <- unlist(z)
 	}

@@ -27,7 +27,7 @@ SpatialLinesDataFrame
 }
 
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 f <- system.file("external/test.grd", package="raster")

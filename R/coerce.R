@@ -53,7 +53,7 @@ setAs('Raster', 'SpatialPixelsDataFrame',
 			SpatialPixelsDataFrame(points=sp, data=v, grid=grd)
 		} else {
 			warning('object has no values, returning a "SpatialPixels" object')
-			SpatialPixelsDataFrame(points=sp, grid=grd)
+			SpatialPixels(points=sp, grid=grd)
 		}
 	}
 )
@@ -212,7 +212,7 @@ setAs('STFDF', 'RasterBrick',
 		b <- brick(r, nl=length(time) * nc)
 		b <- setZ(b, rep(time, nc)) # rep changes some time formats
 		names(b) <- paste(rep(colnames(from@data), each=length(time)), as.character(time), sep='')
-		# need to imprive this for character, factor variables
+		# need to improve this for character, factor variables
 		m <- as.numeric(as.matrix(from@data))
 		setValues(b, m)
 	}
@@ -284,8 +284,8 @@ setAs('RasterLayerSparse', 'RasterLayer',
 # spatstat
 setAs('im', 'RasterLayer', 
 	function(from) {
-		r = raster(nrows=from$dim[1], ncols=from$dim[2], xmn=from$xrange[1], xmx=from$xrange[2], ymn=from$yrange[1], ymx=from$yrange[2], crs='')
-		r = setValues(r, from$v)
+		r <- raster(nrows=from$dim[1], ncols=from$dim[2], xmn=from$xrange[1], xmx=from$xrange[2], ymn=from$yrange[1], ymx=from$yrange[2], crs='')
+		r <- setValues(r, from$v)
 		flip(r, direction='y')
 	}
 )
@@ -425,4 +425,68 @@ setAs('grf', 'RasterLayer',
 		r
 	}
 )
+
+
+setAs('RasterLayer', 'big.matrix',
+	function(from) {
+
+		if (!require(bigmemory)) { 
+			stop('You need to install the bigmemory package') 
+		}
+		stopifnot(hasValues(from))
+
+		if (fromDisk(from) & .driver(from) == 'big.matrix') {
+			return(attr(from, 'big.matrix'))
+			# or copy the big.matrix to a new file and return that?
+			# to avoid changing data that then no longer matches metadata file
+		}
+		
+		b <- big.matrix(nrow(from), ncol(from))
+
+		if (canProcessInMemory(from)) {
+			b[]  <- as.matrix(from)
+		} else {
+			tr <- blockSize(from)
+			pb <- pbCreate(tr$n)			
+			for (i in 1:tr$n) {
+				b[tr$row[i]:(tr$row[i]+tr$nrows[i]-1), ] <- getValues(from, row=tr$row[i], nrows=tr$nrows[i], format='matrix')
+				pbStep(pb) 
+			}
+			pbClose(pb)
+		}	
+		b
+	}
+)
+
+
+setAs('RasterStackBrick', 'big.matrix',
+	function(from) {
+
+	if (!require(bigmemory)) { 
+		stop('You need to install the bigmemory package') 
+	}
+	stopifnot(hasValues(from))
+
+	names(b) <- colnames(from)
+
+	b <- big.matrix(ncell(from), nlayers(from) )
+	
+	op <- options('bigmemory.allow.dimnames')
+	options(bigmemory.allow.dimnames=TRUE)
+	colnames(b) <- names(from)
+	options(bigmemory.allow.dimnames=op)
+
+	if (canProcessInMemory(from)) {
+		b[]  <- as.matrix(from)
+	} else {
+		tr <- blockSize(from)
+		pb <- pbCreate(tr$n)
+		for (i in 1:tr$n) {
+			b[tr$row[i]:(tr$row[i]+tr$nrows[i]-1), ] <- getValues(from, row=tr$row[i], nrows=tr$nrows[i], format='matrix')
+			pbStep(pb) 
+		}
+		pbClose(pb)
+	}	
+	b
+} )
 

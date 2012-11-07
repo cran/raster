@@ -26,7 +26,7 @@ RasterLayer
 
 \seealso{ For random-like point distributions, see \code{\link{rasterize}} }
 
-\author{Robert J. Hijmans }
+
 
 \examples{
 r <- raster(nrow=10, ncol=10, xmn=0, xmx=10, ymn=0, ymx=10, crs=NA)

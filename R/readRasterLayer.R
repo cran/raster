@@ -1,6 +1,6 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date: Sept 2009
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
 
 
@@ -15,8 +15,10 @@
 #	startcol <- min(max(1, round(startcol)), object@ncols)
 #	endcol <- min(object@ncols, startcol+ncols-1)
 #	ncols <- endcol - startcol + 1
-		
-	if (.isNativeDriver(object@file@driver))  {
+
+	driver <- object@file@driver
+	
+	if (.isNativeDriver(driver))  {
 
 		getBSQData <- function(raster, r, nrows, c, ncols, dtype, dsize, dsign, band=1) {
 			offset <- raster@file@offset + (band-1) * raster@ncols * raster@nrows + (r-1) * raster@ncols 
@@ -115,12 +117,23 @@
 		
 
 # ascii is internal to this package but not 'native' (not binary)
-	} else if (object@file@driver == 'ascii') {
+	} else if (driver == 'ascii') {
 		result <- .readRowsAscii(object, startrow, nrows, startcol, ncols)
 		
-	} else if (object@file@driver == 'netcdf') {
+	} else if (driver == 'netcdf') {
 		result <- .readRowsNetCDF(object, startrow, nrows, startcol, ncols)
 		
+	} else if (driver == 'big.matrix') {
+		bm <- attr(object@file, 'big.matrix')
+		if (nbands(object) > 1) {
+			bn <- bandnr(object)
+			startcell <- cellFromRowCol(object, startrow, startcol)
+			endcell <- cellFromRowCol(object, (startrow+nrows-1), (startcol+ncols-1))	
+			result <- bm[startcell:endcell, bn]
+		
+		} else {
+			result <- as.vector(t(bm[startrow:(startrow+nrows-1), startcol:(startcol+ncols-1)]))
+		}
 		
 #use GDAL  		
 	} else { 

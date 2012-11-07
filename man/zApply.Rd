@@ -25,7 +25,7 @@ zApply(x, by, fun=mean, name='', ...)
 Raster* object
 }
 
-\author{Oscar Perpinan Lamigueiro & Robert J. Hijmans }
+\author{Oscar Perpinan Lamigueiro & Robert J. Hijmans}
 
 \examples{
 # 12 values of irradiation, 1 for each month

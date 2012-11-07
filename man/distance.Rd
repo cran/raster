@@ -23,7 +23,7 @@ The distance unit is in meters if the RasterLayer is not projected (\code{+proj=
 }
 
 
-\author{Robert J. Hijmans }
+
 
 \value{RasterLayer}
 

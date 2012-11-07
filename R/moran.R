@@ -7,7 +7,7 @@
 ..moran <- function(x, directions=8) {
 	stopifnot(directions %in% c(4,8))
 	# not memory safe	
-	adj <- adjacency(x, fromCells=1:ncell(x), toCells=1:ncell(x), directions=8)
+	adj <- adjacent(x, 1:ncell(x), target=1:ncell(x), directions=8, pairs=TRUE)
 	z <- x - cellStats(x, mean)
 	wZiZj <- na.omit(z[adj[,1]] * z[adj[,2]])
 	z2 <- cellStats(z*z, sum)

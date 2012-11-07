@@ -32,7 +32,7 @@ setMethod("modal", signature(x='Raster'),
 		}
 
 		tr <- blockSize(out)
-		pb <- pbCreate(tr$n)
+		pb <- pbCreate(tr$n, label='modal')
 		out <- writeStart(out, filename="")
 		for (i in 1:tr$n) {
 			v <- cbind( getValues( x, row=tr$row[i], nrows=tr$nrows[i] ), add)

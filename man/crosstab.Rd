@@ -34,7 +34,7 @@ A table or data.frame
 
 \seealso{ \code{\link[raster]{freq}}, \code{\link[raster]{zonal}} }
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 r <- raster(nc=5, nr=5)

@@ -4,18 +4,6 @@
 # Licence GPL v3
 
 
-.requireRgdal <- function(stopIfAbsent=TRUE) {
-	w <- getOption('warn')
-	options('warn'=-1) 
-	x <- isTRUE( try( require(rgdal, quietly=TRUE ) ) )
-	options('warn'= w) 
-	if (!x & stopIfAbsent) {
-		stop("package 'rgdal' is not available")
-	}
-	return(x)
-}
-
-
 .rasterObjectFromFile <- function(x, band=1, objecttype='RasterLayer', native=FALSE, silent=TRUE, offset=NULL, ...) {
 	x <- trim(x)
 	if (x=='' | x=='.') { # etc? 
@@ -41,6 +29,8 @@
 			return ( .rasterFromRasterFile(grdfile, band=band, objecttype) )
 		} 
 	}
+	
+	
 	if (! file.exists(x) ) {
 		if (extension(x) == '') {
 			grifile <- .setFileExtensionValues(x, 'raster')
@@ -66,6 +56,10 @@
 		}
 	}
 
+	if ( fileext == ".BIG" | fileext == ".BRD") {
+		return( .rasterFromRasterFile(x, band=band, objecttype, driver='big.matrix') )
+	}
+	
 	if (!is.null(offset)) {
 		return ( .rasterFromASCIIFile(x, offset) )
 	}

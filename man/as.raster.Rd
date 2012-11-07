@@ -28,7 +28,7 @@ as.raster(x, ...)
 'raster' object
 }
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 r <- raster(ncol=3, nrow=3)

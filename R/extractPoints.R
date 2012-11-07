@@ -4,8 +4,38 @@
 # Licence GPL v3
 
 
+
+setMethod('extract', signature(x='Raster', y='matrix'), 
+function(x, y, method='simple', buffer=NULL, small=FALSE, cellnumbers=FALSE, fun=NULL, na.rm=TRUE, layer, nl, df=FALSE, factors=FALSE, ...){ 
+	.xyValues(x, y, method=method, buffer=buffer, small=small, cellnumbers=cellnumbers, fun=fun, na.rm=na.rm, layer=layer, nl=nl, df=df, factors=factors, ...)
+})
+
+
+
+setMethod('extract', signature(x='Raster', y='data.frame'), 
+function(x, y, ...){ 
+	return( .xyValues(x, as.matrix(y), ...))
+})
+
+
+setMethod('extract', signature(x='Raster', y='SpatialPoints'), 
+function(x, y, ...){ 
+	px <- projection(x, asText=FALSE)
+	comp <- .compareCRS(px, projection(y), unknown=TRUE)
+	if (!comp) {
+		if (!.requireRgdal()) {
+			warning('CRS of SpatialPoints and rater do not match')
+		} else {
+			warning('Transforming SpatialPoints to the CRS of the Raster')
+			y <- spTransform(y, px)
+		}
+	}
+	.xyValues(x, coordinates(y), ...)
+})
+
+
 	
-.xyValues <- function(object, xy, method='simple', cellnumbers=FALSE, buffer=NULL, fun=NULL, na.rm=TRUE, layer, nl, df=FALSE, factors=FALSE, ...) { 
+.xyValues <- function(object, xy, method='simple', buffer=NULL, small=FALSE, cellnumbers=FALSE, fun=NULL, na.rm=TRUE, layer, nl, df=FALSE, factors=FALSE, ...) { 
 
 	nlyrs <- nlayers(object)
 	if (nlyrs > 1) {
@@ -26,7 +56,7 @@
 		if (method != 'simple') { 
 			warning('method argument is ignored when a buffer is used') 
 		}
-		res <- .xyvBuf(object, xy, buffer, fun, na.rm, layer=layer, nl=nl, cellnumbers=cellnumbers) 		
+		res <- .xyvBuf(object, xy, buffer, fun, na.rm, layer=layer, nl=nl, cellnumbers=cellnumbers, small=small) 		
 		
 	} else if (method == 'bilinear') {
 		res <- .bilinearValue(object, xy, layer=layer, n=nl) 

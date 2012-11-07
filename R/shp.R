@@ -5,9 +5,8 @@
 
 
 shapefile <- function(filename, object=NULL, overwrite=FALSE, verbose=FALSE) {
-	if (!(require(rgdal))) {
-		stop('This function requires the rgdal package; please install it')
-	}
+	.requireRgdal() 
+	
 	if (is.null(object)) {
 		stopifnot(file.exists(extension(filename, '.shp')))
 		stopifnot(file.exists(extension(filename, '.shx')))

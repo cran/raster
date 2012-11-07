@@ -35,24 +35,16 @@ values(x, ...)
  \item{x}{Raster* object}
  \item{row}{Numeric. Row number, should be between 1 and nrow(x), or missing in which case all values are returned}
  \item{nrows}{Numeric. Number of rows. Should be an integer > 0, or missing}
- \item{...}{Additional arguments, see Details}
+ \item{...}{Additional arguments. When x is a \code{RasterLayer}: \code{format} to specifiy the output format. Either "matrix" or, the default "", in which case a vector is returned}
 }
-  
-
-\section{Methods}{
-\describe{
-Additional arguments when x is a \code{RasterLayer}:
-\item{format}{Character. specifiy the output format. Either "" or "matrix". The default is "", in which case a vector is returned}
-}}
 
 \value{
 vector or matrix of raster values
 }
 
-\seealso{ \code{\link{getValuesBlock}, \link{getValuesFocal}, \link{setValues}} }
+\seealso{\code{\link{getValuesBlock}, \link{getValuesFocal}, \link{setValues}} }
 
 
-\author{Robert J. Hijmans}
 \examples{
 r <- raster(system.file("external/test.grd", package="raster"))
 r

@@ -40,7 +40,7 @@ The methods for Spatial* objects allow for easy creation of a data.frame with th
 data.frame
 }
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 r <- raster(ncol=3, nrow=3)

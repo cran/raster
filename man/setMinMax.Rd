@@ -26,7 +26,7 @@ a Raster* object
 
 \seealso{ \code{\link[raster]{getValues}} }
 
-\author{ Robert J. Hijmans }
+
 
 \examples{ 
 r <- raster(system.file("external/test.grd", package="raster"))

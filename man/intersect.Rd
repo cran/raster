@@ -31,7 +31,7 @@ If the first object is a Raster* object, this function is equivalent to \code{\l
 Extent or Raster* object
 }
 
-\author{Robert J. Hijmans}
+
 
 \seealso{
 \code{\link{union}, \link[raster]{extent}, \link{crop}}

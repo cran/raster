@@ -22,7 +22,7 @@ The direction (azimuth) to or from the nearest cell that is not \code{NA}. The d
 \item{...}{Additional arguments as for \code{\link{writeRaster}}}
 }
 
-\author{Robert J. Hijmans }
+
 
 \value{RasterLayer}
 

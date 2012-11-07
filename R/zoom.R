@@ -15,11 +15,15 @@ if (!isGeneric("zoom")) {
 setMethod('zoom', signature(x='Raster'), 
 function(x, ext=drawExtent(), maxpixels=100000, layer=1, new=TRUE, useRaster=TRUE, ...) {
 	ext <- ext  # force to start with drawing before creating a new graphics device
-	if (new) { dev.new() }
+	if (new) { 
+		dev.new() 
+	}
 	if (nlayers(x) > 1) { 
 		x <- raster(x, layer) 
 	}
-	if (useRaster) {
+	if (length(x@legend@colortable) > 0) {
+		.plotCT(x, maxpixels=maxpixels, ext=ext, ...)
+	} else if (useRaster) {
 		.plotraster2(x, maxpixels=maxpixels, ext=ext, ...) 	
 	} else {
 		.plotraster(x, col=col, maxpixels=maxpixels, add=add, ...) 

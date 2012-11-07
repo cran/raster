@@ -19,7 +19,7 @@ setMethod('cover', signature(x='RasterLayer', y='RasterLayer'),
 	} 
 		
 	outRaster <- raster(x)
-	compare(c(outRaster, rasters))
+	compareRaster(c(outRaster, rasters))
 	
 	filename <- trim(filename)
 	if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
@@ -45,9 +45,9 @@ setMethod('cover', signature(x='RasterLayer', y='RasterLayer'),
 	} else {
 	
 		if (filename == '') { filename <- rasterTmpFile() }
-		outRaster <- writeStart(outRaster, filename=filename, format=format, datatype=datatype, overwrite=overwrite, progress=progress )
+		outRaster <- writeStart(outRaster, filename=filename, format=format, datatype=datatype, overwrite=overwrite )
 		tr <- blockSize(outRaster, length(rasters))
-		pb <- pbCreate(tr$n)
+		pb <- pbCreate(tr$n, progress=progress, label='cover')
 		for (i in 1:tr$n) {
 			v <- getValues( rasters[[1]], row=tr$row[i], nrows=tr$nrows[i] )
 			if (! is.matrix(v) ) {	v <- matrix(v, ncol=1) }		

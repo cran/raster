@@ -58,7 +58,7 @@ This function has replaced a previous version of \code{focal}, and functions \co
 }
 
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 r <- raster(ncols=36, nrows=18, xmn=0)

@@ -144,7 +144,7 @@ function(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=F
 
 		out <- writeStart(out, filename,...)
 		tr <- blockSize(out, minblocks=3, minrows=3)
-		pb <- pbCreate(tr$n, ...)
+		pb <- pbCreate(tr$n, label='focal', ...)
 
 		addr <- floor(nrow(w) / 2)
 		addc <- floor(ncol(w) / 2)

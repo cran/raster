@@ -27,7 +27,7 @@ A vector of quantiles
 
 \seealso{ \code{\link[raster]{density}}, \code{\link[raster]{cellStats}}  }
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 r <- raster(ncol=100, nrow=100)

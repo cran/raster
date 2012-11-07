@@ -10,7 +10,7 @@ setReplaceMethod("[", c("RasterLayer", "RasterLayer", "missing"),
 		if (! hasValues(i) ) {
 			i <- cellsFromExtent(x, i)
 			
-		} else if (compare(x, i, stopiffalse=FALSE, showwarning=FALSE)) {
+		} else if (compareRaster(x, i, stopiffalse=FALSE, showwarning=FALSE)) {
 			i <- as.logical( getValues(i) )
 		
 		} else {

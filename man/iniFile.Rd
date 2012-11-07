@@ -29,6 +29,6 @@ This function allows for using inistrings that have "=" as part of a value (but 
 A n*3 matrix of characters with columns: section, name, value; or a list if \code{aslist=TRUE}.
 }
 
-\author{Robert J. Hijmans}
+
 
 \keyword{file}

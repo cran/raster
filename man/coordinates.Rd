@@ -50,7 +50,7 @@ a single number
 \seealso{ \code{\link[raster]{extent}},  \code{\link[raster]{dimensions}} }
 
 
-\author{Robert J. Hijmans }
+
 
 \examples{
 

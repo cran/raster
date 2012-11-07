@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date : October 2009
 # Version 0.9
 # Licence GPL v3
@@ -43,7 +43,7 @@
     }  
 	
 	if (filetype=='PACKED BINARY') {
-		stop('cannot read packed binary files, read via rgdal?')
+		stop('cannot natively read packed binary files, read via rgdal?')
 	}
 	
 	x <- raster(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs=projstring)
@@ -59,7 +59,6 @@
 	x@data@min <- minval
 	x@data@max <- maxval
 	x@data@haveminmax <- TRUE
-	x@file@nodatavalue <- nodataval
 
 	if (inidatatype == 'BYTE') {
 		dataType(x) <- 'INT1U'
@@ -71,6 +70,7 @@
 		stop(paste('unsupported IDRISI data type:', inidatatype))
 	}
 	
+	x@file@nodatavalue <- nodataval
 	x@data@fromdisk <- TRUE
 
 	x@file@driver <- 'IDRISI'

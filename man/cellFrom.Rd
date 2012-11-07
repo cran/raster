@@ -61,7 +61,7 @@ vector of row, column or cell numbers. \code{cellFromLine} and \code{cellFromPol
 \code{\link{xyFromCell}, \link{cellsFromExtent}}
 }
 
-\author{Robert J. Hijmans }
+
 
 \examples{
 r <- raster(ncols=10, nrows=10)

@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  April 2010
 # Version 0.9
 # Licence GPL v3
@@ -12,7 +12,7 @@ if (!isGeneric("plotRGB")) {
 
 
 setMethod("plotRGB", signature(x='RasterStackBrick'), 
-function(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, interpolate=FALSE, bgcol='white', alpha, bgalpha, ...) { 
+function(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, interpolate=FALSE, colNA='white', alpha, bgalpha, addfun=NULL, zlim=NULL, zlimcol=NULL, ...) { 
 
 	if (missing(scale)) {
 		scale <- 255
@@ -22,33 +22,61 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, inte
 			}
 		}
 	}
+	scale <- as.vector(scale)[1]
+	dots <- list(...)
 	
 	r <- sampleRegular(raster(x,r), maxpixels, ext=ext, asRaster=TRUE, useGDAL=TRUE)
 	g <- sampleRegular(raster(x,g), maxpixels, ext=ext, asRaster=TRUE, useGDAL=TRUE)
 	b <- sampleRegular(raster(x,b), maxpixels, ext=ext, asRaster=TRUE, useGDAL=TRUE)
+
+	RGB <- cbind(getValues(r), getValues(g), getValues(b))
+	
+	if (!is.null(zlim)) {
+		if (length(zlim) == 2) {
+			zlim <- sort(zlim)
+			if (is.null(zlimcol)) {
+				RGB[ RGB<zlim[1] ] <- zlim[1]
+				RGB[ RGB>zlim[2] ] <- zlim[2]
+			} else { #if (is.na(zlimcol)) {
+				RGB[RGB<zlim[1] | RGB>zlim[2]] <- NA
+			} 
+		} else if (NROW(dots$zlim) == 3 & NCOL(dots$zlim) == 2) {
+			for (i in 1:3) {
+				zmin <- min(zlim[i,])		
+				zmax <- max(zlim[i,])
+				if (is.null(zlimcol)) {
+					RGB[RGB[,i] < zmin, i] <- zmin
+					RGB[RGB[,i] > zmax, i] <- zmax
+				} else { #if (is.na(zlimcol)) {
+					RGB[RGB < zmin | RGB > zmax, i] <- NA
+				}
+			}
+		} else {
+			stop('zlim should be a vector of two numbers or a 3x2 matrix (one row for each color)')
+		}
+	}
+	
+	RGB <- na.omit(RGB)
 	
 	if (!is.null(stretch)) {
 		stretch = tolower(stretch)
 		if (stretch == 'lin') {
-			r <- .linStretch(r)
-			g <- .linStretch(g)
-			b <- .linStretch(b)
+			RGB[,1] <- .linStretchVec(RGB[,1])
+			RGB[,2] <- .linStretchVec(RGB[,2])
+			RGB[,3] <- .linStretchVec(RGB[,3])
 		} else if (stretch == 'hist') {
-			r <- .eqStretch(r)
-			g <- .eqStretch(g)
-			b <- .eqStretch(b)
+			RGB[,1] <- .eqStretchVec(RGB[,1])
+			RGB[,2] <- .eqStretchVec(RGB[,2])
+			RGB[,3] <- .eqStretchVec(RGB[,3])
 		} else if (stretch != '') {
 			warning('invalid stretch value')
 		}
 	}
-	
-	scale = as.vector(scale)[1]
-	
-	RGB <- na.omit(cbind(getValues(r), getValues(g), getValues(b)))
+
 	
 	naind <- as.vector( attr(RGB, "na.action") )
 	if (!is.null(naind)) {
-		bg <- col2rgb(bgcol)
+		bg <- col2rgb(colNA)
 		bg <- rgb(bg[1], bg[2], bg[3], alpha=bgalpha, max=255)
 		z <- rep( bg, times=ncell(r))
 		z[-naind] <- rgb(RGB[,1], RGB[,2], RGB[,3], alpha=alpha, max=scale)
@@ -61,7 +89,6 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, inte
 	require(grDevices)
 	bb <- as.vector(t(bbox(r)))
 
-	dots <- list(...)
 	add <- ifelse(is.null(dots$add), FALSE, dots$add)
 	
 	if (!add) {
@@ -74,9 +101,9 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, inte
 		asp <- dots$asp
 		if (is.null(asp)) {
 			if (.couldBeLonLat(x)) {
-				ym <- mean(x@extent@ymax + x@extent@ymin)
-				asp <- min(5, 1/cos((ym * pi)/180))
-				asp <- NA
+			    ym <- mean(c(x@extent@ymax, x@extent@ymin))
+				asp <- 1/cos((ym * pi)/180)
+				#asp <- min(5, 1/cos((ym * pi)/180))
 			} else {
 				asp <- 1
 			}
@@ -96,9 +123,10 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, inte
 	}
 	rasterImage(z, bb[1], bb[3], bb[2], bb[4], interpolate=interpolate)
 	
-	addfun <- dots$addfun
-	if (is.function(addfun)) {
-		addfun()
+	if (!is.null(addfun)) {
+		if (is.function(addfun)) {
+			addfun()
+		}
 	}
 }
 )

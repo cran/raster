@@ -8,33 +8,36 @@
 \title{Red-Green-Blue plot of a multi-layered Raster object}
 
 \description{
-Make a Red-Green-Blue plot based on three layers (in a RasterBrick or RasterStack). Three layers (bands) are combined such that one is the red channel, one is the green channel, and one is the blue channel. This function could be used to make 'True (or false) color images' from Landsat and other multi-band satellite images. 
+Make a Red-Green-Blue plot based on three layers (in a RasterBrick or RasterStack). Three layers (sometimes referred to as "bands" because they may reperesent different bandwidths in the electromagnetic spectrum) are combined such that they represent the red, green and blue channel. This function can be used to make 'True (or false) color images' from Landsat and other multi-band satellite images. 
 }
 
 
 
 \usage{
-\S4method{plotRGB}{RasterStackBrick}(x, r=1, g=2, b=3, scale, maxpixels=500000, 
-    stretch=NULL, ext=NULL, interpolate=FALSE, bgcol='white', alpha, bgalpha, ...)
+\S4method{plotRGB}{RasterStackBrick}(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL,
+         ext=NULL, interpolate=FALSE, colNA='white', alpha, bgalpha, addfun=NULL, zlim=NULL, zlimcol=NULL, ...)
 }
 
 \arguments{
   \item{x}{RasterBrick or RasterStack}
-  \item{r}{Integer. Index of the Red channel, between 1 and nlayers(x)}
-  \item{g}{Integer. Index of the Green channel, between 1 and nlayers(x)}
-  \item{b}{Integer. Index of the Blue channel, between 1 and nlayers(x)}
-  \item{scale}{Integer. Maximum (possible) value in the three channels. Defaults to 255 or to the maximum value of \code{x} if that is known and larger than 255}
-  \item{maxpixels}{Maximum number of pixels to use}
-  \item{stretch}{Option to stretch the values to increase the contrast of the image: "lin" or "hist"}
+  \item{r}{integer. Index of the Red channel, between 1 and nlayers(x)}
+  \item{g}{integer. Index of the Green channel, between 1 and nlayers(x)}
+  \item{b}{integer. Index of the Blue channel, between 1 and nlayers(x)}
+  \item{scale}{integer. Maximum (possible) value in the three channels. Defaults to 255 or to the maximum value of \code{x} if that is known and larger than 255}
+  \item{maxpixels}{integer > 0. Maximum number of pixels to use}
+  \item{stretch}{character. Option to stretch the values to increase the contrast of the image: "lin" or "hist"}
   \item{ext}{An \code{\link{Extent}} object to zoom in to a region of interest (see \code{\link{drawExtent}})}
-  \item{interpolate}{interpolate the image when drawing}
-  \item{bgcol}{Background (NA) color. Default is 'white'}
+  \item{interpolate}{logical. If \code{TRUE}, interpolate the image when drawing}
+  \item{colNA}{color for the background (\code{NA} values)}
   \item{alpha}{transparency. Integer between 0 (transparent) and 255 (opaque)}
   \item{bgalpha}{Background transparency. Integer between 0 (transparent) and 255 (opaque)}
+  \item{addfun}{Function to add additional items such as points or polygons to the plot (map). See \code{\link[raster]{plot}}}
+  \item{zlim}{vector of lenght 2. Range of values to plot}
+  \item{zlimcol}{If \code{NULL} the values outside the range of zlim get the color of the extremes of the range. If zlimcol has any other value, the values outside the zlim range get the color of \code{NA} values (see colNA)}
   \item{...}{graphical parameters as in \code{\link{rasterImage}}}
 }
 
-\author{ Robert J. Hijmans; stretch option based on functions by Josh Gray }
+\author{Robert J. Hijmans; stretch option based on functions by Josh Gray }
 
 \seealso{ \code{\link[raster]{plot}} }
 

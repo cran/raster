@@ -5,6 +5,7 @@
 	packageStartupMessage(paste("raster ", pkg.info[["Version"]], " (", pkg.info["Date"], ")", sep=""))
 
 	tst <- try( removeTmpFiles( .tmptime() ), silent=TRUE ) 
+
 	return(invisible(0))
 }
 

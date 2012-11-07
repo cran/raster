@@ -49,7 +49,7 @@ rasterToPoints <- function(x, fun=NULL, spatial=FALSE, ...) {
 		Y <- yFromRow(x, 1:nrow(x))
 
 		tr <- blockSize(x)
-		pb <- pbCreate(tr$n, ...)
+		pb <- pbCreate(tr$n, label='rasterize', ...)
 
 		if (nl > 1) {
 		

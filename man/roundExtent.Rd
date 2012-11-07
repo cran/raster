@@ -26,7 +26,7 @@ See \code{\link[raster]{Math-methods}} for these (and many more) methods with Ra
 
 \seealso{\code{\link[raster]{Math-methods}}}
   
-\author{Robert J. Hijmans }
+
 \examples{
 e <- extent(c(0.999999,  10.000011, -60.4, 60))
 round(e)

@@ -29,7 +29,7 @@ RasterLayer or RasterBrick
 
 \seealso{ transpose: \code{\link{t}}, \code{\link[raster]{rotate}} }
 
-\author{Robert J. Hijmans }
+
 
 \examples{
 r <- raster(nrow=18, ncol=36)

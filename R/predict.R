@@ -9,7 +9,7 @@ if (!isGeneric("predict")) {
 }	
 
 setMethod('predict', signature(object='Raster'), 
-	function(object, model, filename="", fun=predict, ext=NULL, const=NULL, index=1, na.rm=TRUE, format, datatype, overwrite=FALSE, progress='', ...) {
+	function(object, model, filename="", fun=predict, ext=NULL, const=NULL, index=1, na.rm=TRUE, inf.rm=FALSE, format, datatype, overwrite=FALSE, progress='', ...) {
 	
 		filename <- trim(filename)
 		if (missing(format)) { format <- .filetype(filename=filename) } 
@@ -87,19 +87,11 @@ setMethod('predict', signature(object='Raster'),
 			predrast <- writeStart(predrast, filename=filename, format=format, datatype=datatype, overwrite=overwrite )
 		}
 		
-		tr <- blockSize(predrast, n=nlayers(object)+3)
-		doCluster <- .doCluster()
-		if (doCluster) {
-			cl <- getCluster()
-			on.exit( returnCluster() )
-			cat( 'Using cluster with', length(cl), 'nodes\n' )
-			flush.console()		
-		}
-
+		tr <- blockSize(predrast, n=nlayers(predrast)+3)
 		
 		napred <- matrix(rep(NA, ncol(predrast) * tr$nrows[1] * nlayers(predrast)), ncol=nlayers(predrast))
 		factres	<- FALSE
-		pb <- pbCreate(tr$n,  progress=progress )			
+		pb <- pbCreate(tr$n,  progress=progress, label='predict' )			
 
 		factorwarned <- FALSE
 		for (i in 1:tr$n) {
@@ -138,11 +130,14 @@ setMethod('predict', signature(object='Raster'),
 			}
 			
 			if (! is.null(const)) {
-				blockvals = cbind(blockvals, const)
+				blockvals <- cbind(blockvals, const)
 			} 
 
-			if (na.rm) {  
-				blockvals <- na.omit(blockvals)		
+			if (na.rm) { 
+				if (inf.rm) {
+					blockvals[!is.finite(as.matrix(blockvals))] <- NA
+				}
+				blockvals <- na.omit(blockvals)						
 			}
 
 			nrb <- nrow(blockvals)
@@ -150,17 +145,7 @@ setMethod('predict', signature(object='Raster'),
 				predv <- napred
 			} else {
 	
-				if (doCluster) {
-				
-					predv <- clusterApply(cl, splitRows(blockvals, length(cl)), fun, object=model)
-					if (is.vector(predv[[1]])) {
-						predv <- unlist(predv)
-					} else {
-						predv <- do.call(rbind, predv)
-					}
-				} else {
-					predv <- fun(model, blockvals, ...)
-				}
+				predv <- fun(model, blockvals, ...)
 		
 				if (class(predv)[1] == 'list') {
 					predv <- unlist(predv)
@@ -194,7 +179,8 @@ setMethod('predict', signature(object='Raster'),
 						} else {
 							factaschar = TRUE
 						}
-						predrast@data@attributes <- list(levels(predv))
+						levs <- levels(predv)
+						predrast@data@attributes <- list(data.frame(ID=1:length(levs), value=levs))
 						predrast@data@isfactor <- TRUE
 						facttest <- FALSE
 					}

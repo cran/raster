@@ -18,6 +18,8 @@
 		extension(fname) <- ".bip"
 	} else if (type == 'BSQ') {
 		extension(fname) <- ".bsq"
+	} else if (type == 'big.matrix') {
+		extension(fname) <- ".big"
 	} else {
 		stop('unknown file format')
 	}
@@ -33,6 +35,8 @@
 		extension(fname) <- ".rdc"
 	} else if (type %in% c('BIL', 'BSQ', 'BIP')) {
 		extension(fname) <- ".hdr"
+	} else if (type == 'big.matrix') {
+		extension(fname) <- ".brd"
 	} else {
 		stop('unknown file format')
 	}

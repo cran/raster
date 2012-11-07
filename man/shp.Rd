@@ -27,9 +27,7 @@ shapefile(filename, object=NULL, overwrite=FALSE, verbose=FALSE)
 Spatial*DataFrame (reading). Nothing is returned when writing a shapefile.
 }
 
-\author{
-Robert J. Hijmans
-}
+
 
 \keyword{spatial}
 

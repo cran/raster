@@ -5,14 +5,13 @@
 # version 1.0
 
 
-if (!isGeneric("expand")) {
-	setGeneric("expand", function(x, y, ...)
-		standardGeneric("expand"))
+
+if (!isGeneric("extend")) {
+	setGeneric("extend", function(x, y, ...)
+		standardGeneric("extend"))
 }	
 
-
-
-setMethod('expand', signature(x='Extent'), 
+setMethod('extend', signature(x='Extent'), 
 # function by Etienne B. Racine
 function(x, y, ...) {
 	if (length(y) == 1) {
@@ -31,7 +30,7 @@ function(x, y, ...) {
 }
 )
 
-setMethod('expand', signature(x='Raster'), 
+setMethod('extend', signature(x='Raster'), 
 function(x, y, value=NA, filename='', ...) {
 
 	if (is.vector(y)) {
@@ -106,7 +105,7 @@ function(x, y, value=NA, filename='', ...) {
 		tr$nrows <- c(tr$row[-1], nrow(out)+1) - tr$row
 		tr$n <- length(tr$row)
 			
-		pb <- pbCreate(tr$n, ...)
+		pb <- pbCreate(tr$n, label='extend', ...)
 		out <- writeStart(out, filename=filename, datatype=datatype, ... )
 		for (i in 1:tr$n) {
 			d <- matrix(value, nrow=tr$nrows[i] * ncol(out), ncol=nlayers(out))

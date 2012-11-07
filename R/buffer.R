@@ -16,7 +16,7 @@ function(x, width=0, filename='', doEdge=FALSE, ...) {
 	stopifnot(width > 0)
 
 	if (doEdge) {
-		r <- edge(x, classes=FALSE, type='inner', progress=.progress(...)) 
+		r <- raster::edge(x, classes=FALSE, type='inner', progress=.progress(...)) 
 		pts <- try(  rasterToPoints(r, fun=function(z){ z>0 } )[,1:2, drop=FALSE] )
 	} else {
 		pts <- try(  rasterToPoints(x)[,1:2, drop=FALSE] )
@@ -38,7 +38,7 @@ function(x, width=0, filename='', doEdge=FALSE, ...) {
 	}
 	                                                                        
 	if (canProcessInMemory(out, 6)) {
-		pb <- pbCreate(4, ...)
+		pb <- pbCreate(4, label='buffer', ...)
 		x <- values(x)
 		i <- which(is.na(x))
 		if (length(i) < 1) {
@@ -63,7 +63,7 @@ function(x, width=0, filename='', doEdge=FALSE, ...) {
 	
 	out <- writeStart(out, filename=filename, ...)
 	tr <- blockSize(out)
-	pb <- pbCreate(tr$n, ...)
+	pb <- pbCreate(tr$n, label='buffer', ...)
 	xy <- cbind(rep(xFromCol(out, 1:ncol(out)), tr$nrows[1]), NA)
 	for (i in 1:tr$n) {
 		if (i == tr$n) {

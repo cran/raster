@@ -11,8 +11,12 @@ if (!isGeneric("freq")) {
 
 
 setMethod('freq', signature(x='RasterLayer'), 
-	function(x, digits=0, useNA="ifany", progress='', ...) {
-
+	function(x, digits=0, value=NULL, useNA="ifany", progress='', ...) {
+		
+		if (!is.null(value)) {
+			return(.count(x, value, digits=digits, progress=progress, ...))
+		}
+	
 		if (canProcessInMemory(x, 3)) {
 	
 			d <- round(getValues(x), digits=digits)
@@ -21,7 +25,7 @@ setMethod('freq', signature(x='RasterLayer'),
 		} else {
 		
 			tr <- blockSize(x, n=2)
-			pb <- pbCreate(tr$n, progress=progress)	
+			pb <- pbCreate(tr$n, progress=progress, label='freq')	
 			z <- vector(length=0)
 			for (i in 1:tr$n) {
 				d <- round(getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i]), digits=digits)
@@ -43,12 +47,16 @@ setMethod('freq', signature(x='RasterLayer'),
 
 
 setMethod('freq', signature(x='RasterStackBrick'), 
-	function(x, digits=0, useNA="ifany", merge=FALSE, progress='', ...) {
-		
+	function(x, digits=0, value=NULL, useNA="ifany", merge=FALSE, progress='', ...) {
+
+		if (!is.null(value)) {
+			return(.count(x, value, digits=digits, progress=progress, ...))
+		}
+	
 		nl <- nlayers(x)
 		res <- list()
 		
-		pb <- pbCreate(nl, progress=progress)	
+		pb <- pbCreate(nl, progress=progress, label='freq')	
 		for (i in 1:nl) { 
 			res[[i]] <- freq( raster(x, i), useNA=useNA, progress='', ...) 
 			pbStep(pb, i)

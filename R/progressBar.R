@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-pbCreate <- function(nsteps, progress, style=3, ...) {
+pbCreate <- function(nsteps, progress, style=3, label='Progress', ...) {
 
 	if (missing(progress)) {
 		progress <- .progress()
@@ -17,7 +17,7 @@ pbCreate <- function(nsteps, progress, style=3, ...) {
 	if (progress=='text') {
 		pb <- txtProgressBar(min=0, max=nsteps, style=style)
 	} else if (progress %in% c('window', 'tcltk', 'windows')) {
-		tit <- paste(' Progress (', nsteps, ' steps)', sep='')
+		tit <- paste(label, ' (', nsteps, ' steps)', sep='')
 		#if (.Platform$OS.type == "windows" ) {
 		#	pb <- winProgressBar(title=tit, min=0 , max=nsteps, width = 300, label='starting')
 		#} else {

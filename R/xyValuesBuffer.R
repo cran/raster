@@ -45,13 +45,17 @@
 			nodes <- min(nrow(xy), length(cl))
 			cat('Using cluster with', nodes, 'nodes\n')
 			flush.console()
-			clFun <- function(i) {
-				s <- sum(rn[i], rx[i], cn[i], cx[i])
+			
+
+			clusterExport(cl, c('object', 'obj', 'cellnumbers'), envir=environment())
+			
+			clFun1 <- function(i, rn, rx, cn, cx) {
+				s <- sum(rn, rx, cn, cx)
 				if (is.na(s)) {
 					return(NA)
 				} else {
-					value <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
-					cell <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
+					value <- getValuesBlock(object, rn, rx-rn+1, cn, cx-cn+1)
+					cell <- cellFromRowColCombine(obj, rn:rx, cn:cx)
 					coords <- xyFromCell(obj, cell)
 					if (cellnumbers) {
 						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), cell, value)
@@ -68,12 +72,13 @@
 			}
 		
 			for (i in 1:nodes) {
-				sendCall(cl[[i]], clFun, i, tag=i)
+				sendCall(cl[[i]], clFun1, list(i, rn[i], rx[i], cn[i], cx[i]), tag=i)
 			}
 			for (i in 1:nrow(xy)) {
 				d <- recvOneData(cl)
 				
 				if (! d$value$success) {
+					print(d)
 					stop('cluster error')
 				} else  {
 					cv[[i]] <- d$value$value
@@ -81,7 +86,7 @@
 				
 				ni <- nodes + i 
 				if (ni <= nrow(xy)) {
-					sendCall(cl[[d$node]], clFun, ni, tag=ni)
+					sendCall(cl[[d$node]], clFun1, list(i, rn[i], rx[i], cn[i], cx[i]), tag=ni)
 				}
 			}
 		
@@ -127,18 +132,22 @@
 			nodes <- min(nrow(xy), length(cl))
 			cat('Using cluster with', nodes, 'nodes\n')
 			flush.console()
-			clFun <- function(i) {
-				s <- sum(rn[i], rx[i], cn[i], cx[i])
+
+	
+			clusterExport(cl, c('object', 'obj', 'cellnumbers'), envir=environment())
+			
+			clFun2 <- function(i, xy, rn, rx, cn, cx) {
+				s <- sum(rn, rx, cn, cx)
 				if (is.na(s)) {
 					return(NA)
 				} else {
-					value <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
-					cell <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
+					value <- getValuesBlock(object, rn, rx-rn+1, cn, cx-cn+1)
+					cell <- cellFromRowColCombine(obj, rn:rx, cn:cx)
 					coords <- xyFromCell(obj, cell)
 					if (cellnumbers) {
-						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), cell, value)
+						pd <- cbind(pointDistance(xy, coords, longlat=TRUE), cell, value)
 					} else {
-						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), value)
+						pd <- cbind(pointDistance(xy, coords, longlat=TRUE), value)
 					}
 					if (nrow(pd) > 1) {
 						pd <- pd[pd[,1] <= buffer[i], -1]
@@ -150,18 +159,19 @@
 			}
 
 			for (i in 1:nodes) {
-				sendCall(cl[[i]], clFun, i, tag=i)
+				sendCall(cl[[i]], clFun2, list(i, xy[i, ,drop=FALSE], rn[i], rx[i], cn[i], cx[i]), tag=i)
 			}
 			for (i in 1:nrow(xy)) {
 				d <- recvOneData(cl)
 				if (! d$value$success) {
+					print(d)
 					stop('cluster error')
 				} else {
 					cv[[i]] <- d$value$value
 				}
 				ni <- nodes + i
 				if (ni <= nrow(xy)) {
-					sendCall(cl[[d$node]], clFun, ni, tag=ni)
+					sendCall(cl[[d$node]], clFun2, list(ni, xy[i, ,drop=FALSE], rn[i], rx[i], cn[i], cx[i]), tag=i)
 				}
 			}
 		} else {

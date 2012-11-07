@@ -6,10 +6,17 @@
 
 canProcessInMemory <- function(x, n=4) {
 
-# used for testing:
-#	setOptions(overwrite=TRUE)
-#	setOptions(format='GTiff')
-#	return(FALSE)
+
+# for testing purposes	
+#	rasterOptions(format='GTiff') 
+#	require(ncdf)
+#	require(rgdal)
+#	rasterOptions(format='big.matrix')
+#	rasterOptions(format='CDF')
+#	rasterOptions(overwrite=TRUE)
+#	rasterOptions(todisk=TRUE)
+# return(FALSE)
+	
 	if (.toDisk()) { 
 		return(FALSE) 
 	} 

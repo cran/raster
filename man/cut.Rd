@@ -27,7 +27,7 @@ Raster* object
 \seealso{ \code{ \link{subs}, \link{reclassify}, \link{calc}} } 
 
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 

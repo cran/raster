@@ -23,9 +23,9 @@ function(x, ...) {
 	}
 
 	if (nlayers(x) > 0) {
-		compare(c(x, rasters))
+		compareRaster(c(x, rasters))
 	} else if (length(rasters) > 1) {
-		compare(rasters)
+		compareRaster(rasters)
 	}
 		
 	vals <- sapply(rasters, hasValues) 
