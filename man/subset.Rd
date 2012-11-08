@@ -29,7 +29,7 @@ Extract a set of layers from a RasterStack or RasterBrick object.
 Raster* object
 }
 
-\author{Robert J. Hijmans}
+
 
 \seealso{ \code{\link[raster]{dropLayer}}}
 

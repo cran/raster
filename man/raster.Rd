@@ -15,7 +15,9 @@
 \alias{raster,SpatialGrid-method}
 \alias{raster,SpatialPixels-method}
 \alias{raster,matrix-method}
+\alias{raster,big.matrix-method}
 \alias{raster,list-method}
+\alias{raster,im-method}
 \alias{raster,asc-method}
 \alias{raster,kasc-method}
 \alias{raster,kde-method}
@@ -24,154 +26,78 @@
 \title{Create a RasterLayer object}
 
 \description{
-Methods to create a RasterLayer object. RasterLayer objects can be created from scratch, a file, an Extent object, a matrix, an 'image' object, or from a Raster*, Spatial*, asc, kasc (adehabitat*), grf (geoR) or kde object.
+Methods to create a RasterLayer object. RasterLayer objects can be created from scratch, a file, an Extent object, a matrix, an 'image' object, or from a Raster*, Spatial*, im (spatstat) asc, kasc (adehabitat*), grf (geoR) or kde object.
 
-In many cases, e.g. when a RasterLayer is created from a file, it does (initially) not contain any cell (pixel) values, it only has the parameters that describe the RasterLayer.
+In many cases, e.g. when a RasterLayer is created from a file, it does (initially) not contain any cell (pixel) values in (RAM) memory, it only has the parameters that describe the RasterLayer. You can access cell-values with \code{\link[raster]{getValues}, \link[raster]{extract}} and related functions. You can assign new values with  \code{\link[raster]{setValues}} and with \code{\link[raster]{replacement}}.
 
 For an overview of the functions in the raster package have a look here: \code{\link{raster-package}}.
 }
 
 
-\arguments{
-\item{x}{Filename (character), Extent, Raster*, SpatialPixels*, SpatialGrid* object, matrix, or missing}
-\item{...}{Additional arguments, see below }  
-}
-
 \usage{
-raster(x, ...)
+\S4method{raster}{character}(x, band=1, ...)
+
+\S4method{raster}{RasterLayer}(x) 
+
+\S4method{raster}{RasterStack}(x, layer=0) 
+
+\S4method{raster}{RasterBrick}(x, layer=0) 
+
+\S4method{raster}{missing}(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, crs, ext)
+
+\S4method{raster}{Extent}(x, nrows=10, ncols=10, crs=NA)
+
+\S4method{raster}{matrix}(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA, template=NULL)
+
+\S4method{raster}{big.matrix}(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA, template=NULL)
+
+\S4method{raster}{SpatialGrid}(x, layer=1, values=TRUE)
+
+\S4method{raster}{SpatialPixels}(x, layer=1, values=TRUE)
 }
 
-\section{Methods}{
-\describe{
-
-\bold{1) Create a RasterLayer object from a file}
-
-\code{raster(x, band=1, ...)}
-
-\tabular{rll}{
-\tab \code{x} \tab character. Name of raster file  \cr
-\tab \code{band} \tab positive integer. Band number in case of a file of multiple bands, default = 1 \cr
-\tab \code{sub} \tab positive integer. Subdataset number for a file with subdatasets \cr
-\tab \code{...} \tab additional arguments.  \cr
+\arguments{
+\item{x}{filename (character), Extent, Raster*, SpatialPixels*, SpatialGrid*, object, 'image', matrix, im, or missing. Supported file types are the 'native' raster package format and those that can be read via \code{rgdal} (see \code{\link[rgdal]{readGDAL}}}
+\item{band}{integer. The layer to use in a multi-layer file}
+\item{...}{Additional arguments, see Details }  
+\item{layer}{integer. The layer to use in a multi-layer file, or the layer to extract from a RasterStack/Brick. If the latter case, an empty RasterLayer (no associated values) is returned if \code{layer=0}}
+\item{values}{logical. If \code{TRUE}, the cell values of '\code{x}' are copied to the RasterLayer object that is returned}
+\item{nrows}{integer > 0. Number of rows}
+\item{ncols}{integer > 0. Number of columns}
+\item{xmn}{minimum x coordinate (left border)}
+\item{xmx}{maximum x coordinate (right border)}
+\item{ymn}{minimum y coordinate (bottom border)}
+\item{ymx}{maximum y coordinate (top border)}
+\item{ext}{object of class Extent. If present, the arguments xmn, xmx, ymn and ynx are ignored}
+\item{crs}{character or object of class CRS. PROJ4 type description of a Coordinate Reference System (map projection). If this argument is missing, and the x coordinates are withing -360 .. 360 and the y coordinates are within -90 .. 90, "+proj=longlat +datum=WGS84" is used}
+\item{template}{Raster* or Extent object used to set the extent (and CRS in case of a Raster* object). If not \code{NULL}, arguments \code{xmn}, \code{xmx}, \code{ymn}, \code{ymx} and \code{crs} (unless \code{template} is an Extent object) are ignored}
 }
-
-Additional arguments:
-\tabular{rll}{
-\tab \code{native} \tab Logical.  Default is FALSE except when package rgdal is missing. If TRUE, reading and writing of IDRISI, BIL, BSQ, BIP, SAGA, and Arc ASCII files is done with native (raster package) drivers, rather then via rgdal. 'raster' and netcdf format files are always read with native drivers. \cr
-\tab \code{offset} \tab Integer. To indicate the number of header rows on non-standard ascii files (rarely useful; use with caution) \cr
-}
-
-For netCDF files (CF convention):
-\tabular{rll}{
-\tab \code{varname} \tab character. The variable name (e.g. 'altitude' or 'precipitation'. If not supplied and the file has multiple variables are a guess will be made (and reported))\cr
-\tab \code{band} \tab integer > 0. The 'band' (layer) number of the file. E.g., the 'time' variable (if there are any) (default=NA)\cr
-}
-
-To read netCDF files, the \code{ncdf} or the \code{ncdf4} package needs to be available. If both are available, \code{ncdf4} is used. Only the \code{ncdf4} package can read the most recent version (4) of the netCDF format (as well as older versions), for windows it not available on CRAN but can be downloaded \href{http://cirrus.ucsd.edu/~pierce/ncdf/}{here}.
-
-
-If \code{x} is a character value, it should be a filename of a file that the raster package can read. Supported file types are the 'native' raster package format and those that can be read via \code{rgdal}. See \code{\link[rgdal]{readGDAL}} help for supported file types.
-
-
-\bold{2) Create a RasterLayer object from scratch}
-
-\code{raster(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, crs, ext)}
-
-\tabular{rll}{
- \tab \code{nrows} \tab number of rows \cr
- \tab \code{ncols} \tab number of columns \cr
- \tab \code{xmn} \tab minimum x coordinate (left border) \cr
- \tab \code{xmx} \tab maximum x coordinate (right border) \cr
- \tab \code{ymn} \tab minimum y coordinate (bottom border) \cr
- \tab \code{ymx} \tab maximum y coordinate (top border) \cr
- \tab \code{crs} \tab Character or object of class CRS. PROJ4 type description of a Coordinate Reference System (map projection). If this argument is missing, and the x coordinates are withing -360 .. 360 and the y coordinates are within -90 .. 90, "+proj=longlat +datum=WGS84" is used. \cr
- \tab \code{ext} \tab object of class Extent. If present, the arguments xmn, xmx, ymn and ynx are ignored \cr
-}
-(item \code{x} is 'missing' in this case)
-
- 
-\bold{3) Create a RasterLayer object from an \code{\link[raster]{Extent-class}} object}
-  
-\code{raster(x, nrows=10, ncols=10, crs=NA)}
-
-\tabular{rll}{
- \tab \code{x} \tab Extent object \cr
- \tab \code{nrows} \tab number of rows  \cr
- \tab \code{ncols} \tab number of columns \cr
- \tab \code{crs} \tab PROJ4 type description of a map projection \cr
-}
-
-
-\bold{4) Create a RasterLayer object from a Raster* object.} 
-
-This copies the parameters of a Raster* object to a new RasterLayer, 
-but does not copy the filename nor the cell values associated with the original Raster* object. 
-
-\code{raster(x)}
-
-\tabular{rll}{
- \tab \code{x} \tab a Raster* object \cr
-}
-
-
-\bold{5) Create a RasterLayer object from a RasterStack or RasterBrick object.}
-
-\code{raster(x, layer=0)}
-
-\tabular{rll}{
- \tab \code{x} \tab a RasterStack, SpatialPixels* or SpatialGrid* object \cr
- \tab \code{layer} \tab Integer. The layer from which to copy values to the new RasterLayer, if layer>0.  \cr
-}
-
-
-\bold{6) Create a RasterLayer object from a RasterStack, RasterBrick, SpatialPixels* or SpatialGrid* object.}
-
-\code{raster(x, layer=0)}
-
-\tabular{rll}{
- \tab \code{x} \tab RasterStack, RasterBrick, SpatialPixels* or SpatialGrid* object \cr
- \tab \code{layer} \tab Integer. the layer from which to copy values to the new RasterLayer, if layer>0\cr
-}
-
-
-\bold{7) Create a RasterLayer object from a matrix.} 
-
-The default extent is set to be between 0 and 1 in the x and y direction but can be changed at creation of the RasterLayer object or later. You can also provide a projection.  
-
-\code{function(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA)}
-
-\tabular{rll}{
- \tab \code{x} \tab matrix \cr
- \tab \code{xmn} \tab minimum x coordinate (left border) \cr
- \tab \code{xmx} \tab maximum x coordinate (right border) \cr
- \tab \code{ymn} \tab minimum y coordinate (bottom border) \cr
- \tab \code{ymx} \tab maximum y coordinate (top border) \cr
- \tab \code{crs} \tab PROJ4 type description of a map projection (optional) \cr
-}
-
-
-\bold{8) Create a RasterLayer object from an 'image' object (a list with vectors x and y and matrix z), or from an asc, kasc, or kde object }
-
-\code{raster(img, crs)}
-
-\tabular{rll}{
- \tab \code{x} \tab RasterStack, SpatialPixels* or SpatialGrid* object \cr
- \tab \code{crs} \tab PROJ4 type description of a map projection (optional) \cr
-}
-}}
-
 
 \details{
-A new RasterLayer object normally has no cell-values in memory. 
-If it is created from a file on disk, you can access cell-values with \code{\link[raster]{getValues}, \link[raster]{extract}} and related functions.
-You can assign new values with  \code{\link[raster]{setValues}} and with \code{\link[raster]{replacement}}.
+If \code{x} represents a filename, the following additional variables are recognized:
+
+\code{sub}: positive integer. Subdataset number for a file with subdatasets
+
+\code{native}: logical.  Default is \code{FALSE} except when package \code{rgdal} is missing. If \code{TRUE}, reading and writing of IDRISI, BIL, BSQ, BIP, SAGA, and Arc ASCII files is done with native (raster package) drivers, rather then via rgdal. 'raster' and netcdf format files are always read with native drivers. 
+
+\code{RAT}: logical. The default is \code{TRUE}, in which case a raster attribute table is created for files that have one
+
+\code{offset}: integer. To indicate the number of header rows on non-standard ascii files (rarely useful; use with caution)
+
+If \code{x} represents a \bold{NetCDF} file, the following additional variable is recognized:
+
+\code{varname}: character. The variable name, such as 'tasmax' or 'pr'. If not supplied and the file has multiple variables are a guess will be made (and reported)
+
+\code{lvar}: integer > 0 (default=3). To select the 'level variable' (3rd dimension variable) to use, if the file has 4 dimensions (e.g. depth instead of time)\cr
+
+\code{level}: integer > 0 (default=1). To select the 'level' (4th dimension variable) to use, if the file has 4 dimensions, e.g. to create a RasterBrick of weather over time at a certain height. \cr
+
+To use NetCDF files the \code{ncdf} or the \code{ncdf4} package needs to be available. If both are available, \code{ncdf4} is used. Only the \code{ncdf4} package can read the most recent version (4) of the netCDF format (as well as older versions), for windows it not available on CRAN but can be downloaded \href{http://cirrus.ucsd.edu/~pierce/ncdf/}{here}. It is assumed that these files follow, or are compatible with the CF convention.
 }
 
 \value{
-RasterLayer object
+RasterLayer
 }
-
-\author{Robert J. Hijmans}
 
 \seealso{ \code{\link[raster]{stack}, \link[raster]{brick}} }
 

@@ -29,7 +29,7 @@ A Raster* object, and in some cases the side effect of a new file on disk.
 
 \seealso{ \code{\link[raster]{Math-methods}}, \code{\link[raster]{overlay}}, \code{\link[raster]{calc}} }
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 

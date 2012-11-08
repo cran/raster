@@ -30,15 +30,15 @@ Numeric
 }
 
 \details{
-\code{cellStats} will fail (gracefully) for very large Raster* objects except for a number of known functions: sum, mean, min, max, sd, 'countNA'. 'countNA' must be supplied as a character value (with quotes), the other known functions may be supplied with or without quotes. For other functions you could perhaps use a sample of the RasterLayer that can be held in memory (see \code{\link[raster]{sampleRandom}} and \code{\link[raster]{sampleRegular}} )
+\code{cellStats} will fail (gracefully) for very large Raster* objects except for a number of known functions: sum, mean, min, max, sd, 'skew' and 'rms'. 'skew' (skewness) and 'rms' (Root Mean Square) must be supplied as a character value (with quotes), the other known functions may be supplied with or without quotes. For other functions you could perhaps use a sample of the RasterLayer that can be held in memory (see \code{\link[raster]{sampleRandom}} and \code{\link[raster]{sampleRegular}} )
 
 }
 
 \seealso{ 
-\code{\link[raster]{quantile}}, \code{\link[raster]{minValue}}, \code{\link[raster]{maxValue}}, \code{\link[raster]{setMinMax}}
+\code{\link[raster]{freq}}, \code{\link[raster]{quantile}}, \code{\link[raster]{minValue}}, \code{\link[raster]{maxValue}}, \code{\link[raster]{setMinMax}}
 }
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 r <- raster(nrow=18, ncol=36)

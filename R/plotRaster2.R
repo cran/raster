@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-.plotraster2 <- function(object, col=rev(terrain.colors(25)), maxpixels=100000, xlab='', ylab='', ext=NULL, xlim, ylim, add=FALSE, addfun=NULL, colNA=NA, ...) {
+.plotraster2 <- function(object, col=rev(terrain.colors(25)), maxpixels=100000, xlab='', ylab='', ext=NULL, xlim, ylim, add=FALSE, addfun=NULL, colNA=NA, main, facvar=0, ...) {
 
  	if ( ! hasValues(object) ) { 
 		stop('no values associated with this RasterLayer')
@@ -28,7 +28,15 @@
 #	leg <- object@legend
 	object <- sampleRegular(object, size=maxpixels, ext=ext, asRaster=TRUE)
 	
-	.rasterImagePlot(object, col=col, xlab=xlab, ylab=ylab, add=add, colNA=colNA, ...)	
+	if (facvar > 0) {
+		object <- deratify(object, facvar)		
+	}
+	
+	if (missing(main)) {
+		main <- names(object)
+	}	
+	
+	.rasterImagePlot(object, col=col, xlab=xlab, ylab=ylab, add=add, colNA=colNA, main=main, ...)	
 	
 	if (!is.null(addfun)) {
 		if (is.function(addfun)) {

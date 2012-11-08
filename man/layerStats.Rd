@@ -36,10 +36,7 @@ List with two items: the correlation or (weighted) covariance matrix, and the (w
 }
 
 
-\author{
-Jonathan A. Greenberg & Robert Hijmans. 
-Weighted covariance based on code by Mort Canty 
-}
+\author{Jonathan A. Greenberg & Robert Hijmans. Weighted covariance based on code by Mort Canty}
 
 
 \references{

@@ -48,16 +48,14 @@ setClass ('BasicRaster',
 		ncols ='integer',
 		nrows ='integer',
 		crs = 'CRS',
-		z = 'list',
-		layernames = 'character'
+		z = 'list'
 	),
 	prototype (	
 		rotated = FALSE,
 		ncols= as.integer(1),
 		nrows= as.integer(1),
 		crs = CRS(as.character(NA)),
-		z = list(),
-		layernames = "Do not use the layernames slot (it is obsolete and will be removed)\nUse function 'names'"
+		z = list()
 	),
 	validity = function(object) {
 		validObject(extent(object))
@@ -78,6 +76,7 @@ setClass('.RasterFile',
 		datanotation='character',
 		byteorder ='character',
 		nodatavalue ='numeric', # on disk, in ram it is NA
+		NAchanged ='logical',
 		nbands ='integer',
 		bandorder ='character',
 		offset='integer',
@@ -91,6 +90,7 @@ setClass('.RasterFile',
 		datanotation='FLT4S',
 		byteorder = .Platform$endian,
 		nodatavalue = -Inf,
+		NAchanged = FALSE,
 		nbands = as.integer(1),
 		bandorder = 'BIL',
 		offset = as.integer(0),
@@ -250,7 +250,7 @@ setClass ('RasterStack',
 		),
 	validity = function(object) {
 		if (length(object@layers) > 1) {
-			cond <- compare(object@layers, extent=TRUE, rowcol=TRUE, tolerance=0.05, stopiffalse=FALSE, showwarning=FALSE) 
+			cond <- compareRaster(object@layers, extent=TRUE, rowcol=TRUE, tolerance=0.05, stopiffalse=FALSE, showwarning=FALSE) 
 		} else {
 			cond <- TRUE
 		}
@@ -311,7 +311,7 @@ setClass ('.RasterQuad',
 		),
 	validity = function(object) {
 		if (length(object@bricks) > 1) {
-			test <- compare(object@bricks, extent=TRUE, rowcol=TRUE, tolerance=0.05, stopiffalse=FALSE, showwarning=FALSE) 
+			test <- compareRaster(object@bricks, extent=TRUE, rowcol=TRUE, tolerance=0.05, stopiffalse=FALSE, showwarning=FALSE) 
 		} else {
 			test <- TRUE
 		}

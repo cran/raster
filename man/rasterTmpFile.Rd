@@ -24,7 +24,7 @@ removeTmpFiles(h=24)
 }
 
 \details{
-The default path where the temporary files are stored is returned by \code{showOptions()}; you can change it (for the current session) with \link[raster]{setOptions}. 
+The default path where the temporary files are stored is returned (can be changed with \code{\link{rasterOptions}}). 
 }
 
 \value{
@@ -36,9 +36,9 @@ The default path where the temporary files are stored is returned by \code{showO
 }
 
 
-\author{Robert J. Hijmans}
 
-\seealso{ \code{\link[raster]{setOptions}}, \code{\link[raster]{showOptions}}, \code{\link[base]{tempfile}} }  
+
+\seealso{ \code{\link{rasterOptions}}, \code{\link[base]{tempfile}} }  
 
 \examples{
 #rasterTmpFile('mytemp_')

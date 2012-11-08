@@ -1,8 +1,10 @@
 # Authors: Robert J. Hijmans and Jacob van Etten, 
 # Date : May 2010
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
 
+# RH: updated for igraph (from igraph0)
+# sept 23, 2012
 
 if (!isGeneric("clump")) {
 	setGeneric("clump", function(x, ...)
@@ -16,59 +18,56 @@ if (!isGeneric("clump")) {
 	if (length(val) == 0) { 
 		return( setValues(x1, NA) )
 	}
-	adjv <- as.vector( t ( adjacency(x1, val, val, directions=directions) ) )
-	cl <- clusters(graph(adjv, directed=FALSE))$membership[val+1]
-	
-	add = val[! val %in% adjv]		   # RH
-	adjv <- c(adjv, rep(add, each=2))  # fixed problem of missing the last single cells, perhaps clumsy?
-	
-	cl <- clusters(graph(adjv, directed=FALSE))$membership[val+1]
-	#ucl <- sort(unique(cl))
-	#ucl <- data.frame(id=ucl, value=1:length(ucl))
-
-	x1[val] <- as.numeric(as.factor(cl)) # RH force 1 to n
+	adjv <- as.vector(t(adjacent(x1, val, directions=directions, target=val, pairs=TRUE)))
+	# RH. To fix problem of missing single cells, perhaps more efficient than "include=T" in adjacent
+	add <- val[! val %in% adjv]		   
+	adjv <- c(adjv, rep(add, each=2))  
+	cl <- clusters(graph(adjv, directed=FALSE))$membership[val]
+	cl <- as.numeric(as.factor(cl)) # RH force 1 to n
+	x1[val] <- cl
 	return(x1)
 }
 
 
 setMethod('clump', signature(x='RasterLayer'), 
-
 function(x, filename='', directions=8, gaps=TRUE, ...) {
 
-	if( !require(igraph0)) {
-		stop('you need to install the igraph0 package to be able to use this function')
+	if( !require(igraph)) {
+		stop('you need to install the igraph package to be able to use this function')
 	}
 
 	if (! directions %in% c(4,8)) { stop('directions should be 4 or 8') }
 
 	filename <- trim(filename)
 	if (filename != ""  & file.exists(filename)) {
-		if (.overwrite(...)==FALSE) {
+		if (! .overwrite(...)) {
 			stop("file exists. Use another name or 'overwrite=TRUE' if you want to overwrite it")
 		}
 	}
 
 	datatype <- list(...)$datatype
-	if (is.null(datatype)) {
-		datatype <- 'INT2S'
-	}
-		
 	
 	out <- raster(x)
 	
 	if (canProcessInMemory(out, 3)) {
 		x <- .smallClump(x, directions)
+		names(x) <- 'clumps'
 		if (filename != '') {
-			x <- writeRaster(x, filename, ...)
+			if (is.null(datatype)) {
+				x <- writeRaster(x, filename, datatype='INT4S')
+			} else {
+				x <- writeRaster(x, filename, ...)
+			}
 		}
 		return(x)
 	} 
 	# else 
 
-	out <- writeStart(out, filename=rasterTmpFile(), datatype='INT2U')
+	names(out) <- 'clumps'
+	out <- writeStart(out, filename=rasterTmpFile(), datatype='INT4S')
 
 	tr <- blockSize(out, minrows=3)
-	pb <- pbCreate(tr$n, ...)
+	pb <- pbCreate(tr$n, label='clump', ...)
 	
 	ext <- c(xmin(out), xmax(out), ymax(out), NA)
 	maxval <- 0
@@ -104,27 +103,34 @@ function(x, filename='', directions=8, gaps=TRUE, ...) {
 	
 	if (nrow(rcl) > 0) {
 		g <- graph.edgelist(rcl, directed=FALSE)
-		cl <- clusters(g)$membership
-		rc <- cbind(V(g),cl)
+		clumps <- clusters(g)$membership
+		rc <- cbind(V(g), clumps)
 		i <- rc[,1] != rc[,2]
 		rc <- rc[i, ,drop=FALSE]
-		out <- subs(out, data.frame(rc), subsWithNA=FALSE, filename=filename, datatype=datatype, ...)
+		if (is.null(datatype)) {
+			out <- subs(out, data.frame(rc), subsWithNA=FALSE, filename=filename, datatype='INT4S', ...)
+		} else {
+			out <- subs(out, data.frame(rc), subsWithNA=FALSE, filename=filename, ...)
+		}
 		return(out)
 		
 	} else if (!gaps) {
 		un <- unique(out)
-		un <- data.frame(cbind(un, 1:length(un)))
-		return( subs(out, un, subsWithNA=FALSE, filename=filename, datatype=datatype, ...) )
-		
-		
+		un <- data.frame(cbind(un, clumps=1:length(un)))
+		if (is.null(datatype)) {
+			return( subs(out, un, subsWithNA=FALSE, filename=filename, datatype='INT4S', ...) )
+		} else {
+			return( subs(out, un, subsWithNA=FALSE, filename=filename, ...) )
+		}
 	} else if (filename != '') {
-		return( writeRaster(out, filename=filename, datatype=datatype, ...) )
+		if (is.null(datatype)) {
+			return( writeRaster(out, filename=filename, datatype='INT4S', ...) )
+		} else {
+			return( writeRaster(out, filename=filename, ...) )
+		}
 		
 	} else {
 		return(out)
 	}
 }
-
 )
-
-

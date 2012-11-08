@@ -29,7 +29,7 @@ RasterBrick
 
 \seealso{ \code{ \link{focal}} } 
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 r <- raster(ncols=5, nrows=5)

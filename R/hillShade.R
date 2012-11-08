@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 hillShade <- function(slope, aspect, angle=45, direction=0, filename='', normalize=FALSE, ...) {
-	compare(slope, aspect)
+	compareRaster(slope, aspect)
 
 	direction <- direction * pi/180
 	zenith <- (90 - angle)*pi/180

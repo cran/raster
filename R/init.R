@@ -39,7 +39,7 @@ init <- function(x, fun, v, filename="", ...) {
 		} else {
 			out <- writeStart(out, filename=filename, ...)
 			tr <- blockSize(out)
-			pb <- pbCreate(tr$n, ...)
+			pb <- pbCreate(tr$n, label='init', ...)
 			for (i in 1:tr$n) {
 				if (v == 'cell') { 
 					out <- writeValues(out, cellFromRowCol(out, tr$row[i],1):cellFromRowCol(out, tr$row[i]+tr$nrows[i]-1, ncol(out)), tr$row[i])
@@ -66,7 +66,7 @@ init <- function(x, fun, v, filename="", ...) {
 		} else {
 			out <- writeStart(out, filename=filename, ...)
 			tr <- blockSize(out)
-			pb <- pbCreate(tr$n, ...)
+			pb <- pbCreate(tr$n, label='init', ...)
 			for (i in 1:tr$n) {
 				n <- ncol(out) * tr$nrows[i]
 				out <- writeValues(out, fun(n), tr$row[i])

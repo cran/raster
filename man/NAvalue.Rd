@@ -29,7 +29,7 @@ Returns or set the NA value used for storage on disk.
 }
 
 
-\author{ Robert J. Hijmans }
+
 
 \examples{ 
 r1 <- raster(system.file("external/rlogo.grd", package="raster"))

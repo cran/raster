@@ -30,7 +30,7 @@ If the name or location of a raster file changes, the RasterStack becomes invali
 RasterStack object
 }
 
-\author{Robert J. Hijmans}
+
 
 \seealso{ \code{\link[raster]{writeRaster}}, \code{\link[raster]{stack}}, \code{\link[raster]{addLayer}}}
 

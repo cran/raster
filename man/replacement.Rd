@@ -8,6 +8,7 @@
 \alias{[<-,RasterStackBrick,missing,missing-method}
 
 \alias{[[<-,RasterStack,numeric,missing-method}
+\alias{[[<-,RasterBrick,numeric,missing-method}
 
 
 \alias{[<-,Raster,numeric,numeric-method}
@@ -23,8 +24,7 @@
 \description{
 You can set values of a Raster* object, when \code{i} is a vector of cell numbers, a Raster*, Extent, or Spatial* object. 
 
-These are shorthand methods that only work for relatively small Raster* objects. In other cases you can use functions such as \code{\link{calc} and \link{rasterize}}. 
-
+These are shorthand methods that work best for relatively small Raster* objects. In other cases you can use functions such as \code{\link{calc} and \link{rasterize}}. 
 }
 
 \section{Methods}{
@@ -33,8 +33,8 @@ These are shorthand methods that only work for relatively small Raster* objects.
 
 \code{x[i,j] <- value}
 
-Arguments
 \tabular{rll}{
+\tab \bold{Arguments:} \tab  \cr
 \tab \code{x} \tab a Raster* object \cr
 \tab \code{i} \tab cell number(s), row number(s), Extent, Spatial* object \cr
 \tab \code{j} \tab columns number(s) (only available if i is (are) a row number(s)) \cr

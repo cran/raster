@@ -42,8 +42,12 @@ function(x, y, ..., fun, filename="", unstack=TRUE){
 	
 	
 	ln <- length(x)
-	if (ln < 1) { stop('no Rasters') }
-	if (ln > 2) { compare(x) }
+	if (ln < 1) { 
+		stop('no Rasters') 
+	}
+	if (ln > 2) { 
+		compareRaster(x) 
+	}
 	
 	nl <- sapply(x, nlayers)
 	maxnl <- max(nl)
@@ -92,8 +96,8 @@ function(x, y, ..., fun, filename="", unstack=TRUE){
 		out <- brick(x[[1]], values=FALSE, nl=nlout)
 	}
 	
-	if ( canProcessInMemory(out, sum(nl)) ) {
-		pb <- pbCreate(3, ...)			
+	if ( canProcessInMemory(out, sum(nl)+maxnl) ) {
+		pb <- pbCreate(3, label='overlay', ...)			
 		pbStep(pb, 1)
 		if (doapply) {
 			valmat <- matrix(nrow=ncell(out)*maxnl, ncol=length(x)) 
@@ -140,8 +144,9 @@ function(x, y, ..., fun, filename="", unstack=TRUE){
 		} 
 		out <- writeStart(out, filename=filename, ...)
 		
-		tr <- blockSize(out, n=length(x))
-		pb <- pbCreate(tr$n, ...)
+		
+		tr <- blockSize(out, n=sum(nl)+maxnl)
+		pb <- pbCreate(tr$n, label='overlay', ...)
 		
 		if (doapply) { 
 			valmat = matrix(nrow=tr$nrows[1]*ncol(out)*maxnl, ncol=length(x)) 

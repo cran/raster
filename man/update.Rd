@@ -38,7 +38,7 @@ update(object, ...)
 RasterLayer or RasterBrick
 }
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 # setting up an example RasterLayer with file
@@ -61,7 +61,6 @@ as.matrix(r)
 m = matrix(1:10, ncol=2)
 r <- update(r, v=m, cell=2)
 as.matrix(r)
-
 }
 
 \keyword{methods}

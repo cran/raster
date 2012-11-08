@@ -72,7 +72,7 @@ function(x, filename="", type='inner', classes=FALSE, directions=8, ...) {
 	
 		out <- writeStart(out, filename, datatype=datatype, ...)
 		tr <- blockSize(out, minblocks=3, minrows=3)
-		pb <- pbCreate(tr$n, ...)
+		pb <- pbCreate(tr$n, label='edge', ...)
 		
 		nc <- ncol(out)+2
 		v <- getValues(x, row=1, nrows=tr$nrows[1]+1)

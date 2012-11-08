@@ -131,7 +131,7 @@
 	}
 
 	tr <- blockSize(x, n=2*nlayers(x))
-	pb <- pbCreate(tr$n, ...)
+	pb <- pbCreate(tr$n, label='rasterize', ...)
 
 	rx <- c(xmin(x), xmax(x))
 	

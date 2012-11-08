@@ -1,24 +1,33 @@
 # Author: Jacob van Etten
 # email jacobvanetten@yahoo.com
 # Date :  May 2010
-# Version 1.0.x
+# Version 1.1
 # Licence GPL v3
 
-#setGeneric("gridDistance", function(object, ...) standardGeneric("gridDistance"))
+# RH: updated for igraph (from igraph0)
+# sept 23, 2012
 
-#setMethod("gridDistance", signature(object = "RasterLayer"), def =	
 
-gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 
-	if( !require(igraph0)) {
+if (!isGeneric("gridDistance")) {
+	setGeneric("gridDistance", function(x, ...)
+		standardGeneric("gridDistance"))
+}	
+
+setMethod("gridDistance", signature("RasterLayer"), 
+
+function(x, origin, omit=NULL, filename="", ...) {
+
+	if( !require(igraph)) {
 		stop('you need to install the igraph0 package to be able to use this function')
 	}
-	
-	if (missing(origin)) stop("you must supply an 'origin' argument")
-	
+	if (missing(origin)) {
+		stop("you must supply an 'origin' argument")
+	}
 	if (! hasValues(x) ) {
 		stop('cannot compute distance on a RasterLayer with no data')
 	}
+
 	lonlat <- .couldBeLonLat(x)
 	filename <- trim(filename)
 	
@@ -29,25 +38,25 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 	}
 	
 	# keep canProcessInMemory for debugging
-	if ( canProcessInMemory(x, n=10) ) { # need to test more to see how much igraph can deal with
-		outRaster <- raster(x)
+	# need to test more to see how much igraph can deal with
+	if ( canProcessInMemory(x, n=10) ) { 
+		out <- raster(x)
 		x <- getValues(x) # to avoid keeping values in memory twice
 		
 		oC <- which(x %in% origin) 
 		ftC <- which(!(x %in% omit))
-		v <- .calcDist(outRaster, ncell(outRaster), ftC, oC, lonlat=lonlat)
+		v <- .calcDist(out, ncell(out), ftC, oC, lonlat=lonlat)
 		v[is.infinite(v)] <- NA
 		
-		outRaster <- setValues(outRaster, v)
+		out <- setValues(out, v)
 		if (filename != "") {
-			outRaster <- writeRaster(outRaster, filename, ...)
+			out <- writeRaster(out, filename, ...)
 		}
-		return(outRaster)
+		return(out)
 		
 	} else 	{
 	
 		tr <- blockSize(x, n=1)
-		
 		pb <- pbCreate(tr$n*2 - 1, ...)
 
 		#going up
@@ -70,13 +79,9 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 								startCell=startCell,
 								lonlat=lonlat)[1:chunkSize]
 				} else {
-					chunkDist <- .calcDist(x, 
-								chunkSize=chunkSize, 
-								ftC=ftC, 
-								oC=oC, 
-								perCell=0, 
-								startCell=startCell,
-								lonlat=lonlat)
+					chunkDist <- .calcDist(x, chunkSize=chunkSize, 
+								ftC=ftC, oC=oC, perCell=0,
+								startCell=startCell, lonlat=lonlat)
 				}
 			} else {
 				if (i < tr$n) {
@@ -96,9 +101,8 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 		r1 <- writeStop(r1)
 		
 		#going down
-		if (filename == '') {filename <- rasterTmpFile()}
 		
-		outRaster <- writeStart(raster(x), filename=filename, overwrite=TRUE, ...)			
+		out <- writeStart(raster(x), filename=filename, overwrite=TRUE, ...)			
 		for (i in 1:tr$n) {
 			chunk <- getValues(x, row=tr$row[i], nrows=tr$nrows[i]) 
 			chunkSize <- length(chunk)
@@ -113,33 +117,24 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 					chunkDist[is.na(chunkDist)] <- Inf 
 				
 					chunkDist <- pmin(chunkDist,
-						.calcDist(x, 
-							chunkSize=chunkSize+ncol(x), 
+						.calcDist(x, chunkSize=chunkSize+ncol(x), 
 							ftC = c(lastRowftC, ftC+ncol(x)), 
 							oC = c(lastRowftC, oC+ncol(x)), 
-							perCell=c(lastRowDist, rep(0,times=length(oC))), 
+							perCell = c(lastRowDist, rep(0,times=length(oC))), 
 							startCell = startCell - ncol(x),
 							lonlat=lonlat)[-(1:ncol(r1))])
 							
 				} else {
-				
 					chunkDist <- getValues(r1, row=tr$row[i], nrows=tr$nrows[i])
 					chunkDist[is.na(chunkDist)] <- Inf
 			
 					chunkDist <- pmin(chunkDist,
-						.calcDist(x, 
-							chunkSize=chunkSize, 
-							ftC=ftC, 
-							oC=oC, 
-							perCell=0, 
-							startCell=startCell,
-							lonlat=lonlat))
+						.calcDist(x, chunkSize=chunkSize, 
+							ftC=ftC, oC=oC, perCell=0, 
+							startCell=startCell, lonlat=lonlat))
 				}
-			
-				
-			} else {
-				chunkDist <- rep(NA, tr$nrows[i] * ncol(outRaster))		
-				
+			} else {			
+				chunkDist <- rep(NA, tr$nrows[i] * ncol(out))						
 			}
 
 			lastRow <- chunk[(length(chunk)-ncol(x)+1):length(chunk)]
@@ -148,33 +143,35 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 			lastRowDist <- lastRowDist[lastRowftC]
 			chunkDist[is.infinite(chunkDist)] <- NA
 
-			outRaster <- writeValues(outRaster, chunkDist, tr$row[i])
+			out <- writeValues(out, chunkDist, tr$row[i])
 			pbStep(pb) 
 		}
-		outRaster <- writeStop(outRaster)
+		out <- writeStop(out)
 		pbClose(pb)
-		return(outRaster)
+		return(out)
 	}
 }
+)
 
 
 .calcDist <- function(x, chunkSize, ftC, oC, perCell=0, startCell=0, lonlat) {
 	
-	if(length(oC)>0) {
-	
-		adj <- adjacency(x, fromCells=ftC, toCells=ftC, directions=8)
+	if (length(oC) > 0) {
+		#adj <- adjacency(x, fromCells=ftC, toCells=ftC, directions=8)
+		adj <- adjacent(x, ftC, directions=8, target=ftC, pairs=TRUE)
 		startNode <- max(adj)+1 #extra node to serve as origin
 		adjP <- rbind(adj, cbind(rep(startNode, times=length(oC)), oC))
-		distGraph <- graph.edgelist(adjP-1, directed=TRUE)
-		if(length(perCell) == 1) {
-			if(perCell == 0) {perCell <- rep(0, times=length(oC))}
+		distGraph <- graph.edgelist(adjP, directed=TRUE)
+		if (length(perCell) == 1) {
+			if (perCell == 0) {
+				perCell <- rep(0, times=length(oC))
+			}
 		}
-		
+
 		if (lonlat) {
 			distance <- pointDistance(xyFromCell(x,adj[,1]+startCell), xyFromCell(x,adj[,2]+startCell), longlat=TRUE) 
-			
 			E(distGraph)$weight <- c(distance, perCell)
-			
+
 		} else {
 			sameRow <- which(rowFromCell(x, adj[,1]) == rowFromCell(x, adj[,2]))
 			sameCol <- which(colFromCell(x, adj[,1]) == colFromCell(x, adj[,2]))
@@ -184,20 +181,17 @@ gridDistance <- function(x, origin, omit=NULL, filename="", ...) {
 			E(distGraph)$weight[(length(adj[,1])+1):(length(adj[,1])+length(oC))] <- perCell
 		}
 		
-		shortestPaths <- shortest.paths(distGraph, startNode-1)
+		shortestPaths <- shortest.paths(distGraph, startNode)
 		shortestPaths <- shortestPaths[-(length(shortestPaths))] #chop startNode off
 		
-		if(length(shortestPaths) < chunkSize){ 
+		if (length(shortestPaths) < chunkSize) { 
 			#add Inf values where shortest.paths() leaves off before completing all nodes
 			shortestPaths <- c(shortestPaths, rep(Inf, times=chunkSize-length(shortestPaths))) 
 		}
 		
 	} else {
-	
 		shortestPaths <- rep(Inf, times=chunkSize)
-	
 	}
 	
 	return(shortestPaths)
-
 }

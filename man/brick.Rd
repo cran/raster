@@ -5,148 +5,91 @@
 \alias{brick}
 
 \alias{brick,character-method}
+\alias{brick,missing-method}
 \alias{brick,RasterLayer-method}
 \alias{brick,RasterStack-method}
 \alias{brick,RasterBrick-method}
 \alias{brick,Extent-method}
+\alias{brick,array-method}
+\alias{brick,big.matrix-method}
 \alias{brick,list-method}
-\alias{brick,missing-method}
 \alias{brick,SpatialPixels-method}
 \alias{brick,SpatialGrid-method}
-\alias{brick,array-method}
 \alias{brick,kasc-method}
 \alias{brick,grf-method}
 
 \title{ Create a RasterBrick object}
 
 \description{
-A RasterBrick is a multi-layer raster object. They are typically created from a multi-band file; but they can also exist entirely in memory. They are similar to a RasterStack, but processing time should be shorter when using a RasterBrick. Yet they are less flexible as they can only point to a single file.
+A RasterBrick is a multi-layer raster object. They are typically created from a multi-layer (band) file; but they can also exist entirely in memory. They are similar to a RasterStack (that can be created with \code{\link[raster]{stack}}), but processing time should be shorter when using a RasterBrick. Yet they are less flexible as they can only point to a single file.
 
-A RasterBrick can be created from RasterLayer objects, from a RasterStack, or from a (multi-band) file. The can also be created from SpatialPixels*, SpatialGrid*, and Extent objects, and from a three-dimensional array.
+A RasterBrick can be created from RasterLayer objects, from a RasterStack, or from a (multi-layer) file. The can also be created from SpatialPixels*, SpatialGrid*, and Extent objects, and from a three-dimensional array.
 }
 
-\usage{brick(x, ...)}
+\usage{
+\S4method{brick}{character}(x, ...)
+
+\S4method{brick}{RasterStack}(x, values=TRUE, nl, filename='', ...) 
+
+\S4method{brick}{RasterBrick}(x, nl, ...)
+
+\S4method{brick}{RasterLayer}(x, ..., values=TRUE, nl=1, filename='') 
+
+\S4method{brick}{missing}(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, nl=1, crs)
+
+\S4method{brick}{Extent}(x, nrows=10, ncols=10, crs=NA, nl=1)
+
+\S4method{brick}{array}(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA, transpose=FALSE)
+
+\S4method{brick}{big.matrix}(x, template, filename='', ...)
+
+\S4method{brick}{SpatialGrid}(x)
+
+\S4method{brick}{SpatialPixels}(x)
+}
+
 
 \arguments{
- \item{x}{ Filename (character), Raster* object, array, SpatialGrid*, SpatialPixels*, Extent, or list of Raster* objects }
- \item{...}{ Additional arguments. See under Details}
+\item{x}{character (filename, see Details); Raster* object; missing; array; SpatialGrid*; SpatialPixels*; Extent; or list of Raster* objects. Supported file types are the 'native' raster package format and those that can be read via rgdal (see \code{\link[rgdal]{readGDAL}}), and NetCDF files (see details)}
+\item{...}{see Details}
+\item{values}{logical. If \code{TRUE}, the cell values of '\code{x}' are copied to the RasterBrick object that is returned}
+\item{nl}{integer > 0. How many layers should the RasterBrick have?}
+\item{filename}{character. Filename if you want the RasterBrick to be saved on disk}
+\item{nrows}{integer > 0. Number of rows}
+\item{ncols}{integer > 0. Number of columns}
+\item{xmn}{minimum x coordinate (left border)}
+\item{xmx}{maximum x coordinate (right border)}
+\item{ymn}{minimum y coordinate (bottom border)}
+\item{ymx}{maximum y coordinate (top border)}
+\item{crs}{character or object of class CRS. PROJ4 type description of a Coordinate Reference System (map projection). If this argument is missing, and the x coordinates are withing -360 .. 360 and the y coordinates are within -90 .. 90, "+proj=longlat +datum=WGS84" is used}
+\item{transpose}{if \code{TRUE}, the values in the array are transposed}
+\item{template}{Raster* object used to set the extent, number of rows and columns and CRS}
 }
 
+\details{
+If \code{x} is a RasterLayer, the additional arguments can be used to pass additional Raster* objects.
 
-\section{Methods}{
-\describe{
+If there is a \code{filename} argument, the additional arguments are as for \code{\link{writeRaster}}. The big.matrix most have rows representing cells and columns representing layers.
 
-\bold{1) Create a RasterBrick from a file}
+If \code{x} represents a filename there is the following additional argument:
 
-\code{brick(x, ...)}
+\code{native}: logical. If \code{TRUE} (not the default), reading and writing of IDRISI, BIL, BSQ, BIP, and Arc ASCII files is done with native (raster package) drivers, rather then via rgdal.
 
-\tabular{rll}{
-\tab \code{x} \tab character. A filename of a file that the raster package can read. Supported file types are the 'native' raster 
-package format and those that can be read via rgdal. See \code{\link[rgdal]{readGDAL}} for supported file types.\cr
-\tab \code{...} \tab additional arguments.\cr
-}
-
-Additional arguments:
-\tabular{rll}{
-\tab \code{native} \tab Logical.  Default is \code{FALSE} except when package rgdal is missing. If TRUE, reading and writing
-of IDRISI, BIL, BSQ, BIP, and Arc ASCII files is done with native (raster package) drivers, rather then via rgdal. 'raster', RSAGA,
-and netcdf format files are always read with native drivers.
-}
-
-For netCDF files (CF convention):
-\tabular{rll}{
-\tab \code{varname} \tab character. The variable name (e.g. 'altitude' or 'precipitation'. If not supplied and the file has multiple
-variables are a guess will be made (and reported))\cr
-\tab \code{level} \tab integer > 0 (default=3). To select the 'level' (4th dimension variable) to use, if the data has 4 dimensions \cr
-}
-
-To read netCDF files, the \code{ncdf} package needs to be available. 
-
-
-\bold{2) Create a RasterBrick from scratch}
-
-\code{brick(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, crs="+proj=longlat +datum=WGS84", nl=1)}
-
-\tabular{rll}{
- \tab \code{nrows} \tab number of rows \cr
- \tab \code{ncols} \tab number of columns \cr
- \tab \code{xmn} \tab minimum x coordinate (left border) \cr
- \tab \code{xmx} \tab maximum x coordinate (right border) \cr
- \tab \code{ymn} \tab minimum y coordinate (bottom border) \cr
- \tab \code{ymx} \tab maximum y coordinate (top border) \cr
- \tab \code{crs} \tab Character or object of class CRS. PROJ4 type description of a Coordinate Reference System (map projection) \cr
- \tab \code{nl} \tab the desired number of layers \cr
-}
-(item \code{x} is 'missing' in this case)
-
+In addition, if \code{x} is a \bold{NetCDF} filename there are the following additional arguments:
  
-\bold{3) Create a RasterBrick from an Extent object}
-  
-\code{brick(x, nrows=10, ncols=10, crs=NA, nl=1)}
+\code{varname}: character. The variable name (e.g. 'altitude' or 'precipitation'. If not supplied and the file has multiple
+variables are a guess will be made (and reported))
 
-\tabular{rll}{
- \tab \code{x} \tab \link{Extent} object \cr
- \tab \code{nrows} \tab number of rows  \cr
- \tab \code{ncols} \tab number of columns \cr
- \tab \code{crs} \tab Character or object of class CRS. PROJ4 type description of a Coordinate Reference System (map projection) \cr
- \tab \code{nl} \tab the desired number of layers \cr
+\code{lvar}: integer > 0 (default=3). To select the 'level variable' (3rd dimension variable) to use, if the file has 4 dimensions (e.g. depth instead of time)
+
+\code{level}: integer > 0 (default=1). To select the 'level' (4th dimension variable) to use, if the file has 4 dimensions, e.g. to create a RasterBrick of weather over time at a certain height.
+
+To use NetCDF files the \code{ncdf} or the \code{ncdf4} package needs to be available. If both are available, \code{ncdf4} is used. Only the \code{ncdf4} package can read the most recent version (4) of the netCDF format (as well as older versions), for windows it not available on CRAN but can be downloaded \href{http://cirrus.ucsd.edu/~pierce/ncdf/}{here}. It is assumed that these files follow, or are compatible with the CF convention.
 }
-
-
-\bold{4) Create a RasterBrick from a RasterStack}
-
-\code{brick(x, values=TRUE, nl)}
-
-\tabular{rll}{
- \tab \code{x} \tab a RasterStack object \cr
- \tab \code{values} \tab Logical. If \code{TRUE}, the values of the RasterStack are transferred to the RasterBrick \cr
- \tab \code{nl} \tab the desired number of layers (optional. If set, \code{values} becomes FALSE \cr
-}
-
-
-\bold{5) Create a RasterBrick from a RasterLayer or RasterBrick} 
-
-\code{brick(x, nl=1)}
-
-This copies the parameters of a RasterStack object to a new RasterBrick. The values of the RasterStack are transferred to the RasterBrick, unless values=FALSE.
-
-\tabular{rll}{
-\tab \code{x} \tab a Raster* object \cr
-\tab \code{nl} \tab the desired number of layers \cr
-}
-
-
-\bold{6) Create a RasterBrick from a SpatialPixels* or SpatialGrid*}
-
-\code{brick(x, layer=0)}
-
-
-
-\bold{7) Create a RasterBrick from an array } 
-
-The default extent is set to be between 0 and 1 in the x and y direction but can be changed at creation of the RasterLayer object or later. You can also provide a projection.  
-
-\code{function(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA, transpose=FALSE)}
-
-\tabular{rll}{
- \tab \code{x} \tab three-dimensional array (rows, columns, layers) \cr
- \tab \code{xmn} \tab minimum x coordinate (left border) \cr
- \tab \code{xmx} \tab maximum x coordinate (right border) \cr
- \tab \code{ymn} \tab minimum y coordinate (bottom border) \cr
- \tab \code{ymx} \tab maximum y coordinate (top border) \cr
- \tab \code{crs} \tab PROJ4 type description of a map projection (optional) \cr
- \tab \code{transpose} \tab Logical. Transpose the data? \cr
-}
-
-}}
-
-
 
 \value{
-RasterBrick object
+RasterBrick
 }
-
-\author{Robert J. Hijmans}
 
 \seealso{ \code{\link[raster]{raster}} }
 

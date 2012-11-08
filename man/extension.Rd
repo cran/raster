@@ -26,7 +26,7 @@ A file extension, filename or path.
 If \code{ext(filename)} is used without a \code{value} argument, it returns the file extension; otherwise it returns the filename (with new extensions set to \code{value}
 }
 
-\author{Robert J. Hijmans }
+
 
 
 \examples{

@@ -41,7 +41,7 @@ vector \code{(x=RasterLayer)} or matrix
 
 \seealso{ \code{\link{getValues}} }
 
-\author{Robert J. Hijmans}
+
 \examples{
 r <- raster(system.file("external/test.grd", package="raster"))
 b <- getValuesBlock(r, row=100, nrows=3, col=10, ncols=5)

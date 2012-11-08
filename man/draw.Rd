@@ -28,7 +28,7 @@ If \code{sp==TRUE} a SpatialPolygons or SpatialLines object; otherwise a matrix 
 \seealso{ \code{\link[graphics]{locator}}  }
  
  
-\author{ Robert J. Hijmans }
+
 
 
 \keyword{ spatial }

@@ -33,7 +33,7 @@ zoom(x, ...)
 Extent object (invisibly)
 }
 
-\author{Robert J. Hijmans}
+
 
 \seealso{ \code{\link[raster]{drawExtent}}, \code{\link[raster]{plot}}}
 

@@ -100,14 +100,14 @@ setMethod('getValuesBlock', signature(x='RasterBrick', row='numeric'),
 				lastcol <- col + ncols - 1
 				res <- x@data@values[cellFromRowColCombine(x, row:lastrow, col:lastcol), ]
 			}
-			if (ncol(res) > nlyrs) {
+			if (NCOL(res) > nlyrs) {
 				res <- res[, lyrs, drop=FALSE]
 			}
-			
+			colnames(res) <- names(x)[lyrs]
 			
 		} else if ( fromDisk(x) ) {
 			res <- .readRasterBrickValues(x, row, nrows, col, ncols)
-			if (ncol(res) > nlyrs) {
+			if (NCOL(res) > nlyrs) {
 				res <- res[, lyrs, drop=FALSE]
 			}
 		} else {

@@ -11,7 +11,7 @@ if (!isGeneric("Which")) {
 
 
 setMethod('Which', signature(x='RasterLayer'), 
-function(x, cells=FALSE, ...) {
+function(x, cells=FALSE, na.rm=TRUE, ...) {
 
 		
 	if (canProcessInMemory(x, 2)){
@@ -19,7 +19,9 @@ function(x, cells=FALSE, ...) {
 			return(which(getValues(x)==TRUE))
 		} else {
 			x <- as.logical(x)
-			x[is.na(x)] <- FALSE
+			if (na.rm) {
+				x[is.na(x)] <- FALSE
+			}
 			return(x)
 		}
 		
@@ -42,7 +44,9 @@ function(x, cells=FALSE, ...) {
 				vv <- c(vv, which(v==TRUE) + offs)
 			} else {
 				v <- as.logical(v)
-				v[is.na(v)] <- 0
+				if (na.rm) {
+					v[is.na(v)] <- 0
+				}
 				out <- writeValues(out, v, tr$row[i])
 			}
 			pbStep(pb, i)

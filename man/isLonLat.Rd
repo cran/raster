@@ -1,7 +1,7 @@
 \name{isLonLat}
 
 \alias{isLonLat}
-\alias{isLonLat,Raster-method}
+\alias{isLonLat,BasicRaster-method}
 \alias{isLonLat,Spatial-method}
 \alias{isLonLat,CRS-method}
 \alias{isLonLat,character-method}
@@ -10,7 +10,7 @@
 \title{Is this longitude/latitude data?}
 
 \description{
- Test whether a Raster* object has a longitude/latitude coordinate reference system.
+Test whether a Raster* object has a longitude/latitude coordinate reference system.
 }
 
 \usage{
@@ -26,7 +26,7 @@ isLonLat(x)
 Logical
 }
 
-\author{Robert J. Hijmans }
+
 
 \examples{
 r <- raster()

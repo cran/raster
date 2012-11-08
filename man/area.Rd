@@ -33,7 +33,7 @@ If \code{x} is a RasterStack/Brick, a RasterBrick will be returned if \code{na.r
 RasterLayer or RasterBrick. Cell values represent the size of the cell in km2, or the relative size if \code{weights=TRUE}
 }
 
-\author{Robert J. Hijmans }
+
 
 \examples{
 

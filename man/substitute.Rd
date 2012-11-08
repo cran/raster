@@ -37,7 +37,7 @@ You can also replace values using a fitted model. E.g. fit a model to \code{glm}
 Raster object
 }
 
-\author{Robert J. Hijmans}
+
 
 \seealso{ \code{\link{reclassify}, \link{cut}}}
 

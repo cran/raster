@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date : November 2009
 # Version 0.9
 # Licence GPL v3
@@ -14,13 +14,13 @@ setMethod('mask', signature(x='Raster', mask='Spatial'),
 function(x, mask, filename="", inverse=FALSE, ...){ 
 	
 	if (inverse) {
-		mask <- rasterize(mask, x, -1)
+		mask <- rasterize(mask, x, 1)
 		mask(x, mask, filename=filename, inverse=TRUE, ...)
 	
 	} else {
 	
 		if (nlayers(x) > 1) {
-			mask <- rasterize(mask, x, -1)
+			mask <- rasterize(mask, x, 1)
 			mask(x, mask, filename=filename, ...)
 		} else {
 			rasterize(mask, x, filename=filename, mask=TRUE, ...)
@@ -33,7 +33,7 @@ function(x, mask, filename="", inverse=FALSE, ...){
 setMethod('mask', signature(x='RasterLayer', mask='RasterLayer'), 
 function(x, mask, filename="", inverse=FALSE, ...){ 
 
-	compare(x, mask)
+	compareRaster(x, mask)
 	ln <- names(x)
 	if ( inMemory(x) & inMemory(mask)=='all') {
 		x[is.na(mask)] <- NA
@@ -67,7 +67,7 @@ function(x, mask, filename="", inverse=FALSE, ...){
 
 		out <- writeStart(out, filename=filename, ...)
 		tr <- blockSize(out)
-		pb <- pbCreate(tr$n, ...)
+		pb <- pbCreate(tr$n, label='mask', ...)
 
 		if (inverse) {
 			for (i in 1:tr$n) {
@@ -99,11 +99,10 @@ function(x, mask, filename="", inverse=FALSE, ...){
 setMethod('mask', signature(x='RasterStackBrick', mask='RasterLayer'), 
 function(x, mask, filename="", inverse=FALSE, ...){ 
 
-	compare(x, mask)
+	compareRaster(x, mask)
 	
 	out <- brick(x, values=FALSE)
-	ln <- names(x)
-	names(out) <- ln
+	names(out) <- ln <- names(x)
 	
 	if (canProcessInMemory(x, nlayers(x)+4)) {
 
@@ -117,7 +116,6 @@ function(x, mask, filename="", inverse=FALSE, ...){
 		if (filename != '') {
 			out <- writeRaster(out, filename, ...)
 		} 
-		names(out) <- ln
 		return(out)
 		
 	} else {
@@ -130,7 +128,7 @@ function(x, mask, filename="", inverse=FALSE, ...){
 		out <- writeStart(out, filename=filename, ...)
 
 		tr <- blockSize(out)
-		pb <- pbCreate(tr$n, ...)
+		pb <- pbCreate(tr$n, label='mask', ...)
 
 		if (inverse) {
 			for (i in 1:tr$n) {
@@ -163,7 +161,7 @@ function(x, mask, filename="", inverse=FALSE, ...){
 setMethod('mask', signature(x='RasterLayer', mask='RasterStackBrick'), 
 function(x, mask, filename="", inverse=FALSE, ...){ 
 
-	compare(x, mask)
+	compareRaster(x, mask)
 
 	out <- brick(mask, values=FALSE)
 	
@@ -187,7 +185,7 @@ function(x, mask, filename="", inverse=FALSE, ...){
 		if ( filename=='') { filename <- rasterTmpFile() }
 		out <- writeStart(out, filename=filename, ...)
 		tr <- blockSize(out)
-		pb <- pbCreate(tr$n, ...)
+		pb <- pbCreate(tr$n, label='mask', ...)
 
 		if (inverse) {
 			for (i in 1:tr$n) {
@@ -234,7 +232,7 @@ function(x, mask, filename="", inverse=FALSE, ...){
 		stop('number of layers of x and mask must match')
 	}
 	
-	compare(x, mask)
+	compareRaster(x, mask)
 	out <- brick(x, values=FALSE)
 	ln <- names(x)
 	names(out) <- ln
@@ -260,7 +258,7 @@ function(x, mask, filename="", inverse=FALSE, ...){
 
 		out <- writeStart(out, filename=filename, ...)
 		tr <- blockSize(out)
-		pb <- pbCreate(tr$n, ...)
+		pb <- pbCreate(tr$n, label='mask', ...)
 
 		if (inverse) {
 			for (i in 1:tr$n) {

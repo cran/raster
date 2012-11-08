@@ -26,7 +26,7 @@ and use the data file (.gri) that already exists. The function can write a VRT (
 This (hopefully) allows for reading the binary data (.gri), perhaps after changing the file extension, in other programs such as ENVI or ArcGIS.
 }
 
-\author{Robert J. Hijmans}
+
 
 \seealso{ \code{\link[raster]{writeRaster}}, \code{\link[rgdal]{writeGDAL}} }
 

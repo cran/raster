@@ -39,7 +39,7 @@ writeStop(x)
 RasterLayer or RasterBrick 
 }
 
-\author{Robert J. Hijmans}
+
 
 \seealso{ \code{\link{writeRaster}, \link{blockSize}, \link{update}} }  
 

@@ -40,12 +40,8 @@ s <- stack(r1, r2, r3)
 names(s) <- c('A', 'B', 'C')
 
 boxplot(s, notch=TRUE, col=c('red', 'blue', 'orange'), main='Box plot', ylab='random' )
-
 }
 
-\author{
-Robert J. Hijmans
-}
 
 \keyword{spatial}
 

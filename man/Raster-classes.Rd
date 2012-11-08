@@ -31,7 +31,7 @@ An object of the \code{RasterLayer} class refers to a single layer (variable) of
 
 A \code{RasterStack} represents a collection of \code{RasterLayer} objects with the same extent and resolution. Organizing \code{RasterLayer} objects in a \code{RasterStack} can be practical when dealing with multiple layers; for example to summarize their values (see \code{\link[raster]{calc}}) or in spatial modeling (see \code{\link[raster]{predict}}). 
 
-An object of class \code{RasterBrick} can also contain multiple layers of raster data, but they are more tightly related. An object of class  \code{RasterBrick} can refer to only a single (multi-band) data file, whereas each layer in a \code{RasterStack} can refer to another file (or another band in a multi-band file). This has implications for processing speed and flexibility. A \code{RasterBrick} should process quicker than a \code{RasterStack} (irrespective if values are on disk or in memory). However, a \code{RasterStack} is more flexible as a single object can refer to layers that have values stored on disk as well as in memory. If a layer that does not refer to values on disk (they only exists in memory) is added to a \code{RasterBrick}, it needs to load all its values into memory (and this may not be possible because of memory size limitations). 
+An object of class \code{RasterBrick} can also contain multiple layers of raster data, but they are more tightly related. An object of class  \code{RasterBrick} can refer to only a single (multi-layer) data file, whereas each layer in a \code{RasterStack} can refer to another file (or another band in a multi-band file). This has implications for processing speed and flexibility. A \code{RasterBrick} should process quicker than a \code{RasterStack} (irrespective if values are on disk or in memory). However, a \code{RasterStack} is more flexible as a single object can refer to layers that have values stored on disk as well as in memory. If a layer that does not refer to values on disk (they only exists in memory) is added to a \code{RasterBrick}, it needs to load all its values into memory (and this may not be possible because of memory size limitations). 
  
 Objects can be created from file or from each other with the following functions: \code{\link[raster]{raster}, \link[raster]{brick}} and \link[raster]{stack}.
  
@@ -75,7 +75,7 @@ Slots for RasterLayer and RasterBrick objects
 
 
 
-\author{ Robert J. Hijmans }
+
 
 
 \examples{

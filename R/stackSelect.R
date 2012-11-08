@@ -16,7 +16,7 @@ function(x, y, recycle=FALSE, type='index', filename='', ...) {
 	out <- brick(x, values=FALSE)	
 	nlx <- nlayers(out)
 	nly <- nlayers(y)
-	compare(out, y)
+	compareRaster(out, y)
 
 	if (recycle) {
 		stopifnot(nly > 1)

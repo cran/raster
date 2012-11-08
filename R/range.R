@@ -28,7 +28,7 @@
 		}	
 		
 		out <- raster(x)
-		out <- brick(out, nl=2)
+		out <- brick(out, nl=2, values=FALSE)
 		names(out) <- c('range_min', 'range_max')
 	
 		if (canProcessInMemory(x)) {
@@ -46,7 +46,7 @@
 		
 		tr <- blockSize(x)
 		out <- writeStart(out, filename="")
-		pb <- pbCreate(tr$n)
+		pb <- pbCreate(tr$n, label='range',)
 		if (!is.null(add)) {
 			add <- range(add)
 			for (i in 1:tr$n) {

@@ -232,7 +232,7 @@ When you use multiple multi-layer objects with different numbers or layers, the 
 r <- raster(ncol=5, nrow=5)
 r[] <- 1
 s <- stack(r, r+1)
-q <- stack(r, r+2, r+4)
+q <- stack(r, r+2, r+4, r+6)
 x <- r + s + q
 x
 @
@@ -271,7 +271,7 @@ The "..."  argument allows for setting additional arguments that are relevant wh
 
 There are several functions that deal with modifying the spatial extent of \verb@Raster*@ objects. The {\bf crop} function lets you take a geographic subset of a larger \verb@Raster@ object. You can crop a \verb@Raster*@ by providing an extent object or another spatial object from which an extent can be extracted (objects from classes deriving from Raster and from Spatial in the sp package). An easy way to get an extent object is to plot a \verb@RasterLayer@ and then use {\bf drawExtent} to visually determine the new extent (bounding box) to provide to the crop function. 
 
-{\bf trim} crops a \verb@RasterLayer@ by removing the outer rows and columns that only contain \NA values. In contrast, {\bf expand} adds new rows and/or columns with \NA values. The purpose of this could be to create a new \verb@RasterLayer@ of the same extent of another larger \verb@RasterLayer@ such that the can be used together in other functions. 
+{\bf trim} crops a \verb@RasterLayer@ by removing the outer rows and columns that only contain \NA values. In contrast, {\bf extend} adds new rows and/or columns with \NA values. The purpose of this could be to create a new \verb@RasterLayer@ with the same Extent of another larger \verb@RasterLayer@ such that the can be used together in other functions. 
 
 The {\bf merge} function lets you merge 2 or more \verb@Raster*@ objects into a single new object. The input objects must have the same resolution and origin (such that their cells neatly fit into a single larger raster). If this is not the case you can first adjust one of the \verb@Raster*@ objects with use {\bf (dis)aggregate} or {\bf resample}.
 
@@ -310,7 +310,7 @@ With {\bf overlay} you can combine multiple Raster objects (e.g. multiply them).
 You can use {\bf cut} or {\bf reclassify} to replace ranges of values with single values, or {\bf subs} to substitute (replace) single values with other values. 
 
 <<raster-6>>=
-r <- raster(ncol=5, nrow=1)
+r <- raster(ncol=3, nrow=2)
 r[] <- 1:ncell(r)
 getValues(r)
 s <- calc(r, fun=function(x){ x[x < 4] <- NA; return(x)} )
@@ -367,7 +367,7 @@ It is also possible to convert the values of a \verb@RasterLayer@ to points or p
 
 \section{Summarizing functions}
 
-When used with a \verb@Raster*@ object as first argument, normal summary statistics functions such as min, max and mean return a RasterLayer. You can use cellStats if, instead, you want to obtain a summary for all cells of a single \verb@Raster*@ object. You can use {\bf freq} to make a frequency table, or {\bf count} to count the number of cells with a specified value. Use {\bf zonal} to summarize a \verb@Raster*@ object using zones (areas with the same integer number) defined in a \verb@RasterLayer@ and {\bf crosstab} to cross-tabulate two \verb@RasterLayer@ objects.
+When used with a \verb@Raster*@ object as first argument, normal summary statistics functions such as min, max and mean return a RasterLayer. You can use cellStats if, instead, you want to obtain a summary for all cells of a single \verb@Raster*@ object. You can use {\bf freq} to make a frequency table, or to count the number of cells with a specified value. Use {\bf zonal} to summarize a \verb@Raster*@ object using zones (areas with the same integer number) defined in a \verb@RasterLayer@ and {\bf crosstab} to cross-tabulate two \verb@RasterLayer@ objects.
 
 <<raster-10>>=
 r <- raster(ncol=36, nrow=18)
@@ -377,7 +377,7 @@ s = r
 s[] <- round(runif(ncell(r)) * 5)
 zonal(r, s, 'mean')
 freq(s)
-count(s, 3)
+freq(s, value=3)
 crosstab(r*3, s)
 @
 
@@ -488,10 +488,10 @@ Accessing values through this type of indexing should be avoided inside function
 
 \section{Session options}
 
-There is a number of session options that influence reading and writing files. These can be set in a session, with \verb@setOptions@, and saved to make them persistent in between sessions. But you probably should not change the default values unless you have pressing need to do so. You can, for example, set the directory where temporary files are written, and set your preferred default file format and data type. Some of these settings can be overwritten by arguments to functions where they apply (with arguments like filename, datatype, format). Except for generic functions like mean, '+', and sqrt. These functions may write a file when the result is too large to hold in memory and then these options can only be set through the session options.  The options chunksize and maxmemory determine the maximum size (in number of cells) of a single chunk of values that is read/written in chunk-by-chunk processing of very large files.
+There is a number of session options that influence reading and writing files. These can be set in a session, with \verb@rasterOptions@, and saved to make them persistent in between sessions. But you probably should not change the default values unless you have pressing need to do so. You can, for example, set the directory where temporary files are written, and set your preferred default file format and data type. Some of these settings can be overwritten by arguments to functions where they apply (with arguments like filename, datatype, format). Except for generic functions like mean, '+', and sqrt. These functions may write a file when the result is too large to hold in memory and then these options can only be set through the session options.  The options chunksize and maxmemory determine the maximum size (in number of cells) of a single chunk of values that is read/written in chunk-by-chunk processing of very large files.
 
 <<raster-119>>=
-showOptions()
+rasterOptions()
 @
 
 

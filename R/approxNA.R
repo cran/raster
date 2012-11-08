@@ -58,7 +58,7 @@ function(x, filename="", method="linear", yleft, yright, rule=1, f=0, ties=mean,
 	} 
 	
 	tr <- blockSize(out)
-	pb <- pbCreate(tr$n, ...)
+	pb <- pbCreate(tr$n, label='approxNA', ...)
 	out <- writeStart(out, filename=filename, ...)
 
 	for (j in 1:tr$n) {

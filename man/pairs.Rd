@@ -43,9 +43,7 @@ plot(r, 1/r)
 }
 }
 
-\author{
-Robert J. Hijmans
-}
+
 
 \keyword{spatial}
 

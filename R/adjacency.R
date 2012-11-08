@@ -4,26 +4,17 @@
 # Licence GPL v3
 
 
-#Costumized (internal) functions can be created for each number of directions and for upper, middle and lower rows to optimize the code for row-level processing. 32 directions can be created if higher precision is needed.
-#adjraster <- function(raster, directions, outerMeridianConnect) {
-#	adjacency(raster, !is.na(cbind(1:ncell(raster),values(raster)))[,1], 1:ncell(raster), directions, outerMeridianConnect)
-#	v <- vector(length=ncell(raster))
-#	v[adj[,2]] <- 2
-#	v[adj[,1]] <- 1
-#	rs <- setValues(rs, v)
-#	return(raster)
-#}
-
 .cs <- function(a,b) {
 	aRep <- rep(a,times=length(b))
 	cbind(aRep,as.integer(aRep+rep(b,each=length(a))),deparse.level=0)
 }
 
 
-
-
 adjacency <- function(x, fromCells, toCells, directions) {
 
+	#if (.depracatedwarnings()) {
+	#	 warning('This function is obsolete. Use "adjacent" in stead')
+	#}
 	if (is.character(directions)) { directions <- tolower(directions) }
 	stopifnot(directions %in% c(4,8,16) | directions=='bishop')
 

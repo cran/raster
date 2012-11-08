@@ -5,7 +5,7 @@
 \title{Pairs of adjacent cells}
 
 \description{
-Identify pairs of cells that are adjacent.  
+Identify pairs of cells that are adjacent.  See \code{\link{adjacent}} for an alternative implementation.
 }
 
 \usage{
@@ -19,14 +19,6 @@ adjacency(x, fromCells, toCells, directions)
   \item{directions}{in how many direction cells should be connected: 4, 8 or 16; or "bishop"}
 }
 
-\details{
-Cell numbers start with 1 in the upper-left corner and increase from left to right and from top to bottom.
-
-Number of directions: 4 connects cells with one-cell rook moves, 8 with one-cell queen moves, and 16 with knight and one-cell queen moves.
-"bishop" connects cells with one-cell diagonal moves.
-
-The function connects the outer meridians for global rasters with a longitude/latitude coordinate reference system.
-}
 
 \value{
 A two column matrix with each row containing a pair of adjacent cells. 
@@ -36,7 +28,7 @@ A two column matrix with each row containing a pair of adjacent cells.
 \code{\link{adjacent}}
 }
 
-\author{Jacob van Etten \email{jacobvanetten@yahoo.com}}
+\author{Jacob van Etten}
 
 
 \examples{

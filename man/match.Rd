@@ -36,7 +36,7 @@ Raster* obeject
 \seealso{ \code{\link{calc}, \link[base]{match}} }
 
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 r <- raster(nrow=10, ncol=10)

@@ -115,11 +115,11 @@
 	maxy <- max(line[,2])
 	xyxy <- cbind(poly, rbind(poly[-1,], poly[1,]))
     xyxy <- subset(xyxy, !( (xyxy[,2] > maxy & xyxy[,4] > maxy ) | (xyxy[,2] < miny & xyxy[,4] < miny)) )
-	if (length(xyxy) < 1) { 
+	if (nrow(xyxy) == 0) { 
 		return(resxy) 
 	}
-	for (i in 1:length(xyxy[,1])) {
-		xy <- .intersectSegments(xyxy[i,1], xyxy[i,2], xyxy[i,3], xyxy[i,4], line[1,1], line[1,2], line[2,1], line[2,2] )
+	for (i in 1:nrow(xyxy)) {
+		xy <- raster:::.intersectSegments(xyxy[i,1], xyxy[i,2], xyxy[i,3], xyxy[i,4], line[1,1], line[1,2], line[2,1], line[2,2] )
 		if (!is.na(xy[1])) {
 			resxy <- rbind(resxy, xy)
 		}
@@ -129,7 +129,24 @@
 
 
 
+
+
 .polygonsToRaster <- function(p, rstr, field, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue="all", getCover=FALSE, filename="", silent=FALSE, ...) {
+
+	leftColFromX <- function ( object, x )	{
+		colnr <- (x - xmin(object)) / xres(object)
+		i <- colnr %% 1 == 0
+		colnr[!i] <- trunc(colnr[!i]) + 1 
+		colnr[colnr==0] <- 1
+		colnr
+	}
+
+
+	rightColFromX <- function ( object, x )	{
+		colnr <- trunc((x - xmin(object)) / xres(object)) + 1 
+		colnr[ x == xmax(object) ] <- object@ncols
+		colnr
+	}
 
 		
 	if (! inherits(p, 'SpatialPolygons') ) {
@@ -183,11 +200,13 @@
 	spbb <- bbox(p)
 	rsbb <- bbox(rstr)
 	if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
-		stop('polygon and raster have no overlapping areas')
+		# instead of a warning
+		return( init(rstr, function() NA) )
+		# so that clusterR can use this function (overlap with some chunks might be NULL)
 	}
 	
 	npol <- length(p@polygons)
-	pvals <- .getPutVals(p, field, npol, mask)
+	pvals <- raster:::.getPutVals(p, field, npol, mask)
 	putvals <- pvals[,1]
 	if (ncol(pvals) > 1) {
 		rstr@data@isfactor <- TRUE
@@ -224,12 +243,12 @@
 	if (! silent) {  cat('Found', npol, 'region(s) and', cnt, 'polygon(s)\n') }
 	polinfo <- subset(polinfo, polinfo[,1] <= cnt, drop=FALSE)
 #	polinfo <- polinfo[order(polinfo[,1]),]
-	rm(p)
+#	rm(p)
 
 		
 	lxmin <- min(spbb[1,1], rsbb[1,1]) - xres(rstr)
 	lxmax <- max(spbb[1,2], rsbb[1,2]) + xres(rstr)
-	if (getCover) { return (.polygoncover(rstr, filename, polinfo, lxmin, lxmax, pollist, ...)) }
+	if (getCover) { return (raster:::.polygoncover(rstr, filename, polinfo, lxmin, lxmax, pollist, ...)) }
 
 	adj <- 0.5 * xres(rstr)
 
@@ -244,7 +263,7 @@
 	rv1 <- rep(NA, ncol(rstr))
 	lst1 <- vector(length=ncol(rstr), mode='list')
 	holes1 <- rep(FALSE, ncol(rstr))
-	pb <- pbCreate(nrow(rstr), ...)
+	pb <- pbCreate(nrow(rstr), label='rasterize', ...)
 
 	for (r in 1:nrow(rstr)) {
 		if (doFun) {
@@ -259,7 +278,7 @@
 		if (length(subpol[,1]) > 0) { 		
 			updateHoles <- FALSE
 			lastpolnr <- subpol[1,6]
-			for (i in 1:length(subpol[,1])) {
+			for (i in 1:nrow(subpol)) {
 				if (i == nrow(subpol)) { 
 					updateHoles <- TRUE 
 				} else if (subpol[i+1,6] > lastpolnr) { # new polygon
@@ -301,8 +320,8 @@
 							if (x2a < rxmn) { next }
 							x1a <- min(rxmx, max(rxmn, x1a))
 							x2a <- min(rxmx, max(rxmn, x2a))
-							col1 <- colFromX(rstr, x1a)
-							col2 <- colFromX(rstr, x2a)
+							col1 <- leftColFromX(rstr, x1a)
+							col2 <- rightColFromX(rstr, x2a)
 							if (col1 > col2) { next }
 							if ( subpol[i, 5] == 1 ) {
 								holes[col1:col2] <- TRUE
@@ -341,17 +360,17 @@
 				}
 				if (updateHoles) {
 					if (doFun) {
-						tmp <- rv
-						rv <- lst1
-						ind <- which(!holes )
+						#tmp <- rv
+						#rv <- lst1
+						ind <- which(holes )
 						for (ii in ind) {
-							if (!is.null(tmp[[ii]])) {
-								rv[[ii]] <- tmp[[ii]]
-							}
+							vals <- rv[[ii]]
+							rv[[ii]] <- vals[-length(vals)]
 						}
 					} else {
 						rv[holes] <- NA
 					}
+					stopifnot(length(rrv) == length(rv))
 					rrv[!is.na(rv)] <- rv[!is.na(rv)]
 					holes <- holes1
 					updateHoles = FALSE	
@@ -361,11 +380,13 @@
 		}
 		
 		if (doFun) {
-			for (i in 1:length(rrv)) {
-				if (is.null(rrv[[i]])) {
-					rrv[[i]] <- NA
-				}
-			}
+		    
+			rrv <- lapply(rrv, function(x) if(is.null(x)) NA else x)
+			#for (i in 1:length(rrv)) {
+			#	if (is.null(rrv[[i]])) {
+			#		rrv[[i]] <- NA
+			#	}
+			#}
 			rrv <- sapply(rrv, fun)
 		}
 		
@@ -394,6 +415,7 @@
 		if (filename == "") {
 			v[,r] <- rrv
 		} else {
+#			print(rrv)
 			rstr <- writeValues(rstr, rrv, r)
 		}
 		pbStep(pb, r)
@@ -433,7 +455,7 @@
 		bigraster <- writeStart(bigraster, filename=filename, ...)
 	}
 	
-	pb <- pbCreate(nrow(bigraster), ...)
+	pb <- pbCreate(nrow(bigraster), label='rasterize', ...)
 	for (rr in 1:nrow(bigraster)) {
 		y <- yFromRow(bigraster, rr)
 		yn <- y - hr
@@ -543,7 +565,7 @@
 	}
 
 	if (class(p) == 'SpatialPolygons' | field == 0) {
-		putvals <- as.integer(1:length(p@polygons))
+		putvals <- 1:length(p@polygons)
 	} else {
 		putvals <- as.vector(p@data[,field])
 		if (class(putvals) == 'character') {

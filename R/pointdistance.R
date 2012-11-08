@@ -76,14 +76,7 @@ pointDistance <- function (p1, p2, longlat,  ...) {
 
 	type <- list(...)$type
 	if (!is.null(type)) {
-		if (!(type %in% c('Euclidean', 'GreatCircle'))) {
-			stop('type should be Euclidean or GreatCircle')
-		}
-		if (type == 'Euclidean') { 
-			stop("type='Euclidean' is a depracated argument. Use 'longlat=TRUE'")
-		} else { 
-			stop("type='GreatCircle' is a depracated argument. Use 'longlat=FALSE'")
-		}
+		stop("'type' is a depracated argument. Use 'longlat'")
 	}		
 	if (missing(longlat)) {
 		stop('you must provide a "longlat" argument (TRUE/FALSE)')

@@ -30,7 +30,7 @@ This function returns the unique values in a RasterLayer, or the unique combinat
 vector or matrix
 }
 
-\author{Robert J.Hijmans}
+
 
 \examples{
 r <- raster(ncol=10, nrow=10)

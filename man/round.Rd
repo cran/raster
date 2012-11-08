@@ -47,7 +47,6 @@ see ?base::round
 a RasterLayer object
 }
 
-\author{Robert J.Hijmans}
 
 \examples{
 r <- raster(ncol=10, nrow=10)

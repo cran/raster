@@ -6,7 +6,7 @@
 \alias{mosaic,Raster,Raster-method}
 
 \title{ 
-Merge Raster* objects, using a function to compute cell value for overlapping areas. See \code{\link{merge}} for a simpler apporach.
+Merge Raster* objects using a function for overlapping areas 
 }
 
 \description{
@@ -35,9 +35,9 @@ The Raster objects must have the same origin and resolution.
 RasterLayer or RasterBrick object.
 }
 
-\author{Robert J. Hijmans}
 
-\seealso{ \code{\link[raster]{merge}}, \code{\link[raster]{expand}}}
+
+\seealso{ \code{\link[raster]{merge}}, \code{\link[raster]{extend}}}
 
 \examples{
 r <- raster(ncol=100, nrow=100)

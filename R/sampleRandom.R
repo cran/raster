@@ -78,7 +78,7 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 			d <- dim(x)
 			x <- matrix(as.vector(x), d[1], d[2])
 			if ( nrow(x) > size) {
-				s = sampleInt(nrow(x), size)
+				s <- sampleInt(nrow(x), size)
 				x <- x[s, ]
 			}
 		} else { 
@@ -173,7 +173,8 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 		x <- cbind(x[,1,drop=FALSE], xy, x[,2:ncol(x),drop=FALSE])
 	}
 	if (rowcol) {
-		x <- cbind(x[,1,drop=FALSE], rc, x[,2:ncol(x), drop=FALSE])
+		rc <- cbind(row=rowFromCell(r, x[,1]), col=colFromCell(r, x[,1]))
+		x <- cbind(x[ , 1, drop=FALSE], rc, x[ , 2:ncol(x), drop=FALSE])
 	}
 	if (sp) {
 		xy <- data.frame(xyFromCell(r, x[,1]))

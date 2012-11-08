@@ -27,10 +27,13 @@ function(x, format='') {
 
 	if (format=='matrix') { 
 		return ( matrix(x, ncol=cr[1], nrow=cr[2], byrow=TRUE) )
+	#} else if (format =='array') {
+	#	return( array( matrix(x, ncol=cr[1], nrow=cr[2], byrow=TRUE), dim=c(cr, 1)) )
+		
 #	} else if (f) {
 #		x <- factor(x)
 		# set labels?
-	}	
+	}
 
 	return( x ) 
 }

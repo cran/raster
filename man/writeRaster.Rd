@@ -10,7 +10,7 @@
 \description{
 Write an entire Raster* object to a file, using one of the many supported formats. See \code{\link[raster]{writeValues}} for writing in chunks (e.g.  by row). 
 
-When writing a file to disk, the file format is determined by the 'format=' argument if supplied, or else by the file extension (if the extension is known). If other cases the default format is used. The 'factory-fresh' default format is 'raster', but this can be changed using \code{\link[raster]{setOptions}}.
+When writing a file to disk, the file format is determined by the 'format=' argument if supplied, or else by the file extension (if the extension is known). If other cases the default format is used. The default format is 'raster', but this setting can be changed (see \code{\link{rasterOptions}}).
 }
 
 \usage{
@@ -22,12 +22,12 @@ When writing a file to disk, the file format is determined by the 'format=' argu
 \arguments{
 \item{x}{Raster* object}
 \item{filename}{Output filename}
-\item{format}{Character. Output file type. See \code{\link[raster]{writeFormats}}. If this argument is not provided, it is attempted to infer it from the filename extension. If that fails, the default format is used. The default format is 'raster', but this can be changed using \code{\link[raster]{setOptions}}}
+\item{format}{Character. Output file type. See \code{\link[raster]{writeFormats}}. If this argument is not provided, it is attempted to infer it from the filename extension. If that fails, the default format is used. The default format is 'raster', but this can be changed using \code{\link{rasterOptions}}}
 \item{...}{Additional arguments: 
   		
 \code{datatype}{Character. Output data type (e.g. 'INT2S' or 'FLT4S'). 
 See \code{\link{dataType}}. If no datatype is specified, 'FLT4S' is used,
-unless this default value was changed with \code{\link{setOptions}}}
+unless this default value was changed with \code{\link{rasterOptions}}}
 	
 \code{overwrite}: Logical. If TRUE, "filename" will be overwritten if it exists
 	
@@ -37,10 +37,13 @@ unless this default value was changed with \code{\link{setOptions}}}
 For some other formats you can use the 'options' argument (see below)
 	
 \code{options}: Character. File format specific GDAL options. E.g., when
-writing a geotiff file: \code{options=c("COMPRESS=NONE", "TFW=YES")}
+writing a geotiff file you can use: \code{options=c("COMPRESS=NONE", "TFW=YES")}
 
-NetCDF files have the following additional, optional, arguments: 
-\code{varname, varunit, longname, xname, yname, zname, zunit}
+You can use options=c("PROFILE=BASELINE") to create a plain  tif with no GeoTIFF tags. 
+This can be useful when writing files to be read by applications intolerant of unrecognised tags. 
+(see \url{http://www.gdal.org/frmt_gtiff.html})
+
+NetCDF files have the following additional, optional, arguments: \code{varname}, \code{varunit}, \code{longname}, \code{xname}, \code{yname}, \code{zname}, \code{zunit}
 }
 
 \item{bylayer}{if \code{TRUE}, write a seperate file for each layer}
@@ -53,7 +56,7 @@ See \code{writeFormats} for supported file types ("formats", "drivers").
 
 The rgdal package is needed, except for these file formats: 'raster', 'BIL', 'BIP', 'BSQ', 'SAGA', 'ascii', 'IDRISI', and 'CDF'. Some of these formats can be used with or without rgdal (idrisi, SAGA, ascii).  You need the 'ncdf' library for the 'CDF' format. 
 
-In multi-band files  (i.e. files saved from RasterStack or RasterBrick objects), in the native 'raster' format, the bandorder can be set to BIL ('Bands Interleaved by Line'), BIP ('Bands Interleaved by Pixels') or BSQ ('Bands SeQuential'). Note that bandorder is not the same as filetype here. 
+In multi-layer files (i.e. files saved from RasterStack or RasterBrick objects), in the native 'raster' format, the band-order can be set to BIL ('Bands Interleaved by Line'), BIP ('Bands Interleaved by Pixels') or BSQ ('Bands SeQuential'). Note that bandorder is not the same as filetype here. 
 
 Supported file types include:
 
@@ -75,7 +78,7 @@ Supported file types include:
 This function is used for the side-effect of writing values to a file.
 }
 
-\author{Robert J. Hijmans}
+
 
 \seealso{\code{\link[raster]{writeFormats}}, \code{\link[raster]{writeValues}} }  
 
@@ -88,7 +91,7 @@ r <- crop(r, extent(179880, 180800, 329880, 330840) )
 # write to an integer binary file
 rf <- writeRaster(r, filename="allint.grd", datatype='INT4S', overwrite=TRUE)
 
-# make a brick and save multi-band file
+# make a brick and save multi-layer file
 b <- brick(r, sqrt(r))
 bf <- writeRaster(b, filename="multi.grd", bandorder='BIL', overwrite=TRUE)
 

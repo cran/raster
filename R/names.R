@@ -50,46 +50,34 @@ setMethod('names', signature(x='RasterStack'),
 	}
 )
 
-layerNames <- function(x) {
-	names(x)
-}
-
 
 setMethod('names<-', signature(x='Raster'), 
 	function(x, value)  {
-		'layerNames<-'(x, value)
+		nl <- nlayers(x)
+		if (is.null(value)) {
+			value <- rep('', nl)
+		} else if (length(value) != nl) {
+			stop('incorrect number of layer names')
+		}
+		value <- .goodNames(value)
+		
+		if (inherits(x, 'RasterStack')){
+			
+			x@layers <- sapply(1:nl, function(i){ 
+				r <- x@layers[[i]]
+				r@data@names <- value[i]
+				r
+			})
+			
+		} else {
+			if (.hasSlot(x@data, 'names')) {
+				x@data@names <- value
+			} else {
+				x@layernames <- value		
+			}
+		}
+
+		return(x)
 	}
 )
-
-
-'layerNames<-' <- function(x, value) {
-
-	nl <- nlayers(x)
-	if (is.null(value)) {
-		value <- rep('', nl)
-	} else if (length(value) != nl) {
-		stop('incorrect number of layer names')
-	}
-	value <- .goodNames(value)
-	
-	if (inherits(x, 'RasterStack')){
-		
-		x@layers <- sapply(1:nl, function(i){ 
-			r <- x@layers[[i]]
-			r@data@names <- value[i]
-			r
-		})
-		
-	} else {
-		if (.hasSlot(x@data, 'names')) {
-			x@data@names <- value
-		} else {
-			x@layernames <- value		
-		}
-	}
-
-	return(x)
-}
-
-
 

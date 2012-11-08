@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 .isSupportedFormat <- function(dname) {
-	res <- dname %in% c(.nativeDrivers(), 'ascii')
+	res <- dname %in% c(.nativeDrivers(), 'ascii', 'big.matrix', 'CDF')
 	if (!res) { 
 		res <- .isSupportedGDALFormat(dname) 
 	} 
@@ -13,6 +13,7 @@
 
 
 .gdalWriteFormats <- function() {
+	.requireRgdal()
 	gd <- gdalDrivers()
 	gd <- as.matrix( gd[gd[,3] == T, ] )
 	i <- which(gd[,1] %in% c('VRT', 'MEM', 'MFF', 'MFF2'))

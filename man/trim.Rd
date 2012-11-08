@@ -36,9 +36,7 @@ If \code{x} is a Raster* object, the following additional arguments can be passe
 }
 
 \value{
-A RasterLayer or RasterBrick object (if \code{x} is a Raster* object).
-
-A character string If \code{x} is a character string.
+A RasterLayer or RasterBrick object (if \code{x} is a Raster* object) or a character string (if \code{x} is a character string).
 }
 
 \author{Robert J. Hijmans and Jacob van Etten}
@@ -51,7 +49,7 @@ r1[400] <- 6
 s <- trim(r1) 
 
 
-trim("  hi folks  ")
+trim("   hi folks   ")
 }
 
 \keyword{spatial}

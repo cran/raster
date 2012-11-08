@@ -53,7 +53,7 @@ If \code{name='worldclim'} you must also provide a variable name 'var=', and a r
 \url{http://diva-gis.org/gdata}
 }
 
-\author{ Robert J. Hijmans }
+
 
 
 \keyword{ spatial }

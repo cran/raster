@@ -35,7 +35,7 @@ matrix
 \code{\link{getValuesBlock}}
 }
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 r <- raster(nrow=25, ncol=25)

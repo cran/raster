@@ -19,6 +19,7 @@
 	}
 	dataType(x) <- datatype
 	datatype = .getNetCDFDType(datatype)
+	nl <- nlayers(x)
 	
 	if (.couldBeLonLat(x)) {
 		if (missing(xname)) xname = 'longitude'
@@ -32,21 +33,31 @@
 		yunit = 'meter' # probably
 	}
 	
-	
-	if (missing(zunit))  zunit <- 'unknown'
-	if (missing(zname))  zname <- 'value'
-	if (missing(varname))  varname <- 'variable'
+	if (missing(zunit)) {
+		zunit <- 'unknown'
+	}
+	if (missing(zname)) {
+		zname <- 'value'
+	}
+	if (missing(varname))  {
+		if (nl == 1) {
+			varname <- names(x)
+		} else if (!is.null(names(x@z))) {
+			varname <- names(x@z)
+		} else {
+			varname <- 'variable'
+		}
+	}	
 	x@title <- varname
 	if (missing(varunit))  varunit <- ''
 	if (missing(longname))  longname <- varname
 	
-
 	if (ncdf4) {
 	
 		xdim <- ncdf4::ncdim_def( xname, xunit, xFromCol(x, 1:ncol(x)) )
 		ydim <- ncdf4::ncdim_def( yname, yunit, yFromRow(x, 1:nrow(x)) )
 		if (inherits(x, 'RasterBrick')) {
-			zv <- 1:nlayers(x)
+			zv <- 1:nl
 			z <- getZ(x)
 			if (!is.null(z)) {
 				zv[] <- as.numeric(z)
@@ -109,7 +120,7 @@
 		xdim <- dim.def.ncdf( xname, xunit, xFromCol(x, 1:ncol(x)) )
 		ydim <- dim.def.ncdf( yname, yunit, yFromRow(x, 1:nrow(x)) )
 		if (inherits(x, 'RasterBrick')) {
-			zv <- 1:nlayers(x)
+			zv <- 1:nl
 			z <- getZ(x)
 			if (!is.null(z)) {
 				zv[] <- as.numeric(z)
@@ -168,8 +179,8 @@
 		close.ncdf(nc)
 	}
 	
-	x@data@min <- rep(Inf, nlayers(x))
-	x@data@max <- rep(-Inf, nlayers(x))
+	x@data@min <- rep(Inf, nl)
+	x@data@max <- rep(-Inf, nl)
 	x@data@haveminmax <- FALSE
 	x@file@driver <- 'netcdf'
 	x@file@name <- filename

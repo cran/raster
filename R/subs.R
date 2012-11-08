@@ -150,7 +150,7 @@ setMethod('subs', signature(x='Raster', y='data.frame'),
 				filename <- rasterTmpFile()
 			}
 			tr <- blockSize(out)
-			pb <- pbCreate(tr$n, ...)
+			pb <- pbCreate(tr$n, label='subs', ...)
 			out <- writeStart(out, filename=filename, ...)
 			for (i in 1:tr$n) {
 				v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])

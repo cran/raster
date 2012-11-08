@@ -13,7 +13,12 @@ Calculate values for a new Raster* object from another Raster* object, using a f
 
 If \code{x} is a RasterLayer, \code{fun} is typically a function that can take a single vector as input, and return a vector of values of the same length (e.g. \code{sqrt}). If \code{x} is a RasterStack or RasterBrick, fun should operate on a vector of values (one vector for each cell). \code{calc} returns a RasterLayer if \code{fun} returns a single value (e.g. \code{sum}) and it returns a RasterBrick if \code{fun} returns more than one number, e.g., \code{fun=quantile}.
  
-In many cases, what can be achieved with \code{calc}, can also be accomplished with a more intuitive 'raster-algebra' notation (see \code{\link[raster]{Arith-methods}}). For example, \code{r <- r * 2} rather than \code{r <- calc(r, fun=function(x){x * 2}}, or \code{r <- sum(s)} rather than 
+In many cases, what can be achieved with \code{calc}, can also be accomplished with a more intuitive 'raster-algebra' notation (see \code{\link[raster]{Arith-methods}}). For example, \code{r <- r * 2} instead of
+
+ 
+\code{r <- calc(r, fun=function(x){x * 2}}, or \code{r <- sum(s)} instead of
+
+
 \code{r <- calc(s, fun=sum)}. However, \code{calc} should be faster when using complex formulas on large datasets. With \code{calc} it is possible to set an output filename and file type preferences. 
  
 See (\code{\link[raster]{overlay}}) to use functions that refer to specific layers, like (\code{function(a,b,c){a + sqrt(b) / c}})
@@ -53,7 +58,7 @@ Because the mean value of each chunk will likely be different. Rather do somethi
 \seealso{ \code{ \link[raster]{overlay}} ,  \code{ \link[raster]{reclassify}},  \link[raster]{Arith-methods}, \link[raster]{Math-methods}} 
 
 
-\author{ Robert J. Hijmans and Matteo Mattiuzzi}
+\author{Robert J. Hijmans and Matteo Mattiuzzi}
 
 \examples{
 r <- raster(ncols=36, nrows=18)

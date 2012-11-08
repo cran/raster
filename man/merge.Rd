@@ -41,7 +41,7 @@ The Raster objects must have the same origin and resolution. In areas where the 
 RasterLayer or RasterBrick
 }
 
-\author{Robert J. Hijmans}
+
 
 
 \examples{

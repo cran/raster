@@ -39,7 +39,7 @@ The last cell number equals the number of cells of the Raster* object.
   xFromCol, yFromCol, xFromCell, yFromCell: vector of x or y coordinate(s) 
   xyFromCell: matrix(x,y) of pairs of coordinates 
 }
-\author{Robert J. Hijmans }
+
 
 \seealso{
 \code{\link{cellFromXY}}

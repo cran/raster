@@ -73,7 +73,7 @@ function(x, y, filename='', snap='near', datatype=NULL, ...) {
 		}
 	} else { 
 		tr <- blockSize(out)
-		pb <- pbCreate(tr$n, ...)
+		pb <- pbCreate(tr$n, label='crop', ...)
 		out <- writeStart(out, filename=filename, datatype=datatype, ... )
 		for (i in 1:tr$n) {
 			vv <- getValuesBlock(x, row=tr$row[i]+row1-1, nrows=tr$nrows[i], col1, nc)

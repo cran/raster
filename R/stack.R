@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date : September 2008
 # Version 0.9
 # Licence GPL v3
@@ -15,7 +15,6 @@ function(x) {
 	return(new("RasterStack"))
 	}
 )
-
 
 
 setMethod("stack", signature(x='Raster'), 
@@ -38,7 +37,7 @@ setMethod("stack", signature(x='Raster'),
 
 
 setMethod("stack", signature(x='character'), 
-function(x, ..., bands=NULL, varname="", native=FALSE, quick=FALSE) {
+function(x, ..., bands=NULL, varname="", native=FALSE, RAT=TRUE, quick=FALSE) {
 
 	rlist <- c(x, list(...))
 
@@ -62,14 +61,14 @@ function(x, ..., bands=NULL, varname="", native=FALSE, quick=FALSE) {
 			return(.quickStack(rlist, native=native))
 		}
 		
-		return(stack(rlist, bands=bands, native=native))
+		return(stack(rlist, bands=bands, native=native, RAT=RAT))
 	}
 } )
 
 
 
 setMethod("stack", signature(x='list'), 
-function(x, bands=NULL, native=FALSE, ...) {
+function(x, bands=NULL, native=FALSE, RAT=TRUE, ...) {
 
 	if (inherits(x, 'data.frame')) {
 		return(utils::stack(x, ...))
@@ -100,7 +99,9 @@ function(x, bands=NULL, native=FALSE, ...) {
 			warning('RasterLayer objects without cell values were removed')
 			x <- x[hd]
 		}
-		if (length(x) > 1) compare(x)	
+		if (length(x) > 1) {
+			compareRaster(x)
+		}
 		s <- new("RasterStack")
 		s@nrows <- x[[1]]@nrows
 		s@ncols <- x[[1]]@ncols
@@ -118,7 +119,7 @@ function(x, bands=NULL, native=FALSE, ...) {
 	
 	r <- list()
 
-	first <- raster(x[[1]])
+	first <- raster(x[[1]], native=native, RAT=RAT)
 	if (!is.null(bands)) {
 		lb <- length(bands)
 		bands <- bands[bands %in% 1:nbands(first)]
@@ -135,14 +136,14 @@ function(x, bands=NULL, native=FALSE, ...) {
 		if (is.character(x[[i]])) {
 			if (!is.null(bands)) {
 				for (b in bands) {
-					r[j] <- raster(x[[i]], band=b, native=native, ...)
+					r[j] <- raster(x[[i]], band=b, native=native, RAT=RAT, ...)
 					if (namesFromList) {
 						names(r[[j]]) <- paste(lstnames[i], '_', b, sep='')
 					}
 					j <- j + 1
 				}
 			} else {
-				r[j] <- raster(x[[i]], band=1, native=native, ...)
+				r[j] <- raster(x[[i]], band=1, native=native, RAT=RAT, ...)
 				bds <- nbands(r[[j]])
 
 				if (namesFromList) {
@@ -155,7 +156,7 @@ function(x, bands=NULL, native=FALSE, ...) {
 				j <- j + 1
 				if (bds > 1) {
 					for (b in 2:bds) {
-						r[j] <- raster(x[[i]], band=b, native=native, ...)
+						r[j] <- raster(x[[i]], band=b, native=native, RAT=RAT, ...)
 							
 						if (namesFromList) {
 							names(r[[j]]) <- paste(lstnames[i], '_', b, sep='')
@@ -216,12 +217,7 @@ function(x, bands=NULL, native=FALSE, ...) {
 
 setMethod("stack", signature(x='SpatialGridDataFrame'), 
 	function(x) {
-		stk <- new("RasterStack")
-		for (i in 1:ncol(x@data)) {
-			rs <- raster(x, i)
-			stk <- addLayer(stk, rs)
-		}
-		return(stk)
+		.stackFromBrick(brick(x))
 	}
 )
 
@@ -230,7 +226,7 @@ setMethod("stack", signature(x='SpatialGridDataFrame'),
 setMethod("stack", signature(x='SpatialPixelsDataFrame'), 
 	function(x) {
 		x <- as(x, 'SpatialGridDataFrame')
-		return(stack(x))
+		.stackFromBrick(brick(x))
 	}
 )
 

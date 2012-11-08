@@ -93,13 +93,14 @@ setMethod ('print' , 'Spatial',
 			if (nc > maxnl) {
 				x <- x[, 1:maxnl]
 			}
-			coln <- colnames(x)
+			ln <- colnames(x)
 			if (nc > maxnl) {
-				coln <- c(coln[1:maxnl], '...')
+				ln <- c(ln[1:maxnl], '...')
 				x <- x[, 1:maxnl]
 			}
-			cat('variables   :', paste(coln, collapse=', '), '\n')
-
+			wrn <- getOption('warn')
+			on.exit(options('warn' = wrn))
+			options('warn'=-1) 
 			r <- apply(x, 2, range, na.rm=TRUE)
 			minv <- as.vector(r[1, ])
 			maxv <- as.vector(r[2, ])
@@ -107,8 +108,18 @@ setMethod ('print' , 'Spatial',
 				minv <- c(minv, '...')
 				maxv <- c(maxv, '...')
 			}
-			cat('min values  :', paste(minv, collapse=', '), '\n')
-			cat('max values  :', paste(maxv, collapse=', '), '\n')
+
+			w <- pmax(nchar(ln), nchar(minv), nchar(maxv))
+			m <- rbind(ln, minv, maxv)
+				# a loop because 'width' is not recycled by format
+			for (i in 1:ncol(m)) {
+				m[,i]   <- format(m[,i], width=w[i], justify="right")
+			}
+
+			cat('names       :', paste(m[1,], collapse=', '), '\n')
+			cat('min values  :', paste(m[2,], collapse=', '), '\n')
+			cat('max values  :', paste(m[3,], collapse=', '), '\n')
+			
 		}
 	}
 )	

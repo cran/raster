@@ -1,9 +1,10 @@
-# Author: Matteo Mattiuzzi and Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Matteo Mattiuzzi and Robert J. Hijmans
 # Date : November 2010
 # Version 1.0
 # Licence GPL v3
 
-beginCluster <- function(n, type, nice, exclude=NULL) {
+
+beginCluster <- function(n, type='SOCK', nice, exclude=NULL) {
 	if (! require(snow) ) {
 		stop('you need to install the "snow" package')
 	}
@@ -17,12 +18,11 @@ beginCluster <- function(n, type, nice, exclude=NULL) {
 		cat(n, 'cores detected\n')
 	}
 
-	if (missing(type)) {
-		type <- getClusterOption("type")
-		cat('cluster type:', type, '\n')
-	}
+#	if (missing(type)) {
+#		type <- getClusterOption("type")
+#		cat('cluster type:', type, '\n')
+#	}
 	
-
 	cl <- makeCluster(n, type) 
 	cl <- .addPackages(cl, exclude=exclude)
 	options(rasterClusterObject = cl)

@@ -1,20 +1,32 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  September 2009
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
+
+
+if (!isGeneric('writeValues')) {
+	setGeneric('writeValues', function(x, v, start)
+		standardGeneric('writeValues')) 
+}
+
 
 setMethod('writeValues', signature(x='RasterLayer', v='vector'), 
 	function(x, v, start) {
 
 		v[is.infinite(v)] <- NA
+		if (is.logical(v)) {
+			v <- as.integer(v)
+		}
 		
 		rsd <- na.omit(v) # min and max values
 		if (length(rsd) > 0) {
 			x@data@min <- min(x@data@min, rsd)
 			x@data@max <- max(x@data@max, rsd)
 		}	
+
+		driver <- x@file@driver
 		
-		if ( x@file@driver == 'gdal' ) {
+		if ( driver == 'gdal' ) {
 			off = c(start-1, 0)
 			if (substr(x@file@datanotation,1,1) != 'F') {
 				v <- round(v)
@@ -30,7 +42,7 @@ setMethod('writeValues', signature(x='RasterLayer', v='vector'),
 			
 			gd <- putRasterData(x@file@transient, v, band=1, offset=off) 	
 
-		} else if ( x@file@driver %in% .nativeDrivers() ) {
+		} else if ( driver %in% .nativeDrivers() ) {
 			if (x@file@dtype == "INT" ) { 
 				if (substr(x@file@datanotation, 5 , 5) == 'U') { 
 					v[v < 0] <- NA
@@ -47,19 +59,33 @@ setMethod('writeValues', signature(x='RasterLayer', v='vector'),
 			} else if ( x@file@dtype =='LOG' ) {
 				v[v != 1] <- 0
 				v <- as.integer(v)  
-				v[is.na(v)] <- as.integer(x@file@nodatavalue)		
-			} else { 
+				v[is.na(v)] <- as.integer(x@file@nodatavalue)
+				
+			} else { #if (!is.numeric(v)) { 
+				# v may be integers, while the filetype is FLT
 				v  <- as.numeric( v ) 
+				if (driver != 'raster') {
+					v[is.na(v)] <- x@file@nodatavalue
+				}
 			}
+			
 			start <- (start-1) * x@ncols * x@file@dsize
-			seek(x@file@con, start, rw='w')			
+			seek(x@file@con, start, rw='w')	
+#			print(v)
 			writeBin(v, x@file@con, size=x@file@dsize )
 			
-		} else if ( x@file@driver == 'netcdf') {
+		} else if ( driver == 'netcdf') {
 
 			x <- .writeValuesCDF(x, v, start)
 			
-		} else if ( x@file@driver == 'ascii') {
+		} else if ( driver == 'big.matrix') {
+
+			b <- attr(x@file, 'big.matrix')
+			nrows <- length(v) / ncol(x)
+			# b[rowColFromCell(x, start:(start+length(v)-1))] <- v
+			b[start:(start+nrows-1), ] <-  matrix(v, nrow=nrows, byrow=TRUE)
+
+		} else if ( driver == 'ascii') {
 		
 			opsci = options('scipen')
 			if (x@file@dtype == 'INT') {
@@ -72,7 +98,7 @@ setMethod('writeValues', signature(x='RasterLayer', v='vector'),
 			options(scipen=opsci)
 			
 		} else {
-			stop('huh? Was writeStart used?')
+			stop('was writeStart used?')
 		}
 		return(x)
 	} 		
@@ -84,11 +110,22 @@ setMethod('writeValues', signature(x='RasterBrick', v='matrix'),
 	function(x, v, start) {
 	
 		v[is.infinite(v)] <- NA
+		if (is.logical(v)) {
+			v[] <- as.integer(v)
+		}
+
+		w <- getOption('warn')
+		options('warn'=-1) 
+		rng <- apply(v, 2, range, na.rm=TRUE)
+		x@data@min <- pmin(x@data@min, rng[1,])
+		x@data@max <- pmax(x@data@max, rng[2,])
+		options('warn'= w) 		
 		
-		if ( x@file@driver %in% .nativeDrivers() ) {
+		driver <- x@file@driver
+		if ( driver %in% .nativeDrivers() ) {
 			
 			#if (!is.matrix(v)) v <- matrix(v, ncol=1)
-
+			
 			if (x@file@dtype == "INT") { 
 				v[is.na(v)] <- x@file@nodatavalue		
 				dm <- dim(v)
@@ -100,18 +137,11 @@ setMethod('writeValues', signature(x='RasterBrick', v='matrix'),
 				dm <- dim(v)
 				v <- as.integer(round(v))  
 				dim(v) <- dm
-			} else { 
-				v[]  <- as.numeric( v ) 
+			} else { # if (!is.numeric(v)) { 
+				v[] <- as.numeric( v ) 
 			}
 
-			w <- getOption('warn')
-			options('warn'=-1) 
-			rng <- apply(v, 2, range, na.rm=TRUE)
-			x@data@min <- pmin(x@data@min, rng[1,])
-			x@data@max <- pmax(x@data@max, rng[2,])
-			options('warn'= w) 
-
-			
+		
 			if (x@file@bandorder=='BIL') {
 			
 				start <- (start-1) * x@ncols * x@file@dsize * nlayers(x)
@@ -144,26 +174,27 @@ setMethod('writeValues', signature(x='RasterBrick', v='matrix'),
 				stop('unknown band order')
 			}
 			
-		} else if ( x@file@driver == 'netcdf') {
+		} else if ( driver == 'netcdf') {
 
 			x <- .writeValuesBrickCDF(x, v, start)
 
-		} else {
-			off = c(start-1, 0)
+		} else if ( driver == 'big.matrix') {
+
+			b <- attr(x@file, 'big.matrix')
+			startcell <- cellFromRowCol(x, start, 1)
+			endcell <- startcell+nrow(v)-1
+			b[startcell:endcell, ] <- v
+			
+		} else { # rgdal
+		
+			off <- c(start-1, 0)
 			if (x@file@datanotation == 'INT1U') {
 				v[v < 0] <- NA
 			}
 
-			w <- getOption('warn')
-			options('warn'=-1) 
-			rng <- apply(v, 2, range, na.rm=TRUE)
-			x@data@min <- pmin(x@data@min, rng[1,])
-			x@data@max <- pmax(x@data@max, rng[2,])
-			options('warn'= w) 
-
 			v[is.na(v)] <- x@file@nodatavalue
 			for (i in 1:nlayers(x)) {
-				vv = matrix(v[,i], nrow=ncol(x))
+				vv <- matrix(v[,i], nrow=ncol(x))
 				gd <- putRasterData(x@file@transient, vv, band=i, offset=off) 	
 			}
 		}

@@ -1,11 +1,11 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date : June 2008
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
 
+
 .gdFixGeoref <- function(mdata) {
-	gdversion = getGDALVersionInfo()
-	gdversion = trim(substr(gdversion, 5, 10))
+	gdversion <- getOption('rasterGDALVersion')
 	test <- gdversion < '1.8.0'	
 	if (test) {
 		if (! is.null(mdata) ) {
@@ -25,23 +25,13 @@
 
 .rasterFromGDAL <- function(filename, band, type, sub=0, RAT=TRUE, silent=TRUE, warn=TRUE, ...) {	
 
-# most of this was taken from the GDALinfo function in rgdal
-# that was written by Roger Bivand and others
-
 	.requireRgdal() 
-
-	# suppressing the geoTransform warning...
-#	w <- getOption('warn')
-#	on.exit(options('warn'= w))
-#	options('warn'= -1) 
-#	options('warn'= w) 
-
-
+	
 	if (sub > 0) {
+		gdalinfo <- GDALinfo(filename, silent=TRUE, returnRAT=FALSE, returnCategoryNames=FALSE)
 		sub <- round(sub)
-		x <- GDAL.open(filename, silent=TRUE)
-		subdsmdata <- .Call("RGDAL_GetMetadata", x, "SUBDATASETS", PACKAGE = "rgdal")
-		GDAL.close(x)
+		subdsmdata <- attr(gdalinfo, 'subdsmdata')
+
 		i <- grep(paste("SUBDATASET_", sub, "_NAME", sep=''), subdsmdata)
 		if (length(i) > 0) {
 			x <- subdsmdata[i[1]]
@@ -50,43 +40,49 @@
 			stop(paste('subdataset "sub=', sub, '" not available', sep=''))
 		}
 	}
-
-	x <- GDAL.open(filename, silent=TRUE)
 	
-	nc <- as.integer(.Call('RGDAL_GetRasterXSize', x, PACKAGE="rgdal"))
-	nr <- as.integer(.Call('RGDAL_GetRasterYSize', x, PACKAGE="rgdal"))
-    nbands <- as.integer(.Call('RGDAL_GetRasterCount', x, PACKAGE="rgdal"))
+	w <- getOption('warn')
+	on.exit(options('warn' = w))
+	options('warn'=-1) 
+	gdalinfo <- try ( GDALinfo(filename, silent=silent, returnRAT=RAT, returnCategoryNames=RAT) )
+	options('warn'= w) 
 
-    #dr <- getDriverName(getDriver(x))
-    gt <- .Call("RGDAL_GetGeoTransform", x, PACKAGE = "rgdal")
-    if (attr(gt, "CE_Failure") ) {
-		if (warn) {
-			warning("GeoTransform values not available; georeferencing will not be correct")
-		}
+	if (class(gdalinfo) == 'try-error') {
+		gdalinfo <- GDALinfo(filename, silent=silent, returnRAT=FALSE, returnCategoryNames=FALSE)
+		warning('Could not read RAT or Category names')
 	}
 
-    ysign <- sign(gt[6])
-    offset.y <- ifelse(ysign < 0, gt[4] + ysign * nr * abs(gt[6]), gt[4] + abs(gt[6]))
-	
-	xn <- round(gt[1], digits=9)
-	xx <- xn + abs(gt[2]) * nc
+	nc <- as.integer(gdalinfo[["columns"]])
+	nr <- as.integer(gdalinfo[["rows"]])
+
+	xn <- gdalinfo[["ll.x"]]
+	xn <- round(xn, digits=9)
+
+	xx <- xn + gdalinfo[["res.x"]] * nc
 	xx <- round(xx, digits=9)
-	yn <- round(offset.y, digits=9)
-	yx <- yn + abs(gt[6]) * nr
+
+	yn <- gdalinfo[["ll.y"]]
+	yn <- round(yn, digits=9)
+	yx <- yn + gdalinfo[["res.y"]] * nr
 	yx <- round(yx, digits=9)
 
+	nbands <- as.integer(gdalinfo[["bands"]])
+
 	rotated <- FALSE
-	if (abs(gt[3]) != 0 | abs(gt[5]) != 0) {
+	if (gdalinfo['oblique.x'] != 0 | gdalinfo['oblique.y'] != 0) {
 		rotated <- TRUE
 
 		## adapted from rgdal::getGeoTransFunc
 		if (warn) {
 			warning('\n\n This file has a rotation\n Support such files is limited and results of data processing might be wrong.\n Proceed with caution & consider using the "rectify" function\n')
 		}
-		rotMat <- matrix(gt[c(2, 3, 5, 6)], 2)
+		rotMat <- matrix(gdalinfo[c('res.x', 'oblique.x', 'oblique.y', 'res.y')], 2)
+		ysign <- attr(gdalinfo, 'ysign')
+		rotMat[4] <- rotMat[4] * ysign
+
 		invMat <- solve(rotMat)
 		
-		offset <- gt[c(1, 4)]
+		offset <- c(xn, yx)
 		trans <- function(x, inv=FALSE) {
 			if (inv) {
 				x <- t(t(x) - c(offset[1], offset[2]))
@@ -102,7 +98,12 @@
 	
 		crd <- trans(cbind(c(0, 0, nc, nc), c(0, nr, 0, nr))+0.5)
 		rot <- new(".Rotation")
-		rot@geotrans <- as.vector(gt)
+		
+		gtr <- gdalinfo[c('ll.x', 'res.x', 'oblique.x', NA, 'oblique.y', 'res.y')]
+		gtr[4] <- yx
+		gtr[6] <- gtr[6] * ysign
+		
+		rot@geotrans <- gtr
 		rot@transfun <- trans
 
 		xn  <- min(crd[,1])
@@ -112,7 +113,7 @@
 		
 	} 
 	
-	mdata <- .Call("RGDAL_GetMetadata", x, NULL, PACKAGE = "rgdal")
+	mdata <- attr(gdalinfo, 'mdata')
 	fixGeoref <- FALSE
 	try( fixGeoref <- .gdFixGeoref(mdata), silent=TRUE )
 
@@ -141,10 +142,6 @@
 			band <- 1 
 		}
 		r@data@band <- as.integer(band)
-		ct <- getColorTable( x )
-		if (! is.null(ct)) { 
-			r@legend@colortable <- ct 
-		}
 		nbands <-1 
 	}
 	if (rotated) {
@@ -152,63 +149,47 @@
 		r@rotation <- rot
 	}	
 
-	projection(r) <- .Call("RGDAL_GetProjectionRef", x, PACKAGE = "rgdal")
+	projection(r) <- attr(gdalinfo, 'projection')
 
-   	r@history[[1]] <- mdata
-    r@history[[2]] <- .Call("RGDAL_GetMetadata", x, "SUBDATASETS", PACKAGE = "rgdal")
+#   	r@history[[1]] <- mdata
+
+		
+	bi <- attr(gdalinfo, 'df')
+	GDType <- as.character(bi[['GDType']])
+	hasNoDataValues <- bi[['hasNoDataValue']]
+	NoDataValue <- bi[['NoDataValue']]
 	
-    GDType <- character(nbands)
-    Bmin <- Bmax <- numeric(nbands)
-	hasNoDataValues <- logical(nbands)
-	NoDataValues <- numeric(nbands)
-	RATlist <- vector(mode = "list", length = nbands)
-	CATlist <- vector(mode = "list", length = nbands)
+#	if (getOption('rasterNewRGDALVersion')) {	
+#		sbi <- attr(gdalinfo, 'sdf')
+#		Bmin <- sbi[['Bmin']]
+#		Bmax <- sbi[['Bmax']]	
+#	} else {
+		Bmin <- bi[['Bmin']]
+		Bmax <- bi[['Bmax']]
+#	}
+	
+	
+	RATlist <- attr(gdalinfo, 'RATlist')
+	CATlist <- attr(gdalinfo, 'CATlist')
+
 	blockrows <- integer(nbands)
 	blockcols <- integer(nbands)
+	
+	x <- GDAL.open(filename, silent=TRUE)
+	ct <- getColorTable( x )
+	if (! is.null(ct)) { 
+		r@legend@colortable <- ct 
+	}
 	for (i in 1:nbands) {
-		rstband <- getRasterBand(x, band[i])
-		GDType[i] <- rgdal:::.GDALDataTypes[(.Call("RGDAL_GetBandType", rstband, PACKAGE = "rgdal")) + 1]
-		statsi <- .Call("RGDAL_GetBandStatistics", rstband, silent, PACKAGE = "rgdal")
-		if (is.null(statsi)) {
-			Bmin[i] <- .Call("RGDAL_GetBandMinimum", rstband, PACKAGE = "rgdal")
-			Bmax[i] <- .Call("RGDAL_GetBandMaximum", rstband, PACKAGE = "rgdal")
-		} else {
-			Bmin[i] <- statsi[1]
-			Bmax[i] <- statsi[2]
-			#Bmn[i] <- statsi[3]
-			#Bsd[i] <- statsi[4]
-		}
-		if (RAT) {
-			RATi <- NULL
-			try( RATi <- .Call("RGDAL_GetRAT", rstband, PACKAGE = "rgdal") )
-			if (!is.null(RATi)) {
-				RATlist[[i]] <- RATi
-			}
-
-			CATi <- NULL
-			try( CATi <- .Call("RGDAL_GetCategoryNames", rstband, PACKAGE = "rgdal") )
-			if (!is.null(CATi)) {
-				CATlist[[i]] <- CATi
-			}
-			
-		}
-		NDV <- .Call("RGDAL_GetBandNoDataValue", rstband, PACKAGE = "rgdal")
-		if (is.null(NDV)) {
-			hasNoDataValues[i] <- FALSE
-		} else {
-			hasNoDataValues[i] <- TRUE
-			NoDataValues[i] <- NDV[1]
-		}
-		
 		bs <- getRasterBlockSize( getRasterBand(x, i) )
 		blockrows[i] <- bs[1]
 		blockcols[i] <- bs[2]
 	}
-
 	GDAL.close(x)
 
 	r@file@blockrows <- blockrows
 	r@file@blockcols <- blockcols
+
 
 	if (fixGeoref) {
 		cat('Fixing "AREA_OR_POINT=Point" georeference\n')
@@ -236,18 +217,21 @@
 	r@data@fromdisk <- TRUE
 		
 	datatype <- "FLT4S"
-	minv = 	rep(Inf, nlayers(r))
-	maxv = 	rep(-Inf, nlayers(r))
+	minv <-	rep(Inf, nlayers(r))
+	maxv <-	rep(-Inf, nlayers(r))
 	try ( minv <- as.numeric( Bmin ) , silent=TRUE ) 
 	try ( maxv <- as.numeric( Bmax ) , silent=TRUE ) 
 	minv[minv == -4294967295] <- Inf
 	maxv[maxv == 4294967295] <- -Inf
 	try ( datatype <- .getRasterDType ( GDType[1] ), silent=TRUE )
 	
-	if ( is.finite(minv) && is.finite(maxv) ) r@data@haveminmax <- TRUE 
+	if ( is.finite(minv) && is.finite(maxv) ) {
+		r@data@haveminmax <- TRUE 
+	}
 	r@file@datanotation <- datatype
-	r@data@min <- minv
-	r@data@max <- maxv
+	
+	r@data@min <- minv[band]
+	r@data@max <- maxv[band]
 
 	rats <- ! sapply(RATlist, is.null) 
 	if (any(rats)) {
@@ -271,33 +255,23 @@
 						next
 					} else {
 						j <- which(colnames(dr) == 'Histogram')
-						if (isTRUE(j>0)) {
-							dr <- data.frame(ID=0:(nrow(dr)-1), COUNT=dr[,j], dr[,-j])
+						if (isTRUE(j>0) & ncol(dr) > 1) {
+							dr <- data.frame(ID=0:(nrow(dr)-1), COUNT=dr[,j], dr[,-j,drop=FALSE])
 						} else {
 							dr <- data.frame(ID=0:(nrow(dr)-1), dr)
 						}
 					}
-				}
-				
+				}				
 				att[[i]] <- dr
-				if (! silent) {
-					usage <- attr(RATlist[[i]], 'GFT_usage')
-					if (! isTRUE(usage[1] == "GFU_MinMax")) {
-						warning('usage[1] != GFU_MinMax')
-						# process min/max
-					} else {
-						if (! isTRUE(usage[2] == "GFU_PixelCount")) {
-							warning('usage[2] != GFU_PixelCount')
-						}
-					}
-				}
 			}
 		}
 		
-		r@data@attributes <- att
-		r@data@isfactor <- rats
+		r@data@attributes <- att[band]
+		r@data@isfactor <- rats[band]
 	}
 	
 #oblique.x   0  #oblique.y   0 
 	return(r)
 }
+
+

@@ -37,7 +37,7 @@ A single numeric value or two numeric values.
 \seealso{ \code{\link[raster]{extent}}, \code{\link[raster]{ncell}}  }
 
 
-\author{Robert J. Hijmans }
+
 \examples{
 r <- raster(ncol=18, nrow=18)
 xres(r)

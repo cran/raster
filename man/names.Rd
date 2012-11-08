@@ -38,7 +38,7 @@ Character
 \seealso{ \code{\link{nlayers}, \link[raster]{bands}} }
 
 
-\author{Robert J. Hijmans }
+
 
 
 \examples{

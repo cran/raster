@@ -27,7 +27,7 @@ validRow(object, rownr)
 \value{
   logical value
 }
-\author{Robert J. Hijmans }
+
 
 
 \examples{

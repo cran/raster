@@ -24,6 +24,7 @@
 			vals <- getValues(x)[uniquecells]
 			adjust <- FALSE
 		} else if ( fromDisk(x) ) {
+			driver <- x@file@driver
 			if (length(uniquecells) > 250 & canProcessInMemory(x, 4)) {
 				vals <- getValues(x)
 				if (length(layers) > 1) {
@@ -32,13 +33,15 @@
 					vals <- vals[uniquecells]				
 				}
 				adjust <- FALSE
-			} else if (x@file@driver == 'gdal') {
+			} else if (driver == 'gdal') {
 				vals <- .readCellsGDAL(x, uniquecells, layers)
-			} else if ( .isNativeDriver( x@file@driver) ) {  # raster, BIL, ..
+			} else if ( .isNativeDriver( driver) ) {  # raster, BIL, ..
 				vals <- .readCellsRaster(x, uniquecells, layers)
-			} else if (x@file@driver == 'netcdf') {
+			} else if ( driver == 'big.matrix') {
+				vals <- .readBigMatrixCells(x, uniquecells) 
+			} else if ( driver == 'netcdf') {
 				vals <- .readRasterCellsNetCDF(x, uniquecells) 
-			} else if (x@file@driver == 'ascii') {
+			} else if ( driver == 'ascii') {
 				# can only have one layer
 				vals <- .readCellsAscii(x, uniquecells)
 			} else {
@@ -62,10 +65,46 @@
 			vals <- vals * x@data@gain + x@data@offset
 		}
 	}
+
+	# if  NAvalue() has been used.....
+	if (.naChanged(x)) {
+		if (x@file@nodatavalue < 0) {
+			vals[vals <= x@file@nodatavalue] <- NA
+		} else {
+			vals[vals == x@file@nodatavalue] <- NA
+		}
+	}
 	
 	return(vals)
 }
 
+ 
+
+.readBigMatrixCells <- function(x, cells, layers) {
+	
+	b <- attr(x@file, 'big.matrix')
+	
+	if (inherits(x, 'RasterLayer')) {
+	
+		colrow <- matrix(ncol=3, nrow=length(cells))
+		colrow[,1] <- colFromCell(x, cells)
+		colrow[,2] <- rowFromCell(x, cells)
+		colrow[,3] <- NA
+		rows <- sort(unique(colrow[,2]))
+		nc <- x@ncols
+		
+		for (i in 1:length(rows)) {
+			v <- b[rows[i],  ]
+			thisrow <- colrow[colrow[,2] == rows[i], , drop=FALSE]
+			colrow[colrow[,2]==rows[i], 3] <- v[thisrow[,1]]
+		}
+		colrow[, 3]
+
+	} else {
+		b[cells, layers]	
+	}
+}	
+ 
  
 .readCellsGDAL <- function(x, cells, layers) {
 
@@ -74,7 +113,6 @@
 		layers <- bandnr(x)
 	}
 	laysel <- length(layers)
-	if (laysel > 1) att = FALSE
 	
 	colrow <- matrix(ncol=2+laysel, nrow=length(cells))
 	colrow[,1] <- colFromCell(x, cells)
@@ -92,12 +130,6 @@
 		for (i in 1:length(rows)) {
 			offs <- c(rows[i]-1, 0) 
 			v <- getRasterData(con, offset=offs, region.dim=c(1, nc), band = layers)
-			# if  NAvalue() has been used.....
-			if (x@file@nodatavalue < 0) {
-				v[v <= x@file@nodatavalue] <- NA 			
-			} else {
-				v[v == x@file@nodatavalue] <- NA 			
-			}		
 			thisrow <- colrow[colrow[,2] == rows[i], , drop=FALSE]
 			colrow[colrow[,2]==rows[i], 3] <- v[thisrow[,1]]
 		}
@@ -107,11 +139,6 @@
 			if (nrow(thisrow) == 1) {
 				offs <- c(rows[i]-1, thisrow[,1]-1)
 				v <- as.vector( getRasterData(con, offset=offs, region.dim=c(1, 1)) )
-				if (x@file@nodatavalue < 0) {
-					v[v <= x@file@nodatavalue] <- NA 			
-				} else {
-					v[v == x@file@nodatavalue] <- NA 			
-				}		
 				colrow[colrow[,2]==rows[i], 2+(1:laysel)] <- v[layers]
 
 			} else {
@@ -119,12 +146,6 @@
 				v <- getRasterData(con, offset=offs, region.dim=c(1, nc))
 				v <- do.call(cbind, lapply(1:nl, function(i) v[,,i]))
 			
-			# if  NAvalue() has been used.....
-				if (x@file@nodatavalue < 0) {
-					v[v <= x@file@nodatavalue] <- NA 			
-				} else {
-					v[v == x@file@nodatavalue] <- NA 			
-				}		
 				colrow[colrow[,2]==rows[i], 2+(1:laysel)] <- v[thisrow[,1], layers]
 			}
 		}

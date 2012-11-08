@@ -25,7 +25,7 @@ pbCreate creates a progress bar, pbStep sets the progress, and pbClose closes it
 canProcessInMemory(x, n=4)
 closeConnection(x)
 openConnection(x, silent=FALSE)
-pbCreate(nsteps, progress, style=3, ...)
+pbCreate(nsteps, progress, style=3, label='Progress', ...)
 pbStep(pb, step=NULL, label='')
 pbClose(pb, timer)
 getCluster()
@@ -34,27 +34,25 @@ returnCluster()
 
 \arguments{
   \item{x}{RasterLayer or RasterBrick object}
-  \item{n}{Integer. The number of copies of a RasterLayer object with values that a function needs to store in memory}  
-  \item{silent}{Logical. passed on to GDAL.open}  
-  \item{nsteps}{Integer. Number of steps the progress bar will make from start to end (e.g. nrow(raster)) }
-  \item{progress}{Character. 'text', 'window', or ''}
+  \item{n}{integer. The number of copies of a RasterLayer object with values that a function needs to store in memory}  
+  \item{silent}{logical. passed on to GDAL.open}  
+  \item{nsteps}{integer. Number of steps the progress bar will make from start to end (e.g. nrow(raster)) }
+  \item{progress}{character. 'text', 'window', or ''}
   \item{style}{style for text progress bar. See \code{\link[utils]{txtProgressBar}} }
-  \item{...}{additional arguments}
-  \item{pb}{a progress bar object created with pbCreate }
+  \item{label}{character. Label for the window type prograss bar}
+  \item{...}{additional arguments (None implemented)}
+  \item{pb}{ progress bar object created with pbCreate }
   \item{step}{which step is this ( 1 <= step <= nsteps ). If step is \code{NULL}, a single step is taken }
-  \item{label}{label for the non-text progress bars}
-  \item{timer}{Logical. If \code{TRUE}, time to completion will be printed. If missing, the value will be taken from the rasterOptions}
+  \item{timer}{logical. If \code{TRUE}, time to completion will be printed. If missing, the value will be taken from the rasterOptions}
 }
 
 \value{
 canProcessInMemory: logical
 
-closeHandle: RasterLayer object
+closeConnection: RasterLayer or RasterBrick object
 
 getCluster: snow cluster object
 }
-
-\author{Robert J. Hijmans}
 
 
 \examples{

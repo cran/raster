@@ -46,7 +46,7 @@ values(x) <- value
 \value{
 a Raster* object
 }
-\author{ Robert J. Hijmans }
+
 
 \examples{ 
 r <- raster(ncol=10, nrow=10)

@@ -12,9 +12,14 @@ if (!isGeneric('writeRaster')) {
 setMethod('writeRaster', signature(x='RasterLayer', filename='character'), 
 function(x, filename, format, ...) {
 
-	stopifnot(hasValues(x))
+	if (!hasValues(x)) {
+		warning('all cell values are NA')
+	}
+	
 	filename <- trim(filename)
-	if (filename == '') {	stop('provide a filename')	}
+	if (filename == '') {	
+		stop('provide a filename')	
+	}
 	filename <- .fullFilename(filename, expand=TRUE)
 		
 	if (!file.exists(dirname(filename))) {
@@ -37,7 +42,8 @@ function(x, filename, format, ...) {
 		r <- raster(x)
 		tr <- blockSize(r)
 		pb <- pbCreate(tr$n, ...)			
-		r <- writeStart(r, filename=filename, format=filetype, ...)
+		# use x to keep layer names
+		r <- writeStart(x, filename=filename, format=filetype, ...)
 		for (i in 1:tr$n) {
 			v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
 			r <- writeValues(r, v, tr$row[i])
@@ -57,6 +63,9 @@ function(x, filename, format, ...) {
 	} else if (filetype=='ascii') {
 		x <- .writeAscii(x, filename=filename,...)
 		
+	} else if (filetype=='big.matrix') {
+		x <- .writeBigMatrix(x, filename=filename,...)
+
 	} else if (filetype=='CDF') {
 		x <- .startWriteCDF(x, filename=filename, ...)
 		x <- .writeValuesCDF(x, getValues(x))
@@ -75,36 +84,75 @@ function(x, filename, format, ...) {
 setMethod('writeRaster', signature(x='RasterStackBrick', filename='character'), 
 function(x, filename, format, bylayer=FALSE, suffix='numbers', ...) {
 
-	stopifnot(hasValues(x))
+	
+	if (!hasValues(x)) {
+		warning('all cell values are NA')
+	}
+	
+	
 	filename <- trim(filename)
-	if (filename == '') {	stop('provide a filename')	}
-	filename <- .fullFilename(filename, expand=TRUE)
-	filetype <- .filetype(format, filename=filename)
-	filename <- .getExtension(filename, filetype)
 	
 	if (bylayer) {
+		
 		nl <- nlayers(x)
-		ext <- extension(filename)
-		fn <- extension(filename, '')
-		if (suffix[1] == 'numbers') {
-			fn <- paste(fn, '_', 1:nl, ext, sep='')
+		
+		if (length(filename) > 1) {
+			if (length(filename) != nlayers(x) ) {
+				stop('the number of filenames is > 1 but not equal to the number of layers')	
+			}
+			
+			filename <- .fullFilename(filename, expand=TRUE)
+			filetype <- .filetype(format, filename=filename[1])
+			filename <- .getExtension(filename, filetype)
+				   
 		} else {
-			fn <- paste(fn, '_', names(x), ext, sep='')
+		
+			if (filename == '') { 
+				stop('provide a filename') 
+			}
+			filename <- .fullFilename(filename, expand=TRUE)
+			filetype <- .filetype(format, filename=filename)
+			filename <- .getExtension(filename, filetype)
+
+			ext <- extension(filename)
+			filename <- extension(filename, '')
+			if (suffix[1] == 'numbers') {
+				filename <- paste(filename, '_', 1:nl, ext, sep='')
+			} else if (suffix[1] == 'names') {
+				filename <- paste(filename, '_', names(x), ext, sep='')
+			} else if (length(suffix) == nl) {
+				filename <- paste(filename, '_', suffix, ext, sep='')
+			} else {
+				stop('invalid "suffix" argument')
+			}
 		}
+		
+		
+		if (filetype == 'KML') {
+			layers <- lapply(1:nl, function(i) KML(x[[i]], filename=filename[i], ...))	
+			return(invisible(x))
+		}
+			
 		if (inherits(x, 'RasterBrick')) {
 			x <- stack(x)
 		}
-		layers <- lapply(1:nl, function(i) writeRaster(x[[i]], filename=fn[i], format=filetype, ...))	
-		
+		layers <- lapply(1:nl, function(i) writeRaster(x[[i]], filename=filename[i], format=filetype, ...))	
 		return(stack(layers))
 	}
 	
 
+	if (filename == '') {	
+		stop('provide a filename')	
+	}
+	filename <- .fullFilename(filename, expand=TRUE)
+	filetype <- .filetype(format, filename=filename)
+	filename <- .getExtension(filename, filetype)
+	
+	
 	if (filetype == 'KML') {
 		KML(x, filename, ...) 
 		return(invisible(x))
 	}
-	
 	
 	if (.isNativeDriver(filetype)) {
 		if (! filetype %in% c("raster", "BIL", "BSQ", "BIP") ) {
@@ -113,6 +161,10 @@ function(x, filename, format, bylayer=FALSE, suffix='numbers', ...) {
 	
 		out <- brick(x, values=FALSE)
 		names(out) <- names(x)
+		z <- getZ(x)
+		if (!is.null(z)) {
+			out <- setZ(out, z)
+		}
 		out <- writeStart(out, filename, format=filetype, ...)
 	
 		if (inMemory(x)) {

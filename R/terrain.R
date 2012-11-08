@@ -98,7 +98,7 @@ terrain <- function(x, opt='slope', unit='radians', neighbors=8, filename='', ..
 
 		out <- writeStart(out, filename, ...)
 		tr <- blockSize(out, minblocks=3, minrows=3)
-		pb <- pbCreate(tr$n, ...)
+		pb <- pbCreate(tr$n, label='terrain', ...)
 		
 		nc <- ncol(out)
 		buf <- 1:nc

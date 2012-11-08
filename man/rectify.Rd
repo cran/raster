@@ -29,7 +29,7 @@ rectify(x, ext, res, method='ngb', filename='', ...)
 RasterLayer or RasterBrick object
 }
 
-\author{Robert J. Hijmans }
+
 
 
 \keyword{spatial}

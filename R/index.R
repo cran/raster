@@ -31,7 +31,7 @@ function(x, i, j, ... ,drop=TRUE) {
 		i <- extent(i)
 		callNextMethod(x, i=i, ..., drop=drop)
 	
-	} else if (compare(x, i, stopiffalse=FALSE, showwarning=FALSE)) {
+	} else if (compareRaster(x, i, stopiffalse=FALSE, showwarning=FALSE)) {
 		i <- which( as.logical( getValues(i) ) )
 		.doExtract(x, i, drop=drop)
 

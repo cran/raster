@@ -32,7 +32,7 @@ function(x, incomparables=FALSE, ...) {
 		u2 <- vector()
 		
 		tr <- blockSize(x, n=2)
-		pb <- pbCreate(tr$n, ...)	
+		pb <- pbCreate(tr$n, label='unique', ...)	
 
 		for (i in 1:tr$n) {
 			u1 <- unique( c(u1, getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i])) )
@@ -79,7 +79,7 @@ function(x, incomparables=FALSE, ...) {
 		un <- list(length=nl, mode='list')
 		
 		tr <- blockSize(x, n=2)
-		pb <- pbCreate(tr$n, ...)	
+		pb <- pbCreate(tr$n, label='unique', ...)	
 
 		un <- NULL
 		for (i in 1:tr$n) {

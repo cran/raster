@@ -11,11 +11,11 @@ factorValues <- function(x, v, layer=1, att=NULL, append.names=FALSE) {
 	if (!is.data.frame(rat)) {
 		rat <- rat[[1]]
 	}
-	if (colnames(rat)[2]=='WEIGHT') {
-		i <- which(match(rat$ID, round(v))==1)
-	} else {
+#	if (colnames(rat)[2]=='WEIGHT') {
+#		i <- which(match(rat$ID, round(v))==1)
+#	} else {
 		i <- match(round(v), rat$ID)
-	}
+#	}
 	r <- rat[i, -1, drop=FALSE]
 
 	rownames(r) <- NULL
@@ -91,7 +91,7 @@ setMethod('levels', signature(x='Raster'),
 		f <- is.factor(x)
 		if (any(f)) {
 			if (inherits(x, 'RasterStack')) {
-				return( lapply(x@layers, function(i) i@data@attributes)  )
+				return( sapply(x@layers, function(i) i@data@attributes)  )
 			} else {
 				return(x@data@attributes)
 			}
@@ -115,15 +115,15 @@ setMethod('levels', signature(x='Raster'),
 	}
 	
 	if (!is.null(old)) {
-		if (colnames(newv)[2] == 'WEIGHT') {
-			if (nrow(newv) < nrow(old)) {
-				warning('the number of rows in the raster attributes (factors) data.frame is lower than expected (values missing?)')
-			}
-			if (! all(unique(sort(newv[,1])) == sort(unique(old[,1])))) {
-				warning('the values in the "ID" column in the raster attributes (factors) data.frame have changed')
-			}
+#		if (colnames(newv)[2] == 'WEIGHT') {
+#			if (nrow(newv) < nrow(old)) {
+#				warning('the number of rows in the raster attributes (factors) data.frame is lower than expected (values missing?)')
+#			}
+#			if (! all(unique(sort(newv[,1])) == sort(unique(old[,1])))) {
+#				warning('the values in the "ID" column in the raster attributes (factors) data.frame have changed')
+#			}
 	
-		} else {
+#		} else {
 		
 			if (! nrow(newv) == nrow(old)) {
 				warning('the number of rows in the raster attributes (factors) data.frame is unexpected')
@@ -131,12 +131,12 @@ setMethod('levels', signature(x='Raster'),
 			if (! all(sort(newv[,1]) == sort(old[,1]))) {
 				warning('the values in the "ID" column in the raster attributes (factors) data.frame have changed')
 			}
-		}
+#		}
 	}
 	newv[, 1] <- as.integer(newv[, 1])
-	if (colnames(newv)[2] == 'WEIGHT') {
-		newv[, 2] <- as.numeric(newv[, 2])
-	}
+#	if (colnames(newv)[2] == 'WEIGHT') {
+#		newv[, 2] <- as.numeric(newv[, 2])
+#	}
 	newv
 }
 
@@ -158,14 +158,15 @@ setMethod('levels<-', signature(x='Raster'),
 			return(x)
 		} 
 		
-		i <- sapply(value, is.null)
-		if (! all(i)) {
+		i <- ! sapply(value, is.null)
+		if ( any(i) ) {
 			stopifnot (length(value) == nlayers(x))
 			levs <- levels(x)
-			for (j in which(!i)) {
-				value[j] <- .checkLevels(levs[[j]], value[[j]])				
+			for (j in which(i)) {
+				value[[j]] <- .checkLevels(levs[[j]], value[[j]])
 			}
 			x@data@attributes <- value
+			x@data@isfactor <- i
 		} else {
 			x@data@attributes <- list()		
 		}

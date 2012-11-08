@@ -28,8 +28,6 @@ dropLayer(x, i, ...)
 RasterStack
 }
 
-\author{Robert J. Hijmans}
-
 \seealso{ \code{\link[raster]{subset}}}
 
 \examples{

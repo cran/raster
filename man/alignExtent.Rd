@@ -27,7 +27,7 @@ Aligning an Extent object to another object assures that it gets the same origin
 }
   
   
-\author{Robert J. Hijmans}
+
 
 \seealso{ \code{\link[raster]{extent}}, \code{\link[raster]{drawExtent}}, \code{\link[raster]{Extent-class}} }
 

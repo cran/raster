@@ -3,11 +3,130 @@
 # Version 0.9
 # Licence GPL v3
 
+
+
+layerNames <- function(x) {
+	if (.depracatedwarnings()) {
+		warning('the layerNames function is obsolete. Use "names" instead')
+	}
+	names(x)
+}
+
+
+
+'layerNames<-' <- function(x, value) {
+	if (.depracatedwarnings()) {
+		warning('the layerNames function is obsolete. Use "names" instead')
+	}
+	
+	nl <- nlayers(x)
+	if (is.null(value)) {
+		value <- rep('', nl)
+	} else if (length(value) != nl) {
+		stop('incorrect number of layer names')
+	}
+	value <- .goodNames(value)
+	
+	if (inherits(x, 'RasterStack')){
+		
+		x@layers <- sapply(1:nl, function(i){ 
+			r <- x@layers[[i]]
+			r@data@names <- value[i]
+			r
+		})
+		
+	} else {
+		if (.hasSlot(x@data, 'names')) {
+			x@data@names <- value
+		} else {
+			x@layernames <- value		
+		}
+	}
+
+	return(x)
+}
+
+compare <- function(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE, orig=FALSE, rotation=TRUE, tolerance, stopiffalse=TRUE, showwarning=FALSE) {
+	if (.depracatedwarnings()) {
+		warning("raster function 'compare' is obsolete. It has been replaced by 'compareRaster'")
+	}	
+	compareRaster(x, ..., extent=extent, rowcol=rowcol, crs=crs, res=res, orig=orig, rotation=rotation, tolerance=tolerance, stopiffalse=stopiffalse, showwarning=showwarning)
+}
+
+
+
+if (!isGeneric("expand")) {
+	setGeneric("expand", function(x, y, ...)
+		standardGeneric("expand"))
+}	
+
+
+setMethod('expand', signature(x='Extent'), 
+function(x, y, ...) {
+	if (.depracatedwarnings()) {
+		warning("function 'expand' is obsolete. It has been replaced by 'extend'")
+	}
+	extend(x, y, ...)
+}
+)
+
+
+setMethod('expand', signature(x='Raster'), 
+function(x, y, value=NA, filename='', ...) {
+	if (.depracatedwarnings()) {
+		warning("function 'expand' is obsolete. It has been replaced by 'extend'")
+	}
+	extend(x, y, value=value, filename=filename, ...)
+} )
+
+
+
+unionExtent <- function(...) {
+	stop('this function has been depracated. Use "union"')
+}
+
+
+intersectExtent <- function(...) {
+	stop('this function has been depracated. Use "intersect"')
+}
+
+
+setOptions <- function(...) {
+	if (.depracatedwarnings()) {
+		warning('this function is depracated. Use "rasterOptions" instead')
+	}
+	rasterOptions(...)
+}
+
+showOptions <- function() {
+	if (.depracatedwarnings()) {
+		warning('This function is depracated. Use "rasterOptions()" in stead')
+	}
+	rasterOptions()
+}
+
+clearOptions <- function() {
+	if (.depracatedwarnings()) {
+		warning('This function is depracated. Use "rasterOptions(default=TRUE)" in stead')
+	}
+	rasterOptions(default=TRUE)
+}
+
+
+saveOptions <- function() {
+	if (.depracatedwarnings()) {
+		warning('This function is depracated. Use "rasterOptions(save=TRUE)" in stead')
+	}
+	rasterOptions(save=TRUE)
+}
+
+
 	
 .focalValues <- function(x, row, ngb=3, fun=NULL, na.rm=FALSE, layer, nl, ...) {
 
-	warning('this function is depracated. Use "getValuesFocal" instead.')
-	
+	if (.depracatedwarnings()) {
+		warning('this function is depracated. Use "getValuesFocal" instead.')
+	}
 	dots <- list(...)
 	if (! is.null(dots$buffer) ) {
 		warning('argument "buffer" is ignored')
@@ -90,5 +209,4 @@
 		
 	return(v)
 }
-
 

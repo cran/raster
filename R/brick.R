@@ -28,25 +28,20 @@ setMethod('brick', signature(x='missing'),
 
 
 setMethod('brick', signature(x='character'), 
-	function(x, values=FALSE, crs=NULL, ...) {
-		b <- .rasterObjectFromFile(x, objecttype='RasterBrick', ...)
-		if (values) {
-			b <- readAll(b)
-		}
-		if (!is.null(crs)) {
-			projection(b) <- crs
-		}
-		return(b)
+	function(x, ...) {
+		.rasterObjectFromFile(x, objecttype='RasterBrick', ...)
 	}
 )
 
 
 setMethod('brick', signature(x='RasterLayer'), 
-	function(x, ..., values=TRUE, filename='', format,  datatype, overwrite, progress, nl=1) {
+	function(x, ..., values=TRUE, nl=1, filename='') {
+
 		nl <- max(round(nl), 0)
-		if (nl != 1 | !hasValues(x)) {
+		if (!hasValues(x)) {
 			values <- FALSE
 		}
+		
 		if (!values) {
 			b <- brick(x@extent, nrows=nrow(x), ncols=ncol(x), crs=projection(x), nl=nl)
 			if (rotated(x)) {
@@ -55,13 +50,16 @@ setMethod('brick', signature(x='RasterLayer'),
 			}
 			return(b)
 		}
-		x <- stack(x, ...)
+		
 		filename <- trim(filename)
-		if (missing(format)) { format <- .filetype(filename=filename) } 
-		if (missing(datatype)) { datatype <- .datatype() }
-		if (missing(overwrite)) { overwrite <- .overwrite() }
-		if (missing(progress)) { progress <- .progress() }
+		dots <- list(...)
+		if (is.null(dots$format)) { format <- .filetype(filename=filename) } 
+		if (is.null(dots$datatype)) { datatype <- .datatype() }
+		if (is.null(dots$overwrite)) { overwrite <- .overwrite() }
+		if (is.null(dots$progress)) { progress <- .progress() }
 
+		x <- stack(x, ...)
+		
 		brick(x, values=values, filename=filename, format=format, datatype=datatype, overwrite=overwrite, progress=progress)
 	}
 )
@@ -237,6 +235,36 @@ setMethod('brick', signature(x='array'),
 )
 	
 
+
+setMethod('brick', signature(x='big.matrix'), 
+	function(x, template, filename='', ...) {
+		stopifnot(inherits(template, 'BasicRaster'))
+		stopifnot(nrow(x) == ncell(template))
+		r <- brick(template)
+		filename <- trim(filename)
+		names(r) <- colnames(x)
+		if (canProcessInMemory(r)) {
+			r <- setValues(r, x[])
+			if (filename != '') {
+				r <- writeRaster(r, filename, ...)
+			}
+		} else {
+			tr <- blockSize(r)
+			pb <- pbCreate(tr$n, ...)
+			r <- writeStart(r, filename, ...)
+			for (i in 1:tr$n) {
+				r <- writeValues(r, x[tr$row[i]:(tr$row[i]+tr$nrows[i]-1), ], tr$row[i] )
+				pbStep(pb) 
+			}
+			r <- writeStop(r)
+			pbClose(pb)
+		}
+		return(r)
+	}
+)
+
+	
+	
 
 setMethod('brick', signature(x='kasc'), 
 	function(x) {

@@ -3,6 +3,13 @@
 # Version 1.0
 # Licence GPL v3
 
+.naChanged <- function(x) {
+	if (.hasSlot(x@file, 'NAchanged')) {
+		return(x@file@NAchanged)
+	} else {
+		return(TRUE)
+	}
+}
 
 'NAvalue<-' <- function(x, value) {
 	if (inherits(x, 'RasterStack')) {
@@ -16,9 +23,11 @@
 		}
 		for (i in 1:nl) {
 			x@layers[[i]]@file@nodatavalue <- value[i]
+			x@layers[[i]]@file@NAchanged <- TRUE
 		}
 	} else {
 		x@file@nodatavalue <- value[[1]]
+		x@file@NAchanged <- TRUE
 	}
 	return(x)
 }

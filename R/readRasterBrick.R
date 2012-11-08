@@ -1,6 +1,6 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date: Sept 2009
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
 
 
@@ -159,6 +159,12 @@
  	} else if (object@file@driver == 'netcdf') {
 		result <- .readRowsBrickNetCDF(object, startrow, nrows, startcol, ncols)
 	
+ 	} else if (object@file@driver == 'big.matrix') {
+
+		b <- attr(object@file, 'big.matrix')
+		start <- cellFromRowCol(object, startrow, startcol)
+		end <- cellFromRowCol(object, endrow, endcol)
+		result <- b[start:end, ]
  
 	} else {
 	#use GDAL  			
@@ -177,7 +183,6 @@
 
         closeDataset(con)
         result[result == object@file@nodatavalue] <- NA
-		
 		
 	}
 

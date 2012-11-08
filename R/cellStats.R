@@ -67,6 +67,7 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 					return( colSums(x, na.rm=na.rm) )
 					
 				} else if (stat == 'countNA') { 
+					warning ("'countNA' is depracted. Use freq(x, 'value=NA') instead")
 					return( colSums(is.na(x)) )
 				
 				} else if (stat == 'sd') { 
@@ -81,6 +82,27 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 						st <- n * st / (n-1)
 					} 
 					return(st)
+
+				} else if (stat == 'rms') { 
+					if (na.rm) {
+						n <- colSums(! is.na(x))
+					} else {
+						n <- nrow(x)
+					}
+					if (asSample) {
+						n <- n-1
+					}
+					st <- apply(x, 2, function(x) sqrt(sum(x^2)/n))
+
+				} else if (stat == 'skew') { 
+					if (na.rm) {
+						n <- colSums(! is.na(x))
+					} else {
+						n <- nrow(x)
+					}
+					
+				
+					
 				}
 			} 
 			return( ( apply(x, 2, stat, na.rm=na.rm) ) )
@@ -102,6 +124,7 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 		} else if (stat == 'range') {
 			fun <- range
 		} else if (stat == 'countNA') {
+			warning ("'countNA' is depracted. Use freq(x, 'value=NA') instead")
 			st <- 0	
 			counts <- TRUE
 		} else if (stat == 'skew') {
@@ -114,18 +137,18 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 			counts <- TRUE
 	
 			
-		} else if (stat == 'mean' | stat == 'sd') {
+		} else if (stat == 'mean' | stat == 'sd' | stat == 'rms') {
 			st <- 0	
 			sumsq <- 0
 			cnt <- 0
 			counts <- TRUE
 		} else { 
-			stop("invalid 'stat'. Should be sum, min, max, sd, mean, or 'countNA'") 
+			stop("invalid 'stat'. Should be sum, min, max, sd, mean, 'rms', 'skew', or 'countNA'") 
 		}
 
 			
 		tr <- blockSize(x)
-		pb <- pbCreate(tr$n)			
+		pb <- pbCreate(tr$n, label='cellStats', ...)
 		
 		for (i in 1:tr$n) {
 			d <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
@@ -176,10 +199,21 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 			
 		if (stat == 'sd') {
 			meansq <- (st/cnt)^2
-			# cnt/(cnt-1) to use n-1, as in sd 
-			st <- sqrt(( (sumsq / cnt) - meansq ) * (cnt/(cnt-1)))
+			if (asSample) {
+				# cnt/(cnt-1) to use n-1, as in sd 
+				st <- sqrt(( (sumsq / cnt) - meansq ) * (cnt/(cnt-1)))
+			} else {
+				st <- sqrt( (sumsq / cnt) - meansq )
+			}
 		} else if (stat == 'mean') {
 			st <- st / cnt
+		} else if (stat == 'rms') {
+			if (asSample) {
+				st <- sqrt(sumsq/(cnt-1))
+			} else {
+				st <- sqrt(sumsq/cnt)
+			}
+
 		} else if (stat == 'skew') {
 	
 			meansq <- (stsd/cnt)^2
@@ -288,7 +322,7 @@ setMethod('cellStats', signature(x='RasterLayer'),
 
 			
 		tr <- blockSize(x)
-		pb <- pbCreate(tr$n)			
+		pb <- pbCreate(tr$n, label='cellStats', ...)
 		
 		for (i in 1:tr$n) {
 			d <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])

@@ -27,7 +27,7 @@ cover(x, y, ...)
 RasterLayer or RasterBrick object
 }
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 r1 <- raster(ncols=36, nrows=18)

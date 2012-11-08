@@ -30,7 +30,7 @@ RasterLayer
 
 \seealso{ \code{\link[raster]{rowFromCell}} }
 
-\author{Robert J. Hijmans }
+
 
 \examples{
 r <- raster(ncols=100, nrows=100)

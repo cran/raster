@@ -5,7 +5,7 @@
 \title{Adjacent cells}
 
 \description{
-Identify cells that are adjacent to a set of cells on a raster. See \code{\link{adjacency}} for an alternative implementation.
+Identify cells that are adjacent to a set of cells on a raster. 
 }
 
 \usage{
@@ -15,8 +15,8 @@ adjacent(x, cells, directions=4, pairs=FALSE, target=NULL, sorted=FALSE,
 
 \arguments{
   \item{x}{Raster* object}
-  \item{cells}{vector of cell numbers for which adjacent cells should be found}
-  \item{directions}{the number of directions in which cells should be connected: 4 (rook's case), 8 (queen's case), 16, or 'bishop'. Or a neigborhood matrix (see Details)}
+  \item{cells}{vector of cell numbers for which adjacent cells should be found. Cell numbers start with 1 in the upper-left corner and increase from left to right and from top to bottom}
+  \item{directions}{the number of directions in which cells should be connected: 4 (rook's case), 8 (queen's case), 16 (knight and one-cell queen moves), or 'bishop' to connect cells with one-cell diagonal moves. Or a neigborhood matrix (see Details)}
   \item{pairs}{logical. If \code{TRUE}, a matrix of pairs of adjacent cells is returned. If \code{FALSE}, a vector of cells adjacent to \code{cells} is returned}
   \item{target}{optional vector of target cell numbers that should be considered. All other adjacent cells are ignored}
   \item{sorted}{logical. Should the results be sorted? }
@@ -26,8 +26,6 @@ adjacent(x, cells, directions=4, pairs=FALSE, target=NULL, sorted=FALSE,
 
 \details{
 A neighborhood matrix indentifies the cells around each cell that are considered adjacent. The matrix should have one, and only one, cell with value 0 (the focal cell); at least one cell with value 1 (the adjacent cell(s)); All other cells are not considered adjacent and ignored.
-
-Cell numbers start with 1 in the upper-left corner and increase from left to right and from top to bottom.
 }
 
 
@@ -35,9 +33,6 @@ Cell numbers start with 1 in the upper-left corner and increase from left to rig
 matrix or vector with adjacent cells. 
 }
 
-\seealso{
-\code{\link{adjacency}}
-}
 
 \author{Robert J. Hijmans and Jacob van Etten}
 
@@ -58,7 +53,6 @@ rook <- matrix(c(NA, 1, NA,
                  NA, 1, NA), ncol=3, byrow=TRUE)
 
 adjacent(r, cells = c(1,55,90), directions=rook, sorted=TRUE) 
-
 }
 
 \keyword{spatial}

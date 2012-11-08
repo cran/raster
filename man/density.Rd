@@ -28,7 +28,7 @@ Create density plots of values in a Raster object
 density plot (and a density object, returned invisibly if \code{plot=TRUE)} 
 }
 
-\author{Robert J. Hijmans}
+
 
 
 \keyword{spatial}

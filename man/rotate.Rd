@@ -28,7 +28,7 @@ RasterLayer or a RasterBrick object
 
 \seealso{ \code{\link[raster]{flip}} }
 
-\author{Robert J. Hijmans }
+
 \examples{
 
 r <- raster(nrow=18, ncol=36)

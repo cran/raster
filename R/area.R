@@ -68,7 +68,7 @@ setMethod('area', signature(x='RasterLayer'),
 		dx <- .haversine(0, y, xres(out), y)
 
 		tr <- blockSize(out)
-		pb <- pbCreate(tr$n, ...)
+		pb <- pbCreate(tr$n, label='area', ...)
 
 			for (i in 1:tr$n) {
 				r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
@@ -115,7 +115,7 @@ setMethod('area', signature(x='RasterStackBrick'),
 			return( area(raster(x), filename=filename, na.rm=FALSE, weights=weights, ...) )
 		}	
 		
-		out = brick(x, values=FALSE)
+		out <- brick(x, values=FALSE)
 
 		if (! .couldBeLonLat(out)) {
 			stop('This function is only useful for Raster* objects with a longitude/latitude coordinates')
@@ -150,8 +150,9 @@ setMethod('area', signature(x='RasterStackBrick'),
 			flush.console()		
 				
 			tr <- blockSize(out, minblocks=nodes)
-			pb <- pbCreate(tr$n, ...)
+			pb <- pbCreate(tr$n, label='area', ...)
 
+#			clFun <- function(i, tr, dx, dy, out, nl) {
 			clFun <- function(i) {
 				r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
 				vv <- dx[r] * dy / 1000000
@@ -162,14 +163,19 @@ setMethod('area', signature(x='RasterStackBrick'),
 				vv[is.na(a)] <- NA
 				return(vv)
 			}
-				
+
+			clusterExport(cl, c('tr', 'dx', 'dy', 'out', 'nl'), envir=environment())
+			
 		    for (i in 1:nodes) {
-				sendCall(cl[[i]], clFun, i, tag=i)
+				sendCall(cl[[i]], clFun, list(i), tag=i)
 			}
 
 			for (i in 1:tr$n) {
 				d <- recvOneData(cl)
-				if (! d$value$success ) { stop('cluster error') }
+				if (! d$value$success ) { 
+					print(d)
+					stop('cluster error') 
+				}
 
 				if (filename == "") {
 					r <- tr$row[d$value$tag]:(tr$row[d$value$tag]+tr$nrows[d$value$tag]-1)
@@ -181,7 +187,8 @@ setMethod('area', signature(x='RasterStackBrick'),
 				}
 
 				if ((nodes + i) <= tr$n) {
-					sendCall(cl[[d$node]], clFun, nodes+i, tag=nodes+i)
+#					sendCall(cl[[d$node]], clFun, list(nodes+i, tr, dx, dy, out, nl), tag=nodes+i)
+					sendCall(cl[[d$node]], clFun, list(nodes+i), tag=nodes+i)
 				}
 				pbStep(pb, i) 	
 			}		
@@ -189,7 +196,7 @@ setMethod('area', signature(x='RasterStackBrick'),
 		} else {
 
 			tr <- blockSize(out)
-			pb <- pbCreate(tr$n, ...)
+			pb <- pbCreate(tr$n, label='area', ...)
 		
 		#rows <- 1
 			for (i in 1:tr$n) {

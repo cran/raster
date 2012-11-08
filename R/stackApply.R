@@ -41,7 +41,7 @@ stackApply <- function(x, indices, fun, filename='', na.rm=TRUE, ...) {
 		if (makemat) { 
 			x <- matrix(x, ncol=1) 
 		}
-		pb <- pbCreate(3,...)
+		pb <- pbCreate(3, label='stackApply', ...)
 		pbStep(pb)
 		if (rowcalc) {
 			v <- lapply(uin, function(i) fun(x[, ind==uin[i], drop=FALSE], na.rm=na.rm))
@@ -63,7 +63,7 @@ stackApply <- function(x, indices, fun, filename='', na.rm=TRUE, ...) {
 	
 	out <- writeStart(out, filename=filename, ...)
 	tr <- blockSize(out, n=nl+nlout)
-	pb <- pbCreate(tr$n, ...)
+	pb <- pbCreate(tr$n, label='stackApply', ...)
 
 	for (i in 1:tr$n) {
 		a <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])

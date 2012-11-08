@@ -87,11 +87,10 @@ deratify <- function(x, att=NULL, layer=1, complete=FALSE, drop=TRUE, fun='mean'
 	}
 	
 	RAT <- levels(x)[[1]]
-	if (colnames(RAT)[2] == 'WEIGHT') {
-		weighted <- TRUE
-	} else {
-		weighted <- FALSE
-	}
+	weighted <- FALSE
+#	if (colnames(RAT)[2] == 'WEIGHT') {
+#		weighted <- TRUE
+#	}
 
 	if (complete) {
 		x@data@isfactor <- FALSE

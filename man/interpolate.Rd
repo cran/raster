@@ -8,12 +8,12 @@
 \title{Interpolate}
 
 \description{
-Make a RasterLayer with interpolated values using a fitted model object of classes such as 'gstat' or 'Krige'. That is, these are models that have location ('x' and 'y', or 'longitude' and 'latitude') as independent variables. If x and y are the only independent variables provide an empty (no associated data in memory or on file) RasterLayer for which you want predictions. If there are more spatial predictor variables provide these as a Raster* object in the first argument of the function. If you do not have x and y locations as implicit predictors in your model you should use \code{\link[raster]{predict}} instead.
+Make a RasterLayer with interpolated values using a fitted model object of classes such as 'gstat' (gstat package) or 'Krige' (fields pacakge). That is, these are models that have location ('x' and 'y', or 'longitude' and 'latitude') as independent variables. If x and y are the only independent variables provide an empty (no associated data in memory or on file) RasterLayer for which you want predictions. If there are more spatial predictor variables provide these as a Raster* object in the first argument of the function. If you do not have x and y locations as implicit predictors in your model you should use \code{\link[raster]{predict}} instead.
 }
 
 \usage{
 \S4method{interpolate}{Raster}(object, model, filename="", fun=predict, 
-     xyOnly=TRUE, ext=NULL, const=NULL, index=1, na.rm=TRUE, debug.level=1, ...)
+    xyOnly=TRUE, ext=NULL, const=NULL, index=1, na.rm=TRUE, debug.level=1, ...)
 }
 
 \arguments{
@@ -31,17 +31,15 @@ Make a RasterLayer with interpolated values using a fitted model object of class
 }
 
 \value{
-Raster object
+Raster* object
 }
 
 \seealso{ \code{\link[raster]{predict}}, \code{\link[gstat]{predict.gstat}}, \code{\link[fields]{Tps}} }
 
-\author{ Robert J. Hijmans}
+
 
 \examples{
-
 \dontrun{
-
 ## Thin plate spline interpolation with x and y only
 library(fields) 
 r <- raster(system.file("external/test.grd", package="raster"))
@@ -58,9 +56,11 @@ se <- mask(se, r)
 plot(se)
 
 
-##gstat examples
+## gstat examples
 library(gstat)
-## inverse distance weighted interpolation with gstat
+data(meuse)
+
+## inverse distance weighted (IDW)
 r <- raster(system.file("external/test.grd", package="raster"))
 data(meuse)
 mg <- gstat(id = "zinc", formula = zinc~1, locations = ~x+y, data=meuse, 
@@ -69,12 +69,35 @@ z <- interpolate(r, mg)
 z <- mask(z, r)
 
 ## kriging
-coordinates(meuse) = ~x+y
+coordinates(meuse) <- ~x+y
+projection(meuse) <- projection(r)
+
+## ordinary kriging
 v <- variogram(log(zinc)~1, meuse)
 m <- fit.variogram(v, vgm(1, "Sph", 300, 1))
-g <- gstat(NULL, "log.zinc", log(zinc)~1, meuse, model = m)
-projection(r) <- projection(meuse)
-x <- interpolate(r, g)
+gOK <- gstat(NULL, "log.zinc", log(zinc)~1, meuse, model=m)
+OK <- interpolate(r, gOK)
+
+# examples below provided by Maurizio Marchi
+## universial kriging
+vu <- variogram(log(zinc)~elev, meuse)
+mu <- fit.variogram(vu, vgm(1, "Sph", 300, 1))
+gUK <- gstat(NULL, "log.zinc", log(zinc)~elev, meuse, model=mu)
+names(r) <- 'elev'
+UK <- interpolate(r, gUK, xyOnly=FALSE)
+
+## co-kriging
+gCoK <- gstat(NULL, 'log.zinc', log(zinc)~1, meuse)
+gCoK <- gstat(gCoK, 'elev', elev~1, meuse)
+gCoK <- gstat(gCoK, 'cadmium', cadmium~1, meuse)
+gCoK <- gstat(gCoK, 'copper', copper~1, meuse)
+coV <- variogram(gCoK)
+plot(coV, type='b', main='Co-variogram')
+coV.fit <- fit.lmc(coV, gCoK, vgm(model='Sph', range=1000))
+coV.fit
+plot(coV, coV.fit, main='Fitted Co-variogram')
+coK <- interpolate(r, coV.fit)
+plot(coK)
 }
 }
 

@@ -30,7 +30,7 @@ hasValues(x)
 Logical value
 }
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 rs <- raster(system.file("external/test.grd", package="raster"))

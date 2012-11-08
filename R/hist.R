@@ -1,23 +1,32 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  June 2008
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
 
-setMethod('hist', signature(x='RasterStackBrick'), 
+
+setMethod('hist', signature(x='Raster'), 
 	function(x, layer, maxpixels=100000, plot=TRUE, main, ...) {
 		
-		if (missing(layer)) y = 1:nlayers(x)
-		else if (is.character(layer)) {
+		if (missing(layer)) {
+			y = 1:nlayers(x)
+		} else if (is.character(layer)) {
 			y <- match(layer, names(x))
 		} else { 
 			y <- layer 
 		}
+		
 		y <- unique(as.integer(round(y)))
 		y <- na.omit(y)
 		y <- y[ y >= 1 & y <= nlayers(x) ]
 		nl <- length(y)
 		
-		if (nl == 0) {stop('no existing layers selected')}
+		if (nl == 0) {
+			stop('no layers selected')
+		}
+
+		if (missing(main)) {
+			main=names(x) 
+		}
 		
 		if (nl > 1)	{
 			res <- list()
@@ -26,41 +35,33 @@ setMethod('hist', signature(x='RasterStackBrick'),
 				nl <- 16
 				y <- y[1:16]
 			}
-			if (missing(main)) {
-				main=names(x) 
-			}
 
 			nc <- ceiling(sqrt(nl))
 			nr <- ceiling(nl / nc)
-			
 			mfrow <- par("mfrow")
 			spots <- mfrow[1] * mfrow[2]
 			if (spots < nl) {
 				par(mfrow=c(nr, nc))
 			}
-			for (i in 1:length(y)) {	
-				r <- raster(x, y[i])
-				m <- main[y[i]]
-				if (plot) { res[[i]] = hist(r, maxpixels=maxpixels, main=m, ...)
-				} else  { res[[i]] = hist(r, maxpixels=maxpixels, plot=FALSE, ...) }
+			for (i in 1:length(y)) {
+				res[[i]] = .hist1(raster(x, y[i]), maxpixels=maxpixels, main=main[y[i]], plot=plot, ...) 
 			}		
 
-		} else if (nl==1) {
-			if (missing(main)) main = names(x)[y]
-			x <- raster(x, y)
-			if (plot) { res = hist(x, maxpixels=maxpixels, main=main, ...)
-			} else { res = hist(r, maxpixels=maxpixels, plot=FALSE, ...) }
+		} else if (nl==1) {			
+			res <- .hist1(x, maxpixels=maxpixels, main=main[1], plot=plot, ...) 	
+		}		
+		if (plot) {
+			return(invisible(res))
+		} else {
+			return(res)
 		}
-		
-		if (plot) return(invisible(res))
-		else return(res)
-		
 	}
 )
 
 
-setMethod('hist', signature(x='RasterLayer'), 
-	function(x, layer=1, maxpixels=100000, main=NA,  plot=TRUE, ...){
+
+.hist1 <- function(x, maxpixels, main, plot, ...){
+
 		if ( inMemory(x) ) {
 			v <- getValues(x)
 		} else if ( fromDisk(x) ) {
@@ -79,16 +80,14 @@ setMethod('hist', signature(x='RasterLayer'),
 			}	
 		} else { 
 			stop('cannot make a histogram; need data on disk or in memory')
-		}		
+		}	
+		
 		if (.shortDataType(x) == 'LOG') {
 			v <- v * 1
 		}
-		if (plot) { res = hist(v, main=main, ...)  
-		} else { res = hist(v, plot=FALSE, ...)  }
-		
-		if (plot) return(invisible(res))
-		else return(res)
-	}	
-)
+
+		hist(v, main=main, plot=plot, ...)  
+}	
+
 
 

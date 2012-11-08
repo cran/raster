@@ -24,7 +24,8 @@ A single value, or a vector, or matrix of values giving the distance in meters (
 If \code{p2} is missing, a distance matrix is returned
 }
 
-\seealso{The \code{geosphere} package for many additional distance functions and other functions that operate on spherical coordinates; \code{\link{distanceFromPoints},  \link{distance},  \link{gridDistance}, \link[sp]{spDistsN1}} }
+\seealso{\code{\link{distanceFromPoints}, \link{distance}, \link{gridDistance}}, \code{\link[sp]{spDistsN1}}. 
+The \code{geosphere} package has many additional distance functions and other functions that operate on spherical coordinates}
 
 
 \author{Robert J. Hijmans and Jacob van Etten }

@@ -36,7 +36,7 @@ setMethod('crosstab', signature(x='RasterStackBrick', y='missing'),
 			res <- do.call(table, c(res, ...))
 		} else {
 			tr <- blockSize(x)
-			pb <- pbCreate(tr$n, progress=progress)	
+			pb <- pbCreate(tr$n, label='crosstab', progress=progress)	
 			res <- NULL
 			for (i in 1:tr$n) {
 				d <- getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i])
@@ -72,7 +72,7 @@ setMethod('crosstab', signature(x='RasterStackBrick', y='missing'),
 
 .oldcrosstab <- function(x, y, digits=0, long=FALSE, progress, ...) {
 # old function, not used any more	
-		compare(c(x, y))
+		compareRaster(c(x, y))
 		if (missing(progress)) { progress <- .progress() }
 
 		if (canProcessInMemory(x, 3) | ( inMemory(x) & inMemory(y) )) {
@@ -80,7 +80,7 @@ setMethod('crosstab', signature(x='RasterStackBrick', y='missing'),
 		} else {
 			res <- NULL
 			tr <- blockSize(x, n=2)
-			pb <- pbCreate(tr$n, progress=progress)	
+			pb <- pbCreate(tr$n, label='crosstab', progress=progress)	
 			for (i in 1:tr$n) {
 			
 				d <- table( round(getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i]), digits=digits), round(getValuesBlock(y, row=tr$row[i], nrows=tr$nrows[i]), digits=digits), ...)

@@ -94,7 +94,7 @@ rasterToPolygons <- function(x, fun=NULL, n=4, na.rm=TRUE, digits=12, dissolve=F
 		if (dissolve) {
 			dat <- data.frame(value=unique(sp@data[,1]))
 			rownames(dat) <- dat[,1]
-			if (version_GEOS0() < "3.3.0") {
+			if (compareVersion(version_GEOS0(), "3.3.0") < 0) {
 				sp <- gUnionCascaded(sp, id=sp@data[,1])
 			} else {
 				sp <- gUnaryUnion(sp, id=sp@data[,1])

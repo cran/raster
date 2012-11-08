@@ -27,7 +27,7 @@ init(x, fun, v, filename="", ...)
 RasterLayer
 }
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 r <- raster(ncols=36, nrows=18)

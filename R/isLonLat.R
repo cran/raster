@@ -54,7 +54,7 @@ setMethod('isLonLat', signature(x='Spatial'),
 )
 
 
-setMethod('isLonLat', signature(x='Raster'), 
+setMethod('isLonLat', signature(x='BasicRaster'), 
 # copied from the SP package (slightly adapted)
 #author:
 # ...

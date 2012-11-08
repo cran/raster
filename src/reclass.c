@@ -46,7 +46,7 @@ SEXP reclass(SEXP d, SEXP r, SEXP low, SEXP right, SEXP onlyNA, SEXP valNA) {
 	if (NAonly) {  // only change NA values
 	
 		for (i=0; i<n; i++) {
-			if (!R_FINITE(xd[i])) {
+			if (R_IsNA(xd[i])) {
 				xval[i] = NAval;
 			} else {
 				xval[i] = xd[i];
@@ -58,7 +58,7 @@ SEXP reclass(SEXP d, SEXP r, SEXP low, SEXP right, SEXP onlyNA, SEXP valNA) {
 		if (nc == 2) {
 		
 			for (i=0; i<n; i++) {
-				if (! R_FINITE(xd[i])) {
+				if (R_IsNA(xd[i])) {
 					xval[i] = NAval;
 				} else {
 					xval[i] = xd[i];
@@ -75,7 +75,7 @@ SEXP reclass(SEXP d, SEXP r, SEXP low, SEXP right, SEXP onlyNA, SEXP valNA) {
 		} else if (doleftright) {   // interval closed at left and right
 			
 			for (i=0; i<n; i++) {
-				if (! R_FINITE(xd[i])) {
+				if (R_IsNA(xd[i])) {
 					xval[i] = NAval;
 				} else {
 					xval[i] = xd[i];
@@ -105,7 +105,7 @@ SEXP reclass(SEXP d, SEXP r, SEXP low, SEXP right, SEXP onlyNA, SEXP valNA) {
 //				Rprintf ("lowres = %f \n", lowres);
 				
 				for (i=0; i<n; i++) {
-					if (!R_FINITE(xd[i])) {
+					if (R_IsNA(xd[i])) {
 						xval[i] = NAval;
 					} else if (xd[i] == lowval) {
 						xval[i] = lowres;
@@ -123,7 +123,7 @@ SEXP reclass(SEXP d, SEXP r, SEXP low, SEXP right, SEXP onlyNA, SEXP valNA) {
 			} else { // !dolowest
 
 				for (i=0; i<n; i++) {
-					if (!R_FINITE(xd[i])) {
+					if (R_IsNA(xd[i])) {
 						xval[i] = NAval;
 					} else {
 						xval[i] = xd[i];
@@ -151,7 +151,7 @@ SEXP reclass(SEXP d, SEXP r, SEXP low, SEXP right, SEXP onlyNA, SEXP valNA) {
 				}
 				
 				for (i=0; i<n; i++) {
-					if (!R_FINITE(xd[i])) {
+					if (R_IsNA(xd[i])) {
 						xval[i] = NAval;
 					} else if (xd[i] == lowval) {
 						xval[i] = lowres;
@@ -169,7 +169,7 @@ SEXP reclass(SEXP d, SEXP r, SEXP low, SEXP right, SEXP onlyNA, SEXP valNA) {
 			} else { //!dolowest
 			
 				for (i=0; i<n; i++) {
-					if (!R_FINITE(xd[i])) {
+					if (R_IsNA(xd[i])) {
 						xval[i] = NAval;
 					} else {
 						xval[i] = xd[i];

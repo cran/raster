@@ -34,7 +34,7 @@
 				if (length(na.omit(cells)) == 0) {
 					return(cells)
 				}
-				result <-  x@data@values[cells, lyrs] 
+				result <-  x@data@values[cells, lyrs, drop=FALSE] 
 				
 			} else if (x@file@driver == 'netcdf') {
 				result <- .readBrickCellsNetCDF(x, cells, layer, nl) 

@@ -21,7 +21,7 @@ sampleInt(n, size, replace=FALSE)
 
 \value{vector of integer numbers}
 
-\author{Robert J. Hijmans}
+
 
 \examples{
   sampleInt(1e+12, 10)

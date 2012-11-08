@@ -28,7 +28,7 @@ integer
 \seealso{ \code{\link[raster]{names}} }
 
 
-\author{Robert J. Hijmans }
+
 \examples{
 r <- raster(ncols=10, nrows=10)
 r[] <- 1:ncell(r)

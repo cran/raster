@@ -86,6 +86,7 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 		if (useGDAL) {
 			offs <- c(firstrow,firstcol)-1
 			reg <- c(nrow(rcut), ncol(rcut))-1
+			
 			if (inherits(x, 'RasterStack')) {
 				
 				v <- matrix(NA, ncol=nl, nrow=prod(nr, nc))
@@ -120,10 +121,13 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 				if (x@data@gain != 1 | x@data@offset != 0) {
 					v <- v * x@data@gain + x@data@offset
 				}
-				if (x@file@nodatavalue < 0) {
-					v[v <= x@file@nodatavalue] <- NA
-				} else {
-					v[v == x@file@nodatavalue] <- NA
+				
+				if (.naChanged(x)) {
+					if (x@file@nodatavalue < 0) {
+						v[v <= x@file@nodatavalue] <- NA
+					} else {
+						v[v == x@file@nodatavalue] <- NA
+					}
 				}
 			}
 	
@@ -141,6 +145,10 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 				} else {
 					outras <- setValues(outras, as.vector(v))
 				}
+				names(outras) <- names(x)
+				if (any(is.factor(x))) {
+					levels(outras) <- levels(x)
+				}
 				return(outras)
 				
 			} else {
@@ -153,7 +161,7 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 				if (sp) {
 					warning("'sp=TRUE' is ignored when 'useGDAL=TRUE'")
 				}
-				return(v)
+				return( as.vector(v) )
 			}
 		}
 	}
@@ -190,6 +198,9 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 		}
 		outras <- setValues(outras, m)
 		names(outras) <- names(x)
+		if (any(is.factor(x))) {
+			levels(outras) <- levels(x)
+		}
 		return(outras)
 		
 	} else {

@@ -8,7 +8,7 @@
 \description{
 Resample transfers values between non matching Raster* objects (in terms of origin and resolution). Use \code{\link[raster]{projectRaster}} if the target has a different coordinate reference system (projection).
 
-Before using resample, you may want to consider using these other functions instead: \code{\link[raster]{aggregate}}, \code{\link[raster]{disaggregate}}, \code{\link[raster]{crop}}, \code{\link[raster]{expand}}, \code{\link[raster]{merge}}.
+Before using resample, you may want to consider using these other functions instead: \code{\link[raster]{aggregate}}, \code{\link[raster]{disaggregate}}, \code{\link[raster]{crop}}, \code{\link[raster]{extend}}, \code{\link[raster]{merge}}.
 }
 
 
@@ -29,10 +29,10 @@ Before using resample, you may want to consider using these other functions inst
 RasterLayer or RasterBrick object 
 }
 
-\author{Robert J. Hijmans }
 
 
-\seealso{ \code{\link[raster]{aggregate}}, \code{\link[raster]{disaggregate}}, \code{\link[raster]{crop}}, \code{\link[raster]{expand}}, \code{\link[raster]{merge}}, \code{\link[raster]{projectRaster}} }
+
+\seealso{ \code{\link[raster]{aggregate}}, \code{\link[raster]{disaggregate}}, \code{\link[raster]{crop}}, \code{\link[raster]{extend}}, \code{\link[raster]{merge}}, \code{\link[raster]{projectRaster}} }
 
 
 \examples{

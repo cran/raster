@@ -3,36 +3,26 @@
 \docType{methods}
 
 \alias{hist}
-\alias{hist,RasterLayer-method}
-\alias{hist,RasterStackBrick-method}
+\alias{hist,Raster-method}
 
 \title{Histogram}
 
 \description{
-Create a histogram of the values of a RasterLayer. NA values are ignored. Large datasets are sampled using \code{maxpixels}.
+Create a histogram of the values of a RasterLayer. For large datasets a sample is used.
 }
 
 \usage{
-hist(x, ...) 
+\S4method{hist}{Raster}(x, layer, maxpixels=100000, plot=TRUE, main, ...)
 }
 
 \arguments{
-  \item{x}{A Raster* object}
+  \item{x}{Raster* object}
+  \item{layer}{integer (or character) to indicate layer number (or name). Can be used to subset the layers to plot in a multilayer Raster* object} 
+  \item{maxpixels}{integer. To regularly subsample very large objects}
+  \item{plot}{logical. Plot the histogram or only return the histogram values}
+  \item{main}{character. Main title(s) for the plot. Default is the value of \code{\link{names}}}
   \item{...}{Additional arguments. See under Methods and at \code{\link[graphics]{hist}}}  
 }
-
-\section{Methods}{
-\describe{
-A full call as implemented here:
-
-\code{hist(x, layer, maxpixels=100000, plot=TRUE, main, ...)}
-
-\code{layer} can be used to subset the layers to plot in a multilayer object (RasterBrick or RasterStack)
-
-\code{maxpixels} is the maximum number of (randomly sampled) cells to be used for creating the histogram
-
-see \code{\link[graphics]{hist}} for the other arguments
-}}
 
 
 \value{

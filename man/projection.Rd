@@ -35,7 +35,7 @@ For compatability with \code{sp} you can use \code{proj4string} instead of \code
 
 \details{ projections are done by with the PROJ.4 library exposed by rgdal }
 
-\author{ Robert J. Hijmans }
+
 
 \examples{ 
 r <- raster()

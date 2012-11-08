@@ -38,7 +38,7 @@ as.array(x, ...)
 matrix or array
 }
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 r <- raster(ncol=3, nrow=3)

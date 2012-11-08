@@ -36,10 +36,6 @@ Computes the weighted mean for each cell of a number or raster layers. The weigh
 RasterLayer
 }
 
-\author{
-Robert J Hijmans
-}
-
 
 \seealso{
 \code{\link{Summary-methods}}, \code{\link[stats]{weighted.mean}}

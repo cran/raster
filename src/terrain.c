@@ -351,7 +351,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 		double dmin;
 		GetRNGstate();
 		for (i = ncol+1; i < ncol * (nrow-1); i++) {
-			if (!R_FINITE(xd[i])) {
+			if (R_IsNA(xd[i])) {
 				xval[i+addn] = R_NaReal;
 			} else {
 				d[0] = (xd[i] - xd[i+1]) / dx;

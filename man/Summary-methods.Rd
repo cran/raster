@@ -26,7 +26,7 @@ To summarize all cells within a single RasterLayer, see \code{\link[raster]{cell
 
 \seealso{ \code{\link{calc}} }
 
-\author{Robert J. Hijmans }
+
 
 \examples{
 r1 <- raster(nrow=10, ncol=10)

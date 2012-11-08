@@ -24,7 +24,7 @@ function(x, filename='', degrees=FALSE, from=FALSE, doEdge=FALSE, ...) {
 	from <- as.integer(from)
 	
 	if (doEdge) {
-		r <- edge(x, classes=FALSE, type='inner', asNA=TRUE, progress=.progress(...)) 
+		r <- raster::edge(x, classes=FALSE, type='inner', asNA=TRUE, progress=.progress(...)) 
 		pts <- try(  rasterToPoints(r, fun=function(z){ z>0 } )[,1:2, drop=FALSE] )
 	} else {
 		pts <- try(  rasterToPoints(x)[,1:2, drop=FALSE] )
@@ -52,7 +52,7 @@ function(x, filename='', degrees=FALSE, from=FALSE, doEdge=FALSE, ...) {
 	
 	out <- writeStart(out, filename, ...)
 	tr <- blockSize(out)
-	pb <- pbCreate(tr$n, ...)
+	pb <- pbCreate(tr$n, label='direction', ...)
 	xy <- cbind(rep(xFromCol(out, 1:ncol(out)), tr$nrows[1]), NA)
 	for (i in 1:tr$n) {
 		if (i == tr$n) {

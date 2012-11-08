@@ -23,7 +23,7 @@ atan2(y, x)
 
 \seealso{ \code{\link[raster]{Math-methods}} }
 
-\author{Robert J. Hijmans}
+
 
 \examples{
 r1 <- r2 <- raster(nrow=10, ncol=10)

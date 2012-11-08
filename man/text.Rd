@@ -36,7 +36,7 @@ Plots labels, that is a textual (rather than color) representation of values, on
 \code{\link[graphics]{text}, \link[raster]{plot}}
 }
 
-\author{Robert J. Hijmans}
+
 
 \examples{ 
 r <- raster(nrows=4, ncols=4)
