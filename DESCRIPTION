@@ -1,10 +1,10 @@
 Package: raster
 Type: Package
 Title: raster: Geographic data analysis and modeling
-Version: 2.0-29
-Date: 7-November-2012
+Version: 2.0-31
+Date: 9-November-2012
 Depends: methods, sp, R (>= 2.14.0)
-Suggests: rgdal (>= 0.6-28), rgeos (>= 0.2-3), ncdf, ncdf4, igraph,
+Suggests: rgdal (>= 0.7-22), rgeos (>= 0.2-3), ncdf, ncdf4, igraph,
         snow, bigmemory, tcltk, rasterVis
 Author: Robert J. Hijmans & Jacob van Etten
 Maintainer: Robert J. Hijmans <r.hijmans@gmail.com>
@@ -13,7 +13,7 @@ Description: Reading, writing, manipulating, analyzing and modeling of
         high-level functions and processing of very large files is
         supported.
 License: GPL (>= 3)
-URL: http://raster.r-forge.r-project.org/
-Packaged: 2012-11-07 21:27:42 UTC; rhijmans
+URL: http://cran.r-project.org/web/packages/raster/
+Packaged: 2012-11-10 04:34:42 UTC; rhijmans
 Repository: CRAN
-Date/Publication: 2012-11-08 06:42:07
+Date/Publication: 2012-11-10 07:53:44

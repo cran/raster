@@ -1,3 +1,4 @@
+
 --- 7-November-2012, version 2.0-29
 new function 'select' for selecting spatial subsets by drawing on plot (map)
 new function 'barplot' for RasterLayer objects
@@ -8,7 +9,7 @@ raster now uses 'igraph' instead of 'igraph0' (functions gridDistance and clump)
 renamed function 'compare' to 'compareRaster' (to avoid name hiding by the igraph package)
 renamed function 'expand' to 'extend' (to avoid name hiding by the Matrix package)
 functions setOptions, showOptions, saveOptions, and clearOptions have been replaced by new function "rasterOptions"
-incorporated function 'count' into 'freq' (via the 'value' argument) and 'count' is now hidden as '.count' (to avoid name hiding of count by the plyr package)
+incorporated function 'count' into 'freq' (via the 'value' argument) and 'count' now gives a warning and will be removed in the future (to avoid name hiding of count by the plyr package which is used by rgeos)
 new argument 'alignOnly' to projectRaster
 new option 'setStatistics=FALSE' for writing to some GDAL files (geoTiff in particular) to suppress writing band statistics (min, max, mean, sd). This is currently not documented. When TRUE, all statistics are written when all the values are in memory, but only min and max are written in other cases, leading to problems in QGIS (reported by Agustin Lobo)
 Added argument "gridded=TRUE" for plot(RasterLayer, RasterLayer), to show counts for intervals (suggested by Agustin Lobo)

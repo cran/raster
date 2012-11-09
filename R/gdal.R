@@ -1,3 +1,8 @@
+# Author: Robert J. Hijmans
+# Date : September 2012
+# Version 1.0
+# Licence GPL v3
+
 
 
 .requireRgdal <- function(stopIfAbsent=TRUE) {
@@ -11,12 +16,15 @@
 	
 	if (! isTRUE(y) ) {
 		if (x) {
-			options('rasterGDALLoaded'=TRUE)
 			gdversion <- getGDALVersionInfo()
 			gdversion <- trim(substr(gdversion, 5, 10))
-			options('rasterGDALVersion'=gdversion)
 			pkg.info <- utils::packageDescription('rgdal') 
-			test <- utils::compareVersion(pkg.info[["Version"]], "0.7-19") > 0
+			test <- utils::compareVersion(pkg.info[["Version"]], "0.7-21") > 0
+			if (!test) {
+				stop('you use rgdal version: ', pkg.info[["Version"]], '\nYou need version 0.7-22 or higher')
+			}
+			options('rasterGDALLoaded'=TRUE)
+			options('rasterGDALVersion'=gdversion)
 			options('rasterNewRGDALVersion' = test)
 		} else if (stopIfAbsent) {
 			stop("package 'rgdal' is not available")
