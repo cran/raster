@@ -6,6 +6,7 @@
 
 \alias{intersectExtent}
 \alias{unionExtent}
+\alias{count}
 
 
 \name{Obsolete}
@@ -18,6 +19,8 @@ Functions setOptions, showOptions, saveOptions, and clearOptions have been repla
 
 intersectExtent has been replaced by \code{\link{intersect}}
 unionExtent has been replaced by \code{\link{union}}
+
+count has been replaced by freq( , , value=  )
 }
 
 \usage{
@@ -27,6 +30,7 @@ saveOptions()
 clearOptions()
 intersectExtent(...)
 unionExtent(...)
+count(...)
 }
 
 \arguments{

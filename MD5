@@ -1,5 +1,5 @@
-ef43f4e72e3ade48b076bd77c405e6e1 *ChangeLog
-7cdbed6dc44a7dfdb8a56c45082323d0 *DESCRIPTION
+f2b51966f438167b7a8ed850e1b2142b *ChangeLog
+ad85f811867a956b795000ce173e6feb *DESCRIPTION
 723b00b5fa11cb4a53ed4e3110675f84 *NAMESPACE
 b7ccac43f5dfe713b5d4f6effc9ddd37 *R/AAAClasses.R
 0fe1173bf8b65453bba8ea8ff3c6207f *R/GDALtransient.R
@@ -27,7 +27,7 @@ db8e309fda421a54a5b32ed466c94df4 *R/atan2.R
 4c66ecc5fe6e1f3dc1f89b7801c3c9c3 *R/barplot.R
 47cd16019f682a3a843e4c1a19eaf949 *R/bbox.R
 3a1e6c30b03de6fda300ecbf5e282cad *R/bilinearValue.R
-dff2d31971b2cb5e671eb943194a87d1 *R/blend.R
+96d2644a2046872f0901a906edce4d46 *R/blend.R
 c6406e2d275ff8cd8186b2ceb799d55d *R/blockSize.R
 7586b8b55e52d944f112802ecf729d72 *R/boxplot.R
 dd98cb679d9c64b2fdfdf6a3ec8a3780 *R/brick.R
@@ -51,7 +51,7 @@ e81c0b589785735137e4a5df4abacebd *R/commonDataType.R
 4f8deca83cb432298d25cc687355543a *R/compare_Logical.R
 f4af4e1a9741bad8f69157ade362cdb2 *R/connection.R
 03a8c8fef54a97d31aecb74c0ada98ac *R/contour.R
-c4951eee6ddf2487afe97687f086f499 *R/count.R
+5d18f689aac59af809f8eed6b15d7502 *R/count.R
 2a8b3f900e04aaa1b958daf4c19f13c9 *R/cover.R
 9bc9c4812611be08f7249176d00ff379 *R/coverBrick.R
 a52ea6b233fb650792b61ab3684ae837 *R/crop.R
@@ -92,7 +92,7 @@ d1996d7795eb5b1dac069b3f3d566618 *R/focal.R
 16e9a452c13c48759d979aeb41b3418b *R/freq.R
 3f39798b22bcb1e0bfd4c9036729c2d3 *R/fullFileName.R
 a9b0b85fb60817dba81aec5101cc75ca *R/gainoffset.R
-731a5efe68c915708e9a2819ce924c6a *R/gdal.R
+ccbe7219d58d3c5acad49e432a908dda *R/gdal.R
 93c3aa3aff28ce4337cb49315215c239 *R/gdalFormats.R
 6fd921f3a79949c4317898d7bd039762 *R/getData.R
 ad5efa6cea7613327143516443a2a6fc *R/getValues.R
@@ -235,7 +235,7 @@ fe26eaca2db86f6a5d14c2ce1fab7967 *R/shift.R
 88e7f03b6efd40a86795e2193ff954be *R/stack.R
 8b231e571f84b21bd69c1cd17e0ea2ca *R/stackApply.R
 13c3d01319e31f18f6494d6f36c5c9a8 *R/stackFile.R
-fc5235d2c11f2a2a62aa9ac64dfd3d38 *R/stackQuick.R
+be7b1315d03da50e5e51de59f8f5d5b9 *R/stackQuick.R
 ecdf5bd6874e1420e4739d5285920ebe *R/stackSelect.R
 419e04b11334ff9aed048b4219a873e1 *R/stretch.R
 a45c43ddaff371c1053562acd0cb1045 *R/subs.R
@@ -276,11 +276,11 @@ bbc25cd2b52fe28992728f7a2fbf66b2 *R/zonal.R
 814cdd7db7edf1f64c7dd8d3a266b987 *R/zoom.R
 2f5bfc89633470018979d4e333174e40 *R/zzz.R
 9b0d94396f6affa0bfbd30432e56fb3a *inst/doc/Raster.Rnw
-0c1aa9ae95b66dae676acc5c2dc7f629 *inst/doc/Raster.pdf
+72b92b6cf31aba397df7c4d0d281940e *inst/doc/Raster.pdf
 b19c28ec2d02d8d503521d72953098a9 *inst/doc/functions.Rnw
-1d8f3e5b2669512bf64c3e0943c97572 *inst/doc/functions.pdf
+756ab58e8aafd6ac98e13583f0dbab31 *inst/doc/functions.pdf
 cdf4af6595c744554a8b1e658c524cef *inst/doc/rasterfile.Rnw
-065ca3c79cdd1e3c1914ed974199c4f2 *inst/doc/rasterfile.pdf
+565c83b0ae0f51b17492eb6d3f24c586 *inst/doc/rasterfile.pdf
 b881b0fbe3b8d46675d5ba649aba98bb *inst/external/countries.csv
 7e1cc4f8e01df980c0e3b54d9797d6cd *inst/external/rlogo.grd
 b3ed7227bb04142c4a36cbe25067d5ac *inst/external/rlogo.gri
@@ -380,7 +380,7 @@ e2843923291909994b044b5b5df8921d *man/movingFun.Rd
 a18ff31d9b1fdfccd4c07188374b3666 *man/names.Rd
 c851fb14df1c7c3f8a573b0f4d60ffa4 *man/ncell.Rd
 b49e7d548d1c00ef9e9e87640b2fb5ea *man/nlayers.Rd
-860bb2e3ce2a10fba3d50d9004ce539f *man/obsolete.Rd
+1d24e6dc09928d2d417e08b5bffffcb2 *man/obsolete.Rd
 c16d46ccd0a20ef83bc75e2382688466 *man/origin.Rd
 ea69a893695287d97d231cfd66abba56 *man/overlay.Rd
 96379250813832bfe1652669def0239e *man/pairs.Rd

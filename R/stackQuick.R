@@ -50,18 +50,47 @@
  
 .stackFromBrick <- function(b, bands=NULL) {
 		
+	
 	nbands <- nlayers(b)
 	if (is.null(bands)) {
 		bands <- 1:nbands
 	}
 	bands <- bands[bands %in% 1:nbands]
-	
+
 	havemnmx <- b@data@haveminmax
 	if (havemnmx) {
 		mn <- minValue(b)
 		mx <- maxValue(b)
 	}
 	ln <- names(b)
+
+	if (inMemory(b)) {
+		r <- b[[ bands[1] ]]
+		s <- stack(r)
+		
+		if (length(bands) > 1) {
+
+			if (havemnmx) {
+				s@layers <- sapply( bands, function(i) { 
+						r@data@values <- b@data@values[,i]
+						r@data@names <- ln[i]
+						r@data@min <- mn[i]
+						r@data@max <- mx[i]
+						r
+						})
+			} else {
+				s@layers <- sapply(bands, function(i){ 
+						r@data@values <- b@data@values[,i]					
+						r@data@names <- ln[i]
+						r
+						})
+			}
+		}
+		return(s)
+		
+	}
+	
+
 	
 	r <- raster(b, bands[1])
 	s <- stack(r)

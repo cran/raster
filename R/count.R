@@ -4,6 +4,15 @@
 # Licence GPL v3
 
 
+count <- function(...) {
+	if (.depracatedwarnings()) {
+		warning('function "count" is obsolete. Use "freq" instead')
+	}
+	.count(...)
+}
+
+
+
 .count <- function(x, value, digits=0, progress='', ...) {
 
 	value <- value[1]
