@@ -10,7 +10,7 @@
 \description{
 Reclassify values of a Raster* object. The function (re)classifies groups of values to other values. For example, all values between 1 and 10 become 1, and all values between 11 and 15 become 2 (see functions \code{\link{subs}} and \code{\link{cut}} for alternative approaches). 
 
-Reclassification is done with matrix \code{rcl}, in the order of the reclassify table. Thus, if there are overlapping ranges, the last range applies.  
+Reclassification is done with matrix \code{rcl}, in the row order of the reclassify table. Thus, if there are overlapping ranges, the first time a number is within a range determines the reclassification value.  
 }
 
 \usage{

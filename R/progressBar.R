@@ -59,8 +59,8 @@ pbClose <- function(pb, timer) {
 		timer <- .timer()		
 	}
 	if (timer) {
-		elapsed <- (Sys.time() - attr(pb, "starttime"))[3]
-		cat(as.numeric(elapsed), 'seconds\n')
+		elapsed <- difftime(Sys.time(), attr(pb, "starttime"), units = "secs")
+		cat(round(as.numeric(elapsed)), 'seconds\n')
 	}
 }
 

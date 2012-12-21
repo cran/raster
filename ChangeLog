@@ -1,5 +1,14 @@
+--- 21-December-2012, version: 2.0-41
+fixed bugs in extend: added rows did in some cases get values from row above, and using a 'datatype' arugment led to an error. Both reported by Oliver Soong
+fixed bug, introduced in previous version, in aggregate with expand=FALSE (reported by Mark Payne)
+fixed bug in summary that occurred when some layers had NA values and others not (reported by Agustin Lobo)
+getValuesBlock now has a row=1 default value. docs suggested that the default was all rows (but there was no default). Inconsistency reported by Oliver Soong
+blockSize made safer for resample with cluster (thanks to Stefan Schlaffer)
+'timer' (in progressbar) works again (thanks to Stefan Schlaffer)
+subsetting a brick to a single layer now returns a RasterLayer (unless drop=FALSE), which is consistent with the behavior or a RasterStack (suggested by Jon Olav Skoien)
+Fixed error occurring when creating a RasterStack from several ncdf files using a 'varname' argument (Problem reported by Greg).
 
---- 7-November-2012, version 2.0-29
+--- 7-November-2012, version 2.0-31
 new function 'select' for selecting spatial subsets by drawing on plot (map)
 new function 'barplot' for RasterLayer objects
 new function 'scale' for Raster* objects (suggested by Agustin Lobo)

@@ -36,8 +36,8 @@
 	}
 	
 	extension <- .defaultExtension(.filetype())
-	d <- .tmpdir()
-	dir.create(d,  showWarnings = FALSE)
+	d <- .tmpdir(create=TRUE)
+#	dir.create(d,  showWarnings = FALSE)
 	f <- paste(round(runif(10)*10), collapse="")
 	d <- paste(d, prefix, f, extension, sep="")
 	if (file.exists(d)) {
@@ -62,7 +62,6 @@ rasterTmpFile <- function(prefix='raster_tmp_')  {
 
 	extension <- .defaultExtension(.filetype())
 	d <- .tmpdir()
-	dir.create(d,  showWarnings = FALSE)
 
 	while(TRUE) {
 		f <- paste(gsub(' ', '_', gsub(':', '', as.character(Sys.time()))), '_', paste(round(runif(5)*10), collapse=""), sep='')

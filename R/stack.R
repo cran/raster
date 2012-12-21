@@ -45,7 +45,7 @@ function(x, ..., bands=NULL, varname="", native=FALSE, RAT=TRUE, quick=FALSE) {
 		if (length(rlist) == 1) {
 			return(.stackCDF(x, varname=varname, bands=bands))
 		} else {
-			s <- stack(sapply(rlist, function(x) .stackCDF(x, varname=varname, bands=bands)))
+			s <- stack(sapply(rlist, function(x) raster(x, varname=varname, bands=bands)))
 		}
 		
 	} else {
@@ -119,7 +119,11 @@ function(x, bands=NULL, native=FALSE, RAT=TRUE, ...) {
 	
 	r <- list()
 
-	first <- raster(x[[1]], native=native, RAT=RAT)
+	if (is.character(x[[1]])) {
+		first <- raster(x[[1]], native=native, RAT=RAT, ...)
+	} else {
+		first <- raster(x[[1]])	
+	}
 	if (!is.null(bands)) {
 		lb <- length(bands)
 		bands <- bands[bands %in% 1:nbands(first)]
@@ -167,18 +171,20 @@ function(x, bands=NULL, native=FALSE, RAT=TRUE, ...) {
 			}
 		} else if (extends(class(x[[i]]), "Raster")) {
 			if (inherits(x[[i]], 'RasterStackBrick')) {
-				if (!is.null(bands)) {
-					for (b in bands) {
-						r[j] <- raster(x[[i]], b)
-						j <- j + 1
-					}
-				} else {
+			# commented on 2012/11/21 because bands should 
+			# only refer to files, not to layers in Raster objects
+			#	if (!is.null(bands)) {
+			#		for (b in bands) {
+			#			r[j] <- raster(x[[i]], b)
+			#			j <- j + 1
+			#		}
+			#	} else {
 					if (inherits(x[[i]], 'RasterBrick')) {
 						x[[i]] <- stack(x[[i]])
 					}
 					r <- c(r, x[[i]]@layers)
 					j <- j + nlayers(x[[i]])
-				}
+			#	}
 			} else {
 				r[j] <- x[[i]]
 				if (namesFromList) {

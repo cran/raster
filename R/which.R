@@ -16,7 +16,7 @@ function(x, cells=FALSE, na.rm=TRUE, ...) {
 		
 	if (canProcessInMemory(x, 2)){
 		if (cells) {
-			return(which(getValues(x)==TRUE))
+			return(which(as.logical(getValues(x)) == TRUE))
 		} else {
 			x <- as.logical(x)
 			if (na.rm) {
@@ -37,7 +37,7 @@ function(x, cells=FALSE, na.rm=TRUE, ...) {
 		tr <- blockSize(out, n=2)
 		pb <- pbCreate(tr$n, type=.progress() )	
 		for (i in 1:tr$n) {
-			v <- getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i] ) 
+			v <- as.logical( getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i] ) )
 			
 			if (cells) {
 				offs <- (tr$row[i]-1) * out@ncols

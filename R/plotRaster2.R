@@ -33,7 +33,8 @@
 	}
 	
 	if (missing(main)) {
-		main <- names(object)
+		main <- ''
+		#main <- names(object)
 	}	
 	
 	.rasterImagePlot(object, col=col, xlab=xlab, ylab=ylab, add=add, colNA=colNA, main=main, ...)	

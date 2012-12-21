@@ -428,6 +428,7 @@ function(object, v, cell, band) {
 
 
 .checkData <- function(object, v, cell, dtype) {
+
 	stopifnot(length(cell) > 0)
 
 	if (is.matrix(v)) {
@@ -446,12 +447,21 @@ function(object, v, cell, band) {
 		}
 		dm <- dim(v)
 		mat <- TRUE
+		
 	} else {
 		stopifnot( is.vector(v) ) 
 		if (length(cell) > 1) {
-			stopifnot(length(cell) == length(v))
 			stopifnot(max(cell) <= ncell(object))
 			stopifnot(min(cell) > 0)
+			
+			if (length(cell) != length(v)) {
+				# recycling
+				vv <- cell
+				vv[] <- v
+				v <- vv
+			}
+
+			
 		} else {
 			stopifnot(cell > 0)
 			if ((length(v) + cell - 1) > ncell(object)) {

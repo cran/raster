@@ -39,16 +39,16 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 				lastchar = substr(tmpdir, nchar(tmpdir), nchar(tmpdir))
 				if (lastchar != "/" & lastchar != '\\') {
 					tmpdir <- paste(tmpdir, '/', sep='')
-				}		
-				res <- file.exists(substr(tmpdir, 1, nchar(tmpdir)-1))
-				if (!res) { 
-					res <- dir.create(tmpdir, recursive=TRUE, showWarnings = FALSE) 
 				}
-				if (res) { 
+				#res <- file.exists(substr(tmpdir, 1, nchar(tmpdir)-1))
+				#if (!res) { 
+				#	res <- dir.create(tmpdir, recursive=TRUE, showWarnings = FALSE) 
+				#}
+				#if (res) { 
 					options(rasterTmpDir = tmpdir) 
-				} else { 
-					warning(paste('could not create tmpdir:',tmpdir))	
-				}
+				#} else { 
+				#	warning(paste('could not create tmpdir:', tmpdir))
+				#}
 			}
 		}
 	}
@@ -142,7 +142,7 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		options(rasterDatatype = 'FLT4S')
 		options(rasterProgress = 'none')
 		options(rasterTimer = FALSE)
-		options(rasterTmpDir = .tmpdir())
+		options(rasterTmpDir = .tmpdir(create=FALSE))
 		options(rasterTmpTime = 24*7)
 		options(rasterToDisk = FALSE)
 		options(rasterSetFileExt = TRUE)
@@ -174,7 +174,7 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		format=.filetype(),
 		overwrite=.overwrite(),
 		datatype=.datatype(),
-		tmpdir=.tmpdir(),
+		tmpdir=.tmpdir(create=FALSE),
 		tmptime=.tmptime(),
 		progress=.progress(),
 		timer=.timer(),
@@ -241,7 +241,7 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		cat('standardnames :', lst$standardnames, '\n')
 		cat('warn depracat.:', lst$depwarning, '\n')
 		if (lst$todisk) {
-		   cat('todisk       : TRUE\n')
+		   cat('todisk        : TRUE\n')
 		}
 	}
 	
@@ -279,16 +279,11 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		d <- .tmppath()
 	}
 	lastchar <- substr(d, nchar(d), nchar(d))
-	if (lastchar == '/' | lastchar == '\\') {
-		dd <- substr( d, 1, nchar(d)-1 )
-	}
-	if (!file.exists(dd)) {
-		if (create) {
-			d <- .tmppath()
-			dir.create( d, recursive=TRUE, showWarnings=FALSE )
-		} else {
-			return(NA)
-		}
+	# if (lastchar == '/' | lastchar == '\\') {
+	#	d <- substr( d, 1, nchar(d)-1 )
+	#}
+	if (!file.exists(d) & create) {
+		dir.create( d, recursive=TRUE, showWarnings=FALSE )
 	}
 	return(d)
 }

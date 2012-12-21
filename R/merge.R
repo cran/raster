@@ -44,16 +44,12 @@ setMethod('merge', signature(x='RasterStackBrick', y='missing'),
 setMethod('merge', signature(x='Raster', y='Raster'), 
 
 function(x, y, ..., tolerance=0.05, filename="", overlap=TRUE, ext=NULL) { 
-	x <- c(x, y, list(...))	
+	x <- c(x, y, list(...))
 	isRast <- sapply(x, function(x) inherits(x, 'Raster'))
 
-	if (sum(isRast) < 2) {
-		stop('merge needs at least 2 Raster* objects')
-	}
-	
 	dotargs <- x[ !isRast ]
 	x <- x[ isRast ]
-	
+
 	compareRaster(x, extent=FALSE, rowcol=FALSE, orig=TRUE, res=TRUE, tolerance=tolerance)
 	
 	if (is.null(dotargs$datatype)) {
