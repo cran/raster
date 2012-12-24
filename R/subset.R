@@ -65,9 +65,7 @@ function(x, subset, drop=TRUE, filename='', ...) {
 	if (! all(subset %in% 1:nl)) {
 		stop('not a valid subset')
 	}
-	if (nl==1) {
-		return(x)
-	}
+	#if (nl==1) {return(x)} # this does not drop
 	
 	varname <- attr(x@data, "zvar")
 	if (is.null(varname)) { 

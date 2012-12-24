@@ -19,6 +19,8 @@ function(x, rcl, filename='', include.lowest=FALSE, right=TRUE, ...) {
 		rcl <- matrix(rcl, ncol=3, byrow=TRUE) 
 	} else if ( dim(rcl)[2] == 1 ) { 
 		rcl <- matrix(rcl, ncol=3, byrow=TRUE) 
+	} else if (is.data.frame(rcl)) {
+		rcl <- as.matrix(rcl)
 	}
 	
 	nc <- ncol(rcl)

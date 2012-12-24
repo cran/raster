@@ -1,46 +1,43 @@
 \name{getValuesBlock}
 
 \alias{getValuesBlock}
-\alias{getValuesBlock,RasterLayer,numeric-method}
-\alias{getValuesBlock,RasterLayerSparse,numeric-method}
-\alias{getValuesBlock,RasterStack,numeric-method}
-\alias{getValuesBlock,RasterBrick,numeric-method}
+\alias{getValuesBlock,RasterLayer-method}
+\alias{getValuesBlock,RasterLayerSparse-method}
+\alias{getValuesBlock,RasterStack-method}
+\alias{getValuesBlock,RasterBrick-method}
   
 \title{Get a block of raster cell values}
 
 \description{
-getValuesBlock returns values for a block (rectangular area) of values of a Raster* object. It will take them from memory if available, else it will read them from disk. 
+getValuesBlock returns values for a block (rectangular area) of values of a Raster* object. 
 }
 
+
 \usage{
-getValuesBlock(x, row, ...)
+\S4method{getValuesBlock}{RasterLayer}(x, row=1, nrows=1, col=1, ncols=(ncol(x)-col+1), format='')
+
+\S4method{getValuesBlock}{RasterBrick}(x, row=1, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs)
+
+\S4method{getValuesBlock}{RasterStack}(x, row=1, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs)
 }
+
 
 \arguments{
  \item{x}{Raster* object}
- \item{row}{Numeric. Row number, should be between 1 and nrow(x), or missing in which case all values are returned}
- \item{...}{Additional arguments, see Details}
+ \item{row}{positive integer. Row number to start from, should be between 1 and nrow(x)}
+ \item{nrows}{postive integer. How many rows? Default is 1}
+ \item{col}{postive integer. Column number to start from, should be between 1 and ncol(x)}
+ \item{ncols}{postive integer. How many columns? Default is the number of colums left after the start column}
+ \item{format}{character. If \code{format='matrix'}, a matrix is returned instead of a vector}
+ \item{lyrs}{integer (vector). Which layers? Default is all layers (\code{1:nlayers(x)})}
 }
-  
 
-
-\details{
-Additional arguments:
-
-\tabular{rll}{  
-  \tab  \code{nrows} \tab Integer. How many rows? Default is 1 \cr
-  \tab  \code{col}  \tab Integer. Start column. Default is 1\cr
-  \tab  \code{ncols}  \tab Integer. How many columns? Default is the number of colums left after the start column \cr
-  \tab  \code{lyrs}  \tab Integer (vector). Which layers? Default is all layers (\code{1:nlayers(x)})  \cr
-}
-}
 
 \value{
-vector \code{(x=RasterLayer)} or matrix 
+matrix or vector (if \code{(x=RasterLayer)}, unless \code{format='matrix'})
 }
 
 \seealso{ \code{\link{getValues}} }
-
 
 \examples{
 r <- raster(system.file("external/test.grd", package="raster"))

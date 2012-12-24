@@ -321,7 +321,7 @@
 	}
 	
 	if (type == 'RasterLayer') {
-		if (is.na(band) | is.null(band)) {
+		if (is.null(band) | is.na(band)) {
 			if (dims > 2) { 
 				stop(zvar, ' has mutliple layers, provide a "band" value between 1 and ', dims[dim3])
 			} 

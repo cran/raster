@@ -1,6 +1,6 @@
 # Author: Robert J. Hijmans
 # Date: June 2008
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
 
 
@@ -11,94 +11,69 @@ if (!isGeneric("summary")) {
 
 
 
-setMethod('summary', signature(object='Raster'), 
+setMethod('summary', signature(object='RasterLayer'), 
 	function(object, maxsamp=100000, ...) {
 		
-		warn <- NULL
 		if ( inMemory(object) ) {
-			values <- as.matrix( summary(object@data@values) )
+			sm <- as.matrix( quantile( object@data@values, na.rm=TRUE) )
+			sm <- c(sm, sum(is.na( object@data@values) ))
+			
 		} else if (  fromDisk(object) ) {
 			if (ncell(object) > maxsamp) {
 				v <- sampleRandom(object, maxsamp)
-				cat(paste('summary based on a sample of', maxsamp, 'cells, which is', round(100*maxsamp/ncell(object), 2), '% of all cells\n'))
+				warning(paste('summary is an estimate based on a sample of ', maxsamp, ' cells (', round(100*maxsamp/ncell(object), 2), '% of all cells)\n', sep=''))
+				nas <- round(sum(is.na(v)) * ncell(object) / maxsamp)
 			} else {
 				v <- getValues(object)
+				nas <- sum(is.na(v))
 			}
-			values <- as.matrix( summary(v) )
+			sm <- quantile(v, na.rm=TRUE)
+			sm <- c(sm, nas)
+			
 		} else {
-			values <- as.matrix(rep(NA, 7))
+			sm <- NA
 		}
-		colnames(values) <- ""
+		values <- matrix(sm, ncol=1, nrow=6)
+		rownames(values) <- c('Min.', '1st Qu.', 'Median', '3rd Qu.', 'Max.', "NA's")
+		colnames(values) <- names(object)
 		return(values)
 	}	
 )
 
 
-setMethod('summary', signature(object='RasterStack'), 
+
+
+
+setMethod('summary', signature(object='RasterStackBrick'), 
 	function(object, maxsamp=100000, ...) {
-		if (nlayers(object) == 0) {	stop('no layers in this RasterStack') }
-		
-		ncell <- ncell(object)
-		values <- NULL
-		warn <- NULL
-		for (n in 1:nlayers(object)) {
-			if ( inMemory(object@layers[[n]]) ) {
-				sm <- as.matrix( summary(object@layers[[n]]@data@values) )
-			} else {
-				if (ncell > maxsamp) {
-					v <- sampleRandom(object@layers[[n]], maxsamp)
-				    cat(paste('summary based on a sample of', maxsamp, 'cells, which is', round(100*maxsamp/ncell(object), 2), '% of all cells\n'))
-				} else {
-					v <- getValues(object@layers[[n]])
-				}
-				sm <- as.matrix( summary(v) )					
-			}
-			values <- cbind(values, as.matrix(as.vector(sm)))
-		}
-		rownames(values) <- rownames(sm)
-		colnames(values) <- names(object)
-		return(values) 
-	}
-)	
-
-
-
-
-setMethod('summary', signature(object='RasterBrick'), 
-	function(object, maxsamp=100000, ...) {
-	
-		ncell <- ncell(object)
-		values <- NULL
-		warn <- NULL
-		
+			
 		if ( inMemory(object) ) {
-			for (n in 1:nlayers(object)) {
-				sm <- as.matrix( summary( object@data@values[,n] ) )
-				values <- cbind(values, as.matrix(sm))
-			} 
+		
+			sm <- apply(object@data@values, 2, quantile, na.rm=TRUE)
+			nas <- apply(is.na(object@data@values), 2, sum)
+			values <- rbind(sm, nas)
 
 		} else if (  fromDisk(object) ) {
-		
-			if (ncell > maxsamp) {
-				v <- sampleRandom(object, maxsamp)
-				warn <- paste('summary based on a sample of', maxsamp, 'cells, which is', round(100*maxsamp/ncell(object), 2), '% of all cells')
+			
+			nc <- ncell(object)
+			if (nc > maxsamp) {
+				v <- sampleRegular(object, maxsamp)
+				nas <- round(apply(is.na(v), 2, sum) * nc / maxsamp)
+				warning(paste('summary is an estimate based on a sample of ', maxsamp, ' cells (', round(100*maxsamp/nc, 2), '% of all cells)\n', sep=''))
+				
 			} else {
 				v <- getValues(object)
+				nas <- apply(is.na(v), 2, sum)
 			}
 
-			for (n in 1:nlayers(object)) {
-				sm <- as.matrix( summary( v[,n] ) )
-				values <- cbind(values, as.matrix(sm))
-			} 
+			sm <- apply(v, 2, quantile, na.rm=T)
+			values <- rbind(sm, nas)
 			
 		} else {
 			stop('no cell values associated with this RasterBrick')
 		}
-		rownames(values) <- rownames(sm)
-		colnames(values) <- names(object)
-		print(values)
-		if (!is.null(warn)) cat(warn, '\n')
-		invisible(values) 
+		rownames(values) <- c('Min.', '1st Qu.', 'Median', '3rd Qu.', 'Max.', "NA's")
+		return(values)
 	}
 )	
 

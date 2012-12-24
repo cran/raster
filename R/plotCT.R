@@ -4,20 +4,19 @@
 # Licence GPL v3
 
 
-.plotCT <- function(x, maxpixels=500000, ext=NULL, interpolate=FALSE, axes, xlab='', ylab='', asp, add=FALSE, addfun=NULL, main, zlim=NULL, zlimcol=NULL, ...) { 
+.plotCT <- function(x, maxpixels=500000, ext=NULL, interpolate=FALSE, axes, main, xlab='', ylab='', asp, add=FALSE, addfun=NULL, zlim=NULL, zlimcol=NULL, ...) { 
 # plotting with a color table
-	
-	if (missing(main)) {
-		main <- names(x)[1]
-	}
-	
+
+   if (missing(main)) {
+        main <- names(x)[1]
+    }
+
 	if (!add) {
 		if (missing(axes)) {
 			axes <- FALSE
 		} 
 		if (!axes) {
-			old.par <- par(no.readonly = TRUE) 
-			on.exit(par(old.par))
+			# if (main != "") { } else {
 			par(plt=c(0,1,0,1))
 		}	
 		if (missing(asp)) {

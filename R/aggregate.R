@@ -3,12 +3,11 @@
 # Version 1.0
 # Licence GPL v3
 
-# Major overhaul (including C interface)
-# October 2012
+# October 2012: Major overhaul (including C interface)
+# November 2012: fixed bug with expand=F
 
 
 setMethod('aggregate', signature(x='Raster'), 
-
 function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 
 	doC <- list(...)$doC
@@ -77,34 +76,46 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 	}
 	
 	if (!is.na(op) & doC) {
+	
 		if ( canProcessInMemory(x)) {
-			dims <- as.integer(c(dim(x), dim(out)[1:2], xfact, yfact))
-			out <- setValues(out, .Call("aggregate", as.double(getValues(x)), op, 
-						as.integer(na.rm), dims, PACKAGE='raster')
-				)
+		
+			dims <- as.integer(c(lastrow, lastcol, nl, dim(out)[1:2], xfact, yfact))
+			x <- getValuesBlock(x, 1, lastrow, 1, lastcol)
+			out <- setValues(out, .Call("aggregate", as.double(x), op, as.integer(na.rm), dims, PACKAGE='raster'))
+		
 		} else {
+		
 			out <- writeStart(out, filename=filename, ...)
-
 			tr <- blockSize(x, minrows=yfact)
+
 			st <- round(tr$nrows[1] / yfact) * yfact
 			tr$n <- ceiling(lastrow / st)
 			tr$row <- c(1, cumsum(rep(st, tr$n-1))+1)
 			tr$nrows <- rep(st, tr$n)
 			tr$write <- cumsum(c(1, ceiling(tr$nrows[1:(tr$n-1)]/yfact)))
-			if (expand) {
-				tr$nrows[tr$n] <-  tr$nrows[tr$n] - (sum(tr$nrows)-x@nrows)
+			dif <- sum(tr$nrows) - nrow(x)
+			if (dif > 0) {
+				if (expand) {
+					tr$nrows[tr$n] <-  tr$nrows[tr$n] - dif
+				} else {
+					dif <- dif %/% xfact
+					if (dif > 0) {
+						tr$nrows[tr$n] <- dif * xfact
+					} else {
+						tr$n <- tr$n - 1
+					}
+				}
 			}
 			tr$outrows <- ceiling(tr$nrows/yfact)
+			
 			pb <- pbCreate(tr$n, label='aggregate', ...)
 
-			dims <- as.integer(c(dim(x), dim(out)[1:2], xfact, yfact))
+			dims <- as.integer(c(lastrow, lastcol, nl, dim(out)[1:2], xfact, yfact))
 			if (inherits(out, 'RasterBrick')) {
 				for (i in 1:tr$n) {
 					dims[c(1, 4)] = as.integer(c(tr$nrows[i], tr$outrows[i]))
 					vals <- getValuesBlock(x, tr$row[i], tr$nrows[i], 1, lastcol)
-					vals <- .Call("aggregate", as.double(vals), op,
-							as.integer(na.rm), dims, PACKAGE='raster')
-							
+					vals <- .Call("aggregate", as.double(vals), op, as.integer(na.rm), dims, PACKAGE='raster')
 					out <- writeValues(out, matrix(vals, ncol=nl), tr$write[i])
 					pbStep(pb, i) 
 				}
@@ -112,8 +123,7 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 				for (i in 1:tr$n) {
 					dims[c(1, 4)] = as.integer(c(tr$nrows[i], tr$outrows[i]))
 					vals <- getValuesBlock(x, tr$row[i], tr$nrows[i], 1, lastcol)
-					vals <- .Call("aggregate", as.double(vals), op,
-							as.integer(na.rm), dims, PACKAGE='raster')
+					vals <- .Call("aggregate", as.double(vals), op,	as.integer(na.rm), dims, PACKAGE='raster')
 					out <- writeValues(out, vals, tr$write[i])
 					pbStep(pb, i) 
 				}
@@ -187,18 +197,28 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 		
 			out <- writeStart(out, filename=filename, ...)
 			
+			
 			tr <- blockSize(x, minrows=yfact)
 			st <- round(tr$nrows[1] / yfact) * yfact
 			tr$n <- ceiling(lastrow / st)
 			tr$row <- c(1, cumsum(rep(st, tr$n-1))+1)
 			tr$nrows <- rep(st, tr$n)
 			tr$write <- cumsum(c(1, ceiling(tr$nrows[1:(tr$n-1)]/yfact)))
-			if (expand) {
-				tr$nrows[tr$n] <-  tr$nrows[tr$n] - (sum(tr$nrows)-x@nrows)
+			dif <- sum(tr$nrows) - nrow(x)
+			if (dif > 0) {
+				if (expand) {
+					tr$nrows[tr$n] <-  tr$nrows[tr$n] - dif
+				} else {
+					dif <- dif %/% xfact
+					if (dif > 0) {
+						tr$nrows[tr$n] <- dif * xfact
+					} else {
+						tr$n <- tr$n - 1
+					}
+				}
 			}
 			
 			pb <- pbCreate(tr$n, label='aggregate', ...)
-			
 			m <- tr$nrows[1] / yfact
 			vv <- matrix(NA, nrow= yfact*xfact, ncol=csteps * m)
 		
@@ -332,8 +352,7 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 			pbClose(pb)
 			out <- writeStop(out)
 			return(out)
-		}
-	
+		}	
 	}
 }
 )
@@ -345,8 +364,3 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 #r <- raster()
 #r[] = 1:ncell(r)
 #raster:::.aggtest(r, 5, 'min', doC=T)
-
-
-
-
-	

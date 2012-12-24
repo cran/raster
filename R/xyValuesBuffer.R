@@ -39,77 +39,28 @@
 		rn[is.na(rn) &  (xy[,2]-bufy <= ymax(obj) & xy[,2]+bufy >= ymax(obj))] <- 1
 		rx[is.na(rx) &  (xy[,2]-bufy <= ymin(obj) & xy[,2]+bufy >= ymin(obj))] <- nrow(obj)
 
-		if (.doCluster()) {
-			cl <- getCluster()
-			on.exit( returnCluster() )
-			nodes <- min(nrow(xy), length(cl))
-			cat('Using cluster with', nodes, 'nodes\n')
-			flush.console()
-			
-
-			clusterExport(cl, c('object', 'obj', 'cellnumbers'), envir=environment())
-			
-			clFun1 <- function(i, rn, rx, cn, cx) {
-				s <- sum(rn, rx, cn, cx)
-				if (is.na(s)) {
-					return(NA)
+		for (i in 1:nrow(xy)) {
+			s <- sum(rn[i], rx[i], cn[i], cx[i])
+			if (is.na(s)) {
+				cv[[i]] <- NA
+			} else {
+				value <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
+				cell <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
+				coords <- xyFromCell(obj, cell)
+				if (cellnumbers) {
+					pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), cell, value)
 				} else {
-					value <- getValuesBlock(object, rn, rx-rn+1, cn, cx-cn+1)
-					cell <- cellFromRowColCombine(obj, rn:rx, cn:cx)
-					coords <- xyFromCell(obj, cell)
-					if (cellnumbers) {
-						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), cell, value)
-					} else {
-						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), value)
-					}
-					if (nrow(pd) > 1) {
-						pd <- pd[pd[,1] <= buffer[i], -1]
-					} else { 
-						pd <- pd[,-1]
-					}					
-					return(pd)
+					pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), value)
 				}
-			}
-		
-			for (i in 1:nodes) {
-				sendCall(cl[[i]], clFun1, list(i, rn[i], rx[i], cn[i], cx[i]), tag=i)
-			}
-			for (i in 1:nrow(xy)) {
-				d <- recvOneData(cl)
-				
-				if (! d$value$success) {
-					print(d)
-					stop('cluster error')
-				} else  {
-					cv[[i]] <- d$value$value
-				} 
-				
-				ni <- nodes + i 
-				if (ni <= nrow(xy)) {
-					sendCall(cl[[d$node]], clFun1, list(i, rn[i], rx[i], cn[i], cx[i]), tag=ni)
-				}
-			}
-		
-		} else {
-		
-			for (i in 1:nrow(xy)) {
-				s <- sum(rn[i], rx[i], cn[i], cx[i])
-				if (is.na(s)) {
-					cv[[i]] <- NA
-				} else {
-					value <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
-					cell <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
-					coords <- xyFromCell(obj, cell)
-					if (cellnumbers) {
-						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), cell, value)
+				if (nrow(pd) > 1) {
+					v <- pd[pd[,1] <= buffer[i], -1]
+					if (NROW(v) == 0) {
+						cv[[i]] <- pd[which.min(pd[,1]), -1]
 					} else {
-						pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), value)
+						cv[[i]] <- v
 					}
-					if (nrow(pd) > 1) {
-						cv[[i]] <- pd[pd[,1] <= buffer[i], -1]
-					} else { 
-						cv[[i]] <- pd[,-1]
-					}
+				} else { 
+					cv[[i]] <- pd[,-1]
 				}
 			}
 		}

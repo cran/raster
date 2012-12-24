@@ -201,7 +201,7 @@
 	rsbb <- bbox(rstr)
 	if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
 		# instead of a warning
-		return( init(rstr, function() NA) )
+		return( init(rstr, function(x) NA) )
 		# so that clusterR can use this function (overlap with some chunks might be NULL)
 	}
 	

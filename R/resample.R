@@ -60,7 +60,7 @@ function(x, y, method="bilinear", filename="", ...)  {
 		cat('Using cluster with', nodes, 'nodes\n')
 		flush.console()
 		
-		tr <- blockSize(y, minblocks=nodes, n=nl*4)
+		tr <- blockSize(y, minblocks=nodes, n=nl*4*nodes)
 		pb <- pbCreate(tr$n, label='resample', ...)
 
 		clFun <- function(i) {

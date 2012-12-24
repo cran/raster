@@ -1,17 +1,17 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  June 2008
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
 
 if (!isGeneric("getValuesBlock")) {
-	setGeneric("getValuesBlock", function(x, row, ...)
+	setGeneric("getValuesBlock", function(x, ...)
 		standardGeneric("getValuesBlock"))
 }	
 
 
 
-setMethod('getValuesBlock', signature(x='RasterStack', row='numeric'), 
-	function(x, row, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs) {
+setMethod('getValuesBlock', signature(x='RasterStack'), 
+	function(x, row=1, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs) {
 		stopifnot(row <= x@nrows)
 		stopifnot(col <= x@ncols)
 		stopifnot(nrows > 0)
@@ -66,8 +66,8 @@ setMethod('getValuesBlock', signature(x='RasterStack', row='numeric'),
 
 
 
-setMethod('getValuesBlock', signature(x='RasterBrick', row='numeric'), 
-	function(x, row, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs) {
+setMethod('getValuesBlock', signature(x='RasterBrick'), 
+	function(x, row=1, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs) {
 		row <- max(1, round(row))
 		col <- max(1, round(col))
 		stopifnot(row <= x@nrows)
@@ -120,8 +120,8 @@ setMethod('getValuesBlock', signature(x='RasterBrick', row='numeric'),
 
 
 
-setMethod('getValuesBlock', signature(x='RasterLayer', row='numeric'), 
- 	function(x, row, nrows=1, col=1, ncols=(ncol(x)-col+1), format='') {
+setMethod('getValuesBlock', signature(x='RasterLayer'), 
+ 	function(x, row=1, nrows=1, col=1, ncols=(ncol(x)-col+1), format='') {
 		
 		row <- max(1, min(x@nrows, round(row[1])))
 		lastrow <- min(x@nrows, row + round(nrows[1]) - 1)
@@ -162,8 +162,8 @@ setMethod('getValuesBlock', signature(x='RasterLayer', row='numeric'),
 
 
 
-setMethod('getValuesBlock', signature(x='RasterLayerSparse', row='numeric'), 
- 	function(x, row, nrows=1, col=1, ncols=(ncol(x)-col+1), format='') {
+setMethod('getValuesBlock', signature(x='RasterLayerSparse'), 
+ 	function(x=1, row, nrows=1, col=1, ncols=(ncol(x)-col+1), format='') {
 		
 		row <- max(1, min(x@nrows, round(row[1])))
 		lastrow <- min(x@nrows, row + round(nrows[1]) - 1)

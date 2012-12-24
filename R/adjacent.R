@@ -35,7 +35,7 @@
 }
 
 
-adjacent <- function(x, cells, directions=4, pairs=FALSE, target=NULL, sorted=FALSE, include=FALSE, id=FALSE) {
+adjacent <- function(x, cells, directions=4, pairs=TRUE, target=NULL, sorted=FALSE, include=FALSE, id=FALSE) {
 
 	if (is.character(directions)) { directions <- tolower(directions) }
 

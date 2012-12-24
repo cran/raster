@@ -12,18 +12,14 @@ if (!isGeneric("mosaic")) {
 }	
 
 
-
 setMethod('mosaic', signature(x='Raster', y='Raster'), 
 function(x, y, ..., fun, tolerance=0.05, filename="") { 
 	x <- c(x, y, list(...))	
 	isRast <- sapply(x, function(x) inherits(x, 'Raster'))
 
-	if (sum(isRast) < 2) {
-		stop('merge needs at least 2 Raster* objects')
-	}
-	
 	dotargs <- x[ !isRast ]
 	x <- x[ isRast ]
+	
 	if (is.null(dotargs$datatype)) {
 		dotargs$datatype <- .commonDataType(sapply(x, dataType))  
 	}

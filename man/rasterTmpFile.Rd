@@ -41,10 +41,11 @@ The default path where the temporary files are stored is returned (can be change
 \seealso{ \code{\link{rasterOptions}}, \code{\link[base]{tempfile}} }  
 
 \examples{
-#rasterTmpFile('mytemp_')
+\dontrun{
+rasterTmpFile('mytemp_')
 showTmpFiles()
 removeTmpFiles(h=24)
-}
+}}
 
 \keyword{ spatial }
 

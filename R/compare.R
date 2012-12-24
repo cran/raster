@@ -29,20 +29,20 @@ compareRaster <- function(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE,
 		if (extent) {
 			if (!(isTRUE(all.equal(ext1, extent(objects[[i]]), tolerance=tolerance, scale=minres )))) {
 				result <- FALSE
-				if (stopiffalse) { stop('Different extent') }
-				if (showwarning) { warning('Different extent') }
+				if (stopiffalse) { stop('different extent') }
+				if (showwarning) { warning('different extent') }
 			}	
 		}	
 		if (rowcol) {
 			if ( !(identical(ncol1, ncol(objects[[i]]))) ) {
 				result <- FALSE
-				if (stopiffalse) { stop('ncols different') } 
-				if (showwarning) { warning('ncols different') } 
+				if (stopiffalse) { stop('different number or columns') } 
+				if (showwarning) { warning('different number or columns') } 
 			}	
 			if ( !(identical(nrow1, nrow(objects[[i]]))) ) {
 				result <- FALSE
-				if (stopiffalse) { stop('nrows different') }
-				if (showwarning) { warning('nrows different') }
+				if (stopiffalse) { stop('different number or rows') }
+				if (showwarning) { warning('different number or rows') }
 			}
 		}
 		if (crs) {

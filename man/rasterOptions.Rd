@@ -49,8 +49,10 @@ list of the current options (invisibly). If no arguments are provided the option
 \seealso{ \code{\link[base]{options}}, \code{\link[raster]{rasterTmpFile}} }  
 
 \examples{
+\dontrun{
 rasterOptions()
 rasterOptions(chunksize=2e+07) 
+}
 }
 
 \keyword{ spatial }
