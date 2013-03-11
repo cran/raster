@@ -16,17 +16,17 @@
 Click on a map (plot) to get values of a Raster* or Spatial* object at that location; and optionally the coordinates and cell number of the location. For SpatialLines and SpatialPoints you need to click twice (draw a box).
 }
 
+
 \usage{
-\S4method{click}{Raster}(x, n=1, id=FALSE, xy=FALSE, cell=FALSE, type="n", ...)
+\S4method{click}{Raster}(x, n=Inf, id=FALSE, xy=FALSE, cell=FALSE, type="n", show=TRUE, ...)
 
-\S4method{click}{SpatialGrid}(x, n=1, id=FALSE, xy=FALSE, cell=FALSE, type = "n", ...)
+\S4method{click}{SpatialGrid}(x, n=1, id=FALSE, xy=FALSE, cell=FALSE, type="n", ...)
 
-\S4method{click}{SpatialPolygons}(x, n=1, id=FALSE, xy=FALSE, type = "n", ...)
+\S4method{click}{SpatialPolygons}(x, n=1, id=FALSE, xy=FALSE, type="n", ...)
 
 \S4method{click}{SpatialLines}(x, ...)
 
 \S4method{click}{SpatialPoints}(x, ...)
-
 }
 
 
@@ -37,6 +37,7 @@ Click on a map (plot) to get values of a Raster* or Spatial* object at that loca
   \item{xy}{Logical. If \code{TRUE}, xy coordinates are included in the output}
   \item{cell}{Logical. If \code{TRUE}, cell numbers are included in the output}
   \item{type}{One of "n", "p", "l" or "o". If "p" or "o" the points are plotted; if "l" or "o" they are joined by lines. See ?locator}
+  \item{show}{logical. Print the values after each click?}
   \item{...}{additional graphics parameters used if type != "n" for plotting the locations. See ?locator}   
  }
  

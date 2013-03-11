@@ -17,7 +17,7 @@
 		on.exit( close.ncdf(nc) )		
 	} 
 
-	zvar <- .varName(nc, varname)
+	zvar <- raster:::.varName(nc, varname)
 	dims <- nc$var[[zvar]]$ndims	
 	
 	dim3 <- 3
@@ -41,11 +41,12 @@
 			st@z <- list( nc$var[[zvar]]$dim[[dim3]]$vals[bands] )
 			names(st@z) <- nc$var[[zvar]]$dim[[dim3]]$units
 			if ( nc$var[[zvar]]$dim[[dim3]]$name == 'time' ) {	
-				st <- try( .doTime(st, nc, zvar, dim3, ncdf4)  )
+				try( st <- raster:::.doTime(st, nc, zvar, dim3, ncdf4)  )
 			}
-			st@layers <- lapply(list(bands), function(x){
+			nms <- as.character(st@z[[1]])
+			st@layers <- lapply(bands, function(x){
 												r@data@band <- x;
-												r@data@names <- st@z[[1]][x];
+												r@data@names <- nms[x];
 												return(r)} 
 											)
 		} 

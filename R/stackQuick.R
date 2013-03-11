@@ -11,6 +11,8 @@
 	} else {
 		stopifnot(length(files == length(nbands)))
 	}
+	nbands <- as.integer(nbands)
+	band <- as.integer(band)
 	
 	if (length(band) == 1) {
 		band <- rep(band, length(files))
@@ -18,17 +20,17 @@
 		stopifnot(length(files == length(band)))
 	}
 	
-	r@data@haveminmax=FALSE 
-	r@file@nbands = nbands[1]
-	r@data@band = band[1]
+	r@data@haveminmax <- FALSE 
+	r@file@nbands <- nbands[1]
+	r@data@band <- band[1]
 	
 	ln <- extension(basename(files), '')
 	s <- stack(r)
 	s@layers <- sapply(1:length(files), 
 			function(i){ 
-				r@file@name <-  files[i]
+				r@file@name <- files[i]
 				r@file@nbands <- nbands[i]
-				r@data@band <-  band[i]
+				r@data@band <- band[i]
 				r@data@names <- ln[i]
 				r
 			}

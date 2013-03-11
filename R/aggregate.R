@@ -82,7 +82,12 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 			dims <- as.integer(c(lastrow, lastcol, nl, dim(out)[1:2], xfact, yfact))
 			x <- getValuesBlock(x, 1, lastrow, 1, lastcol)
 			out <- setValues(out, .Call("aggregate", as.double(x), op, as.integer(na.rm), dims, PACKAGE='raster'))
-		
+
+			if (filename != '') {
+				out <- writeRaster(out, filename, ...)
+			}
+			return(out)
+			
 		} else {
 		
 			out <- writeStart(out, filename=filename, ...)
@@ -130,8 +135,8 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 			}
 			pbClose(pb)
 			out <- writeStop(out)
+			return(out)	
 		}
-		return(out)	
 	}
 	
  # else not implemented in C  

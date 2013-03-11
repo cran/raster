@@ -17,7 +17,7 @@ setReplaceMethod("[", c("RasterLayer", "RasterLayer", "missing"),
 			i <- cellsFromExtent(x, i)
 		}		
 	
-		.replace(x, i, value=value) 
+		.replace(x, i, value=value, recycle=1) 
 	}
 )
 
@@ -46,7 +46,7 @@ setReplaceMethod("[", c("RasterLayer","missing","missing"),
 )
 
 
-.replace <- function(x, i, value, allLayers=TRUE) {
+.replace <- function(x, i, value, recycle=1) {
 
 	if (inherits(x, 'RasterStack')) {
 		x <- brick(x, values=TRUE)
@@ -56,20 +56,22 @@ setReplaceMethod("[", c("RasterLayer","missing","missing"),
 	if ( is.logical(i) ) {
 		i <- which(i)
 	} else {
-		if (! is.numeric(value)) { 
-			value <- as.numeric(value) 
-		}
+	#	if (! is.numeric(i)) { 
+	#		i <- as.integer(i) 
+	#	}
 		i <- na.omit(i)
 	}
 
-	if (allLayers) {
-		i <- i[ i > 0 & i <= ncell(x) ]
-		nl <- nlayers(x)
-		if (nl > 1) {
-			add <- ncell(x) * 0:(nl-1)
-			i <- as.vector(t((matrix(rep(i, nl), nrow=nl, byrow=TRUE)) + add))
+	nl <- nlayers(x)
+  # recycling
+	if (nl > 1) {
+		rec2 <- ceiling(nl / recycle)
+		if (rec2 > 1) {
+			add <- ncell(x)*recycle * (0:(rec2-1))
+			i <- as.vector(t((matrix(rep(i, rec2), nrow=rec2, byrow=TRUE)) + add))
 		}
 	}
+	i <- i[ i > 0 & i <= (ncell(x)*nl) ]
 	
 	if (! inMemory(x) ) {
 		if ( fromDisk(x) ) {

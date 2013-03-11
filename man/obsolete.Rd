@@ -1,11 +1,6 @@
 
 \alias{setOptions}
 \alias{showOptions}
-\alias{clearOptions}
-\alias{saveOptions}
-
-\alias{intersectExtent}
-\alias{unionExtent}
 \alias{count}
 
 
@@ -26,10 +21,6 @@ count has been replaced by freq( , , value=  )
 \usage{
 setOptions(...)
 showOptions()
-saveOptions()
-clearOptions()
-intersectExtent(...)
-unionExtent(...)
 count(...)
 }
 
@@ -37,7 +28,7 @@ count(...)
 \item{...}{arguments}
 }
 
-\seealso{ \code{\link{rasterOptions}}, \code{\link{intersect}}, \code{\link{union}} }
+\seealso{ \code{\link{rasterOptions}}, \code{\link{freq}} }
 
 \keyword{spatial}
 

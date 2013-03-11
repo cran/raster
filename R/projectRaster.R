@@ -7,10 +7,20 @@
 projectExtent <- function(object, crs) {
 	.requireRgdal()
 
+	object <- raster(object)
+	dm <- oldm <- dim(object)
+	# simple way to avoid a bug with a single column/row reported by 
+	# Jon Olav Skoien
+	dm[1] <- max(10, dm[1])
+	dm[2] <- max(10, dm[2])
+	dim(object) <- dm
+	
 	validObject(projection(object, asText=FALSE))
 	validObject(projection(crs, asText=FALSE))
 	projfrom <- projection(object)
 	projto <- projection(crs)
+	
+	
 	
 #	rs <- res(object)
 #	xmn <- object@extent@xmin - 0.5 * rs[1]
@@ -41,7 +51,7 @@ projectExtent <- function(object, crs) {
 	xy3[ncol(xy3),1] <- xy3[ncol(xy3),1] + 0.5 * xres(object)
 	
 	xy4 <- xyFromCell(object, cellFromRowCol(object, nrow(object), cols))
-	xy4[,2] <- xy4[,2] + 0.5 * yres(object)
+	xy4[,2] <- xy4[,2] - 0.5 * yres(object)
 	xy4[1,1] <- xy4[1,1] - 0.5 * xres(object)
 	xy4[ncol(xy4),1] <- xy4[ncol(xy4),1] + 0.5 * xres(object)
 	
@@ -61,9 +71,7 @@ projectExtent <- function(object, crs) {
 	
 	}
 	
-
-	
-	res <- .gd_transform( projfrom, projto, nrow(xy), xy[,1], xy[,2] )
+	res <- rgdal:::.gd_transform( projfrom, projto, nrow(xy), xy[,1], xy[,2] )
 	
 	x <- res[[1]]
 	y <- res[[2]]
@@ -86,7 +94,7 @@ projectExtent <- function(object, crs) {
 		miny <- miny - 0.5
 	}
 	
-	obj <- raster(extent(minx, maxx, miny,  maxy), nrows=nrow(object), ncols=ncol(object), crs=crs)
+	obj <- raster(extent(minx, maxx, miny,  maxy), nrows=oldm[1], ncols=oldm[2], crs=crs)
 	return(obj)
 }
 
@@ -100,7 +108,7 @@ projectExtent <- function(object, crs) {
 	y1 <- y - 0.5 * res[2]
 	y2 <- y + 0.5 * res[2]
 	xy <- cbind(c(x1, x2, x, x), c(y, y, y1, y2))
-	pXY <- .gd_transform( projection(raster), crs, nrow(xy), xy[,1], xy[,2] )
+	pXY <- rgdal:::.gd_transform( projection(raster), crs, nrow(xy), xy[,1], xy[,2] )
 	pXY <- cbind(pXY[[1]], pXY[[2]])
 	out <- c((pXY[2,1] - pXY[1,1]), (pXY[4,2] - pXY[3,2]))
 	if (any(is.na(res))) {
@@ -328,7 +336,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 			xy <- coordinates(to) 
 			xy <- subset(xy, xy[,1] > e@xmin & xy[,1] < e@xmax)
 			cells <- cellFromXY(to, xy)
-			xy <- .gd_transform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
+			xy <- rgdal:::.gd_transform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
 			xy <- cbind(xy[[1]], xy[[2]])
 			to[cells] <- .xyValues(from, xy, method=method)
 			
@@ -348,7 +356,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 				xy <- subset(xy, xy[,1] > e@xmin & xy[,1] < e@xmax)
 				if (nrow(xy) > 0) {
 					ci <- match(cellFromXY(to, xy), cells)
-					xy <- .gd_transform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
+					xy <- rgdal:::.gd_transform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
 					xy <- cbind(xy[[1]], xy[[2]])
 					v <- matrix(nrow=length(cells), ncol=nl)
 					v[ci, ] <- .xyValues(from, xy, method=method)

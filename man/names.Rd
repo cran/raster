@@ -1,7 +1,7 @@
 \name{names}
 
 \alias{layerNames}
-\alias{layerNames<-}
+\alias{labels,Raster-method}
 \alias{names}
 \alias{names<-}
 \alias{names,Raster-method}
@@ -22,12 +22,14 @@ Function \code{layerNames} is deprecated. Use \code{names} instead.
 
 \S4method{names}{Raster}(x)<-value
 
+\S4method{labels}{Raster}(object)
+
 layerNames(x)
-layerNames(x) <- value
 }
 
 \arguments{
   \item{x}{Raster* object}
+  \item{object}{Raster* object}  
   \item{value}{Character (vector)}
 }
 
@@ -51,6 +53,7 @@ names(s) <- c('a', 'b', 'c')
 names(s)[2] <- 'hello world'
 names(s)
 s
+labels(s)
 }
 
 \keyword{spatial}

@@ -19,9 +19,12 @@ if (!isGeneric("click")) {
 	}
 	cells <- cellFromXY(x, xyCoords)
 	cells <- unique(na.omit(cells))
-	if (length(cells) == 0 ) { stop('no valid cells selected') }
+	if (length(cells) == 0 ) { 
+		stop('no valid cells selected') 
+	}
 	cells
 }
+
 
 
 setMethod('click', signature(x='missing'), 
@@ -77,8 +80,7 @@ setMethod('click', signature(x='SpatialPixels'),
 )
 
 
-setMethod('click', signature(x='Raster'), 
-	function(x, n=1, id=FALSE, xy=FALSE, cell=FALSE, type="n", ...) {
+.oldclick <- function(x, n=1, id=FALSE, xy=FALSE, cell=FALSE, type="n", ...) {
 	
 	cells <- .getCellFromClick(x, n, type, id, ...)
 	value <- .cellValues(x, cells)
@@ -97,7 +99,49 @@ setMethod('click', signature(x='Raster'),
 	} 
 	value
 }
-)
+
+
+
+setMethod('click', signature(x='Raster'), 
+	function(x, n=Inf, id=FALSE, xy=FALSE, cell=FALSE, type="n", show=TRUE, ...) {
+	values <- NULL
+	i <- 0
+	n <- max(n, 1)
+	while (i < n) {
+		i <- i + 1
+		loc <- locator(1, type, ...)
+		xyCoords <- cbind(x=loc$x, y=loc$y)
+		if (id) { 
+			text(xyCoords, labels=i) 
+		}
+		cells <- na.omit(cellFromXY(x, xyCoords))
+		if (length(cells) == 0) break
+		
+		value <- extract(x, cells)
+		if (cell) {
+			value <- data.frame(cell=cells, value)
+		}
+		if (xy) { 
+			xyCoords <- xyFromCell(x, cells)
+			colnames(xyCoords) <- c('x', 'y')
+			value <- data.frame(xyCoords, value)
+		} 
+		if (show) {
+			print(value)
+			flush.console()
+		}
+		if (is.null(dim(value))) { 
+			value <- matrix(value)
+			colnames(value) <- names(x)
+		}
+		values <- rbind(values, value)
+	}
+	if (show) {
+		invisible(values)
+	} else {
+		values
+	}
+})
 
 
 

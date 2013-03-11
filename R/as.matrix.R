@@ -23,3 +23,10 @@ function(x, maxpixels, ...){
 	return( getValues(x) )
 })
 
+
+setMethod('as.matrix', signature(x='Extent'), 
+function(x, ...) {
+	b <- bbox(x)
+	rownames(b) <- c('x', 'y')
+	b
+})

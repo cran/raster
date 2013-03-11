@@ -13,7 +13,11 @@ setMethod('text', signature(x='RasterLayer'),
 	function(x, labels, digits=0, fun=NULL, ...) {
 		x <- rasterToPoints(x, fun=fun, spatial=FALSE)
 		if (missing(labels)) {
-			labels <- as.character(round(x[,3], digits=digits) )
+			if (NCOL(x) > 2) {
+				labels <- as.character(round(x[,3], digits=digits) )
+			} else {
+				labels <- 1:NROW(x)
+			}
 		}
 		text(x[,1], x[,2], labels, ...)
 	}

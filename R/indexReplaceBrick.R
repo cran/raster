@@ -107,6 +107,7 @@ setReplaceMethod("[[", c("RasterBrick", "numeric", "missing"),
 setReplaceMethod("[", c("RasterStackBrick", "Raster", "missing"),
 	function(x, i, j, value) {
 	
+		nl <- nlayers(i)
 		if (! hasValues(i) ) {
 			i <- cellsFromExtent(x, i)
 		} else if (compareRaster(x, i, stopiffalse=FALSE, showwarning=FALSE)) {
@@ -116,7 +117,11 @@ setReplaceMethod("[", c("RasterStackBrick", "Raster", "missing"),
 		} else {
 			i <- cellsFromExtent(x, i)
 		}			
-		.replace(x, i, value=value) 
+		if (nl < nlayers(x)) {
+			.replace(x, i, value=value, recycle=nl)
+		} else {
+			.replace(x, i, value=value, recycle=1) 
+		}
 	}
 )
 
@@ -124,12 +129,7 @@ setReplaceMethod("[", c("RasterStackBrick", "Raster", "missing"),
 setReplaceMethod("[", c("Raster", "Extent", "missing"),
 	function(x, i, j, value) {
 		i <- cellsFromExtent(x, i)
-		nl <- nlayers(x)
-		if (nl > 1) {
-			add <- ncell(x) * 0:(nl-1)
-			i <- as.vector(t((matrix(rep(i, nl), nrow=nl, byrow=TRUE)) + add))
-		}
-		.replace(x, i, value=value)
+		.replace(x, i, value=value, recycle=1)
 	}
 )
 
@@ -151,7 +151,7 @@ setReplaceMethod("[", c("Raster", "Spatial", "missing"),
 		} else { # if (inherits(i, 'SpatialPoints')) {
 			i <- cellsFromXY(x, coordinates(i))
 
-			return( .replace(x, i, value=value) )
+			return( .replace(x, i, value=value, recycle=1) )
 		}
 	}
 )
@@ -190,14 +190,14 @@ setReplaceMethod("[", c("RasterStackBrick","missing","missing"),
 setReplaceMethod("[", c("Raster", "numeric", "numeric"),
 	function(x, i, j, value) {
 		i <- cellFromRowColCombine(x, i, j)
-		.replace(x, i, value)
+		.replace(x, i, value, recycle=1)
 	}
 )	
 
 setReplaceMethod("[", c("Raster","missing", "numeric"),
 	function(x, i, j, value) {
 		j <- cellFromCol(x, j)
-		.replace(x, j, value=value)
+		.replace(x, j, value=value, recycle=1)
 	}
 )
 
@@ -209,7 +209,7 @@ setReplaceMethod("[", c("Raster","numeric", "missing"),
 		if (narg > 0) {
 			i <- cellFromRow(x, i)
 		}
-		.replace(x, i=i, value=value)
+		.replace(x, i=i, value=value, recycle=1)
 	}
 )
 
@@ -221,7 +221,7 @@ setReplaceMethod("[", c("Raster", "matrix", "missing"),
 		} else {
 			i <- as.vector(i)
 		}
-		.replace(x, i=i, value=value)
+		.replace(x, i=i, value=value, recycle=1)
 	}
 )
 
@@ -229,7 +229,7 @@ setReplaceMethod("[", c("Raster", "matrix", "missing"),
 
 setReplaceMethod("[", c("Raster", "logical", "missing"),
 	function(x, i, j, value) {
-		.replace(x, i, value)
+		.replace(x, i, value, recycle=1)
 	}
 )	
 

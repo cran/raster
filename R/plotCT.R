@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  July 2010
 # Version 0.9
 # Licence GPL v3
@@ -8,16 +8,20 @@
 # plotting with a color table
 
    if (missing(main)) {
-        main <- names(x)[1]
+        main <- ''
     }
 
+	sethook <- FALSE
 	if (!add) {
+		plot.new()
 		if (missing(axes)) {
 			axes <- FALSE
 		} 
 		if (!axes) {
 			# if (main != "") { } else {
+			old.par <- par(no.readonly = TRUE) 
 			par(plt=c(0,1,0,1))
+			sethook <- TRUE
 		}	
 		if (missing(asp)) {
 			if (.couldBeLonLat(x)) {
@@ -71,6 +75,16 @@
 		if (is.function(addfun)) {
 			addfun()
 		}
+	}
+
+	if (sethook) {
+		setHook("plot.new", function(...) {
+			w <- getOption('warn')
+			on.exit(options('warn' = w))
+			options('warn'=-1) 
+		    on.exit(par(old.par))
+			}, 	action="replace")
+		setHook("plot.new", function(...) setHook("plot.new", NULL, "replace"))
 	}
 	
 }

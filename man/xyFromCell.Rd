@@ -14,8 +14,8 @@ These functions get coordinates of the center of raster cells for a row, column,
 }
 
 \usage{
-xFromCol(object, colnr)
-yFromRow(object, rownr)
+xFromCol(object, col=1:ncol(object))
+yFromRow(object, row=1:nrow(object))
 xyFromCell(object, cell, spatial=FALSE)
 xFromCell(object, cell)
 yFromCell(object, cell)
@@ -25,8 +25,8 @@ yFromCell(object, cell)
 \arguments{
   \item{object}{Raster* object (or a SpatialPixels* or SpatialGrid* object)}
   \item{cell}{cell number(s)}
-  \item{colnr}{column number; or vector of column numbers}
-  \item{rownr}{row number; or vector of row numbers}
+  \item{col}{column number; or vector of column numbers}
+  \item{row}{row number; or vector of row numbers}
   \item{spatial}{return a SpatialPoints object (sp package) instead of a matrix}
 }
   
@@ -36,8 +36,9 @@ The last cell number equals the number of cells of the Raster* object.
 }
 
 \value{
-  xFromCol, yFromCol, xFromCell, yFromCell: vector of x or y coordinate(s) 
-  xyFromCell: matrix(x,y) of pairs of coordinates 
+xFromCol, yFromCol, xFromCell, yFromCell: vector of x or y coordinates 
+
+xyFromCell: matrix(x,y) with coordinate pairs 
 }
 
 

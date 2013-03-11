@@ -1,3 +1,20 @@
+--- to do
+focal for multi-layer objects
+support for RasterQuad (4 dimensional) objects
+add equivalent to "subsWithNA" to reclassify
+move resample (bilenear interp. (and add other options)) and rasterize/(lines, polygons) to C
+
+--- 10-March-2013, version: 2.1-10
+replacement with multi-layer object now works as expected (problem reported by Julian Zeidler)
+replacing a logical value in a RasterLayer previously changed the data type to numeric
+improved setExtent (bug report by Kathi Borgmann)
+adjacency is now obsolete (use adjacent instead)
+rasterOptions now (optionally) saved in a file in the start-up working directory
+fixed colnames in extract/polygons (cellnumbers=TRUE & df=TRUE). Reported by Florian de Boissieu
+bug with Math methods that occured when using mapply fixed thanks to Martin Morgan
+Then results of terrain(flowdir) were the mirror image of what the help says. The code has been fixed to match the help file. Reported by Daniel Schlaepfer.
+Bug fixes in dealing with RATs (reported by Dylan Beaudette) and rasterize/poings (reported by Steven Mosher)
+
 --- 21-December-2012, version: 2.0-41
 fixed bugs in extend: added rows did in some cases get values from row above, and using a 'datatype' arugment led to an error. Both reported by Oliver Soong
 fixed bug, introduced in previous version, in aggregate with expand=FALSE (reported by Mark Payne)

@@ -1,36 +1,30 @@
 \name{compareRaster}
 
 \alias{compareRaster}
-\alias{compare}
   
 \title{Compare Raster objects}
 
 \description{
 Evaluate whether a two or more Raster* objects have the same extent, number of rows and columns, projection, resolution, and origin (or a subset of these comparisons). Cell values are not compared by this function. 
-
-compare is an obsolete function that will be removed from the package. It is equivalent to compareRaster.
 }
 
 \usage{
 compareRaster(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE, orig=FALSE, 
 			rotation=TRUE, tolerance, stopiffalse=TRUE, showwarning=FALSE) 
-
-compare(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE, orig=FALSE, 
-			rotation=TRUE, tolerance, stopiffalse=TRUE, showwarning=FALSE) 			
 }
 
 \arguments{
-  \item{x}{A Raster* object }
-  \item{...}{Additional Raster* objects}
-  \item{extent}{Logical. If \code{TRUE}, bounding boxes are compared}
-  \item{rowcol}{Logical. If \code{TRUE}, number of rows and columns of the objects are compared}
-  \item{crs}{Logical. If \code{TRUE}, coordinate reference systems are compared.}
-  \item{res}{Logical. If \code{TRUE}, resolutions are compared (redundant when checking extent and rowcol)}
-  \item{orig}{Logical. If \code{TRUE}, origins are compared}
-  \item{rotation}{Logical. If \code{TRUE}, rotations are compared}  
-  \item{tolerance}{Numeric value between 0 and 0.5. If not supplied, the default value is used (see \code{\link{rasterOptions}}. It sets difference (relative to the cell resolution) that is permissible for objects to be considered 'equal', if they have a non-integer origin or resolution. See \link{all.equal}. }
-  \item{stopiffalse}{Logical. If \code{TRUE}, an error will occur if the objects are not the same}
-  \item{showwarning}{Logical. If \code{TRUE}, an warning will be given if objects are not the same. Only relevant when \code{stopiffalse} is \code{TRUE}}
+  \item{x}{Raster* object }
+  \item{...}{Raster* objects}
+  \item{extent}{logical. If \code{TRUE}, bounding boxes are compared}
+  \item{rowcol}{logical. If \code{TRUE}, number of rows and columns of the objects are compared}
+  \item{crs}{logical. If \code{TRUE}, coordinate reference systems are compared.}
+  \item{res}{logical. If \code{TRUE}, resolutions are compared (redundant when checking extent and rowcol)}
+  \item{orig}{logical. If \code{TRUE}, origins are compared}
+  \item{rotation}{logical. If \code{TRUE}, rotations are compared}  
+  \item{tolerance}{numeric between 0 and 0.5. If not supplied, the default value is used (see \code{\link{rasterOptions}}. It sets difference (relative to the cell resolution) that is permissible for objects to be considered 'equal', if they have a non-integer origin or resolution. See \link{all.equal}. }
+  \item{stopiffalse}{logical. If \code{TRUE}, an error will occur if the objects are not the same}
+  \item{showwarning}{logical. If \code{TRUE}, an warning will be given if objects are not the same. Only relevant when \code{stopiffalse} is \code{TRUE}}
  }
   
 

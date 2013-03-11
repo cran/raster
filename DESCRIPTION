@@ -1,8 +1,8 @@
 Package: raster
 Type: Package
 Title: raster: Geographic data analysis and modeling
-Version: 2.0-41
-Date: 21-December-2012
+Version: 2.1-12
+Date: 11-March-2013
 Depends: methods, sp, R (>= 2.14.0)
 Suggests: rgdal (>= 0.7-22), rgeos (>= 0.2-3), ncdf, ncdf4, igraph,
         snow, bigmemory, tcltk, rasterVis
@@ -14,9 +14,8 @@ Description: Reading, writing, manipulating, analyzing and modeling of
         supported.
 License: GPL (>= 3)
 URL: http://cran.r-project.org/web/packages/raster/
+ByteCompile: TRUE
+Packaged: 2013-03-12 06:00:57 UTC; rhijmans
+NeedsCompilation: yes
 Repository: CRAN
-Repository/R-Forge/Project: raster
-Repository/R-Forge/Revision: 2620
-Repository/R-Forge/DateTimeStamp: 2012-12-22 00:07:39
-Date/Publication: 2012-12-24 07:20:04
-Packaged: 2012-12-22 03:15:55 UTC; rforge
+Date/Publication: 2013-03-12 09:52:59

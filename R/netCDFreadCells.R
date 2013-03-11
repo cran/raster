@@ -13,13 +13,13 @@
 		return(r)
 	} 
 	
-# read only rows needed	
-	row1 <- rowFromCell(x, min(cells))
-	row2 <- rowFromCell(x, max(cells))
-	ncl <- (row2 - row1 + 1) * x@ncols
-	r <- raster(nrow=1, ncol=ncl)
 
 	if (canProcessInMemory(r, 2)) {
+	# read only rows needed	
+		row1 <- rowFromCell(x, min(cells))
+		row2 <- rowFromCell(x, max(cells))
+		ncl <- (row2 - row1 + 1) * x@ncols
+		r <- raster(nrow=1, ncol=ncl)
 		v <- getValues(x, row1, row2-row1+1)
 		v <- v[cells-cellFromRowCol(x, row1, 1)+1]
 		return(v)
@@ -32,7 +32,9 @@
 	colrow[,3] <- NA
 	rows <- sort(unique(colrow[,2]))
 	readrows <- rows
-	if ( x@file@toptobottom ) { readrows <- x@nrows - readrows + 1	}
+	if ( x@file@toptobottom ) { 
+		readrows <- x@nrows - readrows + 1	
+	}
 
 	zvar = x@data@zvar
 	time = x@data@band
@@ -48,9 +50,16 @@
 		getfun <- get.var.ncdf
 	}
 	
-#####		
-	
-	if (nc$var[[zvar]]$ndims == 2) {
+	if (nc$var[[zvar]]$ndims == 1) {
+		ncx <- x@ncols
+		count <- ncx
+		for (i in 1:length(rows)) {
+			start <- (readrows[i]-1) * ncx + 1
+			v <- as.vector(getfun(nc, varid=zvar, start=start, count=count))
+			thisrow <- subset(colrow, colrow[,2] == rows[i])
+			colrow[colrow[,2]==rows[i], 3] <- v[thisrow[,1]]
+		}	
+	} else	if (nc$var[[zvar]]$ndims == 2) {
 		count <- c(x@ncols, 1)
 		for (i in 1:length(rows)) {
 			start <- c(1, readrows[i])
@@ -130,6 +139,7 @@
 	}
 	
 	
+	# this needs to be optimized. Read chunks and extract cells
 	if (nc$var[[zvar]]$ndims == 2) {
 		count <- c(1, 1)
 		res <- matrix(nrow=length(cells), ncol=1)

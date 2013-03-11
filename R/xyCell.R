@@ -4,13 +4,13 @@
 # Licence GPL v3
 
 
-yFromRow <- function(object, rownr) {
+yFromRow <- function(object, row=1:nrow(object)) {
 	if (rotated(object)) {
 		stop('this function is not supported for rotated rasters')
 	}
-	rownr <- round(rownr)
-	rownr[rownr < 1 | rownr > object@nrows] <- NA
-	ymax(object) - ((rownr-0.5) * yres(object))
+	row <- round(row)
+	row[row < 1 | row > object@nrows] <- NA
+	ymax(object) - ((row-0.5) * yres(object))
 }	
 
 .yFromRow <- function(object, rownr) {
@@ -22,13 +22,13 @@ yFromRow <- function(object, rownr) {
 	
 
 
-xFromCol <- function(object, colnr) {
+xFromCol <- function(object, col=1:ncol(object)) {
 	if (rotated(object)) {
 		stop('this function is not supported for rotated rasters')
 	}
-	colnr <- round(colnr)
-	colnr[colnr < 1 | colnr > object@ncols] <- NA
-	xmin(object) + (colnr - 0.5) * xres(object) 
+	col <- round(col)
+	col[col < 1 | col > object@ncols] <- NA
+	xmin(object) + (col - 0.5) * xres(object) 
 }  
 
 .xFromCol <- function(object, colnr) {

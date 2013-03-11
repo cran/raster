@@ -23,13 +23,11 @@
 
 \description{
 
-These functions allow for defining a layer as a categorical variable. This creates a layer with integer values that are linked to other values via a "Raster Attribute Table" (RAT). Thus the cell values are an index, whereas the actual values of interest are in the RAT. The RAT is a data.frame with three or more columns. The first column in the RAT ("ID") has the unique cell values of the layer; this column should normally not be changed. The other columns can be of any basic type (factor, character, integer, numeric or logical). You can use multiple factor variables in a single RAT (to store multiple attributes for raster 'zones'). However, in the context of the raster package it is not recommended to do that. The functions documented here are mainly available such that files with a RAT can be read and processed. 
+These functions allow for defining a RasterLayer as a categorical variable. Such a RasterLayer is linked to other values via a "Raster Attribute Table" (RAT). Thus the cell values are an index, whereas the actual values of interest are in the RAT. The RAT is a data.frame. The first column in the RAT ("ID") has the unique cell values of the layer; this column should normally not be changed. The other columns can be of any basic type (factor, character, integer, numeric or logical). The functions documented here are mainly available such that files with a RAT can be read and processed; currently there is not too much further support. Whether a layer is defined as a factor or not is currently ignored by almost all functions. An exception is the 'extract' function (when used with option df=TRUE).
 
 Function 'levels' returns the RAT for inspection. It can be modified and set using \code{levels <- value}  (but use caution as it is easy to mess things up). 
 
-\code{as.factor} and \code{ratify} create a layer with a RAT table. Function 'deratify' creates a single layer for a variable in the RAT table. 
-
-This feature is not used much in the package. Whether a layer is defined as a factor or not is currently ignored by all, except the 'extract' functions (when used with option df=TRUE).
+\code{as.factor} and \code{ratify} create a layer with a RAT table. Function 'deratify' creates a single layer for a (or each) variable in the RAT table. 
 }
 
 \usage{

@@ -344,7 +344,7 @@ Cell numbers start at 1 in the upper-left corner. They increase within rows, fro
 \author{Except where indicated otherwise, all functions were written by Robert J. Hijmans}
 
 \section{Acknowledgements}{
-Extensive contributions were made by Jonathan Greenberg, Phil Heilman, Agustin Lobo, Matteo Mattiuzzi, Steven Mosher, Stefan Schlaffer, and Kevin Ummel. Contributions were also made by Jochen Albrecht, Neil Best, Andrew Bevan, Roger Bivand, Isabelle Boulangeat, Lyndon Estes, Josh Gray, Tim Haering, Herry Herry, Paul Hiemstra, Ned Hornig, Mayeul Kauffmann, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Justin McGrath, Richard Plant, Edzer Pebesma, Oscar Perpinan Lamigueiro, Etienne Racine, David Ramsey, Michael Sumner, Jon Olav Skoien, Shaun Walbridge, Julian Zeidler, and many others.
+Extensive contributions were made by Jonathan Greenberg, Phil Heilman, Agustin Lobo, Matteo Mattiuzzi, Steven Mosher, Stefan Schlaffer, and Kevin Ummel. Contributions were also made by Jochen Albrecht, Neil Best, Andrew Bevan, Roger Bivand, Isabelle Boulangeat, Lyndon Estes, Josh Gray, Tim Haering, Herry Herry, Paul Hiemstra, Ned Hornig, Mayeul Kauffmann, Bart Kranstauber, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Justin McGrath, Richard Plant, Edzer Pebesma, Oscar Perpinan Lamigueiro, Etienne Racine, David Ramsey, Michael Sumner, Jon Olav Skoien, Shaun Walbridge, Julian Zeidler, and many others.
 }
 
 \keyword{package}

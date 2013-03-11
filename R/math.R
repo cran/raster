@@ -1,4 +1,4 @@
-# Authors: Robert J. Hijmans, r.hijmans@gmail.com 
+# Authors: Robert J. Hijmans
 # Date :  January 2009
 # Version 0.9
 # Licence GPL v3
@@ -10,8 +10,8 @@ setMethod("Math", signature(x='Raster'),
 		if (!hasValues(x)) {
 			return(x)
 		}
-		funname <- as.character(sys.call(sys.parent())[[1]])
-		
+		#funname <- as.character(sys.call(sys.parent())[[1]])
+		funname <- .Generic
 		
 		nl <- nlayers(x)
 		if (nl > 1) {
@@ -97,7 +97,9 @@ setMethod("Math", signature(x='RasterLayerSparse'),
 		if (!hasValues(x)) {
 			return(x)
 		}
-		funname <- as.character(sys.call(sys.parent())[[1]])
+#		funname <- as.character(sys.call(sys.parent())[[1]])
+		funname <- .Generic
+
 
 		if (substr(funname, 1, 3) == 'cum' ) { 
 			setValues(x, do.call(funname, list(x@data@values)))

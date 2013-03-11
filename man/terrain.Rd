@@ -30,7 +30,7 @@ terrain(x, opt='slope', unit='radians', neighbors=8, filename='', ...)
 When \code{neighbors=4}, slope and aspect are computed according to Fleming and Hoffer (1979) and Ritter (1987). When \code{neigbors=8}, slope and aspect are computed according to Horn (1981). The Horn algorithm may be best for rough surfaces, and the Fleming and Hoffer algorithm may be better for smoother surfaces (Jones, 1997; Burrough and McDonnell, 1998).
 If slope = 0, aspect is set to 0.5*pi radians (or 90 degrees if unit='degrees'). When computing slope or aspect, the CRS (\code{\link{projection}}) of the RasterLayer \code{x} must be known (may not be \code{NA}), to be able to safely differentiate between planar and longitude/latitude data.
 
-flowdir returns the 'flow direction' (of water), i.e. the direction of the greatest drop in elevation (or the smallest rise if all neighbors are higher). The are encoded as powers of 2 (0 to 7). The cell to the right of the focal cell 'x' is 1, the one below that is 2, and so on:
+flowdir returns the 'flow direction' (of water), i.e. the direction of the greatest drop in elevation (or the smallest rise if all neighbors are higher). They are encoded as powers of 2 (0 to 7). The cell to the right of the focal cell 'x' is 1, the one below that is 2, and so on:
 \tabular{rrr}{
 32 \tab64 \tab 128\cr 
 16 \tab x \tab 1 \cr 

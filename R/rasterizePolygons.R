@@ -7,13 +7,13 @@
 .getPutVals <- function(obj, field, n, mask) {
 	lvs <- NA
 	if (mask) {
-		putvals <- data.frame(rep(1, length=n))
+		putvals <- data.frame(v=rep(1, length=n))
 	
 	} else if (missing(field)) {
-		putvals <- data.frame(as.integer(1:n))
+		putvals <- data.frame(v=as.integer(1:n))
 		
 	} else if (isTRUE (is.na(field))) { 
-		putvals <- data.frame(rep(NA, n))
+		putvals <- data.frame(v=rep(NA, n))
 		
 	} else if (!is.numeric(field) ) {
 		if (! .hasSlot(obj, 'data')) {
@@ -57,6 +57,9 @@
 		}
 		
 	} else {
+		if (missing(field)) {
+			field <- 1
+		}
 		if (length(field) > 1) { 
 			if (NROW(field) == n) {  # multiple fields at once?
 #			if (length(field) == n) {

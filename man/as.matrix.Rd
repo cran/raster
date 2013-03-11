@@ -6,7 +6,9 @@
 \alias{as.array,RasterLayer-method}
 \alias{as.matrix,RasterStackBrick-method}
 \alias{as.matrix,RasterLayer-method}
+\alias{as.matrix,Extent-method}
   
+ 
 \title{Get a matrix with raster cell values}
 
 \description{
