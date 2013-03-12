@@ -18,7 +18,7 @@
 	}
 
 	if (missing(main)) {
-		main <- names(object)[1]
+		main <- '' #names(object)[1]
 	}
 
 	if ( ! inMemory(object) ) { 

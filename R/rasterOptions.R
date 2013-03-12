@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress, timer, chunksize, maxmemory, todisk, setfileext, tolerance, standardnames, depracatedwarnings, default=FALSE, save=FALSE) {
+rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress, timer, chunksize, maxmemory, todisk, setfileext, tolerance, standardnames, depracatedwarnings, default=FALSE) {
 	
 	
 	
@@ -151,6 +151,9 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		options(rasterTolerance = 0.1)
 		options(rasterStandardNames = TRUE)
 		options(rasterDepracatedWarnings = TRUE)
+		v <- utils::packageDescription('raster')[["Version"]]
+#		fn <- paste(options('startup.working.directory'), '/rasterOptions_', v, sep='')
+#		if (file.exists(fn)) { file.remove(fn) }
 	}
 
 	
@@ -187,42 +190,29 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		depwarning=.depracatedwarnings()
 	)
 	
+	save <- FALSE
 	if (save) {
 	
-		fn <- paste(R.home(component="etc"), '/', 'Rprofile.site', sep='')
-		if (file.exists(fn)) {
-			oplst <- readLines(fn)
-			if (length(oplst) == 0) { 
-				oplst <- "" 
-			}
-			oplst <- .removeRasterOptions(oplst)
-			if (oplst[length(oplst)] != "") { 
-				oplst <- c(oplst, "") 
-			}
-		} else {
-			oplst <- ""
-		}
-
-		cnt <- 1
-		oplst <- c(oplst, "# Options for the 'raster' package")
-		oplst <- c(oplst, paste("options(rasterFiletype='", lst$format, "')", sep='')) 
-		oplst <- c(oplst, paste("options(rasterOverwrite=", lst$overwrite, ')', sep=''))
-		oplst <- c(oplst, paste("options(rasterDatatype='", lst$datatype, "')", sep=''))
-		oplst <- c(oplst, paste("options(rasterTmpDir='", lst$tmpdir, "')", sep=''))
-		oplst <- c(oplst, paste("options(rasterTmpTime='", lst$tmptime, "')", sep=''))
-		oplst <- c(oplst, paste("options(rasterProgress='", lst$progress, "')", sep=''))
-		oplst <- c(oplst, paste("options(rasterTimer=", lst$timer, ')', sep=''))
-		oplst <- c(oplst, paste("options(rasterChunkSize=", lst$chunksize, ")", sep=''))
-		oplst <- c(oplst, paste("options(rasterMaxMemory=", lst$maxmemory, ")", sep=''))
-		oplst <- c(oplst, paste("options(rasterSetFileExt=", lst$setfileext, ')', sep=''))
-		oplst <- c(oplst, paste("options(rasterTolerance=", lst$tolerance, ')', sep=''))
-		oplst <- c(oplst, paste("options(rasterStandardNames=", lst$standardnames, ')', sep=''))
-		oplst <- c(oplst, paste("options(rasterDepracatedWarnings=", lst$depwarning, ')', sep=''))
+		v <- utils::packageDescription('raster')[["Version"]]
+		fn <- paste(options('startup.working.directory'), '/rasterOptions_', v, sep='')
+		oplst <- NULL
+		oplst <- c(oplst, paste("rasterFiletype='", lst$format, "'", sep='')) 
+		oplst <- c(oplst, paste("rasterOverwrite=", lst$overwrite, sep=''))
+		oplst <- c(oplst, paste("rasterDatatype='", lst$datatype, "'", sep=''))
+		oplst <- c(oplst, paste("rasterTmpDir='", lst$tmpdir, "'", sep=''))
+		oplst <- c(oplst, paste("rasterTmpTime='", lst$tmptime, "'", sep=''))
+		oplst <- c(oplst, paste("rasterProgress='", lst$progress, "'", sep=''))
+		oplst <- c(oplst, paste("rasterTimer=", lst$timer, sep=''))
+		oplst <- c(oplst, paste("rasterChunkSize=", lst$chunksize, sep=''))
+		oplst <- c(oplst, paste("rasterMaxMemory=", lst$maxmemory, sep=''))
+		oplst <- c(oplst, paste("rasterSetFileExt=", lst$setfileext, sep=''))
+		oplst <- c(oplst, paste("rasterTolerance=", lst$tolerance, sep=''))
+		oplst <- c(oplst, paste("rasterStandardNames=", lst$standardnames, sep=''))
+		oplst <- c(oplst, paste("rasterDepracatedWarnings=", lst$depwarning, sep=''))
 		
 		r <- try( write(unlist(oplst), fn), silent = TRUE )
-		if (class(r) == "try-error") { 
-			warning('Cannot save options. No write access to: ', fn, '\n')	
-		}
+
+		cnt <- 1
 	}	
 	
 	
@@ -247,6 +237,17 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 	
 	invisible(lst)
 }
+
+
+.loadOptions <- function(f) {
+	if (file.exists(f)) {
+		dd <- readLines(f)
+		for (d in dd) {
+			try(eval(parse(text=paste("options(", d, ")"))))
+		}
+	}
+}
+
 
 
 .depracatedwarnings <- function() {

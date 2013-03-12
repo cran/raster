@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-.rasterObjectFromFile <- function(x, band=1, objecttype='RasterLayer', native=FALSE, silent=TRUE, offset=NULL, ...) {
+.rasterObjectFromFile <- function(x, band=1, objecttype='RasterLayer', native=FALSE, silent=TRUE, offset=NULL, ncdf=FALSE, GMT=FALSE, ...) {
 	x <- trim(x)
 	if (x=='' | x=='.') { # etc? 
 		stop('provide a valid filename')
@@ -43,7 +43,10 @@
 		}
 	}
 
-	if ( fileext %in% c(".NC", ".CDF", ".NCDF", ".NETCDF")) {
+	if (isTRUE(GMT)) {
+		return(.rasterObjectFromCDF_GMT(x))
+	}
+	if (( fileext %in% c(".NC", ".NCF", ".NC4", ".CDF", ".NCDF", ".NETCDF")) | (isTRUE(ncdf))) {
 		return ( .rasterObjectFromCDF(x, type=objecttype, band=band, ...) )
 		# return ( .rasterFromCDF(x, objecttype, ...) )
 	}

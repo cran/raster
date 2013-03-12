@@ -12,7 +12,7 @@ if (!isGeneric("plotRGB")) {
 
 
 setMethod("plotRGB", signature(x='RasterStackBrick'), 
-function(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, interpolate=FALSE, colNA='white', alpha, bgalpha, addfun=NULL, zlim=NULL, zlimcol=NULL, ...) { 
+function(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, interpolate=FALSE, colNA='white', alpha, bgalpha, addfun=NULL, zlim=NULL, zlimcol=NULL, axes=FALSE, xlab='', ylab='', asp=NULL, add=FALSE, ...) { 
 
 	if (missing(scale)) {
 		scale <- 255
@@ -23,7 +23,6 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, inte
 		}
 	}
 	scale <- as.vector(scale)[1]
-	dots <- list(...)
 	
 	r <- sampleRegular(raster(x,r), maxpixels, ext=ext, asRaster=TRUE, useGDAL=TRUE)
 	g <- sampleRegular(raster(x,g), maxpixels, ext=ext, asRaster=TRUE, useGDAL=TRUE)
@@ -40,7 +39,7 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, inte
 			} else { #if (is.na(zlimcol)) {
 				RGB[RGB<zlim[1] | RGB>zlim[2]] <- NA
 			} 
-		} else if (NROW(dots$zlim) == 3 & NCOL(dots$zlim) == 2) {
+		} else if (NROW(zlim) == 3 & NCOL(zlim) == 2) {
 			for (i in 1:3) {
 				zmin <- min(zlim[i,])		
 				zmax <- max(zlim[i,])
@@ -89,16 +88,10 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, inte
 	require(grDevices)
 	bb <- as.vector(t(bbox(r)))
 
-	add <- ifelse(is.null(dots$add), FALSE, dots$add)
 	
 	if (!add) {
-		xlab <- ifelse(is.null(dots$xlab), '', dots$xlab)
-		ylab <- ifelse(is.null(dots$ylab), '', dots$ylab)
-		axes <- ifelse(is.null(dots$axes), FALSE, dots$axes)
-		
 		if (!axes) par(plt=c(0,1,0,1))
 
-		asp <- dots$asp
 		if (is.null(asp)) {
 			if (.couldBeLonLat(x)) {
 			    ym <- mean(c(x@extent@ymax, x@extent@ymin))
@@ -109,7 +102,7 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, inte
 			}
 		}
 		
-		plot(NA, NA, xlim=c(bb[1], bb[2]), ylim=c(bb[3], bb[4]), type = "n", xaxs='i', yaxs='i', xlab=xlab, ylab=ylab, asp=asp, axes=FALSE)
+		plot(NA, NA, xlim=c(bb[1], bb[2]), ylim=c(bb[3], bb[4]), type = "n", xaxs='i', yaxs='i', xlab=xlab, ylab=ylab, asp=asp, axes=FALSE, ...)
 		if (axes) {
 			xticks <- axTicks(1, c(xmin(r), xmax(r), 4))
 			yticks <- axTicks(2, c(ymin(r), ymax(r), 4))
@@ -121,7 +114,7 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, inte
 			#axis(4, at=yticks, labels=FALSE, lwd.ticks=0)
 		}
 	}
-	rasterImage(z, bb[1], bb[3], bb[2], bb[4], interpolate=interpolate)
+	rasterImage(z, bb[1], bb[3], bb[2], bb[4], interpolate=interpolate, ...)
 	
 	if (!is.null(addfun)) {
 		if (is.function(addfun)) {

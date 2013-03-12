@@ -15,7 +15,8 @@ Make a Red-Green-Blue plot based on three layers (in a RasterBrick or RasterStac
 
 \usage{
 \S4method{plotRGB}{RasterStackBrick}(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL,
-         ext=NULL, interpolate=FALSE, colNA='white', alpha, bgalpha, addfun=NULL, zlim=NULL, zlimcol=NULL, ...)
+        ext=NULL, interpolate=FALSE, colNA='white', alpha, bgalpha, addfun=NULL, zlim=NULL, zlimcol=NULL,
+		axes=FALSE, xlab='', ylab='', asp=NULL, add=FALSE, ...)
 }
 
 \arguments{
@@ -34,7 +35,12 @@ Make a Red-Green-Blue plot based on three layers (in a RasterBrick or RasterStac
   \item{addfun}{Function to add additional items such as points or polygons to the plot (map). See \code{\link[raster]{plot}}}
   \item{zlim}{vector of lenght 2. Range of values to plot}
   \item{zlimcol}{If \code{NULL} the values outside the range of zlim get the color of the extremes of the range. If zlimcol has any other value, the values outside the zlim range get the color of \code{NA} values (see colNA)}
-  \item{...}{graphical parameters as in \code{\link{rasterImage}}}
+  \item{axes}{logical. If \code{TRUE} axes are drawn}
+  \item{xlab}{character. Label of x-axis}
+  \item{ylab}{character. Label of y-axis}
+  \item{asp}{numeric. Aspect (ratio of x and y. If NULL, and appropriate value is computed to match data for the lonlat coordinate refernce system, and 1 for planar coordinate reference systems}
+  \item{add}{logical. If \code{TRUE} add values to current plot}
+  \item{...}{graphical parameters as in \code{\link{plot}} or \code{\link{rasterImage}}}
 }
 
 \author{Robert J. Hijmans; stretch option based on functions by Josh Gray }

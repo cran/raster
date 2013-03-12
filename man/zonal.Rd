@@ -2,7 +2,8 @@
 
 \alias{zonal}
 
-\alias{zonal,Raster,RasterLayer-method}
+\alias{zonal,RasterLayer,RasterLayer-method}
+\alias{zonal,RasterStackBrick,RasterLayer-method}
 
 \title{Zonal statistics}
 
@@ -15,7 +16,9 @@ The function used should accept a \code{na.rm} argument. For example, if using \
 }
 
 \usage{
-\S4method{zonal}{Raster,RasterLayer}(x, z, stat='mean', digits=0, na.rm=TRUE, ...) 
+\S4method{zonal}{RasterLayer,RasterLayer}(x, z, stat='mean', digits=0, na.rm=TRUE, ...) 
+
+\S4method{zonal}{RasterStackBrick,RasterLayer}(x, z, stat='mean', digits=0, na.rm=TRUE, ...) 
 }
 
 \arguments{

@@ -15,7 +15,7 @@ Create an "image" type plot of a RasterLayer. This is an implementation of a gen
 
 \usage{
 image(x, ...) 
-\S4method{image}{RasterLayer}(x, maxpixels=500000, useRaster=TRUE, main, ...)
+\S4method{image}{RasterLayer}(x, maxpixels=500000, useRaster=TRUE, ...)
 
 \S4method{image}{RasterStackBrick}(x, y=1, maxpixels=100000, useRaster=TRUE, main, ...)
 }

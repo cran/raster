@@ -29,6 +29,16 @@
 }
 
 
+
+
+setMethod('labels', signature(object='Raster'), 
+	function(object) { 
+		names(object)
+	}
+)
+
+	
+
 setMethod('names', signature(x='Raster'), 
 	function(x) { 
 		if (.hasSlot(x@data, 'names')) {

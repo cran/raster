@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  July 2010
 # Version 1.0
 # Licence GPL v3
@@ -29,7 +29,7 @@ rasterFromXYZ <- function(xyz, res=c(NA, NA), crs=NA, digits=5) {
 		rx <- min(dx)
 		for (i in 1:5) {
 			rx <- rx / i
-			q <-  sum(round(dx %% rx, digits = digits)) 
+			q <- sum(round(dx / rx, digits=digits) %% 1)
 			if ( q == 0 ) {
 				break
 			}
@@ -39,7 +39,8 @@ rasterFromXYZ <- function(xyz, res=c(NA, NA), crs=NA, digits=5) {
 		}
 	} else {
 		rx <- res[1]
-		if ( sum(round(dx %% rx, digits = digits)) > 0 ) {
+		test <- sum(round(dx / rx, digits=digits) %% 1)
+		if ( test > 0 ) {
 			stop('x cell sizes are not regular')
 		}
 	}
@@ -52,7 +53,7 @@ rasterFromXYZ <- function(xyz, res=c(NA, NA), crs=NA, digits=5) {
 		ry <- min(dy)
 		for (i in 1:5) {
 			ry <- ry / i
-			q <-  sum(round(dy %% ry, digits = digits)) 
+			q <- sum(round(dy / ry, digits=digits) %% 1)
 			if ( q == 0 ) {
 				break
 			}
@@ -62,7 +63,8 @@ rasterFromXYZ <- function(xyz, res=c(NA, NA), crs=NA, digits=5) {
 		}
 	} else {
 		ry <- res[2]
-		if ( sum(round(dy %% ry, digits = digits)) > 0 ) {
+		test <- sum(round(dy / ry, digits=digits) %% 1)
+		if ( test > 0 ) {
 			stop('y cell sizes are not regular')
 		}
 	}

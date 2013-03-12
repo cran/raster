@@ -33,8 +33,8 @@ returnCluster()
 }
 
 \arguments{
-  \item{x}{RasterLayer or RasterBrick object}
-  \item{n}{integer. The number of copies of a RasterLayer object with values that a function needs to store in memory}  
+  \item{x}{RasterLayer or RasterBrick object (for connections) or RasterStack object (canProcessInMemory)}
+  \item{n}{integer. The number of copies of the Raster* object cell values that a function needs to be able to have in memory}  
   \item{silent}{logical. passed on to GDAL.open}  
   \item{nsteps}{integer. Number of steps the progress bar will make from start to end (e.g. nrow(raster)) }
   \item{progress}{character. 'text', 'window', or ''}

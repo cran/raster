@@ -80,6 +80,7 @@ setMethod("Arith", signature(e1='RasterLayer', e2='numeric'),
 		if (!hasValues(e1)) { stop('RasterLayer has no values') }
 
 		r <- raster(e1)
+		names(r) <- names(e1)
 		if (canProcessInMemory(e1, 4)) {
 			if (length(e2) > ncell(r)) {
 				e2 <- e2[1:ncell(r)]
@@ -118,6 +119,7 @@ setMethod("Arith", signature(e1='numeric', e2='RasterLayer'),
     function(e1, e2){ 
 		stopifnot(hasValues(e2))
 
+		names(r) <- names(e2)
 		r <- raster(e2)
 		if (canProcessInMemory(e2, 4)) {
 			if (length(e1) > ncell(r)) {
@@ -197,13 +199,14 @@ setMethod("Arith", signature(e1='RasterStackBrick', e2='numeric'),
 				a[] <- e2
 				e2 <- a
 			}
-					
+
+			b <- brick(e1, values=FALSE)
+			names(b) <- names(e1)
+			
 			if (canProcessInMemory(e1, 3)) {
-				b <- brick(e1, values=FALSE)
 				return( setValues(b, t(callGeneric( t(getValues(e1)), e2))) )
 			}
 			
-			b <- brick(e1, values=FALSE)
 			tr <- blockSize(b)
 			pb <- pbCreate(tr$n, label='arith')
 			b <- writeStart(b, filename=rasterTmpFile(), bandorder='BIL')
@@ -218,12 +221,13 @@ setMethod("Arith", signature(e1='RasterStackBrick', e2='numeric'),
 		}
 		
 		# else:
+
+		b <- brick(e1, values=FALSE)
+		names(b) <- names(e1)
 		
 		if (canProcessInMemory(e1, 3)) {
-			b <- brick(e1, values=FALSE)
 			return ( setValues(b,  callGeneric(getValues(e1), e2) ) )
 		} else {
-			b <- brick(e1, values=FALSE)
 			tr <- blockSize(b)
 			pb <- pbCreate(tr$n, label='arith')
 			b <- writeStart(b, filename=rasterTmpFile())
@@ -252,12 +256,14 @@ setMethod("Arith", signature(e1='numeric', e2='RasterStackBrick'),
 				e1 <- a
 			}
 					
+
+			b <- brick(e2, values=FALSE)
+			names(b) <- names(e2)
+			
 			if (canProcessInMemory(e2, 3)) {
-				b <- brick(e2, values=FALSE)
 				return( setValues(b, t(callGeneric( e1, t(getValues(e2))))) )
 			}
 			
-			b <- brick(e2, values=FALSE)
 			tr <- blockSize(b)
 			pb <- pbCreate(tr$n, label='arith')
 			b <- writeStart(b, filename=rasterTmpFile())
@@ -272,13 +278,14 @@ setMethod("Arith", signature(e1='numeric', e2='RasterStackBrick'),
 		}
 		
 		# else:
+
+		b <- brick(e2, values=FALSE)
+		names(b) <- names(e2)
 		
 		if (canProcessInMemory(e2, 3)) {
-			b <- brick(e2, values=FALSE)
 			return ( setValues(b,  callGeneric(e1, getValues(e2)) ) )
 		} else {
-			
-			b <- brick(e2, values=FALSE)
+	
 			tr <- blockSize(b)
 			pb <- pbCreate(tr$n, label='arith')
 			b <- writeStart(b, filename=rasterTmpFile())

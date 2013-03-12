@@ -38,13 +38,19 @@ if (!isGeneric("as.data.frame")) {
 setMethod('as.data.frame', signature(x='Raster'), 
 	function(x, row.names = NULL, optional = FALSE, xy=FALSE, ...) {
 
-		v <- as.data.frame(values(x), row.names=row.names, optional=optional, xy=FALSE, ...)
+		v <- as.data.frame(getValues(x), row.names=row.names, optional=optional, ...)
 		colnames(v) <- names(x)  # for nlayers = 1
 		
 		i <- is.factor(x)
 		if (any(is.factor(x))) {
 			if (ncol(v) == 1) {
-				v <- data.frame(factorValues(x, v[,1], 1))
+				v <- data.frame( factorValues(x, v[,1], 1))
+		#		j <- which(sapply(v, is.character))
+		#		if (length(j) > 0) {
+		#			for (jj in j) {
+		#				v[, jj] <- as.factor(v[,jj])
+		#			}
+		#		}
 			} else {
 				v <- .insertFacts(x, v, 1:nlayers(x))
 			}

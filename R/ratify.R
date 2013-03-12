@@ -87,23 +87,19 @@ deratify <- function(x, att=NULL, layer=1, complete=FALSE, drop=TRUE, fun='mean'
 	}
 	
 	RAT <- levels(x)[[1]]
-	weighted <- FALSE
-#	if (colnames(RAT)[2] == 'WEIGHT') {
-#		weighted <- TRUE
-#	}
 
-	if (complete) {
-		x@data@isfactor <- FALSE
-		x@data@attributes <- list()
+	if (NCOL(RAT) > 2) {
+		if (colnames(RAT)[2] == '_WEIGHT_') {
+			levels(x) <- .unweightRAT(RAT, fun)
+		}
+	} else if (NCOL(RAT) == 1) {
+		warning('this layer already has a single factor level (use "complete=TRUE" to remove it)')
 		return(x)
 	}
 	
-	if (ncol(RAT) <= 2) {
-		if (weighted & ncol(RAT)==3) {
-			levels(x) <- .unweightRAT(RAT, fun)
-		} else {
-			warning('this layer already has a single factor level (use "complete=TRUE" to remove it)')
-		}
+	if (complete) {
+		x@data@isfactor <- FALSE
+		x@data@attributes <- list()
 		return(x)
 	}
 	
@@ -119,9 +115,6 @@ deratify <- function(x, att=NULL, layer=1, complete=FALSE, drop=TRUE, fun='mean'
 	} 
 	
 	cc <- 2:ncol(RAT)
-	if (weighted) {
-		levels(x) <- .unweightRAT(RAT, fun)
-	}	
 
 	if (drop) {
 		for (i in cc) {

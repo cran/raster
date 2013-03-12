@@ -26,7 +26,7 @@ function(x, ext=drawExtent(), maxpixels=100000, layer=1, new=TRUE, useRaster=TRU
 	} else if (useRaster) {
 		.plotraster2(x, maxpixels=maxpixels, ext=ext, ...) 	
 	} else {
-		.plotraster(x, col=col, maxpixels=maxpixels, add=add, ...) 
+		.plotraster(x, col=col, maxpixels=maxpixels, ...) 
 	}
 		
 	return(invisible(ext))

@@ -25,6 +25,12 @@
 
 
     nbands <- nlayers(r)
+	ct <- r@legend@colortable
+	if (length(ct) > 0 ) {
+		hasCT <- TRUE
+	} else {
+		hasCT <- FALSE
+	}
 	r <- raster(r)
 	datatype <- .datatype(...)
 	overwrite <- .overwrite(...)
@@ -45,6 +51,8 @@
 	}	
 
 	dataformat <- .getGdalDType(datatype, gdalfiletype)
+	
+	if (dataformat != 'Byte') hasCT <- FALSE
 		
 	if (missing(NAflag)) { 
 		NAflag <- .GDALnodatavalue(dataformat) 
@@ -64,7 +72,13 @@
  
 	for (i in 1:nbands) {
 		b <- new("GDALRasterBand", transient, i)
-		.gd_SetNoDataValue(b, NAflag)
+		rgdal:::.gd_SetNoDataValue(b, NAflag)
+		if (hasCT) {
+			try( .SetRasterColorTable. <- rgdal:::.gd_SetRasterColorTable, silent=TRUE)
+			if (exists(".SetRasterColorTable.")) {
+				rgdal:::.gd_SetRasterColorTable(b, t(col2rgb(ct, TRUE)))
+			}
+		}
 	}
 
 	if (rotated(r)) {
@@ -78,9 +92,11 @@
 		#}
 	}
 	
-    .gd_SetGeoTransform(transient, gt)
-	.gd_SetProject(transient, projection(r))
-
-	if (is.null(options)) options <- ''
+	rgdal:::.gd_SetGeoTransform(transient, gt)
+	rgdal:::.gd_SetProject(transient, projection(r))
+		
+	if (is.null(options)) {
+		options <- ''
+	}
 	return(list(transient, NAflag, options, dataformat))
 }

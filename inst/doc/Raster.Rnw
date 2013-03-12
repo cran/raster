@@ -453,10 +453,9 @@ extract(r, xy)
 @
 
 
-You can also extract values using SpatialPolygons* or SpatialLines*. The default approach for extracting raster values with polygons is that a polygon has to cover the center of a cell, for the cell to be included. However, you can use argument "weights=TRUE" in which case you get, apart from the cell values, the percentage of each cell that is covered by the polygon, so that you can apply, e.g., a 50% area covered threshold, or compute an area-weighted average.
+You can also extract values using SpatialPolygons* or SpatialLines*. The default approach for extracting raster values with polygons is that a polygon has to cover the center of a cell, for the cell to be included. However, you can use argument "weights=TRUE" in which case you get, apart from the cell values, the percentage of each cell that is covered by the polygon, so that you can apply, e.g., a "50\% area covered" threshold, or compute an area-weighted average.
 
 In the case of lines, any cell that is crossed by a line is included. For lines and points, a cell that is only 'touched' is included when it is below or to the right (or both) of the line segment/point (except for the bottom row and right-most column).
-
 
 In addition, you can use standard \R indexing to access values, or to replace values (assign new values to cells) in a \verb@Raster@ object. If you replace a value in a \verb@Raster@ object based on a file, the connection to that file is lost (because it now is different from that file). Setting raster values for very large files will be very slow with this approach as each time a new (temporary) file, with all the values, is written to disk. If you want to overwrite values in an existing file, you can use {\bf update} (with caution!)
 

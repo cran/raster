@@ -18,13 +18,13 @@ To permanently set any of these options, you can add them to \code{<your R insta
 \usage{
 rasterOptions(format, overwrite, datatype, tmpdir, tmptime, progress, 
      timer, chunksize, maxmemory, todisk, setfileext, tolerance, 
-     standardnames, depracatedwarnings, default=FALSE, save=FALSE)		
+     standardnames, depracatedwarnings, default=FALSE)		
 }
 
 
 \arguments{
 \item{format}{character. The default file format to use. See \code{\link[raster]{writeFormats}}}
-\item{overwrite}{Logical. The default value for overwriting existing files. If \code{TRUE}, existing files will be overwritten}
+\item{overwrite}{logical. The default value for overwriting existing files. If \code{TRUE}, existing files will be overwritten}
 \item{datatype}{character. The default data type to use. See \link[raster]{dataType}}
 \item{tmpdir}{character. The default location for writing temporary files; See \code{\link{rasterTmpFile}}}
 \item{tmptime}{number > 1. The number of hours after which a temporary file will be deleted. As files are deleted when loading the raster package, this option is only useful if you  save this option so that it is loaded when starting a new session}
@@ -39,7 +39,6 @@ rasterOptions(format, overwrite, datatype, tmpdir, tmptime, progress,
 \item{depracatedwarnings}{logical. If \code{TRUE} (the default) a warning is generated when a depracated (obsolete) function is used}
 
 \item{default}{logical. If \code{TRUE}, all options are set to their default values}
-\item{save}{logical. If \code{TRUE}, an attempt is made to save the current options (with the exception of the 'todisk' option) to the \code{/etc/Rprofile.site} file to make them persistent (they will be set when starting a new R session)}
 }
 
 \value{

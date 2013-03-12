@@ -82,14 +82,11 @@ setAs('Raster', 'SpatialGridDataFrame',
 		grd <- .getGridTop(r)
 
 		if (hasValues(from)) {
-		
 			sp <- SpatialGridDataFrame(grd, proj4string=crs, data=as.data.frame(from))
-			
 		} else { 
 			warning('object has no values, returning a "SpatialGrid" object')
 			sp  <- SpatialGrid(grd, proj4string=crs)
 		}
-		
 		sp
 	}
 )

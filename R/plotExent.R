@@ -16,12 +16,12 @@
 
 
 setMethod("plot", signature(x='Extent', y='missing'), 
-	function(x, y, add=FALSE, ...)  {
+	function(x, y, type='l', add=FALSE, ...)  {
 		xy <- .extentMatrix(x)
 		if (add) {
 			lines(xy, ...) 
 		} else {
-			plot(xy, type='l', ...)
+			plot(xy, type=type, ...)
 		}
 	}
 )	

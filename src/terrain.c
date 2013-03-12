@@ -344,7 +344,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 	} else if (option[7]) { 
 	  // flow direction
 		addn = add * n;
-
+		int v;
 		double d[8] = {0,0,0,0,0,0,0,0};
 		double p[8] = {1,2,4,8,16,32,64,128}; // pow(2, j)
 		double dxy = sqrt(dx * dx + dy * dy);
@@ -364,18 +364,19 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 				d[7] = (xd[i] - xd[i+1-ncol]) / dxy;
 				// using the lowest neighbor, even if it is higher than the focal cell.
 				dmin = d[0];
-				xval[i+addn] = 1;
+				v = 0;
 				for (j=1; j<8; j++) {
-					if (d[j] < dmin) {
+					if (d[j] > dmin) {
 						dmin = d[j];
-						xval[i+addn] = p[j];
+						v = j;
 					} else if (d[j] == dmin) {
 						if (unif_rand() > 0.5) {
 							dmin = d[j];
-							xval[i+addn] = p[j];
+							v = j;
 						}
 					}
 				}
+				xval[i+addn] = p[v];
 			}
 		}
 		PutRNGstate();

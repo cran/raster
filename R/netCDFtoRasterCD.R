@@ -98,7 +98,7 @@
 	if (varname=='') { 
 		nv <- length(vars)
 		if (nv == 0) {
-			stop()
+			return('z')
 		} 
 		
 		if (nv  == 1) {
@@ -144,13 +144,14 @@
 	# assuming "CF-1.0"
 	
 	zvar <- .varName(nc, varname, warn=warn)
-	
-	datatype <- .getRasterDTypeFromCDF( nc$var[[zvar]]$prec )
-	
+	# datatype <- .getRasterDTypeFromCDF( nc$var[[zvar]]$prec )
 	dim3 <- 3
 	dims <- nc$var[[zvar]]$ndims
+	
 	if (dims== 1) { 
-		stop(zvar, ' only has a single dimension; I cannot make a RasterLayer from this')
+		
+		return(.rasterObjectFromCDF_GMT(nc, ncdf4))
+		
 	} else if (dims == 4) { 
 		if (type != 'RasterQuadBrick') {
 			nlevs <- nc$var[[zvar]]$dim[[lvar]]$len

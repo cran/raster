@@ -11,7 +11,7 @@ if (!isGeneric("plot")) {
 
 
 setMethod("plot", signature(x='Raster', y='ANY'), 
-	function(x, y, col=rev(terrain.colors(255)), maxpixels=500000, alpha=1, colNA=NA, add=FALSE, ext=NULL, useRaster=TRUE, interpolate=FALSE, addfun=NULL, nc, nr, maxnl=16, main, ...)  {
+	function(x, y, maxpixels=500000, col, alpha=1, colNA=NA, add=FALSE, ext=NULL, useRaster=TRUE, interpolate=FALSE, addfun=NULL, nc, nr, maxnl=16, main, ...)  {
 	
 		if (alpha < 1) {
 			alpha <- max(alpha, 0) * 255 + 1
@@ -25,6 +25,10 @@ setMethod("plot", signature(x='Raster', y='ANY'),
 			stop('Raster object has no cell values')
 		}
 
+		hasNoCol <- missing(col)
+		if (hasNoCol) {
+			col <- rev(terrain.colors(255))
+		}
 		
 		if (nl == 1) {
 			if (inherits(x, 'RasterBrick')) {
@@ -38,8 +42,8 @@ setMethod("plot", signature(x='Raster', y='ANY'),
 			}
 	
 			
-			if (length(x@legend@colortable) > 0) {
-				.plotCT(x, maxpixels=maxpixels, ext=ext, interpolate=interpolate, main=main, addfun=addfun, ...)
+			if ( (length(x@legend@colortable) > 0) & hasNoCol) {
+				.plotCT(x, maxpixels=maxpixels, ext=ext, interpolate=interpolate, main=main, add=add, addfun=addfun, ...)
 			} else if (! useRaster) {
 				.plotraster(x, col=col, maxpixels=maxpixels, add=add, ext=ext, main=main, addfun=addfun, ...) 
 			} else {
@@ -68,7 +72,7 @@ setMethod("plot", signature(x='Raster', y='ANY'),
 		
 		if (length(y) == 1) {
 			x <- raster(x, y)
-			if (length(x@legend@colortable) > 0) {
+			if ( (length(x@legend@colortable) > 0) & hasNoCol) {
 				.plotCT(x, maxpixels=maxpixels, ext=ext, interpolate=interpolate, main=main[y], addfun=addfun, ...)
 			} else if (useRaster) {
 				.plotraster2(x, col=col, colNA=colNA, maxpixels=maxpixels, main=main[y], ext=ext, interpolate=interpolate, addfun=addfun, ...) 
@@ -113,7 +117,7 @@ setMethod("plot", signature(x='Raster', y='ANY'),
 				if (coln==1) ya='s' else ya='n'
 				
 				obj <- raster(x, y[i])
-				if (length(obj@legend@colortable) > 0) {
+				if ((length(obj@legend@colortable) > 0) & hasNoCol) {
 					.plotCT(obj, maxpixels=maxpixels, ext=ext, interpolate=interpolate, main=main, addfun=addfun, ...)
 				} else if (useRaster) {
 					.plotraster2(obj, col=col, maxpixels=maxpixels, xaxt=xa, yaxt=ya, main=main[y[i]], 

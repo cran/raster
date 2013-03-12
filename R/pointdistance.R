@@ -40,7 +40,8 @@
 	if (longlat) { 
 		fun <- .haversine 
 	} else { 
-		fun <- .planedist
+		return(.planedist2(x, x))
+	#	fun <- .planedist
 	}
     n = nrow(x)
     dm = matrix(ncol = n, nrow = n)
@@ -60,7 +61,8 @@
 	if (longlat) { 
 		fun <- .haversine 
 	} else { 
-		fun <- .planedist
+		return(.planedist2(x, y))
+		# fun <- .planedist
 	}
 	n = nrow(x)
 	m = nrow(y)
@@ -106,6 +108,17 @@ pointDistance <- function (p1, p2, longlat,  ...) {
 .planedist <- function(x1, y1, x2, y2) {
 	sqrt(( x1 -  x2)^2 + (y1 - y2)^2) 
 }
+
+
+.planedist2 <- function(p1, p2) {
+# code by Bill Venables, CSIRO Laboratories
+# https://stat.ethz.ch/pipermail/r-help/2008-February/153841.html
+	z0 <- complex(, p1[,1], p1[,2])
+	z1 <- complex(, p2[,1], p2[,2])
+	outer(z0, z1, function(z0, z1) Mod(z0-z1))
+}
+
+
 
 .haversine <- function(x1, y1, x2, y2, r=6378137) {
 	adj <- pi / 180
