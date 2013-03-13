@@ -3,11 +3,18 @@
 
 
 layerNames <- function(x) {
-	if (.depracatedwarnings()) {
-		warning('the layerNames function is obsolete. Use "names" instead')
-	}
+	warning('the layerNames function is obsolete. Use "names" instead')
 	names(x)
 }
+
+
+'layerNames<-' <- function(x, value) {
+	warning('the layerNames function is obsolete. Use "names" instead')
+	names(x) <- value
+	x
+}
+
+
 
 
 .compare <- function(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE, orig=FALSE, rotation=TRUE, tolerance, stopiffalse=TRUE, showwarning=FALSE) {

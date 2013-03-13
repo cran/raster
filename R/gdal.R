@@ -25,6 +25,8 @@
 			
 		} else if (stopIfAbsent) {
 			stop("package 'rgdal' is not available")
+		} else {
+			return(FALSE)
 		}
 	}
 	
