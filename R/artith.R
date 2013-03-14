@@ -119,8 +119,8 @@ setMethod("Arith", signature(e1='numeric', e2='RasterLayer'),
     function(e1, e2){ 
 		stopifnot(hasValues(e2))
 
-		names(r) <- names(e2)
 		r <- raster(e2)
+		names(r) <- names(e2)
 		if (canProcessInMemory(e2, 4)) {
 			if (length(e1) > ncell(r)) {
 				e1 <- e1[1:ncell(r)]

@@ -61,6 +61,8 @@ setMethod('names', signature(x='RasterStack'),
 )
 
 
+
+
 setMethod('names<-', signature(x='Raster'), 
 	function(x, value)  {
 		nl <- nlayers(x)

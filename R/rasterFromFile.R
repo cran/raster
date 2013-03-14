@@ -67,7 +67,9 @@
 		return ( .rasterFromASCIIFile(x, offset) )
 	}
 	if(!native) {
-		if (! .requireRgdal(FALSE) )  { native <- TRUE }  
+		if (! .requireRgdal(FALSE) )  { 
+			native <- TRUE 
+		}  
 	}
 	if (native) {
 		if ( fileext == ".ASC" ) {

@@ -1,5 +1,5 @@
 81cdf28ca557dafc511e2ba1f58be5a6 *ChangeLog
-0592c65a038fd19775bc76372d5f0c03 *DESCRIPTION
+61cac21d5d64cbf136b2bbc8dca05723 *DESCRIPTION
 723b00b5fa11cb4a53ed4e3110675f84 *NAMESPACE
 b7ccac43f5dfe713b5d4f6effc9ddd37 *R/AAAClasses.R
 033b8d8c0feaaf6a588b492b1d3c2292 *R/GDALtransient.R
@@ -15,7 +15,7 @@ d1eae4c6cac533b85698d2e3bb297d82 *R/adjacency.R
 0c9d2e032606773e35105596bdeeedf1 *R/animate.R
 8b51d5fc768dfc3d95b40fc8479bf6e4 *R/approxNA.R
 31b7341ef326a34797f09b25e8ad40e6 *R/area.R
-00528e24da196d14662f864340485742 *R/artith.R
+6f7244b18c59acfe0f28b9d67b413de2 *R/artith.R
 0739ab338f7d82d70307eef74f098840 *R/as.array.R
 f4132774f2852255b0d150c07d6c1d15 *R/as.data.frame.R
 a88d0edb31854bb4d4300fd509874de5 *R/as.logical.R
@@ -61,7 +61,7 @@ f4af4e1a9741bad8f69157ade362cdb2 *R/connection.R
 0d97af860a7b93014a99fddd17e09bd6 *R/dataProperties.R
 74e88cb38db9cbc5977a68a871ba869a *R/dataType.R
 57003e51e68ec9b9a37abc9d46d766bd *R/density.R
-6dd6bc7abb7c5219831a3711f246f106 *R/depracated.R
+9fc452520b28508b80dedb710a2c8922 *R/depracated.R
 914f743d13411be93d2d2b9866a32213 *R/destair.R
 8e250f9798ac357ff0187b7accc29776 *R/detectCores.R
 ff3eed95eb35429add57707b0b12fead *R/dim.R
@@ -92,7 +92,7 @@ d1996d7795eb5b1dac069b3f3d566618 *R/focal.R
 16e9a452c13c48759d979aeb41b3418b *R/freq.R
 3f39798b22bcb1e0bfd4c9036729c2d3 *R/fullFileName.R
 a9b0b85fb60817dba81aec5101cc75ca *R/gainoffset.R
-8b33a7a27c6b4d1b0fbcae4b1e203abc *R/gdal.R
+c69a58c60fb7555da5052c56eed2f39f *R/gdal.R
 93c3aa3aff28ce4337cb49315215c239 *R/gdalFormats.R
 6fd921f3a79949c4317898d7bd039762 *R/getData.R
 ad5efa6cea7613327143516443a2a6fc *R/getValues.R
@@ -150,7 +150,7 @@ b6258f1476a950b71681bead61714147 *R/mosaic.R
 72d871776b92414574233f8296e8bd37 *R/movingFun.R
 510952c9c63c30c5ea14776280e666c0 *R/multiCore.R
 03a7a03798a1af13f3b84dd95d5e435d *R/naValue.R
-f36a6dd22f88b6a4732ad7206cbe8f82 *R/names.R
+43732faeed224b3ce5e5a94cbeedb51b *R/names.R
 092c70f79fc10774d599b8ce3e57e1e3 *R/ncell.R
 153584a5e4b9f2cc71f09933d6a61216 *R/netCDFread.R
 8a439372bac5ee6b5bb3416aeaa09770 *R/netCDFreadCells.R
@@ -187,7 +187,7 @@ a6753651bc3303855d016b958b68e525 *R/raster.R
 3a1263bd8c39232baf9297500901e29b *R/rasterFromASCII.R
 d21e699ed60ab0f56bf5f3fd16b9c204 *R/rasterFromBIL.R
 b9754e5df90e7dc4e75342a40dacc51b *R/rasterFromCells.R
-ba8e64b0800456334e8d901dc8e31c30 *R/rasterFromFile.R
+881a693c682941b5c47727978802eaf6 *R/rasterFromFile.R
 f071b5689090a5f8956db5cc3f2cb476 *R/rasterFromGDAL.R
 1dddd22b09fbf0afdc8c648ce038bf31 *R/rasterFromIDRISI.R
 d4c1be27e355612f0f1f763e218cabc2 *R/rasterFromRasterFile.R
@@ -278,11 +278,11 @@ ef9c1cba1873c91c589737a2a410cede *R/zonal.R
 4a1786a5b08a8bcf170827be5434aaca *R/zoom.R
 d3f6c1b7c1d8451f3c3ab0a9c6a30430 *R/zzz.R
 0fb5021b1488acc05020683904b914cb *inst/doc/Raster.Rnw
-4a412fffdc27751f47414639068cf672 *inst/doc/Raster.pdf
+1e26b250f6103a76bdbfb02857f6982d *inst/doc/Raster.pdf
 b19c28ec2d02d8d503521d72953098a9 *inst/doc/functions.Rnw
-715f111e2aae68d487172c7ce66fdf8a *inst/doc/functions.pdf
+f022ee6ebfcb713bd4518e17e46599d8 *inst/doc/functions.pdf
 cdf4af6595c744554a8b1e658c524cef *inst/doc/rasterfile.Rnw
-f8fbf710ff8d671596ce5e9bee520ed9 *inst/doc/rasterfile.pdf
+38c97174391fa9282f7090e4f45c4877 *inst/doc/rasterfile.pdf
 b881b0fbe3b8d46675d5ba649aba98bb *inst/external/countries.csv
 7e1cc4f8e01df980c0e3b54d9797d6cd *inst/external/rlogo.grd
 b3ed7227bb04142c4a36cbe25067d5ac *inst/external/rlogo.gri
@@ -379,7 +379,7 @@ a2c26f54cbc69595fccac3c3c8b29143 *man/merge.Rd
 9e546a44f3bcfeede1daa3e6bf8691f2 *man/modal.Rd
 1866197a753dee2ccc30810b077e6adc *man/mosaic.Rd
 e2843923291909994b044b5b5df8921d *man/movingFun.Rd
-c83650b970423d0bdbefcf190820a8fb *man/names.Rd
+f03beb915fe6fd8c9209d9d70ec59f20 *man/names.Rd
 c851fb14df1c7c3f8a573b0f4d60ffa4 *man/ncell.Rd
 b49e7d548d1c00ef9e9e87640b2fb5ea *man/nlayers.Rd
 89d01c4826e6967f095240c057ff7d81 *man/obsolete.Rd

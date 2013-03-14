@@ -1,6 +1,7 @@
 \name{names}
 
 \alias{layerNames}
+\alias{layerNames<-}
 \alias{labels,Raster-method}
 \alias{names}
 \alias{names<-}
@@ -13,8 +14,6 @@
 
 \description{
 Get or set the names of the layers of a Raster* object
-
-Function \code{layerNames} is deprecated. Use \code{names} instead. 
 }
 
 \usage{
@@ -38,9 +37,6 @@ Character
 }
 
 \seealso{ \code{\link{nlayers}, \link[raster]{bands}} }
-
-
-
 
 
 \examples{
