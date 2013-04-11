@@ -152,7 +152,7 @@ setMethod('as.data.frame', signature(x='SpatialLines'),
 		if (sepNA) {
 			sep <- rep(NA,4)
 			for (i in 1:nobs) {
-				nsubobj <- length(x@line[[i]]@Lines)
+				nsubobj <- length(x@lines[[i]]@Lines)
 				ps <- lapply(1:nsubobj, 
 						function(j) 
 							rbind(cbind(j, j+cnt, x@lines[[i]]@Lines[[j]]@coords), sep)
@@ -162,7 +162,7 @@ setMethod('as.data.frame', signature(x='SpatialLines'),
 			}
 		} else {
 			for (i in 1:nobj) {
-				nsubobj <- length(x@line[[i]]@Lines)
+				nsubobj <- length(x@lines[[i]]@Lines)
 				ps <- lapply(1:nsubobj, function(j) cbind(j, j+cnt, x@lines[[i]]@Lines[[j]]@coords))
 				objlist[[i]] <- cbind(i, do.call(rbind, ps))
 				cnt <- cnt+nsubobj

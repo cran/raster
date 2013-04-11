@@ -5,7 +5,6 @@
 
 
 .getPutVals <- function(obj, field, n, mask) {
-	lvs <- NA
 	if (mask) {
 		putvals <- data.frame(v=rep(1, length=n))
 	
@@ -14,64 +13,38 @@
 		
 	} else if (isTRUE (is.na(field))) { 
 		putvals <- data.frame(v=rep(NA, n))
-		
+
+	} else if (NROW(field) == n) {
+		if (is.null(nrow(field))) {
+			return(data.frame(field, stringsAsFactors=FALSE))
+		} else {
+			return(field)
+		}
+			
 	} else if (!is.numeric(field) ) {
+		if (length(field) != 1) {
+			stop("field is a character vector of length not equal to 1 or the number of geometries")		
+		}
 		if (! .hasSlot(obj, 'data')) {
-			stop("field name is not numeric, and vector object has no data.frame")
+			stop("field name is a single character value, but vector object has no data.frame")
+			# or return(data.frame(v=rep(field, n))) ??
 		}
 		field <- which(colnames(obj@data) == field)[1]
 		if (is.na(field)) {
 			stop('field does not exist')
 		}
-		putvals <- (obj@data[[field]])
-		if (class(putvals) == 'factor') {
-			# warning('selected field is a factor (coverted to numeric)')
-			w <- getOption('warn')
-			on.exit(options('warn' = w))
-			options('warn'=-1) 
-			pvals <- as.numeric(as.character(putvals))
-			if (all(is.na(pvals) == is.na(putvals))) {
-				putvals <- data.frame(pvals)
-			} else {
-				lvs <- levels(putvals)
-				putvals <- data.frame(ID=as.integer(putvals), value=lvs)
-				colnames(putvals)[2] <- colnames(obj@data)[[field]]
-			}
-		}
-		if (class(putvals) == 'character') {
-			# warning('selected field is character type (coverted to numeric)')
-			w <- getOption('warn')
-			on.exit(options('warn' = w))
-			options('warn'=-1) 
-			pvals <- as.numeric(putvals)
-			if (all(is.na(pvals) == is.na(putvals))) {
-				putvals <- data.frame(pvals)
-			} else {
-				putvals <- as.factor(putvals)
-				lvs <- levels(putvals)
-				putvals <- data.frame(ID=as.integer(putvals), value=lvs)
-				colnames(putvals)[2] <- colnames(obj@data)[[field]]
-			}
-		} else {
-			putvals <- data.frame(putvals)
-		}
+		putvals <- obj@data[, field, drop=FALSE]
 		
-	} else {
-		if (missing(field)) {
-			field <- 1
-		}
-		if (length(field) > 1) { 
-			if (NROW(field) == n) {  # multiple fields at once?
-#			if (length(field) == n) {
-				putvals <- data.frame(field)
-			} else {
-				stop('field should be a single value or equal the number of spatial features') 
-			}
+	} else if (length(field) > 1) { 
+		if (NROW(field) == n) {  
+			putvals <- data.frame(field)
 		} else {
-			putvals <- vector(length=n)
-			putvals[] <- field
-			putvals <- data.frame(putvals)
+			stop('field should be a single value or equal the number of spatial features') 
 		}
+	} else {
+		putvals <- vector(length=n)
+		putvals[] <- field
+		putvals <- data.frame(putvals)
 	}
 	putvals
 }
@@ -163,9 +136,9 @@
 	
 	if (getCover) {
 		fun <- 'first'
-		mask = FALSE
-		update=FALSE
-		field=-1
+		mask <- FALSE
+		update <- FALSE
+		field <- -1
 	}
 
 	if (is.character(fun)) {

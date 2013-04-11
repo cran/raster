@@ -19,7 +19,7 @@ function(x, y, ...){
 
 
 setMethod('extract', signature(x='Raster', y='SpatialPoints'), 
-function(x, y, ...){ 
+function(x, y, ..., df=FALSE, sp=FALSE){ 
 	px <- projection(x, asText=FALSE)
 	comp <- .compareCRS(px, projection(y), unknown=TRUE)
 	if (!comp) {
@@ -30,12 +30,22 @@ function(x, y, ...){
 			y <- spTransform(y, px)
 		}
 	}
-	.xyValues(x, coordinates(y), ...)
+	if (sp) {
+		v <- .xyValues(x, coordinates(y), ..., df=TRUE)
+		if (!.hasSlot(y, 'data')) {
+			y <- SpatialPointsDataFrame(y,  v[, -1, drop=FALSE])
+		} else {
+			y@data <- cbind(y@data, v[, -1, drop=FALSE])
+		}
+		return(y)
+	} else {
+		.xyValues(x, coordinates(y), ..., df=df)
+	}
 })
 
 
 	
-.xyValues <- function(object, xy, method='simple', buffer=NULL, small=FALSE, cellnumbers=FALSE, fun=NULL, na.rm=TRUE, layer, nl, df=FALSE, factors=FALSE, ...) { 
+.xyValues <- function(object, xy, method='simple', buffer=NULL, small=FALSE, cellnumbers=FALSE, fun=NULL, na.rm=TRUE, layer, nl, df=FALSE, factors=FALSE, sp=FALSE, ...) { 
 
 	nlyrs <- nlayers(object)
 	if (nlyrs > 1) {

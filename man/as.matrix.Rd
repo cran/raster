@@ -1,5 +1,6 @@
 \name{as.matrix}
 
+\alias{as.vector}
 \alias{as.matrix}
 \alias{as.array}
 \alias{as.array,RasterStackBrick-method}
@@ -7,6 +8,8 @@
 \alias{as.matrix,RasterStackBrick-method}
 \alias{as.matrix,RasterLayer-method}
 \alias{as.matrix,Extent-method}
+\alias{as.vector,Extent-method}
+\alias{as.vector,Raster-method}
   
  
 \title{Get a matrix with raster cell values}
@@ -23,21 +26,23 @@ If there is insufficient memory to load all values, you can use \code{\link{getV
 \usage{
 as.matrix(x, ...)
 as.array(x, ...)
+as.vector(x, mode="any")
 }
 
 \arguments{
- \item{x}{ Raster* object }
- \item{...}{ Additional arguments. 
+ \item{x}{ Raster* or (for as.matrix and as.vector) Extent object }
+ \item{mode}{ character string giving an atomic mode or "list", or "any" }
+ \item{...}{ additional arguments: 
  
 	\code{maxpixels} Integer. To regularly subsample very large objects 
 	
-   \code{transpose} Logical. Transpose the data? (for as.array only)
+    \code{transpose} Logical. Transpose the data? (for as.array only)
 
 }}
   
 
 \value{
-matrix or array
+matrix, array, or vector
 }
 
 
@@ -48,6 +53,7 @@ r[] = 1:ncell(r)
 as.matrix(r)
 s <- stack(r,r)
 as.array(s)
+as.vector(extent(s))
 }
 
 \keyword{spatial}

@@ -48,6 +48,7 @@ setClass ('BasicRaster',
 		ncols ='integer',
 		nrows ='integer',
 		crs = 'CRS',
+		history = 'list',
 		z = 'list'
 	),
 	prototype (	
@@ -55,6 +56,7 @@ setClass ('BasicRaster',
 		ncols= as.integer(1),
 		nrows= as.integer(1),
 		crs = CRS(as.character(NA)),
+		history = list(),
 		z = list()
 	),
 	validity = function(object) {
@@ -170,13 +172,9 @@ setClass ('RasterLayer',
 	representation (
 		file = '.RasterFile',
 		data = '.SingleLayerData',
-		legend = '.RasterLegend',
-		history = 'list'
-		),
-	prototype (
-		history = list()
-		)
+		legend = '.RasterLegend'
 	)
+)
 
 
 
@@ -225,15 +223,8 @@ setClass ('RasterBrick',
 	representation (
 		file = '.RasterFile',
 		data = '.MultipleRasterData',
-		legend = '.RasterLegend',
-		history = 'list'
-		),
-	prototype (
-		history = list()
-		),
-	validity = function(object)
-	{
-	}
+		legend = '.RasterLegend'
+	)
 )
 
 	

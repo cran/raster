@@ -37,8 +37,8 @@
 				vals <- .readCellsGDAL(x, uniquecells, layers)
 			} else if ( .isNativeDriver( driver) ) {  # raster, BIL, ..
 				vals <- .readCellsRaster(x, uniquecells, layers)
-			} else if ( driver == 'big.matrix') {
-				vals <- .readBigMatrixCells(x, uniquecells) 
+#			} else if ( driver == 'big.matrix') {
+#				vals <- .readBigMatrixCells(x, uniquecells) 
 			} else if ( driver == 'netcdf') {
 				vals <- .readRasterCellsNetCDF(x, uniquecells) 
 			} else if ( driver == 'ascii') {
@@ -54,6 +54,11 @@
 		return(rep(NA, times=length(cells[,1])))
 	}
 	
+	if (is.null(dim(vals))) { 
+		vals <- matrix(vals, ncol=1)
+		colnames(vals) <- names(x)[layers]
+	}
+		
 	vals <- cbind(uniquecells, vals)
 	vals <- merge(x=cells[,2], y=vals, by=1, all=TRUE)
 	vals <- as.matrix(cbind(cells[,1], vals[,2:ncol(vals)]))

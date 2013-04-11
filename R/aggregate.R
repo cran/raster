@@ -12,19 +12,12 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 
 	doC <- list(...)$doC
 	if (is.null(doC)) doC <- TRUE
+	fact <- rep(as.integer(round(fact)), length.out=2)
+	xfact <- fact[1]
+	yfact <- fact[2]
+	if (xfact < 1 | yfact < 1) { stop('fact should be > 0') } 
+	if (xfact < 2 & yfact < 2) { stop('fact[1] or fact[2] should be > 1') } 
 	
-	if (length(fact)==1) {
-		fact <- as.integer(round(fact))
-		if (fact < 2) { stop('fact should be > 1') }
-		xfact <- yfact <- fact
-	} else if (length(fact)==2) {
-		xfact <- as.integer(round(fact[[1]]))
-		yfact <- as.integer(round(fact[[2]]))
-		if (xfact < 2) { stop('fact[[1]] should be > 1') } 
-		if (yfact < 2) { stop('fact[[2]] should be > 1') }
-	} else {
-		stop('length() should be 1 or 2')
-	}
 	if (xfact > ncol(x)) {
 		warning('aggregation factor is larger than the number of columns') 
 		xfact <- ncol(x)

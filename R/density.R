@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date: December 2009
 # Version 0.1
 # Licence GPL v3
@@ -12,9 +12,9 @@ if (!isGeneric("density")) {
 setMethod('density', signature(x='Raster'), 
 	function(x, layer, maxpixels=100000, plot=TRUE, main, ...) {
 
-		if (nlayers==1) {
-			d = sampleRegular(x, maxpixels, useGDAL=TRUE)
-			x = density(na.omit(d))
+		if (nlayers(x)==1) {
+			d <- sampleRegular(x, maxpixels, useGDAL=TRUE)
+			x <- density(na.omit(d))
 			if (plot) {
 				if (missing(main)) {
 					main=''
@@ -26,11 +26,12 @@ setMethod('density', signature(x='Raster'),
 			}
 		}
 		
-		if (missing(layer)) y = 1:nlayers(x)
-		else if (is.character(layer)) {
+		if (missing(layer)) {
+			y <- 1:nlayers(x)
+		} else if (is.character(layer)) {
 			y <- match(layer, names(x))
-		} else { 
-			y <- layer 
+		} else {
+			y <- layer
 		}
 		y <- unique(as.integer(round(y)))
 		y <- na.omit(y)

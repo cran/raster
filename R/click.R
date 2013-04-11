@@ -11,6 +11,18 @@ if (!isGeneric("click")) {
 
 
 
+.getClicks <- function(...) {
+	res <- list()
+	while(TRUE) {
+		loc <- locator(1, ...)
+		if (is.null(loc)) break
+		res <- c(res, loc)
+	}
+	matrix(res, ncol=2, byrow=TRUE)
+}
+
+
+
 .getCellFromClick <- function(x, n, type, id, ...) {
 	loc <- locator(n, type, ...)
 	xyCoords <- cbind(x=loc$x, y=loc$y)

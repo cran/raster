@@ -13,25 +13,26 @@ Make a Raster object with predictions from a fitted model object (for example, o
 
 \usage{
 \S4method{predict}{Raster}(object, model, filename="", fun=predict, ext=NULL, const=NULL, 
-   index=1, na.rm=TRUE, inf.rm=FALSE, format, datatype, overwrite=FALSE, progress='', ...)
+   index=1, na.rm=TRUE, inf.rm=FALSE, factors=NULL, format, datatype, overwrite=FALSE, progress='', ...)
 }
 
 
 \arguments{
   \item{object}{Raster* object. Typicially a multi-layer type (RasterStack or RasterBrick)}
-  \item{model}{A fitted model of any class that has a 'predict' method (or for which you can supply a similar method as \code{fun} argument. E.g. glm, gam, or randomForest }
-  \item{filename}{Optional output filename }
-  \item{fun}{Function. Default value is 'predict', but can be replaced with e.g. predict.se (depending on the type of model), or your own custom function.}
-  \item{ext}{An Extent object to limit the prediction to a sub-region of \code{x} }
+  \item{model}{fitted model of any class that has a 'predict' method (or for which you can supply a similar method as \code{fun} argument. E.g. glm, gam, or randomForest }
+  \item{filename}{character. Optional output filename }
+  \item{fun}{function. Default value is 'predict', but can be replaced with e.g. predict.se (depending on the type of model), or your own custom function.}
+  \item{ext}{Extent object to limit the prediction to a sub-region of \code{x} }
   \item{const}{data.frame. Can be used to add a constant for which there is no Raster object for model predictions. Particularly useful if the constant is a character-like factor value for which it is currently not possible to make a RasterLayer }
-  \item{index}{Integer. To select the column if predict.'model' returns a matrix with multiple columns }
-  \item{na.rm}{Logical. Remove cells with \code{NA} values in the predictors before solving the model (and return a \code{NA} value for those cells). This option prevents errors with models that cannot handle \code{NA} values. In most other cases this will not affect the output. An exception is when predicting with a boosted regression trees model because these return predicted values even if some (or all!) variables are \code{NA} }
-  \item{inf.rm}{Logical. Remove cells with values that are not finite (some models will fail with -Inf/Inf values). This option is ignored when \code{na.rm=FALSE}}
- \item{format}{Character. Output file type. See \link[raster]{writeRaster} (optional) }
- \item{datatype}{Character. Output data type. See \link[raster]{dataType} (optional) }
- \item{overwrite}{Logical. If TRUE, "filename" will be overwritten if it exists }
- \item{progress}{Character. "text", "window", or "" (the default, no progress bar)  }
-  \item{...}{Additional arguments to pass to the predict.'model' function }
+  \item{index}{integer. To select the column if predict.'model' returns a matrix with multiple columns }
+  \item{na.rm}{logical. Remove cells with \code{NA} values in the predictors before solving the model (and return a \code{NA} value for those cells). This option prevents errors with models that cannot handle \code{NA} values. In most other cases this will not affect the output. An exception is when predicting with a boosted regression trees model because these return predicted values even if some (or all!) variables are \code{NA} }
+  \item{inf.rm}{logical. Remove cells with values that are not finite (some models will fail with -Inf/Inf values). This option is ignored when \code{na.rm=FALSE}}
+ \item{factors}{list with levels for factor variables. The list elements should be named with names that correspond to names in \code{object} such that they can be matched. This argument may be omitted for standard models such as 'glm' as the predict function will extract the levels from the \code{model} object, but it is necessary in some other cases (e.g. cforest models from the party package)}
+ \item{format}{character. Output file type. See \link[raster]{writeRaster} (optional) }
+ \item{datatype}{character. Output data type. See \link[raster]{dataType} (optional) }
+ \item{overwrite}{logical. If TRUE, "filename" will be overwritten if it exists }
+ \item{progress}{character. "text", "window", or "" (the default, no progress bar)  }
+  \item{...}{additional arguments to pass to the predict.'model' function }
  }
 
 \seealso{
@@ -109,7 +110,7 @@ x <- predict(logo, pca, index=1:3)
 plot(x)
 
 \dontrun{
-require(randomForest)
+library(randomForest)
 rfmod <- randomForest(pa ~., data=v)
 
 ## note the additional argument "type='response'" that is 
@@ -117,11 +118,20 @@ rfmod <- randomForest(pa ~., data=v)
 r3 <- predict(logo, rfmod, type='response', progress='window')
 
 ## get a RasterBrick with class membership probabilities
-v$pa <- as.factor(v$pa)
-rfmod2 <- randomForest(pa ~., data=v)
+vv <- v
+vv$pa <- as.factor(vv$pa)
+rfmod2 <- randomForest(pa ~., data=vv)
 r4 <- predict(logo, rfmod2, type='prob', index=1:2)
 spplot(r4)
 
+# cforest example with factors argument
+v$red <- as.factor(round(v$red/100))
+logo[[1]] <- round(logo[[1]]/100)
+library(party)
+m <- cforest(pa~., control=cforest_unbiased(mtry=3), data=v)
+f <- list(levels(v$red))
+names(f) <- 'red'
+pc <- predict(logo, m, OOB=TRUE, factors=f)
 }
 }
 

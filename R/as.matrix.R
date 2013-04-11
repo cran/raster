@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans 
 # Date : October 2010
 # Version 1.0
 # Licence GPL v3
@@ -30,3 +30,16 @@ function(x, ...) {
 	rownames(b) <- c('x', 'y')
 	b
 })
+
+
+setMethod('as.vector', signature(x='Extent'), 
+function(x,  mode = "any") {
+	as.vector(c(x@xmin, x@xmax, x@ymin, x@ymax), mode=mode)
+})
+
+
+setMethod('as.vector', signature(x='Raster'), 
+function(x,  mode = "any") {
+	as.vector(getValues(x), mode=mode)
+})
+

@@ -51,8 +51,6 @@ setReplaceMethod("[", c("RasterLayer","missing","missing"),
 	if (inherits(x, 'RasterStack')) {
 		x <- brick(x, values=TRUE)
 	}
-
-
 	if ( is.logical(i) ) {
 		i <- which(i)
 	} else {
@@ -71,19 +69,69 @@ setReplaceMethod("[", c("RasterLayer","missing","missing"),
 			i <- as.vector(t((matrix(rep(i, rec2), nrow=rec2, byrow=TRUE)) + add))
 		}
 	}
-	i <- i[ i > 0 & i <= (ncell(x)*nl) ]
+	j <- i > 0 & i <= (ncell(x)*nl)
+	
+	if (!all(j)) {
+		i <- i[j]
+		value <- value[j]
+	}
 	
 	if (! inMemory(x) ) {
-		if ( fromDisk(x) ) {
-			x <- try( readAll(x) )
+		if (canProcessInMemory(x)) {
+			if ( fromDisk(x) ) {
+				x <- readAll(x)
+			} else {
+				x <- setValues(x, rep(NA, times=ncell(x)))
+			}
 		} else {
-			x <- try (setValues(x, rep(NA, times=ncell(x))) )
-		}
-		if (class(x) == 'try-error') {
-			stop('cannot do in-memory replace values on this raster (it is too large).\nYou can use the "calc" function instead.')
+			tr <- blockSize(x)
+			pb <- pbCreate(tr$n, label='replace')
+			hv <- hasValues(x)
+			if (nl==1) {
+				r <- raster(x)
+				r <- writeStart(r, filename=rasterTmpFile(), overwrite=TRUE )
+				for (k in 1:tr$n) {
+					cells <- cellFromRowCol(x, tr$row[k], 1):cellFromRowCol(x, tr$row[k]+tr$nrows[k]-1, ncol(x))
+					if (hv) {
+						v <- getValues(x, row=tr$row[k], nrows=tr$nrows[k])
+					} else {
+						v <- rep(NA, length(cells))
+					}
+					j <- which(i %in% cells)
+					if (length(j) > 0) {
+						localcells <- i[j] - (cells[1]-1)
+						v[localcells] <- value[j]
+					}
+					r <- writeValues(r, v, tr$row[k])
+					pbStep(pb, k) 	
+				}
+				
+			} else {
+				r <- brick(x)
+				r <- writeStart(r, filename=rasterTmpFile(), overwrite=TRUE )
+				add <- (0:(nl-1)) * ncell(x)
+				for (k in 1:tr$n) {
+					cells <- cellFromRowCol(x, tr$row[k], 1):cellFromRowCol(x, tr$row[k]+tr$nrows[k]-1, ncol(x))
+					if (hv) {
+						v <- getValues(x, row=tr$row[k], nrows=tr$nrows[k])
+					} else {
+						v <- matrix(NA, nrow=length(cells), ncol=nl)
+					}
+					cells <- cells + rep(add, each=length(cells))
+					j <- which(i %in% cells)
+					if (length(j) > 0) {
+						localcells <- i[j] - (cells[1]-1)
+						v[localcells] <- value[j]
+					}
+					r <- writeValues(r, v, tr$row[k])
+					pbStep(pb, k)
+				}
+			}	
+			r <- writeStop(r)
+			pbClose(pb)
+			return(r)
 		}
 	}
-		
 		
 	x@data@values[i] <- value
 	x <- setMinMax(x)

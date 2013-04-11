@@ -5,16 +5,16 @@
 
 
 
-.pointsToRaster <- function(xy, raster, field, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue='all', filename="", na.rm=TRUE, ...) {
+.pointsToRaster <- function(xy, r, field, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue='all', filename="", na.rm=TRUE, ...) {
 
-	rs <- raster(raster)
+	rs <- raster(r)
 	
 	if (mask & update) { 
 		stop('use either "mask=TRUE" OR "update=TRUE", or neither')
 	} else if (mask) { 
-		oldraster <- raster 
+		oldraster <- r
 	} else if (update) {
-		oldraster <- raster 
+		oldraster <- r 
 		if (!is.numeric(updateValue)) {
 			if (is.na(updateValue)) {
 				updateValue <- 'NA'

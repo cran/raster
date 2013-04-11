@@ -24,7 +24,7 @@ setMethod('select', signature(x='Raster'),
 			}
 		} else {
 			e <- drawPoly()
-			int <- intersect(e, extent(x))
+			int <- intersect(extent(x), e)
 			if (is.null(int)) {
 				x <- NULL
 			} else {

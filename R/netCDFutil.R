@@ -32,10 +32,11 @@
 	
 	sp <- g$standard_parallel
 	if (!is.null(sp)) {
-		if (length(sp) > 1)
-		g$standard_parallel1 <- sp[1]
-		g$standard_parallel2 <- sp[2]
-		g$standard_parallel <- NULL
+		if (length(sp) > 1) {
+			g$standard_parallel1 <- sp[1]
+			g$standard_parallel2 <- sp[2]
+			g$standard_parallel <- NULL
+		}
 	}
 	vars <- names(g)
 	vals <- unlist(g)

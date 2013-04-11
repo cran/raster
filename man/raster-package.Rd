@@ -263,6 +263,7 @@ Cell numbers start at 1 in the upper-left corner. They increase within rows, fro
     \code{\link{xyFromCell}} \tab x and y coordinates from cell numbers \cr
     \code{\link{colFromX}} \tab Column numbers from x-coordinates (or longitude) \cr
     \code{\link{rowFromY}} \tab Row numbers from y-coordinates (or latitude) \cr
+    \code{\link{rowColFromCell}} \tab Row and column numbers from cell numbers\cr
     \code{\link{cellFromXY}} \tab Cell numbers from x and y coordinates \cr
     \code{\link{cellFromRowCol}} \tab Cell numbers from row and column numbers \cr
     \code{\link{cellsFromExtent}} \tab Cell numbers from extent object \cr

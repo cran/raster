@@ -102,10 +102,10 @@ setMethod('raster', signature(x='big.matrix'),
 			r <- raster(ncols=ncol(x), nrows=nrow(x), xmn=xmn, xmx=xmx, ymn=ymn, ymx=ymx, crs=crs)
 		}
 		
-		r@file@driver <- 'big.matrix'
-		if (is.filebacked(x)) {
-			r@file@name <- bigmemory:::file.name(x)
-		}
+#		r@file@driver <- 'big.matrix'
+#		if (is.filebacked(x)) {
+#			r@file@name <- bigmemory:::file.name(x)
+#		}
 		r@data@fromdisk <- TRUE
 		r@data@inmemory <- FALSE
 		attr(r@file, 'big.matrix') <- x

@@ -6,7 +6,7 @@
 
 
 setMethod('extract', signature(x='Raster', y='SpatialPolygons'), 
-function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, df=FALSE, layer, nl, factors=FALSE, ...){ 
+function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, df=FALSE, layer, nl, factors=FALSE, sp=FALSE, ...){ 
 
 	px <- projection(x, asText=FALSE)
 	comp <- .compareCRS(px, projection(y), unknown=TRUE)
@@ -21,7 +21,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 	addres <- max(res(x))
 	npol <- length(y@polygons)
 	res <- list()
-	res[[npol+1]] = NA
+	res[[npol+1]] <- NA
 
 	if (!is.null(fun)) {
 		cellnumbers <- FALSE
@@ -32,6 +32,14 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 					warning('"fun" was changed to "mean"; other functions cannot be used when "weights=TRUE"' )
 				}
 			}	
+		}
+		if (sp) {
+			df <- TRUE
+		}
+	} else {
+		if (sp) {
+			sp <- FALSE
+			warning('argument sp=TRUE is ignored if fun=NULL')
 		}
 	}
 	
@@ -223,7 +231,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 						w <- matrix(rep(w, nl), ncol=nl)
 						w[is.na(x)] <- NA
 						w <- colSums(w, na.rm=TRUE)
-						x <- apply(x, 1, function(x) x / w )
+						x <- apply(x, 1, function(X) { X / w } )
 						res <- rowSums(x, na.rm=na.rm) 
 					} else {
 						return( NULL )
@@ -275,6 +283,20 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 			}
 			res <- data.frame(res[,i,drop=FALSE], v)
 		}
+	}
+	
+	if (sp) {
+		if (nrow(res) != npol) {
+			warning('sp=TRUE is ignored because fun does not summarize the values of each polygon to a single number')
+			return(res)
+		}
+		
+		if (! .hasSlot(y, 'data') ) {
+			y <- SpatialPolygonsDataFrame(y, res[, -1, drop=FALSE])
+		} else {
+			y@data <- cbind(y@data, res[, -1, drop=FALSE])
+		}
+		return(y)
 	}
 
 	res
