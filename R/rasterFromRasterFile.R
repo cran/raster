@@ -132,7 +132,7 @@
 		if (RAT) {
 			if (isTRUE(isCat[band])) {
 		# currently only for a single layer!
-				try( x <- .getRat(ratvalues, ratnames, rattypes) )
+				try( x <- .getRat(x, ratvalues, ratnames, rattypes), silent=TRUE )
 			}
 		}
 	}
@@ -196,17 +196,17 @@
 
 #	if( dataSize(x) * (ncell(x) * nbands(x) + x@file@offset) !=  file.info(valuesfile)$size ) {
 	
-	if (driver == 'big.matrix') {
-		require(bigmemory)
-		x@file@name <- valuesfile
-		dscfile <- extension(valuesfile, 'big.dsc')
-		attr(x@file, 'big.matrix') <- attach.big.matrix(dscfile)
+#	if (driver == 'big.matrix') {
+#		require(bigmemory)
+#		x@file@name <- valuesfile
+#		dscfile <- extension(valuesfile, 'big.dsc')
+#		attr(x@file, 'big.matrix') <- attach.big.matrix(dscfile)
 		
-	} else {
+#	} else {
 		x@file@name <- filename
 		if( (dataSize(x) * ncell(x) * nbands(x))  !=  file.info(valuesfile)$size ) {
 			warning('size of values file does not match the number of cells (given the data type)')
-		}
+#		}
 	}
 	
     return(x)

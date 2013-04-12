@@ -27,8 +27,8 @@
 		xunit = 'degrees_east'
 		yunit = 'degrees_north'
 	} else {
-		if (missing(xname)) xname = 'northing'
-		if (missing(yname)) yname = 'easting'	
+		if (missing(xname)) xname = 'easting'
+		if (missing(yname)) yname = 'northing'
 		xunit = 'meter' # probably
 		yunit = 'meter' # probably
 	}

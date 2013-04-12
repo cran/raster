@@ -63,8 +63,8 @@ function(x, filename, format, ...) {
 	} else if (filetype=='ascii') {
 		x <- .writeAscii(x, filename=filename,...)
 		
-	} else if (filetype=='big.matrix') {
-		x <- .writeBigMatrix(x, filename=filename,...)
+#	} else if (filetype=='big.matrix') {
+#		x <- .writeBigMatrix(x, filename=filename,...)
 
 	} else if (filetype=='CDF') {
 		x <- .startWriteCDF(x, filename=filename, ...)

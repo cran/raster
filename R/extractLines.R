@@ -1,19 +1,41 @@
 # Author: Robert J. Hijmans
 # Date : December 2009
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
 
 
-
 setMethod('extract', signature(x='Raster', y='SpatialLines'), 
-function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, factors=FALSE, ...){ 
+function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, factors=FALSE, along=FALSE, sp=FALSE, ...){ 
 
 	px <- projection(x, asText=FALSE)
 	comp <- .compareCRS(px, projection(y), unknown=TRUE)
 	if (!comp) {
 		.requireRgdal()
-		warning('Transforming SpatialLines to the CRS of the Raster')
+		warning('Transforming SpatialLines to the CRS of the Raster object')
 		y <- spTransform(y, px)
+	}
+	if (missing(layer)) {
+		layer <- 1
+	}
+	if (missing(nl)) {
+		nl <- nlayers(x)
+	}	
+
+	if (!is.null(fun)) {
+		cellnumbers <- FALSE
+		along <- FALSE
+		if (sp) {
+			df <- TRUE
+		}
+	} else {
+		if (sp) {
+			sp <- FALSE
+			warning('argument sp=TRUE is ignored if fun=NULL')
+		}
+	}
+	
+	if (along) {
+		return(.extractLinesAlong(x, y, cellnumbers=cellnumbers, df=df, layer, nl, factors=factors, ...))
 	}
 
 	spbb <- bbox(y)
@@ -21,18 +43,8 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, fa
 	addres <- 2 * max(res(x))
 	nlns <- length( y@lines )
 	res <- list()
-	res[[nlns+1]] = NA
-
-	if (missing(layer)) {
-		layer <- 1
-	}
-	if (missing(nl)) {
-		nl <- nlayers(x)
-	}	
+	res[[nlns+1]] <- NA
 	
-	if (!is.null(fun)) {
-		cellnumbers <- FALSE
-	}
 	
 	if (spbb[1,1] > rsbb[1,2] | spbb[1,2] < rsbb[1,1] | spbb[2,1] > rsbb[2,2] | spbb[2,2] < rsbb[2,1]) {
 		if (df) {
@@ -46,9 +58,7 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, fa
 	
 	rr <- raster(x)
 	cn <- names(x)
-	
 	pb <- pbCreate(nlns, label='extract', ...)
-	
 	
 	if (.doCluster()) {
 		cl <- getCluster()
@@ -106,15 +116,11 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, fa
 				rc <- .linesToRaster(pp, rc, silent=TRUE)
 				xy <- rasterToPoints(rc)[,-3,drop=FALSE]
 				if (cellnumbers) {
-					if (length(xy) > 0) { # always TRUE?
-						v <- cbind(cellFromXY(rr, xy), .xyValues(x, xy, layer=layer, nl=nl))
-						colnames(v) <- c('cell', cn)
-						res[[i]] <- v
-					}
+					v <- cbind(cellFromXY(rr, xy), .xyValues(x, xy, layer=layer, nl=nl))
+					colnames(v) <- c('cell', cn)
+					res[[i]] <- v
 				} else {
-					if (length(xy) > 0) { # always TRUE?
-						res[[i]] <- .xyValues(x, xy, layer=layer, nl=nl)
-					}
+					res[[i]] <- .xyValues(x, xy, layer=layer, nl=nl)
 				}
 			} 
 			pbStep(pb)
@@ -134,7 +140,7 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, fa
 		} else {
 			j <- vector(length=length(i))
 			j[i] <- NA
-			j[!i] <- sapply(res[!i], fun, na.rm)
+			j[!i] <- sapply(res[!i], fun, na.rm=na.rm)
 		}
 		res <- j
 	}
@@ -159,8 +165,108 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, fa
 			res <- data.frame(res[,1,drop=FALSE], v)
 		}
 	}
+	
+	if (sp) {
+		if (nrow(res) != nlns) {
+			warning('sp=TRUE is ignored because fun does not summarize the values of each line to a single number')
+			return(res)
+		}
+	
+		if (! .hasSlot(y, 'data') ) {
+			y <- SpatialLinesDataFrame(y,  res[, -1, drop=FALSE])
+		} else {
+			y@data <- cbind(y@data,  res[, -1, drop=FALSE])
+		}
+		return(y)
+	}
+	
+	
 	res
 }
 )
+
+
+.extractLinesAlong <- function(x, y, cellnumbers=FALSE, df=FALSE, layer, nl, factors=FALSE, ...){ 
+
+	spbb <- bbox(y)
+	rsbb <- bbox(x)
+	addres <- 2 * max(res(x))
+	nlns <- length( y@lines )
+	res <- list()
+	res[[nlns+1]] <- NA
+
+	if (spbb[1,1] > rsbb[1,2] | spbb[1,2] < rsbb[1,1] | spbb[2,1] > rsbb[2,2] | spbb[2,2] < rsbb[2,1]) {
+		if (df) {
+			res <- matrix(ncol=1, nrow=0)
+			colnames(res) <- 'ID'
+			return(res)
+		} else {
+			return(res[1:nlns])
+		}
+	}
+	
+	rr <- raster(x)
+	cn <- names(x)
+	
+	pb <- pbCreate(nlns, label='extract', ...)
+	
+	y <- as.data.frame(y, xy=TRUE)	
+	for (i in 1:nlns) {
+		yp <- y[y$object == i, ]
+		nparts <- max(yp$part)
+		vv <- NULL
+		for (j in 1:nparts) {
+			pp <- yp[yp$part==j, c('x', 'y'), ]
+			for (k in 1:(nrow(pp)-1)) {
+				ppp <- pp[k:(k+1), ]
+				spbb <- bbox(as.matrix(ppp))
+				if (! (spbb[1,1] > rsbb[1,2] | spbb[1,2] < rsbb[1,1] | spbb[2,1] > rsbb[2,2] | spbb[2,2] < rsbb[2,1]) ) {
+					lns <- SpatialLines(list(Lines(list(Line(ppp)), "1")))
+					rc <- crop(rr, extent(lns) + addres)
+					rc <- raster:::.linesToRaster(lns, rc, silent=TRUE)
+					xy <- rasterToPoints(rc)[,-3,drop=FALSE]
+					v <- cbind(row=rowFromY(rr, xy[,2]), col=colFromX(rr, xy[,1]), raster:::.xyValues(x, xy, layer=layer, nl=nl))
+				#up or down?
+					if (ppp[1,2] < ppp[2,2]) {
+						#order top to bottom
+						v <- v[order(-v[,1], v[,2]), ]
+					} else {
+					#order bottom to top
+						v <- v[order(v[,1], -v[,2]), ]
+					}
+					vv <- rbind(vv, v)
+				}
+			} 
+			if (cellnumbers) {
+				vv <- cbind(cellFromRowCol(rr, vv[,1], vv[,2]), vv[,-c(1:2)])
+			} else {
+				vv <- vv[,-c(1:2)]
+			}
+			res[[i]] <- vv
+			pbStep(pb)
+		}
+	}
+	
+	res <- res[1:nlns]
+	pbClose(pb)
+	
+	
+	if (df) {
+		res <- data.frame( do.call(rbind, sapply(1:length(res), function(x) if (!is.null(res[[x]])) cbind(x, res[[x]]))) )
+		lyrs <- layer:(layer+nl-1)
+		colnames(res) <- c('ID', names(x)[lyrs])
+		
+		if (any(is.factor(x)) & factors) {
+			v <- res[, -1, drop=FALSE]
+			if (ncol(v) == 1) {
+				v <- data.frame(factorValues(x, v[,1], layer))
+			} else {
+				v <- .insertFacts(x, v, lyrs)
+			}
+			res <- data.frame(res[,1,drop=FALSE], v)
+		}
+	}
+	res
+}
 
 

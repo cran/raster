@@ -26,16 +26,16 @@ function(x, filename, options=NULL, format, ...) {
 		stop("Attempting to write a file to a path that does not exist:\n  ", dirname(filename))
 	}
 	
-	filetype <- raster:::.filetype(format=format, filename=filename)
-	filename <- raster:::.getExtension(filename, filetype)
+	filetype <- .filetype(format=format, filename=filename)
+	filename <- .getExtension(filename, filetype)
 	if (filetype=='ascii') { 
 		x <- .startAsciiWriting(x, filename, ...)
 	} else if ( filetype %in% .nativeDrivers() ) { 
 		x <- .startRasterWriting(x, filename, format=filetype, ...)
 	} else if ( filetype == 'CDF' ) { 
 		x <- .startWriteCDF(x, filename, ...)
-	} else if ( filetype == 'big.matrix' ) { 
-		x <- .startBigMatrixWriting(x, filename, ...)
+#	} else if ( filetype == 'big.matrix' ) { 
+#		x <- .startBigMatrixWriting(x, filename, ...)
 	} else {
 		x <- .startGDALwriting(x, filename, options=options, format=filetype, ...)
 	}		
@@ -59,8 +59,8 @@ function(x, filename, options=NULL, format, ...) {
 		x <- .startRasterWriting(x, filename, format=filetype, ...) 
 	} else if ( filetype == 'CDF' ) { 
 		x <- .startWriteCDF(x, filename, ...)
-	} else if ( filetype == 'big.matrix' ) { 
-		x <- .startBigMatrixWriting(x, filename, ...)
+#	} else if ( filetype == 'big.matrix' ) { 
+#		x <- .startBigMatrixWriting(x, filename, ...)
 	} else {
 		x <- .startGDALwriting(x, filename, options=options, format=filetype, ...) 
 	}
@@ -73,8 +73,8 @@ setMethod('writeStop', signature(x='RasterLayer'),
 		driver <- x@file@driver
 		if ( driver %in% .nativeDrivers() ) { 
 			return( .stopRasterWriting(x) )
-		} else if ( driver == 'big.matrix' ) { 
-			return( .stopBigMatrixWriting(x) )
+#		} else if ( driver == 'big.matrix' ) { 
+#			return( .stopBigMatrixWriting(x) )
 		} else if ( driver == 'ascii' ) { 
 			return( .stopAsciiWriting(x) )
 		} else if ( driver == 'netcdf' ) { 
@@ -92,8 +92,8 @@ setMethod('writeStop', signature(x='RasterBrick'),
 			return( .stopRasterWriting(x) )
 		} else if ( driver == 'netcdf' ) { 
 			return( .stopWriteCDF(x) )
-		} else if ( driver == 'big.matrix' ) { 
-			return( .stopBigMatrixWriting(x) )
+#		} else if ( driver == 'big.matrix' ) { 
+#			return( .stopBigMatrixWriting(x) )
 		} else {
 			return( .stopGDALwriting(x) )
 		}

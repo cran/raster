@@ -58,7 +58,7 @@ vector of row, column or cell numbers. \code{cellFromLine} and \code{cellFromPol
 }
 
 \seealso{
-\code{\link{xyFromCell}, \link{cellsFromExtent}}
+\code{\link{xyFromCell}, \link{cellsFromExtent}, \link{rowColFromCell}}
 }
 
 

@@ -8,7 +8,7 @@ setMethod('hist', signature(x='Raster'),
 	function(x, layer, maxpixels=100000, plot=TRUE, main, ...) {
 		
 		if (missing(layer)) {
-			y = 1:nlayers(x)
+			y <- 1:nlayers(x)
 		} else if (is.character(layer)) {
 			y <- match(layer, names(x))
 		} else { 
@@ -47,8 +47,12 @@ setMethod('hist', signature(x='Raster'),
 				res[[i]] = .hist1(raster(x, y[i]), maxpixels=maxpixels, main=main[y[i]], plot=plot, ...) 
 			}		
 
-		} else if (nl==1) {			
-			res <- .hist1(x, maxpixels=maxpixels, main=main[1], plot=plot, ...) 	
+		} else if (nl==1) {
+			if (nlayers(x) > 1) {
+				x <- x[[y]]
+				main <- main[y]
+			}
+			res <- .hist1(x, maxpixels=maxpixels, main=main, plot=plot, ...) 	
 		}		
 		if (plot) {
 			return(invisible(res))

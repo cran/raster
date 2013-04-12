@@ -9,7 +9,9 @@ if (!isGeneric("predict")) {
 }	
 
 setMethod('predict', signature(object='Raster'), 
-	function(object, model, filename="", fun=predict, ext=NULL, const=NULL, index=1, na.rm=TRUE, inf.rm=FALSE, format, datatype, overwrite=FALSE, progress='', ...) {
+	function(object, model, filename="", fun=predict, ext=NULL, const=NULL, index=1, 
+				na.rm=TRUE, inf.rm=FALSE, factors=NULL,
+				format, datatype, overwrite=FALSE, progress='', ...) {
 	
 		filename <- trim(filename)
 		if (missing(format)) { format <- .filetype(filename=filename) } 
@@ -50,7 +52,7 @@ setMethod('predict', signature(object='Raster'),
 		facttest <- TRUE
 		
 		if (inherits(model, "randomForest")) {
-			f <- names(which(sapply(model$forest$xlevels, max)!= "0"))
+			f <- names(which(sapply(model$forest$xlevels, max) != "0"))
 			if (length(f) > 0) { 
 				haveFactor <- TRUE 
 				factlevels <- list()
@@ -59,7 +61,6 @@ setMethod('predict', signature(object='Raster'),
 				}
 			}
 		} else {
-		
 			dataclasses <- try (attr(model$terms, "dataClasses")[-1], silent=TRUE)
 			if (class(dataclasses) != "try-error") {
 				varnames <- names(dataclasses)
@@ -74,8 +75,15 @@ setMethod('predict', signature(object='Raster'),
 						factlevels[[i]] <- levels( model$data[f][,1] )
 					}
 				}
+			} else if (!is.null(factors)) {
+				haveFactor <- TRUE 
+				factlevels <- list()
+				for (i in 1:length(f)) {
+					f <- names(factors)
+					factlevels <- factors
+				}
 			}
-		}	
+		}		
 		
 		if (!canProcessInMemory(predrast) && filename == '') {
 			filename <- rasterTmpFile()

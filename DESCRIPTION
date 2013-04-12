@@ -1,11 +1,11 @@
 Package: raster
 Type: Package
 Title: raster: Geographic data analysis and modeling
-Version: 2.1-16
-Date: 14-March-2013
+Version: 2.1-25
+Date: 11-April-2013
 Depends: methods, sp, R (>= 2.14.0)
 Suggests: rgdal (>= 0.7-22), rgeos (>= 0.2-3), ncdf, ncdf4, igraph,
-        snow, bigmemory, tcltk, rasterVis
+        snow, tcltk, rasterVis
 Author: Robert J. Hijmans & Jacob van Etten
 Maintainer: Robert J. Hijmans <r.hijmans@gmail.com>
 Description: Reading, writing, manipulating, analyzing and modeling of
@@ -15,7 +15,7 @@ Description: Reading, writing, manipulating, analyzing and modeling of
 License: GPL (>= 3)
 URL: http://cran.r-project.org/web/packages/raster/
 ByteCompile: TRUE
-Packaged: 2013-03-13 19:44:40 UTC; rhijmans
+Packaged: 2013-04-12 06:06:10 UTC; rhijmans
 NeedsCompilation: yes
 Repository: CRAN
-Date/Publication: 2013-03-13 21:38:51
+Date/Publication: 2013-04-12 14:36:10
