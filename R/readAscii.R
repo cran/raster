@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date : October 2009
 # Version 0.9
 # Licence GPL v3
@@ -9,11 +9,11 @@
 	filename <- trim(filename(x))
     if (!file.exists(filename)) { stop(paste(filename, " does not exist")) }
 	v <- as.numeric( scan(filename, skip=x@offset, what='character', quiet=TRUE) )
-	if (x@file@nodatavalue < 0) {
-		v[v <= x@file@nodatavalue ] <- NA 			
-	} else {
+#	if (x@file@nodatavalue < -10000) {
+#		v[v <= x@file@nodatavalue ] <- NA 			
+#	} else {
 		v[v == x@file@nodatavalue ] <- NA 					
-	}	
+#	}	
 	return ( v ) 
 }
 
@@ -38,11 +38,11 @@
 		skiprows <- x@file@offset + startrow - 1 
 		v <- as.numeric ( scan(filename(x), skip=skiprows, nlines=nrows, what='character', quiet=TRUE) )
 	}
-	if (x@file@nodatavalue < 0) {
-		v[v <= x@file@nodatavalue ] <- NA 			
-	} else {
+#	if (x@file@nodatavalue < 0) {
+#		v[v <= x@file@nodatavalue ] <- NA 			
+#	} else {
 		v[v == x@file@nodatavalue ] <- NA 					
-	}
+#	}
 	return ( v )
 }
 

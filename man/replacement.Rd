@@ -2,6 +2,7 @@
 
 \docType{methods}
 
+
 \alias{[<-,RasterLayer,RasterLayer,missing-method}
 \alias{[<-,RasterLayer,missing,missing-method}
 \alias{[<-,RasterStackBrick,Raster,missing-method}
@@ -9,7 +10,7 @@
 
 \alias{[[<-,RasterStack,numeric,missing-method}
 \alias{[[<-,RasterBrick,numeric,missing-method}
-
+\alias{[[<-,RasterStackBrick,character,missing-method}
 
 \alias{[<-,Raster,numeric,numeric-method}
 \alias{[<-,Raster,numeric,missing-method}
@@ -19,7 +20,11 @@
 \alias{[<-,Raster,Spatial,missing-method}
 \alias{[<-,Raster,Extent,missing-method}
 
-\title{Replace cell values of a Raster* object}
+\alias{$<-,Raster-method}
+\alias{$,Raster-method}
+
+
+\title{Replace cell values or layers of a Raster* object}
 
 \description{
 You can set values of a Raster* object, when \code{i} is a vector of cell numbers, a Raster*, Extent, or Spatial* object. 

@@ -41,6 +41,7 @@ setMethod("mean", signature(x='Raster'),
 			tr <- blockSize(x)
 			pb <- pbCreate(tr$n, label='mean')
 			out <- writeStart(out, filename="")
+			x <- readStart(x, ...)
 			if (old) {
 				for (i in 1:tr$n) {
 					v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
@@ -57,7 +58,8 @@ setMethod("mean", signature(x='Raster'),
 				}
 			}
 			pbClose(pb)
-			writeStop(out)
+			x <- readStop(x)
+			return( writeStop(out) )
 		} else {
 			d3 <- d[3] + length(add)
 			if (canProcessInMemory(x)) {
@@ -78,6 +80,7 @@ setMethod("mean", signature(x='Raster'),
 			tr <- blockSize(x)
 			pb <- pbCreate(tr$n, label='mean')
 			out <- writeStart(out, filename="")
+			x <- readStart(x, ...)
 			if (old) {
 				for (i in 1:tr$n) {
 					v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
@@ -96,7 +99,9 @@ setMethod("mean", signature(x='Raster'),
 				}
 			}
 			pbClose(pb)
-			writeStop(out)
+			x <- readStop(x)
+			return( writeStop(out) )
+			
 		}
 	}
 )
@@ -128,6 +133,7 @@ setMethod("mean", signature(x='Raster'),
 		tr <- blockSize(x)
 		pb <- pbCreate(tr$n, label='mean')
 		out <- writeStart(out, filename="")
+		x <- readStart(x)		
 		
 		if (old) {
 			for (i in 1:tr$n) {
@@ -145,6 +151,7 @@ setMethod("mean", signature(x='Raster'),
 			}
 		}
 		pbClose(pb)
+		x <- readStop(x)		
 		return ( writeStop(out) )
 		
 	
@@ -164,6 +171,7 @@ setMethod("mean", signature(x='Raster'),
 		tr <- blockSize(x)
 		pb <- pbCreate(tr$n, label='mean')
 		out <- writeStart(out, filename="")
+		x <- readStart(x)		
 		if (old) {
 			for (i in 1:tr$n) {
 				v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
@@ -180,7 +188,9 @@ setMethod("mean", signature(x='Raster'),
 			}
 		}
 		pbClose(pb)
+		x <- readStop(x)
 		writeStop(out)
+		
 	}
 }
 
@@ -199,6 +209,7 @@ setMethod("mean", signature(x='Raster'),
 		tr <- blockSize(x)
 		pb <- pbCreate(tr$n, label='mean')
 		out <- writeStart(out, filename="")
+		x <- readStart(x)
 		for (i in 1:tr$n) {
 			v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
 			v <- .rowMin(v, na.rm=na.rm)
@@ -206,7 +217,7 @@ setMethod("mean", signature(x='Raster'),
 			pbStep(pb, i)
 		}
 		pbClose(pb)
-		
+		x <- readStop(x)
 		return ( writeStop(out) )
 		
 
@@ -221,6 +232,7 @@ setMethod("mean", signature(x='Raster'),
 		tr <- blockSize(x)
 		pb <- pbCreate(tr$n, label='mean')
 		out <- writeStart(out, filename="")
+		x <- readStart(x)
 		for (i in 1:tr$n) {
 			v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
 			v <- .rowMin(cbind(v, add), na.rm=na.rm)
@@ -228,6 +240,7 @@ setMethod("mean", signature(x='Raster'),
 			pbStep(pb, i)
 		}
 		pbClose(pb)
+		x <- readStop(x)
 		return ( writeStop(out) )
 		
 	}
@@ -249,6 +262,7 @@ setMethod("mean", signature(x='Raster'),
 		tr <- blockSize(x)
 		pb <- pbCreate(tr$n, label='mean')
 		out <- writeStart(out, filename="")
+		x <- readStart(x)
 		for (i in 1:tr$n) {
 			v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
 			v <- .rowMax( v, na.rm=na.rm)
@@ -256,6 +270,7 @@ setMethod("mean", signature(x='Raster'),
 			pbStep(pb, i)
 		}
 		pbClose(pb)
+		x <- readStop(x)
 		return( writeStop(out) )
 		
 	} else {
@@ -269,6 +284,7 @@ setMethod("mean", signature(x='Raster'),
 		tr <- blockSize(x)
 		pb <- pbCreate(tr$n, label='mean')
 		out <- writeStart(out, filename="")
+		x <- readStart(x)
 		for (i in 1:tr$n) {
 			v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
 			v <- .rowMax( cbind(v, add), na.rm=na.rm)
@@ -276,6 +292,7 @@ setMethod("mean", signature(x='Raster'),
 			pbStep(pb, i)
 		}
 		pbClose(pb)
+		x <- readStop(x)
 		return( writeStop(out) )
 	}
 }

@@ -27,7 +27,7 @@ function(x, breaks, ..., filename='', format, datatype='INT2S', overwrite, progr
 	if (nl == 1) { out <- raster(x)
 	} else { out <- brick(x, values=FALSE) }	
 	
-	if (canProcessInMemory(out, 2)) {
+	if (canProcessInMemory(out, n=nl*2 + 2)) {
 
 		if (nl > 1) {
 			values(out) <- apply(getValues(x), 2, function(x) as.numeric(cut(x, breaks=breaks, ...)))

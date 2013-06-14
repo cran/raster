@@ -78,8 +78,10 @@
 		dsign <- dataSigned(object@file@datanotation)
 		if (dsize > 2) { dsign <- TRUE }
 
-		
-		object <- openConnection(object)
+		is.open <- object@file@open
+		if (!is.open) {
+			object <- readStart(object)
+		}
 		if (object@file@nbands > 1) {
 			band <- object@data@band
 			bo <- object@file@bandorder
@@ -93,7 +95,9 @@
 		} else {
 			result <- getBSQData(object, r=startrow, nrows=nrows, c=startcol, ncols=ncols, dtype=dtype, dsize=dsize, dsign=dsign) 
 		}
-		object <- closeConnection(object)
+		if (!is.open) {
+			object <- readStop(object)
+		}
 
 		if (! object@file@toptobottom ) {
 			result <- t(matrix(result, nrow=ncols, ncol=nrows))
@@ -123,25 +127,29 @@
 	} else if (driver == 'netcdf') {
 		result <- .readRowsNetCDF(object, startrow, nrows, startcol, ncols)
 		
-	} else if (driver == 'big.matrix') {
-		bm <- attr(object@file, 'big.matrix')
-		if (nbands(object) > 1) {
-			bn <- bandnr(object)
-			startcell <- cellFromRowCol(object, startrow, startcol)
-			endcell <- cellFromRowCol(object, (startrow+nrows-1), (startcol+ncols-1))	
-			result <- bm[startcell:endcell, bn]
-		
-		} else {
-			result <- as.vector(t(bm[startrow:(startrow+nrows-1), startcol:(startcol+ncols-1)]))
-		}
+#	} else if (driver == 'big.matrix') {
+#		bm <- attr(object@file, 'big.matrix')
+#		if (nbands(object) > 1) {
+#			bn <- bandnr(object)
+#			startcell <- cellFromRowCol(object, startrow, startcol)
+#			endcell <- cellFromRowCol(object, (startrow+nrows-1), (startcol+ncols-1))	
+#			result <- bm[startcell:endcell, bn]
+#		
+#		} else {
+#			result <- as.vector(t(bm[startrow:(startrow+nrows-1), startcol:(startcol+ncols-1)]))
+#		}
 		
 #use GDAL  		
 	} else { 
 		offs <- c((startrow-1), (startcol-1)) 
 		reg <- c(nrows, ncols)
-		con <- GDAL.open(object@file@name, silent=TRUE)
-		result <- getRasterData(con, offset=offs, region.dim=reg, band=object@data@band)
-		closeDataset(con)
+		if ( object@file@open ) {
+			result <- getRasterData(object@file@con, offset=offs, region.dim=reg, band=object@data@band)
+		} else {
+			con <- GDAL.open(object@file@name, silent=TRUE)
+			result <- getRasterData(con, offset=offs, region.dim=reg, band=object@data@band)
+			closeDataset(con)
+		}
 		result <- as.vector(result)
 		
 		# if  NAvalue() has been used.....

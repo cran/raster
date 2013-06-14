@@ -283,3 +283,10 @@ setMethod ('show' , 'RasterStack',
 	}
 )
 
+
+setMethod ('show' , '.RasterList', 
+	function(object) {
+		cat('class       :' , class(object), '\n')
+		cat('length      : ', length(object), '\n', sep="" ) 
+	}
+)

@@ -107,6 +107,7 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 			tr$outrows <- ceiling(tr$nrows/yfact)
 			
 			pb <- pbCreate(tr$n, label='aggregate', ...)
+			x <- readStart(x, ...)	
 
 			dims <- as.integer(c(lastrow, lastcol, nl, dim(out)[1:2], xfact, yfact))
 			if (inherits(out, 'RasterBrick')) {
@@ -128,6 +129,8 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 			}
 			pbClose(pb)
 			out <- writeStop(out)
+			x <- readStop(x)
+
 			return(out)	
 		}
 	}
@@ -217,6 +220,7 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 			}
 			
 			pb <- pbCreate(tr$n, label='aggregate', ...)
+			x <- readStart(x, ...)	
 			m <- tr$nrows[1] / yfact
 			vv <- matrix(NA, nrow= yfact*xfact, ncol=csteps * m)
 		
@@ -280,6 +284,7 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 			pbStep(pb, i) 
 			out <- writeValues(out, vals, tr$write[i])
 			pbClose(pb)
+			x <- readStop(x)	
 			out <- writeStop(out)
 			return(out)
 		}
@@ -323,9 +328,11 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 			rows <- rep(1, each=(ncol(x) * yfact))
 			
 			out <- writeStart(out, filename=filename, ...)
+			x <- readStart(x, ...)	
+
 			
 			cells <- cellFromRowCol(x, rows, cols)
-			nrows = yfact
+			nrows <- yfact
 
 			w <- getOption('warn')
 			on.exit(options('warn' = w))
@@ -349,6 +356,7 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 			} 
 			pbClose(pb)
 			out <- writeStop(out)
+			x <- readStop(x)	
 			return(out)
 		}	
 	}

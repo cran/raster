@@ -34,12 +34,13 @@
 
 # This one works for multilayer objects
 # Linear stretch between min and max values
-.stretch <- function(x, maxv=255, minq=0, maxq=1, filename='', ...) {
+stretch <- function(x, minv=0, maxv=255, minq=0, maxq=1, filename='', ...) {
 	minq <- max(0,minq)
 	maxq <- min(1,maxq)
 	stopifnot(minq < maxq)
 	maxv <- maxv[1]
-	stopifnot(maxv > 0)
+	minv <- minv[1]
+	stopifnot(maxv > minv)
 	nl <- nlayers(x)
 	q <- quantile(x, c(minq, maxq), na.rm=TRUE)
 	
@@ -48,7 +49,7 @@
 		if (canProcessInMemory(out)) {
 			x <- getValues(x)
 			x <- (maxv*(x-q[1]))/(q[2]-q[1])
-			x[x < 0] <- 0
+			x[x < minv] <- minv
 			x[x > maxv] <- maxv
 			out <- setValues(out, x)
 		} else {

@@ -122,7 +122,8 @@
 }
 
 
-.rasterObjectFromCDF <- function(filename, varname='', band=NA, type='RasterLayer', lvar=3, level=0, warn=TRUE, ...) {
+.rasterObjectFromCDF <- function(filename, varname='', band=NA, type='RasterLayer', lvar=3, level=0, 
+                        warn=TRUE, dims=1:3, ...) {
 
 	ncdf4 <- .NCDFversion4()
 	
@@ -143,16 +144,16 @@
 	
 	# assuming "CF-1.0"
 	
-	zvar <- .varName(nc, varname, warn=warn)
+	zvar <- raster:::.varName(nc, varname, warn=warn)
 	# datatype <- .getRasterDTypeFromCDF( nc$var[[zvar]]$prec )
-	dim3 <- 3
-	dims <- nc$var[[zvar]]$ndims
+	dim3 <- dims[3]
+	ndims <- nc$var[[zvar]]$ndims
 	
-	if (dims== 1) { 
+	if (ndims== 1) { 
 		
 		return(.rasterObjectFromCDF_GMT(nc, ncdf4))
 		
-	} else if (dims == 4) { 
+	} else if (ndims == 4) { 
 		if (type != 'RasterQuadBrick') {
 			nlevs <- nc$var[[zvar]]$dim[[lvar]]$len
 			if (level <=0 ) {
@@ -173,14 +174,14 @@
 				dim3 <- 4 
 			}
 		}
-	} else if (dims > 4) { 
+	} else if (ndims > 4) { 
 		warning(zvar, ' has more than 4 dimensions, I do not know what to do with these data')
 	}
 	
-	ncols <- nc$var[[zvar]]$dim[[1]]$len
-	nrows <- nc$var[[zvar]]$dim[[2]]$len
+	ncols <- nc$var[[zvar]]$dim[[dims[1]]]$len
+	nrows <- nc$var[[zvar]]$dim[[dims[2]]]$len
 
-	xx <- nc$var[[zvar]]$dim[[1]]$vals
+	xx <- nc$var[[zvar]]$dim[[dims[1]]]$vals
 	rs <- xx[-length(xx)] - xx[-1]
 	
 	if (! isTRUE ( all.equal( min(rs), max(rs), tolerance=0.025, scale=min(rs) ) ) ) {
@@ -192,7 +193,7 @@
 	rm(xx)
 
 	
-	yy <- nc$var[[zvar]]$dim[[2]]$vals
+	yy <- nc$var[[zvar]]$dim[[dims[2]]]$vals
 	rs <- yy[-length(yy)] - yy[-1]
 	if (! isTRUE ( all.equal( min(rs), max(rs), tolerance=0.025, scale= min(rs)) ) ) {
 		stop('cells are not equally spaced; you should extract values as points') }
@@ -264,8 +265,8 @@
 	}
 
 	if (is.na(crs)) {
-		if (((tolower(substr(nc$var[[zvar]]$dim[[1]]$name, 1, 3)) == 'lon')  &
-		    ( tolower(substr(nc$var[[zvar]]$dim[[2]]$name, 1, 3)) == 'lat' ) ) | 
+		if (((tolower(substr(nc$var[[zvar]]$dim[[dims[1]]]$name, 1, 3)) == 'lon')  &
+		    ( tolower(substr(nc$var[[zvar]]$dim[[dims[2]]]$name, 1, 3)) == 'lat' ) ) | 
 		    ( xrange[1] < -181 | xrange[2] > 181 | yrange[1] < -91 | yrange[2] > 91 )) {
 				crs <- '+proj=longlat +datum=WGS84'
 		}
@@ -309,7 +310,7 @@
 	}
 	r@data@fromdisk <- TRUE
 	
-	if (dims == 2) {
+	if (ndims == 2) {
 		nbands = 1
 	} else {
 		r@file@nbands <- nc$var[[zvar]]$dim[[dim3]]$len
@@ -323,8 +324,8 @@
 	
 	if (type == 'RasterLayer') {
 		if (is.null(band) | is.na(band)) {
-			if (dims > 2) { 
-				stop(zvar, ' has mutliple layers, provide a "band" value between 1 and ', dims[dim3])
+			if (ndims > 2) { 
+				stop(zvar, ' has multiple layers, provide a "band" value between 1 and ', nc$var[[zvar]]$dim[[dim3]]$len)
 			} 
 		} else {
 			if (length(band) > 1) {
@@ -339,7 +340,7 @@
 		} 
 
 	} else {
-		#if (length(dims)== 2) { 
+		#if (length(ndims)== 2) { 
 		#	stop('cannot make a RasterBrick from data that has only two dimensions (no time step), use raster() instead, and then make a RasterBrick from that')	
 		#} 
 		r@data@nlayers <- r@file@nbands

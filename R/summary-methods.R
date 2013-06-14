@@ -70,6 +70,8 @@ setMethod("Summary", signature(x='Raster'),
 		
 		tr <- blockSize(x)
 		out <- writeStart(out, filename="")
+		x <- readStart(x)
+
 		pb <- pbCreate(tr$n)
 		if (!is.null(add)) {
 			add <- fun(add, na.rm=na.rm)
@@ -88,6 +90,7 @@ setMethod("Summary", signature(x='Raster'),
 			} 
 		}
 		pbClose(pb)			
+		x <- readStop(x)
 		writeStop(out)
 	}
 )

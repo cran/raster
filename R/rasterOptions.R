@@ -139,7 +139,7 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		cnt <- 1
 		options(rasterFiletype = 'raster')
 		options(rasterOverwrite = FALSE)
-		options(rasterDatatype = 'FLT4S')
+		options(rasterDatatype = 'FLT8S')
 		options(rasterProgress = 'none')
 		options(rasterTimer = FALSE)
 		options(rasterTmpDir = .tmpdir(create=FALSE))
@@ -383,7 +383,7 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 	if (missing(datatype)) { 
 		datatype <- getOption('rasterDatatype')
 		if (is.null(datatype)) {
-			return('FLT4S') 
+			return('FLT8S') 
 		} 
 	} 
 	if (! datatype %in% c('LOG1S', 'INT1S', 'INT2S', 'INT4S', 'INT1U', 'INT2U', 'INT4U', 'FLT4S', 'FLT8S')) {

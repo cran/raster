@@ -16,7 +16,7 @@ ratify <- function(x, filename='', count=FALSE, ...) {
 	x@data@attributes <- list(f)
 	if (filename != '') {
 		x <- writeRaster(x, filename, ...)
-		# only native format stores this...
+		# only native format stores this, hence re-assign these:
 		x@data@isfactor <- TRUE
 		x@data@attributes <- list(f)	
 	}

@@ -34,14 +34,24 @@ Raster* object
 \seealso{ \code{\link[raster]{dropLayer}}}
 
 \examples{
-r <- raster(system.file("external/test.grd", package="raster"))
-s <- stack(r,r,r)
+s <- stack(system.file("external/rlogo.grd", package="raster"))
 sel <- subset(s, 2:3)
+
+# Note that this is equivalent to
+sel2 <- s[[2:3]]
+
+
+# and in this particular case:
+sel3 <- dropLayer(s, 1)
+
+nlayers(s)
+nlayers(sel)
+
+# effect of 'drop=FALSE' when selecting a single layer
 sel <- subset(s, 2)
+class(sel)
 sel <- subset(s, 2, drop=FALSE)
-  
-#  sel <- subset(s, 2:3) is equivalent to
-sel <- dropLayer(s, 1)
+class(sel)
 }
 
 \keyword{ spatial }

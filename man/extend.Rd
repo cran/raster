@@ -1,9 +1,5 @@
 \name{extend}
 
-\alias{expand}
-\alias{expand,Raster-method}
-\alias{expand,Extent-method}
-
 \alias{extend}
 \alias{extend,Raster-method}
 \alias{extend,Extent-method}
@@ -16,7 +12,7 @@ Extend returns an Raster* object with a larger spatial extent. The output Raster
 
 There is also an extend method for Extent objects to enlarge (or reduce) an Extent. You can also use algebraic notation to do that (see examples)
 
-This function, "extend" replaces the obsolete function "expand" (to avoid a name conflict with the Matrix package).
+This function has replaced function "expand" (to avoid a name conflict with the Matrix package).
 }
 
 \usage{
@@ -51,7 +47,7 @@ r[] <- 1:ncell(r)
 e <- extent(-180, 0, 0, 90)
 re <- extend(r, e)
 
-# expand with a number of rows and columns (at each side)
+# extend with a number of rows and columns (at each side)
 re2 <- extend(r, c(2,10))
 
 # Extent object

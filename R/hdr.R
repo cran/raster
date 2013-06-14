@@ -7,8 +7,21 @@
 hdr <- function(x, format, extension='.wld') {
 
 	if (inherits(x, 'RasterStack')) { stop('Only applicable to RasterLayer and RasterBrick classes (and their derivatives)') }
+
 	if (x@file@name == '') { stop('Object has no filename') }
 
+#	if (missing(filename)) {
+#		if (x@file@name == '') { 
+#			stop('Object has no filename; please provide a "filename=" argument') 
+#		}
+#	} else {
+#		fn <- trim(as.character(filename[1]))
+#		if (nchar(fn) < 1) {
+#			stop('invalid filename')
+#		}
+#		x@file@name == fn
+#	}
+	
 	type <- toupper(format)
 	if (type=="RASTER") {
 		.writeHdrRaster(x)

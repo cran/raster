@@ -33,10 +33,10 @@
 
 	binraster <- .setFileExtensionValues(raster@file@name, 'raster')
 
-	raster <- openConnection(raster)
+	raster <- readStart(raster)
 	writeBin( as.vector(raster@data@indices), raster@file@con, size = as.integer(4)) 
 	writeBin( as.vector(raster@data@values), raster@file@con, size = dataSize(raster@file@datanotation) ) 
-	raster <- closeConnection(raster)
+	raster <- readStop(raster)
 
 	# add the 'sparse' key word to the hdr file!!!
 	hdr(raster) 

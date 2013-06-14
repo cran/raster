@@ -7,15 +7,17 @@
 \alias{extent,matrix-method}
 \alias{extent,numeric-method}
 \alias{extent,list-method}
+\alias{extent,GridTopology-method}
 \alias{bbox,Raster-method}
 \alias{bbox,Extent-method}
+
 
   
 \title{Extent}
 
 \description{
 This function returns an Extent object of a Raster* or Spatial* object (or an Extent object), or creates an 
-Extent object from a matrix (2x2; rows=xmin, xmax; cols=ymin, ymax), vector (length=4; order= xmin, xmax, ymin, ymax) or list (with at least two elements, with names 'x' and 'y')
+Extent object from a 2x2 matrix (first row: xmin, xmax; second row: ymin, ymax), vector (length=4; order= xmin, xmax, ymin, ymax) or list (with at least two elements, with names 'x' and 'y')
 
 \code{bbox} returns a \code{sp} package like 'bbox' object (a matrix)
 }
@@ -25,8 +27,8 @@ extent(x, ...)
 }
 
 \arguments{
-\item{x}{A Raster* or Extent object, a matrix, or a vector of four numbers } 
-\item{...}{Additional arguments. When x is a single number you can pass three additional numbers (xmin, xmax, ymin, ymax)
+\item{x}{Raster* or Extent object, a matrix, or a vector of four numbers } 
+\item{...}{Additional arguments. When x is a single number representing 'xmin', you can pass three additional numbers (xmax, ymin, ymax)
 
 When \code{x} is a Raster* object, you can pass four additional arguments to crop the extent: \code{r1, r2, c1, c2}, representing the first and last row and column number }
 }
@@ -34,7 +36,7 @@ When \code{x} is a Raster* object, you can pass four additional arguments to cro
 
  
 \value{
-An Extent object
+Extent object
 }
   
 \author{Robert J. Hijmans; Etienne Racine wrote the extent function for a list}

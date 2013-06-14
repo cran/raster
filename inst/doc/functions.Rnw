@@ -9,6 +9,8 @@
 
 %\VignetteIndexEntry{Writing functions for large raster files}
 
+\newcommand{\R}{{\normalfont\textsf{R }}{}}
+
 \SweaveOpts{keep.source=TRUE}
 
 \begin{document}
@@ -37,7 +39,7 @@ r[] <- 1:100
 r
 @
 
-Now we write a simple function, f1, and use it to add 5 to all cell values of 'r'
+Below is a simple function, f1, that we use to add 5 to all cell values of 'r'
 
 <<code-2>>=
 f1 <- function(x, a) {
@@ -48,7 +50,7 @@ s <- f1(r, 5)
 s
 @
 
-f1 is a really bad example. It looks efficient but it has several problems. First of all, the slot x@data@values may be empty, which is typically the case when a raster object is derived from a file on disk. But even if all values are in memory the returned object will be invalid. This is because the values of a multiple slots may need to be adjusted when changing values. For example, the returned 'x' may still point to a file (now incorrectly, because the values no longer correspond). And the slots with the minimum and maximum values have not been updated. While it is OK (but normally not necessary) to directly read values of slots, you should not set them directly. The raster package has functions that set values of slots. This is illustrated in the next example.
+f1 is a really bad example. It looks efficient but it has several problems. First of all, the slot x@data@values may be empty, which is typically the case when a raster object is derived from a file on disk. But even if all values are in memory the returned object will be invalid. This is because the values of a multiple slots need to be adjusted when changing values. For example, the returned 'x' may still point to a file (now incorrectly, because the values no longer correspond to it). And the slots with the minimum and maximum cell values have not been updated. While it can be OK (but normally not necessary) to directly read values of slots, you should not set them directly. The raster package has functions that set values of slots. This is illustrated in the next example.
 
 <<code-3>>=
 f2 <- function(x, a) {
@@ -61,9 +63,9 @@ s <- f2(r, 5)
 s
 @
 
-f2 is much better. Function {\bf getValues} gets the cell values whether they are on disk or in memory (and will return NA values if neither is the case). {\bf setValues} sets the values to the RasterLayer object assuring that other slots are updated as well.
+f2 is much better than f1. Function {\bf getValues} gets the cell values whether they are on disk or in memory (and will return NA values if neither is the case). {\bf setValues} sets the values to the RasterLayer object assuring that other slots are updated as well.
 
-However, this function could fail for very large raster files, depending on the amount of RAM your computer has and R can access, because all values are read into memory at once. Processing data in chunks circumvents this problem.
+However, this function could fail when used with very large raster files, depending on the amount of RAM your computer has and that \R can access, because all values are read into memory at once. Processing data in chunks circumvents this problem.
 
 
 \section{Row by row}
@@ -91,7 +93,7 @@ Note how, in the above example, first a new empty RasterLayer, 'out' is created 
 
 \section{Multiple rows at once}
 
-Row by row processing is easy to do but it can be a bit inefficient. There is some overhead associated with each read and write operation. An alternative is to read, calculate, and write by block; here defined as a number of rows (1 or more). The function {bf blockSize} is a helper function to determine appropriate block size (number of rows). 
+Row by row processing is easy to do but it can be a bit inefficient because there is some overhead associated with each read and write operation. An alternative is to read, calculate, and write by block; here defined as a number of rows (1 or more). The function {bf blockSize} is a helper function to determine appropriate block size (number of rows). 
 
 <<code-5>>=
 f4 <- function(x, a, filename) {
@@ -113,7 +115,7 @@ blockSize(s)
 
 \section{Filename optional}
 
-In the above examples (functions f3 and f4) you must supply a filename. In the raster package that is never the case, it is always optional. If a filename is provided, values are written to disk. If no filename is provided the values are only written to disk if they cannot be stored in RAM. To determine whether the output needs to be written to disk, the function {\bf canProcessInMemory} is used. This function uses the size of the output raster to determine the total memory size needed. However, additional copies of the values are often made when doing computations. And perhaps you are combining values from several RasterLayer objects in which case you need to be able to use much more memory than for the output RasterLayer object alone. To account for this you can supply an additional parameter, indicating the total memory needed. In the examples below we use '3', indicating that we would need RAM to hold three times the size of the output RasterLayer. That seems reasonably safe in this case.
+In the above examples (functions f3 and f4) you must supply a filename. However, in the raster package that is never the case, it is always optional. If a filename is provided, values are written to disk. If no filename is provided the values are only written to disk if they cannot be stored in RAM. To determine whether the output needs to be written to disk, the function {\bf canProcessInMemory} is used. This function uses the size of the output raster to determine the total memory size needed. Multiple copies of the values are often made when doing computations. And perhaps you are combining values from several RasterLayer objects in which case you need to be able to use much more memory than for the output RasterLayer object alone. To account for this you can supply an additional parameter, indicating the total number of copies needed. In the examples below we use '3', indicating that we would need RAM to hold three times the size of the output RasterLayer. That seems reasonably safe in this case.
 
 
 First an example for row by row processing:
@@ -183,7 +185,7 @@ f6 <- function(x, a, filename='') {
 			out <- writeValues(out, v, bs$row[i])
 		} else {
 			cols <- bs$row[i]:(bs$row[i]+bs$nrows[i]-1)	
-			vv[,cols] <- matrix(v, nrow=out@ncols)
+			vv[,cols] <- matrix(v, nrow=ncol(out))
 		}
 	}
 	if (todisk) {
@@ -202,40 +204,40 @@ The next example is an alternative implementation that you might prefer if you w
 
 <<code-8>>=
 f7 <- function(x, a, filename='') {
+
 	out <- raster(x)
-	small <- canProcessInMemory(out, 3)
+	filename <- trim(filename)
 	
-	if (small) {
+	if (canProcessInMemory(out, 3)) {
 		v <- getValues(x) + a
 		out <- setValues(out, v)
 		if (filename != '') {
 			out <- writeRaster(out, filename, overwrite=TRUE)
 		}
-		return(out)
+	} else {
+		if (filename == '') {
+			filename <- rasterTmpFile()
+		}
+		out <- writeStart(out, filename)
+		
+		bs <- blockSize(r)
+		for (i in 1:bs$n) {
+			v <- getValues(x, row=bs$row[i], nrows=bs$nrows[i] )
+			v <- v + a
+			out <- writeValues(out, v, bs$row[i])
+		}
+		out <- writeStop(out)
 	}
-
-	filename <- trim(filename)
-	if (filename == '') {
-		filename <- rasterTmpFile()
-	}
-	out <- writeStart(out, filename)
-	
-	bs <- blockSize(r)
-	for (i in 1:bs$n) {
-		v <- getValues(x, row=bs$row[i], nrows=bs$nrows[i] )
-		v <- v + a
-		out <- writeValues(out, v, bs$row[i])
-	}
-	out <- writeStop(out)
 	return(out)
 }
+
 s <- f7(r, 5)
 @
 
 
 \section{A complete function}
 
-Finally, let's add some useful bells and whistles. For example, you may want to specify a file format and data type, be able to overwrite an existing file, and use a progress bar. So far, default values have been used. If you use the below function, the dots '...' allow you to change these by providing additional arguments 'overwrite', 'format', and 'datatype'. (In all cases you can also set default values with {\bf setOptions}).
+Finally, let's add some useful bells and whistles. For example, you may want to specify a file format and data type, be able to overwrite an existing file, and use a progress bar. So far, default values have been used. If you use the below function, the dots '...' allow you to change these by providing additional arguments 'overwrite', 'format', and 'datatype'. (In all cases you can also set default values with the {\bf rasterOptions} function).
 
 
 <<code-9>>=
@@ -289,7 +291,7 @@ s
 
 Note that most of the additional arguments are passed on to writeStart: 
 
-\code{out <- writeStart(out, filename, ...)}
+\texttt{out <- writeStart(out, filename, ...)}
 
 Only the \texttt{progress=} argument goes to \texttt{pbCreate}
 

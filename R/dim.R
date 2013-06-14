@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  June 2008
 # Version 0.9
 # Licence GPL v3
@@ -69,7 +69,7 @@ setMethod('dim<-', signature(x='RasterBrick'),
 		} else if (length(value) == 2) {
 			value <- c(value, nlayers(x))
 		} else if (length(value) > 3) {
-			warning('value should have lenght 1, 2, or 3. Additional values ignored')
+			warning('value should have length 1, 2, or 3. Additional values ignored')
 			value <- value[1:3]
 		}
 		

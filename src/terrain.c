@@ -341,7 +341,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 		
 		add++;
 		
-	} else if (option[7]) { 
+	} if (option[7]) { 
 	  // flow direction
 		addn = add * n;
 		int v;

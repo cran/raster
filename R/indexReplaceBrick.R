@@ -3,6 +3,36 @@
 # Version 1.0
 # Licence GPL v3
 
+setMethod("$", "Raster",  function(x, name) { x[[name]] } )
+
+setMethod("$<-", "Raster",  
+	function(x, name, value) { 
+		i <- which(name == names(x))[1]
+		if (is.na(i)) {
+			if (inherits(value, 'Raster')) {
+				names(value) <- name
+				x <- addLayer(x, value)
+				return(x)
+			} else {
+				r <- raster(x)
+				names(r) <- name
+				r[] <- value
+				x <- addLayer(x, r)
+				return(x)
+			}
+		} else {
+			if (inherits(value, 'Raster')) {
+				x[[name]] <- value
+			} else {
+				r <- x[[name]]
+				r[] <- value
+				x[[name]] <- value
+			}
+			return(x)
+		} 
+	}
+)
+
 
 setMethod("[[", "Raster",
 function(x,i,j,...,drop=TRUE) {
@@ -27,10 +57,25 @@ function(x,i,j,...,drop=TRUE) {
 })
 
 
+setReplaceMethod("[[", c("RasterStackBrick", "character", "missing"),
+	function(x, i, j, value) {
+		n <- which(i == names(x))[1]
+		if (is.na(n)) {
+			n <- nlayers(x) + 1
+		} 
+		if (inherits(value, 'Raster')) {
+			names(value) <- i
+		}
+		x[[n]] <- value
+		x
+	}
+)
+
+
 setReplaceMethod("[[", c("RasterStack", "numeric", "missing"),
 	function(x, i, j, value) {
+	
 		i <- round(i)
-
 		if (i < 1) {
 			stop('index should be > 0')
 		}
@@ -86,11 +131,14 @@ setReplaceMethod("[[", c("RasterBrick", "numeric", "missing"),
 				}
 				# for recycling
 				value[] <- val
+				x <- setValues(x, value, i)
 			} else {
 				compareRaster(x, value)
+				nm <- names(value)
 				value <- getValues(value)
+				x <- setValues(x, value, i)
+				names(x)[i] <- nm
 			}
-			x <- setValues(x, value, i)
 		} else {
 			x <- stack(x)
 			x[[i]] <- value
