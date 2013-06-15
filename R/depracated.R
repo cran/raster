@@ -15,25 +15,12 @@ layerNames <- function(x) {
 }
 
 
-
-
 .compare <- function(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE, orig=FALSE, rotation=TRUE, tolerance, stopiffalse=TRUE, showwarning=FALSE) {
 	if (.depracatedwarnings()) {
 		warning("raster function 'compare' is obsolete. It has been replaced by 'compareRaster'")
 	}	
 	compareRaster(x, ..., extent=extent, rowcol=rowcol, crs=crs, res=res, orig=orig, rotation=rotation, tolerance=tolerance, stopiffalse=stopiffalse, showwarning=showwarning)
 }
-
-
-if (!isGeneric("expand")) {
-	setGeneric("expand", function(x, y, ...)
-		standardGeneric("expand"))
-}	
-
-setMethod('expand', signature(x='Raster'), 
-function(x, y, value=NA, filename='', ...) {
-	stop("function 'expand' is obsolete. It has been replaced by 'extend'")
-} )
 
 
 setOptions <- function(...) {

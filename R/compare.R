@@ -4,10 +4,24 @@
 # Licence GPL v3
 
 
-compareRaster <- function(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE, orig=FALSE, rotation=TRUE, tolerance, stopiffalse=TRUE, showwarning=FALSE) {
+if (!isGeneric("all.equal")) {
+	setGeneric("all.equal", function(target, current, ...)
+		standardGeneric("all.equal"))
+}	
+
+setMethod("all.equal", c("Raster", "Raster"),
+	function(target, current, values=TRUE, stopiffalse=FALSE, showwarning=TRUE, ...) { 
+		compareRaster(target, current, ..., values=values, stopiffalse=stopiffalse, showwarning=showwarning)
+	}
+)
+
+
+compareRaster <- function(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE, orig=FALSE, rotation=TRUE, values=FALSE, tolerance, stopiffalse=TRUE, showwarning=FALSE) {
 
 	if (missing(tolerance)) {
-		tolerance <- .tolerance()
+		tol <- .tolerance()
+	} else {
+		tol <- tolerance
 	}
 	
 	result <- TRUE
@@ -27,7 +41,7 @@ compareRaster <- function(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE,
 	
 	for (i in 2:length(objects)) { 
 		if (extent) {
-			if (!(isTRUE(all.equal(ext1, extent(objects[[i]]), tolerance=tolerance, scale=minres )))) {
+			if (!(isTRUE(all.equal(ext1, extent(objects[[i]]), tolerance=tol, scale=minres )))) {
 				result <- FALSE
 				if (stopiffalse) { stop('different extent') }
 				if (showwarning) { warning('different extent') }
@@ -58,7 +72,7 @@ compareRaster <- function(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE,
 		
 # Can also check res through extent & rowcol
 		if (res) {
-			if (!(isTRUE(all.equal(res1, res(objects[[i]]), tolerance=tolerance, scale=minres)))) {
+			if (!(isTRUE(all.equal(res1, res(objects[[i]]), tolerance=tol, scale=minres)))) {
 				result <- FALSE
 				if (stopiffalse)  { stop('different resolution') }
 				if (showwarning) { warning('different resolution') }
@@ -67,7 +81,7 @@ compareRaster <- function(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE,
 # Can also check orig through extent & rowcol, but orig is useful for e.g. Merge(raster, raster)
 		if (orig) {
 			dif <- origin1 - abs(origin(objects[[i]]))
-			if (!(isTRUE(all.equal(dif, c(0,0), tolerance=tolerance, scale=minres)))) {
+			if (!(isTRUE(all.equal(dif, c(0,0), tolerance=tol, scale=minres)))) {
 				result <- FALSE
 				if (stopiffalse) { stop('different origin') }
 				if (showwarning) { warning('different origin') }
@@ -87,6 +101,37 @@ compareRaster <- function(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE,
 						if (stopiffalse) { stop('rotations are different') }
 						if (showwarning) { warning('rotations are different') }
 						result <- FALSE
+					}
+				}
+			}
+		}
+		
+		if (values) {
+			hv1 <- hasValues(objects[[1]])
+			hvi <- hasValues(objects[[i]])
+			if (hv1 != hvi) {
+				if (stopiffalse) { stop('not all objects have values') }
+				if (showwarning) { warning('not all objects have values') }
+				result <- FALSE
+			} else if (hv1 & hvi) { 
+				if (canProcessInMemory(objects[[1]])) {
+					test <- isTRUE(all.equal(getValues(objects[[1]]), getValues(objects[[i]])))
+					if (! test) {
+						if (stopiffalse) { stop('not all objects have the same values') }
+						if (showwarning) { warning('not all objects have the same values') }
+						result <- FALSE
+					}	
+				} else {
+					tr <- blockSize(objects[[1]])
+					for (j in 1:tr$n) {
+						v1 <- getValues(objects[[1]], tr$row[j], tr$nrows[j])
+						v2 <- getValues(objects[[i]], tr$row[j], tr$nrows[j])
+						if (!isTRUE(all.equal(v1, v2))) {
+							if (stopiffalse) { stop('not all objects have the same values') }
+							if (showwarning) { warning('not all objects have the same values') }
+							result <- FALSE
+							break
+						}
 					}
 				}
 			}

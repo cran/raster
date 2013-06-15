@@ -21,8 +21,8 @@ If \code{x} represents points, each point is assigned to a grid cell. Points tha
 }
 
 \usage{
-\S4method{rasterize}{matrix,Raster}(x, y, field, fun='last', background=NA, 
-    mask=FALSE, update=FALSE, updateValue='all', filename="", na.rm=TRUE, ...)
+\S4method{rasterize}{matrix,Raster}(x, y, field, fun='last', background=NA,
+     mask=FALSE, update=FALSE, updateValue='all', filename="", na.rm=TRUE, ...)
 	
 \S4method{rasterize}{SpatialPoints,Raster}(x, y, field, fun='last', background=NA, 
     mask=FALSE, update=FALSE, updateValue='all', filename="", na.rm=TRUE, ...)
@@ -31,7 +31,8 @@ If \code{x} represents points, each point is assigned to a grid cell. Points tha
     mask=FALSE, update=FALSE, updateValue='all', filename="", ...)
 	
 \S4method{rasterize}{SpatialPolygons,Raster}(x, y, field, fun='last', background=NA, 
-    mask=FALSE, update=FALSE, updateValue='all', filename="", getCover=FALSE, silent=FALSE, ...)
+    mask=FALSE, update=FALSE, updateValue='all', filename="", 
+    getCover=FALSE, silent=FALSE, ...)
 }
 
 \arguments{

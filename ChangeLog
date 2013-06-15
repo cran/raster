@@ -5,6 +5,17 @@ add equivalent to "subsWithNA" to reclassify
 move resample (bilenear interp. (and add other options)) and rasterize/(lines, polygons) to C
 function for affine transformation
 
+--- 14-June-2013, version: 2.1-37
+new argument 'values' to 'trim' to allow trimming for other values that NA
+new functions (for Raster objects) which.min and which.max
+layers can now be refered to with a $ (as in lists and data.frames)
+coercion methods to Extent and RasterLayer from GridTopology contributed by Michael Sumner
+bug fixes in crosstab and in zonal, reported by Josh Perlman
+bug fix in terrain. flowdir was not computed when used together with other options (bug and fix reported by Etienne Racine)
+changed default datatype to FLT8S (from FLT4S) to avoid generalization of large integers
+NA value in native arc ascii files now only the flag value (it was any value <= the flag value)
+bug fix in assigning colnames when extracting values from RasterBrick
+
 --- 11-April-2013, version: 2.1-25
 removed bugs from 'f8' in the writing functions vignette (reported by J. R. Matchett)
 fixed bug that occured when creating stack from ascii files if rgdal was not installed

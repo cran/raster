@@ -45,6 +45,7 @@ RasterLayer, RasterStack, and RasterBrick objects are, as a group, referred to a
     \code{\link{raster}}\tab To create a RasterLayer \cr
     \code{\link{stack}} \tab To create a RasterStack (multiple layers)\cr
     \code{\link{brick}} \tab To create a RasterBrick (multiple layers)\cr
+    \code{\link{subset}} \tab Select layers of a RasterStack/Brick\cr
     \code{\link{addLayer}} \tab Add a layer to a Raster* object\cr
     \code{\link{dropLayer}} \tab Remove a layer from a RasterStack or RasterBrick \cr
     \code{\link{unstack}} \tab Create a list of RasterLayer objects from a RasterStack \cr
@@ -333,8 +334,8 @@ Cell numbers start at 1 in the upper-left corner. They increase within rows, fro
   \code{\link{pbCreate}} \tab Initialize a progress bar  \cr
   \code{\link{pbStep}} \tab Take a progress bar step \cr
   \code{\link{pbClose}} \tab Close a progress bar \cr
-  \code{\link{openConnection}} \tab Open a file connection \cr
-  \code{\link{closeConnection}} \tab Close a file connection \cr
+  \code{\link{readStart}} \tab Open file connections for efficient multi-chunck reading \cr
+  \code{\link{readStop}} \tab Close file connections \cr
   \code{\link{rasterTmpFile}}  \tab Get a name for a temporary file \cr
   \code{\link{inMemory}} \tab Are the cell values in memory? \cr
   \code{\link{fromDisk}} \tab Are the cell values read from a file? \cr	

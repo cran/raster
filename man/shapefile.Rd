@@ -13,7 +13,8 @@ Reading and writing "shapefiles". Simple wrapper around readOGR and writeOGR (rg
 
 
 \usage{
-shapefile(filename, object=NULL, overwrite=FALSE, verbose=FALSE, stringsAsFactors=FALSE, ...)
+shapefile(filename, object=NULL, overwrite=FALSE, 
+                verbose=FALSE, stringsAsFactors=FALSE, ...)
 }
  
 \arguments{

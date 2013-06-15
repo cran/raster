@@ -12,15 +12,23 @@
 	if ( x@file@toptobottom ) { 
 		row <- x@nrows - row - nrows + 2 
 	}
-	
+	is.open <- x@file@open
 	if (isTRUE(getOption('rasterNCDF4'))) {
-		nc <- ncdf4::nc_open(x@file@name)
-		on.exit( ncdf4::nc_close(nc) )		
-		ncdf4 <- TRUE
+		if (is.open) {
+			nc <- x@file@con
+		} else {
+			nc <- ncdf4::nc_open(x@file@name)
+			on.exit( ncdf4::nc_close(nc) )		
+		}
+		ncdf4 <- TRUE	
 	
 	} else {
-		nc <- open.ncdf(x@file@name)
-		on.exit( close.ncdf(nc) )
+		if (is.open) {
+			nc <- x@file@con
+		} else {
+			nc <- open.ncdf(x@file@name)
+			on.exit( close.ncdf(nc) )
+		}	
 		ncdf4 <- FALSE
 	}
 	
@@ -97,6 +105,8 @@
 	
 	
 .readRowsBrickNetCDF <- function(x, row, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs) {
+
+	is.open <- x@file@open
 	
 	if ( x@file@toptobottom ) { 
 		row <- x@nrows - row - nrows + 2
@@ -129,13 +139,21 @@
 	stopifnot(ncols > 0)
 
 	if (getOption('rasterNCDF4')) {
-		nc <- ncdf4::nc_open(x@file@name)
-		on.exit( ncdf4::nc_close(nc) )		
+		if (is.open) {
+			nc <- x@file@con
+		} else {
+			nc <- ncdf4::nc_open(x@file@name)
+			on.exit( ncdf4::nc_close(nc) )		
+		}
 		ncdf4 <- TRUE
 	
 	} else {
-		nc <- open.ncdf(x@file@name)
-		on.exit( close.ncdf(nc) )
+		if (is.open) {
+			nc <- x@file@con
+		} else {
+			nc <- open.ncdf(x@file@name)
+			on.exit( close.ncdf(nc) )
+		}	
 		ncdf4 <- FALSE
 	}
 	

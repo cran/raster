@@ -211,6 +211,7 @@ function(x, filename, format, bylayer=FALSE, suffix='numbers', ...) {
 
 		tr <- blockSize(b)
 		pb <- pbCreate(tr$n, ...)
+		x <- readStart(x, ...)
 		b <- writeStart(b, filename=filename, format=filetype, ...)
 		for (i in 1:tr$n) {
 			v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
@@ -218,6 +219,7 @@ function(x, filename, format, bylayer=FALSE, suffix='numbers', ...) {
 			pbStep(pb, i)
 		}
 		b <- writeStop(b)
+		x <- readStop(x)
 		pbClose(pb)
 		return(b)	
 	} 

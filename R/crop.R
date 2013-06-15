@@ -77,12 +77,14 @@ function(x, y, filename='', snap='near', datatype=NULL, ...) {
 		tr <- blockSize(out)
 		pb <- pbCreate(tr$n, label='crop', ...)
 		out <- writeStart(out, filename=filename, datatype=datatype, ... )
+		x <- readStart(x, ...)
 		for (i in 1:tr$n) {
 			vv <- getValuesBlock(x, row=tr$row[i]+row1-1, nrows=tr$nrows[i], col1, nc)
 			out <- writeValues(out, vv, tr$row[i])
 			pbStep(pb, i) 			
 		} 
 		out <- writeStop(out)
+		x <- readStop(x)
 		pbClose(pb)
 	}
 

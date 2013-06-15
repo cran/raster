@@ -16,7 +16,8 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 	if (!hasValues(x)) {
 		stop('No values associated with the Raster object')
 	}	
-
+	size <- round(size)
+	stopifnot(size > 0)
 
 	if (asRaster) {
 		if (! is.null(ext)) {
@@ -39,10 +40,8 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 	}
 	
 	stopifnot(size <= ncell(x))
-	
 	r <- raster(x)
 	nc <- ncell(r)
-	
 	layn <- names(x)
 
 	removeCells <- FALSE
@@ -51,12 +50,13 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 		cells <- TRUE
 	}
 
-
-	if ( inMemory(x) ) {
+	if ( canProcessInMemory(x) ) {
+	
 		if (is.null(ext)) {
 			x <- getValues(x)
 		} else {
 			x <- crop(x, ext)
+			rc <- raster(x)
 			x <- getValues(x)
 		}
 		
@@ -64,24 +64,26 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 			if (is.null(ext)) {
 				x <- cbind(cell=1:nc, value=x)			
 			} else {
-				xy <- xyFromCell(r, 1:nc)
-				cell <- cellFromXY(r, xy)
-				x <- cbind(cell, value=x)
+				XY <- xyFromCell(rc, 1:ncell(rc))
+				cell <- cellFromXY(r, XY)
+				x <- cbind(cell=cell, x)
 			}
 		}
 
 		if (na.rm) { 
-			x <- na.omit(x) 
+			x <- na.omit(x)
 		}
 
 		if (is.matrix(x)) {
+			# get rid of omit attributes
 			d <- dim(x)
 			x <- matrix(as.vector(x), d[1], d[2])
 			if ( nrow(x) > size) {
 				s <- sampleInt(nrow(x), size)
-				x <- x[s, ]
+				x <- x[s, ,drop=FALSE]
 			}
 		} else { 
+			# get rid of omit attributes
 			x <- as.vector(x)
 			s <- sampleInt(length(x), size)
 			x <- x[s]			
@@ -90,28 +92,29 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 	} else {
 		
 		if (! is.null(ext)) {
-			r <- crop(r, ext)
+			rr <- crop(r, ext)
 		}
 			
 		if (size >= nc) {
 			
 			if (is.null(ext)) {
-				x <- cbind(1:nc, getValues(x))
+				x <- getValues(r)
 			} else {
-				x <- cbind(1:nc, getValues(crop(x, ext)))			
+				x <- getValues(rr)
 			}
 			
 			if (cells) {
 				if (is.null(ext)) {
 					x <- cbind(cell=1:nc, value=x)
 				} else {
-					xy <- xyFromCell(r, 1:nc)
-					cell <- cellFromXY(x, xy)
-					x <- cbind(cell, value=x)
+					XY <- xyFromCell(rr, 1:ncell(rr))
+					cell <- cellFromXY(r, XY)
+					x <- cbind(cell, x)
 				}
 			}
 			if (na.rm) { 
 				x <- na.omit(x) 
+				# get rid of omit attributes
 				if (is.matrix(x)) {
 					d <- dim(x)
 					x <- matrix(as.vector(x), d[1], d[2])
@@ -132,8 +135,8 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 			rcells <- sampleInt(nc, N)
 			
 			if (!is.null(ext)) {
-				xy <- xyFromCell(r, rcells)
-				rcells <- cellFromXY(x, xy)
+				XY <- xyFromCell(r, rcells)
+				rcells <- cellFromXY(r, XY)
 			}
 			
 			x <- .cellValues(x, rcells)
@@ -163,30 +166,32 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 	if (is.matrix(x)) {
 		if (cells) {
 			colnames(x) <- c('cell', layn)
+			if (xy) {
+				XY <- xyFromCell(r, x[,1])
+				x <- cbind(x[,1,drop=FALSE], XY, x[,2:ncol(x),drop=FALSE])
+			}
+			if (rowcol) {
+				rc <- cbind(row=rowFromCell(r, x[,1]), col=colFromCell(r, x[,1]))
+				x <- cbind(x[ , 1, drop=FALSE], rc, x[ , 2:ncol(x), drop=FALSE])
+			}
+			if (sp) {
+				if (!xy) {
+					XY <- data.frame(xyFromCell(r, x[,1]))
+				}
+				if (removeCells) {
+					x <- x[,-1,drop=FALSE]
+				}
+				x <- SpatialPointsDataFrame(XY, data=data.frame(x), proj4string=projection(r, asText=FALSE))
+				
+			} else if (removeCells) {
+				x <- x[,-1,drop=FALSE]	
+			}
+			
 		} else {
 			colnames(x) <- layn
 		}
 	}
-	
-	if (xy) {
-		xy <- xyFromCell(r, x[,1])
-		x <- cbind(x[,1,drop=FALSE], xy, x[,2:ncol(x),drop=FALSE])
-	}
-	if (rowcol) {
-		rc <- cbind(row=rowFromCell(r, x[,1]), col=colFromCell(r, x[,1]))
-		x <- cbind(x[ , 1, drop=FALSE], rc, x[ , 2:ncol(x), drop=FALSE])
-	}
-	if (sp) {
-		xy <- data.frame(xyFromCell(r, x[,1]))
-		if (removeCells) {
-			x <- x[,-1,drop=FALSE]
-		}
-		x <- SpatialPointsDataFrame(xy, data=data.frame(x), proj4string=projection(r, asText=FALSE))
 		
-	} else if (removeCells) {
-		x <- x[,-1,drop=FALSE]	
-	}
-	
 	return(x)
 }
 )

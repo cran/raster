@@ -66,6 +66,12 @@ function(x, y, value=NA, filename='', ...) {
 	}
 	out@data@names <- names(x)
 	out <- setExtent(out, y, keepres=TRUE)
+	if (is.factor(x)) {
+#		if (is.na(value)) {
+			levels(out) <- levels(x)
+#		}	
+	}
+
 	
 	if (nrow(x) == nrow(out) & ncol(x) == ncol(out)) {
 		# nothing to do.
@@ -130,7 +136,9 @@ function(x, y, value=NA, filename='', ...) {
 		}
 		
 		pbClose(pb)
-		writeStop(out)
+		out <- writeStop(out)
+		return(out)
+
 	} 
 }
 )

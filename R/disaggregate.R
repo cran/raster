@@ -83,6 +83,7 @@ function(x, fact=NULL, method='', filename='', ...) {
 		rown <- (tr$row-1) * yfact + 1
 		pb <- pbCreate(tr$n, label='disaggregate', ...)
 		out <- writeStart(out, filename=filename, datatype=.commonDataType(dataType(x)), ...)
+		x <- readStart(x, ...)		
 		
 		cols <- rep(seq.int(ncx), each=xfact)
 		rows <- rep(seq.int(tr$nrows[1]), each=yfact)
@@ -106,6 +107,7 @@ function(x, fact=NULL, method='', filename='', ...) {
 		}
 	
 		out <- writeStop(out)
+		x <- readStop(x)
 		pbClose(pb)			
 	
 	}

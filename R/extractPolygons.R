@@ -268,10 +268,14 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 
 		lyrs <- layer:(layer+nl-1)
 		if (cellnumbers) {
-			colnames(res) <- c('ID', 'cell', names(x)[lyrs])
+			nms <- c('ID', 'cell', names(x)[lyrs])
 		} else {
-			colnames(res) <- c('ID', names(x)[lyrs])
+			nms <- c('ID', names(x)[lyrs])
 		}
+		if (weights) {
+			nms <- c(nms, 'weight')
+		}
+		colnames(res) <- nms
 		
 		if (any(is.factor(x)) & factors) {
 			i <- ifelse(cellnumbers, 1:2, 1)

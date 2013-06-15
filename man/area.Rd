@@ -19,10 +19,10 @@ Compute the approximate surface area of cells in an unprojected (longitude/latit
 
 \arguments{
 \item{x}{Raster* object}
-\item{filename}{Character. Filename for the output Raster object (optional)}
-\item{na.rm}{Logical. If \code{TRUE}, cells that are \code{NA} are ignored}
-\item{weights}{Logical. If \code{TRUE}, the area of each cells is divided by the total area of all cells that are not \code{NA}}
-\item{...}{Additional arguments as for \code{\link{writeRaster}}}  
+\item{filename}{character. Filename for the output Raster object (optional)}
+\item{na.rm}{logical. If \code{TRUE}, cells that are \code{NA} are ignored}
+\item{weights}{logical. If \code{TRUE}, the area of each cells is divided by the total area of all cells that are not \code{NA}}
+\item{...}{additional arguments as for \code{\link{writeRaster}}}  
 }
 
 \details{

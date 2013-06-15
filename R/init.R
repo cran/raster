@@ -77,7 +77,7 @@ init <- function(x, fun, v, filename="", ...) {
 		}
 	}
 	if (inmem & filename != '') {
-		out = writeRaster(out, filename=filename, ...)
+		out <- writeRaster(out, filename=filename, ...)
 	}
 	return(out)
 }

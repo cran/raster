@@ -1,9 +1,7 @@
 # Author: Robert J. Hijmans
-# contact: r.hijmans@gmail.com
 # Date : December 2009
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
-
 
 if (!isGeneric("trim")) {
 	setGeneric("trim", function(x, ...)
@@ -55,9 +53,11 @@ setMethod('trim', signature(x='matrix'),
 )
 
 
+# June 2013, modification by Mike Sumner, added argument "value"
 
 setMethod('trim', signature(x='Raster'), 
-function(x, padding=0, filename='', ...) {
+function(x, padding=0, values=NA, filename='', ...) {
+
 
 	filename <- trim(filename)
 
@@ -69,14 +69,16 @@ function(x, padding=0, filename='', ...) {
 
 	for (r in 1:nr) {
 		v <- getValues(x, r)
-		if (sum(is.na(v)) < ncl) { break }
+		if (sum(v %in% values) < ncl) {
+			break 
+		}
 	}
 	if ( r == nr) { stop('only NA values found') }
 	firstrow <- min(max(r-padding, 1), nr)
 	
 	for (r in nr:1) {
 		v <- getValues(x, r)
-		if (sum(is.na(v)) < ncl) { break }
+		if (sum(v %in% values) < ncl) { break }
 	}
 	lastrow <- max(min(r+padding, nr), 1)
 	
@@ -88,13 +90,13 @@ function(x, padding=0, filename='', ...) {
 	
 	for (c in 1:nc) {
 		v <- getValuesBlock(x, 1 ,nrow(x), c, 1)
-		if (sum(is.na(v)) < nrl) { break }
+		if (sum(v %in% values) < nrl) { break }
 	}
 	firstcol <- min(max(c-padding, 1), nc) 
 	
 	for (c in nc:1) {
 		v <- getValuesBlock(x, 1 ,nrow(x), c, 1)
-		if (sum(is.na(v)) < nrl) { break }
+		if (sum(v %in% values) < nrl) { break }
 	}
 	lastcol <- max(min(c+padding, nc), 1)
 	

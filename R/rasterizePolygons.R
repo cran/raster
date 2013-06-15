@@ -9,7 +9,15 @@
 		putvals <- data.frame(v=rep(1, length=n))
 	
 	} else if (missing(field)) {
-		putvals <- data.frame(v=as.integer(1:n))
+		if (.hasSlot(obj, 'data')) {
+			putvals <- obj@data
+			cn <- .goodNames(c('ID', colnames(putvals)))
+			cn[1] <- 'ID'
+			putvals <- data.frame(ID=1:nrow(putvals), putvals)
+			colnames(putvals) <- cn	
+		} else {
+			putvals <- data.frame(v=as.integer(1:n))
+		}
 		
 	} else if (isTRUE (is.na(field))) { 
 		putvals <- data.frame(v=rep(NA, n))
@@ -187,6 +195,9 @@
 	if (ncol(pvals) > 1) {
 		rstr@data@isfactor <- TRUE
 		rstr@data@attributes <- list(pvals)
+		if (!(fun %in% c('first', 'last'))) {
+			stop('when rasterizing multiple values you must use "fun=first" or "fun=last"')
+		}
 	}
 
 	polinfo <- matrix(NA, nrow=npol * 2, ncol=6)
@@ -269,9 +280,9 @@
 					rvtmp <- rv1
 					if ( sum(x[-length(x)] == x[-1]) > 0 ) {
 					# single node intersection going out of polygon ....
-						spPnts <- xyFromCell(rstr, cellFromRowCol(rstr, rep(r, ncol(rstr)), 1:ncol(rstr)), TRUE)
+						spPnts <- SpatialPoints(xyFromCell(rstr, cellFromRowCol(rstr, rep(r, ncol(rstr)), 1:ncol(rstr))))
 						spPol <- SpatialPolygons(list(Polygons(list(mypoly), 1)))
-						over <- overlay(spPnts, spPol)
+						over <- over(spPnts, spPol)
 						if ( subpol[i, 5] == 1 ) {
 							holes[!is.na(over)] <- TRUE
 						} else {
@@ -463,7 +474,7 @@
 					# single node intersection going out of polygon ....
 							spPnts <- xyFromCell(rstr, cellFromRowCol(rstr, rep(r, ncol(rstr)), 1:ncol(rstr)), TRUE)
 							spPol <- SpatialPolygons(list(Polygons(list(mypoly), 1)))
-							over <- overlay(spPnts, spPol)
+							over <- over(spPnts, spPol)
 							if ( subpol[i, 5] == 1 ) {
 								holes[!is.na(over)] <- TRUE
 							} else {
@@ -567,7 +578,7 @@
 		} else {
 			rowcol[,1] <- r
 			sppoints <- xyFromCell(raster, cellFromRowCol(raster, rowcol[,1], rowcol[,2]), TRUE)
-			over <- overlay(sppoints, p)
+			over <- over(sppoints, p)
 			vals <- putvals[over]
 		}
 		if (filename == "") {

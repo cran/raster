@@ -224,6 +224,7 @@ function(x, fun, filename='', na.rm, forcefun=FALSE, forceapply=FALSE, ...) {
 
 # else 
 	
+	x <- readStart(x)
 	out <- writeStart(out, filename=filename, ...)
 	tr <- blockSize(out)
 	pb <- pbCreate(tr$n, label='calc', ...)			
@@ -264,6 +265,7 @@ function(x, fun, filename='', na.rm, forcefun=FALSE, forceapply=FALSE, ...) {
 		}
 	}
 	out <- writeStop(out)
+	x <- readStop(x)
 	pbClose(pb)
 	return(out)
 }

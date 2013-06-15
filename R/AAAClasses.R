@@ -85,7 +85,8 @@ setClass('.RasterFile',
 		toptobottom='logical',
 		blockrows='integer',
 		blockcols='integer',
-		driver ='character'
+		driver ='character',
+		open = 'logical'
 		),
 	prototype (	
 	    name = '',
@@ -99,7 +100,8 @@ setClass('.RasterFile',
 		toptobottom = TRUE,
 		blockrows = as.integer(0),
 		blockcols= as.integer(0),
-		driver = '' # raster or gdal
+		driver = '', 
+		open = FALSE
 	),
 	validity = function(object) {
 		c1 <- datanotation %in% c('LOG1S', 'INT1S', 'INT2S', 'INT4S', 'INT1U', 'INT2U', 'FLT4S', 'FLT8S')
@@ -254,21 +256,6 @@ setClass ('RasterStack',
 setClassUnion("RasterStackBrick", c("RasterStack", "RasterBrick"))
 
 
-setClass ('.RasterList',
-	representation (
-	    filename ='character',
-		layers ='list'
-		),
-	prototype (
-		filename='',
-		layers = list()
-		),
-	validity = function(object) {
-		return( length(object@layers) == object@data@nlayers )
-	}
-)
-
-
 setClass ('RasterLayerSparse',
 	contains = 'RasterLayer',
 	representation (
@@ -312,5 +299,18 @@ setClass ('.RasterQuad',
 
 
 #setClassUnion("RasterStackBrickList", c("RasterStack", "RasterBrick", "RasterList"))
+
+
+
+setClass ('.RasterList',
+	contains = 'list',
+	representation (),
+	prototype (),
+	validity = function(object) {
+		s <- sapply(object, function(x) inherits(x, 'Raster'))
+		return( sum(s) == length(s))
+	}
+)
+
 
 

@@ -28,6 +28,7 @@ setMethod("Math", signature(x='Raster'),
 					tr <- blockSize(x)
 					pb <- pbCreate(tr$n, label='math')			
 					r <- writeStart(r, filename=rasterTmpFile(), overwrite=TRUE )
+					x <- readStart(x)
 					last <- 0
 					for (i in 1:tr$n) {
 						v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
@@ -41,6 +42,7 @@ setMethod("Math", signature(x='Raster'),
 						pbStep(pb, i) 
 					}
 					r <- writeStop(r)
+					x <- readStop(x)
 					pbClose(pb)
 				}
 				return(r)
@@ -53,12 +55,15 @@ setMethod("Math", signature(x='Raster'),
 				tr <- blockSize(x)
 				pb <- pbCreate(tr$n, label='math')
 				r <- writeStart(r, filename=rasterTmpFile(), overwrite=TRUE )
+				x <- readStart(x)
+
 				for (i in 1:tr$n) {
 					v <- t( apply(getValues(x, row=tr$row[i], nrows=tr$nrows[i]), 1, funname) )
 					r <- writeValues(r, v, tr$row[i])
 					pbStep(pb, i) 
 				}
 				r <- writeStop(r)
+				x <- readStop(x)
 				pbClose(pb)
 			}
 			
@@ -76,12 +81,15 @@ setMethod("Math", signature(x='Raster'),
 				tr <- blockSize(x)
 				pb <- pbCreate(tr$n, label='math')
 				r <- writeStart(r, filename=rasterTmpFile(), datatype=datatype, overwrite=TRUE )
+				x <- readStart(x)
+
 				for (i in 1:tr$n) {
 					v <- callGeneric( getValues(x, row=tr$row[i], nrows=tr$nrows[i]) )
 					r <- writeValues(r, v, tr$row[i])
 					pbStep(pb, i) 
 				}
 				r <- writeStop(r)
+				x <- readStop(x)
 				pbClose(pb)
 			}
 		}
@@ -133,12 +141,15 @@ setMethod("Math2", signature(x='Raster'),
 			tr <- blockSize(x)
 			pb <- pbCreate(tr$n, label='math')
 			r <- writeStart(r, filename=rasterTmpFile(), datatype=datatype, format=.filetype(), overwrite=TRUE )
+			x <- readStart(x)
+		
 			for (i in 1:tr$n) {
 				v <- callGeneric( getValues(x, row=tr$row[i], nrows=tr$nrows[i]), digits )
 				r <- writeValues(r, v, tr$row[i])
 				pbStep(pb, i) 
 			}
 			r <- writeStop(r)
+			x <- readStop(x)
 			pbClose(pb)
 		}
 		return(r)
@@ -168,12 +179,16 @@ setMethod("log", signature(x='Raster'),
 			tr <- blockSize(x)
 			pb <- pbCreate(tr$n, label='math')
 			r <- writeStart(r, '', overwrite=TRUE )
+			x <- readStart(x)
+			
 			for (i in 1:tr$n) {
 				v <- log( getValues(x, row=tr$row[i], nrows=tr$nrows[i]), base=base )
 				r <- writeValues(r, v, tr$row[i])
 				pbStep(pb, i) 
 			}
 			r <- writeStop(r)
+			x <- readStop(x)
+			
 			pbClose(pb)
 		}
 		return(r)

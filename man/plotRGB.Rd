@@ -14,9 +14,9 @@ Make a Red-Green-Blue plot based on three layers (in a RasterBrick or RasterStac
 
 
 \usage{
-\S4method{plotRGB}{RasterStackBrick}(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL,
-        ext=NULL, interpolate=FALSE, colNA='white', alpha, bgalpha, addfun=NULL, zlim=NULL, zlimcol=NULL,
-		axes=FALSE, xlab='', ylab='', asp=NULL, add=FALSE, ...)
+\S4method{plotRGB}{RasterStackBrick}(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, 
+    ext=NULL, interpolate=FALSE, colNA='white', alpha, bgalpha, addfun=NULL, zlim=NULL, 
+	zlimcol=NULL, axes=FALSE, xlab='', ylab='', asp=NULL, add=FALSE, ...)
 }
 
 \arguments{

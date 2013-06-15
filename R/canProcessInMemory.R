@@ -14,8 +14,8 @@ canProcessInMemory <- function(x, n=4) {
 #	rasterOptions(format='big.matrix')
 #	rasterOptions(format='CDF')
 #	rasterOptions(overwrite=TRUE)
-#	rasterOptions(todisk=TRUE)
-# return(FALSE)
+#  rasterOptions(todisk=TRUE)
+#  return(FALSE)
 	
 	if (.toDisk()) { 
 		return(FALSE) 

@@ -46,6 +46,8 @@ There is, however, a difference if \code{NA} values are considered. One can use 
 Laplacian filter: \code{filter=matrix(c(0,1,0,1,-4,1,0,1,0), nrow=3)}
 
 Sobel filter: \code{filter=matrix(c(1,2,1,0,0,0,-1,-2,-1) / 4, nrow=3)}
+
+see the \code{\link{focalWeight}} function to create distance based circular, rectangular, or Gaussian filters.
 }
 
 \value{
@@ -53,12 +55,7 @@ RasterLayer
 }
 
 
-\note{
-This function has replaced a previous version of \code{focal}, and functions \code{focalNA} and \code{focalFilter})
-}
-
-
-
+\seealso{ \code{\link{focalWeight}} }
 
 \examples{
 r <- raster(ncols=36, nrows=18, xmn=0)
@@ -70,20 +67,8 @@ r3 <- focal(r, w=matrix(1/9,nrow=3,ncol=3))
 # 5x5 mean filter
 r5 <- focal(r, w=matrix(1/25,nrow=5,ncol=5)) 
 
-# Gaussian filter for square cells
-fgauss <- function(sigma, n=5) {
-	m <- matrix(nc=n, nr=n)
-	col <- rep(1:n, n)
-	row <- rep(1:n, each=n)
-	x <- col - ceiling(n/2)
-	y <- row - ceiling(n/2)
-# according to http://en.wikipedia.org/wiki/Gaussian_filter
-	m[cbind(row, col)] <- 1/(2*pi*sigma^2) * exp(-(x^2+y^2)/(2*sigma^2))
-# sum of weights should add up to 1	
-	m / sum(m)
-}
-
-gf=fgauss(1.5)
+# Gaussian filter
+gf <- focalWeight(r, 2, "Gauss")
 rg <- focal(r, w=gf)
 
 # The max value for the lower-rigth corner of a 3x3 matrix around a focal cell
@@ -94,7 +79,6 @@ rm <- focal(r, w=f, fun=max)
 # global lon/lat data: no 'edge effect' for the columns
 xmin(r) <- -180
 r3g <- focal(r, w=matrix(1/9,nrow=3,ncol=3)) 
-
 
 
 \dontrun{

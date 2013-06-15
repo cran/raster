@@ -21,20 +21,28 @@
 }
 
 
+
 .getW <- function(w) {
 	if (length(w) == 1) {
 		w <- round(w)
-		stopifnot(w > 1)
-		w=matrix(1, ncol=w, nrow=w)
+		stopifnot(w > 0)
+		w <- matrix(1, ncol=w, nrow=w)
+		w <- w / sum(w)
+		warning('the computation of the weights matrix has changed in version 2.1-35. The sum of weights is now 1')
 	} else if (length(w) == 2) {
 		w <- round(w)
-		w=matrix(1, ncol=w[1], nrow=w[2])
+		w <- matrix(1, ncol=w[1], nrow=w[2])
+		w <- w / sum(w)
+		warning('the computation of the weights matrix has changed in version 2.1-35. The sum of weights is now 1')
 	} 
 	if (! is.matrix(w) ) {
 		stop('w should be a single number, two numbers, or a matrix')
 	} 
 	return(w)
 }
+
+
+
 
 if (!isGeneric("focal")) {
 	setGeneric("focal", function(x, ...)
@@ -55,7 +63,7 @@ function(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=F
 		warning('argument "ngb" is ignored!')		
 	}
 	
-	w <- raster:::.getW(w)
+	w <- .getW(w)
 	d <- dim(w)
 	if (prod(d) == 0) { stop('ncol and nrow of w must be > 0') }
 	if (min(d %% 2) == 0) { stop('w must have uneven sides') }	
@@ -72,7 +80,7 @@ function(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=F
 		padrows <- TRUE
 	}
 
-	gll <- as.integer(raster:::.isGlobalLonLat(out))
+	gll <- as.integer(.isGlobalLonLat(out))
 	if (gll) {
 		pad <- TRUE
 	}

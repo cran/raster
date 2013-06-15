@@ -6,11 +6,10 @@
 
 .compareCRS <- function(x, y, unknown=FALSE, verbatim=FALSE, verbose=FALSE) {
 	
+	x <- tolower(projection(x))
+	y <- tolower(projection(y))
 	
 	step1 <- function(z, verbatim) {
-		if (class(z) != 'character') { 	
-			z <- projection(z) # works for Raster and Spatial objects
-		}
 		z <- gsub(' ', '', z)
 		if (!verbatim) {
 			z <- unlist( strsplit(z, '+', fixed=TRUE) )[-1]
@@ -18,13 +17,13 @@
 		}
 		z
 	}
-
-	x <- step1(x, verbatim)
-	y <- step1(y, verbatim)
 	
 	if (verbatim) {
 		return(x==y)
 	}
+	
+	x <- step1(x, verbatim)
+	y <- step1(y, verbatim)
 	
 	if (length(x) == 0 | length(y) == 0) {
 		if (unknown) {
@@ -36,11 +35,13 @@
 			return(FALSE) 
 		}
 	}
+	x <- x[x[,1] != 'towgs84', , drop=FALSE]
 	x <- x[which(x[,1] %in% y[,1]), ,drop=FALSE]
 	y <- y[which(y[,1] %in% x[,1]), ,drop=FALSE]
 	x <- x[order(x[,1]), ,drop=FALSE]
 	y <- y[order(y[,1]), ,drop=FALSE]
 	i <- x[,2] == y[,2]
+	
 	if (! all(i)) {
 		if (verbose) {
 			i <- which(!i)

@@ -1,5 +1,5 @@
 ### R code from vignette source 'functions.Rnw'
-### Encoding: ISO8859-1
+### Encoding: UTF-8
 
 ###################################################
 ### code chunk number 1: code-1
@@ -137,7 +137,7 @@ f6 <- function(x, a, filename='') {
 			out <- writeValues(out, v, bs$row[i])
 		} else {
 			cols <- bs$row[i]:(bs$row[i]+bs$nrows[i]-1)	
-			vv[,cols] <- matrix(v, nrow=out@ncols)
+			vv[,cols] <- matrix(v, nrow=ncol(out))
 		}
 	}
 	if (todisk) {
@@ -155,33 +155,33 @@ s <- f6(r, 5)
 ### code chunk number 8: code-8
 ###################################################
 f7 <- function(x, a, filename='') {
+
 	out <- raster(x)
-	small <- canProcessInMemory(out, 3)
+	filename <- trim(filename)
 	
-	if (small) {
+	if (canProcessInMemory(out, 3)) {
 		v <- getValues(x) + a
 		out <- setValues(out, v)
 		if (filename != '') {
 			out <- writeRaster(out, filename, overwrite=TRUE)
 		}
-		return(out)
+	} else {
+		if (filename == '') {
+			filename <- rasterTmpFile()
+		}
+		out <- writeStart(out, filename)
+		
+		bs <- blockSize(r)
+		for (i in 1:bs$n) {
+			v <- getValues(x, row=bs$row[i], nrows=bs$nrows[i] )
+			v <- v + a
+			out <- writeValues(out, v, bs$row[i])
+		}
+		out <- writeStop(out)
 	}
-
-	filename <- trim(filename)
-	if (filename == '') {
-		filename <- rasterTmpFile()
-	}
-	out <- writeStart(out, filename)
-	
-	bs <- blockSize(r)
-	for (i in 1:bs$n) {
-		v <- getValues(x, row=bs$row[i], nrows=bs$nrows[i] )
-		v <- v + a
-		out <- writeValues(out, v, bs$row[i])
-	}
-	out <- writeStop(out)
 	return(out)
 }
+
 s <- f7(r, 5)
 
 

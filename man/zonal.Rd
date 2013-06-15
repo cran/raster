@@ -16,15 +16,15 @@ The function used should accept a \code{na.rm} argument. For example, if using \
 }
 
 \usage{
-\S4method{zonal}{RasterLayer,RasterLayer}(x, z, stat='mean', digits=0, na.rm=TRUE, ...) 
+\S4method{zonal}{RasterLayer,RasterLayer}(x, z, fun='mean', digits=0, na.rm=TRUE, ...) 
 
-\S4method{zonal}{RasterStackBrick,RasterLayer}(x, z, stat='mean', digits=0, na.rm=TRUE, ...) 
+\S4method{zonal}{RasterStackBrick,RasterLayer}(x, z, fun='mean', digits=0, na.rm=TRUE, ...) 
 }
 
 \arguments{
   \item{x}{Raster* object}
   \item{z}{RasterLayer with codes representing zones}
-  \item{stat}{a function to be applied to summarize the values by zone. Either as character: 'mean', 'sd', 'min', 'max', 'sum'; or, for relatively small Raster* objects, as a proper function  }
+  \item{fun}{function to be applied to summarize the values by zone. Either as character: 'mean', 'sd', 'min', 'max', 'sum'; or, for relatively small Raster* objects, a proper function}
   \item{digits}{integer. Number of digits to maintain in 'zones'. By default averaged to an integer (zero digits)}
   \item{na.rm}{logical. If \code{TRUE}, \code{NA} values in \code{x} are ignored}
   \item{...}{additional arguments. One implemented: \code{progress}, as in \code{\link{writeRaster}}}
@@ -47,10 +47,8 @@ z[] <- rep(1:5, each=20)
 zonal(r, z, 'sum')
 
 # for smaller files you can also provide a function
-\dontrun{
 zonal(r, z, mean)
 zonal(r, z, min)
-}
 
 # multiple layers
 zonal(stack(r, r*10), z, 'sum')

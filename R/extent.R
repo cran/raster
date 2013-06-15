@@ -18,12 +18,59 @@ setMethod('extent', signature(x='BasicRaster'),
 	function(x, r1, r2, c1, c2){ 
 		e <- x@extent
 		r <- res(x)
-		if (! missing(c1) )  { xn <- xFromCol(x, c1) - 0.5 * r[1] } else { xn <- e@xmin }
-		if (! missing(c2) )  { xx <- xFromCol(x, c2) + 0.5 * r[1] } else { xx <- e@xmax }
-		if (! missing(r1) )  { yx <- yFromRow(x, r1) + 0.5 * r[2] } else { yx <- e@ymax }
-		if (! missing(r2) )  { yn <- yFromRow(x, r2) - 0.5 * r[2] } else { yn <- e@ymin }
-		e <- extent(xn, xx, yn, yx )
-		if (validObject(e)) { return(e) }
+		if (! missing(c1) )  { 
+			xn <- xFromCol(x, c1) - 0.5 * r[1]
+			if (is.na(xn)) {
+				warning('invalid first colummn')
+				xn <- e@xmin
+			}
+		} else { 
+			xn <- e@xmin 
+		}
+		if (! missing(c2) )  { 
+			xx <- xFromCol(x, c2) + 0.5 * r[1]
+			if (is.na(xx)) {
+				warning('invalid second colummn')
+				xx <- e@xmax
+			}
+		} else {
+			xx <- e@xmax 
+		}
+		if (! missing(r1) )  { 
+			yx <- yFromRow(x, r1) + 0.5 * r[2]
+			if (is.na(yx)) {
+				warning('invalid first row')
+				yx <- e@ymax
+			}
+		} else {
+			yx <- e@ymax 
+		}
+		if (! missing(r2) )  {
+			yn <- yFromRow(x, r2) - 0.5 * r[2]
+			if (is.na(yn)) {
+				warning('invalid second row')			
+				yn <- e@ymin
+			}
+		} else { 
+			yn <- e@ymin 
+		}
+		if (xn == xx) {
+			stop('min and max x are the same')
+		}
+		if (yn == yx) {
+			stop('min and max y are the same')
+		}
+		if (xn > xx) {
+			warning('min x larger than max x')
+		}
+		if (yn > yx) {
+			warning('min y larger than max y')
+		}
+		
+		e <- extent(sort(c(xn, xx)), sort(c(yn, yx)))
+		if (validObject(e)) { 
+			return(e) 
+		}
 	}
 )
 
@@ -93,4 +140,21 @@ setMethod('extent', signature(x='list'),
 		lim <- c(range(x$x), (range(x$y)))
 		return(extent(lim,...))
 	}
+)
+
+
+
+setMethod('extent', signature(x='GridTopology'),
+# contributed by Michael Sumner
+	function(x){
+		cco <- x@cellcentre.offset
+		cs <- x@cellsize
+		cdim <- x@cells.dim
+		e <- new('Extent')
+		e@xmin <- cco[1] - cs[1]/2
+		e@xmax <- e@xmin + cs[1] * cdim[1]
+		e@ymin <- cco[2] - cs[2]/2
+		e@ymax <- e@ymin + cs[2] * cdim[2]
+		return(e)
+    }
 )

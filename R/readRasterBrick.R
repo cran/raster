@@ -122,7 +122,10 @@
 		dsign <- dataSigned(object@file@datanotation)
 		if (dsize > 2) { dsign <- TRUE }
 		
-		object <- openConnection(object)
+		is.open <- object@file@open
+		if (!is.open) {
+			object <- readStart(object)
+		}
 		if (object@data@nlayers > 1) {
 			bo <- object@file@bandorder
 			if (bo == 'BSQ') {
@@ -135,7 +138,9 @@
 		} else {
 			result <- getBSQData(object, r=startrow, nrows=nrows, c=startcol, ncols=ncols, dtype=dtype, dsize=dsize, dsign=dsign) 
 		}
-		object <- closeConnection(object)
+		if (!is.open) {
+			object <- readStop(object)
+		}
 			
 
 #		result[is.nan(result)] <- NA

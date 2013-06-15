@@ -56,11 +56,11 @@
 	x <- as.matrix(x)
 	x[is.infinite(x)] <- NA
 	if (!is.null(zlim)) {
-		if (is.null(zlimcol)) {
-			x[ x<zlim[1] ] <- zlim[1]
-			x[ x>zlim[2] ] <- zlim[2]
+		if (!is.null(zlimcol)) {
+			x[x < zlim[1]] <- zlim[1]
+			x[x > zlim[2]] <- zlim[2]
 		} else { #if (is.na(zlimcol)) {
-			x[x<zlim[1] | x>zlim[2]] <- NA
+			x[x < zlim[1] | x > zlim[2]] <- NA
 		} 
 	}
 	

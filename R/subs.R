@@ -105,7 +105,7 @@ setMethod('subs', signature(x='Raster', y='data.frame'),
 				levs[[i-1]] <- lv
 				hasfactor[i-1] <- TRUE
 				m <- match(y[,i], uny)
-				y[,i] <- as.numeric(uny[m])
+				y[,i] <- m #as.numeric(uny[m])
 			}
 		}
 		

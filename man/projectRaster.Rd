@@ -14,7 +14,8 @@ be adjusted (e.g. by setting its resolution) and used as a template \code{'to'} 
 }
 
 \usage{
-projectRaster(from, to, res, crs, method="bilinear", alignOnly=FALSE, over=FALSE, filename="", ...) 
+projectRaster(from, to, res, crs, method="bilinear", 
+             alignOnly=FALSE, over=FALSE, filename="", ...) 
 
 projectExtent(object, crs)
 }

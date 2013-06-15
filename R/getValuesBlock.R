@@ -192,7 +192,7 @@ setMethod('getValuesBlock', signature(x='RasterLayerSparse'),
 			#if (! fromDisk(x)) {
 			#	return(rep(NA, times=(lastcell-startcell+1)))
 			#}
-			#res <- .readRasterLayerValues(x, row, nrows, col, ncols)
+			#res <- .readRasterLayerValues(x, row, nrows, col, ncols, is.open)
 			
 		} else  {
 			res <- rep(NA, nrows * ncols)			

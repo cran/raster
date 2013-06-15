@@ -89,8 +89,12 @@ setMethod('hist', signature(x='Raster'),
 		if (.shortDataType(x) == 'LOG') {
 			v <- v * 1
 		}
-
-		hist(v, main=main, plot=plot, ...)  
+		
+		if (plot) {
+			hist(v, main=main, plot=plot, ...)  
+		} else {
+			hist(v, plot=plot, ...)  		
+		}
 }	
 
 

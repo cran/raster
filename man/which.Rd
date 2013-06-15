@@ -24,7 +24,7 @@
 }
 
 
-\seealso{ \code{\link[base]{which}} }
+\seealso{ \code{\link{which.max}},  \code{\link{which.min}} }
 
 \value{
 RasterLayer

@@ -20,6 +20,11 @@ setMethod('KML', signature(x='Spatial'),
 				spTransform(x, CRS('+proj=longlat +datum=WGS84'))
 			}
 		}
+		
+		if (! .hasSlot(x, 'data') ) {
+			x <- addAttrToGeom(x, data.frame(id=1:length(x)), match.ID=FALSE)
+		}
+		
 		extension(filename) <- '.kml'
 		if (file.exists(filename)) {
 			if (overwrite) {
@@ -31,7 +36,7 @@ setMethod('KML', signature(x='Spatial'),
 		
 		name <- deparse(substitute(x))
 		writeOGR(x, filename, name, 'KML')
-		.zipKML(filename, '', zip) 
+		.zipKML(filename, '', zip, ovewrite=overwrite) 
 	}
 )
 	

@@ -107,8 +107,8 @@ setMethod('levels', signature(x='Raster'),
 	if (! is.data.frame(newv)) { 
 		stop('new raster attributes (factor values) should be in a data.frame (inside a list)')
 	}
-	if (! ncol(newv) > 1) {
-		stop('the number of columns in the raster attributes (factors) data.frame should be > 1')
+	if (! ncol(newv) > 0) {
+		stop('the number of columns in the raster attributes (factors) data.frame should be > 0')
 	}
 	if (! colnames(newv)[1] == c('ID')) {
 		stop('the first column name of the raster attributes (factors) data.frame should be "ID"')

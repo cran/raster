@@ -9,31 +9,24 @@
 \title{Trim}
 
 \description{
-Trim (shrink) a Raster* object by removing outer rows and columns that have no data.
+Trim (shrink) a Raster* object by removing outer rows and columns that all have the same value (e.g. NA).
 
-Or remove the whitespace before or after a string of characters.
+Or remove the whitespace before or after a string of characters (or a matrix, or the chracter values in a data.frame).
 }
 
 \usage{
-trim(x, ...) 
+\S4method{trim}{Raster}(x, padding=0, values=NA, filename='', ...)
+\S4method{trim}{character}(x, ...)
 }
 
 \arguments{
-  \item{x}{A Raster* object or a character string}
-  \item{...}{additional arguments. See Details.}  
+  \item{x}{Raster* object or a character string}
+  \item{values}{numeric. Value(s) based on which a Raster* should be trimmed}
+  \item{padding}{integer. Number of outer rows/columns to keep}
+  \item{filename}{character. Optional output filename}
+  \item{...}{If \code{x} is a Raster* object: additional arguments as for \code{\link{writeRaster}}}
 }
 
-\details{
-If \code{x} is a Raster* object, the following additional arguments can be passed, to replace default values for this function
-\tabular{rll}{
-  \tab \code{padding}  \tab Integer. Number of outer rows/columns with NA values to keep; default=0\cr
-  \tab \code{filename}  \tab Output filename. Default = '' \cr
-  \tab \code{format}  \tab Character. Output file type. See \link[raster]{writeRaster} \cr
-  \tab \code{datatype}  \tab Character. Output data type; can be 'INT', 'FLT', or a complete datatype description, See \link[raster]{dataType} \cr
-  \tab \code{overwrite} \tab Logical. If TRUE, "filename" will be overwritten if it exists \cr
-  \tab \code{progress}  \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
- }
-}
 
 \value{
 A RasterLayer or RasterBrick object (if \code{x} is a Raster* object) or a character string (if \code{x} is a character string).
@@ -42,11 +35,11 @@ A RasterLayer or RasterBrick object (if \code{x} is a Raster* object) or a chara
 \author{Robert J. Hijmans and Jacob van Etten}
 
 \examples{
-r1 <- raster(ncol=36,nrow=18)
-r1[309:310] <- 1:2
-r1[353:355] <- 3:5
-r1[400] <- 6
-s <- trim(r1) 
+r <- raster(ncol=18,nrow=18)
+r[39:49] <- 1
+r[113:155] <- 2
+r[200] <- 6
+s <- trim(r) 
 
 
 trim("   hi folks   ")

@@ -17,7 +17,7 @@ flip(x, direction, ...)
 }
 
 \arguments{
-  \item{x}{a Raster* object}
+  \item{x}{Raster* object}
   \item{direction}{Character. 'y' or 'x'; or 1 (=x) or 2 (=y)}
    \item{...}{Additional arguments as for \code{\link{writeRaster}}}  
 }

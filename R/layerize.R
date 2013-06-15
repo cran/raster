@@ -15,20 +15,22 @@ setMethod('layerize', signature(x='RasterLayer', y='missing'),
 		
 		doC <- list(...)$doC
 		if (is.null(doC)) doC <- TRUE		
+
+		if (is.null(classes)) {
+			classes <- as.integer( sort(unique(x)) )
+		} else {
+			classes <- as.integer(classes) 
+		}
 		
 		out <- raster(x)
+		if (length(classes) > 1) {
+			out <- brick(out, nl=length(classes))
+		}
+		names(out) <- classes
+		
 		if (canProcessInMemory(out)) {
-			v <- as.integer(getValues(x))
-			if (is.null(classes)) {
-				classes <- as.integer(sort(unique(v)))
-			} else {
-				classes <- as.integer(classes)
-			}
-			if (length(classes) > 1) {
-				out <- brick(out, nl=length(classes))
-			}
-			names(out) <- classes
 
+			v <- as.integer(getValues(x))
 			if (doC) {
 				v <- .Call("layerize", v, as.integer(classes), as.integer(falseNA), PACKAGE='raster')
 				v <- matrix(v, ncol=length(classes))
@@ -57,15 +59,6 @@ setMethod('layerize', signature(x='RasterLayer', y='missing'),
 		
 # else to disk		
 
-		if (is.null(classes)) {
-			classes <- as.integer( sort(unique(x)) )
-		} else {
-			classes <- as.integer(classes) 
-		}
-		if (length(classes) > 1) {
-			out <- brick(out, nl=length(classes))
-		} 
-		names(out) <- classes
 ##			out <- writeStart(out, filename=filename, datatype='INT2S', ...)
 #		} else {
 		out <- writeStart(out, filename=filename, ...)
@@ -116,39 +109,44 @@ function(x, y, classes=NULL, filename='', ...) {
 		return(raster(y))
 	}
 
-		
-	if (canProcessInMemory(x, 25)) {
+	if (is.null(classes)) {
+		classes <- as.integer( sort(unique(x)))
+	}	
+	out <- raster(y)
+	if (length(classes) > 1) {
+		out <- brick(out, nl=length(classes))
+	}
+	names(out) <- paste('count_', as.character(classes), sep='')
+	
+	if (canProcessInMemory( out )) {
 		b <- crop(x, int)
 		xy <- xyFromCell(b, 1:ncell(b))
-		mc <- cellFromXY(y, xy)
-		v <- table(mc, as.integer(getValues(b)))
+		mc <- cellFromXY(out, xy)
+		b <- as.integer(getValues(b))
+		if (!is.null(classes)) {
+			b[! b %in% classes] <- NA
+		}	
+		v <- table(mc, b)
 		cells <- as.integer(rownames(v))
-		m <- match(cells, 1:ncell(y))
+		m <- match(cells, 1:ncell(out))
 		cn <- as.integer(colnames(v))
-		res <- matrix(NA, nrow=ncell(y), ncol=length(cn))
+		res <- matrix(NA, nrow=ncell(out), ncol=length(cn))
 		for (i in 1:length(cn)) {
 			 res[m,i] <- v[,i]
 		}
 		
-		y <- brick(y, nl=length(cn))
-		names(y) <- paste('count_', as.character(cn), sep='')
-		y <- setValues(y, res)
+		names(out) <- paste('count_', as.character(cn), sep='')
+		out <- setValues(out, res)
 		
 		if (filename != '') {
-			y <- writeRaster(y, filename, ...)
+			out <- writeRaster(out, filename, ...)
 		}
-		return(y)
+		return(out)
 	} 
 	#  else 
 
-	if (is.null(classes)) {
-		classes <- as.integer( sort(unique(x)))
-	}	
 	
-	out  <- brick(y, values=FALSE, nl=length(classes))
-	names(out) <- paste('count_', as.character(classes), sep='')
 	out <- writeStart(out, filename=filename, ...)
-	
 	tr <- blockSize(out)
 	pb <- pbCreate(tr$n, label='layerize', ...)
 	for(i in 1:tr$n) {		
