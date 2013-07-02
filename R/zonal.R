@@ -16,11 +16,8 @@ setMethod('zonal', signature(x='RasterLayer', z='RasterLayer'),
 	
 		# backward compatibility
 		if (!is.null(list(...)$stat)) {
-			stat <- list(...)$stat
-			warning('argument "stat" was replaced by "fun"')
-		} else {
-			stat <- fun
-		}
+			stop('argument "stat" was replaced by "fun"')
+		} 
 
 		compareRaster(c(x, z))
 		stopifnot(hasValues(z))
@@ -34,32 +31,49 @@ setMethod('zonal', signature(x='RasterLayer', z='RasterLayer'),
 			inmem <- FALSE
 		}
 	
+
 		if (inmem) {
 			pb <- pbCreate(2, label='zonal', ...)		
-			func <- match.fun(stat)
+			func <- match.fun(fun)
 			x <- getValues(x)
 			z <- round(getValues(z), digits=digits)
 			pb <- pbStep(pb, 1)		
 			alltab <- tapply(x, z, FUN=func, na.rm=na.rm) 
-			alltab <- cbind(as.numeric(names(alltab)), alltab)
-
-			stat <- deparse(substitute(stat))
+			
+			if (is.array(alltab)) { # multiple numbers
+				id <- as.numeric(dimnames(alltab)[[1]])
+				alltab <- matrix(unlist(alltab), nrow=dim(alltab), byrow=TRUE)
+				alltab <- cbind(id, alltab)
+			} else {
+				alltab <- cbind(as.numeric(names(alltab)), alltab)
+			}
 			pb <- pbStep(pb, 2)
+			colnames(alltab)[1] <- 'zone'
+			d <- dim(alltab)[2]
+			if (d==2) {
+				if (is.character(fun)) {
+					colnames(alltab)[2] <- fun[1]
+				} else {
+					colnames(alltab)[2] <- 'value'
+				}
+			} else {
+				colnames(alltab)[2:d] <- paste0('value_', 1:(d-1))
+			}
 			
 		} else {
 		
-			if (class(stat) != 'character') {
-				stop("RasterLayers cannot be processed in memory.\n You can use stat='sum', 'mean', 'sd', 'min', or 'max', but not a function")
+			if (class(fun) != 'character') {
+				stop("RasterLayers cannot be processed in memory.\n You can use fun='sum', 'mean', 'sd', 'min', or 'max', but not a function")
 			}
-			if (! stat %in% c('sum', 'mean', 'sd', 'min', 'max')) {
-				stop("stat can be 'sum', 'mean', 'sd', 'min', or 'max'")
+			if (! fun %in% c('sum', 'mean', 'sd', 'min', 'max')) {
+				stop("fun can be 'sum', 'mean', 'sd', 'min', or 'max'")
 			}
 			sdtab <- FALSE
-			func <- match.fun(stat)
-			if ( stat == 'mean' | stat == 'sd') {
+			func <- match.fun(fun)
+			if ( fun == 'mean' | fun == 'sd') {
 				func <- sum
 				counts <- TRUE
-				if (stat == 'sd') {
+				if (fun == 'sd') {
 					sdtab <- TRUE
 				}
 			} else {
@@ -139,13 +153,15 @@ setMethod('zonal', signature(x='RasterLayer', z='RasterLayer'),
 				}
 				
 			}
+			colnames(alltab)[1] <- 'zone'
+			if (is.character(fun)) {
+				colnames(alltab)[2] <- fun
+			} else {
+				colnames(alltab)[2] <- 'value'
+			}		
 		}
-	
 		#alltab <- as.matrix(alltab)
-		colnames(alltab)[1] <- 'zone'
-		colnames(alltab)[2] <- stat[1]
 		pbClose(pb)
-	
 		return(alltab)
 	}
 )
@@ -160,12 +176,8 @@ setMethod('zonal', signature(x='RasterStackBrick', z='RasterLayer'),
 
 		# backward compatibility
 		if (!is.null(list(...)$stat)) {
-			stat <- list(...)$stat
-			warning('argument "stat" was replaced by "fun"')
-		} else {
-			stat <- fun
-		}
-
+			stop('argument "stat" was replaced by "fun"')
+		} 
 	
 		compareRaster(c(x, z))
 		stopifnot(hasValues(z))
@@ -181,28 +193,28 @@ setMethod('zonal', signature(x='RasterStackBrick', z='RasterLayer'),
 	
 		if (inmem) {
 			pb <- pbCreate(2, label='zonal', ...)		
-			func <- match.fun(stat)
+			func <- match.fun(fun)
 			x <- getValues(x)
 			x <- cbind(x, round(getValues(z), digits=digits))
 			pb <- pbStep(pb, 1)		
 			alltab <- aggregate(x[,1:(ncol(x)-1)], by=list(x[,ncol(x)]), FUN=func, na.rm=na.rm) 
-			stat <- deparse(substitute(stat))
+			fun <- 'value'
 			pb <- pbStep(pb, 2)
 			
 		} else {
 		
-			if (class(stat) != 'character') {
-				stop("RasterLayers cannot be processed in memory.\n You can use stat='sum', 'mean', 'sd', 'min', or 'max', but not a function")
+			if (class(fun) != 'character') {
+				stop("RasterLayers cannot be processed in memory.\n You can use fun='sum', 'mean', 'sd', 'min', or 'max', but not a function")
 			}
-			if (! stat %in% c('sum', 'mean', 'sd', 'min', 'max')) {
-				stop("stat can be 'sum', 'mean', 'sd', 'min', or 'max'")
+			if (! fun %in% c('sum', 'mean', 'sd', 'min', 'max')) {
+				stop("fun can be 'sum', 'mean', 'sd', 'min', or 'max'")
 			}
 			sdtab <- FALSE
-			func <- match.fun(stat)
-			if ( stat == 'mean' | stat == 'sd') {
+			func <- match.fun(fun)
+			if ( fun == 'mean' | fun == 'sd') {
 				func <- sum
 				counts <- TRUE
-				if (stat == 'sd') {
+				if (fun == 'sd') {
 					sdtab <- TRUE
 				}
 			} else {
@@ -274,7 +286,7 @@ setMethod('zonal', signature(x='RasterStackBrick', z='RasterLayer'),
 		if (ncol(alltab) > 2) {
 			colnames(alltab)[2:ncol(alltab)] <- layernames
 		} else {
-			colnames(alltab)[2] <- stat[1]
+			colnames(alltab)[2] <- fun[1]
 		}
 		pbClose(pb)
 	

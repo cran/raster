@@ -5,8 +5,9 @@
 
 
 .getPutVals <- function(obj, field, n, mask) {
+
 	if (mask) {
-		putvals <- data.frame(v=rep(1, length=n))
+		return( data.frame(v=rep(1, length=n)) )
 	
 	} else if (missing(field)) {
 		if (.hasSlot(obj, 'data')) {
@@ -18,43 +19,40 @@
 		} else {
 			putvals <- data.frame(v=as.integer(1:n))
 		}
+		return(putvals)
 		
 	} else if (isTRUE (is.na(field))) { 
-		putvals <- data.frame(v=rep(NA, n))
+		return( data.frame(v=rep(NA, n)) )
 
-	} else if (NROW(field) == n) {
+		
+	} else if (is.character(field) ) {
+		if (.hasSlot(obj, 'data')) {
+			nms <- names(obj)
+			if (length(field) <= length(nms)) {
+				m <- match(field, nms)
+				if (!all(is.na(m))) {
+					m <- na.omit(m)
+					return(obj@data[, m, drop=FALSE])
+				}
+			}
+		} 
+	}
+
+	if (NROW(field) == n) {
 		if (is.null(nrow(field))) {
 			return(data.frame(field, stringsAsFactors=FALSE))
 		} else {
 			return(field)
 		}
-			
-	} else if (!is.numeric(field) ) {
-		if (length(field) != 1) {
-			stop("field is a character vector of length not equal to 1 or the number of geometries")		
-		}
-		if (! .hasSlot(obj, 'data')) {
-			stop("field name is a single character value, but vector object has no data.frame")
-			# or return(data.frame(v=rep(field, n))) ??
-		}
-		field <- which(colnames(obj@data) == field)[1]
-		if (is.na(field)) {
-			stop('field does not exist')
-		}
-		putvals <- obj@data[, field, drop=FALSE]
 		
-	} else if (length(field) > 1) { 
-		if (NROW(field) == n) {  
-			putvals <- data.frame(field)
-		} else {
-			stop('field should be a single value or equal the number of spatial features') 
-		}
-	} else {
-		putvals <- vector(length=n)
-		putvals[] <- field
-		putvals <- data.frame(putvals)
+	} 
+
+	if (is.numeric(field)) {
+		putvals <- rep_len(field, n)
+		return(data.frame(field=putvals))
 	}
-	putvals
+	
+	stop('invalid value for field') 
 }
 
 

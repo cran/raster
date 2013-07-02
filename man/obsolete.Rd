@@ -1,34 +1,34 @@
-
-\alias{setOptions}
-\alias{showOptions}
+\alias{adjacency}
+\alias{layerNames}
 \alias{count}
-
+\alias{layerNames,Raster-method}
+\alias{count,Raster-method}
 
 \name{Obsolete}
 
-  
 \title{Obsolete (depracated) functions}
 
 \description{
-Functions setOptions, showOptions, saveOptions, and clearOptions have been replaced by \code{\link{rasterOptions}}
+These functions are obsolete. 
 
-intersectExtent has been replaced by \code{\link{intersect}}
-unionExtent has been replaced by \code{\link{union}}
+adjacency has been replaced by \code{\link{adjacent}}
 
-count has been replaced by freq( , , value=  )
+layerNames has been replaced by \code{\link{names}}
+
+count has been replaced by \code{\link{freq}}
 }
 
 \usage{
-setOptions(...)
-showOptions()
-count(...)
+adjacency(x, ...) 
+count(x, ...)
+layerNames(x, ...)
 }
 
 \arguments{
-\item{...}{arguments}
+\item{x}{Raster* object}
+\item{...}{additional arguments}
 }
 
-\seealso{ \code{\link{rasterOptions}}, \code{\link{freq}} }
 
 \keyword{spatial}
 

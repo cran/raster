@@ -7,11 +7,19 @@
 # To sp pixel/grid objects	
 
 
-.getGridTop <- function(x) {
-	rs <- res(x)
-	orig <- bbox(x)[,1] + 0.5 * rs
-	GridTopology(orig, rs, dim(x)[2:1] )
-}
+setAs('Raster', 'GridTopology', 
+	function(from) {
+		rs <- res(from)
+		orig <- bbox(from)[,1] + 0.5 * rs
+		GridTopology(orig, rs, dim(from)[2:1] )
+	}
+)
+
+setAs('GridTopology', 'RasterLayer',
+	function(from) {
+		raster(extent(from), nrows=from@cells.dim[2], ncols=from@cells.dim[1])
+	}
+)
 
 
 setAs('Raster', 'SpatialPixels', 
@@ -23,7 +31,7 @@ setAs('Raster', 'SpatialPixels',
 		
 		r <- raster(from)
 		sp <- SpatialPoints(sp[,1:2], proj4string= projection(r, FALSE))
-		grd <- .getGridTop(r)
+		grd <- as(r, 'GridTopology')
 		SpatialPixels(points=sp, grid=grd)
 	}
 )
@@ -38,7 +46,7 @@ setAs('Raster', 'SpatialPixelsDataFrame',
 		r <- raster(from)
 		sp <- SpatialPoints(v[,1:2], proj4string= projection(r, FALSE))
 
-		grd <- .getGridTop(r)
+		grd <- as(r, 'GridTopology')
 		
 		if (ncol(v) > 2) {
 			v <- data.frame(v[, 3:ncol(v), drop = FALSE])
@@ -66,7 +74,7 @@ setAs('Raster', 'SpatialGrid',
 		}	
 		r <- raster(from)
 		crs <- projection(r, FALSE)
-		grd <- .getGridTop(r)
+		grd <- as(r, 'GridTopology')
 		SpatialGrid(grd, proj4string=crs)
 	}
 )
@@ -79,7 +87,7 @@ setAs('Raster', 'SpatialGridDataFrame',
 
 		r <- raster(from)
 		crs <- projection(r, FALSE)
-		grd <- .getGridTop(r)
+		grd <- as(r, 'GridTopology')
 
 		if (hasValues(from)) {
 			sp <- SpatialGridDataFrame(grd, proj4string=crs, data=as.data.frame(from))

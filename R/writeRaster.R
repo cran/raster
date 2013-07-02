@@ -1,6 +1,6 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date: September 2009
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
 
 if (!isGeneric('writeRaster')) {
@@ -39,10 +39,9 @@ function(x, filename, format, ...) {
 		if ( toupper(x@file@name) == toupper(filename) ) {
 			stop('filenames of source and target should be different')
 		}
-		r <- raster(x)
-		tr <- blockSize(r)
+		tr <- blockSize(x)
 		pb <- pbCreate(tr$n, ...)			
-		# use x to keep layer names
+		# use x to keep layer name
 		r <- writeStart(x, filename=filename, format=filetype, ...)
 		for (i in 1:tr$n) {
 			v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
@@ -52,6 +51,7 @@ function(x, filename, format, ...) {
 		if (isTRUE(any(is.factor(x)))) {
 			levels(r) <- levels(x)
 		}
+		r <- setZ(r, getZ(x))
 		r <- writeStop(r)
 		pbClose(pb)
 		return(r)
@@ -148,6 +148,9 @@ function(x, filename, format, bylayer=FALSE, suffix='numbers', ...) {
 	filetype <- .filetype(format, filename=filename)
 	filename <- .getExtension(filename, filetype)
 	
+	if (filetype == "ascii") {
+		stop('this file format does not support multi-layer files')
+	}
 	
 	if (filetype == 'KML') {
 		KML(x, filename, ...) 

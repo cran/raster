@@ -5,6 +5,11 @@ add equivalent to "subsWithNA" to reclassify
 move resample (bilenear interp. (and add other options)) and rasterize/(lines, polygons) to C
 function for affine transformation
 
+--- 2-July-2014, version: 2.1-41
+changes in namespace (disaggregate) to keep compatibility with 'sp'
+bug fix in aggregate with expand=FALSE, reported by Koen Hufkens
+focal sometimes returns NaN where a NA would be easier to interpret (and use in subsequent calls to focal(   , NAonly=T). Trying to return NA now in such cases (reported by Marcia Macedo).
+
 --- 14-June-2013, version: 2.1-37
 new argument 'values' to 'trim' to allow trimming for other values that NA
 new functions (for Raster objects) which.min and which.max

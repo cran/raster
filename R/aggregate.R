@@ -83,33 +83,26 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 			
 		} else {
 		
-			out <- writeStart(out, filename=filename, ...)
-			tr <- blockSize(x, minrows=yfact)
-
+			xx <- brick(x, values=FALSE)
+			if (!expand) {
+				xx <- brick(x, values=FALSE)
+				nrow(xx) <- (nrow(x) %/% yfact) * yfact
+			}		
+			tr <- blockSize(xx, minrows=yfact)
 			st <- round(tr$nrows[1] / yfact) * yfact
 			tr$n <- ceiling(lastrow / st)
 			tr$row <- c(1, cumsum(rep(st, tr$n-1))+1)
 			tr$nrows <- rep(st, tr$n)
 			tr$write <- cumsum(c(1, ceiling(tr$nrows[1:(tr$n-1)]/yfact)))
-			dif <- sum(tr$nrows) - nrow(x)
-			if (dif > 0) {
-				if (expand) {
-					tr$nrows[tr$n] <-  tr$nrows[tr$n] - dif
-				} else {
-					dif <- dif %/% xfact
-					if (dif > 0) {
-						tr$nrows[tr$n] <- dif * xfact
-					} else {
-						tr$n <- tr$n - 1
-					}
-				}
-			}
+			tr$nrows[tr$n] <-  nrow(xx) - tr$row[tr$n] + 1
 			tr$outrows <- ceiling(tr$nrows/yfact)
 			
 			pb <- pbCreate(tr$n, label='aggregate', ...)
 			x <- readStart(x, ...)	
 
 			dims <- as.integer(c(lastrow, lastcol, nl, dim(out)[1:2], xfact, yfact))
+			out <- writeStart(out, filename=filename, ...)
+
 			if (inherits(out, 'RasterBrick')) {
 				for (i in 1:tr$n) {
 					dims[c(1, 4)] = as.integer(c(tr$nrows[i], tr$outrows[i]))

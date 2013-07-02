@@ -53,7 +53,9 @@ function(x, filename, options=NULL, format, ...) {
 	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)
 	
-	if (filetype=='ascii') { stop('ascii files cannot write multi-layer files') }
+	if (filetype=='ascii') { 
+		stop('ARC-ASCII files cannot contain multiple layers') 
+	}
 	native <- filetype %in% c(.nativeDrivers(), 'ascii')
 	if (native) { 
 		x <- .startRasterWriting(x, filename, format=filetype, ...) 

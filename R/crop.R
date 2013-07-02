@@ -10,6 +10,23 @@ if (!isGeneric("crop")) {
 }	
 
 
+.copyWithProperties <- function(x) {
+	if (nlayers(x) <= 1) {
+		out <- raster(x)
+		out@legend <- x@legend
+	} else { 
+		out <- brick(x, values=FALSE)	
+	}
+	names(out) <- names(x)
+	out <- setZ(out, getZ(x))
+	fx <- is.factor(x)
+	if (isTRUE(any(fx))) {
+		out@data@isfactor <- fx
+		out@data@attributes <- levels(x)
+	}
+	out
+}
+
 setMethod('crop', signature(x='Raster', y='ANY'), 
 function(x, y, filename='', snap='near', datatype=NULL, ...) {
 
@@ -22,30 +39,17 @@ function(x, y, filename='', snap='near', datatype=NULL, ...) {
 	validObject(y)
 	
 
-# we could also allow the raster to expand but for now let's not and first make a separate expand function
+	out <- .copyWithProperties(x)	
+	leg <- out@legend
+
 	e <- intersect(extent(x), extent(y))
 	e <- alignExtent(e, x, snap=snap)
-	
-	if (nlayers(x) <= 1) {
-		out <- raster(x)
-		leg <- x@legend
-	} else { 
-		out <- brick(x, values=FALSE)	
-		leg <- new('.RasterLegend')
-	}
 	out <- setExtent(out, e, keepres=TRUE)
-	names(out) <- names(x)
-
+	
 	if (! hasValues(x)) {
 		return(out)
 	}
 
-	fx <- is.factor(x)
-	if (isTRUE(any(fx))) {
-		out@data@isfactor <- fx
-		out@data@attributes <- levels(x)
-	}
-	
 	col1 <- colFromX(x, xmin(out)+0.5*xres(out))
 	col2 <- colFromX(x, xmax(out)-0.5*xres(out))
 	row1 <- rowFromY(x, ymax(out)-0.5*yres(out))

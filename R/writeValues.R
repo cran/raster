@@ -91,8 +91,18 @@ setMethod('writeValues', signature(x='RasterLayer', v='vector'),
 			if (x@file@dtype == 'INT') {
 				options(scipen=10)
 				v <- round(v)				
-			}
+			} 
+			
 			v[is.na(v)] <- x@file@nodatavalue
+			
+			if (x@file@dtype == 'FLT') {
+				# hack to make sure that ArcGIS does not 
+				# assume values are integers if the first 
+				# values have no decimal point
+				v <- as.character(v)
+				v[1] <- formatC(as.numeric(v[1]), 15, format='f')
+			}
+					
 			v <- matrix(v, ncol=ncol(x), byrow=TRUE)
 			write.table(v, x@file@name, append = TRUE, quote = FALSE, sep = " ", eol = "\n", dec = ".", row.names = FALSE, col.names = FALSE)
 			options(scipen=opsci)

@@ -52,6 +52,7 @@ if (!isGeneric("focal")) {
 setMethod('focal', signature(x='RasterLayer'), 
 function(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=FALSE, ...) {
 
+
 	stopifnot(hasValues(x))
 	
 	# mistakes because of differences with old focal and old focalFilter
@@ -63,7 +64,7 @@ function(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=F
 		warning('argument "ngb" is ignored!')		
 	}
 	
-	w <- .getW(w)
+	w <- raster:::.getW(w)
 	d <- dim(w)
 	if (prod(d) == 0) { stop('ncol and nrow of w must be > 0') }
 	if (min(d %% 2) == 0) { stop('w must have uneven sides') }	
@@ -80,7 +81,7 @@ function(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=F
 		padrows <- TRUE
 	}
 
-	gll <- as.integer(.isGlobalLonLat(out))
+	gll <- as.integer(raster:::.isGlobalLonLat(out))
 	if (gll) {
 		pad <- TRUE
 	}
@@ -121,11 +122,16 @@ function(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=F
 			}
 			
 			paddim <- as.integer(dim(v))
+			#v <- as.vector(t(v))
+			# in C NA and NaN are not the same
+			v[!is.finite(v)] <- NA
 			if (dofun) {
-				v <- .Call('focal_fun', as.vector(t(v)), w, paddim, fun, NAonly, e, NAOK=TRUE, PACKAGE='raster')
+				v <- .Call('focal_fun', v, w, paddim, fun, NAonly, e, NAOK=TRUE, PACKAGE='raster')
 			} else {
-				v <- .Call('focal_sum', as.vector(t(v)), w, paddim, narm, NAonly, NAOK=TRUE, PACKAGE='raster')
+				v <- .Call('focal_sum', v, w, paddim, narm, NAonly, NAOK=TRUE, PACKAGE='raster')
 			}
+			#v[!is.finite(v)] <- NA
+
 			v <- matrix(v, nrow=paddim[1], ncol=paddim[2], byrow=TRUE)
 			if (padrows) {
 				v <- v[-c(1:f[1], (nrow(v)-f[1]+1):nrow(v)), -c(1:f[2], (ncol(v)-f[2]+1):ncol(v))] 

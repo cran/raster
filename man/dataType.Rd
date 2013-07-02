@@ -7,9 +7,9 @@
 
 \description{
 Get the datatype of a RasterLayer object. The datatype determines the interpretation of values written to disk. 
-Changing the datatype of a Raster* object does not directly affect the way they are stored in memory; but it does affect how values are read from file (unless values are read via rgdal).
-If you change the datatype of a RasterLayer and then read values from disk these may be completely wrong, so only do this for debugging or when the information in the header file was wrong.
-To set the datatype of a new file, you can give a 'datatype' argument to the functions that write values to disk (e.g. writeRaster). 
+Changing the datatype of a Raster* object does not directly affect the way they are stored in memory. For native file formats (.grd/.gri files) it does affect how values are read from file. This is not the case for file formats that are read via rgdal (such as .tif and .img files) or netcdf.
+
+If you change the datatype of a RasterLayer and then read values from a native format file these may be completely wrong, so only do this for debugging or when the information in the header file was wrong. To set the datatype of a new file, you can give a 'datatype' argument to the functions that write values to disk (e.g. \code{\link{writeRaster}}). 
 }
 
 \usage{
@@ -42,15 +42,13 @@ The following datatypes are available:
 \code{FLT8S} \tab -1.7e+308 \tab   1.7e+308 \cr
 }
 
-For all integer types, except the single byte types, the lowest (signed) or highest (unsigned) value is used to store NA. 
-Single byte files do not have NA values.
-Logical values are stored as signed single byte integers, they do have an NA value (-127)
+For all integer types, except the single byte types, the lowest (signed) or highest (unsigned) value is used to store \code{NA}. Single byte files do not have \code{NA} values. Logical values are stored as signed single byte integers, they do have an \code{NA} value (-127)
 
 \code{INT4U} is available but they are best avoided as R does not support 32-bit unsigned integers.
 }
 
 \value{
-a Raster* object
+Raster* object
 }
 
 

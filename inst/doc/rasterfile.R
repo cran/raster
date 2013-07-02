@@ -1,3 +1,3 @@
 ### R code from vignette source 'rasterfile.Rnw'
-### Encoding: UTF-8
+### Encoding: ISO8859-1
 
