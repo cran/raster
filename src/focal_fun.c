@@ -72,6 +72,11 @@ SEXP focal_fun(SEXP d, SEXP w, SEXP dim, SEXP fun, SEXP NAonly, SEXP rho) {
 					}
 					SETCADR(R_fcall, x);
 					xans[i] = REAL(eval(R_fcall, rho))[0];
+
+					if (R_IsNaN(xans[i])) {
+						xans[i] = R_NaReal;
+					}
+					
 				}
 			}
 		}
@@ -101,15 +106,17 @@ SEXP focal_fun(SEXP d, SEXP w, SEXP dim, SEXP fun, SEXP NAonly, SEXP rho) {
 				}
 				SETCADR(R_fcall, x);
 				xans[i] = REAL(eval(R_fcall, rho))[0];
+				if (R_IsNaN(xans[i])) {
+					xans[i] = R_NaReal;
+				}
+				
 			}
 		}
 		// last rows
 		for (i = ncol * (nrow-wr); i < n; i++) {  
 			xans[i] = R_NaReal;
 		}
-		
 	}
-
 	
 	UNPROTECT(5);
 	return(ans);

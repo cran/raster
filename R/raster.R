@@ -443,7 +443,7 @@ setMethod('raster', signature(x='grf'),
 setMethod('raster', signature(x='GridTopology'),
 	# contributed by Michael Sumner
 	function(x) {
-		raster(extent(x))
+		raster(extent(x), nrows=x@cells.dim[2], ncols=x@cells.dim[1])
 	}
 )
 

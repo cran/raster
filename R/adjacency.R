@@ -10,7 +10,12 @@
 }
 
 
-adjacency <- function(x, fromCells, toCells, directions) {
+adjacency <- function(x, ...) {
+
+	dots <- list(...)
+	fromCells <- dots$fromCells
+	toCells <- dots$toCells
+	directions <- dots$directions 
 
 	if (.depracatedwarnings()) {
 		warning('function "adjaceny" is obsolete. Use function "adjacent" in stead')

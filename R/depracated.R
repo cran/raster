@@ -2,17 +2,26 @@
 # Licence GPL v3
 
 
-layerNames <- function(x) {
-	warning('the layerNames function is obsolete. Use "names" instead')
-	names(x)
-}
+if (!isGeneric("layeNames")) {
+	setGeneric("layerNames", function(x, ...)
+		standardGeneric("layerNames"))
+}	
+
+setMethod('layerNames', signature(x='Raster'), 
+	function(x, ...) { 
+		warning('the layerNames function is obsolete. Use "names" instead')
+		paste('use_names_instead_', names(x), sep='')
+	}
+)
 
 
-'layerNames<-' <- function(x, value) {
-	warning('the layerNames function is obsolete. Use "names" instead')
-	names(x) <- value
-	x
-}
+
+
+#'layerNames<-' <- function(x, value) {
+#	warning('the layerNames function is obsolete. Use "names" instead')
+#	names(x) <- value
+#	x
+#}
 
 
 .compare <- function(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE, orig=FALSE, rotation=TRUE, tolerance, stopiffalse=TRUE, showwarning=FALSE) {
@@ -23,14 +32,14 @@ layerNames <- function(x) {
 }
 
 
-setOptions <- function(...) {
+.setOptions <- function(...) {
 	if (.depracatedwarnings()) {
 		warning('this function is depracated. Use "rasterOptions" instead')
 	}
 	rasterOptions(...)
 }
 
-showOptions <- function() {
+.showOptions <- function() {
 	if (.depracatedwarnings()) {
 		warning('This function is depracated. Use "rasterOptions()" in stead')
 	}

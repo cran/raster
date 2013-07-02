@@ -56,8 +56,8 @@ SEXP focal_sum(SEXP d, SEXP w, SEXP dim, SEXP rmNA, SEXP NAonly) {
 				xval[i] = xd[i];
 			}
 
-			for (i = ncol*wr; i < ncol * (nrow-wr); i++) {
-				if (R_IsNA(xd[i])) {
+			for (i = ncol*wr; i < ncol*(nrow-wr); i++) {
+				if (! R_IsNA(xd[i])) {
 					xval[i] = xd[i];
 				} else {
 					col = i % ncol;

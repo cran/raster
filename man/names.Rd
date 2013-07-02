@@ -1,7 +1,5 @@
 \name{names}
 
-\alias{layerNames}
-\alias{layerNames<-}
 \alias{labels,Raster-method}
 \alias{names}
 \alias{names<-}
@@ -22,14 +20,12 @@ Get or set the names of the layers of a Raster* object
 \S4method{names}{Raster}(x)<-value
 
 \S4method{labels}{Raster}(object)
-
-layerNames(x)
 }
 
 \arguments{
   \item{x}{Raster* object}
   \item{object}{Raster* object}  
-  \item{value}{Character (vector)}
+  \item{value}{character (vector)}
 }
 
 \value{

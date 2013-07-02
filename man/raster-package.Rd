@@ -14,7 +14,7 @@ The raster package provides classes and functions to manipulate geographic (spat
 The package should be particularly useful when using very large datasets that can not be loaded into the computer's memory. Functions will
 work correctly, because they they process large files in chunks, i.e., they read, compute, and write blocks of data, without loading all values into memory at once.
 
-Below is a list of the most important functions grouped by theme. See the vignette for more information and some examples (you can open it by running this command: \code{vignette('Raster')})
+Below is a list of some of the most important functions grouped by theme. See the vignette for more information and some examples (you can open it by running this command: \code{vignette('Raster')})
 }
 
 
@@ -343,10 +343,10 @@ Cell numbers start at 1 in the upper-left corner. They increase within rows, fro
 }
 }
 
-\author{Except where indicated otherwise, all functions were written by Robert J. Hijmans}
+\author{Except where indicated otherwise, the functions in this package were written by Robert J. Hijmans}
 
 \section{Acknowledgements}{
-Extensive contributions were made by Jonathan Greenberg, Phil Heilman, Agustin Lobo, Matteo Mattiuzzi, Steven Mosher, Stefan Schlaffer, and Kevin Ummel. Contributions were also made by Jochen Albrecht, Neil Best, Andrew Bevan, Roger Bivand, Isabelle Boulangeat, Lyndon Estes, Josh Gray, Tim Haering, Herry Herry, Paul Hiemstra, Ned Hornig, Mayeul Kauffmann, Bart Kranstauber, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Justin McGrath, Richard Plant, Edzer Pebesma, Oscar Perpinan Lamigueiro, Etienne Racine, David Ramsey, Michael Sumner, Jon Olav Skoien, Shaun Walbridge, Julian Zeidler, and many others.
+Extensive contributions were made by Jacob van Etten, Jonathan Greenberg, Phil Heilman, Agustin Lobo, Matteo Mattiuzzi, Steven Mosher, Oscar Perpinan Lamigueiro, Stefan Schlaffer, Jon Olav Skoien, Michael Sumner, and Kevin Ummel. Contributions were also made by Jochen Albrecht, Neil Best, Andrew Bevan, Roger Bivand, Isabelle Boulangeat, Lyndon Estes, Josh Gray, Tim Haering, Herry Herry, Paul Hiemstra, Ned Hornig, Mayeul Kauffmann, Bart Kranstauber, Rainer Krug, Alice Laborte, John Lewis, Lennon Li, Justin McGrath, Carsten Neumann, Richard Plant, Edzer Pebesma, Etienne Racine, David Ramsey, Shaun Walbridge, Julian Zeidler and many others.
 }
 
 \keyword{package}
