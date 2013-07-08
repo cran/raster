@@ -36,6 +36,13 @@ setMethod('rotate', signature(x='Raster'),
 		out <- merge(r1, r2, overlap=FALSE, ...)
 		names(out) <- names(x)
 		out@z <- x@z
+		
+		# suggested by Mike Sumner:
+		p <- projection(out)	
+		if (length(grep("\\+over", p)) > 0) {
+			projection(out) <- gsub("[[:space:]]\\+over", "", p)
+		}
+		
 		return(out)
 	}
 )

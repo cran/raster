@@ -47,14 +47,14 @@ cellFromCol <- function(object, colnr) {
 
 cellFromRowColCombine <- function(object, rownr, colnr) {
 	object <- raster(object)
-	rownr[rownr < 1 | rownr > object@nrows] = NA
-	colnr[colnr < 1 | colnr > object@ncols] = NA
-	cols = rep(colnr, times=length(rownr))
-	dim(cols) = c(length(colnr), length(rownr))
-	cols = t(cols)
-	rownr = (rownr-1) * object@ncols
-	cols = cols + rownr
-	return(as.vector(t(cols)))
+	rownr[rownr < 1 | rownr > object@nrows] <- NA
+	colnr[colnr < 1 | colnr > object@ncols] <- NA
+	cols <- rep(colnr, times=length(rownr))
+	dim(cols) <- c(length(colnr), length(rownr))
+	cols <- t(cols)
+	rownr <- (rownr-1) * object@ncols
+	cols <- cols + rownr
+	as.vector(t(cols))
 }
 
 
@@ -89,7 +89,7 @@ cellFromRowCol <- function(object, rownr, colnr) {
 	colnr[colnr < 1 | colnr > ncol(object)] <- NA	
 	# recycle if length(rownr) != length(colnr)
 	x <- cbind(rownr, colnr)
-	return((x[,1]-1) * ncol(object) + x[,2])
+	as.vector((x[,1]-1) * ncol(object) + x[,2])
 }
 
 

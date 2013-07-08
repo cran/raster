@@ -88,7 +88,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 			min = xd[i + a[0]];
 			max = xd[i + a[0]];
 			for (j = 1; j < 9; j++) {
-				v = xd[j+a[j]]; 
+				v = xd[i + a[j]]; 
 				if (v > max) {
 					max = v;
 				} else if (v < min) {

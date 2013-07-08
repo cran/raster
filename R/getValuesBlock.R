@@ -93,12 +93,11 @@ setMethod('getValuesBlock', signature(x='RasterBrick'),
 		if ( inMemory(x) ){
 			lastrow <- row + nrows - 1
 			if (col==1 & ncols==x@ncols) {
-				start <- cellFromRowCol(x, row, 1)
-				end <-  cellFromRowCol(x, lastrow, ncol(x))
-				res <- x@data@values[start:end, ]
+				rnge <- cellFromRowCol(x, c(row, lastrow), c(1, ncol(x)))
+				res <- x@data@values[rnge[1]:rnge[2], , drop=FALSE]
 			} else {
 				lastcol <- col + ncols - 1
-				res <- x@data@values[cellFromRowColCombine(x, row:lastrow, col:lastcol), ]
+				res <- x@data@values[cellFromRowColCombine(x, row:lastrow, col:lastcol), , drop=FALSE]
 			}
 			if (NCOL(res) > nlyrs) {
 				res <- res[, lyrs, drop=FALSE]
@@ -110,7 +109,8 @@ setMethod('getValuesBlock', signature(x='RasterBrick'),
 			if (NCOL(res) > nlyrs) {
 				res <- res[, lyrs, drop=FALSE]
 			}
-		} else {
+			
+		} else { # no data
 			res <- ( matrix(rep(NA, nrows * ncols * nlyrs), ncol=nlyrs) )
 			colnames(res) <- names(x)[lyrs]
 		}

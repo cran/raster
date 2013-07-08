@@ -38,7 +38,11 @@ setMethod('labels', signature(object='Raster'),
 )
 
 	
-
+layerNames <- function(x) {
+	warning('"layerNames" is obsolete and will be removed soon.\nUse function "names" instead')
+	names(x)
+}
+	
 setMethod('names', signature(x='Raster'), 
 	function(x) { 
 		if (.hasSlot(x@data, 'names')) {

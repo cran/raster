@@ -6,12 +6,12 @@
 \alias{names,Raster-method}
 \alias{names,RasterStack-method}
 \alias{names<-,Raster-method}
-
+\alias{layerNames}
   
 \title{Names of raster layers}
 
 \description{
-Get or set the names of the layers of a Raster* object
+Get or set the names of the layers of a Raster* object 
 }
 
 \usage{
@@ -20,6 +20,8 @@ Get or set the names of the layers of a Raster* object
 \S4method{names}{Raster}(x)<-value
 
 \S4method{labels}{Raster}(object)
+
+layerNames(x)
 }
 
 \arguments{
@@ -31,6 +33,12 @@ Get or set the names of the layers of a Raster* object
 \value{
 Character 
 }
+
+
+\note{
+layerNames is obsolete and should not be used
+}
+
 
 \seealso{ \code{\link{nlayers}, \link[raster]{bands}} }
 
