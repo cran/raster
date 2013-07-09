@@ -11,12 +11,12 @@ if (!isGeneric("crop")) {
 
 
 .copyWithProperties <- function(x) {
-	if (nlayers(x) <= 1) {
+	if (inherits(x, 'RasterStackBrick')) {
+		out <- brick(x, values=FALSE)	
+	} else { 
 		out <- raster(x)
 		out@legend <- x@legend
-	} else { 
-		out <- brick(x, values=FALSE)	
-	}
+	} 
 	names(out) <- names(x)
 	out <- setZ(out, getZ(x))
 	fx <- is.factor(x)

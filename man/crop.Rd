@@ -2,6 +2,7 @@
 
 \alias{crop}
 \alias{crop,Raster-method}
+\alias{crop,Spatial-method}
 
 \title{Crop}
 
@@ -12,10 +13,12 @@ If \code{x} is a Raster* object, the Extent is aligned to \code{x}. Areas includ
 
 \usage{
 \S4method{crop}{Raster}(x, y, filename="", snap='near', datatype=NULL, ...)
+
+\S4method{crop}{Spatial}(x, y, ...)
 }
 
 \arguments{
-  \item{x}{Raster* object}
+  \item{x}{Raster* object or SpatialPolygons*, SpatialLines*, or SpatialPoints* object}
   \item{y}{Extent object, or any object from which an Extent object can be extracted (see Details)}
   \item{filename}{Character, output filename. Optional}
   \item{snap}{Character. One of 'near', 'in', or 'out', for use with \code{\link{alignExtent}}}  

@@ -122,15 +122,11 @@ function(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=F
 			}
 			
 			paddim <- as.integer(dim(v))
-			#v <- as.vector(t(v))
-			# in C NA and NaN are not the same
-			v[!is.finite(v)] <- NA
 			if (dofun) {
-				v <- .Call('focal_fun', v, w, paddim, fun, NAonly, e, NAOK=TRUE, PACKAGE='raster')
+				v <- .Call('focal_fun', as.vector(t(v)), w, paddim, fun, NAonly, e, NAOK=TRUE, PACKAGE='raster')
 			} else {
-				v <- .Call('focal_sum', v, w, paddim, narm, NAonly, NAOK=TRUE, PACKAGE='raster')
+				v <- .Call('focal_sum', as.vector(t(v)), w, paddim, narm, NAonly, NAOK=TRUE, PACKAGE='raster')
 			}
-			#v[!is.finite(v)] <- NA
 
 			v <- matrix(v, nrow=paddim[1], ncol=paddim[2], byrow=TRUE)
 			if (padrows) {

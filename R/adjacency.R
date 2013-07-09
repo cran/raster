@@ -12,14 +12,14 @@
 
 adjacency <- function(x, ...) {
 
+	warning('function "adjaceny" is obsolete and will be removed from the "raster" package.\nUse function "adjacent" in stead')
+
+
 	dots <- list(...)
 	fromCells <- dots$fromCells
 	toCells <- dots$toCells
 	directions <- dots$directions 
 
-	if (.depracatedwarnings()) {
-		warning('function "adjaceny" is obsolete. Use function "adjacent" in stead')
-	}
 	
 	if (is.character(directions)) { directions <- tolower(directions) }
 	stopifnot(directions %in% c(4,8,16) | directions=='bishop')
