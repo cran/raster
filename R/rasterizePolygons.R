@@ -48,7 +48,7 @@
 	} 
 
 	if (is.numeric(field)) {
-		putvals <- rep_len(field, n)
+		putvals <- rep(field, length.out=n)
 		return(data.frame(field=putvals))
 	}
 	
