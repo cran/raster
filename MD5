@@ -1,5 +1,5 @@
 25622fa3e4b01c0493ab512b3487d86b *ChangeLog
-b08b2c7b60a2193d149e11517d2d5d00 *DESCRIPTION
+b1699b0dd24b18280f6eab3d4acbe396 *DESCRIPTION
 6093766a5b1a1af0aade58617653c85b *NAMESPACE
 7765e49ff996f5a860ea8dca25365da5 *R/AAAClasses.R
 033b8d8c0feaaf6a588b492b1d3c2292 *R/GDALtransient.R
@@ -8,7 +8,7 @@ b08b2c7b60a2193d149e11517d2d5d00 *DESCRIPTION
 23396c0d70758a3d32fb7c05a8b67a92 *R/addHistory.R
 8c9b2b22967ebe52e8ed1abebb7ca0cd *R/addLayer.R
 ae6537d99681c12dfdbbf4b786cb3307 *R/adjacency.R
-322a41faf84331de4cf7e307807f31f5 *R/adjacent.R
+fcaa50eee9be3cebdeb816d22e980a61 *R/adjacent.R
 8454e4526d48c2dad09fd5ca5c61b4e7 *R/aggregate.R
 44758910ca062c5640e20938d43ee8ad *R/aggregate_old.R
 7e61291edb0dd7140ec28a5cb1e83a19 *R/alignExtent.R
@@ -88,7 +88,7 @@ b2413559dbf053cf8df58470c697ab72 *R/factor.R
 5559b633eff091779be327d29dc06844 *R/fixDBFnames.R
 a2de34bbffe4e73a03ccce8e1aab3683 *R/flip.R
 5270f8ba9f77c2ac6fe85ca839df49a5 *R/focal.R
-b3891548764f055f299cfae0ed730848 *R/focalWeight.R
+a17f40e1b79a07c0ca402c5e22e5f708 *R/focalWeight.R
 044d0eb819e53afdbfedcb1b134ea18a *R/fourCellsFromXY.R
 fcddd7f92f860014b3d322a7c8ff67b3 *R/freq.R
 3f39798b22bcb1e0bfd4c9036729c2d3 *R/fullFileName.R
@@ -201,7 +201,7 @@ ece7270e50bed2ed83e94178f7be3fc2 *R/rasterToPoints.R
 3f8dca8d4c135437f15c6d2e2e8b4d69 *R/rasterize.R
 a9afd733eeeb9dbd774f5719e01d5955 *R/rasterizeLines.R
 af30d2c42d9f4105e96d12380774032f *R/rasterizePoints.R
-6ee4924a0397d1a6c1b6aebcb50b46aa *R/rasterizePolygons.R
+e98d2c53278a8ec976adc10602978e56 *R/rasterizePolygons.R
 9f7acde6c6406dc617074841388d8eb5 *R/rasterizePolygons3.R
 aebb8062bb57846c6f00287cc5daba5d *R/ratify.R
 120112d960482d95e528203cfaf2beda *R/read.R
@@ -279,13 +279,13 @@ f6747bb427f3cb477ea278f45672be5c *R/xyMinMax.R
 d3f6c1b7c1d8451f3c3ab0a9c6a30430 *R/zzz.R
 3be3d2c26ecebd5c98af396455417f24 *inst/doc/Raster.R
 0fb5021b1488acc05020683904b914cb *inst/doc/Raster.Rnw
-86f622705555db31d4fdc5bfb0e7a265 *inst/doc/Raster.pdf
+a6b47558fc17480dab70d128c7d56290 *inst/doc/Raster.pdf
 8513b7865ba30fef7caa5ea4dc9f3ee2 *inst/doc/functions.R
 b6b8b6c45360d7509cc8e05fe48414c4 *inst/doc/functions.Rnw
-1eb388ccda5f63b77fc0d68eeb7adadf *inst/doc/functions.pdf
+b27535ad97a951c7f024cb04826a038b *inst/doc/functions.pdf
 5303ef1393fa09011a13d61e8b5d99b8 *inst/doc/rasterfile.R
 cdf4af6595c744554a8b1e658c524cef *inst/doc/rasterfile.Rnw
-9cba27a431873c4231f55797f74f6155 *inst/doc/rasterfile.pdf
+bc6e9565b40aac391cc57c3993cac7f2 *inst/doc/rasterfile.pdf
 b881b0fbe3b8d46675d5ba649aba98bb *inst/external/countries.csv
 7e1cc4f8e01df980c0e3b54d9797d6cd *inst/external/rlogo.grd
 b3ed7227bb04142c4a36cbe25067d5ac *inst/external/rlogo.gri
