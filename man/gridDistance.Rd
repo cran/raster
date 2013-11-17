@@ -37,7 +37,7 @@ If the RasterLayer to be processed is big, it will be processed in chunks. This 
 \value{RasterLayer}
 
 
-\author{ Jacob van Etten and Robert J. Hijmans }
+\author{Jacob van Etten and Robert J. Hijmans }
 
 
 \examples{

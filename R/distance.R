@@ -12,7 +12,7 @@ if (!isGeneric("distance")) {
 setMethod('distance', signature(x='RasterLayer'), 
 function(x, filename='', doEdge=TRUE, ...) {
 	if (doEdge) {
-		r <- raster::edge(x, classes=FALSE, type='inner', progress=.progress(...)) 
+		r <- raster::edges(x, classes=FALSE, type='inner', progress=.progress(...)) 
 		pts <- try(  rasterToPoints(r, fun=function(z){ z>0 } )[,1:2, drop=FALSE] )
 	} else {
 		pts <- try(  rasterToPoints(x)[,1:2, drop=FALSE] )
@@ -27,7 +27,7 @@ function(x, filename='', doEdge=TRUE, ...) {
 	out <- raster(x)
 	filename <- trim(filename)
 	
-	if (raster:::.couldBeLonLat(x)) { 
+	if (.couldBeLonLat(x)) { 
 		longlat=TRUE 
 	} else { 
 		longlat=FALSE 

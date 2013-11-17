@@ -19,7 +19,8 @@ The methods for Spatial* objects allow for easy creation of a data.frame with th
 }
 
 \usage{
-\S4method{as.data.frame}{Raster}(x, row.names=NULL, optional=FALSE, xy=FALSE, ...)
+\S4method{as.data.frame}{Raster}(x, row.names=NULL, optional=FALSE, xy=FALSE, 
+              na.rm=FALSE, ...)
 
 \S4method{as.data.frame}{SpatialPolygons}(x, row.names=NULL, optional=FALSE,
               xy=FALSE, centroids=TRUE, sepNA=FALSE, ...)
@@ -33,6 +34,7 @@ The methods for Spatial* objects allow for easy creation of a data.frame with th
  \item{row.names}{\code{NULL} or a character vector giving the row names for the data frame. Missing values are not allowed} 
  \item{optional}{logical. If \code{TRUE}, setting row names and converting column names (to syntactic names: see make.names) is optional}
  \item{xy}{logical. If \code{TRUE}, also return the spatial coordinates}
+ \item{na.rm}{logical. If \code{TRUE}, remove rows with NA values. This can be particularly useful for very large datasets with many NA values}
  \item{centroids}{logical. If \code{TRUE} return the centroids instead of all spatial coordinates (only relevant if \code{xy=TRUE})}
  \item{sepNA}{logical. If \code{TRUE} the parts of the spatial objects are separated by lines that are \code{NA} (only if \code{xy=TRUE} and, for polygons, if \code{centroids=FALSE}}
  \item{...}{Additional arguments (none)} 
@@ -46,10 +48,12 @@ data.frame
 
 \examples{
 r <- raster(ncol=3, nrow=3)
-r[] = 1:ncell(r)
+r[] <- sqrt(1:ncell(r))
+r[3:5] <- NA
 as.data.frame(r)
-s <- stack(r,r)
+s <- stack(r, r*2)
 as.data.frame(s)
+as.data.frame(s, na.rm=TRUE)
 }
 
 \keyword{spatial}

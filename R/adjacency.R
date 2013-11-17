@@ -10,7 +10,7 @@
 }
 
 
-adjacency <- function(x, ...) {
+.adjacency <- function(x, ...) {
 
 	warning('function "adjaceny" is obsolete and will be removed from the "raster" package.\nUse function "adjacent" in stead')
 

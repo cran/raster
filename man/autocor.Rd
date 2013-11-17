@@ -12,10 +12,10 @@ Compute Moran's I or Geary's C measures of global spatial autocorrelation in a R
 }
 
 \usage{
-Geary(x, w=3)
-Moran(x, w=3)
-MoranLocal(x, w=3)
-GearyLocal(x, w=3)
+Geary(x, w=matrix(1, 3, 3))
+Moran(x, w=matrix(1, 3, 3))
+MoranLocal(x, w=matrix(1, 3, 3))
+GearyLocal(x, w=matrix(1, 3, 3))
 }
 
 \arguments{

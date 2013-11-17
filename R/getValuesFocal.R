@@ -36,8 +36,8 @@ function(x, row, nrows, ngb, names=FALSE, outside=NA, ...) {
 		stop("'nrows' is too high")
 	}
 	stopifnot(is.atomic(outside))
-	geo <- raster:::.couldBeLonLat(xx)
-	ngb <- raster:::.checkngb(ngb, mustBeOdd=TRUE)
+	geo <- .couldBeLonLat(xx)
+	ngb <- .checkngb(ngb, mustBeOdd=TRUE)
 	
 	ngbr <- floor(ngb[1]/2)
 	ngbc <- floor(ngb[2]/2)

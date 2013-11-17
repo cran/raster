@@ -96,7 +96,7 @@
 	} else if  (dtype == 'Float32' | dtype == 'CFloat32' ) {
 		return('FLT4S')
 	} else if  (dtype == 'Float64' | dtype == 'CFloat64' )  {
-		return('FLT8')
+		return('FLT8S')
 	} else {
 		return('FLT4S')	
 	}

@@ -38,10 +38,10 @@
 	}
 	x <- raster(x)
 	projp <- projection(p)
-	if (! raster:::.compareCRS(projp, x)) {
+	if (! .compareCRS(projp, x)) {
 	#	warning('crs or raster and polygons do not match')
 	}
-	if (projp != "NA") {
+	if (! is.na(projp)) {
 		projection(x) = projp
 	} 
 	

@@ -12,7 +12,7 @@
 \title{Mask values in a Raster object}
 
 \description{
-Create a new Raster* object that has the same values as Raster* \code{x}, except for the cells that are \code{NA}  in a 'mask'. These cells become \code{NA}. The mask can be either another Raster* object of the same extent and resolution, or a Spatial* object (e.g. SpatialPolygons) in which case all cells that are not covered by the Spatial object are set to \code{NA}. You can use \code{inverse=TRUE} to set the cells that are not \code{NA} in the mask, or not coverd by the Spatial* object to \code{NA}. When the mask is a Raster* object, you can also use another value than \code{NA} in the mask object}
+Create a new Raster* object that has the same values as Raster* \code{x}, except for the cells that are \code{NA}  in a 'mask'. These cells become \code{NA}. The mask can be either another Raster* object of the same extent and resolution, or a Spatial* object (e.g. SpatialPolygons) in which case all cells that are not covered by the Spatial object are set to \code{NA}. You can use \code{inverse=TRUE} to set the cells that are not \code{NA} (or other \code{maskvalue}) in the mask, or not covered by the Spatial* object to \code{NA}. When the mask is a Raster* object, you can also use another value than \code{NA} in the mask object}
 
 \usage{
 \S4method{mask}{RasterLayer,RasterLayer}(x, mask, filename="", inverse=FALSE, maskvalue=NA, ...)
@@ -31,9 +31,9 @@ Create a new Raster* object that has the same values as Raster* \code{x}, except
 \item{x}{Raster* object}
 \item{mask}{Raster* object or a Spatial* object}
 \item{inverse}{logical. If \code{TRUE}, areas on mask that are _not_ \code{NA} are masked. This option is only relevant if ]code{maskvalue=NA}}
-\item{maskvalue}{Numeric. The value in \code{mask} that indicates the cells of \code{x} that should become \code{NA}}
-\item{filename}{Character. Optional output filename}
-\item{...}{Additional arguments as in \code{\link{writeRaster}}}
+\item{maskvalue}{numeric. The value in \code{mask} that indicates the cells of \code{x} that should become \code{NA}}
+\item{filename}{character. Optional output filename}
+\item{...}{additional arguments as in \code{\link{writeRaster}}}
 }
 
 \value{Raster* object}

@@ -113,6 +113,7 @@ removeTmpFiles <- function(h=24) {
 
 
 showTmpFiles <- function() {
+	f <- NULL
 	tmpdir <- .tmpdir(create=FALSE)
 	if (!is.na(tmpdir)) {
 		d <- .removeTrailingSlash(tmpdir)
@@ -121,9 +122,10 @@ showTmpFiles <- function() {
 			if (length(f) == 0) {
 				cat('--- none ---\n')
 			} else {
-				extension(f) <- ''
-				f <- paste(unique(f), '\n')
-				cat(f)
+				ff <- f
+				extension(ff) <- ''
+				ff <- paste(unique(ff), '\n')
+				cat(ff)
 			}
 		} else {
 			cat('--- none ---\n')
@@ -131,5 +133,6 @@ showTmpFiles <- function() {
 	} else {
 		cat('--- none ---\n')
 	}
+	invisible(f)
 }
 

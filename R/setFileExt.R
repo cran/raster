@@ -12,6 +12,8 @@
 		extension(fname) <- ".sdat"
 	} else if (type == 'IDRISI') {
 		extension(fname) <- ".rst"
+	} else if (type == 'IDRISIold') {
+		extension(fname) <- ".img"
 	} else if (type == 'BIL') {
 		extension(fname) <- ".bil"
 	} else if (type == 'BIP') {
@@ -33,6 +35,8 @@
 		extension(fname) <- "sgrd"
 	} else if (type == 'IDRISI') {
 		extension(fname) <- ".rdc"
+	} else if (type == 'IDRISIold') {
+		extension(fname) <- ".doc"
 	} else if (type %in% c('BIL', 'BSQ', 'BIP')) {
 		extension(fname) <- ".hdr"
 	} else if (type == 'big.matrix') {

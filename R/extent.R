@@ -101,11 +101,11 @@ setMethod('extent', signature(x='matrix'),
 			e@ymin <- min(x[2,])
 			e@ymax <- max(x[2,])
 		} else {
-			a = apply(x, 2, range, na.rm=TRUE)
-			e@xmin <- a[1,1]
-			e@xmax <- a[2,1]
-			e@ymin <- a[1,2]
-			e@ymax <- a[2,2]
+			a <- as.vector(apply(x, 2, range, na.rm=TRUE))
+			e@xmin <- a[1]
+			e@xmax <- a[2]
+			e@ymin <- a[3]
+			e@ymax <- a[4]
 		}
 		return(e)
 	}

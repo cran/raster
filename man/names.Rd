@@ -6,7 +6,7 @@
 \alias{names,Raster-method}
 \alias{names,RasterStack-method}
 \alias{names<-,Raster-method}
-\alias{layerNames}
+
   
 \title{Names of raster layers}
 
@@ -20,8 +20,6 @@ Get or set the names of the layers of a Raster* object
 \S4method{names}{Raster}(x)<-value
 
 \S4method{labels}{Raster}(object)
-
-layerNames(x)
 }
 
 \arguments{
@@ -32,11 +30,6 @@ layerNames(x)
 
 \value{
 Character 
-}
-
-
-\note{
-layerNames is obsolete and should not be used
 }
 
 

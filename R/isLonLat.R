@@ -21,18 +21,15 @@
 
 .couldBeLonLat <- function(x, warnings=TRUE) {
 	crsLL <- isLonLat(x)
-	if (class(x) == 'character') { 
-		return(crsLL) 
-	}
-	crsNA <- projection(x)=='NA'
+	crsNA <- is.na(crsLL)
 	e <- extent(x)
 	extLL <- (e@xmin > -365 & e@xmax < 365 & e@ymin > -90.1 & e@ymax < 90.1) 
-	if (extLL & crsLL) { 
+	if (extLL & isTRUE(crsLL)) { 
 		return(TRUE)
 	} else if (extLL & crsNA) {
 		if (warnings) warning('CRS is NA. Assuming it is longitude/latitude')
 		return(TRUE)
-	} else if (crsLL) {
+	} else if (isTRUE(crsLL)) {
 		if (warnings) warning('raster has a longitude/latitude CRS, but coordinates do not match that')
 		return(TRUE)
 	} else {
@@ -61,7 +58,7 @@ setMethod('isLonLat', signature(x='BasicRaster'),
 	function(x){
 		p4str <- projection(x)
 		if (is.na(p4str) || nchar(p4str) == 0) {
-			return(as.logical(NA))
+			return(FALSE)
 		} 
 		res <- grep("longlat", p4str, fixed = TRUE)
 		if (length(res) == 0) {
@@ -94,12 +91,12 @@ setMethod('isLonLat', signature(x='CRS'),
 # ...
 	function(x){
 		if (is.na(x@projargs)) { 
-			return(NA)
+			return(FALSE)
 		} else {
 			p4str <- trim(x@projargs)
 		}	
 		if (is.na(p4str) || nchar(p4str) == 0) {
-			return(as.logical(NA))
+			return(FALSE)
 		} 
 		res <- grep("longlat", p4str, fixed = TRUE)
 		if (length(res) == 0) {
@@ -110,3 +107,8 @@ setMethod('isLonLat', signature(x='CRS'),
     }
 )
 
+setMethod('isLonLat', signature(x='ANY'), 
+	function(x){
+		isLonLat(as.character(x))
+    }
+)

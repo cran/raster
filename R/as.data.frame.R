@@ -36,11 +36,35 @@ if (!isGeneric("as.data.frame")) {
 
 
 setMethod('as.data.frame', signature(x='Raster'), 
-	function(x, row.names = NULL, optional = FALSE, xy=FALSE, ...) {
+	function(x, row.names = NULL, optional = FALSE, xy=FALSE, na.rm=FALSE, ...) {
 
-		v <- as.data.frame(getValues(x), row.names=row.names, optional=optional, ...)
-		colnames(v) <- names(x)  # for nlayers = 1
+		if (!canProcessInMemory(x, 4) & na.rm) {
+			tr <- blockSize(x)
+			pb <- pbCreate(tr$n, label='as.data.frame', ...)
+			x <- readStart(x)
+			v <- NULL
+			for (i in 1:tr$n) {
+				start <- (tr$row[i]-1) * ncol(x) + 1
+				end <- start + tr$nrows[i] * ncol(x) - 1
+				vv <- na.omit(cbind(start:end, getValues(x, row=tr$row[i], nrows=tr$nrows[i])))
+				v <- rbind(v, vv)
+				pbStep(pb, i) 	
+			}
+			x <- readStop(x)
+		} else {
+			v <- getValues(x)
+			if (na.rm) {
+				v <- na.omit(cbind(1:ncell(x), v))
+			}
+		}
 		
+		v <- as.data.frame(v, row.names=row.names, optional=optional, ...)
+		if (na.rm) {
+			rownames(v) <- as.character(v[,1])
+			v <- v[,-1,drop=FALSE]
+		} 
+		colnames(v) <- names(x)  # for nlayers = 1
+				
 		i <- is.factor(x)
 		if (any(is.factor(x))) {
 			if (ncol(v) == 1) {

@@ -2,7 +2,7 @@
 # Date : October 2008
 # Version 0.9
 # Licence GPL v3
-# redesinged for multiple row processing
+# redesigned for multiple row processing
 # October 2011
 # version 1
 

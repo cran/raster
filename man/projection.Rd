@@ -1,5 +1,8 @@
 \name{projection}
 
+\alias{crs}
+\alias{crs,ANY-method}
+\alias{crs<-}
 \alias{projection}
 \alias{projection<-}
 \alias{proj4string}
@@ -12,23 +15,27 @@ Get or set the coordinate reference system (CRS) of a Raster* object.
 }
 
 \usage{
+\S4method{crs}{ANY}(x, asText=TRUE, ...)
+crs(x) <- value
 projection(x, asText=TRUE)
 projection(x) <- value
 }
 
 \arguments{
-  \item{x}{A Raster* object }
+  \item{x}{Raster* or Spatial object }
   \item{asText}{logical. If \code{TRUE}, the projection is returned as text. Otherwise a \code{\link[sp]{CRS}} object is returned}
-  \item{value}{a \code{CRS} object or a character string describing a projection and datum in the PROJ.4 format }
+  \item{...}{additional arguments (not implemented)}
+  \item{value}{\code{CRS} object or a character string describing a projection and datum in the PROJ.4 format }
 }
 
 
 \value{
-Raster* object
+Raster* or Spatial* object, or CRS, or character
 }
 
 \note{
-For compatability with \code{sp} you can use \code{proj4string} instead of \code{projection}. 
+\code{crs} replaces earlier function \code{projection}.  
+For compatibility with \code{sp} you can use \code{proj4string} instead of \code{crs}.
 }
 
 \seealso{ \code{\link[raster]{projectRaster}, \link[rgdal]{CRS-class}, \link[rgdal]{spTransform-methods}, \link[rgdal]{projInfo}}}
@@ -39,9 +46,9 @@ For compatability with \code{sp} you can use \code{proj4string} instead of \code
 
 \examples{ 
 r <- raster()
-projection(r)
-projection(r) <- "+proj=lcc +lat_1=48 +lat_2=33 +lon_0=-100 +ellps=WGS84"
-projection(r)
+crs(r)
+crs(r) <- "+proj=lcc +lat_1=48 +lat_2=33 +lon_0=-100 +ellps=WGS84"
+crs(r)
 }
 
 \keyword{ spatial }

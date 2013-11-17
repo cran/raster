@@ -1,18 +1,39 @@
 Package: raster
 Type: Package
 Title: raster: Geographic data analysis and modeling
-Version: 2.1-49
-Date: 2013-07-11
+Version: 2.1-66
+Date: 2013-11-17
 Depends: methods, sp (>= 1.0-11), R (>= 2.15.0)
-Suggests: rgdal (>= 0.7-22), rgeos (>= 0.2-3), ncdf, ncdf4, igraph,
+Suggests: rgdal (>= 0.8-10), rgeos (>= 0.2-3), ncdf, ncdf4, igraph,
         snow, tcltk, rasterVis
-Author: Robert J. Hijmans
+Authors@R: c(
+	person("Robert J.", "Hijmans", role = c("cre", "aut"),  email = "r.hijmans@gmail.com"),
+	person("Jacob", "van Etten", role = "ctb"),
+	person("Matteo", "Mattiuzzi", role = "ctb"),
+	person("Michael", "Sumner", role = "ctb"),
+	person("Jonathan A.", "Greenberg", role = "ctb"),
+	person("Oscar", "Perpinan Lamigueiro", role = "ctb"),
+	person("Andrew", "Bevan", role = "ctb"),
+	person("Etienne B.", "Racine", role = "ctb"),
+	person("Ashton", "Shortridge", role = "ctb"))
 Maintainer: Robert J. Hijmans <r.hijmans@gmail.com>
 Description: Reading, writing, manipulating, analyzing and modeling of gridded spatial data. The package implements basic and high-level functions and processing of very large files is supported.
 License: GPL (>= 3)
 URL: http://cran.r-project.org/web/packages/raster/
 ByteCompile: TRUE
-Packaged: 2013-07-11 16:57:06 UTC; rhijmans
-NeedsCompilation: yes
 Repository: CRAN
-Date/Publication: 2013-07-11 19:48:53
+Repository/R-Forge/Project: raster
+Repository/R-Forge/Revision: 2840
+Repository/R-Forge/DateTimeStamp: 2013-11-18 02:23:50
+Date/Publication: 2013-11-18 08:28:46
+Packaged: 2013-11-18 07:09:37 UTC; ripley
+Author: Robert J. Hijmans [cre, aut],
+  Jacob van Etten [ctb],
+  Matteo Mattiuzzi [ctb],
+  Michael Sumner [ctb],
+  Jonathan A. Greenberg [ctb],
+  Oscar Perpinan Lamigueiro [ctb],
+  Andrew Bevan [ctb],
+  Etienne B. Racine [ctb],
+  Ashton Shortridge [ctb]
+NeedsCompilation: yes

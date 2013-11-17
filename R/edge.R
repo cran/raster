@@ -3,12 +3,18 @@
 # Version 1.0
 # Licence GPL v3
 
-if (!isGeneric("edge")) {
-	setGeneric("edge", function(x, ...)
-		standardGeneric("edge"))
+edge <- function(x, ...) {
+	warning('"edge" is obsolete. Use "edges"')
+	edges(x, ...)
+}
+
+
+if (!isGeneric("edges")) {
+	setGeneric("edges", function(x, ...)
+		standardGeneric("edges"))
 }	
 
-setMethod('edge', signature(x='RasterLayer'), 
+setMethod('edges', signature(x='RasterLayer'), 
 function(x, filename="", type='inner', classes=FALSE, directions=8, ...) {
 
 	dots <- list(...)

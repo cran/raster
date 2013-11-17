@@ -17,7 +17,7 @@
 \title{Helper functions for programming}
 
 \description{ 
-These are low level functions that can be used by programmers to develop new functions. If in doubt, it is almost certain that you do not need these as these functions are already embedded in all other functions in the raster package.
+These are low level functions that can be used by programmers to develop new functions. If in doubt, it is almost certain that you do not need these functions as these are already embedded in all other functions in the raster package.
 
 \code{canProcessInMemory} is typically used within functions. In the raster package this function is used to determine if the amount of memory needed for the function is available. If there is not enough memory available, the function returns \code{FALSE}, and the function that called it will write the results to a temporary file. 
 

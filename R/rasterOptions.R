@@ -419,6 +419,7 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		} else if (ext == '.rst') { return('RST') 
 		} else if (ext == '.mpr') { return('ILWIS')
 		} else if (ext == '.rsw') { return('RMF')
+		} else if (ext == '.flt') { return('EHdr')
 		} else { 
 			warning('extension ', ext, ' is unknown. Using default format.')
 			return('') 

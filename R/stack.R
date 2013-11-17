@@ -78,7 +78,7 @@ function(x, bands=NULL, native=FALSE, RAT=TRUE, ...) {
 	if (is.null(lstnames)) {
 		namesFromList <- FALSE
 	} else {
-		lstnames <- .goodNames(lstnames)
+		lstnames <- validNames(lstnames)
 		namesFromList <- TRUE
 	}
 

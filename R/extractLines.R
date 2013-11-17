@@ -223,9 +223,9 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, fa
 				if (! (spbb[1,1] > rsbb[1,2] | spbb[1,2] < rsbb[1,1] | spbb[2,1] > rsbb[2,2] | spbb[2,2] < rsbb[2,1]) ) {
 					lns <- SpatialLines(list(Lines(list(Line(ppp)), "1")))
 					rc <- crop(rr, extent(lns) + addres)
-					rc <- raster:::.linesToRaster(lns, rc, silent=TRUE)
+					rc <- .linesToRaster(lns, rc, silent=TRUE)
 					xy <- rasterToPoints(rc)[,-3,drop=FALSE]
-					v <- cbind(row=rowFromY(rr, xy[,2]), col=colFromX(rr, xy[,1]), raster:::.xyValues(x, xy, layer=layer, nl=nl))
+					v <- cbind(row=rowFromY(rr, xy[,2]), col=colFromX(rr, xy[,1]), .xyValues(x, xy, layer=layer, nl=nl))
 				#up or down?
 					if (ppp[1,2] < ppp[2,2]) {
 						#order top to bottom

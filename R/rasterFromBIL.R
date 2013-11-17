@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-.rasterFromGenericFile <- function(filename, band=1, SIGNEDINT=NULL, type='RasterLayer', ...) {
+.rasterFromGenericFile <- function(filename, band=1, SIGNEDINT=NULL, type='RasterLayer', crs=NULL, ...) {
 	hdrfname <- .setFileExtensionHeader(filename, "BIL")
 	
 	ini <- readIniFile(hdrfname, token=' ')
@@ -19,7 +19,6 @@
 	nbands <- as.integer(1)
 	band <- as.integer(band)
 	bandorder <- "BIL"
-	projstring <- ""
 	minval <- Inf
 	maxval <- -Inf
 	nodataval <- -Inf
@@ -52,7 +51,6 @@
 		else if (ini[i,2] == "BYTEORDER") {byteorder <- ini[i,3]} 
 		else if (ini[i,2] == "NBANDS") {nbands <- ini[i,3]} 
 		else if (ini[i,2] == "LAYOUT") {bandorder <- ini[i,3]} 
-		else if (ini[i,2] == "PROJECTION=") {projstring <- ini[i,3]} 
 		else if (ini[i,2] == "MINVALUE=") {try (minval <- as.numeric(unlist(strsplit(trim(ini[i,3]), ' ')))) } 
 		else if (ini[i,2] == "MAXVALUE=") {try (maxval <- as.numeric(unlist(strsplit(trim(ini[i,3]), ' ')))) } 
     }  
@@ -109,18 +107,19 @@
 	maxval <- maxval[1:nbands]
 	minval[is.na(minval)] <- Inf
 	maxval[is.na(maxval)] <- -Inf
+
+	if (!is.null(crs)) {
+		prj <- crs
+	}	
 	
-	if (projstring == 'GEOGRAPHIC') {
-		projstring <- "+proj=longlat +datum=WGS84"
-	}
 	
 	if (type == 'RasterBrick') {
-		x <- brick(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs=projstring)
+		x <- brick(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs=prj)
 		x@data@nlayers <-  as.integer(nbands)
 		x@data@min <- minval
 		x@data@max <- maxval
 	} else {
-		x <- raster(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs=projstring)
+		x <- raster(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs=prj)
 		x@data@band <- as.integer(band)
 		x@data@min <- minval[band]
 		x@data@max <- maxval[band]

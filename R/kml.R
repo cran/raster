@@ -14,8 +14,8 @@ if (!isGeneric("KML")) {
 setMethod('KML', signature(x='Spatial'), 
 	function (x, filename, zip='', overwrite=FALSE, ...) {
 		.requireRgdal()
-		if (projection(x) != 'NA') {
-			if (!isLonLat(x)) {
+		if (! is.na(projection(x))) {
+			if (! isLonLat(x) ) {
 				warning('transforming data to longitude/latitude')
 				spTransform(x, CRS('+proj=longlat +datum=WGS84'))
 			}
@@ -36,7 +36,7 @@ setMethod('KML', signature(x='Spatial'),
 		
 		name <- deparse(substitute(x))
 		writeOGR(x, filename, name, 'KML')
-		.zipKML(filename, '', zip, ovewrite=overwrite) 
+		.zipKML(filename, '', zip, overwrite=overwrite) 
 	}
 )
 	

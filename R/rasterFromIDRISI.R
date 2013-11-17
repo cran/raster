@@ -3,19 +3,24 @@
 # Version 0.9
 # Licence GPL v3
 
-.rasterFromIDRISIFile <- function(filename) {
-	valuesfile <- .setFileExtensionValues(filename, "IDRISI")
+.rasterFromIDRISIFile <- function(filename, crs=NULL, old=FALSE, ...) {
+
+	if (old) {
+		idformat <- 'IDRISIold'
+	} else {
+		idformat <- 'IDRISI'
+	}
+	valuesfile <- .setFileExtensionValues(filename, idformat)
 	if (!file.exists(valuesfile )){
 		stop( paste(valuesfile,  "does not exist"))
-	}	
-	filename <- .setFileExtensionHeader(filename, "IDRISI")
+	}		
+	filename <- .setFileExtensionHeader(filename, idformat)
 	
 	ini <- readIniFile(filename, token=':')
 
 	ini[,2] = toupper(ini[,2]) 
 
 	byteorder <- .Platform$endian
-	projstring <- ""
 	nodataval <- -Inf
 	layernames <- ''
 	filetype <- ''
@@ -46,10 +51,13 @@
 		stop('cannot natively read packed binary files, read via rgdal?')
 	}
 	
-	x <- raster(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs=projstring)
+	# attempt could be made to decipher some of the idrisi crs descriptions
+	
+	x <- raster(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs=crs)
 
 	if (nchar(layernames) > 1) {
-		lnams <- unlist(strsplit(layernames, ':'))
+		# lnams <- unlist(strsplit(layernames, ':'))
+		lnams <- layernames
 	} else {
 		lnams <- gsub(" ", "_", extension(basename(filename), ""))
 	}
@@ -73,7 +81,7 @@
 	x@file@nodatavalue <- nodataval
 	x@data@fromdisk <- TRUE
 
-	x@file@driver <- 'IDRISI'
+	x@file@driver <- idformat
     return(x)
 }
 

@@ -10,11 +10,11 @@
 #include "R_ext/Rdynload.h"
 
 
-SEXP focal_sum(SEXP d, SEXP w, SEXP dim, SEXP rmNA, SEXP NAonly) {
+SEXP focal_sum(SEXP d, SEXP w, SEXP dim, SEXP rmNA, SEXP NAonly, SEXP domean) {
 
 	R_len_t i, j, k, q, p;
 	SEXP val;
-	int nrow, ncol, n;
+	int nrow, ncol, n, bemean;
 	double *xd, *xval, *xw, a;
 
 
@@ -35,6 +35,7 @@ SEXP focal_sum(SEXP d, SEXP w, SEXP dim, SEXP rmNA, SEXP NAonly) {
 
 	nrow = INTEGER(dim)[0];
 	ncol = INTEGER(dim)[1];
+	bemean = INTEGER(domean)[0];
 	n = nrow * ncol;
 	PROTECT( val = allocVector(REALSXP, n) );
 	PROTECT(d = coerceVector(d, REALSXP));
@@ -79,6 +80,8 @@ SEXP focal_sum(SEXP d, SEXP w, SEXP dim, SEXP rmNA, SEXP NAonly) {
 						}
 						if (p==0) {
 							xval[i] = R_NaReal;
+						} else if (bemean) {
+							xval[i] = xval[i] / p;
 						}
 					}
 				}
@@ -116,7 +119,9 @@ SEXP focal_sum(SEXP d, SEXP w, SEXP dim, SEXP rmNA, SEXP NAonly) {
 					}
 					if (p==0) {
 						xval[i] = R_NaReal;
-					}
+					} else if (bemean) {
+						xval[i] = xval[i] / p;
+					}			
 				}
 			}
 			
@@ -144,6 +149,10 @@ SEXP focal_sum(SEXP d, SEXP w, SEXP dim, SEXP rmNA, SEXP NAonly) {
 						q++;
 					}
 				}
+				
+				if (bemean) {
+					xval[i] = xval[i] / q;
+				}			
 			}
 		}
 		// last rows

@@ -13,22 +13,22 @@
 	}
 	nbands <- as.integer(nbands)
 	band <- as.integer(band)
-	
+
 	if (length(band) == 1) {
 		band <- rep(band, length(files))
 	} else {
 		stopifnot(length(files == length(band)))
 	}
-	
-	r@data@haveminmax <- FALSE 
+
+	r@data@haveminmax <- FALSE
 	r@file@nbands <- nbands[1]
 	r@data@band <- band[1]
-	
-	ln <- extension(basename(files), '')
+
+	ln <- extension(basename(unlist(files)), '')
 	s <- stack(r)
-	s@layers <- sapply(1:length(files), 
-			function(i){ 
-				r@file@name <- files[i]
+	s@layers <- sapply(1:length(files),
+			function(i){
+				r@file@name <- files[[i]]
 				r@file@nbands <- nbands[i]
 				r@data@band <- band[i]
 				r@data@names <- ln[i]
@@ -49,10 +49,10 @@
 }
 
 
- 
+
 .stackFromBrick <- function(b, bands=NULL) {
-		
-	
+
+
 	nbands <- nlayers(b)
 	if (is.null(bands)) {
 		bands <- 1:nbands
@@ -69,11 +69,11 @@
 	if (inMemory(b)) {
 		r <- b[[ bands[1] ]]
 		s <- stack(r)
-		
+
 		if (length(bands) > 1) {
 
 			if (havemnmx) {
-				s@layers <- sapply( bands, function(i) { 
+				s@layers <- sapply( bands, function(i) {
 						r@data@values <- b@data@values[,i]
 						r@data@names <- ln[i]
 						r@data@min <- mn[i]
@@ -81,25 +81,25 @@
 						r
 						})
 			} else {
-				s@layers <- sapply(bands, function(i){ 
-						r@data@values <- b@data@values[,i]					
+				s@layers <- sapply(bands, function(i){
+						r@data@values <- b@data@values[,i]
 						r@data@names <- ln[i]
 						r
 						})
 			}
 		}
 		return(s)
-		
-	}
-	
 
-	
+	}
+
+
+
 	r <- raster(b, bands[1])
 	s <- stack(r)
 	if (length(bands) > 1) {
-		
+
 		if (havemnmx) {
-			s@layers <- sapply(bands, function(i){ 
+			s@layers <- sapply(bands, function(i){
 					r@data@band <- i
 					r@data@names <- ln[i]
 					r@data@min <- mn[i]
@@ -107,7 +107,7 @@
 					r
 					})
 		} else {
-			s@layers <- sapply(bands, function(i){ 
+			s@layers <- sapply(bands, function(i){
 					r@data@band <-  i
 					r@data@names <- ln[i]
 					r
