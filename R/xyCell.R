@@ -97,20 +97,20 @@ xyFromCell <- function(object, cell, spatial=FALSE) {
 		xy <- object@rotation@transfun( 
 			cbind(colFromCell(object, cell), rowFromCell(object, cell)) 
 		)
-		colnames(xy) <- c("x", "y")	
+		
 	} else {
-		xy <- matrix(data = NA, ncol=2, nrow=length(cell))
-		colnames(xy) <- c("x", "y")	
+		xy <- matrix(data=NA, ncol=2, nrow=length(cell))
 		xy[,1] <- .xFromCol(object, .colFromCell(object, cell))
 		xy[,2] <- .yFromRow(object, .rowFromCell(object, cell))
+		xy[cell < 1 | cell > ncell(object), ] <- NA
 	}
+	colnames(xy) <- c("x", "y")	
+
 	if (spatial) {
-		xy <- SpatialPoints(xy, projection(object, asText=FALSE))
+		xy <- SpatialPoints(na.omit(xy), projection(object, asText=FALSE))
 	}
 	return(xy)
-}  
-	
-
+}
 	
 	
 if (!isGeneric("coordinates")) {
@@ -128,7 +128,7 @@ setMethod('coordinates', signature(obj='Raster'),
 
 yFromCell <- function(object, cell) {
 	if (rotated(object)) {
-		xy <- object@rotation@transfun(xy)
+		xy <- xyFromCell(object, cell)
 		return(xy[,2])
 	} else {
 		rows <- rowFromCell(object, cell)
@@ -138,7 +138,7 @@ yFromCell <- function(object, cell) {
 	
 xFromCell <- function(object, cell) {
 	if (rotated(object)) {
-		xy <- object@rotation@transfun(xy)
+		xy <- xyFromCell(object, cell)
 		return(xy[,1])
 	} else {
 		cols <- colFromCell(object, cell)

@@ -123,7 +123,7 @@
 
 
 .rasterObjectFromCDF <- function(filename, varname='', band=NA, type='RasterLayer', lvar=3, level=0, 
-                        warn=TRUE, dims=1:3, ...) {
+                        warn=TRUE, dims=1:3, crs=NULL, ...) {
 
 	ncdf4 <- .NCDFversion4()
 	
@@ -144,7 +144,7 @@
 	
 	# assuming "CF-1.0"
 	
-	zvar <- raster:::.varName(nc, varname, warn=warn)
+	zvar <- .varName(nc, varname, warn=warn)
 	# datatype <- .getRasterDTypeFromCDF( nc$var[[zvar]]$prec )
 	dim3 <- dims[3]
 	ndims <- nc$var[[zvar]]$ndims
@@ -184,7 +184,7 @@
 	xx <- nc$var[[zvar]]$dim[[dims[1]]]$vals
 	rs <- xx[-length(xx)] - xx[-1]
 	
-	if (! isTRUE ( all.equal( min(rs), max(rs), tolerance=0.025, scale=min(rs) ) ) ) {
+	if (! isTRUE ( all.equal( min(rs), max(rs), tolerance=0.025, scale=abs(min(rs)) ) ) ) {
 		stop('cells are not equally spaced; perhaps consider using these data as points') 
 	}
 	
@@ -195,7 +195,7 @@
 	
 	yy <- nc$var[[zvar]]$dim[[dims[2]]]$vals
 	rs <- yy[-length(yy)] - yy[-1]
-	if (! isTRUE ( all.equal( min(rs), max(rs), tolerance=0.025, scale= min(rs)) ) ) {
+	if (! isTRUE ( all.equal( min(rs), max(rs), tolerance=0.025, scale= abs(min(rs))) ) ) {
 		stop('cells are not equally spaced; you should extract values as points') }
 	yrange <- c(min(yy), max(yy))
 	resy <- (yrange[2] - yrange[1]) / (nrows-1)
@@ -213,7 +213,7 @@
 	long_name <- zvar
 	unit <- ''
 	
-	crs <- NA
+	proj <- NA
 	if (ncdf4) {
 		a <- ncdf4::ncatt_get(nc, zvar, "long_name")
 		if (a$hasatt) { long_name <- a$value }
@@ -223,7 +223,7 @@
 		if ( a$hasatt ) { 
 			gridmap  <- a$value 
 			atts <- ncdf4::ncatt_get(nc, gridmap)
-			try(crs <- .getCRSfromGridMap4(atts), silent=TRUE)
+			try(proj <- .getCRSfromGridMap4(atts), silent=TRUE)
 		} else {
 			a <- ncdf4::ncatt_get(nc, zvar, "projection_format")
 			if ( a$hasatt ) { 
@@ -231,7 +231,7 @@
 				if (isTRUE(projection_format == "PROJ.4")) {
 					a <- ncdf4::ncatt_get(nc, zvar, "projection")
 					if ( a$hasatt ) { 
-						crs <- a$value 
+						proj <- a$value 
 					}
 				}
 			}
@@ -248,15 +248,17 @@
 
 		a <- att.get.ncdf(nc, zvar, "grid_mapping")
 		if ( a$hasatt ) { 
-			try(crs <- .getCRSfromGridMap3(nc, a$value), silent=TRUE)
+			try(proj <- .getCRSfromGridMap3(nc, a$value), silent=TRUE)
 		} else {
 			a <- att.get.ncdf(nc, zvar, "projection")
-			if ( a$hasatt ) { projection  <- a$value }
-			a <- att.get.ncdf(nc, zvar, "projection_format")
 			if ( a$hasatt ) { 
-				projection_format  <- a$value 
-				if (isTRUE(projection_format == "PROJ.4")) {
-					crs <- projection
+				projection  <- a$value 
+				a <- att.get.ncdf(nc, zvar, "projection_format")
+				if ( a$hasatt ) { 
+					projection_format  <- a$value 
+					if (isTRUE(projection_format == "PROJ.4")) {
+						proj <- projection
+					}
 				}
 			}
 		}
@@ -264,13 +266,17 @@
 		natest2 <- att.get.ncdf(nc, zvar, "missing_value")		
 	}
 
-	if (is.na(crs)) {
+	if (is.na(proj)) {
 		if (((tolower(substr(nc$var[[zvar]]$dim[[dims[1]]]$name, 1, 3)) == 'lon')  &
 		    ( tolower(substr(nc$var[[zvar]]$dim[[dims[2]]]$name, 1, 3)) == 'lat' ) ) | 
 		    ( xrange[1] < -181 | xrange[2] > 181 | yrange[1] < -91 | yrange[2] > 91 )) {
-				crs <- '+proj=longlat +datum=WGS84'
+				proj <- '+proj=longlat +datum=WGS84'
 		}
 	} 
+		
+		
+	crs <- .getProj(proj, crs)
+		
 		
 	if (type == 'RasterLayer') {
 		r <- raster(xmn=xrange[1], xmx=xrange[2], ymn=yrange[1], ymx=yrange[2], ncols=ncols, nrows=nrows, crs=crs)
@@ -348,6 +354,8 @@
 		r@data@max <- rep(-Inf, r@file@nbands)
 		try( names(r) <- as.character(r@z[[1]]), silent=TRUE )
 	}
+	
+
 	
 	return(r)
 }

@@ -15,6 +15,8 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 		.raster(..., name=name, download=download, path=path)
 	} else if (name=='worldclim') {
 		.worldclim(..., download=download, path=path)
+	} else if (name=='CMIP5') {
+		.cmip5(..., download=download, path=path)
 	} else if (name=='ISO3') {
 		.ISO()[,c(2,1)]
 	} else if (name=='countries') {
@@ -29,6 +31,9 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 	fn <- paste(tempfile(), '.download', sep='')
 	res <- download.file(url=aurl, destfile=fn, method="auto", quiet = FALSE, mode = "wb", cacheOK = TRUE)
 	if (res == 0) {
+		w <- getOption('warn')
+		on.exit(options('warn' = w))
+		options('warn'=-1) 
 		if (! file.rename(fn, filename) ) { 
 			# rename failed, perhaps because fn and filename refer to different devices
 			file.copy(fn, filename)
@@ -106,10 +111,11 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 	filename <- paste(path, country, '_adm', level, ".RData", sep="")
 	if (!file.exists(filename)) {
 		if (download) {
-			theurl <- paste("http://gadm.org/data/rda/", country, '_adm', level, ".RData", sep="")
+			theurl <- paste("http://biogeo.ucdavis.edu/data/gadm2/R/", country, '_adm', level, ".RData", sep="")
 			.download(theurl, filename)
-			if (!file.exists(filename))
-				{ cat("\nCould not download file -- perhaps it does not exist \n") }
+			if (!file.exists(filename))	{ 
+				cat("\nCould not download file -- perhaps it does not exist \n") 
+			}
 		} else {
 			cat("\nFile not available locally. Use 'download = TRUE'\n")
 		}
@@ -124,25 +130,16 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 
 
 
-.countries <- function(download, path, old=FALSE) {
+.countries <- function(download, path, ...) {
 #	if (!file.exists(path)) {  dir.create(path, recursive=T)  }
-
-	if (old) {
-		filename <- paste(path, 'countries_old.RData', sep="")
-	} else {
-		filename <- paste(path, 'countries.RData', sep="")
-	}
-#	theurl <- paste("http://www.r-gis.org/rgis/data/adm/", country, '_adm', level, ".RData", sep="")
+	filename <- paste(path, 'countries.RData', sep="")
 	if (!file.exists(filename)) {
 		if (download) {
-			if (old) {
-				theurl <- paste("http://diva-gis.org/data/misc/countries_old.RData", sep="")
-			} else {
-				theurl <- paste("http://diva-gis.org/data/misc/countries.RData", sep="")			
-			}
+			theurl <- paste("http://biogeo.ucdavis.edu/data/diva/misc/countries.RData", sep="")
 			.download(theurl, filename)
-			if (!file.exists(filename))
-				{ cat("\nCould not download file -- perhaps it does not exist \n") }
+			if (!file.exists(filename)) {
+				cat("\nCould not download file -- perhaps it does not exist \n") 
+			}
 		} else {
 			cat("\nFile not available locally. Use 'download = TRUE'\n")
 		}
@@ -154,6 +151,64 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 	} 
 }
 
+
+.cmip5 <- function(var, model, rcp, year, res, lon, lat, path, download=TRUE) {
+	if (!res %in% c(2.5, 5, 10)) {
+		stop('resolution should be one of: 2.5, 5, 10')
+	}
+	if (res==2.5) { res <- '2-5' }
+	var <- tolower(var[1])
+	vars <- c('tmin', 'tmax', 'prec', 'bio')
+	stopifnot(var %in% vars)
+	var <- c('tn', 'tx', 'pr', 'bi')[match(var, vars)]
+	
+	model <- toupper(model)
+	models <- c('AC', 'BC', 'CC', 'CE', 'CN', 'GF', 'GD', 'GS', 'HD', 'HG', 'HE', 'IN', 'IP', 'MI', 'MR', 'MC', 'MP', 'MG', 'NO')
+	stopifnot(model %in% models)
+	
+	rcps <- c(26, 45, 60, 85)
+	stopifnot(rcp %in% rcps)
+	stopifnot(year %in% c(50, 70))
+	
+	m <- matrix(c(0,1,1,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,0,1,0,1,1,1,0,0,1,1,1,1,0,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1), ncol=4)
+	i <- m[which(model==models), which(rcp==rcps)]
+	if (!i) {
+		warning('this combination of rcp and model is not available')
+		return(invisible(NULL))
+	}
+	
+	path <- paste(path, '/cmip5/', res, 'm/', sep='')
+	dir.create(path, recursive=TRUE, showWarnings=FALSE)
+
+	zip <- tolower(paste(model, rcp, var, year, '.zip', sep=''))
+	theurl <- paste('http://biogeo.ucdavis.edu/data/climate/cmip5/', res, 'm/', zip, sep='')
+
+	zipfile <- paste(path, zip, sep='')
+	if (var == 'bi') {
+		n <- 19
+	} else {
+		n <- 12
+	}
+	tifs <- paste(extension(zip, ''), 1:n, '.tif', sep='')
+	files <- paste(path, tifs, sep='')
+	fc <- sum(file.exists(files))
+	if (fc < n) {
+		if (!file.exists(zipfile)) {
+			if (download) {
+				.download(theurl, zipfile)
+				if (!file.exists(zipfile))	{ 
+					cat("\n Could not download file -- perhaps it does not exist \n") 
+				}
+			} else {
+				cat("\nFile not available locally. Use 'download = TRUE'\n")
+			}
+		}	
+		unzip(zipfile, exdir=dirname(zipfile))
+	}
+	stack(paste(path, tifs, sep=''))
+}
+
+#.cmip5(var='prec', model='BC', rcp=26, year=50, res=10, path=getwd())
 
 
 .worldclim <- function(var, res, lon, lat, path, download=TRUE) {
@@ -233,8 +288,8 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 
 .raster <- function(country, name, mask=TRUE, path, download, keepzip=FALSE, ...) {
 
-	country <- raster:::.getCountry(country)
-	path <- raster:::.getDataPath(path)
+	country <- .getCountry(country)
+	path <- .getDataPath(path)
 	if (mask) {
 		mskname <- '_msk_'
 		mskpath <- 'msk_'
@@ -243,16 +298,13 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 		mskpath <- ''		
 	}
 	filename <- paste(path, country, mskname, name, ".grd", sep="")
-	# theurl <- paste("http://www.r-gis.org/rgis/data/adm/", country, '_adm', level, ".RData", sep="")
-
-	# http://diva-gis.org/data/msk_alt/MEX_msk_alt.zip
 	if (!file.exists(filename)) {
 		zipfilename <- filename
 		extension(zipfilename) <- '.zip'
 		if (!file.exists(zipfilename)) {
 			if (download) {
-				theurl <- paste("http://diva-gis.org/data/", mskpath, name, "/", country, mskname, name, ".zip", sep="")
-				raster:::.download(theurl, zipfilename)
+				theurl <- paste("http://biogeo.ucdavis.edu/data/diva/", mskpath, name, "/", country, mskname, name, ".zip", sep="")
+				.download(theurl, zipfilename)
 				if (!file.exists(zipfilename))	{ 
 					cat("\nCould not download file -- perhaps it does not exist \n") 
 				}

@@ -138,8 +138,8 @@
 	}
 	
 	rstr <- raster(x)
-	if (projection(lns) != "NA") {
-		projection(rstr) = projection(lns)
+	if (!is.na(projection(lns))) {
+		projection(rstr) <- projection(lns)
 	}
 	
 	if (inherits(lns, 'SpatialPolygons')) {

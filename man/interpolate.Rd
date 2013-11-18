@@ -12,16 +12,17 @@ Make a RasterLayer with interpolated values using a fitted model object of class
 }
 
 \usage{
-\S4method{interpolate}{Raster}(object, model, filename="", fun=predict, 
-    xyOnly=TRUE, ext=NULL, const=NULL, index=1, na.rm=TRUE, debug.level=1, ...)
+\S4method{interpolate}{Raster}(object, model, filename="", fun=predict, xyOnly=TRUE,
+   xyNames=c('x', 'y'), ext=NULL, const=NULL, index=1, na.rm=TRUE, debug.level=1, ...)
 }
 
 \arguments{
 \item{object}{Raster* object}
-\item{model}{Fitted model object}
-\item{filename}{Output filename (optional)}
+\item{model}{model object}
+\item{filename}{character. Output filename (optional)}
 \item{fun}{function. Default value is 'predict', but can be replaced with e.g. 'predict.se' (depending on the class of the model object)}
-\item{xyOnly}{Logical. If \code{TRUE}, values of the Raster* object are not considered as co-variables; and only x and y (longitude and latitude) are used. This should match the model}
+\item{xyOnly}{logical. If \code{TRUE}, values of the Raster* object are not considered as co-variables; and only x and y (longitude and latitude) are used. This should match the model}
+\item{xyNames}{character. variable names that the model uses for the spatial coordinates. E.g., \code{c('longitude', 'latitude')}}
 \item{ext}{Extent object to limit the prediction to a sub-region of \code{x}}
 \item{const}{data.frame. Can be used to add a constant for which there is no Raster object for model predictions. This is particulary useful if the constant is a character-like factor value}
 \item{index}{integer. To select the column if 'predict.model' returns a matrix with multiple columns}

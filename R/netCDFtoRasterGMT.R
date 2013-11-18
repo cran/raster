@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 .rasterObjectFromCDF_GMT <- function(nc, ncdf4) {
-#	ncdf4 <- raster:::.NCDFversion4()
+#	ncdf4 <- .NCDFversion4()
 	if (ncdf4) {
 		options(rasterNCDF4 = TRUE)
 #		nc <- ncdf4::nc_open(filename)
@@ -28,7 +28,7 @@
 		sp <- get.var.ncdf(nc, "spacing", 1)
 	} 
 	zvar = 'z'
-	#datatype <- raster:::.getRasterDTypeFromCDF( nc$var[[zvar]]$prec )
+	#datatype <- .getRasterDTypeFromCDF( nc$var[[zvar]]$prec )
 	#ncell <- nc$var[[zvar]]$dim[[1]]$len
 	#stopifnot(prod(dims) == ncell)
 

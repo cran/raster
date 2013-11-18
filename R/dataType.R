@@ -88,10 +88,10 @@
 		} else if (size == '1') {
 			if (signed) {
 				x@file@datanotation <- 'INT1S'
-				x@file@nodatavalue <- -128
+				x@file@nodatavalue <- as.double(NA)  # no default NA value
 			} else {
 				x@file@datanotation <- 'INT1U'
-				x@file@nodatavalue <- 255
+				x@file@nodatavalue <- as.double(NA)  # no default NA value
 			}
 #		} else if (size == '8') {
 #			x@file@nodatavalue <- -9223372036854775808

@@ -11,7 +11,7 @@
 		datatype <- dtype
 	} else {
 		dsize <- dataSize(dtype)
-		dtype <- raster:::.shortDataType(dtype)
+		dtype <- .shortDataType(dtype)
 		if (any(dtype == 'FLT')) {
 			dsize <- max(dsize[dtype=='FLT'])
 			datatype <- paste('FLT', dsize, 'S', sep='')

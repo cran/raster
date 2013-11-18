@@ -59,7 +59,7 @@ function(x, y, ..., tolerance=0.05, filename="", overlap=TRUE, ext=NULL) {
 	dotargs$filename <- filename
 	
 	nl <- max(unique(sapply(x, nlayers)))
-	bb <- raster:::.unionExtent(x)
+	bb <- .unionExtent(x)
 	if (nl > 1) {
 		out <- brick(x[[1]], values=FALSE, nl=nl)
 	} else {

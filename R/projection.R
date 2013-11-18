@@ -4,6 +4,24 @@
 # Licence GPL v3
 
 
+
+if (!isGeneric("crs")) {
+	setGeneric("crs", function(x, ...)
+		standardGeneric("crs"))
+}	
+
+setMethod("crs", signature('ANY'), 
+	function(x, asText=TRUE, ...) {
+		projection(x, asText=asText)
+	}
+)
+
+
+'crs<-' <- function(x, value) {
+	projection(x) <- value
+	x
+}
+
 'projection<-' <- function(x, value) {
 
 	if (class(value)=="CRS") {
@@ -30,6 +48,7 @@
 }
 
 
+
 projection <- function(x, asText=TRUE) {
 
 	if (extends(class(x), "BasicRaster")) { 
@@ -44,7 +63,7 @@ projection <- function(x, asText=TRUE) {
 		}
 	} else if (class(x) != "CRS") { 
 		if (asText) { 
-			return("NA")
+			return(NA)
 		} else { 
 			return(NA) 
 		}  
@@ -52,7 +71,7 @@ projection <- function(x, asText=TRUE) {
 	
 	if (asText) {
 		if (is.na(x@projargs)) { 
-			return("NA") 
+			return(NA) 
 		} else {
 			return(trim(x@projargs))
 		}	

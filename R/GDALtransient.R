@@ -9,6 +9,7 @@
 
 
 
+
 .getGDALtransient <- function(r, filename, options, NAflag, ...)  {
 
 	.GDALnodatavalue <- function(x){
@@ -72,12 +73,11 @@
  
 	for (i in 1:nbands) {
 		b <- new("GDALRasterBand", transient, i)
-		rgdal:::.gd_SetNoDataValue(b, NAflag)
+		.gd_SetNoDataValue <- eval(parse(text="rgdal:::.gd_SetNoDataValue"))
+		.gd_SetNoDataValue(b, NAflag)
 		if (hasCT) {
-			try( .SetRasterColorTable. <- rgdal:::.gd_SetRasterColorTable, silent=TRUE)
-			if (exists(".SetRasterColorTable.")) {
-				rgdal:::.gd_SetRasterColorTable(b, t(col2rgb(ct, TRUE)))
-			}
+			.gd_SetRasterColorTable <- eval(parse(text="rgdal:::.gd_SetRasterColorTable"))
+			.gd_SetRasterColorTable(b, t(col2rgb(ct, TRUE)))
 		}
 	}
 
@@ -91,9 +91,11 @@
 		gt <- c(xmin(r), xres(r), 0, ymax(r), 0, -yres(r))
 		#}
 	}
-	
-	rgdal:::.gd_SetGeoTransform(transient, gt)
-	rgdal:::.gd_SetProject(transient, projection(r))
+
+	.gd_SetGeoTransform <- eval(parse(text="rgdal:::.gd_SetGeoTransform"))
+	.gd_SetGeoTransform(transient, gt)
+	.gd_SetProject <- eval(parse(text="rgdal:::.gd_SetProject"))	
+	.gd_SetProject(transient, projection(r))
 		
 	if (is.null(options)) {
 		options <- ''

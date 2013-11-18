@@ -4,13 +4,29 @@ support for RasterQuad (4 dimensional) objects
 add equivalent to "subsWithNA" to reclassify
 move resample (bilenear interp. (and add other options)) and rasterize/(lines, polygons) to C
 function for affine transformation
+add AMSR-E ice products and other raw binary products
+add orientation fixes for AVISO currents and similar NetCDFs lacking metadata on the internal CRS
 
---- 8-July-2014, version: 2.1-45
+--- development version
+
+--- 16-November-2013, version: 2.1-65
+added support to read NSIDC sea ice concentration binary files (southern and northern hemisphere)
+	http://nsidc.org/data/polar_stereo/ps_grids.html and
+	http://nsidc.org/data/nsidc-0051.html
+	https://stat.ethz.ch/pipermail/r-sig-geo/2011-October/013067.html
+bug fix in stack with with input file name vector and quick=TRUE 
+bug fix: mask with maskvalue that is not NA ignored "inverse=TRUE"
+new function "validNames" (to avoid using raster:::.goodNames by another package)
+new function "flowPath"
+fixed wrong axes labels with plot( ,gridded=TRUE). Reported by Agustin Lobo
+'edge' renamed to 'edges' to avoid name overlap with igraph::edge. edge is still available for now (with a warning) for backwards compatibility
+	
+--- 8-July-2013, version: 2.1-45
 bug fix in focal with pad=TRUE (introduced in previous version)
 bug fix in terrain/roughness (problem reported by Michael Sumner)
-crop failed with a single-layer RasterBrick (reported by Michael Sumner)
+rotate failed with a single-layer RasterBrick (reported by Michael Sumner)
 
---- 2-July-2014, version: 2.1-41
+--- 2-July-2013, version: 2.1-41
 changes in namespace (disaggregate) to keep compatibility with 'sp'
 bug fix in aggregate with expand=FALSE, reported by Koen Hufkens
 focal sometimes returns NaN where a NA would be easier to interpret (and use in subsequent calls to focal( , NAonly=T). Trying to return NA now in such cases (reported by Marcia Macedo).
@@ -18,7 +34,7 @@ focal sometimes returns NaN where a NA would be easier to interpret (and use in 
 --- 14-June-2013, version: 2.1-37
 new argument 'values' to 'trim' to allow trimming for other values that NA
 new functions (for Raster objects) which.min and which.max
-layers can now be refered to with a $ (as in lists and data.frames)
+layers can now be referred to with a $ (as in lists and data.frames)
 coercion methods to Extent and RasterLayer from GridTopology contributed by Michael Sumner
 bug fixes in crosstab and in zonal, reported by Josh Perlman
 bug fix in terrain. flowdir was not computed when used together with other options (bug and fix reported by Etienne Racine)

@@ -106,7 +106,7 @@ adjacent <- function(x, cells, directions=4, pairs=TRUE, target=NULL, sorted=FAL
 	if (include) directions <- directions + 1
 	
 	d <- matrix(d, ncol=2)
-	if (raster:::.isGlobalLonLat(x)) {
+	if (.isGlobalLonLat(x)) {
 		# normalize longitude to -180..180
 		d[,1] <- (d[,1] + 180) %% 360 - 180
 	}

@@ -49,6 +49,8 @@ hdr <- function(x, format, extension='.wld') {
 		.writeHdrSAGA(x)
 	} else 	if (type=="IDRISI") {
 		.writeHdrIDRISI(x)
+	} else 	if (type=="IDRISIold") {
+		.writeHdrIDRISI(x, old=TRUE)
 	} else 	if (type=="PRJ") {
 		.writeHdrPRJ(x, ESRI=TRUE)
 	} else {

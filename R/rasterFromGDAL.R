@@ -23,7 +23,7 @@
 
 
 
-.rasterFromGDAL <- function(filename, band, type, sub=0, RAT=TRUE, silent=TRUE, warn=TRUE, ...) {	
+.rasterFromGDAL <- function(filename, band, type, sub=0, RAT=TRUE, silent=TRUE, warn=TRUE, crs=NULL, ...) {	
 
 	.requireRgdal() 
 	
@@ -149,8 +149,8 @@
 		r@rotation <- rot
 	}	
 
-	projection(r) <- attr(gdalinfo, 'projection')
-
+	projection(r) <- .getProj(attr(gdalinfo, 'projection'), crs)
+	
 #   	r@history[[1]] <- mdata
 
 		

@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-.rasterFromSAGAFile <- function(filename) {
+.rasterFromSAGAFile <- function(filename, crs=NULL, ...) {
 	valuesfile <- .setFileExtensionValues(filename, "SAGA")
 	if (!file.exists(valuesfile )){
 		stop( paste(valuesfile,  "does not exist"))
@@ -17,7 +17,6 @@
 
 	byteorder <- .Platform$endian
 	ncellvals <- -9
-	projstring <- ""
 	nodataval <- -Inf
 	layernames <- ''
 	toptobottom <- FALSE
@@ -46,7 +45,9 @@
 	yx <- yn + nr * cellsize - (0.5 * cellsize)
 	yn <- yn - (0.5 * cellsize)
 	
-	x <- raster(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs=projstring)
+
+	
+	x <- raster(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs=crs)
 
 	x@file@offset <- dfoffset
 	x@file@toptobottom <- toptobottom

@@ -6,6 +6,7 @@
 
 projectExtent <- function(object, crs) {
 	.requireRgdal()
+	.gd_transform <- eval(parse(text="rgdal:::.gd_transform"))
 
 	object <- raster(object)
 	dm <- oldm <- dim(object)
@@ -71,7 +72,7 @@ projectExtent <- function(object, crs) {
 	
 	}
 	
-	res <- rgdal:::.gd_transform( projfrom, projto, nrow(xy), xy[,1], xy[,2] )
+	res <- .gd_transform( projfrom, projto, nrow(xy), xy[,1], xy[,2] )
 	
 	x <- res[[1]]
 	y <- res[[2]]
@@ -99,7 +100,8 @@ projectExtent <- function(object, crs) {
 }
 
 
-.computeRes <- function(raster, crs) {
+.computeRes <- function(raster, crs, gd_transform) {
+
 	x <- xmin(raster) + 0.5 * (xmax(raster) - xmin(raster))
 	y <- ymin(raster) + 0.5 * (ymax(raster) - ymin(raster))
 	res <- res(raster)
@@ -108,12 +110,12 @@ projectExtent <- function(object, crs) {
 	y1 <- y - 0.5 * res[2]
 	y2 <- y + 0.5 * res[2]
 	xy <- cbind(c(x1, x2, x, x), c(y, y, y1, y2))
-	pXY <- rgdal:::.gd_transform( projection(raster), crs, nrow(xy), xy[,1], xy[,2] )
+	pXY <- gd_transform( projection(raster), crs, nrow(xy), xy[,1], xy[,2] )
 	pXY <- cbind(pXY[[1]], pXY[[2]])
 	out <- c((pXY[2,1] - pXY[1,1]), (pXY[4,2] - pXY[3,2]))
 	if (any(is.na(res))) {
 		if (isLonLat(raster)) {
-			out <- pointDistance(cbind(x1, y1), cbind(x2, y2), longlat=TRUE)
+			out <- pointDistance(cbind(x1, y1), cbind(x2, y2), lonlat=TRUE)
 			out <- c(out, out)
 		} else {
 			out <- res
@@ -137,9 +139,11 @@ projectExtent <- function(object, crs) {
 projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE, over=FALSE, filename="", ...)  {
 
 	.requireRgdal()
+	.gd_transform <- eval(parse(text="rgdal:::.gd_transform"))
+	
 	validObject( projection(from, asText=FALSE) )
 	projfrom <- projection(from)
-	if (projfrom == "NA") { 
+	if (is.na(projfrom)) { 
 		stop("input projection is NA") 
 	}
 	lonlat <- isLonLat(projfrom)
@@ -151,7 +155,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 		projto <- projection(crs)
 		to <- projectExtent(from, projto)
 		if (missing(res)) {
-			res <- .computeRes(from, projto)
+			res <- .computeRes(from, projto, .gd_transform)
 		}
 		res(to) <- res
 		projection(to) <- crs
@@ -173,10 +177,8 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 		to <- extend(to, e)
 	} else {
 		projto <- projection(to)
-		if (projto == "NA") { 
-			if (missing(crs) | is.na(crs) | crs == 'NA' ) {
-				stop("output projection is NA") 
-			} 
+		if (is.na(projto)) { 
+			stop("output projection is NA") 
 		} 
 		
 		e <- extent( projectExtent(from, projto) )
@@ -264,7 +266,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 			v <- matrix(nrow=length(cells), ncol=nl)
 			if (nrow(xy) > 0) {
 				ci <- match(cellFromXY(to, xy), cells)
-				xy <- rgdal:::.gd_transform(projto_int, projfrom, nrow(xy), xy[,1], xy[,2])
+				xy <- .gd_transform(projto_int, projfrom, nrow(xy), xy[,1], xy[,2])
 				xy <- cbind(xy[[1]], xy[[2]])
 				v[ci, ] <- .xyValues(from, xy, method=method)
 			} 
@@ -336,7 +338,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 			xy <- coordinates(to) 
 			xy <- subset(xy, xy[,1] > e@xmin & xy[,1] < e@xmax)
 			cells <- cellFromXY(to, xy)
-			xy <- rgdal:::.gd_transform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
+			xy <- .gd_transform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
 			xy <- cbind(xy[[1]], xy[[2]])
 			to[cells] <- .xyValues(from, xy, method=method)
 			
@@ -356,7 +358,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 				xy <- subset(xy, xy[,1] > e@xmin & xy[,1] < e@xmax)
 				if (nrow(xy) > 0) {
 					ci <- match(cellFromXY(to, xy), cells)
-					xy <- rgdal:::.gd_transform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
+					xy <- .gd_transform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
 					xy <- cbind(xy[[1]], xy[[2]])
 					v <- matrix(nrow=length(cells), ncol=nl)
 					v[ci, ] <- .xyValues(from, xy, method=method)

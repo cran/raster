@@ -50,7 +50,11 @@ function(x, mask, filename="", inverse=FALSE, maskvalue=NA, ...){
 				x[is.na(mask)] <- NA
 			}
 		} else {
-			x[mask==maskvalue] <- NA
+			if (inverse) {
+				x[mask != maskvalue] <- NA
+			} else {
+				x[mask == maskvalue] <- NA			
+			}
 		}
 		x <- setValues(out, x)
 		if (filename != '') {
@@ -87,13 +91,23 @@ function(x, mask, filename="", inverse=FALSE, maskvalue=NA, ...){
 				} 
 			}
 		} else {
-			for (i in 1:tr$n) {
-				v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
-				m <- getValues( mask, row=tr$row[i], nrows=tr$nrows[i] )
-				v[m==maskvalue] <- NA
-				out <- writeValues(out, v, tr$row[i])
-				pbStep(pb, i)
-			} 		
+			if (inverse) {
+				for (i in 1:tr$n) {
+					v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
+					m <- getValues( mask, row=tr$row[i], nrows=tr$nrows[i] )
+					v[m != maskvalue] <- NA
+					out <- writeValues(out, v, tr$row[i])
+					pbStep(pb, i)
+				} 		
+			} else {
+				for (i in 1:tr$n) {
+					v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
+					m <- getValues( mask, row=tr$row[i], nrows=tr$nrows[i] )
+					v[m==maskvalue] <- NA
+					out <- writeValues(out, v, tr$row[i])
+					pbStep(pb, i)
+				} 
+			}
 		}
 		pbClose(pb)
 		out <- writeStop(out)
@@ -122,7 +136,11 @@ function(x, mask, filename="", inverse=FALSE, maskvalue=NA, ...){
 				x[is.na(getValues(mask)), ] <- NA
 			}
 		} else {
-			x[getValues(mask)==maskvalue, ] <- NA
+			if (inverse) {
+				x[getValues(mask) != maskvalue, ] <- NA
+			} else {
+				x[getValues(mask) == maskvalue, ] <- NA			
+			}
 		}
 		out <- setValues(out, x)
 		if (filename != '') {
@@ -159,13 +177,23 @@ function(x, mask, filename="", inverse=FALSE, maskvalue=NA, ...){
 				} 
 			}
 		} else {
-			for (i in 1:tr$n) {
-				v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
-				m <- getValues( mask, row=tr$row[i], nrows=tr$nrows[i] )
-				v[m==maskvalue, ] <- NA
-				out <- writeValues(out, v, tr$row[i])
-				pbStep(pb, i)
-			} 
+			if (inverse) {
+				for (i in 1:tr$n) {
+					v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
+					m <- getValues( mask, row=tr$row[i], nrows=tr$nrows[i] )
+					v[m != maskvalue, ] <- NA
+					out <- writeValues(out, v, tr$row[i])
+					pbStep(pb, i)
+				} 
+			} else {
+				for (i in 1:tr$n) {
+					v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
+					m <- getValues( mask, row=tr$row[i], nrows=tr$nrows[i] )
+					v[m == maskvalue, ] <- NA
+					out <- writeValues(out, v, tr$row[i])
+					pbStep(pb, i)
+				} 
+			}
 		}
 
 		pbClose(pb)
@@ -195,7 +223,11 @@ function(x, mask, filename="", inverse=FALSE, maskvalue=NA, ...){
 				x[is.na(getValues(mask))] <- NA
 			}
 		} else {
-			x[getValues(mask)==maskvalue] <- NA
+			if (inverse) {
+				x[getValues(mask)!=maskvalue] <- NA
+			} else {
+				x[getValues(mask)==maskvalue] <- NA			
+			}
 		}
 		out <- setValues(out, x)
 		if (filename != '') {
@@ -231,14 +263,25 @@ function(x, mask, filename="", inverse=FALSE, maskvalue=NA, ...){
 				} 
 			}
 		} else {
-			for (i in 1:tr$n) {
-				v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
-				v <- matrix(rep(v, nlayers(out)), ncol=nlayers(out))
-				m <- getValues( mask, row=tr$row[i], nrows=tr$nrows[i] )
-				v[m==maskvalue] <- NA
-				out <- writeValues(out, v, tr$row[i])
-				pbStep(pb, i)
-			} 
+			if (inverse) {
+				for (i in 1:tr$n) {
+					v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
+					v <- matrix(rep(v, nlayers(out)), ncol=nlayers(out))
+					m <- getValues( mask, row=tr$row[i], nrows=tr$nrows[i] )
+					v[m != maskvalue] <- NA
+					out <- writeValues(out, v, tr$row[i])
+					pbStep(pb, i)
+				} 
+			} else {
+				for (i in 1:tr$n) {
+					v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
+					v <- matrix(rep(v, nlayers(out)), ncol=nlayers(out))
+					m <- getValues( mask, row=tr$row[i], nrows=tr$nrows[i] )
+					v[m == maskvalue] <- NA
+					out <- writeValues(out, v, tr$row[i])
+					pbStep(pb, i)
+				} 
+			}
 		}
 
 		pbClose(pb)
@@ -281,7 +324,11 @@ function(x, mask, filename="", inverse=FALSE, maskvalue=NA, ...){
 				x[is.na(getValues(mask))] <- NA
 			}
 		} else {
-			x[getValues(mask) == maskvalue] <- NA
+			if (inverse) {
+				x[getValues(mask) != maskvalue] <- NA
+			} else {
+				x[getValues(mask) == maskvalue] <- NA			
+			}
 		}
 		out <- setValues(out, x)
 		if (filename != '') {
@@ -317,13 +364,23 @@ function(x, mask, filename="", inverse=FALSE, maskvalue=NA, ...){
 				} 
 			}
 		} else {
-			for (i in 1:tr$n) {
-				v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
-				m <- getValues( mask, row=tr$row[i], nrows=tr$nrows[i] )
-				v[m == maskvalue] <- NA
-				out <- writeValues(out, v, tr$row[i])
-				pbStep(pb, i)
-			} 		
+			if (inverse) {
+				for (i in 1:tr$n) {
+					v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
+					m <- getValues( mask, row=tr$row[i], nrows=tr$nrows[i] )
+					v[m != maskvalue] <- NA
+					out <- writeValues(out, v, tr$row[i])
+					pbStep(pb, i)
+				} 
+			} else {
+				for (i in 1:tr$n) {
+					v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
+					m <- getValues( mask, row=tr$row[i], nrows=tr$nrows[i] )
+					v[m == maskvalue] <- NA
+					out <- writeValues(out, v, tr$row[i])
+					pbStep(pb, i)
+				} 	
+			}
 		}
 			
 		pbClose(pb)

@@ -8,7 +8,7 @@
 
 \description{
 crop returns a geographic subset of an object as specified by an Extent object (or object from which an extent object can be extracted/created). 
-If \code{x} is a Raster* object, the Extent is aligned to \code{x}. Areas included in \code{y} but outside the extent of \code{x} are ignored (see \code{\link{extend}} if you want a larger area)
+If \code{x} is a Raster* object, the Extent is aligned to \code{x}. Areas included in \code{y} but outside the extent of \code{x} are ignored (see \code{\link{extend}} if you want a larger area).
 }
 
 \usage{
@@ -25,6 +25,8 @@ If \code{x} is a Raster* object, the Extent is aligned to \code{x}. Areas includ
   \item{datatype}{Character. Output \code{\link{dataType}} (by default it is the same as the input datatype)}  
   \item{...}{Additional arguments as for \code{\link{writeRaster}}}  
 }
+
+\note{values within the extent of a Raster* object can be set to NA with \link[raster]{mask}}
 
 \details{
 Objects from which an Extent can be extracted/created include RasterLayer, RasterStack, RasterBrick and objects of the Spatial* classes from the sp package. You can check this with the \code{\link[raster]{extent}} function. New Extent objects can be also be created with function \code{\link{extent}} and \code{\link{drawExtent}} by clicking twice on a plot.

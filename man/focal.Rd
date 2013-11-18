@@ -11,13 +11,13 @@ Calculate focal ("moving window") values for the neighborhood of focal cells usi
 }
 
 \usage{
-\S4method{focal}{RasterLayer}(x, w=3, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=FALSE, ...) 
+\S4method{focal}{RasterLayer}(x, w, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=FALSE, ...) 
 }
 
 \arguments{
 \item{x}{RasterLayer}
   
-\item{w}{matrix of weights (the moving window), e.g. a 3 by 3 matrix; see Details. The matrix can also be expressed as the number of cells in a single direction or in two directions from the focal cell, in which case the weights are all set to 1. I.e. \code{w=3} refers to a 3 by 3 matrix: 2 cells at each side of the focal cell, queen's case, 9 cells in total. This is equivalent to \code{w=c(3,3)}. You can also specify a rectangular neighborhood, e.g. \code{w=c(3,5)}; but the sides must be odd numbers. If you need even sides, you can add a column or row with weights of zero.}
+\item{w}{matrix of weights (the moving window), e.g. a 3 by 3 matrix with values 1; see Details. The matrix does not need to be square, but the sides must be odd numbers. If you need even sides, you can add a column or row with weights of zero}
   
 \item{fun}{function (optional). The function fun should take multiple numbers, and return a single number. For example mean, modal, min or max. It should also accept a \code{na.rm} argument (or ignore it, e.g. as one of the 'dots' arguments. For example, \code{length} will fail, but \code{function(x, ...){na.omit(length(x))}} works. }
 
@@ -39,7 +39,7 @@ Calculate focal ("moving window") values for the neighborhood of focal cells usi
 
 \code{a <- focal(x, w=matrix(1/9, nc=3, nc=3))}
 
-\code{b <- focal(x, w=3, fun=mean)}
+\code{b <- focal(x, w=matrix(1,3,3), fun=mean)}
 
 There is, however, a difference if \code{NA} values are considered. One can use the \code{na.rm=TRUE} option which may make sense when using a function like \code{mean}. However, the results would be wrong when using a weights matrix.
 

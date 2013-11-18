@@ -12,7 +12,8 @@
 			extension <- user
 		}
 	}
-	d <- paste(dirname(tempdir()), '/R_raster_tmp/', extension, '/', sep="")
+#	d <- paste(dirname(tempdir()), '/R_raster_tmp/', extension, '/', sep="")
+    d <- paste(dirname(tempdir()), '/R_raster_', extension, '/', sep="")	
 	return(d)
 }
 

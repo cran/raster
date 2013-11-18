@@ -6,37 +6,37 @@
 
 .rasterObjectFromFile <- function(x, band=1, objecttype='RasterLayer', native=FALSE, silent=TRUE, offset=NULL, ncdf=FALSE, ...) {
 	x <- trim(x)
-	if (x=='' | x=='.') { # etc? 
+	if (x=='' | x=='.') { # etc?
 		stop('provide a valid filename')
 	}
 
 	# fix for opendap https://r-forge.r-project.org/forum/message.php?msg_id=5015
 	start <- tolower(substr(x, 1, 4))
-	if (start != 'http' & start != 'ftp') {	
+	if (start != 'http' & start != 'ftp') {
 		y <- NULL
 		try( y <- normalizePath( x, mustWork=TRUE), silent=TRUE )
 		if (! is.null(y)) {
 			x <- y
 		}
 	}
-	
-	fileext <- toupper(extension(x)) 
+
+	fileext <- toupper(extension(x))
 
 	if (fileext %in% c(".GRD", ".GRI")) {
 		grifile <- .setFileExtensionValues(x, 'raster')
 		grdfile <- .setFileExtensionHeader(x, 'raster')
 		if ( file.exists( grdfile) & file.exists( grifile)) {
-			return ( .rasterFromRasterFile(grdfile, band=band, objecttype) )
-		} 
+			return ( .rasterFromRasterFile(grdfile, band=band, objecttype, ...) )
+		}
 	}
-	
-	
+
+
 	if (! file.exists(x) ) {
 		if (extension(x) == '') {
 			grifile <- .setFileExtensionValues(x, 'raster')
 			grdfile <- .setFileExtensionHeader(x, 'raster')
 			if ( file.exists( grdfile) & file.exists( grifile)) {
-				return ( .rasterFromRasterFile(grdfile, band=band, objecttype) )
+				return ( .rasterFromRasterFile(grdfile, band=band, objecttype, ...) )
 			} else {
 				# stop('file: ', x, ' does not exist')
 			}
@@ -60,41 +60,59 @@
 	}
 
 	if ( fileext == ".BIG" | fileext == ".BRD") {
-		return( .rasterFromRasterFile(x, band=band, objecttype, driver='big.matrix') )
+		return( .rasterFromRasterFile(x, band=band, objecttype, driver='big.matrix', ...) )
 	}
-	
+
 	if (!is.null(offset)) {
-		return ( .rasterFromASCIIFile(x, offset) )
+		return ( .rasterFromASCIIFile(x, offset, ...) )
 	}
 	if(!native) {
-		if (! .requireRgdal(FALSE) )  { 
-			native <- TRUE 
-		}  
+		if (! .requireRgdal(FALSE) )  {
+			native <- TRUE
+		}
 	}
 	if (native) {
 		if ( fileext == ".ASC" ) {
-			return ( .rasterFromASCIIFile(x) )
+			return ( .rasterFromASCIIFile(x, ...) )
 		}
 		if ( fileext %in% c(".BIL", ".BIP", ".BSQ")) {
 			return ( .rasterFromGenericFile(x, type=objecttype, ...) )
 		}
 		if ( fileext %in% c(".RST", ".RDC") ) {
 #  not tested much
-			return ( .rasterFromIDRISIFile(x) )
+			return ( .rasterFromIDRISIFile(x, ...) )
+		}
+		if ( fileext %in% c(".DOC", ".IMG") ) {
+#  not tested much
+			return ( .rasterFromIDRISIFile(x, old=TRUE, ...))
 		}
 		if ( fileext %in% c(".SGRD", ".SDAT") ) {
 # barely tested
-			return ( .rasterFromSAGAFile(x) )
+			return ( .rasterFromSAGAFile(x, ...) )
 		}
-		
+
 	}
 	
+	# old IDRISI format
+	if ( fileext == ".DOC" ) {
+		if (file.exists( extension(x, '.img'))) {
+			return( .rasterFromIDRISIFile(x, old=TRUE, ...))
+		}
+	} 
+
 	if ( fileext %in% c(".SGRD", ".SDAT") ) {
-		r <-  .rasterFromSAGAFile(x) 
+		r <-  .rasterFromSAGAFile(x, ...)
 		if (r@file@toptobottom | r@data@gain != 1) {
 			return(r)
 		} # else use gdal
 	}
+
+    ## MDSumner, NSIDC data
+    if (fileext %in% c(".BIN")) {
+        r <- .rasterFromNSIDCFile(x)
+        if (!is.null(r)) return(r)  ## otherwise continue to GDAL
+    }
+
 
 	if (! .requireRgdal(FALSE) ) {
 		stop("Cannot create RasterLayer object from this file; perhaps you need to install rgdal first")

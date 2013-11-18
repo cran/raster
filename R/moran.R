@@ -18,11 +18,10 @@
 
 
 
-Moran <- function(x, w=3 ) {
+Moran <- function(x, w=matrix(1,3,3) ) {
 
 	z <- x - cellStats(x, mean)
-	w <- raster:::.getFilter(w)
-	wZiZj <- focal(z, w=w, na.rm=TRUE, pad=TRUE)
+	wZiZj <- focal(z, w=w, fun='sum', na.rm=TRUE, pad=TRUE)
 	wZiZj <- overlay(wZiZj, z, fun=function(x,y){ x * y })
 	wZiZj <- cellStats(wZiZj, sum)
 	z2 <- cellStats(z*z, sum)
@@ -30,7 +29,7 @@ Moran <- function(x, w=3 ) {
 	# weights
 	if (sum(! unique(w) %in% 0:1) > 0) {
 		zz <- calc(z, fun=function(x) ifelse(is.na(x), NA ,1))
-		W <- focal( zz, w=w, na.rm=TRUE, pad=TRUE) 
+		W <- focal( zz, w=w, fun='sum', na.rm=TRUE, pad=TRUE) 
 	} else {
 		w2 <- w
 		w2[w2==0] <- NA
@@ -42,11 +41,11 @@ Moran <- function(x, w=3 ) {
 }
 
 
-MoranLocal <- function(x, w=3) { 
+MoranLocal <- function(x, w=matrix(1,3,3)) { 
 	
 	z  <- x - cellStats(x, mean) 
 	#weights
-	w <- .getFilter(w)
+	#w <- .getFilter(w)
 	if (sum(! unique(w) %in% 0:1) > 0) {
 		zz <- calc(z, fun=function(x) ifelse(is.na(x), NA ,1))
 		W  <- focal( zz, w=w, na.rm=TRUE, pad=TRUE)		

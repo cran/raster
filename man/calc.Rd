@@ -33,14 +33,32 @@ See (\code{\link[raster]{overlay}}) to use functions that refer to specific laye
   \item{fun}{function}
   \item{filename}{character. Output filename (optional)}
   \item{na.rm}{Remove \code{NA} values, if supported by 'fun' (only relevant when summarizing a multilayer Raster object into a RasterLayer)}
-  \item{forcefun}{logical. For debugging. Force \code{calc} to not use fun with apply}
-  \item{forceapply}{logical. For debugging. Force \code{calc} to use fun with apply}
+  \item{forcefun}{logical. Force \code{calc} to not use fun with apply; for use with ambiguous functions and for debugging (see Details)}
+  \item{forceapply}{logical. Force \code{calc} to use fun with apply; for use with ambiguous functions and for debugging (see Details)}
   \item{...}{Additional arguments as for \code{\link{writeRaster}}}    
 }
 
 \value{
 a Raster* object
 }
+
+\details{
+The intent of some functions can be ambiguous. Consider:
+
+\code{library(raster)}
+
+\code{r <- raster(volcano)}
+
+\code{calc(r, function(x) x * 1:10)}
+
+In this case, the cell values are multiplied in a vectorized manner and a single layer is returned where the first cell has been multiplied with one, the second cell with two, the 11th cell with one again, and so on. But perhaps the intent was to create 10 new layers (\code{x*1, x*2, ...})? This can be achieved by using argument \code{forceapply=TRUE} 
+
+
+\code{calc(r, function(x) x * 1:10), forceapply=TRUE}
+
+}
+
+
 
 \note{
 For large objects \code{calc} will compute values chunk by chunk. This means that for the result of \code{fun} to be  correct it should not depend on having access to _all_ values at once. For example, to scale the values of a Raster* object by subtracting its mean value (for each layer), you would _not_ do, for Raster object \code{x}: 

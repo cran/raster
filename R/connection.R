@@ -22,8 +22,11 @@ setMethod('readStart', signature(x='Raster'),
 
 setMethod('readStart', signature(x='RasterStack'), 
 	function(x, ...) {
-		for (i in 1:nlayers(x)) {
-			x@layers[[i]] <- readStart(x@layers[[i]], con.check=103, ...)
+		d <- which(sapply(x@layers, fromDisk))
+		if (length(d) > 0) {
+			for (i in d) {
+				x@layers[[i]] <- readStart(x@layers[[i]], con.check=103, ...)
+			}
 		}
 		x
 	}
@@ -77,8 +80,11 @@ setMethod('readStop', signature(x='Raster'),
 
 setMethod('readStop', signature(x='RasterStack'), 
 	function(x, ...) {
-		for (i in 1:nlayers(x)) {
-			x@layers[[i]] <- readStop(x@layers[[i]], ...)
+		d <- which(sapply(x@layers, fromDisk))
+		if (length(d) > 0) {
+			for (i in d) {
+				x@layers[[i]] <- readStop(x@layers[[i]], ...)
+			}
 		}
 		x
 	}

@@ -282,7 +282,7 @@ setMethod('raster', signature(x='RasterBrick'),
 
 
 setMethod('raster', signature(x='Extent'), 
-	function(x, nrows=10, ncols=10, crs=NA) {
+	function(x, nrows=10, ncols=10, crs=NA, ...) {
 		nrows = as.integer(max(1, round(nrows)))
 		ncols = as.integer(max(1, round(ncols)))
 		r <- new("RasterLayer", extent=x, ncols=ncols, nrows=nrows)
@@ -293,8 +293,8 @@ setMethod('raster', signature(x='Extent'),
 
 
 setMethod('raster', signature(x='Spatial'), 
-	function(x){
-		r <- raster(extent(x))
+	function(x, ...){
+		r <- raster(extent(x), ...)
 		projection(r) <- x@proj4string
 		r
 	}
@@ -313,7 +313,9 @@ setMethod('raster', signature(x='SpatialGrid'),
 				if (is.numeric(layer)) {
 					if (layer > 0) {
 						dindex <- max(1, min(dim(x@data)[2], layer))
-						if (dindex != layer) { warning(paste("layer was changed to", dindex))}
+						if (dindex != layer) {
+							warning(paste("layer was changed to", dindex))
+						}
 						layer <- dindex
 					}
 					names(r) <- colnames(x@data)[layer]

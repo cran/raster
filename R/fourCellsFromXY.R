@@ -31,7 +31,7 @@ fourCellsFromXY <- function(object, xy, duplicates=TRUE) {
 	
 	
 	poscol <- cols + pos[,1]
-	if (raster:::.isGlobalLonLat(r)) {
+	if (.isGlobalLonLat(r)) {
 		poscol[poscol==0] <- ncol(r)
 		poscol[poscol==ncol(r)+1] <- 1
 	} else {

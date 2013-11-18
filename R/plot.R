@@ -31,7 +31,7 @@ setMethod("plot", signature(x='Raster', y='ANY'),
 		}
 		
 		if (nl == 1) {
-			if (inherits(x, 'RasterBrick')) {
+			if (inherits(x, 'RasterStackBrick')) {
 				x <- raster(x, 1)
 			}
 			facvar <- 0

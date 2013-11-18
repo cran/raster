@@ -26,8 +26,8 @@
 		bufy <- buffer / 111319.5
 		ymx <- pmin(90, xy[,2] + bufy)
 		ymn <- pmax(-90, xy[,2] - bufy)
-		bufx1 <- buffer / pointDistance(cbind(0, ymx), cbind(1, ymx), longlat=TRUE)
-		bufx2 <- buffer / pointDistance(cbind(0, ymn), cbind(1, ymn), longlat=TRUE)
+		bufx1 <- buffer / pointDistance(cbind(0, ymx), cbind(1, ymx), lonlat=TRUE)
+		bufx2 <- buffer / pointDistance(cbind(0, ymn), cbind(1, ymn), lonlat=TRUE)
 		bufx <- pmax(bufx1, bufx2)
 
 		cn <- colFromX(obj, xy[,1]-bufx)
@@ -48,9 +48,9 @@
 				cell <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
 				coords <- xyFromCell(obj, cell)
 				if (cellnumbers) {
-					pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), cell, value)
+					pd <- cbind(pointDistance(xy[i,], coords, lonlat=TRUE), cell, value)
 				} else {
-					pd <- cbind(pointDistance(xy[i,], coords, longlat=TRUE), value)
+					pd <- cbind(pointDistance(xy[i,], coords, lonlat=TRUE), value)
 				}
 				if (nrow(pd) > 1) {
 					v <- pd[pd[,1] <= buffer[i], -1]
@@ -96,9 +96,9 @@
 					cell <- cellFromRowColCombine(obj, rn:rx, cn:cx)
 					coords <- xyFromCell(obj, cell)
 					if (cellnumbers) {
-						pd <- cbind(pointDistance(xy, coords, longlat=TRUE), cell, value)
+						pd <- cbind(pointDistance(xy, coords, lonlat=TRUE), cell, value)
 					} else {
-						pd <- cbind(pointDistance(xy, coords, longlat=TRUE), value)
+						pd <- cbind(pointDistance(xy, coords, lonlat=TRUE), value)
 					}
 					if (nrow(pd) > 1) {
 						pd <- pd[pd[,1] <= buffer[i], -1]
@@ -135,9 +135,9 @@
 					cell <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
 					coords <- xyFromCell(obj, cell)
 					if (cellnumbers) {
-						pd <- cbind(pointDistance(xy[i,], coords, longlat=FALSE), cell, value)
+						pd <- cbind(pointDistance(xy[i,], coords, lonlat=FALSE), cell, value)
 					} else {
-						pd <- cbind(pointDistance(xy[i,], coords, longlat=FALSE), value)
+						pd <- cbind(pointDistance(xy[i,], coords, lonlat=FALSE), value)
 					}
 					if (nrow(pd) > 1) {
 						cv[[i]] <- pd[pd[,1] <= buffer[i], -1]

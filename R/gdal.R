@@ -15,11 +15,11 @@
 	if (! isTRUE(y) ) {
 		
 		if (x) {
-			pkg.info <- utils::packageDescription('rgdal') 
-			test <- utils::compareVersion(pkg.info[["Version"]], "0.7-21") > 0
-			if (!test) {
-				stop('you use rgdal version: ', pkg.info[["Version"]], '\nYou need version 0.7-22 or higher')
-			}
+			#pkg.info <- utils::packageDescription('rgdal') 
+			#test <- utils::compareVersion(pkg.info[["Version"]], "0.7-21") > 0
+			#if (!test) {
+			#	stop('you use rgdal version: ', pkg.info[["Version"]], '\nYou need version 0.7-22 or higher')
+			#}
 			options('rasterGDALLoaded'=TRUE)
 			return(TRUE)
 			
@@ -29,6 +29,7 @@
 			return(FALSE)
 		}
 	}
+	
 	
 	return(TRUE)
 }

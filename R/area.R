@@ -71,9 +71,9 @@ setMethod('area', signature(x='RasterLayer'),
 			out <- writeStart(out, filename=filename, ...)
 		}
 
-		dy <- pointDistance(c(0,0),c(0, yres(out) ), longlat=TRUE)
+		dy <- pointDistance(c(0,0),c(0, yres(out) ), lonlat=TRUE)
 		y <- yFromRow(out, 1:nrow(out))
-		#dx <- pointDistance(cbind(0, y), cbind(xres(out), y), longlat=TRUE)
+		#dx <- pointDistance(cbind(0, y), cbind(xres(out), y), lonlat=TRUE)
 		dx <- .haversine(0, y, xres(out), y)
 
 		tr <- blockSize(out)
@@ -147,9 +147,9 @@ setMethod('area', signature(x='RasterStackBrick'),
 			out <- writeStart(out, filename=filename, ...)
 		}
 
-		dy <- pointDistance(c(0,0),c(0, yres(out) ), longlat=TRUE)
+		dy <- pointDistance(c(0,0),c(0, yres(out) ), lonlat=TRUE)
 		y <- yFromRow(out, 1:nrow(out))
-		dx <- pointDistance(cbind(0, y), cbind(xres(out), y), longlat=TRUE)
+		dx <- pointDistance(cbind(0, y), cbind(xres(out), y), lonlat=TRUE)
 
 		if (.doCluster() ) {
 			cl <- getCluster()

@@ -8,7 +8,7 @@ if (!isGeneric("interpolate")) {
 
 setMethod('interpolate', signature(object='Raster'), 
 	
-	function(object, model, filename="", fun=predict, xyOnly=TRUE, ext=NULL, const=NULL, index=1, na.rm=TRUE, debug.level=1, ...) {
+	function(object, model, filename="", fun=predict, xyOnly=TRUE, xyNames=c('x','y'), ext=NULL, const=NULL, index=1, na.rm=TRUE, debug.level=1, ...) {
 		
 		predrast <- raster(object)
 		filename <- trim(filename)
@@ -16,8 +16,8 @@ setMethod('interpolate', signature(object='Raster'),
 				
 		if (!is.null(ext)) {
 			predrast <- crop(predrast, extent(ext))
-			firstrow <- rowFromY(object, yFromRow(out, 1))
-			firstcol <- colFromX(object, xFromCol(out, 1))
+			firstrow <- rowFromY(object, yFromRow(predrast, 1))
+			firstcol <- colFromX(object, xFromCol(predrast, 1))
 		} else {
 			firstrow <- 1
 			firstcol <- 1
@@ -45,9 +45,6 @@ setMethod('interpolate', signature(object='Raster'),
 			filename <- rasterTmpFile()	
 		} 
 
-		if (filename == '') {
-			v <- matrix(NA, ncol=nrow(predrast), nrow=ncol(predrast))
-		} 
 
 		if (! xyOnly) {
 			if (inherits(object, 'RasterStack')) {
@@ -81,18 +78,20 @@ setMethod('interpolate', signature(object='Raster'),
 		
 
 		tr <- blockSize(predrast, n=nlayers(object)+3)
-		ablock <- 1:(ncol(object) * tr$nrows[1])
+		ablock <- 1:(ncol(predrast) * tr$nrows[1])
 		napred <- rep(NA, ncol(predrast)*tr$nrows[1])
 				
 		pb <- pbCreate(tr$n, label='interpolate',  ... )			
 		
-		if (filename != '') {
+		if (filename == '') {
+			v <- matrix(NA, ncol=nrow(predrast), nrow=ncol(predrast))
+		} else {
 			predrast <- writeStart(predrast, filename=filename, ... )
 		}
 
 		for (i in 1:tr$n) {
 			if (i==tr$n) { 
-				ablock <- 1:(ncol(object) * tr$nrows[i])
+				ablock <- 1:(ncol(predrast) * tr$nrows[i])
 				napred <- rep(NA, ncol(predrast) * tr$nrows[i])
 			}
 
@@ -119,7 +118,8 @@ setMethod('interpolate', signature(object='Raster'),
 				}
 			} 
 			
-
+			colnames(blockvals)[1:2] <- xyNames[1:2]
+			
 			if (gstatmod) { 
 				if (sp) { 
 					row.names(p) <- 1:nrow(p)

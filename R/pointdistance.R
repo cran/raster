@@ -74,34 +74,38 @@
 }
 
 
-pointDistance <- function (p1, p2, longlat,  ...) {
-
-	type <- list(...)$type
-	if (!is.null(type)) {
-		stop("'type' is a depracated argument. Use 'longlat'")
-	}		
-	if (missing(longlat)) {
-		stop('you must provide a "longlat" argument (TRUE/FALSE)')
+pointDistance <- function (p1, p2, lonlat, allpairs=FALSE, ...) {
+	
+	longlat <- list(...)$longlat
+	if (!is.null(longlat)) {
+		lonlat <- longlat
 	}
-	stopifnot(is.logical(longlat)) 
+	if (missing(lonlat)) {
+		stop('you must provide a "lonlat" argument (TRUE/FALSE)')
+	}
+	stopifnot(is.logical(lonlat)) 
 	
 	p1 <- .pointsToMatrix(p1)
 	if (missing(p2)) {
-		return(.distm(p1, longlat))
+		return(.distm(p1, lonlat))
 	}
 	
 	p2 <- .pointsToMatrix(p2)
 	
-	if(length(p1[,1]) != length(p2[,1])) {
-		if(length(p1[,1]) > 1 & length(p2[,1]) > 1) {
-			return(.distm2(p1, p2, longlat))
+	if (nrow(p1) != nrow(p2)) {
+		allpairs <- TRUE
+	}
+	
+	if (allpairs) {
+		if(nrow(p1) > 1 & nrow(p2) > 1) {
+			return(.distm2(p1, p2, lonlat))
 		}
 	}
 	
-	if (! longlat ) {
-		return( .planedist(p1[,1], p1[,2], p2[,1], p2[,2]) )
-	} else { 
+	if (lonlat ) {
 		return( .haversine(p1[,1], p1[,2], p2[,1], p2[,2], r=6378137) )
+	} else { 
+		return( .planedist(p1[,1], p1[,2], p2[,1], p2[,2]) )
 	}
 }
 

@@ -30,10 +30,10 @@ stackApply <- function(x, indices, fun, filename='', na.rm=TRUE, ...) {
 	filename <- trim(filename)
 
 	rowcalc <- FALSE
-	fun <- raster:::.makeTextFun(fun)
+	fun <- .makeTextFun(fun)
 	if (class(fun) == 'character') { 
 		rowcalc <- TRUE 
-		fun <- raster:::.getRowFun(fun)
+		fun <- .getRowFun(fun)
 	} 
 	
 	if (canProcessInMemory(out, nl+nlout)) {

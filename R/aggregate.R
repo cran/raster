@@ -61,7 +61,7 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 
 	if (! hasValues(x) ) {	return(out) }	
 
-	fun <- raster:::.makeTextFun(fun)
+	fun <- .makeTextFun(fun)
 	if (class(fun) == 'character') { 
 		op <- as.integer(match(fun, c('sum', 'mean', 'min', 'max')) - 1)
 	} else {
@@ -134,7 +134,7 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 
 		if (class(fun) == 'character') { 
 			rowcalc <- TRUE 
-			fun <- raster:::.getColFun(fun)
+			fun <- .getColFun(fun)
 		} else { 
 			rowcalc <- FALSE 
 		}
@@ -362,4 +362,4 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 #r <- raster(nc=9, nr=9)
 #r <- raster()
 #r[] = 1:ncell(r)
-#raster:::.aggtest(r, 5, 'min', doC=T)
+#.aggtest(r, 5, 'min', doC=T)

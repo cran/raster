@@ -13,17 +13,13 @@ if (!isGeneric('setMinMax')) {
 	
 setMethod('setMinMax', signature(x='RasterLayer'), 
 function(x) {
-	clear <- FALSE
+	w <- getOption('warn')
+	on.exit(options('warn' = w))
+	options('warn'=-1) 
 	
 	if ( inMemory(x) ) {
-		vals <- na.omit(x@data@values) 
-		if (length(vals) > 0) {
-			x@data@min <- min(vals)
-			x@data@max <- max(vals)
-		} else {
-			x@data@min <- NA
-			x@data@max <- NA
-		}
+		x@data@min <- min(x@data@values, na.rm=TRUE)
+		x@data@max <- max(x@data@values, na.rm=TRUE)
 	} else {
 		if (! fromDisk(x)) {
 			stop('no values associated with this RasterLayer')
@@ -31,14 +27,14 @@ function(x) {
 		x@data@min <- Inf
 		x@data@max <- -Inf
 		tr <- blockSize(x)
-		pb <- pbCreate(tr$n)			
+		pb <- pbCreate(tr$n)	
+		x <- readStart(x)	
 		for (i in 1:tr$n) {
-			v <- na.omit ( getValues(x, row=tr$row[i], nrows=tr$nrows[i]) )
-			if (length(v) > 0) {
-				x@data@min <- min(x@data@min, min(v))
-				x@data@max <- max(x@data@max, max(v))
-			}	
+			v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i]) 
+			x@data@min <- min(x@data@min, min(v, na.rm=TRUE))
+			x@data@max <- max(x@data@max, max(v, na.rm=TRUE))
 		}
+		x <- readStop(x)
 	}
 	
 #	if (datatype == 'logical') {
@@ -54,6 +50,10 @@ function(x) {
 
 setMethod('setMinMax', signature(x='RasterBrick'), 
 function(x) {
+	w <- getOption('warn')
+	on.exit(options('warn' = w))
+	options('warn'=-1) 
+	
 	inMem <- inMemory(x)
 
 	if ( ! inMem ) {
@@ -70,7 +70,7 @@ function(x) {
 	
 	if ( inMem ) {
 	
-		rge <- apply( getValues(x), 2, FUN=function(x){ range(x, na.rm=TRUE) } )
+		rge <- apply( getValues(x), 2, FUN=function(x){ c(min(x, na.rm=TRUE), max(x, na.rm=TRUE)) } )
 		x@data@min <- as.vector(rge[1,])
 		x@data@max <- as.vector(rge[2,])
 		
@@ -81,6 +81,7 @@ function(x) {
 		minmax <- rbind(minv, maxv)
 		
 		tr <- blockSize(x)
+		x <- readStart(x)	
 		for (i in 1:tr$n) {		
 			rsd <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
 			minmax[1,] <- apply(rbind(rsd, minmax[1,]), 2, min, na.rm=TRUE)

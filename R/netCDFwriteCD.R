@@ -88,7 +88,7 @@
 		ncdf4::ncatt_put(nc, varname, 'long_name', longname)
 
 		proj <- projection(x) 
-		if (proj != "NA") { 
+		if (! is.na(proj)) { 
 			ncdf4::ncatt_put(nc, varname, 'projection', proj)
 			ncdf4::ncatt_put(nc, varname, 'projection_format', 'PROJ.4')
 		}
@@ -151,7 +151,7 @@
 		att.put.ncdf(nc, varname, 'long_name', longname)
 
 		proj <- projection(x) 
-		if (proj != "NA") { 
+		if (! is.na(proj)) { 
 			att.put.ncdf(nc, varname, 'projection', proj)
 			att.put.ncdf(nc, varname, 'projection_format', 'PROJ.4')
 		}
@@ -302,7 +302,7 @@
 #r = raster(ncol=10, nrow=5)
 #r[] = c(1:49, NA)
 #names(r) = 'hello world'
-#a = raster:::.rasterSaveAsNetCDF(r, 'test.nc', overwrite=TRUE)
+#a = .rasterSaveAsNetCDF(r, 'test.nc', overwrite=TRUE)
 #plot(a)
 #print(a)
 

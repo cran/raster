@@ -55,7 +55,7 @@
 	} else {
 		cat('<GeoTransform>', e@xmin, ', ', r[1], ', ', rotation, ', ', e@ymax, ', ', 0.0, ', ', -1*r[2], '</GeoTransform>\n', sep = "", file = f)
 	}
-	if (prj != "NA") {
+	if (! is.na(prj) ) {
 		cat('<SRS>', prj ,'</SRS>\n', sep = "", file = f)
 	}
 	
