@@ -27,13 +27,13 @@ numeric (cell numbers)
 
 \examples{
 data(volcano)
-vol <- raster(volcano, xmn=2667400, xmx=2668010, ymn=6478700, ymx=6479570, crs="+init=epsg:27200")
-fd <- terrain(vol, opt = "flowdir")
+v <- raster(volcano, xmn=2667400, xmx=2668010, ymn=6478700, ymx=6479570, crs="+init=epsg:27200")
+fd <- terrain(v, opt = "flowdir")
 
 path <- flowPath(fd, 2407)
 xy <- xyFromCell(fd, path)
-plot(vol)
-lines(path)
+plot(v)
+lines(xy)
 }
 
 \keyword{spatial}

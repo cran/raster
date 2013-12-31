@@ -18,7 +18,7 @@ To permanently set any of these options, you can add them to \code{<your R insta
 \usage{
 rasterOptions(format, overwrite, datatype, tmpdir, tmptime, progress, 
      timer, chunksize, maxmemory, todisk, setfileext, tolerance, 
-     standardnames, depracatedwarnings, default=FALSE)		
+     standardnames, depracatedwarnings, addheader, default=FALSE)		
 }
 
 
@@ -37,6 +37,7 @@ rasterOptions(format, overwrite, datatype, tmpdir, tmptime, progress,
 \item{tolerance}{numeric. The tolerance used when comparing the origin and resolution of Raster* objects. Expressed as the fraction of a single cell. This should be a number between 0 and 0.5 }
 \item{standardnames}{logical. Default is \code{TRUE}. Should \code{\link{names}} be standardized to be syntactically valid names (using \code{\link{make.names}})}
 \item{depracatedwarnings}{logical. If \code{TRUE} (the default) a warning is generated when a depracated (obsolete) function is used}
+\item{addheader}{character. If not equal to \code{''} (the default) an additional header file is written when a raster format file (grd/gri) is written. Supported formats are as in \code{\link{hdr}}}
 
 \item{default}{logical. If \code{TRUE}, all options are set to their default values}
 }

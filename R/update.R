@@ -420,8 +420,7 @@ function(object, v, cell, band) {
 	if (setminmax) {	
 		b <- new("GDALRasterBand", gdal, band)
 		statistics <- c(object@data@min, object@data@max, NA, NA)
-		.gd_SetStatistics <- eval(parse(text="rgdal:::.gd_SetStatistics"))
-		.gd_SetStatistics(b, statistics)
+		GDALcall(b, "SetStatistics", statistics)	
 	}
 
 	return(object)

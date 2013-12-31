@@ -8,6 +8,98 @@
 setMethod('extract', signature(x='Raster', y='SpatialPolygons'), 
 function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, df=FALSE, layer, nl, factors=FALSE, sp=FALSE, ...){ 
 
+	localFun <- function(i, pp) {
+			spbb <- bbox(pp)
+			
+			if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
+				# do nothing; res[[i]] <- NULL
+			} else {
+				rc <- crop(rr, extent(pp)+addres)
+				
+				agg <- FALSE
+				if (ncell(rc) < 100) {
+					d <- pmax(ceiling(10/dim(r)[1:2]), c(1,1))
+					rc <- disaggregate(rc, d)
+					agg <- TRUE
+				}
+				if (weights) {
+					rc <- .polygonsToRaster(pp, rc, getCover=TRUE, silent=TRUE)
+					rc[rc==0] <- NA
+					xy <- rasterToPoints(rc)
+					weight <- xy[,3] / 100
+					xy <- xy[,-3,drop=FALSE]
+				} else {
+					rc <- .polygonsToRaster(pp, rc, silent=TRUE)
+					xy <- rasterToPoints(rc)[,-3,drop=FALSE]
+				}
+			
+				if (length(xy) > 0)  {  # to catch holes or very small polygons
+					if (weights) {
+						value <- .xyValues(x, xy, layer=layer, nl=nl)
+						if (cellnumbers) {
+							cell <- cellFromXY(x, xy)
+							v <- cbind(cell, value, weight)
+							if (agg) {
+								cn <- colnames(v)
+								v <- aggregate(v[,3:ncol(v)], list(v[,1], v[,2]), FUN=sum)
+								colnames(v) <- cn
+							}
+							r <- v
+						} else {		
+							v <- cbind(value, weight)						
+							if (agg) {
+								cn <- colnames(v)
+								v <- aggregate(v[,2:ncol(v)], list(v[,1,drop=FALSE]), FUN=sum)
+								colnames(v) <- cn
+							}
+							r <- v
+						}
+					} else if (cellnumbers) {
+						value <- .xyValues(x, xy, layer=layer, nl=nl)
+						cell <- cellFromXY(x, xy)
+						v <- cbind(cell, value)		
+						if (agg) {
+							cn <- colnames(v)
+							v <- aggregate(v[,2:ncol(v)], list(v[,1,drop=FALSE]), FUN=sum)
+							colnames(v) <- cn
+						}
+						r <- v
+					} else {
+						v <- .xyValues(x, xy, layer=layer, nl=nl)
+						if (agg) {
+							cell <- cellFromXY(x, xy)
+							v <- cbind(cell, v)
+							vv <- aggregate(v[,2:ncol(v)], list(v[,1,drop=FALSE]), FUN=sum)
+							if (ncol(v) > 2) {
+								colnames(vv) <- colnames(v)
+							}
+							v <- vv[,-1]
+						}
+						r <- v
+					}
+				} else if (small) {
+					ppp <- pp@polygons[[1]]@Polygons
+					ishole <- sapply(ppp, function(z)z@hole)
+					xy <- lapply(ppp, function(z)z@coords)
+					xy <- xy[!ishole]
+					if (length(xy) > 0) {
+						cell <- unique(unlist(lapply(xy, function(z) cellFromXY(x, z))))
+						value <- .cellValues(x, cell, layer=layer, nl=nl)
+						if (weights) {
+							weight=1
+							r <- cbind(cell, value, weight)
+						} else if (cellnumbers) {
+							r <- cbind(cell, value)					
+						} else {
+							r <- value
+						}
+					} # else do nothing; res[[i]] <- NULL
+			} 
+		}
+		r
+	}
+
+
 	px <- projection(x, asText=FALSE)
 	comp <- .compareCRS(px, projection(y), unknown=TRUE)
 	if (!comp) {
@@ -74,74 +166,11 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 		nodes <- min(npol, length(cl)) 
 		cat('Using cluster with', nodes, 'nodes\n')
 		flush.console()
-
-		
+	
 		clusterExport(cl, c('rsbb', 'rr', 'weights', 'addres', 'cellnumbers', 'small'), envir=environment())
-		clFun <- function(i, pp) {
-			spbb <- bbox(pp)
-		
-			if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
-				# do nothing; res[[i]] <- NULL
-			} else {
-				rc <- crop(rr, extent(pp)+addres)
-				if (weights) {
-					rc <- .polygonsToRaster(pp, rc, getCover=TRUE, silent=TRUE)
-					rc[rc==0] <- NA
-					xy <- rasterToPoints(rc)
-					weight <- xy[,3] / 100
-					xy <- xy[,-3,drop=FALSE]
-				} else {
-					rc <- .polygonsToRaster(pp, rc, silent=TRUE)
-					xy <- rasterToPoints(rc)[,-3,drop=FALSE]
-				}
-				
-				if (length(xy) > 0) { # catch very small polygons
-					r <- .xyValues(x, xy, layer=layer, nl=nl)
-					if (weights) {
-						if (cellnumbers) {
-							cell <- cellFromXY(x, xy)
-							r <- cbind(cell, r, weight)
-						} else {				
-							r <- cbind(r, weight)
-						}
-					} else if (cellnumbers) {
-						cell <- cellFromXY(x, xy)
-						r <- cbind(cell, r)						
-					} 
-				} else {
-					if (small) {
-						ppp <- pp@polygons[[1]]@Polygons
-						ishole <- sapply(ppp, function(z)z@hole)
-						xy <- lapply(ppp, function(z)z@coords)
-						xy <- xy[!ishole]
-						if (length(xy) > 0) {
-							cell <- unique(unlist(lapply(xy, function(z) cellFromXY(x, z))))
-							value <- .cellValues(x, cell, layer=layer, nl=nl)
-							if (weights) {
-								weight=0
-								if (cellnumbers) {
-									r <- cbind(cell, value, weight)
-								} else {
-									r <- cbind(value, weight)								
-								}
-							} else if (cellnumbers) {
-								r <- cbind(cell, value)					
-							} else {
-								r <- value
-							}
-						} else {
-							r <- NULL
-						}
-					} else {
-						r <- NULL
-					}
-				}
-			}
-			r
-		}
 		
         for (ni in 1:nodes) {
-			sendCall(cl[[ni]], clFun, list(ni, y[ni,]), tag=ni)
+			sendCall(cl[[ni]], localFun, list(ni, y[ni,]), tag=ni)
 		}
 		
 		for (i in 1:npol) {
@@ -152,66 +181,14 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 			res[[d$value$tag]] <- d$value$value
 			ni <- ni + 1
 			if (ni <= npol) {
-				sendCall(cl[[d$node]], clFun, list(ni, y[ni,]), tag=ni)
+				sendCall(cl[[d$node]], localFun, list(ni, y[ni,]), tag=ni)
 			}
-			pbStep(pb, i)
+			pbStep(pb, ni)
 		}
 		
 	} else {
 		for (i in 1:npol) {
-			pp <- y[i,]
-			spbb <- bbox(pp)
-		
-			if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
-				# do nothing; res[[i]] <- NULL
-			} else {
-				rc <- crop(rr, extent(pp)+addres)
-				if (weights) {
-					rc <- .polygonsToRaster(pp, rc, getCover=TRUE, silent=TRUE)
-					rc[rc==0] <- NA
-					xy <- rasterToPoints(rc)
-					weight <- xy[,3] / 100
-					xy <- xy[,-3,drop=FALSE]
-				} else {
-					rc <- .polygonsToRaster(pp, rc, silent=TRUE)
-					xy <- rasterToPoints(rc)[,-3,drop=FALSE]
-				}
-			
-				if (length(xy) > 0)  {  # catch holes or very small polygons
-					if (weights) {
-						value <- .xyValues(x, xy, layer=layer, nl=nl)
-						if (cellnumbers) {
-							cell <- cellFromXY(x, xy)
-							res[[i]] <- cbind(cell, value, weight)
-						} else {				
-							res[[i]] <- cbind(value, weight)
-						}
-					} else if (cellnumbers) {
-						value <- .xyValues(x, xy, layer=layer, nl=nl)
-						cell <- cellFromXY(x, xy)
-						res[[i]] <- cbind(cell, value)		
-					} else {
-						res[[i]] <- .xyValues(x, xy, layer=layer, nl=nl)
-					}
-				} else if (small) {
-					ppp <- pp@polygons[[1]]@Polygons
-					ishole <- sapply(ppp, function(z)z@hole)
-					xy <- lapply(ppp, function(z)z@coords)
-					xy <- xy[!ishole]
-					if (length(xy) > 0) {
-						cell <- unique(unlist(lapply(xy, function(z) cellFromXY(x, z))))
-						value <- .cellValues(x, cell, layer=layer, nl=nl)
-						if (weights) {
-							weight=0
-							res[[i]] <- cbind(cell, value, weight)
-						} else if (cellnumbers) {
-							res[[i]] <- cbind(cell, value)					
-						} else {
-							res[[i]] <- value
-						}
-					} # else do nothing; res[[i]] <- NULL
-				} 
-			}
+			res[[i]] <- localFun(i, y[i,1])
 			pbStep(pb)
 		}
 	}
@@ -306,4 +283,6 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 	res
 }
 )
+
+#extract(r, p, weights = TRUE, cellnumbers=T)
 

@@ -174,7 +174,7 @@ setMethod('as.data.frame', signature(x='SpatialLines'),
 		objlist <- list()
 		cnt <- 0
 		if (sepNA) {
-			sep <- rep(NA,4)
+			sep <- rep(NA, 4)
 			for (i in 1:nobs) {
 				nsubobj <- length(x@lines[[i]]@Lines)
 				ps <- lapply(1:nsubobj, 
@@ -211,6 +211,29 @@ setMethod('as.data.frame', signature(x='SpatialLines'),
 	}
 )
 
+
+setMethod('as.data.frame', signature(x='SpatialPoints'), 
+	function(x, row.names=NULL, optional=FALSE, xy=TRUE, ...) {
+
+		if (!xy) {
+			if (.hasSlot(x, 'data')) {
+				return( x@data )
+			} else {
+				return(NULL)
+			}
+		}
+				
+		nobj <- length(x)
+		d <- coordinates(x)
+		if (.hasSlot(x, 'data')) {
+			d <- cbind(d, x@data)
+		}
+
+		colnames(d)[1:2] <- c('x', 'y')
+		rownames(d) <- NULL
+		as.data.frame(d, row.names=row.names, optional=optional, ...)
+	}
+)
 
 
 

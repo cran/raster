@@ -18,9 +18,9 @@ setMethod('raster', signature(x='missing'),
 		}
 		if (missing(crs)) {
 			if (ext@xmin > -360.01 & ext@xmax < 360.01 & ext@ymin > -90.000001 & ext@ymax < 90.000001) { 
-				crs ="+proj=longlat +datum=WGS84"
+				crs <- "+proj=longlat +datum=WGS84"
 			} else {
-				crs=NA
+				crs <- as.character(NA)
 			}
 		}
 		r <- raster(ext, nrows=nrows, ncols=ncols, crs=crs)
@@ -58,9 +58,9 @@ setMethod('raster', signature(x='list'),
 		
 		if (missing(crs)) {
 			if (xmn > -360.1 & xmx < 360.1 & ymn > -90.1 & ymx < 90.1) { 
-				crs = "+proj=longlat +datum=WGS84"
+				crs <- "+proj=longlat +datum=WGS84"
 			} else {
-				crs = NA
+				crs <- as.character(NA)
 			}
 		} 
 		
@@ -75,6 +75,9 @@ setMethod('raster', signature(x='list'),
 
 setMethod('raster', signature(x='matrix'), 
 	function(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA, template=NULL) {
+		if (is.na(crs)) {
+			crs <- as.character(NA)
+		}	
 		if (!is.null(template)) {
 			if (inherits(template, 'Extent')) {
 				r <- raster(template, crs=crs)
@@ -92,6 +95,9 @@ setMethod('raster', signature(x='matrix'),
 
 setMethod('raster', signature(x='big.matrix'), 
 	function(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA, template=NULL) {
+		if (is.na(crs)) {
+			crs <- as.character(NA)
+		}	
 		if (!is.null(template)) {
 			if (inherits(template, 'Extent')) {
 				r <- raster(template, crs=crs)
@@ -283,8 +289,11 @@ setMethod('raster', signature(x='RasterBrick'),
 
 setMethod('raster', signature(x='Extent'), 
 	function(x, nrows=10, ncols=10, crs=NA, ...) {
-		nrows = as.integer(max(1, round(nrows)))
-		ncols = as.integer(max(1, round(ncols)))
+		if (is.na(crs)) {
+			crs <- as.character(NA)
+		}	
+		nrows <- as.integer(max(1, round(nrows)))
+		ncols <- as.integer(max(1, round(ncols)))
 		r <- new("RasterLayer", extent=x, ncols=ncols, nrows=nrows)
 		projection(r) <- crs
 		return(r)
@@ -377,9 +386,9 @@ setMethod('raster', signature(x='kasc'),
 		if (missing(crs)) {
 			e <- x@extent
 			if (e@xmin > -360.1 & e@xmax < 360.1 & e@ymin > -90.1 & e@ymax < 90.1) { 
-				crs = "+proj=longlat +datum=WGS84"
+				crs <- "+proj=longlat +datum=WGS84"
 			} else {
-				crs = NA
+				crs <- as.character(NA)
 			}
 		}
 		projection(x) <- crs
@@ -397,7 +406,7 @@ setMethod('raster', signature(x='asc'),
 			if (e@xmin > -360.1 & e@xmax < 360.1 & e@ymin > -90.1 & e@ymax < 90.1) { 
 				crs = "+proj=longlat +datum=WGS84"
 			} else {
-				crs = NA
+				crs = as.charcter(NA)
 			}
 		}
 		projection(x) <- crs
@@ -412,9 +421,9 @@ setMethod('raster', signature(x='kde'),
 		if (missing(crs)) {
 			e <- x@extent
 			if (e@xmin > -360.1 & e@xmax < 360.1 & e@ymin > -90.1 & e@ymax < 90.1) { 
-				crs = "+proj=longlat +datum=WGS84"
+				crs <- "+proj=longlat +datum=WGS84"
 			} else {
-				crs = NA
+				crs <- as.character(NA)
 			}
 		}
 		projection(x) <- crs

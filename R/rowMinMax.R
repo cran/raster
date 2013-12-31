@@ -15,13 +15,10 @@
 }
 
 .colMin <- function(x, na.rm=TRUE) {
-    code <- paste("x[",1:(NCOL(x)),",]",sep="",collapse=",")
-    code <- paste("pmin.int(",code,", na.rm =",na.rm,")")
-    return(eval(parse(text=code)))
+	.rowMin(t(x), na.rm=na.rm)
 }
 
 .colMax <- function(x, na.rm=TRUE) {
-    code <- paste("x[",1:(NCOL(x)),",]",sep="",collapse=",")
-    code <- paste("pmax.int(",code,", na.rm =",na.rm,")")
-    return(eval(parse(text=code)))
+	.rowMax(t(x), na.rm=na.rm)
 }
+

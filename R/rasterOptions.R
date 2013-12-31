@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress, timer, chunksize, maxmemory, todisk, setfileext, tolerance, standardnames, depracatedwarnings, default=FALSE) {
+rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress, timer, chunksize, maxmemory, todisk, setfileext, tolerance, standardnames, depracatedwarnings, addheader, default=FALSE) {
 	
 	
 	
@@ -134,6 +134,19 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		}
 	}
 	
+	
+	addHeader <- function(x) {
+		x <- x[1]
+		if (is.character(x)) {
+			x <- toupper(trim(x))
+			if (nchar(x) < 3) {
+				x <- ''
+			}
+			options(rasterAddHeader = x)
+		}
+	}
+	
+	
 	cnt <- 0
 	if (default) {
 		cnt <- 1
@@ -151,6 +164,7 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		options(rasterTolerance = 0.1)
 		options(rasterStandardNames = TRUE)
 		options(rasterDepracatedWarnings = TRUE)
+		options(rasterAddHeader = '')
 		v <- utils::packageDescription('raster')[["Version"]]
 #		fn <- paste(options('startup.working.directory'), '/rasterOptions_', v, sep='')
 #		if (file.exists(fn)) { file.remove(fn) }
@@ -171,6 +185,7 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 	if (!missing(tolerance)) { setTolerance(tolerance); cnt <- cnt+1 }
 	if (!missing(standardnames)) { setStandardNames(standardnames); cnt <- cnt+1 }
 	if (!missing(depracatedwarnings)) { depracatedWarnings(depracatedwarnings); cnt <- cnt+1 }
+	if (!missing(addheader)) {addHeader(addheader) ; cnt <- cnt+1 }
 
 
 	lst <- list(
@@ -187,7 +202,8 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		setfileext=.setfileext(),
 		tolerance=.tolerance(),
 		standardnames=.standardnames(),
-		depwarning=.depracatedwarnings()
+		depwarning=.depracatedwarnings(),
+		addheader=.addHeader()
 	)
 	
 	save <- FALSE
@@ -209,6 +225,7 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		oplst <- c(oplst, paste("rasterTolerance=", lst$tolerance, sep=''))
 		oplst <- c(oplst, paste("rasterStandardNames=", lst$standardnames, sep=''))
 		oplst <- c(oplst, paste("rasterDepracatedWarnings=", lst$depwarning, sep=''))
+		oplst <- c(oplst, paste("rasterAddHeader=", lst$addheader, sep=''))
 		
 		r <- try( write(unlist(oplst), fn), silent = TRUE )
 
@@ -230,6 +247,11 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		cat('tolerance     :', lst$tolerance, '\n')
 		cat('standardnames :', lst$standardnames, '\n')
 		cat('warn depracat.:', lst$depwarning, '\n')
+		if (lst$addheader == '') {
+			cat('header        : none\n')
+		} else {
+			cat('header        :', lst$addheader, '\n')
+		}
 		if (lst$todisk) {
 		   cat('todisk        : TRUE\n')
 		}
@@ -250,12 +272,22 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 
 
 
+.addHeader <- function() {
+	d <- getOption('rasterAddHeader')
+	if (is.null(d)) {
+		return( '' )
+	} else {
+		return(trim(d))
+	}
+}
+
 .depracatedwarnings <- function() {
 	d <- getOption('rasterDepracatedWarnings')
 	if (is.null(d)) {
 		return( TRUE )
-	} 
-	return(as.logical(d))
+	} else {
+		return(as.logical(d))
+	}
 }
 
 

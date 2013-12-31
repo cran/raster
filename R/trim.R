@@ -66,14 +66,15 @@ function(x, padding=0, values=NA, filename='', ...) {
 	nrl <- nr * nlayers(x)
 	ncl <- nc * nlayers(x)
 	
-
+	cnt <- 0
 	for (r in 1:nr) {
 		v <- getValues(x, r)
 		if (sum(v %in% values) < ncl) {
 			break 
 		}
+		cnt <- cnt + 1
 	}
-	if ( r == nr) { stop('only NA values found') }
+	if ( cnt == nr) { stop('only NA values found') }
 	firstrow <- min(max(r-padding, 1), nr)
 	
 	for (r in nr:1) {

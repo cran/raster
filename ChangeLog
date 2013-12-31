@@ -2,12 +2,22 @@
 focal for multi-layer objects
 support for RasterQuad (4 dimensional) objects
 add equivalent to "subsWithNA" to reclassify
-move resample (bilenear interp. (and add other options)) and rasterize/(lines, polygons) to C
+move resample (bilinear interp. (and add other options)) and rasterize/(lines, polygons) to C
 function for affine transformation
 add AMSR-E ice products and other raw binary products
 add orientation fixes for AVISO currents and similar NetCDFs lacking metadata on the internal CRS
 
---- development version
+--- 21-December-2013, version: 2.2-02
+bug fix that prevented using certain file formats that do not provide a proj4 string
+bug fix in trim. It failed when only the last row had values. Reported by Daniel Schlaepfer
+bug fix in sampleRandom. 'ext' argument was ignored for large Raster objects. Reported by Ned Horning
+bug fix in cellStats with 'skew'. Reported by Oscar Perpiñan Lamigueiro.
+added 'export' argument to cluserR
+added 'NArule' argument to approxNA and fixed bug when there was only one layer without an NA value (reported by Josh Perlman)
+improved rasterTmpFile to avoid creating duplicate names in case of parallel processes that call set.seed (suggested by Daniel Schlaepfer)
+added several functions to manipulate Spatial* objects (aggregate, bind, intersect, erase, union, symdif) that were previously in sptools (on R-Forge)
+'edges' renamed to 'boundaries' to avoid name overlap with igraph::edges. edges (and edge! see previous change below) is still available for now (with a warning) for backwards compatibility
+
 
 --- 16-November-2013, version: 2.1-65
 added support to read NSIDC sea ice concentration binary files (southern and northern hemisphere)

@@ -64,7 +64,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 	
 	if (option[0]) {  
 	// terrain ruggedness
-		for (i = ncol+1; i < ncol * (nrow-1); i++) {
+		for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 			xval[i] = (fabs(xd[i-1-ncol]-xd[i]) + fabs(xd[i-1]-xd[i]) + fabs(xd[i-1+ncol]-xd[i]) +  fabs(xd[i-ncol]-xd[i]) +
 				fabs(xd[i+ncol]-xd[i]) +  fabs(xd[i+1-ncol]-xd[i]) + fabs(xd[i+1]-xd[i]) +  fabs(xd[i+1+ncol]-xd[i])) / 8;
 		}
@@ -73,7 +73,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 	if (option[1]) {
 		addn = add * n;
 	// topograhic position
-		for (i = ncol+1; i < ncol * (nrow-1); i++) {
+		for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 			xval[i+addn] = xd[i] - (xd[i-1-ncol] + xd[i-1] + xd[i-1+ncol] + xd[i-ncol]
 								+ xd[i+ncol] + xd[i+1-ncol] + xd[i+1] + xd[i+1+ncol]) / 8;
 		}
@@ -84,7 +84,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 		addn = add * n;
 		int a[9] = { -1-ncol, -1, -1+ncol, -ncol, 0, ncol, 1-ncol, 1, 1+ncol };
 		double min, max, v;
-		for (i = ncol+1; i < ncol * (nrow-1); i++) {
+		for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 			min = xd[i + a[0]];
 			max = xd[i + a[0]];
 			for (j = 1; j < 9; j++) {
@@ -114,7 +114,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 			for (i=0; i<2; i++) {
 				yw[i] = yw[i] / (2 * dy);
 			}			
-			for (i = ncol; i < ncol * (nrow-1); i++) {
+			for (i = ncol; i < (ncol * (nrow-1)-1); i++) {
 				if (i % ncol == 0) {
 					q = i / ncol;
 					for (k=0; k<2; k++) {
@@ -127,7 +127,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 			}
 			if (unit == 0) {
 				double adj = 180 / M_PI;
-				for (i = ncol+1; i < ncol * (nrow-1); i++) {
+				for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 					xval[i+addn] = xval[i+addn] * adj;
 				}
 			}
@@ -140,14 +140,14 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 				xw[i] = xw[i] / (-2 * dx);
 				yw[i] = yw[i] / (2 * dy);
 			}
-			for (i = ncol+1; i < ncol * (nrow-1); i++) {
+			for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 				zx = xd[i-1] * xw[0] + xd[i+1] * xw[1];
 				zy = xd[i-ncol] * yw[0] + xd[i+ncol] * yw[1];
 				xval[i+addn] = atan( sqrt( pow(zy, 2) + pow(zx, 2) ) );
 			}
 			if (unit == 0) {
 				double adj = 180 / M_PI;
-				for (i = ncol+1; i < ncol * (nrow-1); i++) {
+				for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 					xval[i+addn] = xval[i+addn] * adj;
 				}
 			}
@@ -170,7 +170,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 			for (i=0; i<2; i++) {
 				yw[i] = yw[i] / (2 * dy);
 			}			
-			for (i = ncol; i < ncol * (nrow-1); i++) {
+			for (i = ncol; i < (ncol * (nrow-1)-1); i++) {
 				if (i % ncol == 0) {
 					q = i / ncol;
 					for (k=0; k<2; k++) {
@@ -184,7 +184,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 			}
 			if (unit == 0) {
 				double adj = 180 / M_PI;
-				for (i = ncol+1; i < ncol * (nrow-1); i++) {
+				for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 					xval[i+addn] = xval[i+addn] * adj;
 				}
 			}				
@@ -198,7 +198,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 				xw[i] = xw[i] / (-2 * dx);
 				yw[i] = yw[i] / (2 * dy);
 			}
-			for (i = ncol+1; i < ncol * (nrow-1); i++) {
+			for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 				zx = xd[i-1] * xw[0] + xd[i+1] * xw[1];
 				zy = xd[i-ncol] * yw[0] + xd[i+ncol] * yw[1];
 				zx = atan2(zy, zx);
@@ -206,7 +206,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 			}
 			if (unit == 0) {
 				double adj = 180 / M_PI;
-				for (i = ncol+1; i < ncol * (nrow-1); i++) {
+				for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 					xval[i+addn] = xval[i+addn] * adj;
 				}
 			}
@@ -230,7 +230,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 				yw[i] = yw[i] / (8 * dy);
 			}
 						
-			for (i = ncol; i < ncol * (nrow-1); i++) {
+			for (i = ncol; i < (ncol * (nrow-1)-1); i++) {
 				if (i % ncol == 0) {
 					q = i / ncol;
 					for (k=0; k<6; k++) {
@@ -246,7 +246,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 			}
 			if (unit == 0) {
 				double adj = 180 / M_PI;
-				for (i = ncol+1; i < ncol * (nrow-1); i++) {
+				for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 					xval[i+addn] = xval[i+addn] * adj;
 				}
 			}
@@ -259,7 +259,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 				xw[i] = xw[i] / (-8 * dx);
 				yw[i] = yw[i] / (8 * dy);
 			}
-			for (i = ncol+1; i < ncol * (nrow-1); i++) {
+			for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 				zx = xd[i-1-ncol] * xw[0] + xd[i-1] * xw[1] + xd[i-1+ncol] * xw[2]
 						+ xd[i+1-ncol] * xw[3] + xd[i+1] * xw[4] + xd[i+1+ncol] * xw[5];
 				zy = xd[i-1-ncol] * yw[0] + xd[i-1+ncol] * yw[1] + xd[i-ncol] * yw[2] 
@@ -269,7 +269,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 			}
 			if (unit == 0) {
 				double adj = 180 / M_PI;
-				for (i = ncol+1; i < ncol * (nrow-1); i++) {
+				for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 					xval[i+addn] = xval[i+addn] * adj;
 				}
 			}
@@ -293,7 +293,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 				yw[i] = yw[i] / (8 * dy);
 			}
 						
-			for (i = ncol; i < ncol * (nrow-1); i++) {
+			for (i = ncol; i < (ncol * (nrow-1)-1); i++) {
 				if (i % ncol == 0) {
 					q = i / ncol;
 					for (k=0; k<6; k++) {
@@ -309,7 +309,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 			}
 			if (unit == 0) {
 				double adj = 180 / M_PI;
-				for (i = ncol+1; i < ncol * (nrow-1); i++) {
+				for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 					xval[i+addn] = xval[i+addn] * adj;
 				}
 			}
@@ -322,7 +322,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 				xw[i] = xw[i] / (-8 * dx);
 				yw[i] = yw[i] / (8 * dy);
 			}
-			for (i = ncol+1; i < ncol * (nrow-1); i++) {
+			for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 				zx = xd[i-1-ncol] * xw[0] + xd[i-1] * xw[1] + xd[i-1+ncol] * xw[2]
 						+ xd[i+1-ncol] * xw[3] + xd[i+1] * xw[4] + xd[i+1+ncol] * xw[5];
 				zy = xd[i-1-ncol] * yw[0] + xd[i-1+ncol] * yw[1] + xd[i-ncol] * yw[2] 
@@ -332,7 +332,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 			}
 			if (unit == 0) {
 				double adj = 180 / M_PI;
-				for (i = ncol+1; i < ncol * (nrow-1); i++) {
+				for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 					xval[i+addn] = xval[i+addn] * adj;
 				}
 			}
@@ -350,7 +350,7 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 		double dxy = sqrt(dx * dx + dy * dy);
 		double dmin;
 		GetRNGstate();
-		for (i = ncol+1; i < ncol * (nrow-1); i++) {
+		for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 			if (R_IsNA(xd[i])) {
 				xval[i+addn] = R_NaReal;
 			} else {

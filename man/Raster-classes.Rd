@@ -9,6 +9,7 @@
 \alias{RasterStack-class}
 \alias{RasterBrick-class}
 \alias{RasterStackBrick-class}
+\alias{VectorLayer-class}
 
 
 \alias{print,Raster-method}

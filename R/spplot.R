@@ -27,3 +27,10 @@ setMethod("spplot", signature(obj='Raster'),
 	}
 )
 
+# spplot for SpatialPoints object that has no data.frame
+setMethod('spplot', signature(obj='SpatialPoints'), 
+function(obj, ...) {
+	obj <- SpatialPointsDataFrame(obj, data.frame(ID=1:length(obj)))
+	spplot(obj, ...)
+})
+

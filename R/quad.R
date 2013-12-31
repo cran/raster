@@ -23,7 +23,7 @@ setMethod('.quad', signature(x='missing'),
 
 
 setMethod('.quad', signature(x='Extent'), 
-	function(x, nrows=10, ncols=10, levels=1, steps=1, crs=NA) {
+	function(x, nrows=10, ncols=10, levels=1, steps=1, crs='') {
 		bb <- extent(x)
 		nr = as.integer(round(nrows))
 		nc = as.integer(round(ncols))

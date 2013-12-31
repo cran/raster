@@ -3,6 +3,9 @@
 \docType{methods}
 
 \alias{Arith-methods}
+\alias{+,SpatialPolygons,SpatialPolygons-method}
+\alias{-,SpatialPolygons,SpatialPolygons-method}
+\alias{*,SpatialPolygons,SpatialPolygons-method}
 
 \title{Arithmetic with Raster* objects}
 
@@ -10,11 +13,20 @@
 Standard arithmetic operators for computations with Raster* objects and numeric values. The following operators are available:
 \code{ +, -, *, /, ^, \%\%, \%/\% }
 
-Input Raster* objects should have the same extent, origin and resolution. If only the extent differs, the computation will continue for 
+The input Raster* objects should have the same extent, origin and resolution. If only the extent differs, the computation will continue for 
 the intersection of the Raster objects. Operators are applied on a cell by cell basis.
 For a RasterLayer, numeric values are recycled by row.  For a RasterStack or RasterBrick, recycling is done by layer. 
 RasterLayer objects can be combined RasterStack/Brick objects, in which case the RasterLayer is 'recycled'.
 When using multiple RasterStack or RasterBrick objects, the number of layers of these objects needs to be the same. 
+
+In addition to arithmetic with Raster* objects, the following operations are supported for SpatialPolygons* objects.
+Given SpatialPolygon objects \code{x} and \code{y}:
+
+\code{x+y} is the same as \code{\link{union}(x, y)}
+
+\code{x*y} is the same as \code{\link{intersect}(x, y)}
+
+\code{x-y} is the same as \code{\link{erase}(x, y)}
 }
 
 \details{

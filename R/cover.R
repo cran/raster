@@ -10,8 +10,8 @@ if (!isGeneric("cover")) {
 }	
 
 setMethod('cover', signature(x='RasterLayer', y='RasterLayer'), 
-	function(x, y, ..., filename='', format, datatype, overwrite, progress){ 
-
+	function(x, y, ..., filename=''){ 
+	
 	rasters <- .makeRasterList(x, y, ...)
 	nl <- sapply(rasters, nlayers)
 	if (max(nl) > 1) {
@@ -22,15 +22,31 @@ setMethod('cover', signature(x='RasterLayer', y='RasterLayer'),
 	compareRaster(c(outRaster, rasters))
 	
 	filename <- trim(filename)
-	if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
-	if (missing(overwrite)) { overwrite <- .overwrite()	}
-	if (missing(progress)) { progress <- .progress() }
-	if (missing(datatype)) { 
+	dots <- list(...)
+	if (is.null(dots$format))  { 
+		format <- .filetype(format=format, filename=filename)
+	} else { 
+		format <- dots$format 
+	}
+	if (is.null(dots$overwrite)) { 
+		overwrite <- .overwrite()	
+	} else {
+		overwrite <- dots$overwrite
+	}
+	if (is.null(dots$progress)) { 
+		progress <- .progress() 
+	} else {
+		progress <- dots$progress
+	}
+	if (is.null(dots$datatype)) { 
 		datatype <- unique(dataType(x))
 		if (length(datatype) > 1) {
 			datatype <- .commonDataType(datatype)
 		}
+	} else {
+		datatype <- dots$datatype
 	}
+	
 	if (canProcessInMemory(x, length(rasters) + 2)) {
 	
 		v <- getValues( rasters[[1]] )

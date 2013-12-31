@@ -7,7 +7,7 @@ if (!isGeneric("approxNA")) {
 
 
 setMethod('approxNA', signature(x='RasterStackBrick'), 
-function(x, filename="", method="linear", yleft, yright, rule=1, f=0, ties=mean, z=NULL, ...) { 
+function(x, filename="", method="linear", yleft, yright, rule=1, f=0, ties=mean, z=NULL, NArule=1, ...) { 
 
 	filename <- trim(filename)
 	out <- brick(x, values=FALSE)
@@ -35,8 +35,14 @@ function(x, filename="", method="linear", yleft, yright, rule=1, f=0, ties=mean,
 	
 	if (canProcessInMemory(x)) {
 		x <- getValues(x)
-		i <- rowSums(is.na(x))
-		i <- i < nl & i > 1 # need at least two
+		s <- rowSums(is.na(x))
+		if (isTRUE(NArule)) {
+			j <- s == (nl-1) # one non-NA only
+			if (length(j) > 0 ) {
+				x[j, ] <- apply(x[j, ], 1, max, na.rm=TRUE)
+			}
+		}
+		i <- s < (nl-1) # at least two
 		if (length(i) > 0 ) {
 			if (ylr==0) {
 				x[i,] <- t(apply(x[i,], 1, function(x) approx(x=xout, y=x, xout=xout, method=method, rule=rule, f=f, ties=ties)$y ))
@@ -63,8 +69,14 @@ function(x, filename="", method="linear", yleft, yright, rule=1, f=0, ties=mean,
 
 	for (j in 1:tr$n) {
 		v <- getValues(x, row=tr$row[j], nrows=tr$nrows[j])
-		i <- rowSums(is.na(v))
-		i <- (i < nl) & (i > 1) # need at least two
+		s <- rowSums(is.na(v))
+		if (isTRUE(NArule)) {
+			j <- s == (nl-1) # one non-NA only
+			if (length(j) > 0 ) {
+				v[j, ] <- apply(v[j, ], 1, max, na.rm=TRUE)
+			}
+		}
+		i <- (s < nl-1) # need at least two
 		if (length(i) > 0 ) {
 			if (ylr==0) {
 				v[i,] <- t( apply(v[i,], 1, function(x) approx(x=xout, y=x, xout=xout, method=method, rule=rule, f=f, ties=ties)$y ) )

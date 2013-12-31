@@ -4,6 +4,8 @@
 
 \alias{spplot}
 \alias{spplot,Raster-method}
+\alias{spplot,SpatialPoints-method}
+
 
 \title{Use spplot to plot a Raster* object}
 

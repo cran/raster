@@ -65,9 +65,15 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 			
 				} else if (stat == "sum" ) {
 					return( colSums(x, na.rm=na.rm) )
+
+				} else if (stat == "min" ) {
+					return( .colMin(x, na.rm=na.rm) )
+
+				} else if (stat == "max" ) {
+					return( .colMax(x, na.rm=na.rm) )
 					
 				} else if (stat == 'countNA') { 
-					warning ("'countNA' is depracted. Use freq(x, 'value=NA') instead")
+					warning ("'countNA' is deprecated. Use freq(x, 'value=NA') instead")
 					return( colSums(is.na(x)) )
 				
 				} else if (stat == 'sd') { 
@@ -92,7 +98,9 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 					if (asSample) {
 						n <- n-1
 					}
-					st <- apply(x, 2, function(x) sqrt(sum(x^2)/n))
+					# st <- apply(x, 2, function(x) sqrt(sum(x^2)/n))
+					return(  sqrt( apply(x, 2, function(x) sum(x^2))/n ) )
+					
 
 				} else if (stat == 'skew') { 
 					if (na.rm) {
@@ -100,12 +108,16 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 					} else {
 						n <- nrow(x)
 					}
-					
-				
-					
+					if (asSample) {
+						sdx <- apply(x, 2, sd, na.rm=na.rm)
+					} else {
+						sdx <- apply(x, 2, function(x) sqrt(sum((x-mean(x, na.rm=na.rm))^2, na.rm=na.rm)/n))
+					}
+					return(  colSums(t(t(x) - colMeans(x, na.rm=na.rm))^3, na.rm=na.rm) / (n * sdx^3) )
 				}
-			} 
-			return( ( apply(x, 2, stat, na.rm=na.rm) ) )
+			} # else 
+			
+			return(apply(x, 2, stat, na.rm=na.rm, ...))
 		}
 		
 		if (class(stat) != 'character') {
@@ -118,9 +130,9 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 			fun <- sum
 			st <- 0	
 		} else if (stat == 'min') {
-			fun <- min
+			st <- Inf
 		} else if (stat == 'max') {
-			fun <- max
+			st <- -Inf
 		} else if (stat == 'range') {
 			fun <- range
 		} else if (stat == 'countNA') {
@@ -131,17 +143,16 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 			
 			zmean <- cellStats(x, 'mean')
 			cnt <- 0
-			st <- 0	
-			stsd <- 0
+			d3 <- 0
 			sumsq <- 0
 			counts <- TRUE
-	
 			
 		} else if (stat == 'mean' | stat == 'sd' | stat == 'rms') {
 			st <- 0	
 			sumsq <- 0
 			cnt <- 0
 			counts <- TRUE
+		
 		} else { 
 			stop("invalid 'stat'. Should be sum, min, max, sd, mean, 'rms', 'skew', or 'countNA'") 
 		}
@@ -181,15 +192,22 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 				st <- st + nas
 					
 			} else if (stat=='skew') {
-			
-				stsd <- colSums(d, na.rm=na.rm) + stsd
-				sumsq <- colSums( d^2, na.rm=na.rm) + sumsq
-				d <- t( t(d) - zmean )^3
-				st <- colSums(d, na.rm=na.rm) + st
+
+				d <- t( t(d) - zmean )
+				sumsq <- colSums(d^2, na.rm=TRUE) + sumsq
+				d3 <- colSums(d^3, na.rm=TRUE) + d3
 				cnt <- cnt + cells
 
+			} else if (stat=='min') {
+				tmp <- .colMin(d, na.rm=na.rm)
+				st <- pmin(st, tmp, na.rm=na.rm)
+
+			} else if (stat=='max') {
+				tmp <- .colMax(d, na.rm=na.rm)
+				st <- pmax(st, tmp, na.rm=na.rm)
+				
 			} else {
-					# min, max, range
+					# range
 				st <- apply(rbind(d, st), 2, fun, na.rm=na.rm)
 			}
 				
@@ -215,14 +233,13 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 			}
 
 		} else if (stat == 'skew') {
-	
-			meansq <- (stsd/cnt)^2
-			stsd <- sqrt( (sumsq / cnt) - meansq )
+
 			if (asSample) {
-				stsd <- stsd * (cnt/(cnt-1))
+				stsd <- sqrt(sumsq/(cnt-1))^3
+			} else {
+				stsd <- sqrt(sumsq/cnt)^3
 			}
-			st <- st / (cnt * stsd^3)			
-			
+			st <- d3 / (cnt*stsd)
 		}
 		
 		pbClose(pb)
@@ -277,7 +294,12 @@ setMethod('cellStats', signature(x='RasterLayer'),
 					if (na.rm) {
 						x <- na.omit(x)
 					}
-					return( sum( (x - mean(x))^3 ) / (length(x) * sd(x)^3) )
+					if (asSample) {
+						sdx <- sd(x)
+					} else {
+						sdx <- sqrt(sum((x-mean(x))^2)/(length(x)))
+					}
+					return( sum( (x - mean(x))^3 ) / (length(x) * sdx^3) )
 				}
 			} else {
 				return( stat(x, na.rm=na.rm) )
@@ -306,9 +328,8 @@ setMethod('cellStats', signature(x='RasterLayer'),
 		} else if (stat == 'skew') {
 			zmean <- cellStats(x, 'mean')
 			cnt <- 0
-			st <- 0	
-			stsd <- 0
 			sumsq <- 0
+			d3 <- 0
 			counts <- TRUE
 			
 		} else if (stat == 'mean' | stat == 'sd') {
@@ -353,10 +374,9 @@ setMethod('cellStats', signature(x='RasterLayer'),
 					
 			} else if (stat=='skew') {
 				
-				stsd <- sum(d, na.rm=na.rm) + stsd
-				sumsq <- sum( d^2 , na.rm=na.rm) + sumsq
-				d <- (d - zmean)^3
-				st <- sum(d, na.rm=na.rm) + st
+				d <- (d - zmean)
+				sumsq <- sum(d^2) + sumsq
+				d3 <- sum(d^3) + d3
 				cnt <- cnt + cells
 				
 			} else if (stat=='min') {
@@ -381,14 +401,13 @@ setMethod('cellStats', signature(x='RasterLayer'),
 		} else if (stat == 'mean') {
 			st <- st / cnt
 		} else if (stat == 'skew') {
-			meansq <- (stsd/cnt)^2
-			stsd <- sqrt( (sumsq / cnt) - meansq )
 			if (asSample) {
-				stsd <- stsd * (cnt/(cnt-1))
+				stsd <- sqrt(sumsq/(cnt-1))^3
+			} else {
+				stsd <- sqrt(sumsq/cnt)^3
 			}
-			st <- st / (cnt * stsd^3)
-		}
-		
+			st <- d3 / (cnt*stsd)
+		}		
 		return(st)
 	}
 )

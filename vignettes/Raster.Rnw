@@ -17,7 +17,8 @@
 
 \begin{document}
 
-\SweaveOpts{png=TRUE}
+\SweaveOpts{png=TRUE, pdf=FALSE}
+
 \SweaveOpts{resolution=100}
 \SweaveOpts{keep.source=TRUE}
 
