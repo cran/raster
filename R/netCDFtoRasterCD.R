@@ -123,7 +123,7 @@
 
 
 .rasterObjectFromCDF <- function(filename, varname='', band=NA, type='RasterLayer', lvar=3, level=0, 
-                        warn=TRUE, dims=1:3, crs=NULL, ...) {
+                        warn=TRUE, dims=1:3, crs=NULL, stopIfNotEqualSpaced=TRUE, ...) {
 
 	ncdf4 <- .NCDFversion4()
 	
@@ -183,10 +183,14 @@
 
 	xx <- nc$var[[zvar]]$dim[[dims[1]]]$vals
 	rs <- xx[-length(xx)] - xx[-1]
-	
-	if (! isTRUE ( all.equal( min(rs), max(rs), tolerance=0.025, scale=abs(min(rs)) ) ) ) {
-		stop('cells are not equally spaced; perhaps consider using these data as points') 
+	if (! isTRUE ( all.equal( min(rs), max(rs), tolerance=0.025, scale= abs(min(rs))) ) ) {
+		if (is.na(stopIfNotEqualSpaced)) {
+			warning('cells are not equally spaced; you should extract values as points') 
+		} else if (stopIfNotEqualSpaced) {
+			stop('cells are not equally spaced; you should extract values as points') 
+		}
 	}
+	
 	
 	xrange <- c(min(xx), max(xx))
 	resx <- (xrange[2] - xrange[1]) / (ncols-1)
@@ -196,7 +200,12 @@
 	yy <- nc$var[[zvar]]$dim[[dims[2]]]$vals
 	rs <- yy[-length(yy)] - yy[-1]
 	if (! isTRUE ( all.equal( min(rs), max(rs), tolerance=0.025, scale= abs(min(rs))) ) ) {
-		stop('cells are not equally spaced; you should extract values as points') }
+		if (is.na(stopIfNotEqualSpaced)) {
+			warning('cells are not equally spaced; you should extract values as points') 
+		} else if (stopIfNotEqualSpaced) {
+			stop('cells are not equally spaced; you should extract values as points') 
+		}
+	}
 	yrange <- c(min(yy), max(yy))
 	resy <- (yrange[2] - yrange[1]) / (nrows-1)
 

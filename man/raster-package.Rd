@@ -294,8 +294,30 @@ Cell numbers start at 1 in the upper-left corner. They increase within rows, fro
 }
 }	
 
+\section{XIV. Manipulation of SpatialPolygons* and other vector type Spatial* objects}{
+Some of these functions are in the \code{sp} package. The name in \bold{bold} is the equivalent command in ArcGIS.
+\tabular{ll}{
+  \code{\link{bind}} \tab \bold{append} combine Spatial* objects of the same (vector) type \cr
+  \code{\link{erase}} or "-" \tab \bold{erase} parts of a SpatialPolygons* object\cr
+  \code{\link{intersect}} or "*"  \tab \bold{intersect} SpatialPolygons* objects\cr
+  \code{\link{union}} or "+" \tab \bold{union} SpatialPolygons* objects\cr
+  \code{\link{cover}} \tab \bold{update} and \bold{identity} a SpatialPolygons object with another one\cr
+  \code{\link{symdif}} \tab\bold{symmetrical difference} of two SpatialPolygons* objects \cr 
+  \code{\link{aggregate}} \tab \bold{dissolve} smaller polygons into larger ones \cr
+  \code{\link[sp]{disaggregate}} \tab \bold{explode}: turn polygon parts into separate polygons (in the \code{sp} package) \cr
+  \code{\link{crop}} \tab \bold{clip} a Spatial* object using a rectangle (Extent object)\cr
+  \code{\link{select}} \tab \bold{select} - interactively select spatial features\cr
+  \code{\link{click}} \tab \bold{identify} attributes by clicking on a map\cr
+  \code{\link[sp]{merge}} \tab \bold{Join table} (in the \code{sp} package) \cr
+  \code{\link[sp]{over}} \tab spatial queries between Spatial* objects \cr
+  \code{\link{extract}} \tab spatial queries between Spatial* and Raster* objects \cr
+  \code{\link{as.data.frame}} \tab coerce coordinates of \code{SpatialLines} or \code{SpatialPolygons} into a data.frame\cr
+  --------------------------- \tab ------------------------------------------------------------------------------------------ \cr  
+}
+}
 
-\section{XIV. Extent objects}{
+
+\section{XV. Extent objects}{
 
   \tabular{ll}{
     \code{\link{extent}} \tab Create an extent object \cr
@@ -308,7 +330,7 @@ Cell numbers start at 1 in the upper-left corner. They increase within rows, fro
   }
 }
 
-\section{XV. Miscellaneous}{
+\section{XVI. Miscellaneous}{
 
 \tabular{ll}{
     \code{\link{rasterOptions}} \tab Show, set, save or get session options \cr
@@ -327,7 +349,7 @@ Cell numbers start at 1 in the upper-left corner. They increase within rows, fro
 }
 }
 
-\section{XVI. For programmers}{
+\section{XVII. For programmers}{
 
 \tabular{ll}{
   \code{\link{canProcessInMemory}} \tab Test whether a file can be created in memory \cr

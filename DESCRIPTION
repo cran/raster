@@ -1,11 +1,12 @@
 Package: raster
 Type: Package
 Title: raster: Geographic data analysis and modeling
-Version: 2.1-66
-Date: 2013-11-17
-Depends: methods, sp (>= 1.0-11), R (>= 2.15.0)
-Suggests: rgdal (>= 0.8-10), rgeos (>= 0.2-3), ncdf, ncdf4, igraph,
+Version: 2.2-5
+Date: 2013-12-31
+Depends: methods, sp (>= 1.0-13), R (>= 2.15.0)
+Suggests: rgdal (>= 0.8-12), rgeos (>= 0.3-1), ncdf, ncdf4, igraph,
         snow, tcltk, rasterVis
+Author: Robert J. Hijmans
 Authors@R: c(
 	person("Robert J.", "Hijmans", role = c("cre", "aut"),  email = "r.hijmans@gmail.com"),
 	person("Jacob", "van Etten", role = "ctb"),
@@ -21,19 +22,7 @@ Description: Reading, writing, manipulating, analyzing and modeling of gridded s
 License: GPL (>= 3)
 URL: http://cran.r-project.org/web/packages/raster/
 ByteCompile: TRUE
-Repository: CRAN
-Repository/R-Forge/Project: raster
-Repository/R-Forge/Revision: 2840
-Repository/R-Forge/DateTimeStamp: 2013-11-18 02:23:50
-Date/Publication: 2013-11-18 08:28:46
-Packaged: 2013-11-18 07:09:37 UTC; ripley
-Author: Robert J. Hijmans [cre, aut],
-  Jacob van Etten [ctb],
-  Matteo Mattiuzzi [ctb],
-  Michael Sumner [ctb],
-  Jonathan A. Greenberg [ctb],
-  Oscar Perpinan Lamigueiro [ctb],
-  Andrew Bevan [ctb],
-  Etienne B. Racine [ctb],
-  Ashton Shortridge [ctb]
+Packaged: 2013-12-31 18:53:53 UTC; rhijmans
 NeedsCompilation: yes
+Repository: CRAN
+Date/Publication: 2014-01-01 18:32:03

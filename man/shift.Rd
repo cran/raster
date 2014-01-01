@@ -4,43 +4,40 @@
 
 \alias{shift}
 \alias{shift,Raster-method}
+\alias{shift,SpatialPolygons-method}
+\alias{shift,SpatialLines-method}
+\alias{shift,SpatialPoints-method}
   
 \title{Shift}
 
 \description{
-Shift the location of a Raster* object in the x and/or y direction
+Shift the location of a Raster* of vector type Spatial* object in the x and/or y direction
 }
 
 \usage{
-shift(object, ...)
+\S4method{shift}{Raster}(object, x=0, y=0, filename='', ...)
+
+\S4method{shift}{SpatialPolygons}(object, x=0, y=0,  ...)
+
+\S4method{shift}{SpatialLines}(object, x=0, y=0,  ...)
+
+\S4method{shift}{SpatialPoints}(object, x=0, y=0,  ...)
 }
 
 \arguments{
-  \item{object}{A Raster* object}
-  \item{...}{Additional arguments, see Details}  
+  \item{object}{Raster* or Spatial* object}
+  \item{x}{numeric. The shift in horizontal direction}
+  \item{y}{numeric. The shift in vertical direction}
+  \item{filename}{character file name (optional)}
+  \item{...}{if \code{object} is a Raster* object: additional arguments as for \code{\link{writeRaster}} } 
 }
  
 \value{
-a Raster* object
+Same object type as \code{x}
 }
 
 
-\details{
-The following additional arguments can be passed, to replace default values for this function
-\tabular{lll}{
-  \tab \code{x} \tab Numeric. The shift in horizontal direction \cr
-  \tab \code{y} \tab Numeric. The shift in vertical direction \cr
-  \tab \code{filename} \tab Character. Output filename\cr 
-  \tab \code{format} \tab Character. Output file type. See \link[raster]{writeRaster} \cr
-  \tab \code{datatype} \tab Character. Output data type. See \link[raster]{dataType} \cr
-  \tab \code{overwrite} \tab Logical. If TRUE, "filename" will be overwritten if it exists \cr
-  \tab \code{progress} \tab Character. "text", "window", or "" (the default, no progress bar)  \cr
- }
-}
-  
-
-
-\seealso{ \code{\link[raster]{flip}}, \code{\link[raster]{rotate}} }
+\seealso{ \code{\link{flip}}, \code{\link{rotate}}, and the elide function in the maptools package }
 
 \examples{
 r <- raster()

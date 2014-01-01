@@ -47,8 +47,7 @@
 		
 		for (i in 1:nl) {
 			b <- new("GDALRasterBand", x@file@transient, i)
-			.gd_SetStatistics <- eval(parse(text="rgdal:::.gd_SetStatistics"))
-			.gd_SetStatistics(b, as.double(statistics[i,]))
+			GDALcall(b, "SetStatistics", as.double(statistics[i,]))
 		}
 	}
 	

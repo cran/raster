@@ -4,13 +4,16 @@
 # Licence GPL v3
 
 
-clusterR <- function(x, fun, args=NULL, filename='', cl=NULL, m=2, ...) {
+clusterR <- function(x, fun, args=NULL, export=NULL, filename='', cl=NULL, m=2, ...) {
 
 	if (is.null(cl)) {
 		cl <- getCluster()
 		on.exit( returnCluster() )
 	}
-
+	if (!is.null(export)) {
+		clusterExport(cl, export)	
+	}
+	
 	nodes <- length(cl)
 	
 	out <- raster(x)

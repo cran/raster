@@ -3,35 +3,38 @@
 \docType{methods}
 
 \alias{intersect}
-\alias{intersect,Extent-method}
-\alias{intersect,Raster-method}
+\alias{intersect,Extent,ANY-method}
+\alias{intersect,Raster,ANY-method}
+\alias{intersect,SpatialPolygons,SpatialPolygons-method}
 
 \title{ 
 Intersect Extent
 }
 
 \description{
-Intersect two Extent objects. Returns the intersection, i.e. the area of overlap of two Extent objects. The second argument can also be any argument from which an Extent object can be extracted. 
+Extent objects: Returns the intersection, i.e. the area of overlap of two Extent objects. The second argument can also be any argument from which an Extent object can be extracted. 
 
-If the first object is a Raster* object, this function is equivalent to \code{\link{crop}}. 
+If the first object is a Raster* object: this function is equivalent to \code{\link{crop}}. 
+
+SpatialPolygons* objects: Only the overlapping areas (if any) are returned. For SpatialPolygonDataFrame objects, the data.frames are also merged. 
 }
 
 \usage{
-\S4method{intersect}{Extent}(x, y)
+\S4method{intersect}{Extent,ANY}(x, y)
 
-\S4method{intersect}{Raster}(x, y)
+\S4method{intersect}{Raster,ANY}(x, y)
+
+\S4method{intersect}{SpatialPolygons,SpatialPolygons}(x, y)
 }
 
 \arguments{
-  \item{x}{Extent or Raster* object}
-  \item{y}{Extent object, or any object from which an Extent can be extracted}
+  \item{x}{Extent, Raster* or SpatialPolygons* object}
+  \item{y}{same as \code{x}. Except when \code{x} is a Raster* object, this should be an Extent object, or any object from which an Extent can be extracted}
 } 
 
 \value{
-Extent or Raster* object
+Extent, Raster*, or SpatialPolygons object
 }
-
-
 
 \seealso{
 \code{\link{union}, \link[raster]{extent}, \link{crop}}
@@ -41,6 +44,17 @@ Extent or Raster* object
 e1 <- extent(-10, 10, -20, 20)
 e2 <- extent(0, 20, -40, 5)
 intersect(e1, e2)
+
+#SpatialPolygons
+if (require(rgdal) & require(rgeos)) {
+	p <- shapefile(system.file("external/lux.shp", package="raster"))
+	b <- as(extent(6, 6.4, 49.75, 50), 'SpatialPolygons')
+	projection(b) <- projection(p)
+	i <- intersect(p, b)
+	plot(p)
+	plot(b, add=TRUE, col='red')
+	plot(i, add=TRUE, col='blue', lwd=2)
+}
 }
 
 

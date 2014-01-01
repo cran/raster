@@ -10,7 +10,7 @@ if (!isGeneric("cover")) {
 }	
 
 setMethod('cover', signature(x='RasterStackBrick', y='Raster'), 
-	function(x, y, ..., filename='', format, datatype, overwrite, progress){ 
+	function(x, y, ..., filename=''){ 
 
 	rasters <- .makeRasterList(x, y, ..., unstack=FALSE)
 	nl <- sapply(rasters, nlayers)
@@ -25,12 +25,34 @@ setMethod('cover', signature(x='RasterStackBrick', y='Raster'),
 	
 	outRaster <- brick(x, values=FALSE)
 
-	filename <- trim(filename)
-	if (missing(format)) { format <- .filetype(format=format, filename=filename) } 
-	if (missing(overwrite)) { overwrite <- .overwrite() }
-	if (missing(progress)) { progress <- .progress() }
-	if (missing(datatype)) { datatype <- .datatype() }
 	
+	filename <- trim(filename)
+	dots <- list(...)
+	if (is.null(dots$format))  { 
+		format <- .filetype(format=format, filename=filename)
+	} else { 
+		format <- dots$format 
+	}
+	if (is.null(dots$overwrite)) { 
+		overwrite <- .overwrite()	
+	} else {
+		overwrite <- dots$overwrite
+	}
+	if (is.null(dots$progress)) { 
+		progress <- .progress() 
+	} else {
+		progress <- dots$progress
+	}
+	if (is.null(dots$datatype)) { 
+		datatype <- unique(dataType(x))
+		if (length(datatype) > 1) {
+			datatype <- .commonDataType(datatype)
+		}
+	} else {
+		datatype <- dots$datatype
+	}	
+	
+
 
 	if ( canProcessInMemory(x, sum(nl)+nl[1])) {
 

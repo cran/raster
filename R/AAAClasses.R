@@ -55,7 +55,7 @@ setClass ('BasicRaster',
 		rotated = FALSE,
 		ncols= as.integer(1),
 		nrows= as.integer(1),
-		crs = CRS(as.character(NA)),
+		crs = CRS(),
 		history = list(),
 		z = list()
 	),

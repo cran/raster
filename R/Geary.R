@@ -5,14 +5,16 @@
 
 
 
-.getFilter <- function(w) {
+.getFilter <- function(w, warn=TRUE) {
 	if (!is.matrix(w)) {
 		w <- .checkngb(w)
 		w <- matrix(1, nrow=w[1], ncol=(w[2]))
 		w[ceiling(dim(w)[1]/2), ceiling(dim(w)[2]/2)] <- 0
 	} else {
 		if (w[ceiling(dim(w)[1]/2), ceiling(dim(w)[2]/2)] != 0) {
-			warning('central cell of weights matrix (filter) was set to zero')
+			if (warn) {
+				warning('central cell of weights matrix (filter) was set to zero')
+			}
 			w[ceiling(dim(w)[1]/2), ceiling(dim(w)[2]/2)] <- 0
 		}		
 		stopifnot(all(w >= 0))
@@ -27,7 +29,7 @@
 
 Geary <- function(x, w= matrix(1, 3, 3)) {
 
-	w <- .getFilter(w)
+	w <- .getFilter(w, warn=FALSE)
 	
 	i <- trunc(length(w)/2)+1 
 

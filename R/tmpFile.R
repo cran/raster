@@ -64,7 +64,9 @@ rasterTmpFile <- function(prefix='raster_tmp_')  {
 	d <- .tmpdir()
 
 	while(TRUE) {
-		f <- paste(gsub(' ', '_', gsub(':', '', as.character(Sys.time()))), '_', paste(round(runif(5)*10), collapse=""), sep='')
+	#	f <- paste(gsub(' ', '_', gsub(':', '', as.character(Sys.time()))), '_', paste(round(runif(5)*10), collapse=""), sep='')
+	# added pid as suggested by Daniel Schlaepfer to avoid overlapping file names when running parallel processes and using set.seed() in each node
+		f <- paste(gsub(" ", "_", gsub(":", "", as.character(Sys.time()))), "_", Sys.getpid(), "_", paste(sample(0:9,5,replace=TRUE),collapse=''), sep = "")
 		tmpf <- paste(d, prefix, f, extension, sep="")
 		if (! file.exists(tmpf)) break
 	}

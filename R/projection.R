@@ -11,7 +11,7 @@ if (!isGeneric("crs")) {
 }	
 
 setMethod("crs", signature('ANY'), 
-	function(x, asText=TRUE, ...) {
+	function(x, asText=FALSE, ...) {
 		projection(x, asText=asText)
 	}
 )
@@ -21,6 +21,20 @@ setMethod("crs", signature('ANY'),
 	projection(x) <- value
 	x
 }
+
+
+setMethod('is.na', signature(x='CRS'), 
+	function(x) {
+		is.na(x@projargs)
+	}
+)
+
+
+setMethod('as.character', signature(x='CRS'), 
+	function(x, ...) {
+		x@projargs
+	}
+)
 
 'projection<-' <- function(x, value) {
 

@@ -106,6 +106,12 @@
 		r@data@max <- x@data@max
 		r@data@haveminmax <- TRUE
 	}
+	
+	h <- .addHeader()
+	if (h != '') {
+		try( hdr(r, h), silent=TRUE )
+	}
+	
 	return(r)
 }		
  

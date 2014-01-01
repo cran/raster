@@ -93,6 +93,7 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 		
 		if (! is.null(ext)) {
 			rr <- crop(r, ext)
+			nc <- ncell(rr)
 		}
 			
 		if (size >= nc) {
@@ -135,7 +136,7 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 			rcells <- sampleInt(nc, N)
 			
 			if (!is.null(ext)) {
-				XY <- xyFromCell(r, rcells)
+				XY <- xyFromCell(rr, rcells)
 				rcells <- cellFromXY(r, XY)
 			}
 			

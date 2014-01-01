@@ -6,8 +6,13 @@
 
 projectExtent <- function(object, crs) {
 	.requireRgdal()
-	.gd_transform <- eval(parse(text="rgdal:::.gd_transform"))
 
+	if (packageVersion('rgdal') >= '0.8.12') {	
+		.gd_transform <- rgdal::rawTransform
+	} else {
+		.gd_transform <- eval(parse(text="rgdal:::.gd_transform"))
+	}
+	
 	object <- raster(object)
 	dm <- oldm <- dim(object)
 	# simple way to avoid a bug with a single column/row reported by 
@@ -139,7 +144,13 @@ projectExtent <- function(object, crs) {
 projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE, over=FALSE, filename="", ...)  {
 
 	.requireRgdal()
-	.gd_transform <- eval(parse(text="rgdal:::.gd_transform"))
+
+	if (packageVersion('rgdal') >= '0.8.12') {	
+		.gd_transform <- rgdal::rawTransform
+	} else {
+		.gd_transform <- eval(parse(text="rgdal:::.gd_transform"))
+	}
+	
 	
 	validObject( projection(from, asText=FALSE) )
 	projfrom <- projection(from)

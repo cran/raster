@@ -139,13 +139,12 @@ plot(r)
 
 p1 <- rbind(c(-180,-20), c(-140,55), c(10, 0), c(-140,-60), c(-180,-20))
 hole <- rbind(c(-150,-20), c(-100,-10), c(-110,20), c(-150,-20))
-p2 <- rbind(c(-10,0), c(140,60), c(160,0), c(140,-55), c(-10,0))
-p3 <- rbind(c(-125,0), c(0,60), c(40,5), c(15,-45), c(-125,0))
-pols <- SpatialPolygons( list(  Polygons(list(Polygon(p1), Polygon(hole)), 1),
-      Polygons(list(Polygon(p2)), 2), Polygons(list(Polygon(p3)), 3)))
-pols@polygons[[1]]@Polygons[[2]]@hole <- TRUE
+p1 <- Polygons(list(Polygon(p1), Polygon(hole, hole=TRUE)), 1)
+p2 <- Polygons(list(Polygon(rbind(c(-10,0), c(140,60), c(160,0), c(140,-55), c(-10,0)))), 2)
+p3 <- Polygons(list(Polygon(rbind(c(-125,0), c(0,60), c(40,5), c(15,-45), c(-125,0)))), 3)
+pols <- SpatialPolygons( list( p1 , p2, p3) )
 
-r <- raster(ncol=180, nrow=90)
+r <- raster(ncol=90, nrow=45)
 r <- rasterize(pols, r, fun='sum')
 
 
