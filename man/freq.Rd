@@ -24,7 +24,7 @@ Frequency table of the values of a RasterLayer.
   \item{value}{numeric, logical or NA. An optional single value to only count the number of cells with that value}
   \item{useNA}{character. What to do with NA values? Options are "no", "ifany", "always". See to \code{\link[base]{table}} }
   \item{progress}{character to specify a progress bar. Choose from 'text', 'window', or '' (the default, no progress bar)}
-  \item{merge}{logical. If \code{TRUE} the list will be merged in a single data.frame}
+  \item{merge}{logical. If \code{TRUE} the list will be merged into a single data.frame}
   \item{...}{additional arguments (none implemented)}
 }
 

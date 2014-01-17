@@ -36,6 +36,40 @@
 }
 
 
+
+.getmetadata <- function(x) {
+	x <- x[x[,1] == 'metadata', , drop=FALSE]
+	if (nrow(x) == 0) {
+		return( list() )
+	}
+	y <- sapply(x[,2], function(i) .strSplitOnFirstToken(i, '.'))
+	colnames(y) <- NULL
+	v1 <- y[1,]
+	v2 <- y[2,]
+	vv <- sapply(x[,3], function(i) .strSplitOnFirstToken(i, ':'))
+	colnames(vv) <- NULL
+	type <- vv[1,]
+	v3 <- gsub('#NL#', '\n', vv[2,])
+	a <- list()
+	for (i in 1:length(v1)) {
+		value <- unlist(strsplit(v3[i], '#,#'))
+		if (type[i] == 'Date') {
+			try(value <- as.Date(value))
+		} else {
+			try(value <- as(value, type[i]))
+		}
+		if (is.na(v2[i])) {
+			a[[v1[i]]] <- value
+		} else {
+			b <- list(value)
+			names(b) <- v2[i]
+			a[[v1[i]]] <- c(a[[v1[i]]], b)
+		}
+	}
+	a
+}
+
+
 .rasterFromRasterFile <- function(filename, band=1, type='RasterLayer', driver='raster', RAT=TRUE, crs=NULL, ...) {
 
 	valuesfile <- .setFileExtensionValues(filename, driver)
@@ -46,6 +80,10 @@
 	filename <- .setFileExtensionHeader(filename, driver)
 	
 	ini <- readIniFile(filename)
+	metadata <- .getmetadata(ini)
+	ini <- ini[ini[,1] != 'metadata', , drop=FALSE]
+
+	
 	ini[,2] = toupper(ini[,2]) 
 
 	byteorder <- .Platform$endian
@@ -227,6 +265,8 @@
 			warning('size of values file does not match the number of cells (given the data type)')
 #		}
 	}
+	
+	x@history <- metadata
 	
     return(x)
 }

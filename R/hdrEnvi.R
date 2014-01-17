@@ -35,15 +35,15 @@
 #9=2x64-bit double-precision complex, real-imaginary pair of double precision; 12=16-bit unsigned integer; 
 #13=32-bit unsigned long integer; 14=64-bit signed long integer; and 15=64-bit unsigned long integer.
 
-	cat("interleave = bil\n", file = thefile)	
+	cat("interleave = ", r@file@bandorder, "\n", file = thefile)	
 	cat("sensor type = \n", file = thefile)		
-	if (.Platform$endian == "little") { btorder <- 0 
-	} else { btorder <- 1 }
+	
+	btorder <- as.integer(r@file@byteorder != 'little')  # little -> 0, big -> 1
 	cat("byte order = ", btorder, "\n",file = thefile)		
 
 	if (.couldBeLonLat(r)) {
 		cat("map info = {Geographic Lat/Lon, 1, 1,", xmin(r),", ", ymax(r),", ", xres(r),", ", yres(r), "}\n", file = thefile)
-		} else {
+	} else {
 		cat("map info = {projection, 1, 1,", xmin(r),", ", ymax(r),", ", xres(r),", ", yres(r), "}\n", file = thefile)
 	}
     cat("projection info =", projection(r), "\n", file = thefile) 

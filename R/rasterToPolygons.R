@@ -13,14 +13,6 @@ rasterToPolygons <- function(x, fun=NULL, n=4, na.rm=TRUE, digits=12, dissolve=F
 		}
 	}
 
-	if (dissolve) {
-		if(! require(rgeos) ) {
-			warning('rgeos not installed. Cannot dissolve')
-			dissolve <- FALSE
-		}
-	}
-
-		
 	if (! fromDisk(x) & ! inMemory(x)) {
 		xyv <- xyFromCell(x, 1:ncell(x))
 		xyv <- cbind(xyv, NA)
@@ -38,7 +30,6 @@ rasterToPolygons <- function(x, fun=NULL, n=4, na.rm=TRUE, digits=12, dissolve=F
 	} else {
 		tr <- blockSize(x)
 		xyv <- matrix(ncol=3, nrow=0)
-		colnames(xyv) <- c('x', 'y', 'v')
 		for (i in 1:tr$n) {
 			start <- cellFromRowCol(x, tr$row[i], 1)
 			end <- start+tr$nrows[i]*ncol(x)-1
@@ -53,7 +44,8 @@ rasterToPolygons <- function(x, fun=NULL, n=4, na.rm=TRUE, digits=12, dissolve=F
 			xyv <- rbind(xyv, xyvr)
 		}
 	}
-
+	colnames(xyv) <- c('x', 'y', names(x))
+	
 	xr <- xres(x)/2
 	yr <- yres(x)/2
 
@@ -89,22 +81,12 @@ rasterToPolygons <- function(x, fun=NULL, n=4, na.rm=TRUE, digits=12, dissolve=F
 	
 	sp <- lapply(1:nrow(cr), function(i) Polygons(list(Polygon( matrix( cr[i,], ncol=2 ) )), i))
 	sp <- SpatialPolygons(sp, proj4string=projection(x, FALSE))
-	if (ncol(xyv)==3) {
-		sp <- SpatialPolygonsDataFrame(sp, data.frame(value=xyv[,3]), match.ID=FALSE)
-		if (dissolve) {
-			dat <- data.frame(value=unique(sp@data[,1]))
-			rownames(dat) <- dat[,1]
-			if (compareVersion(version_GEOS0(), "3.3.0") < 0) {
-				sp <- gUnionCascaded(sp, id=sp@data[,1])
-			} else {
-				sp <- gUnaryUnion(sp, id=sp@data[,1])
-			}			
-			sp <- SpatialPolygonsDataFrame(sp, dat, match.ID=TRUE)
-		}
-	} else {
-		sp <- SpatialPolygonsDataFrame(sp, data.frame(xyv[,3:ncol(xyv)]), match.ID=FALSE)
-		if (dissolve) {
-			warning('this function can only dissolve single-layer objects\n')
+	sp <- SpatialPolygonsDataFrame(sp, data.frame(xyv[,3:ncol(xyv),drop=FALSE]), match.ID=FALSE)
+	if (dissolve) {
+		if(! require(rgeos) ) {
+			warning('package rgeos is not available. Cannot dissolve')
+		} else {
+			sp <- aggregate(sp, names(sp))
 		}
 	}
 	sp

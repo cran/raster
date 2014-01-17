@@ -10,9 +10,9 @@
 \description{
 Compute zonal statistics, that is summarized values of a Raster* object for each "zone" defined by a RasterLayer. 
 
-If \code{stat} is a true \code{function}, \code{zonal} will fail (gracefully) for very large Raster objects, but it will in most cases work for functions that can be defined as by a character argument ('mean', 'sd', 'min', 'max', or 'sum').
+If \code{stat} is a true \code{function}, \code{zonal} will fail (gracefully) for very large Raster objects, but it will in most cases work for functions that can be defined as by a character argument ('mean', 'sd', 'min', 'max', or 'sum'). In addition you can use 'count' to count the number of cells in each zone (only useful with \code{na.rm=TRUE}, otherwise \code{freq(z)} would be more direct.
 
-The function used should accept a \code{na.rm} argument. For example, if using \code{fun=length} fails, but \code{fun=function(x, ...){length(x)}} works. the \code{...} argument catches the \code{na.rm} argument, even though it is not used by the function in this case. To remove \code{NA} values, you could use this function: \code{fun=function(x, na.rm){ if(na.rm){length(na.omit(x))}else{length(x)}}}
+If a function is used, it should accept a \code{na.rm} argument (or at least a \code{...} argument)
 }
 
 \usage{
@@ -47,8 +47,10 @@ z[] <- rep(1:5, each=20)
 zonal(r, z, 'sum')
 
 # for smaller files you can also provide a function
+\dontrun{
 zonal(r, z, mean)
 zonal(r, z, min)
+}
 
 # multiple layers
 zonal(stack(r, r*10), z, 'sum')

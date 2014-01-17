@@ -92,16 +92,16 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 	} else {
 		
 		if (! is.null(ext)) {
-			rr <- crop(r, ext)
-			nc <- ncell(rr)
+			xx <- crop(x, ext)
+			nc <- ncell(xx)
 		}
 			
 		if (size >= nc) {
 			
 			if (is.null(ext)) {
-				x <- getValues(r)
+				x <- getValues(x)
 			} else {
-				x <- getValues(rr)
+				x <- getValues(xx)
 			}
 			
 			if (cells) {

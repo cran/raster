@@ -79,7 +79,11 @@ setReplaceMethod("[", c("RasterLayer","missing","missing"),
 	if ( inMemory(x) ) {
 		if (inherits(x, 'RasterStack')) {
 			x <- brick( x, values=TRUE )
+			# this may go to disk, hence we check again below
 		}	
+	}
+	
+	if ( inMemory(x) ) {
 		x@data@values[i] <- value
 		x <- setMinMax(x)
 		x <- .clearFile(x)

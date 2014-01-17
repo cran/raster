@@ -100,7 +100,7 @@
 			stop("invalid datasize for this datatype") 
 		}
 	} else if ( type == 'LOG' ) {
-		x@file@nodatavalue <- -127
+		x@file@nodatavalue <- -128
 		x@file@datanotation <- 'LOG1S'
 	} else {
 		stop("unknown datatype")

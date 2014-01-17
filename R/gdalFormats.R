@@ -37,9 +37,12 @@
 	if (!(dtype %in% c('LOG1S', 'INT1S', 'INT2S', 'INT4S', 'INT1U', 'INT2U', 'INT4U', 'FLT4S', 'FLT8S'))) {
 		stop('not a valid data type')
 	}
+	if (dtype == 'INT1S') { # gdal does not have this
+		warning('data type "INT1S" is not available in GDAL. Changed to "INT2S" (you may prefer "INT1U" (Byte))')
+		dtype <- 'INT2S'
+	}
 	type <- .shortDataType(dtype)
 	size <- dataSize(dtype) * 8
-
 
 	if (format=='BMP' | format=='ADRG' | format=='IDA' | format=='SGI') {
 		return('Byte')
@@ -58,6 +61,7 @@
 	}
 	
 	if (type == 'LOG') {
+		warning('data type "LOG" is not available in GDAL. Changed to "INT1U"')
 		return('Byte')
 	}
 	if (type == 'INT') { 

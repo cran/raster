@@ -5,9 +5,11 @@
 
 
 setMethod('aggregate', signature(x='SpatialPolygons'), 
-function(x, vars=NULL, sums=NULL, ...) {
+function(x, vars=NULL, sums=NULL, dissolve=TRUE, ...) {
 
-	stopifnot(require(rgeos))
+	if (dissolve) {
+		stopifnot(require(rgeos))
+	}
 	
 	if (! .hasSlot(x, 'data') ) {
 		hd <- FALSE
@@ -22,14 +24,23 @@ function(x, vars=NULL, sums=NULL, ...) {
 	}
 	
 	if (isTRUE(is.null(vars))) {
-		if (version_GEOS() < "3.3.0") {
-			x <- gUnionCascaded(x)
+		if (dissolve) {
+			if (version_GEOS() < "3.3.0") {
+				x <- gUnionCascaded(x)
+			} else {
+				x <- gUnaryUnion(x)
+			}
 		} else {
-			x <- gUnaryUnion(x)
-		}	
-		if (hd) {
-			x <- SpatialPolygonsDataFrame(x, data=data.frame(ID=1))
+			p <- list()
+			for (i in 1:length(x)) {
+				nsubobs <- length(x@polygons[[i]]@Polygons)
+				p <- c(p, lapply(1:nsubobs, function(j) x@polygons[[i]]@Polygons[[j]]))
+			}
+			x <- SpatialPolygons(list(Polygons(p, '1')), proj4string=x@proj4string)
 		}
+		#if (hd) {
+		#	x <- SpatialPolygonsDataFrame(x, data=data.frame(ID=1))
+		#}
 		return(x)
 		
 	} else {
@@ -87,16 +98,23 @@ function(x, vars=NULL, sums=NULL, ...) {
 			dat <- cbind(dat, out)
 		}
 		
-		if (version_GEOS0() < "3.3.0") {
-			x <- lapply(1:nrow(id), function(y) spChFIDs(gUnionCascaded(x[dc[dc$v==y,1],]), as.character(y)))
+		if (hd) {
+			x <- as(x, 'SpatialPolygons')
+		}
+		if (dissolve) {
+			if (version_GEOS0() < "3.3.0") {
+				x <- lapply(1:nrow(id), function(y) spChFIDs(gUnionCascaded(x[dc[dc$v==y,1],]), as.character(y)))
+			} else {
+				x <- lapply(1:nrow(id), function(y) spChFIDs(gUnaryUnion(x[dc[dc$v==y,1],]), as.character(y)))
+			}	
 		} else {
-			x <- lapply(1:nrow(id), function(y) spChFIDs(gUnaryUnion(x[dc[dc$v==y,1],]), as.character(y)))
-		}	
+			x <- lapply(1:nrow(id), function(y) spChFIDs(aggregate(x[dc[dc$v==y,1],], dissolve=FALSE), as.character(y)))
+		}
 		
 		x <- do.call(rbind, x)
 		x@proj4string <- crs
-		rownames(dat) <- as.character(id$v)	
-		SpatialPolygonsDataFrame(x, data=dat)
+		rownames(dat) <- NULL
+		SpatialPolygonsDataFrame(x, dat, FALSE)
 	}
 }
 )

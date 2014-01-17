@@ -5,52 +5,41 @@
 # Licence GPL v3
 
 
+.strSplitOnFirstToken <- function(s, token="=") {
+	pos <- which(strsplit(s, '')[[1]]==token)[1]
+	if (is.na(pos)) {
+		return(c(trim(s), NA)) 
+	} else {
+		first <- substr(s, 1, (pos-1))
+		second <- substr(s, (pos+1), nchar(s))
+		return(trim(c(first, second)))
+	}
+}
 
+
+.strSplitOnLastToken <- function(s, token="=") {
+	# not used here
+	pos <- unlist(strsplit(s, ''))
+	pos <- max(which(pos==token))
+	if (!is.finite(pos)) {
+		return(c(s, NA)) 
+	} else {
+		first <- substr(s, 1, (pos-1))
+		second <- substr(s, (pos+1), nchar(s))
+		return(trim(c(first, second)))
+	}
+}
+
+	
 readIniFile <- function(filename, token='=', commenttoken=';', aslist=FALSE, case) {
 
-	strSplitOnFirstToken <- function(s, token="=") {
-		pos <- which(strsplit(s, '')[[1]]==token)[1]
-		if (is.na(pos)) {
-			return(c(trim(s), NA)) 
-		} else {
-			first <- substr(s, 1, (pos-1))
-			second <- substr(s, (pos+1), nchar(s))
-			return(trim(c(first, second)))
-		}
-	}
-
+    stopifnot(file.exists(filename))
 	
-	strSplitOnLastToken <- function(s, token="=") {
-	# not used here
-		pos <- unlist(strsplit(s, ''))
-		pos <- max(which(pos==token))
-		if (!is.finite(pos)) {
-			return(c(s, NA)) 
-		} else {
-			first <- substr(s, 1, (pos-1))
-			second <- substr(s, (pos+1), nchar(s))
-			return(trim(c(first, second)))
-		}
-	}
-
-	strsp <- function(s){ strSplitOnFirstToken(s, token=token) }
+	Lines <- trim(readLines(filename,  warn = FALSE))
 	
-	strSplitComment <- function(s,  token=";") { 
-		# ";" is the start of a comment .
-		strSplitOnFirstToken(s, token=";") 
-	}
-	strspcom <- function(s){ strSplitComment(s, token=commenttoken) }
-	
-	
-    if (!file.exists(filename)) { stop(paste(filename, " does not exist")) }
-	
-	Lines <- readLines(filename,  warn = FALSE)
-	Lines <- trim(Lines)
-	
-	ini <- lapply(Lines, strspcom) 
-	
+	ini <- lapply(Lines, function(s){ .strSplitOnFirstToken(s, token=commenttoken) } ) 
 	Lines <- matrix(unlist(ini), ncol=2, byrow=TRUE)[,1]
-	ini <- lapply(Lines, strsp) 
+	ini <- lapply(Lines, function(s){ .strSplitOnFirstToken(s, token=token) }) 
 	
  	ini <- matrix(unlist(ini), ncol=2, byrow=TRUE)
 	ini <- ini[ ini[,1] != "", , drop=FALSE]
@@ -59,7 +48,7 @@ readIniFile <- function(filename, token='=', commenttoken=';', aslist=FALSE, cas
 	if (ns > 0) {
 		sections <- c(which(is.na(ini[,2])), length(ini[,2]))
 
-# here I should check whether the section text is enclused in [ ]. If not, it is junk text that should be removed, rather than used as a section
+# here I should check whether the section text is enclosed in [ ]. If not, it is junk text that should be removed, rather than used as a section
 		ini <- cbind("", ini)
 		for (i in 1:(length(sections)-1)) {
 			ini[sections[i]:(sections[i+1]), 1] <- ini[sections[i],2]
@@ -84,7 +73,7 @@ readIniFile <- function(filename, token='=', commenttoken=';', aslist=FALSE, cas
 			un <- unique(ini[,1])
 			LST <- list()
 			for (i in 1:length(un)) {
-				sel <- ini[ini[,1] == un[i], 2:3]
+				sel <- ini[ini[,1] == un[i], 2:3, drop=FALSE]
 				lst <- as.list(sel[,2])
 				names(lst) <- sel[,1]
 				LST[[i]] <- lst

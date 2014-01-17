@@ -6,7 +6,7 @@
 .writeHdrRaster <- function(x, type='raster') {
 
 	rastergrd <- .setFileExtensionHeader(filename(x), type)
-	thefile <- file(rastergrd, "w")  # open an txt file connectionis
+	thefile <- file(rastergrd, "w")  # open an txt file connection
 	cat("[general]", "\n", file = thefile)
 	cat("creator=R package 'raster'", "\n", file = thefile)
 	cat("created=", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), "\n", file = thefile)
@@ -22,7 +22,7 @@
 
 	cat("[data]", "\n", file = thefile)
 	cat("datatype=",  x@file@datanotation, "\n", file = thefile)
-	cat("byteorder=",  .Platform$endian, "\n", file = thefile)
+	cat("byteorder=", x@file@byteorder, "\n", file = thefile)
 	nl <- nlayers(x)
 	cat("nbands=",  nl, "\n", file = thefile)
 	cat("bandorder=",  x@file@bandorder, "\n", file = thefile)
@@ -67,7 +67,24 @@
 		cat("zvalues=", paste(c(zname, z), collapse=':'), "\n", file = thefile)
 		cat("zclass=", zclass, "\n", file = thefile)
 	}
-	cat("history=",  x@history, "\n", file = thefile)
+	
+	a <- NULL
+	try( a <- unlist(x@history), silent=TRUE )
+	if (!is.null(a)) {
+		cat("history=", a, "\n", file = thefile)
+	}
+	
+	a <- NULL
+	try( a <- rapply(x@history, function(x) paste(as.character(x), collapse='#,#')), silent=TRUE )
+	if (!is.null(a)) {
+		a <- gsub('\n', '#NL#', a)
+		type <- rapply(x@history, class)
+		type_value <- apply(cbind(type, a), 1, function(x) paste(x, collapse=':'))
+		name_type_value <- apply(cbind(names(a), type_value), 1, function(x) paste(x, collapse='='))
+		name_type_value <- paste(name_type_value, '\n', sep='')
+		cat("[metadata]", "\n", file = thefile)
+		cat(name_type_value, file = thefile)		
+	}
 	close(thefile)
 	return(TRUE)
 }

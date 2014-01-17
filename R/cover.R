@@ -24,7 +24,7 @@ setMethod('cover', signature(x='RasterLayer', y='RasterLayer'),
 	filename <- trim(filename)
 	dots <- list(...)
 	if (is.null(dots$format))  { 
-		format <- .filetype(format=format, filename=filename)
+		format <- .filetype(filename=filename)
 	} else { 
 		format <- dots$format 
 	}

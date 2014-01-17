@@ -40,10 +40,15 @@ function(x, y) {
 		
 		dif1 <- erase(x, y)
 		dif2 <- erase(y, x)
+		
 		x <- intersect(x, y)
-		if (!is.null(dif1) | !is.null(dif2)) {
-			x <- bind(dif1, x, dif2) 
-		} 
+		x <- list(dif1, dif2, x)
+		x <- x[!sapply(x, is.null)]
+		if (length(x) > 1) {
+			x <- do.call(bind, x)
+		} else {
+			x <- x[[1]]
+		}
 		
 		# remove slivers
 		area <- sapply(x@polygons, function(i) slot(i, 'area'))

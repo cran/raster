@@ -40,7 +40,7 @@
 				result <- .readBrickCellsNetCDF(x, cells, layer, nl) 
 				
 			}  else {
-				result <-  .readCells(x, cells, lyrs) 
+				result <- .readCells(x, cells, lyrs) 
 			}
 			
 			if (is.null(dim(result))) { 

@@ -67,10 +67,14 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 					return( colSums(x, na.rm=na.rm) )
 
 				} else if (stat == "min" ) {
-					return( .colMin(x, na.rm=na.rm) )
+					v <- .colMin(x, na.rm=na.rm) 
+					names(v) <- names(x)
+					return(v)
 
 				} else if (stat == "max" ) {
-					return( .colMax(x, na.rm=na.rm) )
+					v <- .colMax(x, na.rm=na.rm)
+					names(v) <- names(x)
+					return(v)
 					
 				} else if (stat == 'countNA') { 
 					warning ("'countNA' is deprecated. Use freq(x, 'value=NA') instead")
@@ -154,7 +158,7 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 			counts <- TRUE
 		
 		} else { 
-			stop("invalid 'stat'. Should be sum, min, max, sd, mean, 'rms', 'skew', or 'countNA'") 
+			stop("invalid 'stat'. Should be 'sum', 'min', 'max', 'sd', 'mean', 'rms', or 'skew'") 
 		}
 
 			
@@ -167,12 +171,18 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 				d <- matrix(d, ncol=1)
 			}
 			if (counts) {
-				nas <- colSums( is.na(d) )
-				if (stat != 'countNA') {
+				if (na.rm & stat != 'countNA') {
+					nas <- colSums( is.na(d) )
 					if (min(nas) == nrow(d)) { 
 						next 
 					}
 					cells <- nrow(d) - nas
+				} else {
+					if (stat == 'countNA') {
+						nas <- colSums( is.na(d) )
+					} else {
+						cells <- nrow(d)
+					}
 				}
 			}
 				
@@ -191,6 +201,11 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 			} else if (stat=='countNA') {
 				st <- st + nas
 					
+			} else if (stat=='rms') {
+			
+				sumsq <- colSums(d^2, na.rm=TRUE) + sumsq
+				cnt <- cnt + cells
+
 			} else if (stat=='skew') {
 
 				d <- t( t(d) - zmean )
@@ -240,6 +255,8 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 				stsd <- sqrt(sumsq/cnt)^3
 			}
 			st <- d3 / (cnt*stsd)
+		} else if (stat %in% c('min', 'max')) {
+			names(st) <- names(x)
 		}
 		
 		pbClose(pb)
@@ -258,7 +275,7 @@ setMethod('cellStats', signature(x='RasterLayer'),
 		stopifnot(hasValues(x))
 		stat <- .csTextFun(stat)
 	
-		if (!inMemory(x)) {
+		if (! inMemory(x) ) {
 			if (canProcessInMemory(x)) {
 				x <- readAll(x)
 			}
@@ -290,6 +307,19 @@ setMethod('cellStats', signature(x='RasterLayer'),
 						st <- n * st / (n-1)
 					} 
 					return(st)
+				} else if (stat == 'rms') { 
+					if (na.rm) {
+						n <- sum(! is.na(x))
+					} else {
+						n <- length(x)
+					}
+					if (asSample) {
+						n <- n-1
+					}
+					# st <- apply(x, 2, function(x) sqrt(sum(x^2)/n))
+					return(  sqrt( sum(x^2)/n ) )
+					
+					
 				} else if (stat == "skew" ) {
 					if (na.rm) {
 						x <- na.omit(x)
@@ -325,6 +355,7 @@ setMethod('cellStats', signature(x='RasterLayer'),
 		} else if (stat == 'countNA') {
 			st <- 0	
 			counts <- TRUE
+			
 		} else if (stat == 'skew') {
 			zmean <- cellStats(x, 'mean')
 			cnt <- 0
@@ -332,7 +363,7 @@ setMethod('cellStats', signature(x='RasterLayer'),
 			d3 <- 0
 			counts <- TRUE
 			
-		} else if (stat == 'mean' | stat == 'sd') {
+		} else if (stat == 'mean' | stat == 'sd' | stat == 'rms') {
 			st <- 0	
 			sumsq <- 0
 			cnt <- 0
@@ -348,12 +379,18 @@ setMethod('cellStats', signature(x='RasterLayer'),
 		for (i in 1:tr$n) {
 			d <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
 			if (counts) {
-				nas <- sum(is.na(d) )
-				if (stat != 'countNA') {
+				if (na.rm & stat != 'countNA') {
+					nas <- sum(is.na(d) )
 					if (nas == length(d)) { # only NAs 
 						next 
 					}
 					cells <- length(d) - nas
+				} else {
+					if (stat == 'countNA') {
+						nas <- sum(is.na(d) )
+					} else {
+						cells <- length(d)
+					}
 				}
 			}
 				
@@ -375,16 +412,16 @@ setMethod('cellStats', signature(x='RasterLayer'),
 			} else if (stat=='skew') {
 				
 				d <- (d - zmean)
-				sumsq <- sum(d^2) + sumsq
-				d3 <- sum(d^3) + d3
+				sumsq <- sum(d^2, na.rm=na.rm) + sumsq
+				d3 <- sum(d^3, na.rm=na.rm) + d3
+				cnt <- cnt + cells
+
+			} else if (stat=='rms') {
+				sumsq <- sum( d^2, na.rm=na.rm) + sumsq
 				cnt <- cnt + cells
 				
-			} else if (stat=='min') {
-				st <- min(d, st, na.rm=na.rm)
-			} else if (stat=='max') {
-				st <- max(d, st, na.rm=na.rm)
-			} else if (stat=='range') {
-				st <- range(d, st, na.rm=na.rm)
+			} else {
+				st <- fun(d, st, na.rm=na.rm)
 			}
 				
 			pbStep(pb, i) 
@@ -400,6 +437,14 @@ setMethod('cellStats', signature(x='RasterLayer'),
 			}
 		} else if (stat == 'mean') {
 			st <- st / cnt
+			
+		} else if (stat == 'rms') {
+			if (asSample) {
+				st <- sqrt(sumsq/(cnt-1))
+			} else {
+				st <- sqrt(sumsq/cnt)
+			}
+			
 		} else if (stat == 'skew') {
 			if (asSample) {
 				stsd <- sqrt(sumsq/(cnt-1))^3

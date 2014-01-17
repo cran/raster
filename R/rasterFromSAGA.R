@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-.rasterFromSAGAFile <- function(filename, crs=NULL, ...) {
+.rasterFromSAGAFile <- function(filename, crs=NA, ...) {
 	valuesfile <- .setFileExtensionValues(filename, "SAGA")
 	if (!file.exists(valuesfile )){
 		stop( paste(valuesfile,  "does not exist"))

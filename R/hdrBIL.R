@@ -12,10 +12,7 @@
 	cat("NCOLS          ",  x@ncols, "\n", file = thefile)
 	cat("NBANDS         ",  nlayers(x), "\n", file = thefile)
 	cat("NBITS          ",  dataSize(x@file@datanotation) * 8, "\n", file = thefile)
-	if (.Platform$endian == "little") { 
-		btorder <- "I" 
-	} else { btorder <- "M" 
-	}
+	btorder <- ifelse(x@file@byteorder == "little", "I", "M")
 	cat("BYTEORDER      ", btorder, "\n", file = thefile)
 	
 #  PIXELTYPE should work for Gdal, and perhpas ArcGIS, see:
@@ -23,11 +20,7 @@
 
 	dtype <- .shortDataType(x@file@datanotation)
 	if (dtype == 'INT' | dtype == 'LOG' ) { 
-		if (dataSigned(x@file@datanotation)) {
-			pixtype <- "SIGNEDINT"
-		} else {
-			pixtype <- "UNSIGNEDINT"
-		}
+		pixtype <- ifelse(dataSigned(x@file@datanotation), "SIGNEDINT", "UNSIGNEDINT")
 	} else { 
 		pixtype <- "FLOAT" 
 	}
