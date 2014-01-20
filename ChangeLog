@@ -7,17 +7,25 @@ function for affine transformation
 add AMSR-E ice products and other raw binary products
 add orientation fixes for AVISO currents and similar NetCDFs lacking metadata on the internal CRS
 
---- 21-December-2013, version: 2.2-02
+--- 14-January-2014, version: 2.2-9
+bug fix in rasterize with small polygons (reverted to previous version) (reported by Roger Bivand)
+bug fix in extract/points/RasterBrick when all points are outside the raster (reported by Jonathan Greenberg)
+bug fix in linking to SAGA files (reported by Chuck Bulmer)
+bug fix in scale with large files (and underlying problem in cellStats) (reported by Oscar Perpiñan Lamigueiro).
+improved chunk size computation in disaggregate as suggested by Benjamin Leutner
+improved writing of min and max value stats when these are truncated because of the data type (suggested by Philip Heilman)
+resample now first aggregates input data if it is being resampled to much larger grid cells
+projectRaster now allows re-projecting to the same CRS as the input data (an alternative to resample)
+
+--- 1-January-2014, version: 2.2-5
 bug fix that prevented using certain file formats that do not provide a proj4 string
 bug fix in trim. It failed when only the last row had values. Reported by Daniel Schlaepfer
 bug fix in sampleRandom. 'ext' argument was ignored for large Raster objects. Reported by Ned Horning
-bug fix in cellStats with 'skew'. Reported by Oscar Perpiñan Lamigueiro.
 added 'export' argument to cluserR
 added 'NArule' argument to approxNA and fixed bug when there was only one layer without an NA value (reported by Josh Perlman)
 improved rasterTmpFile to avoid creating duplicate names in case of parallel processes that call set.seed (suggested by Daniel Schlaepfer)
 added several functions to manipulate Spatial* objects (aggregate, bind, intersect, erase, union, symdif) that were previously in sptools (on R-Forge)
 'edges' renamed to 'boundaries' to avoid name overlap with igraph::edges. edges (and edge! see previous change below) is still available for now (with a warning) for backwards compatibility
-
 
 --- 16-November-2013, version: 2.1-65
 added support to read NSIDC sea ice concentration binary files (southern and northern hemisphere)

@@ -32,12 +32,18 @@ function(x, y, method="bilinear", filename="", ...)  {
 	}
 	if (method == 'ngb') method <- 'simple'
 	
-
-	resdif <- max(res(y) / res(x))
-	if (resdif > 3) {
-		warning('you are resampling y a raster with a much larger cell size, perhaps you should use "aggregate" first')
+	rres <- res(y) / res(x)
+	resdif <- max(rres)
+	if (resdif > 2) {
+		ag <- pmax(1, floor(rres-1))
+		if (max(ag) > 1) {
+			if (method == 'bilinear') {
+				x <- aggregate(x, ag, 'mean')
+			} else {  
+				x <- aggregate(x, ag, modal)
+			}
+		}
 	}
-	
 	e <- .intersectExtent(x, y, validate=TRUE)
 	
 	filename <- trim(filename)

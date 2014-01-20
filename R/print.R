@@ -43,13 +43,31 @@ setMethod ('print', 'Raster',
 
 setMethod ('show' , 'Spatial', 
 	function(object) {
-		print (object)
+		.printSpatial(object)
 	}
 )
 
 
+setMethod ('show' , 'SpatialPoints', 
+	function(object) {
+		.printSpatial(object)
+	}
+)
+
+setMethod ('show' , 'SpatialPointsDataFrame', 
+	function(object) {
+		.printSpatial(object)
+	}
+)
+
 setMethod ('print' , 'Spatial', 
 	function(x, ...) {
+		.printSpatial(x)
+	}
+)	
+
+
+.printSpatial <- function(x, ...) {
 	
 		cat('class       :' , class(x), '\n')
 		isRaster <- hasData <- FALSE
@@ -74,7 +92,7 @@ setMethod ('print' , 'Spatial',
 			cat ('resolution  : ', cs[1], ', ', cs[2], '  (x, y)\n', sep="")		
 			
 		} else {		
-			cat('nfeatures   :' , length(x), '\n')
+			cat('features    :' , length(x), '\n')
 		}
 		
 		e <- bbox(x)
@@ -88,7 +106,7 @@ setMethod ('print' , 'Spatial',
 			maxnl <- 15
 			
 			if (! isRaster) {
-				cat('nvariables  : ', nc, '\n', sep="" ) 
+				cat('variables   : ', nc, '\n', sep="" ) 
 			}
 			if (nc > maxnl) {
 				x <- x[, 1:maxnl]
@@ -111,9 +129,10 @@ setMethod ('print' , 'Spatial',
 
 			w <- pmax(nchar(ln), nchar(minv), nchar(maxv))
 			m <- rbind(ln, minv, maxv)
-				# a loop because 'width' is not recycled by format
+			
+			# a loop because 'width' is not recycled by format
 			for (i in 1:ncol(m)) {
-				m[,i]   <- format(m[,i], width=w[i], justify="right")
+				m[,i] <- format(m[,i], width=w[i], justify="right")
 			}
 
 			cat('names       :', paste(m[1,], collapse=', '), '\n')
@@ -121,6 +140,5 @@ setMethod ('print' , 'Spatial',
 			cat('max values  :', paste(m[3,], collapse=', '), '\n')
 			
 		}
-	}
-)	
+}
 	

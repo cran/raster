@@ -34,7 +34,17 @@ setMethod('zonal', signature(x='RasterLayer', z='RasterLayer'),
 
 		if (inmem) {
 			pb <- pbCreate(2, label='zonal', ...)		
-			func <- match.fun(fun)
+			if (isTRUE(try(fun == 'count', silent=TRUE))) {
+				func <- function(x, na.rm) {
+					if (na.rm) {
+						length(na.omit(x))
+					} else {
+						length(x)
+					}
+				}		
+			} else {
+				func <- match.fun(fun)
+			}	
 			x <- getValues(x)
 			z <- round(getValues(z), digits=digits)
 			pb <- pbStep(pb, 1)		
@@ -63,22 +73,32 @@ setMethod('zonal', signature(x='RasterLayer', z='RasterLayer'),
 		} else {
 		
 			if (class(fun) != 'character') {
-				stop("RasterLayers cannot be processed in memory.\n You can use fun='sum', 'mean', 'sd', 'min', or 'max', but not a function")
+				stop("RasterLayers cannot be processed in memory.\n You can use fun='sum', 'mean', 'sd', 'min', 'max', or 'count' but not a function")
 			}
-			if (! fun %in% c('sum', 'mean', 'sd', 'min', 'max')) {
-				stop("fun can be 'sum', 'mean', 'sd', 'min', or 'max'")
+			if (! fun %in% c('sum', 'mean', 'sd', 'min', 'max', 'count')) {
+				stop("fun can be 'sum', 'mean', 'sd', 'min', 'max', or 'count'")
 			}
 			sdtab <- FALSE
-			func <- match.fun(fun)
+			counts <- FALSE		
+			if (fun == 'count') {
+				func1 <- function(x, na.rm) {
+					if (na.rm) {
+						length(na.omit(x))
+					} else {
+						length(x)
+					}
+				}	
+				func2 <- sum
+			} else {
+				func1 <- func2 <- match.fun(fun)
+			}
 			if ( fun == 'mean' | fun == 'sd') {
-				func <- sum
+				func1 <- func2 <- sum
 				counts <- TRUE
 				if (fun == 'sd') {
 					sdtab <- TRUE
 				}
-			} else {
-				counts <- FALSE		
-			}
+			} 
 
 			alltab <- array(dim=0)
 			sqtab <- cnttab <- alltab
@@ -99,7 +119,7 @@ setMethod('zonal', signature(x='RasterLayer', z='RasterLayer'),
 				#cat(i, '\n')
 				#flush.console()
 				
-				a <- tapply(d, Z, FUN=func, na.rm=na.rm)
+				a <- tapply(d, Z, FUN=func1, na.rm=na.rm)
 				a <- cbind(as.numeric(names(a)), a)
 				alltab <- rbind(alltab, a) 
 				if (counts) {
@@ -124,7 +144,7 @@ setMethod('zonal', signature(x='RasterLayer', z='RasterLayer'),
 					}
 				}
 				if (length(alltab) > 10000) {
-					alltab <- tapply(alltab[,2], alltab[,1], FUN=func, na.rm=na.rm) 
+					alltab <- tapply(alltab[,2], alltab[,1], FUN=func2, na.rm=na.rm) 
 					alltab <- cbind(as.numeric(names(alltab)), alltab)
 					if (counts) {
 						cnttab <- tapply(cnttab[,2], cnttab[,1], FUN=sum, na.rm=na.rm) 
@@ -140,7 +160,7 @@ setMethod('zonal', signature(x='RasterLayer', z='RasterLayer'),
 			x <- readStop(x)
 			z <- readStop(z)
 			
-			alltab <- tapply(alltab[,2], alltab[,1], FUN=func, na.rm=na.rm)
+			alltab <- tapply(alltab[,2], alltab[,1], FUN=func2, na.rm=na.rm)
 			alltab <- cbind(as.numeric(names(alltab)), alltab)
 			if (counts) {
 				cnttab <- tapply(cnttab[,2], cnttab[,1], FUN=sum) 
@@ -193,7 +213,18 @@ setMethod('zonal', signature(x='RasterStackBrick', z='RasterLayer'),
 	
 		if (inmem) {
 			pb <- pbCreate(2, label='zonal', ...)		
-			func <- match.fun(fun)
+			if (isTRUE(try(fun == 'count', silent=TRUE))) {
+				func <- function(x, na.rm) {
+					if (na.rm) {
+						length(na.omit(x))
+					} else {
+						length(x)
+					}
+				}		
+			} else {
+				func <- match.fun(fun)
+			}	
+			
 			x <- getValues(x)
 			x <- cbind(x, round(getValues(z), digits=digits))
 			pb <- pbStep(pb, 1)		
@@ -204,22 +235,33 @@ setMethod('zonal', signature(x='RasterStackBrick', z='RasterLayer'),
 		} else {
 		
 			if (class(fun) != 'character') {
-				stop("RasterLayers cannot be processed in memory.\n You can use fun='sum', 'mean', 'sd', 'min', or 'max', but not a function")
+				stop("RasterLayers cannot be processed in memory.\n You can use fun='sum', 'mean', 'sd', 'min', 'max', or 'count' but not a function")
 			}
-			if (! fun %in% c('sum', 'mean', 'sd', 'min', 'max')) {
-				stop("fun can be 'sum', 'mean', 'sd', 'min', or 'max'")
+			if (! fun %in% c('sum', 'mean', 'sd', 'min', 'max', 'count')) {
+				stop("fun can be 'sum', 'mean', 'sd', 'min', 'max', or 'count'")
 			}
 			sdtab <- FALSE
-			func <- match.fun(fun)
+			counts <- FALSE		
+			
+			if (fun == 'count') {
+				func1 <- function(x, na.rm) {
+					if (na.rm) {
+						length(na.omit(x))
+					} else {
+						length(x)
+					}
+				}	
+				func2 <- sum
+			} else {
+				func1 <- func2 <- match.fun(fun)
+			}
 			if ( fun == 'mean' | fun == 'sd') {
-				func <- sum
+				func1 <- func2 <- sum
 				counts <- TRUE
 				if (fun == 'sd') {
 					sdtab <- TRUE
 				}
-			} else {
-				counts <- FALSE		
-			}
+			} 
 
 			alltab <- array(dim=0)
 			sqtab <- cnttab <- alltab
@@ -240,7 +282,7 @@ setMethod('zonal', signature(x='RasterStackBrick', z='RasterLayer'),
 					 round(getValues(z, row=tr$row[i], nrows=tr$nrows[i]), digits=digits))
 				#cat(i, '\n')
 				#flush.console()
-				alltab <- rbind(alltab, aggregate(d[,1:nc], by=list(d[,nc1]), FUN=func, na.rm=na.rm)) 
+				alltab <- rbind(alltab, aggregate(d[,1:nc], by=list(d[,nc1]), FUN=func1, na.rm=na.rm)) 
 				if (counts) {
 					if (na.rm) {
 						cnttab <- rbind(cnttab, aggregate(d[,1:nc], by=list(d[,nc1]), FUN=function(x)length(na.omit(x))))
@@ -255,7 +297,7 @@ setMethod('zonal', signature(x='RasterStackBrick', z='RasterLayer'),
 					}
 				}
 				if (length(alltab) > 10000) {
-					alltab <- aggregate(alltab[,nc2], by=list(alltab[,1]), FUN=func, na.rm=na.rm) 
+					alltab <- aggregate(alltab[,nc2], by=list(alltab[,1]), FUN=func2, na.rm=na.rm) 
 					if (counts) {
 						cnttab <- aggregate(cnttab[,nc2], by=list(cnttab[,1]), FUN=sum, na.rm=na.rm) 
 						if (sdtab) {
@@ -268,7 +310,7 @@ setMethod('zonal', signature(x='RasterStackBrick', z='RasterLayer'),
 			x <- readStop(x)
 			z <- readStop(z)
 			
-			alltab <- aggregate(alltab[,nc2], by=list(alltab[,1]), FUN=func, na.rm=na.rm) 	
+			alltab <- aggregate(alltab[,nc2], by=list(alltab[,1]), FUN=func2, na.rm=na.rm) 	
 			if (counts) {
 				cnttab <- aggregate(cnttab[,nc2], by=list(cnttab[,1]), FUN=sum) 
 				alltab[,nc2] <- alltab[,nc2] / cnttab[,nc2]

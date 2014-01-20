@@ -6,12 +6,6 @@
 
 projectExtent <- function(object, crs) {
 	.requireRgdal()
-
-	if (packageVersion('rgdal') >= '0.8.12') {	
-		.gd_transform <- rgdal::rawTransform
-	} else {
-		.gd_transform <- eval(parse(text="rgdal:::.gd_transform"))
-	}
 	
 	object <- raster(object)
 	dm <- oldm <- dim(object)
@@ -77,7 +71,7 @@ projectExtent <- function(object, crs) {
 	
 	}
 	
-	res <- .gd_transform( projfrom, projto, nrow(xy), xy[,1], xy[,2] )
+	res <- rawTransform( projfrom, projto, nrow(xy), xy[,1], xy[,2] )
 	
 	x <- res[[1]]
 	y <- res[[2]]
@@ -105,7 +99,7 @@ projectExtent <- function(object, crs) {
 }
 
 
-.computeRes <- function(raster, crs, gd_transform) {
+.computeRes <- function(raster, crs) {
 
 	x <- xmin(raster) + 0.5 * (xmax(raster) - xmin(raster))
 	y <- ymin(raster) + 0.5 * (ymax(raster) - ymin(raster))
@@ -115,7 +109,7 @@ projectExtent <- function(object, crs) {
 	y1 <- y - 0.5 * res[2]
 	y2 <- y + 0.5 * res[2]
 	xy <- cbind(c(x1, x2, x, x), c(y, y, y1, y2))
-	pXY <- gd_transform( projection(raster), crs, nrow(xy), xy[,1], xy[,2] )
+	pXY <- rawTransform( projection(raster), crs, nrow(xy), xy[,1], xy[,2] )
 	pXY <- cbind(pXY[[1]], pXY[[2]])
 	out <- c((pXY[2,1] - pXY[1,1]), (pXY[4,2] - pXY[3,2]))
 	if (any(is.na(res))) {
@@ -145,12 +139,6 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 
 	.requireRgdal()
 
-	if (packageVersion('rgdal') >= '0.8.12') {	
-		.gd_transform <- rgdal::rawTransform
-	} else {
-		.gd_transform <- eval(parse(text="rgdal:::.gd_transform"))
-	}
-	
 	
 	validObject( projection(from, asText=FALSE) )
 	projfrom <- projection(from)
@@ -166,7 +154,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 		projto <- projection(crs)
 		to <- projectExtent(from, projto)
 		if (missing(res)) {
-			res <- .computeRes(from, projto, .gd_transform)
+			res <- .computeRes(from, projto)
 		}
 		res(to) <- res
 		projection(to) <- crs
@@ -210,9 +198,9 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 	validObject(to)
 	validObject(projection(to, asText=FALSE))
 
-	if (identical(projfrom, projto)) {
-		stop('projections of "from" and "to" are the same')
-	}	
+	#if (identical(projfrom, projto)) {
+	#	warning('projections of "from" and "to" are the same')
+	#}	
 	if (lonlat & over) {
 		projto_int <- paste(projto, "+over")
 	} else {
@@ -277,7 +265,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 			v <- matrix(nrow=length(cells), ncol=nl)
 			if (nrow(xy) > 0) {
 				ci <- match(cellFromXY(to, xy), cells)
-				xy <- .gd_transform(projto_int, projfrom, nrow(xy), xy[,1], xy[,2])
+				xy <- rawTransform(projto_int, projfrom, nrow(xy), xy[,1], xy[,2])
 				xy <- cbind(xy[[1]], xy[[2]])
 				v[ci, ] <- .xyValues(from, xy, method=method)
 			} 
@@ -349,7 +337,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 			xy <- coordinates(to) 
 			xy <- subset(xy, xy[,1] > e@xmin & xy[,1] < e@xmax)
 			cells <- cellFromXY(to, xy)
-			xy <- .gd_transform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
+			xy <- rawTransform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
 			xy <- cbind(xy[[1]], xy[[2]])
 			to[cells] <- .xyValues(from, xy, method=method)
 			
@@ -369,7 +357,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 				xy <- subset(xy, xy[,1] > e@xmin & xy[,1] < e@xmax)
 				if (nrow(xy) > 0) {
 					ci <- match(cellFromXY(to, xy), cells)
-					xy <- .gd_transform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
+					xy <- rawTransform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
 					xy <- cbind(xy[[1]], xy[[2]])
 					v <- matrix(nrow=length(cells), ncol=nl)
 					v[ci, ] <- .xyValues(from, xy, method=method)

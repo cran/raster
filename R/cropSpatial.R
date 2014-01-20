@@ -4,6 +4,7 @@
 # Licence GPL v3
 
 
+
 setMethod('crop', signature(x='Spatial', y='ANY'), 
 	function(x, y, ...) {
 	
@@ -19,10 +20,10 @@ setMethod('crop', signature(x='Spatial', y='ANY'),
 			y@proj4string <- x@proj4string		
 		}
 		
-		if (! identical(projection(x), projection(y)) ) {
+		if (! .compareCRS(x, y) ) {
 			warning('non identical CRS')
-			y@proj4string <- x@proj4string
 		}
+		y@proj4string <- x@proj4string
 		
 		if (inherits(x, 'SpatialPolygons')) {
 			stopifnot(require(rgeos))

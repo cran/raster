@@ -4,6 +4,7 @@
 # Licence GPL v3
 
 
+
 if (!isGeneric("cover")) {
 	setGeneric("cover", function(x, y, ...)
 		standardGeneric("cover"))

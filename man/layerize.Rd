@@ -24,7 +24,7 @@ You can supply a second spatially overlapping RasterLayer with larger cells (do 
   \item{x}{RasterLayer}
   \item{y}{RasterLayer or missing}
   \item{classes}{numeric. The values (classes) for which layers should be made. If \code{NULL} all classes are used}
-  \item{falseNA}{logical. If \code{TRUE} the list will be merged in a single data.frame}
+  \item{falseNA}{logical. If \code{TRUE}, cells that are not of the class represented by a layer are \code{NA} rather then \code{FALSE}}
   \item{filename}{character. Output filename (optional)}
   \item{...}{Additional arguments as for \code{\link{writeRaster}}}
 }

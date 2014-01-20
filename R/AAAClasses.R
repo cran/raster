@@ -49,6 +49,7 @@ setClass ('BasicRaster',
 		nrows ='integer',
 		crs = 'CRS',
 		history = 'list',
+		#meta = 'list',
 		z = 'list'
 	),
 	prototype (	
@@ -57,6 +58,7 @@ setClass ('BasicRaster',
 		nrows= as.integer(1),
 		crs = CRS(),
 		history = list(),
+		#meta = list(),
 		z = list()
 	),
 	validity = function(object) {

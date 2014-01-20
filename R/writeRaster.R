@@ -58,8 +58,12 @@ function(x, filename, format, ...) {
 	}
 
 	if (.isNativeDriver(filetype)) {
-		x <- .writeRasterAll(x, filename=filename, filetype=filetype, ...)
-		
+		out <- raster(x)
+		try( out@history <- x@history, silent=TRUE)
+		out <- .startRasterWriting(out, filename, filetype=filetype, ...)
+		out <- writeValues(out, values(x), 1)
+		return( .stopRasterWriting(out) )
+	
 	} else if (filetype=='ascii') {
 		x <- .writeAscii(x, filename=filename,...)
 		

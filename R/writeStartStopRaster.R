@@ -14,17 +14,25 @@
 	fnamevals <- .setFileExtensionValues(filename, filetype)
 	datatype <- .datatype(...)
 	
-	dataType(x) <- datatype
-	if (!missing(NAflag)) {
-		x@file@nodatavalue <- NAflag
-	}
 	
 	if (filetype %in% c('SAGA')) {
 		resdif <- abs((yres(x) - xres(x)) / yres(x) )
 		if (resdif > 0.01) {
 			stop(paste("x has unequal horizontal and vertical resolutions. Such data cannot be stored in SAGA format"))
 		}
+		if (datatype == 'FLT8S') {
+			datatype = 'FLT4S'
+		}		
 	}
+
+	dataType(x) <- datatype
+	if (!missing(NAflag)) {
+		x@file@nodatavalue <- NAflag
+	}
+	
+	if (datatype == 'INT4U') {
+		x@file@nodatavalue <- min(x@file@nodatavalue, 2147483647) # because as.integer returns SIGNED INT4s
+	}		
 
 	overwrite <- .overwrite( ...)
 	if (filetype == 'raster') {
@@ -69,6 +77,7 @@
 		}
 	}
 	x@file@bandorder <- bandorder
+	x@file@byteorder <- .Platform$endian
 	
 	return(x)
 }

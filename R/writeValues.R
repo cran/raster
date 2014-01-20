@@ -14,8 +14,34 @@ setMethod('writeValues', signature(x='RasterLayer', v='vector'),
 	function(x, v, start) {
 
 		v[is.infinite(v)] <- NA
-		if (is.logical(v)) {
-			v <- as.integer(v)
+
+		datanotation <- x@file@datanotation
+		if (substr(datanotation,1,1) != 'F') {
+			v <- round(v)
+			size <- substr(datanotation,4,4)
+			if (substr(datanotation, 1, 3) == 'LOG') {
+				v[v != 1] <- 0
+			} else if (substr(datanotation, 5, 5) == 'U') {
+				v[v < 0] <- NA
+				if (size == '1') {
+					v[v > 255] <- NA
+				} else if (size == '2') {
+					v[v > 65535] <- NA
+				} else {
+					v[v > 4294967295] <- NA				
+				}
+			} else {
+				if (size == '1') {
+					v[v < -128] <- NA
+					v[v > 127] <- NA
+				} else if (size == '2') {
+					v[v < -32768] <- NA
+					v[v > 32767] <- NA
+				} else {
+					v[v < -2147483648] <- NA
+					v[v > 2147483647] <- NA
+				}
+			}
 		}
 		
 		rsd <- na.omit(v) # min and max values
@@ -27,46 +53,22 @@ setMethod('writeValues', signature(x='RasterLayer', v='vector'),
 		driver <- x@file@driver
 		
 		if ( driver == 'gdal' ) {
-			off = c(start-1, 0)
-			if (substr(x@file@datanotation,1,1) != 'F') {
-				v <- round(v)
-			}
-			if (substr(x@file@datanotation,5,5) == 'U') {
-				v[v < 0] <- NA
-				if (x@file@datanotation == 'INT4U') {
-					v[v > 2147483647] <- NA
-				}
-			}			
+			off <- c(start-1, 0)
 			v[is.na(v)] <- x@file@nodatavalue
 			v <- matrix(v, nrow=x@ncols)
-			
 			gd <- putRasterData(x@file@transient, v, band=1, offset=off) 	
 
 		} else if ( driver %in% .nativeDrivers() ) {
-			if (x@file@dtype == "INT" ) { 
-				if (substr(x@file@datanotation, 5 , 5) == 'U') { 
-					v[v < 0] <- NA
-					if (x@file@datanotation == 'INT4U') { 
-						v[is.na(v)] <- x@file@nodatavalue
-						i <- v > 2147483647 & !is.na(v)
-						v[i] <- 2147483647 - v[i]
-					}
-				} else {
-					v[is.na(v)] <- as.integer(x@file@nodatavalue)		
-				}
-				v <- as.integer(round(v))  
-				
-			} else if ( x@file@dtype =='LOG' ) {
-				v[v != 1] <- 0
-				v <- as.integer(v)  
-				v[is.na(v)] <- as.integer(x@file@nodatavalue)
-				
-			} else { #if (!is.numeric(v)) { 
+			if (x@file@dtype == "FLT" ) { 
 				# v may be integers, while the filetype is FLT
 				v  <- as.numeric( v ) 
 				if (driver != 'raster') {
 					v[is.na(v)] <- x@file@nodatavalue
 				}
+			
+			} else {
+				v[is.na(v)] <- as.integer(x@file@nodatavalue)		
+				v <- as.integer(v)  
 			}
 			
 			start <- (start-1) * x@ncols * x@file@dsize

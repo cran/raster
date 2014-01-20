@@ -18,13 +18,13 @@ Aggregation groups rectangular areas to create larger cells. The value for the r
 
 SpatialPolygons:
 
-Aggregate ('dissolve') method for SpatialPolygons to merge polygons if the values of selected variables are the same.
+Aggregate ('dissolve') SpatialPolygons, optionally by combining polygons that have the same attributes for one or more variables.
 }
 
 \usage{
 \S4method{aggregate}{Raster}(x, fact=2, fun=mean, expand=TRUE, na.rm=TRUE, filename='', ...)
 
-\S4method{aggregate}{SpatialPolygons}(x, vars=NULL, sums, ...)
+\S4method{aggregate}{SpatialPolygons}(x, vars=NULL, sums, dissolve=TRUE, ...)
 }
 
 \arguments{
@@ -39,6 +39,7 @@ Aggregate ('dissolve') method for SpatialPolygons to merge polygons if the value
   \item{vars}{character or integer. The variables (column names or numbers) that should be used to aggregate (dissolve) the SpatialPolygons by only maintaining unique combinations of these variables. The default setting is to use no variables and aggregate all polygons. You can also supply a vector with a length of length(row.names(x)) }
 
   \item{sums}{list with function(s) and variable(s) to summarize. This should be a list of lists in which each element of the main lists has two items. The first item is function (e.g. mean), the second element is a vector of column names (or indices) that need to summarize with that function. Be careful with character and factor variables (you can use, e.g. 'first' \code{function(x)x[1]} or 'last' \code{function(x)x[length(x)]} or \code{modal} for these variables}
+  \item{dissolve}{logical. If \code{TRUE} overlapping polygons are dissolved into single features (requires package rgeos)}  
 }
 
 

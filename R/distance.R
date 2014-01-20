@@ -12,7 +12,7 @@ if (!isGeneric("distance")) {
 setMethod('distance', signature(x='RasterLayer'), 
 function(x, filename='', doEdge=TRUE, ...) {
 	if (doEdge) {
-		r <- raster::edges(x, classes=FALSE, type='inner', progress=.progress(...)) 
+		r <- boundaries(x, classes=FALSE, type='inner', progress=.progress(...)) 
 		pts <- try(  rasterToPoints(r, fun=function(z){ z>0 } )[,1:2, drop=FALSE] )
 	} else {
 		pts <- try(  rasterToPoints(x)[,1:2, drop=FALSE] )

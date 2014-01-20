@@ -9,7 +9,7 @@
 	x <- tolower(projection(x))
 	y <- tolower(projection(y))
 	
-	step1 <- function(z, verbatim) {
+	step1 <- function(z) {
 		z <- gsub(' ', '', z)
 		if (!verbatim) {
 			z <- unlist( strsplit(z, '+', fixed=TRUE) )[-1]
@@ -22,10 +22,12 @@
 		return(x==y)
 	}
 	
-	x <- step1(x, verbatim)
-	y <- step1(y, verbatim)
-	
-	if (length(x) == 0 | length(y) == 0) {
+	x <- step1(x)
+	y <- step1(y)
+
+	if (length(x) == 0 & length(y) == 0) {
+		return(TRUE)
+	} else if (length(x) == 0 | length(y) == 0) {
 		if (unknown) {
 			return(TRUE)
 		} else {
@@ -36,6 +38,7 @@
 		}
 	}
 	x <- x[x[,1] != 'towgs84', , drop=FALSE]
+	x <- x[x[,1] != 'no_defs', , drop=FALSE]
 	x <- x[which(x[,1] %in% y[,1]), ,drop=FALSE]
 	y <- y[which(y[,1] %in% x[,1]), ,drop=FALSE]
 	x <- x[order(x[,1]), ,drop=FALSE]

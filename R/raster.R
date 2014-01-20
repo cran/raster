@@ -75,7 +75,7 @@ setMethod('raster', signature(x='list'),
 
 setMethod('raster', signature(x='matrix'), 
 	function(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA, template=NULL) {
-		if (is.na(crs)) {
+		if (isTRUE(is.na(crs))) {
 			crs <- as.character(NA)
 		}	
 		if (!is.null(template)) {
@@ -95,7 +95,7 @@ setMethod('raster', signature(x='matrix'),
 
 setMethod('raster', signature(x='big.matrix'), 
 	function(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA, template=NULL) {
-		if (is.na(crs)) {
+		if (isTRUE(is.na(crs))) {
 			crs <- as.character(NA)
 		}	
 		if (!is.null(template)) {
@@ -289,7 +289,7 @@ setMethod('raster', signature(x='RasterBrick'),
 
 setMethod('raster', signature(x='Extent'), 
 	function(x, nrows=10, ncols=10, crs=NA, ...) {
-		if (is.na(crs)) {
+		if (isTRUE(is.na(crs))) {
 			crs <- as.character(NA)
 		}	
 		nrows <- as.integer(max(1, round(nrows)))
