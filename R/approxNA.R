@@ -1,3 +1,7 @@
+# Author: Robert J. Hijmans
+# Date : February 2012
+# Version 1.0
+# Licence GPL v3
 
 if (!isGeneric("approxNA")) {
 	setGeneric("approxNA", function(x, ...)

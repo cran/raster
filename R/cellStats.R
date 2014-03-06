@@ -89,7 +89,7 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 						} else {
 							n <- nrow(x)
 						}
-						st <- n * st / (n-1)
+						st <- sqrt(st^2 * (n/(n-1)))
 					} 
 					return(st)
 
@@ -232,11 +232,9 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 			
 		if (stat == 'sd') {
 			meansq <- (st/cnt)^2
-			if (asSample) {
-				# cnt/(cnt-1) to use n-1, as in sd 
-				st <- sqrt(( (sumsq / cnt) - meansq ) * (cnt/(cnt-1)))
-			} else {
-				st <- sqrt( (sumsq / cnt) - meansq )
+			st <- sqrt(( (sumsq / cnt) - meansq ) * (cnt/(cnt-1)))
+			if (!asSample) {
+				st <- sqrt( st^2 * (cnt / (cnt-1)))
 			}
 		} else if (stat == 'mean') {
 			st <- st / cnt
@@ -304,7 +302,7 @@ setMethod('cellStats', signature(x='RasterLayer'),
 						} else {
 							n <- length(x)
 						}
-						st <- n * st / (n-1)
+						st <- sqrt(st^2 * (n/(n-1)))
 					} 
 					return(st)
 				} else if (stat == 'rms') { 
@@ -430,10 +428,9 @@ setMethod('cellStats', signature(x='RasterLayer'),
 			
 		if (stat == 'sd') {
 			meansq <- (st/cnt)^2
-			st <- sqrt( (sumsq / cnt) - meansq )
-			if (asSample) {
-				# n-1, as in sd 
-				st <- st * (cnt/(cnt-1))
+			st <- sqrt(( (sumsq / cnt) - meansq ) * (cnt/(cnt-1)))			
+			if (!asSample) {
+				st <- sqrt( st^2 * (cnt / (cnt-1)))
 			}
 		} else if (stat == 'mean') {
 			st <- st / cnt

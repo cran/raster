@@ -26,7 +26,7 @@
 	}
 	
 	thefile <- file(hdrfile, "w")  # open an txt file connectionis
-	if (!old) cat('file format : IDRISI x A.1\n', file = thefile)
+	if (!old) cat('file format : IDRISI Raster A.1\n', file = thefile)
 	cat('file title  : ', names(x), "\n", sep='', file = thefile)
 	cat('data type   : ', pixtype, "\n", sep='', file = thefile)
 	cat('file type   : binary\n', sep='', file = thefile)

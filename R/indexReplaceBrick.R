@@ -122,7 +122,11 @@ setReplaceMethod("[[", c("RasterBrick", "numeric", "missing"),
 			if (!inMemory(x)) {
 				x <- readAll(x)
 			}
-			if (!inherits(value, 'RasterLayer')) {
+			if (inherits(value, 'RasterLayer')) {
+				compareRaster(x, value)
+				x <- setValues(x, getValues(value), i)
+				names(x)[i] <- names(value)
+			} else {
 				val <- value
 				if (i > nl) {
 					value <- getValues(x[[nl]])
@@ -132,12 +136,6 @@ setReplaceMethod("[[", c("RasterBrick", "numeric", "missing"),
 				# for recycling
 				value[] <- val
 				x <- setValues(x, value, i)
-			} else {
-				compareRaster(x, value)
-				nm <- names(value)
-				value <- getValues(value)
-				x <- setValues(x, value, i)
-				names(x)[i] <- nm
 			}
 		} else {
 			x <- stack(x)

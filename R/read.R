@@ -1,7 +1,6 @@
 # Author: Robert J. Hijmans
-# contact: r.hijmans@gmail.com
 # Date : November 2008
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
 
 
@@ -15,16 +14,19 @@ if (!isGeneric("readAll")) {
 setMethod('readAll', signature(object='RasterLayer'), 
 	function(object){ 
 		if (! object@data@fromdisk)  {
-			stop('cannot read values; there is no file associated with this RasterLayer')
+			warning('cannot read values; there is no file associated with this RasterLayer')
+			return(object)
 		}
 		object@data@values <- .readRasterLayerValues(object, 1, object@nrows)
-		object@data@inmemory <- TRUE
 		w <- getOption('warn')
 		on.exit(options('warn' = w))
 		options('warn'=-1) 
 		object@data@min <- as.vector( min(object@data@values, na.rm=TRUE ) )
 		object@data@max <- as.vector( max(object@data@values, na.rm=TRUE ) )
 		object@data@haveminmax <- TRUE
+		object@data@inmemory <- TRUE
+		object@data@fromdisk <- FALSE
+		
 		return(object)
 	}
 )
@@ -46,9 +48,9 @@ setMethod('readAll', signature(object='RasterStack'),
 setMethod('readAll', signature(object='RasterBrick'), 
 	function(object){ 
 		if (! object@data@fromdisk)  {
-			stop('cannot read values; there is no file associated with this RasterBrick')
+			warning('cannot read values; there is no file associated with this RasterBrick')
+			return(object)
 		}
-		object@data@inmemory <- TRUE
 		object@data@values <- .readRasterBrickValues(object, 1, object@nrows)
 		w <- getOption('warn')
 		on.exit(options('warn' = w))
@@ -57,6 +59,8 @@ setMethod('readAll', signature(object='RasterBrick'),
 		object@data@min <- as.vector(rge[1,])
 		object@data@max <- as.vector(rge[2,])
 		object@data@haveminmax <- TRUE
+		object@data@inmemory <- TRUE
+		object@data@fromdisk <- FALSE
 		return(object)
 	}
 )

@@ -7,7 +7,27 @@ function for affine transformation
 add AMSR-E ice products and other raw binary products
 add orientation fixes for AVISO currents and similar NetCDFs lacking metadata on the internal CRS
 
---- 14-January-2014, version: 2.2-9
+--- development version
+
+
+--- 6-March-2014, version: 2.2-31
+new functions 'meta<-' and 'meta' to set and get metadata to a Raster object. Metadata is saved to file for native format files only.
+new argument updatevalue to mask
+new function animate
+new functions corr and corrLocal
+new convenience function origin<-
+new function RGB to create Red-Green-Blue(-alpha) files.
+new intersect method for SpatialPoints with ANY(-thing from which an Extent can be extracted)
+bug fix in boundaries function with large files reported by Adrien Bayeux
+bug fix in writing multiple layers to a ncdf file if the z-value cannot be converted to numeric. Reported by Aseem Sharma
+bug fix in extract with lines and along=TRUE (reported by Robin Edwards)
+bug fix in extract with polygons, in some combinations the column names setting was incorrect and led to an error. (Reported by David Walter)
+bug fix in rasterize/polygons (and affected extract with polygons). It did not consider nested polygons with holes. (Reported by Bart Kranstauber)
+bug fix in disaggregate chunk size computation (reported by Benjamin Leutner)
+bug fixes in writing IDRISI files (reported by Paulo Cardoso)
+bug fix: factors were not set correctly for a Raster* derived from a Spatial* object leading to an error when sampleRegular(asRaster=T) was used (reported by Tomislav Hengl)
+
+--- 20-January-2014, version: 2.2-12
 bug fix in rasterize with small polygons (reverted to previous version) (reported by Roger Bivand)
 bug fix in extract/points/RasterBrick when all points are outside the raster (reported by Jonathan Greenberg)
 bug fix in linking to SAGA files (reported by Chuck Bulmer)

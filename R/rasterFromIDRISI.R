@@ -3,7 +3,7 @@
 # Version 0.9
 # Licence GPL v3
 
-.rasterFromIDRISIFile <- function(filename, crs=NULL, old=FALSE, ...) {
+.rasterFromIDRISIFile <- function(filename, crs=NA, old=FALSE, ...) {
 
 	if (old) {
 		idformat <- 'IDRISIold'

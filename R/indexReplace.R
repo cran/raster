@@ -144,7 +144,7 @@ setReplaceMethod("[", c("RasterLayer","missing","missing"),
 				
 		} else {
 			if (! length(value) %in% c(1, length(i))) {
-				stop('cannot replace values in multi-layer large Raster objects if their length is not 1')
+				stop('length of replacement values does not match the length of the index')
 			}
 			r <- brick(x, values=FALSE)
 			r <- writeStart(r, filename=rasterTmpFile(), overwrite=TRUE )

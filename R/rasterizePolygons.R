@@ -113,7 +113,7 @@
 
 
 
-.polygonsToRaster <- function(p, rstr, field, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue="all", getCover=FALSE, filename="", silent=FALSE, ...) {
+.polygonsToRaster <- function(p, rstr, field, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue="all", getCover=FALSE, filename="", silent=TRUE, ...) {
 
 	leftColFromX <- function ( object, x )	{
 		colnr <- (x - xmin(object)) / xres(object)
@@ -233,7 +233,10 @@
 		
 	lxmin <- min(spbb[1,1], rsbb[1,1]) - xres(rstr)
 	lxmax <- max(spbb[1,2], rsbb[1,2]) + xres(rstr)
-	if (getCover) { return (.polygoncover(rstr, filename, polinfo, lxmin, lxmax, pollist, ...)) }
+	
+	if (getCover) { 
+		return (.polygoncover(rstr, filename, polinfo, lxmin, lxmax, pollist, ...)) 
+	}
 
 	adj <- 0.5 * xres(rstr)
 
@@ -247,7 +250,7 @@
 	rxmx <- xmax(rstr) 
 	rv1 <- rep(NA, ncol(rstr))
 	lst1 <- vector(length=ncol(rstr), mode='list')
-	holes1 <- rep(FALSE, ncol(rstr))
+	holes1 <- rep(0, ncol(rstr))
 	pb <- pbCreate(nrow(rstr), label='rasterize', ...)
 
 	for (r in 1:nrow(rstr)) {
@@ -259,6 +262,7 @@
 		ly <- yFromRow(rstr, r)
 		myline <- rbind(c(lxmin,ly), c(lxmax,ly))
 		holes <- holes1
+
 		subpol <- subset(polinfo, !(polinfo[,2] > ly | polinfo[,3] < ly), drop=FALSE)
 		if (length(subpol[,1]) > 0) { 		
 			updateHoles <- FALSE
@@ -282,9 +286,10 @@
 						spPol <- SpatialPolygons(list(Polygons(list(mypoly), 1)))
 						over <- over(spPnts, spPol)
 						if ( subpol[i, 5] == 1 ) {
-							holes[!is.na(over)] <- TRUE
+							holes[!is.na(over)] <- holes[!is.na(over)] - 1
 						} else {
 							rvtmp[!is.na(over)] <- subpol[i,4] 
+							holes[!is.na(over)] <- holes[!is.na(over)] + 1
 						}
 						# print(paste('exit node intersection on row:', r))
 					} else {
@@ -309,9 +314,10 @@
 							col2 <- rightColFromX(rstr, x2a)
 							if (col1 > col2) { next }
 							if ( subpol[i, 5] == 1 ) {
-								holes[col1:col2] <- TRUE
+								holes[col1:col2] <- holes[col1:col2] - 1
 							} else {
 								rvtmp[col1:col2] <- subpol[i,4]
+								holes[col1:col2] <- holes[col1:col2] + 1
 							}
 						}
 					}
@@ -344,6 +350,7 @@
 					}
 				}
 				if (updateHoles) {
+					holes <- holes < 1
 					if (doFun) {
 						#tmp <- rv
 						#rv <- lst1
@@ -358,7 +365,7 @@
 					stopifnot(length(rrv) == length(rv))
 					rrv[!is.na(rv)] <- rv[!is.na(rv)]
 					holes <- holes1
-					updateHoles = FALSE	
+					updateHoles <- FALSE	
 					
 				}		
 			}
@@ -428,7 +435,7 @@
 	adj <- 0.5 * xres(bigraster)/f
 	nc <- ncol(bigraster) * f
 	rv1 <- rep(0, nc)
-	holes1 <- rep(FALSE, nc)
+	holes1 <- rep(0, nc)
 	prj <- projection(bigraster)
 	hr <- 0.5 * yres(bigraster)
 
@@ -474,9 +481,10 @@
 							spPol <- SpatialPolygons(list(Polygons(list(mypoly), 1)))
 							over <- over(spPnts, spPol)
 							if ( subpol[i, 5] == 1 ) {
-								holes[!is.na(over)] <- TRUE
+								holes[!is.na(over)] <- holes[!is.na(over)] - 1
 							} else {
 								rvtmp[!is.na(over)] <- subpol[i,4] 
+								holes[!is.na(over)] <- holes[!is.na(over)] + 1
 							}
 						} else {
 							for (k in 1:round(nrow(intersection)/2)) {
@@ -494,15 +502,17 @@
 								col2 <- colFromX(rstr, x2a)
 								if (col1 > col2) { next }
 								if ( subpol[i, 5] == 1 ) {
-									holes[col1:col2] <- TRUE
+									holes[col1:col2] <- holes[col1:col2] - 1
 								} else {
 									rvtmp[col1:col2] <- subpol[i,4]
+									holes[col1:col2] <- holes[col1:col2] + 1
 								}
 							}
 						}
 						rv <- pmax(rv, rvtmp)
 					}
 					if (updateHoles) {
+						holes <- holes < 1
 						rv[holes] <- 0
 						holes <- holes1
 						updateHoles = FALSE	

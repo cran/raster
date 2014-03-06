@@ -69,8 +69,14 @@
 
 	driver <- new("GDALDriver", gdalfiletype)
 	
-    transient <- new("GDALTransientDataset", driver=driver, rows=r@nrows, cols=r@ncols, bands=nbands, type=dataformat, fname=filename, options=options, handle=NULL)
- 
+    transient <- try( new("GDALTransientDataset", driver=driver, rows=r@nrows, cols=r@ncols, bands=nbands, type=dataformat, fname=filename, options=options, handle=NULL), silent=TRUE)
+ 	if (class(transient) == 'try-error') {
+		if (dataformat == "Float64") {
+			dataformat <- "Float32"
+		}
+	    transient <- new("GDALTransientDataset", driver=driver, rows=r@nrows, cols=r@ncols, bands=nbands, type=dataformat, fname=filename, options=options, handle=NULL)
+	}
+
 	for (i in 1:nbands) {
 		b <- new("GDALRasterBand", transient, i)
 		GDALcall(b, "SetNoDataValue", NAflag)

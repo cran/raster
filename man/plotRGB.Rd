@@ -33,7 +33,7 @@ Make a Red-Green-Blue plot based on three layers (in a RasterBrick or RasterStac
   \item{alpha}{transparency. Integer between 0 (transparent) and 255 (opaque)}
   \item{bgalpha}{Background transparency. Integer between 0 (transparent) and 255 (opaque)}
   \item{addfun}{Function to add additional items such as points or polygons to the plot (map). See \code{\link[raster]{plot}}}
-  \item{zlim}{vector of lenght 2. Range of values to plot}
+  \item{zlim}{numeric vector of lenght 2. Range of values to plot (optional)}
   \item{zlimcol}{If \code{NULL} the values outside the range of zlim get the color of the extremes of the range. If zlimcol has any other value, the values outside the zlim range get the color of \code{NA} values (see colNA)}
   \item{axes}{logical. If \code{TRUE} axes are drawn}
   \item{xlab}{character. Label of x-axis}

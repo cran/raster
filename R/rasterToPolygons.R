@@ -45,6 +45,10 @@ rasterToPolygons <- function(x, fun=NULL, n=4, na.rm=TRUE, digits=12, dissolve=F
 		}
 	}
 	colnames(xyv) <- c('x', 'y', names(x))
+	if (nrow(xyv) == 0) {
+		warning('no values in selection')
+		NULL
+	}
 	
 	xr <- xres(x)/2
 	yr <- yres(x)/2

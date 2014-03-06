@@ -123,7 +123,7 @@
 
 
 .rasterObjectFromCDF <- function(filename, varname='', band=NA, type='RasterLayer', lvar=3, level=0, 
-                        warn=TRUE, dims=1:3, crs=NULL, stopIfNotEqualSpaced=TRUE, ...) {
+                        warn=TRUE, dims=1:3, crs=NA, stopIfNotEqualSpaced=TRUE, ...) {
 
 	ncdf4 <- .NCDFversion4()
 	

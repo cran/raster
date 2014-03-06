@@ -26,7 +26,7 @@ function(x, filename, format, ...) {
 		stop("Attempting to write a file to a path that does not exist:\n  ", dirname(filename))
 	}
 	
-	filetype <- .filetype(format , filename=filename)
+	filetype <- .filetype(format=format, filename=filename)
 	filename <- .getExtension(filename, filetype)
 	
 	if (filetype == 'KML') {
@@ -60,7 +60,7 @@ function(x, filename, format, ...) {
 	if (.isNativeDriver(filetype)) {
 		out <- raster(x)
 		try( out@history <- x@history, silent=TRUE)
-		out <- .startRasterWriting(out, filename, filetype=filetype, ...)
+		out <- .startRasterWriting(out, filename, format=filetype, ...)
 		out <- writeValues(out, values(x), 1)
 		return( .stopRasterWriting(out) )
 	
@@ -163,7 +163,7 @@ function(x, filename, format, bylayer=FALSE, suffix='numbers', ...) {
 	
 	if (.isNativeDriver(filetype)) {
 		if (! filetype %in% c("raster", "BIL", "BSQ", "BIP") ) {
-			stop('this file format is not supported for multi-band files')
+			stop('this file format does not support multi-band files')
 		}
 	
 		out <- brick(x, values=FALSE)

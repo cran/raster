@@ -25,7 +25,7 @@
 
 
 .getProj <- function(proj, crs) {
-	if (!is.null(crs)) {
+	if ( ! is.na(crs) ) {
 		if (is.na(proj)) {
 			proj <- crs
 		} else {
@@ -70,7 +70,7 @@
 }
 
 
-.rasterFromRasterFile <- function(filename, band=1, type='RasterLayer', driver='raster', RAT=TRUE, crs=NULL, ...) {
+.rasterFromRasterFile <- function(filename, band=1, type='RasterLayer', driver='raster', RAT=TRUE, crs=NA, ...) {
 
 	valuesfile <- .setFileExtensionValues(filename, driver)
 	if (!file.exists( valuesfile )){
@@ -100,7 +100,7 @@
 	
 	isCat <- FALSE
 	ratnames <- rattypes <- ratvalues <- NULL
-	catlevels = matrix(NA)
+	catlevels <- matrix(NA)
 	w <- getOption('warn')
 	on.exit(options('warn' = w))
 	
@@ -158,9 +158,12 @@
 		else if (ini[i,2] == "ZCLASS") { zclass <- ini[i,3] } 
     }  
 	
-	if (prj == 'GEOGRAPHIC') { prj <- "+proj=longlat" }
-	if (prj == 'UNKNOWN') { prj <- NA }
-	
+	if (!is.na(prj)) {
+		if (prj == 'GEOGRAPHIC') { prj <- "+proj=longlat" 
+		} else if (prj == 'UNKNOWN') { prj <- NA 
+		} else if (prj == 'NA') { prj <- NA }
+	}
+
 	prj <- .getProj(prj, crs)
 	
 	if (band < 1) {

@@ -15,7 +15,7 @@ function(x, ngb, names=FALSE, ...) {
 
 
 setMethod("getValuesFocal", signature(x='Raster', row='numeric', nrows='numeric', ngb='numeric'), 
-function(x, row, nrows, ngb, names=FALSE, outside=NA, ...) {
+function(x, row, nrows, ngb, names=FALSE, padValue=NA, array=FALSE, ...) {
 
 	nl <- nlayers(x)
 	if (nl == 0) {
@@ -35,7 +35,7 @@ function(x, row, nrows, ngb, names=FALSE, outside=NA, ...) {
 	if ( (row+nrows-1) > nrow(xx) ) {
 		stop("'nrows' is too high")
 	}
-	stopifnot(is.atomic(outside))
+	stopifnot(is.atomic(padValue))
 	geo <- .couldBeLonLat(xx)
 	ngb <- .checkngb(ngb, mustBeOdd=TRUE)
 	
@@ -59,11 +59,11 @@ function(x, row, nrows, ngb, names=FALSE, outside=NA, ...) {
 		v <- matrix(vv[,i], ncol=nc, byrow=TRUE)
 		if (sr > startrow) {
 			add <- sr - startrow
-			v <- rbind(matrix(outside, nrow=add, ncol=ncol(v)), v)
+			v <- rbind(matrix(padValue, nrow=add, ncol=ncol(v)), v)
 		}
 		if (endrow > er) {
 			add <- endrow - er
-			v <- rbind(v, matrix(outside, nrow=add, ncol=ncol(v)))
+			v <- rbind(v, matrix(padValue, nrow=add, ncol=ncol(v)))
 		}
 		
 		if (geo) {
@@ -71,10 +71,10 @@ function(x, row, nrows, ngb, names=FALSE, outside=NA, ...) {
 			if (ngbc < nv) {
 				v <- cbind(v[,(nv-ngbc+1):nv], v, v[,1:ngbc])
 			} else {
-				stop('horizontal neighborhood is too big')
+				stop('horizontal neighbourhood is too big')
 			}
 		} else {
-			add <- matrix(outside, ncol=ngbc, nrow=nrow(v))
+			add <- matrix(padValue, ncol=ngbc, nrow=nrow(v))
 			v <- cbind(add, v, add)
 		}
 		
@@ -90,7 +90,16 @@ function(x, row, nrows, ngb, names=FALSE, outside=NA, ...) {
 			mm[[i]] <- m
 		}
 	}
-	names(mm) <- names(x)
+	if (array) {
+		if (names) {
+			dnms <- list(rownames(mm[[1]]), colnames(mm[[1]]), names(x))
+		} else {
+			dnms <- list(NULL, NULL, names(x))
+		}
+		mm <- array(unlist(mm), c(nrow(mm[[1]]), ncol(mm[[1]]), length(mm)), dimnames=dnms )
+	} else  {
+		names(mm) <- names(x)
+	}
 	return(mm)
 }
 )

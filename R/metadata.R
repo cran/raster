@@ -1,9 +1,9 @@
 
-.metadata <- function(x) {
+metadata <- function(x) {
 	x@history
 }
 
-'.metadata<-' <- function(x, value) {
+'metadata<-' <- function(x, value) {
 	stopifnot(is.list(value))
 	if (is.data.frame(values)) {
 		values <- as.list(values)
@@ -14,6 +14,9 @@
 	nms <- c(names(value), unlist(sapply(value, names)))
 	if (is.null(names) | any(nms == '')) {
 		stop('invalid metadata: list elements without names')	
+	}
+	if (any(unlist(sapply(value, is.data.frame)) )) {
+		stop('invalid metadata: data.frames are not allowed')	
 	}
 	type <- rapply(value, class)
 	if (any(type == 'matrix')) {

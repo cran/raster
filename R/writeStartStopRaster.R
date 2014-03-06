@@ -14,15 +14,32 @@
 	fnamevals <- .setFileExtensionValues(filename, filetype)
 	datatype <- .datatype(...)
 	
-	
-	if (filetype %in% c('SAGA')) {
-		resdif <- abs((yres(x) - xres(x)) / yres(x) )
-		if (resdif > 0.01) {
-			stop(paste("x has unequal horizontal and vertical resolutions. Such data cannot be stored in SAGA format"))
-		}
+	if (filetype %in% c('SAGA', 'IDRISI')) {
 		if (datatype == 'FLT8S') {
 			datatype = 'FLT4S'
-		}		
+			
+		} else if (filetype == 'IDRISI') {
+			if (datatype == 'INT2U') {
+				datatype = 'INT2S'
+				warning('IDRISI does not support INT2U. datatype changed to INT2S')
+			} else if (datatype == 'INT4S') {
+				datatype = 'INT2S'
+				warning('IDRISI does not support INT4S. datatype changed to INT2S')
+			} else if (datatype == 'INT1S') {
+				datatype = 'INT1U'
+				warning('IDRISI does not support INT1S. datatype changed to INT1U')
+			} else if (datatype == 'LOG1S') {
+				datatype = 'INT1U'
+				warning('IDRISI does not support LOG1S. datatype changed to INT2S')
+			}
+		}
+		
+		if (filetype == 'SAGA') {
+			resdif <- abs((yres(x) - xres(x)) / yres(x) )
+			if (resdif > 0.01) {
+				stop( paste( "x has unequal horizontal and vertical resolutions. Such data cannot be stored in SAGA format" ) )
+			}
+		}
 	}
 
 	dataType(x) <- datatype

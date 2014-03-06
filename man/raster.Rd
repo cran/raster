@@ -44,7 +44,8 @@ For an overview of the functions in the raster package have a look here: \code{\
 
 \S4method{raster}{RasterBrick}(x, layer=0) 
 
-\S4method{raster}{missing}(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, crs, ext)
+\S4method{raster}{missing}(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, 
+		crs, ext, resolution, vals=NULL)
 
 \S4method{raster}{Extent}(x, nrows=10, ncols=10, crs=NA, ...)
 
@@ -52,7 +53,7 @@ For an overview of the functions in the raster package have a look here: \code{\
 
 \S4method{raster}{big.matrix}(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA, template=NULL)
 
-\S4method{raster}{Spatial}(x, ...) 
+\S4method{raster}{Spatial}(x, origin, ...) 
 
 \S4method{raster}{SpatialGrid}(x, layer=1, values=TRUE)
 
@@ -63,7 +64,7 @@ For an overview of the functions in the raster package have a look here: \code{\
 \item{x}{filename (character), Extent, Raster*, SpatialPixels*, SpatialGrid*, object, 'image', matrix, im, or missing. Supported file types are the 'native' raster package format and those that can be read via \code{rgdal} (see \code{\link[rgdal]{readGDAL}}}
 \item{band}{integer. The layer to use in a multi-layer file}
 \item{...}{Additional arguments, see Details }  
-\item{layer}{integer. The layer to use in a multi-layer file, or the layer to extract from a RasterStack/Brick. If the latter case, an empty RasterLayer (no associated values) is returned if \code{layer=0}}
+\item{layer}{integer. The layer (variable) to use in a multi-layer file, or the layer to extract from a RasterStack/Brick or SpatialPixelsDataFrame or SpatialGridDataFrame. An empty RasterLayer (no associated values) is returned if \code{layer=0}}
 \item{values}{logical. If \code{TRUE}, the cell values of '\code{x}' are copied to the RasterLayer object that is returned}
 \item{nrows}{integer > 0. Number of rows}
 \item{ncols}{integer > 0. Number of columns}
@@ -73,11 +74,14 @@ For an overview of the functions in the raster package have a look here: \code{\
 \item{ymx}{maximum y coordinate (top border)}
 \item{ext}{object of class Extent. If present, the arguments xmn, xmx, ymn and ynx are ignored}
 \item{crs}{character or object of class CRS. PROJ.4 type description of a Coordinate Reference System (map projection). If this argument is missing, and the x coordinates are withing -360 .. 360 and the y coordinates are within -90 .. 90, "+proj=longlat +datum=WGS84" is used. Also see under Details if \code{x} is a character (filename)}
+\item{resolution}{numeric vector of length 1 or 2 to set the resolution (see \code{\link{res}}). If this argument is used, arguments \code{ncols} and \code{nrows} are ignored }
+\item{vals}{optional. Values for the new RasterLayer. Accepted formats are as for \code{\link{setValues}}}
+\item{origin}{minimum y coordinate (bottom border)}
 \item{template}{Raster* or Extent object used to set the extent (and CRS in case of a Raster* object). If not \code{NULL}, arguments \code{xmn}, \code{xmx}, \code{ymn}, \code{ymx} and \code{crs} (unless \code{template} is an Extent object) are ignored}
 }
 
 \details{
-If \code{x} represents a filename, the following additional variables are recognized:
+If \code{x} is a filename, the following additional variables are recognized:
 
 \code{sub}: positive integer. Subdataset number for a file with subdatasets
 
@@ -99,6 +103,10 @@ If \code{x} represents a \bold{NetCDF} file, the following additional variable i
 \code{level}: integer > 0 (default=1). To select the 'level' (4th dimension variable) to use, if the file has 4 dimensions, e.g. to create a RasterBrick of weather over time at a certain height. \cr
 
 To use NetCDF files the \code{ncdf} or the \code{ncdf4} package needs to be available. If both are available, \code{ncdf4} is used. Only the \code{ncdf4} package can read the most recent version (4) of the netCDF format (as well as older versions), for windows it not available on CRAN but can be downloaded \href{http://cirrus.ucsd.edu/~pierce/ncdf/}{here}. It is assumed that these files follow, or are compatible with, the CF convention (The GMT format may also work). If the ncdf file does not have a standard extension (which is used to recognize the file format), you can use argument \code{ncdf=TRUE} to indicate the format.
+
+
+If \code{x} is a \code{Spatial} or an \code{Extent} object, additional arguments are for the method with signature \code{'missing'}
+
 }
 
 \value{

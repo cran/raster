@@ -86,7 +86,7 @@ function(x, filename="", type='inner', classes=FALSE, directions=8, ...) {
 	
 		out <- writeStart(out, filename, datatype=datatype, ...)
 		tr <- blockSize(out, minblocks=3, minrows=3)
-		pb <- pbCreate(tr$n, label='edge', ...)
+		pb <- pbCreate(tr$n, label='boundaries', ...)
 		
 		nc <- ncol(out)+2
 		v <- getValues(x, row=1, nrows=tr$nrows[1]+1)
@@ -105,7 +105,7 @@ function(x, filename="", type='inner', classes=FALSE, directions=8, ...) {
 		pbStep(pb, 1)
 		for (i in 2:(tr$n-1)) {
 			v <- getValues(x, row=tr$row[i]-1, nrows=tr$nrows[i]+2)
-			v <- matrix(v, ncol=tr$nrows[1]+3)
+			v <- matrix(v, ncol=tr$nrows[1]+2)
 			if (gll) {
 				v <- rbind(v[nrow(v),], v, v[1,])
 			} else {
@@ -119,7 +119,7 @@ function(x, filename="", type='inner', classes=FALSE, directions=8, ...) {
 		}
 		i <- tr$n
 		v <- getValues(x, row=tr$row[i]-1, nrows=tr$nrows[i]+1)
-		v <- matrix(v, ncol=tr$nrows[1]+1)
+		v <- matrix(v, ncol=tr$nrows[i]+1)
 		if (gll) {
 			v <- rbind(v[nrow(v),], v, v[1,])
 		} else {
