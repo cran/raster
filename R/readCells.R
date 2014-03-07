@@ -20,7 +20,7 @@
 	if (length(uniquecells) == 0) {
 		return( matrix(NA, nrow=nrow(cells), ncol=length(layers)) )
 	}
-
+	uniquecells <- as.integer(uniquecells)
 	adjust <- TRUE
 	if (length(uniquecells) > 0) {
 		if ( inMemory(x) ) {

@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-.rasterFromASCIIFile <- function(filename, offset=6, crs=NULL, ...) {
+.rasterFromASCIIFile <- function(filename, offset=6, crs=NA, ...) {
 	
 	offset <- as.integer(offset)
 	stopifnot(offset > 2)
@@ -114,7 +114,7 @@
     x@file@name <- filename
 	
 	
-	if (!is.null(crs)) {
+	if (!is.na(crs)) {
 		projection(x) <- crs
 	}
 	

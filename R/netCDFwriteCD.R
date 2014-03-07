@@ -18,7 +18,7 @@
 		stop('file exists, use overwrite=TRUE to overwrite it')
 	}
 	dataType(x) <- datatype
-	datatype = .getNetCDFDType(datatype)
+	datatype <- .getNetCDFDType(datatype)
 	nl <- nlayers(x)
 	
 	if (.couldBeLonLat(x)) {
@@ -60,7 +60,16 @@
 			zv <- 1:nl
 			z <- getZ(x)
 			if (!is.null(z)) {
-				zv[] <- as.numeric(z)
+				if (!any(is.na(z))) {
+					z <- as.numeric(z)
+					if (!any(is.na(z))) {
+						zv[] <- z
+					} else {
+						warning('z-values cannot be converted to numeric')
+					}
+				} else {
+					warning('z-values contain NA')
+				}
 			}
 
 			zdim <- ncdf4::ncdim_def( zname, zunit, zv, unlim=TRUE )
@@ -120,10 +129,20 @@
 		xdim <- dim.def.ncdf( xname, xunit, xFromCol(x, 1:ncol(x)) )
 		ydim <- dim.def.ncdf( yname, yunit, yFromRow(x, 1:nrow(x)) )
 		if (inherits(x, 'RasterBrick')) {
+
 			zv <- 1:nl
 			z <- getZ(x)
 			if (!is.null(z)) {
-				zv[] <- as.numeric(z)
+				if (!any(is.na(z))) {
+					z <- as.numeric(z)
+					if (!any(is.na(z))) {
+						zv[] <- z
+					} else {
+						warning('z-values cannot be converted to numeric')
+					}
+				} else {
+					warning('z-values contain NA')
+				}
 			}
 
 			zdim <- dim.def.ncdf( zname, zunit, zv, unlim=TRUE )

@@ -63,10 +63,16 @@ compareRaster <- function(x, ..., extent=TRUE, rowcol=TRUE, crs=TRUE, res=FALSE,
 			thisproj <- projection(objects[[i]])
 			if (is.na(proj1)) {
 				proj1 <- thisproj
-			} else if ( ! .compareCRS(proj1, thisproj, unknown=TRUE) ) {
-				result <- FALSE
-				if (stopiffalse) { stop('different projection') }
-				if (showwarning) { warning('different projection') }
+			} else {
+				crs <- try (compareCRS(proj1, thisproj, unknown=TRUE), silent=TRUE)
+				if (class(crs) == 'try-error') {
+					if (stopiffalse) { stop('invalid CRS') }
+					if (showwarning) { warning('invalid CRS') }
+				} else if (!crs) {
+					result <- FALSE
+					if (stopiffalse) { stop('different CRS') }
+					if (showwarning) { warning('different CRS') }
+				}
 			}
 		}
 		

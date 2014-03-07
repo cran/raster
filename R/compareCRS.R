@@ -3,8 +3,12 @@
 # version 1.0
 # license GPL3
 
+.compareCRS <- function(...) {
+	warning('use "compareCRS", not ".compareCRS"')
+	compareCRS(...)
+}
 
-.compareCRS <- function(x, y, unknown=FALSE, verbatim=FALSE, verbose=FALSE) {
+compareCRS <- function(x, y, unknown=FALSE, verbatim=FALSE, verbose=FALSE) {
 	
 	x <- tolower(projection(x))
 	y <- tolower(projection(y))
@@ -19,9 +23,20 @@
 	}
 	
 	if (verbatim) {
-		return(x==y)
+		if (!is.na(x) & !is.na(y)) {
+			return(x==y)
+		} else {
+			if (is.na(x) & is.na(y)) {
+				return(TRUE) # ??
+
+			} else if (unknown) {
+				return(TRUE) 
+			} else {
+				return(FALSE) 			
+			}
+		}
 	}
-	
+
 	x <- step1(x)
 	y <- step1(y)
 

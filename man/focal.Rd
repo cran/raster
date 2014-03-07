@@ -27,7 +27,7 @@ Calculate focal ("moving window") values for the neighborhood of focal cells usi
  
 \item{pad}{logical. If \code{TRUE}, additional 'virtual' rows and columns are padded to \code{x} such that there are no edge effects. This can be useful when a function needs to have access to the central cell of the filter}
   
-\item{padValue}{logical. The value of the cells of the padded rows and columns}
+\item{padValue}{numeric. The value of the cells of the padded rows and columns}
  
 \item{NAonly}{logical. If \code{TRUE}, only cell values that are \code{NA} are replaced with the computed focal values}
  

@@ -8,7 +8,7 @@ setMethod('extract', signature(x='Raster', y='SpatialLines'),
 function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, factors=FALSE, along=FALSE, sp=FALSE, ...){ 
 
 	px <- projection(x, asText=FALSE)
-	comp <- .compareCRS(px, projection(y), unknown=TRUE)
+	comp <- compareCRS(px, projection(y), unknown=TRUE)
 	if (!comp) {
 		.requireRgdal()
 		warning('Transforming SpatialLines to the CRS of the Raster object')
@@ -226,21 +226,38 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, fa
 					rc <- .linesToRaster(lns, rc, silent=TRUE)
 					xy <- rasterToPoints(rc)[,-3,drop=FALSE]
 					v <- cbind(row=rowFromY(rr, xy[,2]), col=colFromX(rr, xy[,1]), .xyValues(x, xy, layer=layer, nl=nl))
-				#up or down?
-					if (ppp[1,2] < ppp[2,2]) {
-						#order top to bottom
-						v <- v[order(-v[,1], v[,2]), ]
-					} else {
-					#order bottom to top
-						v <- v[order(v[,1], -v[,2]), ]
-					}
+					#up or down?
+					
+					updown <- c(1,-1)[(ppp[1,2] < ppp[2,2]) + 1]
+					rightleft <- c(-1,1)[(ppp[1,1] < ppp[2,1]) + 1]
+
+					v <- v[order(updown*v[,1], rightleft*v[,2]), ]
+
+					#up <- ppp[1,2] < ppp[2,2]
+					#right <- ppp[1,1] < ppp[2,1]					
+#					if (up) {
+#						if (right) {
+#							v <- v[order(-v[,1], v[,2]), ]
+#						} else {
+#							v <- v[order(-v[,1], -v[,2]), ]
+#						}
+					
+#					} else {
+#						if (!right) {
+#							v <- v[order(v[,1], -v[,2]), ]
+#						}
+#					}
 					vv <- rbind(vv, v)
 				}
 			} 
 			if (cellnumbers) {
 				vv <- cbind(cellFromRowCol(rr, vv[,1], vv[,2]), vv[,-c(1:2)])
+				colnames(vv) <- c('cell', names(x))
 			} else {
 				vv <- vv[,-c(1:2)]
+				if (NCOL(vv) > 1) {
+					colnames(vv) <- names(x)
+				}
 			}
 			res[[i]] <- vv
 			pbStep(pb)

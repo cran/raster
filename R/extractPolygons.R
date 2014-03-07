@@ -9,7 +9,7 @@ setMethod('extract', signature(x='Raster', y='SpatialPolygons'),
 function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, df=FALSE, layer, nl, factors=FALSE, sp=FALSE, ...){ 
 
 	px <- projection(x, asText=FALSE)
-	comp <- .compareCRS(px, projection(y), unknown=TRUE)
+	comp <- compareCRS(px, projection(y), unknown=TRUE)
 	if (!comp) {
 		.requireRgdal()
 		warning('Transforming SpatialPolygons to the CRS of the Raster')
@@ -272,7 +272,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 		} else {
 			nms <- c('ID', names(x)[lyrs])
 		}
-		if (weights) {
+		if (weights & is.null(fun)) {
 			nms <- c(nms, 'weight')
 		}
 		colnames(res) <- nms

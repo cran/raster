@@ -12,19 +12,32 @@ if ( !isGeneric("raster") ) {
 
 
 setMethod('raster', signature(x='missing'), 
-	function(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, crs, ext) {
+	function(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, crs, ext, resolution, vals=NULL) {
 		if (missing(ext)) {
 			ext <- extent(xmn, xmx, ymn, ymx)
 		}
 		if (missing(crs)) {
-			if (ext@xmin > -360.01 & ext@xmax < 360.01 & ext@ymin > -90.000001 & ext@ymax < 90.000001) { 
-				crs <- "+proj=longlat +datum=WGS84"
+			if (ext@xmin > -360.01 & ext@xmax < 360.01 & ext@ymin > -90.01 & ext@ymax < 90.01) { 
+				crs <- CRS("+proj=longlat +datum=WGS84")
 			} else {
-				crs <- as.character(NA)
+				crs <- CRS(as.character(NA))
 			}
+		} else {
+			crs <- CRS(as.character(projection(crs)))
 		}
-		r <- raster(ext, nrows=nrows, ncols=ncols, crs=crs)
-		return(r)
+		if (missing(resolution)) {
+			nrows <- as.integer(max(1, round(nrows)))
+			ncols <- as.integer(max(1, round(ncols)))
+			r <- new('RasterLayer', extent=ext, nrows=nrows, ncols=ncols, crs=crs)
+		} else {
+			r <- new('RasterLayer', extent=ext, crs=crs)
+			res(r) <- resolution
+		}
+		if (!is.null(vals)) {
+			return( setValues(r, vals) )
+		} else {
+			return( r )
+		}
 	}
 )
   
@@ -289,22 +302,20 @@ setMethod('raster', signature(x='RasterBrick'),
 
 setMethod('raster', signature(x='Extent'), 
 	function(x, nrows=10, ncols=10, crs=NA, ...) {
-		if (isTRUE(is.na(crs))) {
-			crs <- as.character(NA)
-		}	
-		nrows <- as.integer(max(1, round(nrows)))
-		ncols <- as.integer(max(1, round(ncols)))
-		r <- new("RasterLayer", extent=x, ncols=ncols, nrows=nrows)
-		projection(r) <- crs
-		return(r)
+		raster(xmn=x@xmin, xmx=x@xmax, ymn=x@ymin, ymx=x@ymax, ncols=ncols, nrows=nrows, crs=crs, ...)
 	}
 )
 
 
 setMethod('raster', signature(x='Spatial'), 
-	function(x, ...){
+	function(x, origin, ...){
 		r <- raster(extent(x), ...)
-		projection(r) <- x@proj4string
+		r@crs <- x@proj4string
+		if (!missing(origin)) {
+			origin(r) <- origin
+			r <- extend(r, 1)
+			r <- crop(r, x, snap='out')
+		}
 		r
 	}
 )
@@ -315,21 +326,22 @@ setMethod('raster', signature(x='SpatialGrid'),
 		r <- raster(extent(x))
 		projection(r) <- x@proj4string
 		dim(r) <- c(x@grid@cells.dim[2], x@grid@cells.dim[1])	
+		if (layer < 1) {
+			values <- FALSE
+		}
 		
 		if (inherits(x, 'SpatialGridDataFrame') & values) {
 			if (dim(x@data)[2] > 0) {
 				layer = layer[1]
 				if (is.numeric(layer)) {
-					if (layer > 0) {
-						dindex <- max(1, min(dim(x@data)[2], layer))
-						if (dindex != layer) {
-							warning(paste("layer was changed to", dindex))
-						}
-						layer <- dindex
+					dindex <- max(1, min(dim(x@data)[2], layer))
+					if (dindex != layer) {
+						warning(paste("layer was changed to: ", dindex))
 					}
+					layer <- dindex
 					names(r) <- colnames(x@data)[layer]
 				} else if (!(layer %in% names(x))) {
-					stop(layer, 'does not exist')
+					stop(layer, ' is not a valid name')
 				} else {
 					names(r) <- layer
 				}
@@ -339,7 +351,8 @@ setMethod('raster', signature(x='SpatialGrid'),
 				}
 				if (is.factor( x@data[[layer]]) ) { 
 					r@data@isfactor <- TRUE 
-					r@data@attributes <- list(levels(x@data[[layer]]))
+					levs <- levels(x@data[[layer]])
+					r@data@attributes <- list(data.frame(ID=1:length(levs), levels=levs))
 					r <- setValues(r, as.integer(x@data[[layer]]))
 				} else {
 					r <- setValues(r, x@data[[layer]])
@@ -356,8 +369,12 @@ setMethod('raster', signature(x='SpatialGrid'),
 setMethod('raster', signature(x='SpatialPixels'), 
 	function(x, layer=1, values=TRUE){
 		if (inherits(x, 'SpatialPixelsDataFrame')) {
-			x <- as(x[layer], 'SpatialGridDataFrame')
-			return(raster(x, layer=layer, values=values))
+			if (layer < 1) {
+				x <- as(x, 'SpatialGrid')
+			} else {
+				x <- as(x[layer], 'SpatialGridDataFrame')
+				return(raster(x, values=values))
+			}	
 		} else {
 			x <- as(x, 'SpatialGrid')
 			return(raster(x))		
@@ -404,9 +421,9 @@ setMethod('raster', signature(x='asc'),
 		if (missing(crs)) {
 			e <- x@extent
 			if (e@xmin > -360.1 & e@xmax < 360.1 & e@ymin > -90.1 & e@ymax < 90.1) { 
-				crs = "+proj=longlat +datum=WGS84"
+				crs <- "+proj=longlat +datum=WGS84"
 			} else {
-				crs = as.charcter(NA)
+				crs <- as.character(NA)
 			}
 		}
 		projection(x) <- crs

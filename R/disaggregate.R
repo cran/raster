@@ -79,7 +79,7 @@ function(x, fact=NULL, method='', filename='', ...) {
 		
 	} else { 
 	
-		tr <- blockSize(out)
+		tr <- blockSize(x, n=nlayers(x) * prod(fact))
 		rown <- (tr$row-1) * yfact + 1
 		pb <- pbCreate(tr$n, label='disaggregate', ...)
 		if (is.null(list(...)$datatype)) {

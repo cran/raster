@@ -66,9 +66,8 @@ If \code{y} represents lines, the \code{extract} method returns the values of th
 }
 
 \value{
-A vector for RasterLayer objects, and a matrix for RasterStack or RasterBrick objects. A list or data.frame {\code{df=TRUE}} if \code{y} is a SpatialPolygons* or SpatialLines* object or if a \code{buffer} argument is used (but not a \code{fun} argument). If \code{sp=TRUE}  (and  \code{y} is a Spatial* object and  \code{fun} is not NULL) a Spatial* object is returned. The order of the returned values corresponds to the order of object \code{y}.
+A vector for RasterLayer objects, and a matrix for RasterStack or RasterBrick objects. A list (or a data.frame if \code{df=TRUE}) if \code{y} is a SpatialPolygons* or SpatialLines* object or if a \code{buffer} argument is used (but not a \code{fun} argument). If \code{sp=TRUE} and  \code{y} is a Spatial* object and  \code{fun} is not NULL a Spatial* object is returned. The order of the returned values corresponds to the order of object \code{y}. If \code{df=TRUE}, this is also indicated in the first variable ('ID').
 }
-
 
 \seealso{ \code{\link{getValues}, \link{getValuesFocal}}  }
 

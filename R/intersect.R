@@ -37,6 +37,18 @@ function(x, y) {
 
 
 
+setMethod('intersect', signature(x='SpatialPoints', y='ANY'), 
+function(x, y) {
+	y <- extent(y)
+	xy <- coordinates(x)
+	i <- xy[,1] >= y@xmin & xy[,1] <= y@xmax & xy[,2] >= y@ymin & xy[,2] <= y@ymax
+	x[i, ]
+} )
+
+
+
+
+
 .intersectExtent <- function(x, ..., validate=TRUE) {
 	objects <- c(x, list(...))
 	if (length(objects) == 1) {

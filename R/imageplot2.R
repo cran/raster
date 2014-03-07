@@ -7,6 +7,36 @@
 # July 2011
 
 
+
+.asRaster <- function(x, col, breaks=NULL, fun=NULL, r=NULL, colNA=NA) {
+	if (!is.null(breaks)) {
+		if (is.logical(x)) {
+			x <- x * 1
+		}
+		x[] <- as.numeric(cut(as.vector(x), breaks, include.lowest=TRUE))
+		
+	} else {
+		if (is.function(fun)) {
+			x[] <- fun(x)
+		}
+		if (is.null(r)) {
+			r <- range(x, na.rm=TRUE)
+		}
+		if (r[1] == r[2]) {
+			r[1] <- r[1] - 0.001
+			r[2] <- r[2] + 0.001
+		}
+		x <- (x - r[1])/ (r[2] - r[1])
+		x <- round(x * (length(col)-1) + 1)
+	}
+	x[] <- col[x]
+	if (!is.na(colNA)) {
+		x[is.na(x)] <- rgb(t(col2rgb(colNA)), maxColorValue=255)
+	}
+	as.raster(x)
+}
+	
+
 .rasterImagePlot <- function(x, col, add=FALSE, legend=TRUE, horizontal = FALSE, 
     legend.shrink=0.5, legend.width=0.6, legend.mar = ifelse(horizontal, 3.1, 5.1),
 	legend.lab=NULL, graphics.reset=FALSE, bigplot = NULL, smallplot = NULL, legend.only = FALSE, 
@@ -23,34 +53,7 @@
 		}		
 	}
 	
-	asRaster <- function(x, col, breaks=NULL, fun=NULL, r=NULL) {
-		if (!is.null(breaks)) {
-			if (is.logical(x)) {
-				x <- x * 1
-			}
-			x[] <- as.numeric(cut(as.vector(x), breaks, include.lowest=TRUE))
-			
-		} else {
-			if (is.function(fun)) {
-				x[] <- fun(x)
-			}
-			if (is.null(r)) {
-				r <- range(x, na.rm=TRUE)
-			}
-			if (r[1] == r[2]) {
-				r[1] <- r[1] - 0.001
-				r[2] <- r[2] + 0.001
-			}
-			x <- (x - r[1])/ (r[2] - r[1])
-			x <- round(x * (length(col)-1) + 1)
-		}
-		x[] <- col[x]
-		if (!is.na(colNA)) {
-			x[is.na(x)] <- rgb(t(col2rgb(colNA)), maxColorValue=255)
-		}
-		as.raster(x)
-	}
-	
+
 
 	e <- as.vector(t(bbox(extent(x))))
 	x <- as.matrix(x)
@@ -75,7 +78,7 @@
 	if (! is.finite(zrange[1])) {
 		legend <- FALSE 
 	} else {
-		x <- asRaster(x, col, breaks, fun, zrange)
+		x <- .asRaster(x, col, breaks, fun, zrange, colNA)
 	}
 	
     old.par <- par(no.readonly = TRUE)
@@ -147,9 +150,9 @@
 			
 			if (is.null(breaks)) {
 				mult <- round(max(1, 100 / length(col) ))
-				xx <- asRaster( ((mult*length(col)):1)/mult, col, fun=fun) 
+				xx <- .asRaster( ((mult*length(col)):1)/mult, col, fun=fun, colNA=colNA) 
 			} else {
-				xx <- rev(asRaster(midpoints, col, breaks=breaks, fun=fun))
+				xx <- rev(.asRaster(midpoints, col, breaks=breaks, fun=fun, colNA=colNA))
 			}
 
 			rasterImage(xx, 0, minz, 1, maxz, interpolate=FALSE)
@@ -160,9 +163,9 @@
 			
 			if (is.null(breaks)) {
 				mult <- round(max(1, 100 / length(col) ))
-				xx <- t(asRaster((1:(mult*length(col)))/mult, col, fun=fun ))
+				xx <- t(.asRaster((1:(mult*length(col)))/mult, col, fun=fun, colNA=colNA ))
 			} else {
-				xx <- t(asRaster(midpoints, col, breaks=breaks, fun=fun))
+				xx <- t(.asRaster(midpoints, col, breaks=breaks, fun=fun, colNA=colNA))
 			}
 			rasterImage(xx, minz, 0, maxz, 1, interpolate=FALSE)
 			do.call("axis", axis.args)

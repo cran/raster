@@ -2,7 +2,8 @@
 # Based on maptools:dotsInPolys by Roger Bivand
 
 
-.dotdensity <- function(p, field, x=1, type="regular", ...) {
+.dotdensity <- function(p, field, x=1, type="regular", seed=0,...) {
+	set.seed(seed)
 	stopifnot(inherits(p, 'SpatialPolygons'))
     n <- length(p)
     if (n < 1) return(invisible(NULL))
@@ -30,11 +31,16 @@
 	stopifnot(x > 0)
 	d <- round(field / x)
 	d[d < 1] <- 0
+	d[is.na(d)] <- 0
 	
     res <- vector(mode = "list", length = n)
     for (i in 1:n) {
 		if (d[i] > 0) {
-			ires <- spsample(p[i, ], d[i], type=f, ...) 
+			ires <- try (spsample(p[i, ], d[i], type=f), silent=TRUE  )
+			if (class(ires) == 'try-error') {
+				print(paste('error, ', d[i]))
+				ires <- NULL
+			}
 			if (!is.null(ires)) {
 				res[[i]] <- cbind(coordinates(ires), id=i)
 			}

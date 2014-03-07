@@ -76,16 +76,12 @@ projection <- function(x, asText=TRUE) {
 			return( CRS(x) )
 		}
 	} else if (class(x) != "CRS") { 
-		if (asText) { 
-			return(NA)
-		} else { 
-			return(NA) 
-		}  
+		return(as.logical(NA))
 	}
 	
 	if (asText) {
 		if (is.na(x@projargs)) { 
-			return(NA) 
+			return(as.character(NA))
 		} else {
 			return(trim(x@projargs))
 		}	

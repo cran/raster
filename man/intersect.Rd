@@ -6,9 +6,10 @@
 \alias{intersect,Extent,ANY-method}
 \alias{intersect,Raster,ANY-method}
 \alias{intersect,SpatialPolygons,SpatialPolygons-method}
+\alias{intersect,SpatialPoints,ANY-method}
 
 \title{ 
-Intersect Extent
+Intersect
 }
 
 \description{
@@ -17,6 +18,8 @@ Extent objects: Returns the intersection, i.e. the area of overlap of two Extent
 If the first object is a Raster* object: this function is equivalent to \code{\link{crop}}. 
 
 SpatialPolygons* objects: Only the overlapping areas (if any) are returned. For SpatialPolygonDataFrame objects, the data.frames are also merged. 
+
+SpatialPoints* objects: Only the points that overlap with the extent of object \code{y} are returned.  
 }
 
 \usage{
@@ -25,11 +28,13 @@ SpatialPolygons* objects: Only the overlapping areas (if any) are returned. For 
 \S4method{intersect}{Raster,ANY}(x, y)
 
 \S4method{intersect}{SpatialPolygons,SpatialPolygons}(x, y)
+
+\S4method{intersect}{SpatialPoints,ANY}(x, y)
 }
 
 \arguments{
-  \item{x}{Extent, Raster* or SpatialPolygons* object}
-  \item{y}{same as \code{x}. Except when \code{x} is a Raster* object, this should be an Extent object, or any object from which an Extent can be extracted}
+  \item{x}{Extent, Raster*, SpatialPolygons* or SpatialPoints* object}
+  \item{y}{same as \code{x}. Except when \code{x} is a Raster* or SpatialPoints* object, this should be an Extent object, or any object from which an Extent can be extracted}
 } 
 
 \value{
