@@ -18,6 +18,7 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 	}	
 	size <- round(size)
 	stopifnot(size > 0)
+	r <- raster(x)
 
 	if (asRaster) {
 		if (! is.null(ext)) {
@@ -27,7 +28,6 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 			return(x)
 		}
 		
-		r <- raster(x)
 		if (na.rm) {
 			x <- sampleRandom(x, min(ncell(r), size), cells=TRUE, na.rm=TRUE)
 			r <- rasterize(xyFromCell(r, x[,1]), r, x[,-1], ...)
@@ -40,7 +40,6 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 	}
 	
 	stopifnot(size <= ncell(x))
-	r <- raster(x)
 	nc <- ncell(r)
 	layn <- names(x)
 
@@ -98,9 +97,12 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 			
 		if (size >= nc) {
 			
+			#warning('size > ncell(x)')
+			
 			if (is.null(ext)) {
 				x <- getValues(x)
 			} else {
+				r <- raster(x)
 				x <- getValues(xx)
 			}
 			
@@ -108,7 +110,7 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 				if (is.null(ext)) {
 					x <- cbind(cell=1:nc, value=x)
 				} else {
-					XY <- xyFromCell(rr, 1:ncell(rr))
+					XY <- xyFromCell(xx, 1:ncell(xx))
 					cell <- cellFromXY(r, XY)
 					x <- cbind(cell, x)
 				}
@@ -136,7 +138,7 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 			rcells <- sampleInt(nc, N)
 			
 			if (!is.null(ext)) {
-				XY <- xyFromCell(rr, rcells)
+				XY <- xyFromCell(xx, rcells)
 				rcells <- cellFromXY(r, XY)
 			}
 			

@@ -9,7 +9,7 @@
 	m <- matrix(c("grid_mapping_name", "+proj", "false_easting", "+x_0","false_northing", "+y_0", "scale_factor_at_projection_origin", "+k_0", "scale_factor_at_central_meridian", "+k_0", "standard_parallel", "+lat_1", "standard_parallel1", "+lat_1", "standard_parallel2", "+lat_2", "longitude_of_central_meridian", "+lon_0", "longitude_of_projection_origin", "+lon_0", "latitude_of_projection_origin", "+lat_0", "straight_vertical_longitude_from_pole", "+lon_0"), ncol=2, byrow=TRUE)
 	g <- list()
 	for (i in 1:nrow(m)) {
-		a <- att.get.ncdf(nc, gridmap, m[i,1])
+		a <- ncdf::att.get.ncdf(nc, gridmap, m[i,1])
 		if (a$hasatt) {
 			lst <- list(a$value)
 			names(lst) <- m[i,1]

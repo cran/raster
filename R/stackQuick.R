@@ -42,10 +42,8 @@
 
 
 .quickStackOneFile <- function(filename, bands=NULL, native=FALSE) {
-
 	b <- brick(filename, native=native)
 	.stackFromBrick(b, bands=bands)
-
 }
 
 
@@ -56,8 +54,15 @@
 	nbands <- nlayers(b)
 	if (is.null(bands)) {
 		bands <- 1:nbands
+	} else {
+		if (is.character(bands)) {
+			 bands <- match(bands, names(b))
+		}
+		bands <- bands[bands %in% 1:nbands]
+		if (length(bands)==0) {
+			bands <- 1:nbands
+		}
 	}
-	bands <- bands[bands %in% 1:nbands]
 
 	havemnmx <- b@data@haveminmax
 	if (havemnmx) {

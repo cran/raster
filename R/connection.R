@@ -21,9 +21,11 @@ setMethod('readStart', signature(x='Raster'),
 
 
 setMethod('readStart', signature(x='RasterStack'), 
-	function(x, ...) {
-		d <- which(sapply(x@layers, fromDisk))
-		if (length(d) > 0) {
+	function(x, ..., maxopen=100) {
+		fd <- sapply(x@layers, fromDisk)
+		ld <- sum(fd)
+		if (isTRUE( ld > 0 & ld <= maxopen)) {
+			d <- which(fd)
 			for (i in d) {
 				x@layers[[i]] <- readStart(x@layers[[i]], con.check=103, ...)
 			}
@@ -39,7 +41,7 @@ setMethod('readStart', signature(x='RasterStack'),
 	fn <- trim(x@file@name)
 	driver <- .driver(x)
 	if (driver == "gdal") {
-		attr(x@file, "con") <- GDAL.open(fn, silent=silent)
+		attr(x@file, "con") <- rgdal::GDAL.open(fn, silent=silent)
 		x@file@open <- TRUE
 	} else 	if (.isNativeDriver(driver))  {
 		# R has a max of 128 connections
@@ -52,7 +54,7 @@ setMethod('readStart', signature(x='RasterStack'),
 		if (isTRUE(getOption('rasterNCDF4'))) {
 			attr(x@file, 'con') <- ncdf4::nc_open(x@file@name)
 		} else {
-			attr(x@file, 'con') <- open.ncdf(x@file@name)
+			attr(x@file, 'con') <- ncdf::open.ncdf(x@file@name)
 		}
 		x@file@open <- TRUE
 #	} else if (driver == 'ascii') { # cannot be opened
@@ -94,14 +96,14 @@ setMethod('readStop', signature(x='RasterStack'),
 .closeConnection <- function(x) {
 	driver <- .driver(x)
 	if (driver == "gdal") {
-		try( closeDataset(x@file@con), silent = TRUE )
+		try( rgdal::closeDataset(x@file@con), silent = TRUE )
 	} else if (.isNativeDriver(driver))  {
 		try( close(x@file@con), silent = TRUE )
 	} else if (driver == 'netcdf') {
 		if (isTRUE(getOption('rasterNCDF4'))) {
 			ncdf4::nc_close(x@file@con)
 		} else {
-			close.ncdf(x@file@con)
+			ncdf::close.ncdf(x@file@con)
 		}	
 	} else if (driver == 'ascii') {	}
 	

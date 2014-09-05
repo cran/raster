@@ -122,7 +122,7 @@ bp
 		
 
 	if (!add & missing(asp)) {
-		if (.couldBeLonLat(x)) {
+		if (couldBeLonLat(x)) {
 			ym <- mean(x@extent@ymax + x@extent@ymin)
 			asp <- min(5, 1/cos((ym * pi)/180))
 		} else {

@@ -42,7 +42,7 @@ setMethod('crop', signature(x='Spatial', y='ANY'),
 
 .cropSpatialPolygons <- function(x, y, ...) {
 	
-		y <- gUnaryUnion(y)
+		y <- rgeos::gUnaryUnion(y)
 		row.names(y) <- '1'
 		rnx <- row.names(x)
 		row.names(x) <- as.character(1:length(rnx))
@@ -51,11 +51,11 @@ setMethod('crop', signature(x='Spatial', y='ANY'),
 			
 			# to keep the correct IDs
 			# in future versions of rgeos, this intermediate step won't be necessary
-			i <- as.vector( gIntersects(x, y, byid=TRUE) )
+			i <- as.vector( rgeos::gIntersects(x, y, byid=TRUE) )
 			if (sum(i) == 0) {
 				return(NULL)
 			}
-			y <- gIntersection(x[i,], y, byid=TRUE)
+			y <- rgeos::gIntersection(x[i,], y, byid=TRUE)
 			if (inherits(y, "SpatialCollections")) {
 				y <- y@polyobj
 			}
@@ -69,10 +69,10 @@ setMethod('crop', signature(x='Spatial', y='ANY'),
 			
 			return( SpatialPolygonsDataFrame(y, data) )
 		} else {
-			y <- gIntersection(x, y)
-			if (inherits(y, "SpatialCollections")) {
-				y <- y@polyobj
-			}
+			y <- rgeos::gIntersection(x, y, drop_not_poly=TRUE)
+			#if (inherits(y, "SpatialCollections")) {
+			#	y <- y@polyobj
+			#}
 			return(y)
 		}
 }
@@ -87,11 +87,11 @@ setMethod('crop', signature(x='Spatial', y='ANY'),
 		if (.hasSlot(x, 'data')) {
 		
 			# in future versions of rgeos, this intermediate step should not be necessary
-			i <- as.vector( gIntersects(x, y, byid=TRUE) )
+			i <- as.vector( rgeos::gIntersects(x, y, byid=TRUE) )
 			if (sum(i) == 0) {
 				return(NULL)
 			}
-			y <- gIntersection(x[i,], y, byid=TRUE)
+			y <- rgeos::gIntersection(x[i,], y, byid=TRUE)
 			if (inherits(y, "SpatialCollections")) {
 				y <- y@lineobj
 			}
@@ -104,7 +104,7 @@ setMethod('crop', signature(x='Spatial', y='ANY'),
 			
 			SpatialLinesDataFrame(y, data)
 		} else {
-			y <- gIntersection(x, y)
+			y <- rgeos::gIntersection(x, y)
 			if (inherits(y, "SpatialCollections")) {
 				y <- y@lineyobj
 			}

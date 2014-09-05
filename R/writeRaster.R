@@ -215,7 +215,6 @@ function(x, filename, format, bylayer=FALSE, suffix='numbers', ...) {
 		if (filetype=='CDF') {
 			b@z  <- x@z
 		}
-
 		tr <- blockSize(b)
 		pb <- pbCreate(tr$n, ...)
 		x <- readStart(x, ...)

@@ -93,10 +93,10 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 				
 				for (i in 1:nl) {
 					xx <- x[[i]]
-					con <- GDAL.open(xx@file@name, silent=TRUE)
+					con <- rgdal::GDAL.open(xx@file@name, silent=TRUE)
 					band <- bandnr(xx)
-					vv <- getRasterData(con, band=band, offset=offs, region.dim=reg, output.dim=c(nr, nc)) 
-					closeDataset(con)
+					vv <- rgdal::getRasterData(con, band=band, offset=offs, region.dim=reg, output.dim=c(nr, nc)) 
+					rgdal::closeDataset(con)
 					if (xx@data@gain != 1 | xx@data@offset != 0) {
 						vv <- vv * xx@data@gain + xx@data@offset
 					}
@@ -114,9 +114,9 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 				} else {
 					band <- NULL
 				}
-				con <- GDAL.open(x@file@name, silent=TRUE)
-				v <- getRasterData(con, band=band, offset=offs, region.dim=reg, output.dim=c(nr, nc)) 
-				closeDataset(con)
+				con <- rgdal::GDAL.open(x@file@name, silent=TRUE)
+				v <- rgdal::getRasterData(con, band=band, offset=offs, region.dim=reg, output.dim=c(nr, nc)) 
+				rgdal::closeDataset(con)
 				
 				if (x@data@gain != 1 | x@data@offset != 0) {
 					v <- v * x@data@gain + x@data@offset
@@ -129,6 +129,7 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 						v[v == x@file@nodatavalue] <- NA
 					}
 				}
+				colnames(v) <- names(x)
 			}
 	
 			if (asRaster) {
@@ -136,6 +137,7 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 					outras <- raster(x)
 				} else {
 					outras <- raster(ext) 
+					crs(outras) <- crs(x)
 				}
 				nrow(outras) <- nr
 				ncol(outras) <- nc
@@ -161,7 +163,9 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 				if (sp) {
 					warning("'sp=TRUE' is ignored when 'useGDAL=TRUE'")
 				}
-				return( as.vector(v) )
+
+				
+				return( v )
 			}
 		}
 	}
@@ -175,6 +179,7 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 				outras <- raster(extent(x))
 			} else {
 				outras <- raster(ext)
+				crs(outras) <- crs(x)
 			}
 			ncol(outras) <- nc
 			nrow(outras) <- nr
@@ -188,6 +193,7 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 				outras <- raster(x)
 			} else {
 				outras <- raster(ext) 
+				crs(outras) <- crs(x)
 			}
 			nrow(outras) <- nr
 			ncol(outras) <- nc
@@ -206,14 +212,18 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 	} else {
 	
 		m <- NULL
+		nstart <- 1
 		if (xy) {
 			m <- xyFromCell(x, cell)
+			nstart <- 3
 		}
 		if (cells) {
 			m <- cbind(m, cell=cell)
+			nstart <- nstart + 1
 		} 
 		m <- cbind(m, .cellValues(x, cell))
-		
+		colnames(m)[nstart:(nstart+nl-1)] <- names(x)
+
 		if (sp) {
 			m <- SpatialPointsDataFrame(xyFromCell(x, cell), data.frame(m), proj4string=projection(x, asText=FALSE))
 		}

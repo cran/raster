@@ -9,16 +9,17 @@
 \title{Rotate}
 
 \description{
-Rotate a Raster* object that has x coordinates (longitude) from 0 to 360, to standard coordinates between -180 and 180 degrees. Longitude between 0 and 360 is frequently used in data from global climate models.
+Rotate a Raster* object that has x coordinates (longitude) from 0 to 360, to standard coordinates between -180 and 180 degrees. Longitude between 0 and 360 is frequently used in global climate models.
 }
 
 \usage{
-rotate(x, ...)
+\S4method{rotate}{Raster}(x, filename='', ...)
 }
 
 \arguments{
 \item{x}{Raster* object}
-\item{...}{Additional arguments as for \code{\link{writeRaster}}}  
+\item{filename}{character. Output filename (optional)}
+\item{...}{additional arguments as for \code{\link{writeRaster}}}  
 }
 
 \value{

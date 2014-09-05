@@ -27,14 +27,14 @@
 
 
 .makeProj <- function(projection='longlat', ..., ellipsoid="", datum="", asText=TRUE) {
-	prj <- projInfo("proj")
-	ell <- projInfo("ellps")
-	dat <- projInfo("datum")
+	prj <- rgdal::projInfo("proj")
+	ell <- rgdal::projInfo("ellps")
+	dat <- rgdal::projInfo("datum")
 	projection <- trim(projection)
 	ellipsoid <- trim(ellipsoid)
 	datum <- trim(datum)
 	if (!(projection %in% prj[,1])) {
-		stop("unknown projection. See projInfo()") 
+		stop("unknown projection. See rgdal::projInfo()") 
 	} else {
 		pstr <- paste('+proj=',projection, sep="")
 		projname <- as.vector(prj[which(prj[,1]==projection), 2])
@@ -47,7 +47,7 @@
 	}
 	if (ellipsoid != "") {
 		if (!(ellipsoid %in% ell[,1])) { 
-			stop("unknown ellipsoid. See projInfo('ellps')") 
+			stop("unknown ellipsoid. See rgdal::projInfo('ellps')") 
 		} else {
 			pstr <- paste(pstr, " +ellps=", ellipsoid, sep="")
 #			ellipname <- ell[which(ell[,1]==ellipsoid), 2]
@@ -55,7 +55,7 @@
 	}
 	if (datum != "") {
 		if (!(datum %in% dat[,1])) { 
-			stop("unknown datum. See projInfo('datum')") 
+			stop("unknown datum. See rgdal::projInfo('datum')") 
 		} else {
 			pstr <- paste(pstr, " +datum=", datum, sep="")
 #			datumname <- as.vector(dat[which(dat[,1]==datum), 2])

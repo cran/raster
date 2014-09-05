@@ -155,7 +155,7 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		options(rasterDatatype = 'FLT8S')
 		options(rasterProgress = 'none')
 		options(rasterTimer = FALSE)
-		options(rasterTmpDir = .tmpdir(create=FALSE))
+		options(rasterTmpDir = tmpDir(create=FALSE))
 		options(rasterTmpTime = 24*7)
 		options(rasterToDisk = FALSE)
 		options(rasterSetFileExt = TRUE)
@@ -192,7 +192,7 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		format=.filetype(),
 		overwrite=.overwrite(),
 		datatype=.datatype(),
-		tmpdir=.tmpdir(create=FALSE),
+		tmpdir= tmpDir(create=FALSE),
 		tmptime=.tmptime(),
 		progress=.progress(),
 		timer=.timer(),
@@ -306,7 +306,12 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 }	
 
 
-.tmpdir <- function(create=TRUE) {
+.tmpdir <- function(...) {
+	tmpDir(...)
+}
+
+
+tmpDir <- function(create=TRUE) {
 	d <- getOption('rasterTmpDir')
 	if (is.null(d)) {
 		d <- .tmppath()

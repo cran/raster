@@ -8,7 +8,7 @@
 
 	.requireRgdal()
 
-	p4s <- try(	showWKT(projection(x), file = NULL, morphToESRI = ESRI) )
+	p4s <- try(	rgdal::showWKT(projection(x), file = NULL, morphToESRI = ESRI) )
 	if (class(p4s) != 'try-error') {
 		prjfile <- filename(x)
 		extension(prjfile) <- '.prj'

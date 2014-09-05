@@ -28,7 +28,7 @@ function(x, vars=NULL, sums=NULL, dissolve=TRUE, ...) {
 			if (version_GEOS() < "3.3.0") {
 				x <- gUnionCascaded(x)
 			} else {
-				x <- gUnaryUnion(x)
+				x <- rgeos::gUnaryUnion(x)
 			}
 		} else {
 			p <- list()
@@ -105,7 +105,7 @@ function(x, vars=NULL, sums=NULL, dissolve=TRUE, ...) {
 			if (version_GEOS0() < "3.3.0") {
 				x <- lapply(1:nrow(id), function(y) spChFIDs(gUnionCascaded(x[dc[dc$v==y,1],]), as.character(y)))
 			} else {
-				x <- lapply(1:nrow(id), function(y) spChFIDs(gUnaryUnion(x[dc[dc$v==y,1],]), as.character(y)))
+				x <- lapply(1:nrow(id), function(y) spChFIDs(rgeos::gUnaryUnion(x[dc[dc$v==y,1],]), as.character(y)))
 			}	
 		} else {
 			x <- lapply(1:nrow(id), function(y) spChFIDs(aggregate(x[dc[dc$v==y,1],], dissolve=FALSE), as.character(y)))

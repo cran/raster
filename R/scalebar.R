@@ -19,7 +19,7 @@
 
 .oldscalebar <- function(object, xy=click(), length=100000, label='100 km', offset=0.3, lwd=4, ... ) {
 	object <- raster(object)
-	if (.couldBeLonLat(object)) {
+	if (couldBeLonLat(object)) {
 		midy <- object@extent@ymax - 0.5 * (object@extent@ymax - object@extent@ymin)
 		p <- cbind(0, midy)
 		d <- .destPoint(p, length)

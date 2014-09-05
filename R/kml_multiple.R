@@ -1,6 +1,6 @@
 # Derived from functions GE_SpatialGrid and kmlOverlay 
 # in the maptools package by Duncan Golicher, David Forrest and Roger Bivand 
-# Adaptation for the raster packcage by Robert J. Hijmans, r.hijmans@gmail.com
+# Adaptation for the raster package by Robert J. Hijmans
 # Date : October 2011
 # Version 0.9
 # Licence GPL v3
@@ -52,7 +52,7 @@ setMethod('KML', signature(x='RasterStackBrick'),
 
 function (x, filename, time=NULL, col=rev(terrain.colors(255)), colNA=NA, maxpixels=100000, blur=1, zip='', overwrite=FALSE, ...) {
 
-    if (! .couldBeLonLat(x)) { 
+    if (! couldBeLonLat(x)) { 
         stop("CRS of x must be longitude/latitude")
 	}
 	stopifnot(hasValues(x))
@@ -107,9 +107,9 @@ function (x, filename, time=NULL, col=rev(terrain.colors(255)), colNA=NA, maxpix
 		}
 		
 		if (R.Version()$minor >= 13) {
-			image(x[[i]], col=col, axes=FALSE, useRaster=TRUE, ...)
+			image(x[[i]], col=col, axes=FALSE, useRaster=TRUE, maxpixels=maxpixels, ...)
 		} else {
-			image(x[[i]], col=col, axes=FALSE, ...)
+			image(x[[i]], col=col, axes=FALSE, maxpixels=maxpixels, ...)
 		}
 		dev.off()
 		a <- c("<GroundOverlay>", paste("\t<name>", name[i], "</name>", sep=''))

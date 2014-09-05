@@ -26,7 +26,7 @@ setMethod("which.max", "RasterLayer",
 			v <- values(x)
 			return(which( v >= m))
 		}
-		x <- x >= m
+		x <- x >= m - 0.000001
 		pts <- rasterToPoints(x, function(y) y == 1)
 		cellFromXY(x, pts[,1:2,drop=FALSE])
 	} 
@@ -44,9 +44,9 @@ setMethod("which.min", "RasterLayer",
 			v <- values(x)
 			return(which( v <= m))
 		}
-		x <- x <= m
-		pts <- rasterToPoints(x, function(y) y == 1)
-		cellFromXY(x, pts[,1:2,drop=FALSE])
+		xx <- x <= m + 0.000001
+		pts <- rasterToPoints(xx, function(y) y == 1)
+		cellFromXY(xx, pts[,1:2,drop=FALSE])
 	} 
 )
 

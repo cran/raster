@@ -6,15 +6,11 @@
 
 # name overlap with igraph
 edge <- function(x, ...) {
-	warning('"edge" is obsolete. Use "boundaries"')
+	warning('"edge" is obsolete and will be removed from this package. Use the "boundaries" function instead')
 	boundaries(x, ...)
+	warning('"edge" is obsolete and will be removed from this package. Use the "boundaries" function instead')
 }
 
-# igraph now also has edges!
-edges <- function(x, ...) {
-	warning('"edges" is obsolete. Use "boundaries"')
-    boundaries(x, ...)
-}
 
 
 if (!isGeneric("boundaries")) {
@@ -23,15 +19,8 @@ if (!isGeneric("boundaries")) {
 }	
 
 setMethod('boundaries', signature(x='RasterLayer'), 
-function(x, filename="", type='inner', classes=FALSE, directions=8, ...) {
+function(x, type='inner', classes=FALSE, directions=8, asNA=FALSE, filename="", ...) {
 
-	dots <- list(...)
-	if (!is.null(dots$asZero)) {
-		warning("argument 'asZero' is currently ignored")
-	}
-	if (!is.null(dots$asNA)) {
-		warning("argument 'asNA' is currently ignored")
-	}
 
 	stopifnot( nlayers(x) == 1 )
 	stopifnot( hasValues(x) )
@@ -55,7 +44,6 @@ function(x, filename="", type='inner', classes=FALSE, directions=8, ...) {
 	stopifnot(directions %in% c(4,8))
 	
 	
-#	if (asNA) {	fval <- as.integer(NA) } else { fval <- as.integer(0) }
 #	asZero <- as.integer(as.logical(asZero))
 	
 	
@@ -74,6 +62,9 @@ function(x, filename="", type='inner', classes=FALSE, directions=8, ...) {
 		x <- rbind(x[1,], x, x[nrow(x),])
 		paddim <- as.integer(dim(x))
 		x <- .Call('edge', as.integer(t(x)), paddim, classes, type, directions, NAOK=TRUE, PACKAGE='raster')
+		if (asNA) {
+			x[x==0] <- as.integer(NA)
+		}
 		x <- matrix(x, nrow=paddim[1], ncol=paddim[2], byrow=TRUE)
 		x <- x[2:(nrow(x)-1), 2:(ncol(x)-1)]
 		x <- setValues(out, as.vector(t(x)))
@@ -99,6 +90,9 @@ function(x, filename="", type='inner', classes=FALSE, directions=8, ...) {
 		v <- as.integer(cbind(v[,1], v))
 		
 		v <- .Call('edge', v, as.integer(c(tr$nrows[1]+2, nc)),  classes, type, directions, NAOK=TRUE, PACKAGE='raster')
+		if (asNA) {
+			v[v==0] <- as.integer(NA)
+		}
 		v <- matrix(v, ncol=nc, byrow=TRUE)
 		v <- as.integer(t(v[2:(nrow(v)-1), 2:(ncol(v)-1)]))
 		out <- writeValues(out, v, 1)

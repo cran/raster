@@ -16,25 +16,31 @@ Create a new Raster* object that has the same values as \code{x}, except for the
 } 
 
 \usage{
-\S4method{mask}{RasterLayer,RasterLayer}(x, mask, filename="", inverse=FALSE, maskvalue=NA, updatevalue=NA, ...)
+\S4method{mask}{RasterLayer,RasterLayer}(x, mask, filename="", inverse=FALSE, 
+      maskvalue=NA, updatevalue=NA, updateNA=FALSE, ...)
 
-\S4method{mask}{RasterStackBrick,RasterLayer}(x, mask, filename="", inverse=FALSE, maskvalue=NA, updatevalue=NA, ...)
+\S4method{mask}{RasterStackBrick,RasterLayer}(x, mask, filename="", inverse=FALSE,
+      maskvalue=NA, updatevalue=NA, updateNA=FALSE, ...)
 
-\S4method{mask}{RasterLayer,RasterStackBrick}(x, mask, filename="", inverse=FALSE, maskvalue=NA, updatevalue=NA, ...)
+\S4method{mask}{RasterLayer,RasterStackBrick}(x, mask, filename="", inverse=FALSE, 
+      maskvalue=NA, updatevalue=NA, updateNA=FALSE, ...)
 
-\S4method{mask}{RasterStackBrick,RasterStackBrick}(x, mask, filename="", inverse=FALSE, maskvalue=NA, updatevalue=NA, ...)
+\S4method{mask}{RasterStackBrick,RasterStackBrick}(x, mask, filename="", inverse=FALSE, 
+      maskvalue=NA, updatevalue=NA, updateNA=FALSE, ...)
 
-\S4method{mask}{Raster,Spatial}(x, mask, filename="", inverse=FALSE, updatevalue=NA, ...)
+\S4method{mask}{Raster,Spatial}(x, mask, filename="", inverse=FALSE, 
+      updatevalue=NA, updateNA=FALSE, ...)
 }
 
 
 \arguments{
 \item{x}{Raster* object}
 \item{mask}{Raster* object or a Spatial* object}
+\item{filename}{character. Optional output filename}
 \item{inverse}{logical. If \code{TRUE}, areas on mask that are _not_ \code{NA} are masked. This option is only relevant if ]code{maskvalue=NA}}
 \item{maskvalue}{numeric. The value in \code{mask} that indicates the cells of \code{x} that should become \code{maskvalue} (default = \code{NA})}
 \item{updatevalue}{numeric. The value that cells of \code{x} should become if they are not covered by \code{mask} (and not \code{NA})}
-\item{filename}{character. Optional output filename}
+\item{updateNA}{logical. If \code{TRUE}, \code{NA} values outside the masked area are also updated to the the \code{updatevalue} (only relevant if that value is not \code{NA}}
 \item{...}{additional arguments as in \code{\link{writeRaster}}}
 }
 

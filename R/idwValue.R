@@ -7,7 +7,7 @@
 
 ..idwValue <- function(raster, xy, ngb=4, pow=1, layer, n) {
 	r <- raster(raster)
-	longlat <- .couldBeLonLat(r)
+	longlat <- couldBeLonLat(r)
 	cells <- cellFromXY(r, xy)
 	adj <- adjacent(r, cells, ngb, pairs=TRUE, include=TRUE, id=TRUE)
 

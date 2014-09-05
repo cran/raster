@@ -1,23 +1,42 @@
 --- to do
 focal for multi-layer objects
+step-size option for focal
 support for RasterQuad (4 dimensional) objects
 add equivalent to "subsWithNA" to reclassify
 move resample (bilinear interp. (and add other options)) and rasterize/(lines, polygons) to C
 function for affine transformation
 add AMSR-E ice products and other raw binary products
 add orientation fixes for AVISO currents and similar NetCDFs lacking metadata on the internal CRS
+add VRT output to saveStack
+Fix lines falling between the cracks in extract (calling rasterzeLines): https://stat.ethz.ch/pipermail/r-sig-geo/2014-May/020973.html
 
---- development version
+--- 5-September-2014, version: 2.3-0
+Improvement of ENVI hdr file (WKT projection) suggested by Loïc Dutrieux	
+expanded corLocal to RasterStackBrick	
+union function for single SpatialPolygons* object
+removeTmpFiles now also removes sub-folders. Code modified by Matteo Mattiuzzi	
+expanded functionality: aggregate can now aggregate in space and 'time' (layers).  	
+specifying an invalid band number when creating a RasterLayer now leads to an error instead of a warning. In the case of ncdf files there was no warning (reported by Sahar Mokhtari) 
+removed obsolete function edges (use boundaries instead). obsolete function edge still available this version. 
 
-
+bug fixes: 
+- in plotRGB with stretching (in some cases the image became black). (Reported by Agus Lobo)
+- as.data.frame(xy=TRUE, na.rm=TRUE) now works. Reported by Helen Sofaer
+- RasterLayer with single column RAT tables gave an error on show(). Reported by Nevil Amos 
+- aspect computation for plotting lon/lat rasters failed in some cases (Reported by Francisco Quevedo)
+- datum/ellipsoid and true scale latitude was incorrect for South NSIDC (Reported by Neal Young)
+- extracting values failed for very large rasters (cell numbers > 2*10^9 because as.integer() returns NA). Problem reported by Samantha Franks and by Alexander Herr
+- subset failed for bricks derived from 4D NetCDF files. Reported by Mark Payne
+	
 --- 6-March-2014, version: 2.2-31
 new functions 'meta<-' and 'meta' to set and get metadata to a Raster object. Metadata is saved to file for native format files only.
 new argument updatevalue to mask
 new function animate
-new functions corr and corrLocal
+new function corLocal
 new convenience function origin<-
 new function RGB to create Red-Green-Blue(-alpha) files.
 new intersect method for SpatialPoints with ANY(-thing from which an Extent can be extracted)
+newly exported function compareCRS
 bug fix in boundaries function with large files reported by Adrien Bayeux
 bug fix in writing multiple layers to a ncdf file if the z-value cannot be converted to numeric. Reported by Aseem Sharma
 bug fix in extract with lines and along=TRUE (reported by Robin Edwards)
@@ -54,7 +73,7 @@ added support to read NSIDC sea ice concentration binary files (southern and nor
 	https://stat.ethz.ch/pipermail/r-sig-geo/2011-October/013067.html
 bug fix in stack with with input file name vector and quick=TRUE 
 bug fix: mask with maskvalue that is not NA ignored "inverse=TRUE"
-new function "validNames" (to avoid using raster:::.goodNames by another package)
+new function "validNames" (to avoid the need for using raster:::.goodNames by another package)
 new function "flowPath"
 fixed wrong axes labels with plot( ,gridded=TRUE). Reported by Agustin Lobo
 'edge' renamed to 'edges' to avoid name overlap with igraph::edge. edge is still available for now (with a warning) for backwards compatibility

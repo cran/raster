@@ -27,7 +27,7 @@ if (!isGeneric("area")) {
 
 setMethod('area', signature(x='SpatialPolygons'), 
 	function(x, ...) {
-		if (.couldBeLonLat(x)) {
+		if (couldBeLonLat(x)) {
 			warning('polygon area in square degrees is not very meaningful')
 		}
 		sapply(x@polygons, function(i) slot(i, 'area'))
@@ -50,7 +50,7 @@ setMethod('area', signature(x='RasterLayer'),
 			rm(x)
 		}	
 	
-		if (! .couldBeLonLat(out)) {
+		if (! couldBeLonLat(out)) {
 			warning('This function is only useful for Raster* objects with a longitude/latitude coordinates')
 			ar <- prod(res(out))
 			return( init(out, function(x) ar, filename=filename, ...) )
@@ -126,7 +126,7 @@ setMethod('area', signature(x='RasterStackBrick'),
 		
 		out <- brick(x, values=FALSE)
 
-		if (! .couldBeLonLat(out)) {
+		if (! couldBeLonLat(out)) {
 			stop('This function is only useful for Raster* objects with a longitude/latitude coordinates')
 		}
 	
@@ -173,14 +173,14 @@ setMethod('area', signature(x='RasterStackBrick'),
 				return(vv)
 			}
 
-			clusterExport(cl, c('tr', 'dx', 'dy', 'out', 'nl'), envir=environment())
+			snow::clusterExport(cl, c('tr', 'dx', 'dy', 'out', 'nl'), envir=environment())
 			
 		    for (i in 1:nodes) {
-				sendCall(cl[[i]], clFun, list(i), tag=i)
+				snow::sendCall(cl[[i]], clFun, list(i), tag=i)
 			}
 
 			for (i in 1:tr$n) {
-				d <- recvOneData(cl)
+				d <- snow::recvOneData(cl)
 				if (! d$value$success ) { 
 					print(d)
 					stop('cluster error') 
@@ -196,8 +196,8 @@ setMethod('area', signature(x='RasterStackBrick'),
 				}
 
 				if ((nodes + i) <= tr$n) {
-#					sendCall(cl[[d$node]], clFun, list(nodes+i, tr, dx, dy, out, nl), tag=nodes+i)
-					sendCall(cl[[d$node]], clFun, list(nodes+i), tag=nodes+i)
+#					snow::sendCall(cl[[d$node]], clFun, list(nodes+i, tr, dx, dy, out, nl), tag=nodes+i)
+					snow::sendCall(cl[[d$node]], clFun, list(nodes+i), tag=nodes+i)
 				}
 				pbStep(pb, i) 	
 			}		

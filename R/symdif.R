@@ -25,7 +25,7 @@ function(x, y, ...) {
 			}
 			y@proj4string <- x@proj4string
 		}
-		if (gIntersects(x, y)) {
+		if (rgeos::gIntersects(x, y)) {
 			part1 <- erase(x, y)
 			part2 <- erase(y, x)
 			x <- bind(part1, part2)

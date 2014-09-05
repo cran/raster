@@ -22,7 +22,7 @@ pbCreate <- function(nsteps, progress, style=3, label='Progress', ...) {
 		#	pb <- winProgressBar(title=tit, min=0 , max=nsteps, width = 300, label='starting')
 		#} else {
 		require(tcltk)
-		pb <- tkProgressBar(title=tit, min=0, max=nsteps, width = 300, label='starting')
+		pb <- tcltk::tkProgressBar(title=tit, min=0, max=nsteps, width = 300, label='starting')
 		#}
 	} else {
 		pb <- 'none'
@@ -40,7 +40,7 @@ pbStep <- function(pb, step=NULL, label='') {
 		setTxtProgressBar(pb, step)
 	} else if (pbclass=="tkProgressBar") {
 		if (is.null(step)) { step = pb$getVal() + 1 }
-		setTkProgressBar(pb, step, label=paste(label, step))	
+		tcltk::setTkProgressBar(pb, step, label=paste(label, step))	
 	#} else if (pbclass=="winProgressBar") {
 	#	if (is.null(step)) { step <- getWinProgressBar(pb)+1  }
 	#	setWinProgressBar(pb, step, label=paste(label, step))	

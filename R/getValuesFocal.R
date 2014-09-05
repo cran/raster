@@ -36,7 +36,15 @@ function(x, row, nrows, ngb, names=FALSE, padValue=NA, array=FALSE, ...) {
 		stop("'nrows' is too high")
 	}
 	stopifnot(is.atomic(padValue))
-	geo <- .couldBeLonLat(xx)
+	geo <- couldBeLonLat(xx)
+	
+	mask <- FALSE
+	if (is.matrix(ngb)) {
+		w <- ngb
+		ngb <- dim(w)
+		w <- ! is.na(as.vector(t(w)))
+		mask <- TRUE
+	}
 	ngb <- .checkngb(ngb, mustBeOdd=TRUE)
 	
 	ngbr <- floor(ngb[1]/2)
@@ -84,6 +92,11 @@ function(x, row, nrows, ngb, names=FALSE, padValue=NA, array=FALSE, ...) {
 			rownames(m) <- cellFromRowCol(xx, row, 1):cellFromRowCol(xx, row+nrows-1,nc)
 			colnames(m) <- paste('r', rep(1:ngb[1], each=ngb[2]), 'c', rep(1:ngb[2], ngb[1]), sep='')
 		}
+
+		if (mask) {
+			m <- m[,mask,drop=FALSE]
+		}
+
 		if (nl == 1) {
 			return(m)
 		} else {

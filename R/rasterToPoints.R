@@ -84,7 +84,7 @@ rasterToPoints <- function(x, fun=NULL, spatial=FALSE, ...) {
 		v <- data.frame(xyv[ ,-c(1:2), drop=FALSE])
 		colnames(v) <- laynam
 		crs <- projection(x, asText=FALSE)
-		return( SpatialPointsDataFrame(coords=xyv[,1:2], data=v, proj4string=crs ) )
+		return( SpatialPointsDataFrame(coords=xyv[,1:2,drop=FALSE], data=v, proj4string=crs ) )
 		
 	} else {
 		colnames(xyv)[3:ncol(xyv)] <- laynam

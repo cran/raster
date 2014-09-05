@@ -22,7 +22,7 @@ if (!isGeneric("clump")) {
 	# RH. To fix problem of missing single cells, perhaps more efficient than "include=T" in adjacent
 	add <- val[! val %in% adjv]		   
 	adjv <- c(adjv, rep(add, each=2))  
-	cl <- clusters(graph(adjv, directed=FALSE))$membership[val]
+	cl <- igraph::clusters(igraph::graph(adjv, directed=FALSE))$membership[val]
 	cl <- as.numeric(as.factor(cl)) # RH force 1 to n
 	x1[val] <- cl
 	return(x1)
@@ -102,8 +102,8 @@ function(x, filename='', directions=8, gaps=TRUE, ...) {
 	
 	
 	if (nrow(rcl) > 0) {
-		g <- graph.edgelist(rcl, directed=FALSE)
-		clumps <- clusters(g)$membership
+		g <- igraph::graph.edgelist(rcl, directed=FALSE)
+		clumps <- igraph::clusters(g)$membership
 		rc <- cbind(V(g), clumps)
 		i <- rc[,1] != rc[,2]
 		rc <- rc[i, ,drop=FALSE]

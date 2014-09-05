@@ -9,6 +9,7 @@
 \alias{extract,Raster,SpatialPoints-method}
 \alias{extract,Raster,SpatialLines-method}
 \alias{extract,Raster,SpatialPolygons-method}
+\alias{extract,SpatialPolygons,SpatialPoints-method}
 \alias{extract,Raster,Extent-method}
 
 \title{Extract values from Raster objects}
@@ -28,7 +29,10 @@ If \code{y} represents lines, the \code{extract} method returns the values of th
      nl, factors=FALSE, along=FALSE, sp=FALSE, ...)
 
 \S4method{extract}{Raster,SpatialPolygons}(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE,
-     small=FALSE, df=FALSE, layer, nl, factors=FALSE, sp=FALSE, ...)
+     small=TRUE, df=FALSE, layer, nl, factors=FALSE, sp=FALSE, ...)
+
+
+\S4method{extract}{SpatialPolygons,SpatialPoints}(x, y, ...)
 }
 
 \arguments{

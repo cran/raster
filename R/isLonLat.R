@@ -11,7 +11,7 @@
 	scale <- xres(x)
 	if (isTRUE(all.equal(xmin(x), -180, tolerance=tolerance, scale=scale)) & 
 		isTRUE(all.equal(xmax(x),  180, tolerance=tolerance, scale=scale))) {
-		if (.couldBeLonLat(x, warnings=FALSE)) {
+		if (couldBeLonLat(x, warnings=FALSE)) {
  			res <- TRUE
 		}
 	}
@@ -19,7 +19,11 @@
 }
 
 
-.couldBeLonLat <- function(x, warnings=TRUE) {
+.couldBeLonLat <- function(...) {
+	couldBeLonLat(...)
+}
+
+couldBeLonLat <- function(x, warnings=TRUE) {
 	crsLL <- isLonLat(x)
 	crsNA <- is.na(crsLL)
 	e <- extent(x)

@@ -15,9 +15,9 @@ distanceFromPoints(object, xy, filename='', ...)
 }
 
 \arguments{
-\item{object}{RasterLayer object}
-\item{xy}{Matrix of x and y coordinates, or a SpatialPoints* object.}
-\item{filename}{Filename for the output RasterLayer}
+\item{object}{Raster object}
+\item{xy}{matrix of x and y coordinates, or a SpatialPoints* object.}
+\item{filename}{character. Optional filename for the output RasterLayer}
 \item{...}{Additional arguments as for \code{\link{writeRaster}}}  
 }
 

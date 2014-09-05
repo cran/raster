@@ -47,17 +47,17 @@
 		
 		for (i in 1:nl) {
 			b <- new("GDALRasterBand", x@file@transient, i)
-			GDALcall(b, "SetStatistics", as.double(statistics[i,]))
+			rgdal::GDALcall(b, "SetStatistics", as.double(statistics[i,]))
 		}
 	}
 	
 	if(x@file@options[1] != "") {
-		saveDataset(x@file@transient, x@file@name, options=x@file@options)
+		rgdal::saveDataset(x@file@transient, x@file@name, options=x@file@options)
 	} else {
-		saveDataset(x@file@transient, x@file@name)	
+		rgdal::saveDataset(x@file@transient, x@file@name)	
 	}
 	
-	GDAL.close(x@file@transient) 
+	rgdal::GDAL.close(x@file@transient) 
 	
 	if (nl > 1) {
 		out <- brick(x@file@name)

@@ -67,10 +67,12 @@ function(x, subset, drop=TRUE, filename='', ...) {
 	}
 	#if (nl==1) {return(x)} # this does not drop
 	
-	varname <- attr(x@data, "zvar")
-	if (is.null(varname)) { 
-		varname <- "" 
-	}
+	# probably not needed any more, due to removing 
+	# the filename function below 
+	#varname <- attr(x@data, "zvar")
+	#if (is.null(varname)) { 
+	#	varname <- "" 
+	#}
 
 	# these values may have been changed
 	nav <- NAvalue(x)
@@ -79,9 +81,9 @@ function(x, subset, drop=TRUE, filename='', ...) {
 	if (fromDisk(x)) {
 		nms <- names(x)
 		if (drop & length(subset)==1) {
-			x <- raster(filename(x), band=subset, varname=varname)
+			x <- raster(x, subset)
 		} else {
-			x <- stack(filename(x), bands=subset, varname=varname)
+			x <- stack(x, layers=subset)
 		}
 		extent(x) <- e
 		names(x) <- nms[subset]

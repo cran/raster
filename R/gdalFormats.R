@@ -14,7 +14,7 @@
 
 .gdalWriteFormats <- function() {
 	.requireRgdal()
-	gd <- gdalDrivers()
+	gd <- rgdal::gdalDrivers()
 	gd <- as.matrix( gd[gd[,3] == T, ] )
 	i <- which(gd[,1] %in% c('VRT', 'MEM', 'MFF', 'MFF2'))
 	gd[-i,]

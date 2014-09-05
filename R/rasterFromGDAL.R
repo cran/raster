@@ -28,7 +28,7 @@
 	.requireRgdal() 
 	
 	if (sub > 0) {
-		gdalinfo <- GDALinfo(filename, silent=TRUE, returnRAT=FALSE, returnCategoryNames=FALSE)
+		gdalinfo <- rgdal::GDALinfo(filename, silent=TRUE, returnRAT=FALSE, returnCategoryNames=FALSE)
 		sub <- round(sub)
 		subdsmdata <- attr(gdalinfo, 'subdsmdata')
 
@@ -44,11 +44,11 @@
 	w <- getOption('warn')
 	on.exit(options('warn' = w))
 	options('warn'=-1) 
-	gdalinfo <- try ( GDALinfo(filename, silent=silent, returnRAT=RAT, returnCategoryNames=RAT) )
+	gdalinfo <- try ( rgdal::GDALinfo(filename, silent=silent, returnRAT=RAT, returnCategoryNames=RAT) )
 	options('warn'= w) 
 
 	if (class(gdalinfo) == 'try-error') {
-		gdalinfo <- GDALinfo(filename, silent=silent, returnRAT=FALSE, returnCategoryNames=FALSE)
+		gdalinfo <- rgdal::GDALinfo(filename, silent=silent, returnRAT=FALSE, returnCategoryNames=FALSE)
 		warning('Could not read RAT or Category names')
 	}
 
@@ -130,16 +130,18 @@
 		r@file@nbands <- as.integer(nbands)
 		band <- as.integer(band)
 		if ( band > nbands(r) ) {
-			if (warn) {
-				warning("band too high. Set to nbands")
-			}
-			band <- nbands(r) 
+			stop(paste("band too high. Should be between 1 and", nbands))
+			#if (warn) {
+				#stop("band too high. Set to nbands")
+			#}
+			#band <- nbands(r) 
 		}
 		if ( band < 1) { 
-			if (warn) {
-				warning("band too low. Set to 1")
-			}
-			band <- 1 
+			stop(paste("band should be 1 or higher"))		
+			#if (warn) {
+				#stop("band too low. Set to 1")
+			#}
+			#band <- 1 
 		}
 		r@data@band <- as.integer(band)
 		nbands <-1 
@@ -175,17 +177,17 @@
 	blockrows <- integer(nbands)
 	blockcols <- integer(nbands)
 	
-	x <- GDAL.open(filename, silent=TRUE)
-	ct <- getColorTable( x )
+	x <- rgdal::GDAL.open(filename, silent=TRUE)
+	ct <- rgdal::getColorTable( x )
 	if (! is.null(ct)) { 
 		r@legend@colortable <- ct 
 	}
 	for (i in 1:nbands) {
-		bs <- getRasterBlockSize( getRasterBand(x, i) )
+		bs <- rgdal::getRasterBlockSize( rgdal::getRasterBand(x, i) )
 		blockrows[i] <- bs[1]
 		blockcols[i] <- bs[2]
 	}
-	GDAL.close(x)
+	rgdal::GDAL.close(x)
 
 	r@file@blockrows <- blockrows
 	r@file@blockcols <- blockcols

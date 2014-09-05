@@ -28,7 +28,7 @@ function(x, origin, omit=NULL, filename="", ...) {
 		stop('cannot compute distance on a RasterLayer with no data')
 	}
 
-	lonlat <- .couldBeLonLat(x)
+	lonlat <- couldBeLonLat(x)
 	filename <- trim(filename)
 	
 	if (filename != ""  & file.exists(filename)) {
@@ -161,7 +161,7 @@ function(x, origin, omit=NULL, filename="", ...) {
 		adj <- adjacent(x, ftC, directions=8, target=ftC, pairs=TRUE)
 		startNode <- max(adj)+1 #extra node to serve as origin
 		adjP <- rbind(adj, cbind(rep(startNode, times=length(oC)), oC))
-		distGraph <- graph.edgelist(adjP, directed=TRUE)
+		distGraph <- igraph::graph.edgelist(adjP, directed=TRUE)
 		if (length(perCell) == 1) {
 			if (perCell == 0) {
 				perCell <- rep(0, times=length(oC))
@@ -170,18 +170,18 @@ function(x, origin, omit=NULL, filename="", ...) {
 
 		if (lonlat) {
 			distance <- pointDistance(xyFromCell(x,adj[,1]+startCell), xyFromCell(x,adj[,2]+startCell), longlat=TRUE) 
-			E(distGraph)$weight <- c(distance, perCell)
+			igraph::E(distGraph)$weight <- c(distance, perCell)
 
 		} else {
 			sameRow <- which(rowFromCell(x, adj[,1]) == rowFromCell(x, adj[,2]))
 			sameCol <- which(colFromCell(x, adj[,1]) == colFromCell(x, adj[,2]))
-			E(distGraph)$weight <- sqrt(xres(x)^2 + yres(x)^2)
-			E(distGraph)$weight[sameRow] <- xres(x)
-			E(distGraph)$weight[sameCol] <- yres(x)
-			E(distGraph)$weight[(length(adj[,1])+1):(length(adj[,1])+length(oC))] <- perCell
+			igraph::E(distGraph)$weight <- sqrt(xres(x)^2 + yres(x)^2)
+			igraph::E(distGraph)$weight[sameRow] <- xres(x)
+			igraph::E(distGraph)$weight[sameCol] <- yres(x)
+			igraph::E(distGraph)$weight[(length(adj[,1])+1):(length(adj[,1])+length(oC))] <- perCell
 		}
 		
-		shortestPaths <- shortest.paths(distGraph, startNode)
+		shortestPaths <- igraph::shortest.paths(distGraph, startNode)
 		shortestPaths <- shortestPaths[-(length(shortestPaths))] #chop startNode off
 		
 		if (length(shortestPaths) < chunkSize) { 

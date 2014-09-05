@@ -18,14 +18,14 @@ function(x) {
 
 
 setMethod("stack", signature(x='Raster'), 
-	function(x, ...) {
+	function(x, ..., layers=NULL) {
 		rlist <- list(x, ...)
 		if ( length(rlist) == 1 ) {
 			if (inherits(x, 'RasterLayer')) {
 				stack(rlist)
 			} else if (inherits(x, 'RasterBrick')) {
-				return( .stackFromBrick(x) )
-			} else {
+				return( .stackFromBrick(x, bands=layers) )
+			} else { # RasterStack
 				return(x)
 			}
 		} else {
@@ -222,17 +222,17 @@ function(x, bands=NULL, native=FALSE, RAT=TRUE, ...) {
 
 
 setMethod("stack", signature(x='SpatialGridDataFrame'), 
-	function(x) {
-		.stackFromBrick(brick(x))
+	function(x, ...) {
+		.stackFromBrick(brick(x), ...)
 	}
 )
 
 	
 
 setMethod("stack", signature(x='SpatialPixelsDataFrame'), 
-	function(x) {
+	function(x, ...) {
 		x <- as(x, 'SpatialGridDataFrame')
-		.stackFromBrick(brick(x))
+		.stackFromBrick(brick(x), ...)
 	}
 )
 

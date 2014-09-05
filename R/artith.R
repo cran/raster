@@ -1,6 +1,6 @@
 # Author: Robert J. Hijmans
 # Date :  January 2009
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
 
 setMethod("Arith", signature(e1='Raster', e2='Raster'),
@@ -322,9 +322,6 @@ setMethod("Arith", signature(e1='numeric', e2='RasterStackBrick'),
 )
 
 
-
-
-
 setMethod("Arith", signature(e1='RasterStackBrick', e2='logical'),  # for Arith with NA
     function(e1, e2){ 
 		e2 <- as.integer(e2)
@@ -349,6 +346,8 @@ setMethod("Arith", signature(e1='Extent', e2='numeric'),
 		} else if (length(e2) == 2) {
 			x1 = e2[1]
 			x2 = e2[2]
+		} else if (length(e2) == 4) {
+			return(extent(callGeneric(as.vector(e1), e2)))
 		} else {
 			stop('On an Extent object, you can only use Arith with a single number or with two numbers')
 		}
@@ -364,7 +363,6 @@ setMethod("Arith", signature(e1='Extent', e2='numeric'),
 		d <- (d - r) / 2
 		e1@ymax <- e1@ymax + d
 		e1@ymin <- e1@ymin - d
-		
 		return(e1)
 	}
 )

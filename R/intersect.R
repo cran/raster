@@ -28,7 +28,7 @@ function(x, y) {
 	x@ymax <- min(x@ymax, y@ymax)
 
 	if ((x@xmax <= x@xmin) | (x@ymax <= x@ymin) ) {
-		warning('Objects do not overlap')
+		#warning('Objects do not overlap')
 		return(NULL)
 	}
 	return(x)
@@ -37,7 +37,7 @@ function(x, y) {
 
 
 
-setMethod('intersect', signature(x='SpatialPoints', y='ANY'), 
+setMethod('intersect', signature(x='SpatialPoints', y='Raster'), 
 function(x, y) {
 	y <- extent(y)
 	xy <- coordinates(x)

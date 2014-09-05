@@ -16,9 +16,9 @@ setMethod ('print', 'Raster',
 					print(nc)
 					ncdf4::nc_close(nc)
 				} else {
-					nc <- open.ncdf(x@file@name)
+					nc <- ncdf::open.ncdf(x@file@name)
 					print(nc)
-					close.ncdf(nc)
+					ncdf::close.ncdf(nc)
 				}
 			} else if (any(is.factor(x))) {
 				cat('factor levels (value attributes)\n')

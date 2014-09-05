@@ -26,9 +26,6 @@ adjacent(x, cells, directions=4, pairs=TRUE, target=NULL, sorted=FALSE,
 
 \details{
 A neighborhood matrix identifies the cells around each cell that are considered adjacent. The matrix should have one, and only one, cell with value 0 (the focal cell); at least one cell with value 1 (the adjacent cell(s)); All other cells are not considered adjacent and ignored.
-
-
-Function 'adjacency' is obsolete and should not be used
 }
 
 

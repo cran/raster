@@ -4,7 +4,7 @@
 # Version 0.9
 # Licence GPL v3
 
-# based on  create2GDAL and saveDataset from the rgdal package
+# based on  create2GDAL and rgdal::saveDataset from the rgdal package
 # authors: Timothy H. Keitt, Roger Bivand, Edzer Pebesma, Barry Rowlingson
 
 
@@ -79,9 +79,9 @@
 
 	for (i in 1:nbands) {
 		b <- new("GDALRasterBand", transient, i)
-		GDALcall(b, "SetNoDataValue", NAflag)
+		rgdal::GDALcall(b, "SetNoDataValue", NAflag)
 		if (hasCT) {
-			GDALcall(b, "SetRasterColorTable", t(col2rgb(ct, TRUE)))
+			rgdal::GDALcall(b, "SetRasterColorTable", t(col2rgb(ct, TRUE)))
 		}
 	}
 	
@@ -96,9 +96,9 @@
 		#}
 	}
 
-	GDALcall(transient, "SetGeoTransform", gt)
+	rgdal::GDALcall(transient, "SetGeoTransform", gt)
 	# as.character to ensure NA is character
-	GDALcall(transient, "SetProject", as.character(projection(r))) 
+	rgdal::GDALcall(transient, "SetProject", as.character(projection(r))) 
 	if (is.null(options)) {
 		options <- ''
 	}

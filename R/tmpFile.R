@@ -11,7 +11,7 @@
 	if (filetypes == "") {
 		filetypes="{{GeoTIFF} {.tif} } {{grid files} {.grd}}"
 	}
-	tclvalue(tkgetSaveFile(filetypes=filetypes))
+	tcltk::tclvalue(tcltk::tkgetSaveFile(filetypes=filetypes))
 }
 
 .fileOpenDialog <- function(filetypes="") {
@@ -21,7 +21,7 @@
 	if (filetypes == "") {
 		filetypes="{{All Files} *} {{GeoTIFF} {.tif} } {{grid files} {.grd}}"
 	}
-	tclvalue(tkgetOpenFile(filetypes=filetypes))
+	tcltk::tclvalue(tcltk::tkgetOpenFile(filetypes=filetypes))
 }
 
 
@@ -36,7 +36,7 @@
 	}
 	
 	extension <- .defaultExtension(.filetype())
-	d <- .tmpdir(create=TRUE)
+	d <- tmpDir(create=TRUE)
 #	dir.create(d,  showWarnings = FALSE)
 	f <- paste(round(runif(10)*10), collapse="")
 	d <- paste(d, prefix, f, extension, sep="")
@@ -61,7 +61,7 @@ rasterTmpFile <- function(prefix='raster_tmp_')  {
 	}
 
 	extension <- .defaultExtension(.filetype())
-	d <- .tmpdir()
+	d <- tmpDir()
 
 	while(TRUE) {
 	#	f <- paste(gsub(' ', '_', gsub(':', '', as.character(Sys.time()))), '_', paste(round(runif(5)*10), collapse=""), sep='')
@@ -91,11 +91,11 @@ removeTmpFiles <- function(h=24) {
 	warnopt <- getOption('warn')
 	on.exit(options('warn'= warnopt))
 
-	tmpdir <- .tmpdir(create=FALSE)
+	tmpdir <- tmpDir(create=FALSE)
 	if (!is.na(tmpdir)) {
 	
 		d <- .removeTrailingSlash(tmpdir)
-		f <- list.files(path=d, pattern='raster_tmp*', full.names=TRUE)
+		f <- list.files(path=d, pattern='raster_tmp*', full.names=TRUE, include.dirs=TRUE)
 		fin <- file.info(f)
 		dif <- Sys.time() - fin$mtime
 		dif <- as.numeric(dif, units="hours")
@@ -103,20 +103,17 @@ removeTmpFiles <- function(h=24) {
 		dif[is.na(dif)] <- h + 1
 		f <- f[dif > h]
 		if (length(f) > 1) {
-			unlink(f)
+			unlink(f, recursive=TRUE)
 		}
-	#	if (file.exists(d)) {
-	#		unlink(paste(d, "/raster_tmp_*", sep=""), recursive = FALSE)
-	#	}
-	}
-	
+	}	
 	options('warn'=warnopt) 
 }
 
 
+
 showTmpFiles <- function() {
 	f <- NULL
-	tmpdir <- .tmpdir(create=FALSE)
+	tmpdir <- tmpDir(create=FALSE)
 	if (!is.na(tmpdir)) {
 		d <- .removeTrailingSlash(tmpdir)
 		if (file.exists(d)) {

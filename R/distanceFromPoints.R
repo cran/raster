@@ -10,7 +10,7 @@ distanceFromPoints <- function(object, xy, filename='', ...) {
 
 	filename <- trim(filename)
 	
-	if (.couldBeLonLat(object)) { 
+	if (couldBeLonLat(object)) { 
 		longlat=TRUE 
 	} else { 
 		longlat=FALSE 

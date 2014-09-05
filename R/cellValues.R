@@ -5,7 +5,7 @@
 
 	
 .cellValues <- function(x, cells, layer, nl, df=FALSE, factors=FALSE) { 
-
+	
 	if (inherits(x, 'RasterLayer')) {
 		result <- .readCells(x, cells, 1)
 		lyrs <- layer <- 1
@@ -34,7 +34,7 @@
 				if (length(na.omit(cells)) == 0) {
 					return(cells)
 				}
-				result <-  x@data@values[cells, lyrs, drop=FALSE] 
+				result <- x@data@values[cells, lyrs, drop=FALSE] 
 				
 			} else if (x@file@driver == 'netcdf') {
 				result <- .readBrickCellsNetCDF(x, cells, layer, nl) 

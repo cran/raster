@@ -15,15 +15,15 @@ function(x, y) {
 
 	require(rgeos)
 
-	x <- spChFIDs(x, as.character(1:length(row.names(x))))
-	y <- spChFIDs(y, as.character(1:length(row.names(y))))
+	x <- spChFIDs(x, as.character(1:length(x)))
+	y <- spChFIDs(y, as.character(1:length(y)))
 		
 	if (! identical(proj4string(x), proj4string(y)) ) {
 		warning('non identical CRS')
 		y@proj4string <- x@proj4string
 	}	
 	
-	subs <- gIntersects(x, y, byid=TRUE)
+	subs <- rgeos::gIntersects(x, y, byid=TRUE)
 	if (sum(subs)==0) {
 		warning('polygons do not intersect')
 		return(NULL)
@@ -48,14 +48,14 @@ function(x, y) {
 	subsx <- apply(subs, 2, any)
 	subsy <- apply(subs, 1, any)
 		
-	int  <- gIntersection(x[subsx,], y[subsy,], byid=TRUE)
-	if (inherits(int, "SpatialCollections")) {
-		if (is.null(int@polyobj)) { # merely touching, no intersection
-			#warning('polygons do not intersect')
-			return(NULL)
-		}
-		int <- int@polyobj
-	}
+	int  <- rgeos::gIntersection(x[subsx,], y[subsy,], byid=TRUE, drop_not_poly=TRUE)
+#	if (inherits(int, "SpatialCollections")) {
+#		if (is.null(int@polyobj)) { # merely touching, no intersection
+#			#warning('polygons do not intersect')
+#			return(NULL)
+#		}
+#		int <- int@polyobj
+#	}
 	if (!inherits(int, 'SpatialPolygons')) {
 		# warning('polygons do not intersect')
 		return(NULL)
@@ -83,10 +83,15 @@ function(x, y) {
 
 
 
-#setMethod('intersect', signature(x='SpatialPoints', y='SpatialPolygons'), 
-#function(x, y) {
-#	i <- overlay(x, y)
-#	w <- which(!is.na(i))
-#	x[i,]
-#}	
-#)
+setMethod('intersect', signature(x='SpatialPoints', y='SpatialPolygons'), 
+function(x, y) {
+   if (!identical(proj4string(x), proj4string(y))) {
+        warning("non identical CRS")
+        y@proj4string <- x@proj4string
+    }
+    i <- over(as(x, "SpatialPoints"), as(y, "SpatialPolygons"))
+    i <- which(!is.na(i))
+    x[i, ]
+}	
+)
+
