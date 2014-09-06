@@ -5,6 +5,7 @@
 
 # October 2012: Major overhaul (including C interface)
 # November 2012: fixed bug with expand=F
+# June 2014: support for aggregation over z (layers) in addition to x and y
 
 
 setMethod('aggregate', signature(x='Raster'), 
@@ -14,60 +15,159 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 	if (is.null(doC)) {
 		doC <- TRUE
 	}
-	fact <- rep(as.integer(round(fact)), length.out=2)
+	nl <- nlayers(x)
+
+	fact <- round(fact)
+	lf <- length(fact)
+	if (lf == 1) {
+		fact <- c(fact, fact, 1)
+	} else if (lf == 2) {
+		fact <- c(fact, 1)
+	} else if (lf > 3) {
+		stop('fact should have length 1, 2, or 3')
+	}
+	if (nl < 2) {
+		fact[3] <- 1
+	}
+	if (any(fact < 1)) {
+		stop('fact should be > 0')
+	}
+	if (! any(fact > 1)) {
+		stop('fact should be > 1')
+	}
 	xfact <- fact[1]
 	yfact <- fact[2]
-	if (xfact < 1 | yfact < 1) { stop('fact should be > 0') } 
-	if (xfact < 2 & yfact < 2) { stop('fact[1] or fact[2] should be > 1') } 
+	zfact <- fact[3]
 	
-	if (xfact > ncol(x)) {
-		warning('aggregation factor is larger than the number of columns') 
-		xfact <- ncol(x)
-	}
-	if (yfact > nrow(x)) {
-		warning('aggregation factor is larger than the number of rows')
-		yfact <- nrow(x)
-	}
-
 	ncx <- ncol(x)
 	nrx <- nrow(x)
+	if (xfact > ncx) {
+		warning('aggregation factor is larger than the number of columns') 
+		xfact <- ncx
+	}
+	if (yfact > nrx) {
+		warning('aggregation factor is larger than the number of rows')
+		yfact <- nrx
+	}
+	if (zfact > nl) {
+		warning('aggregation factor is larger than the number of layers')
+		zfact <- nl
+	}
+
+	addlyrs <- 0
 	if (expand) {
 		rsteps <- as.integer(ceiling(nrx/yfact))
 		csteps <- as.integer(ceiling(ncx/xfact))
-		lastcol <- x@ncols
-		lastrow <- x@nrows
+		lsteps <- as.integer(ceiling(nl/zfact))
+		
+		lastcol <- ncx
+		lastrow <- nrx
+		lastlyr <- lsteps * zfact
+		if (lastlyr > nl ) {
+			addlyrs <- lastlyr - nl
+		}
+		lyrs <- 1:nl
+		
 		#addcols <- csteps * xfact - ncx
 		#addrows <- rsteps * yfact - nrx
 
 	} else 	{
 		rsteps <- as.integer(floor(nrx/yfact))
 		csteps <- as.integer(floor(ncx/xfact))
-		lastcol <- min(csteps * xfact, x@ncols)
-		lastrow <- min(rsteps * yfact, x@nrows)
+		lsteps <- as.integer(floor(nl/zfact))
+		
+		lastcol <- min(csteps * xfact, ncx)
+		lastrow <- min(rsteps * yfact, nrx)
+		lastlyr <- min(lsteps * zfact, nl)
+		
+		lyrs <- 1:lastlyr
 	}
-	
+
 	
 	ymn <- ymax(x) - rsteps * yfact * yres(x)
 	xmx <- xmin(x) + csteps * xfact * xres(x)
 		
-	nl <- nlayers(x)
-	if (nl > 1) {
+	if (lsteps > 1) {
 		out <- brick(x, values=FALSE)
 	} else {
 		out <- raster(x)		
 	}
 	extent(out) <- extent(xmin(x), xmx, ymn, ymax(x))
-	dim(out) <- c(rsteps, csteps) 
-	names(out) <- names(x)
+	dim(out) <- c(rsteps, csteps, lsteps) 
 	ncout <- ncol(out)
-
-	if (! hasValues(x) ) {	return(out) }	
+	if (zfact == 1) {
+		names(out) <- names(x)
+	}
+	
+	
+	if (! hasValues(x) ) {	
+		return(out) 
+	}	
 
 	fun <- .makeTextFun(fun)
 	if (class(fun) == 'character') { 
 		op <- as.integer(match(fun, c('sum', 'mean', 'min', 'max')) - 1)
 	} else {
 		op <- NA
+	}
+	
+	if (zfact > 1) {
+		xyzfact <- xfact*yfact*zfact
+		dims <- as.integer(c(lastrow, lastcol, nl+addlyrs, xfact, yfact, zfact))
+
+		if ( canProcessInMemory(x)) {
+			v <- getValuesBlock(x, 1, lastrow, 1, lastcol, lyrs)
+			if (addlyrs > 0) {
+				add <- matrix(NA, nrow=nrow(v), ncol=addlyrs)
+				v <- cbind(v, add)
+			}
+			v <- .Call("aggregate_get", as.double(v), as.integer(dims), PACKAGE='raster')
+			v <- matrix(v, nrow=xyzfact)
+			v <- apply(v, 2, fun, na.rm=na.rm)
+			out <- setValues(out, v)
+			if (filename != '') {
+				out <- writeRaster(out, filename, ...)
+			}
+			return(out)
+		} else {
+
+			xx <- brick(x, values=FALSE)
+			if (!expand) {
+				nrow(xx) <- (nrow(x) %/% yfact) * yfact
+			}		
+			tr <- blockSize(xx, minrows=yfact)
+			st <- round(tr$nrows[1] / yfact) * yfact
+			tr$n <- ceiling(lastrow / st)
+			tr$row <- c(1, cumsum(rep(st, tr$n-1))+1)
+			tr$nrows <- rep(st, tr$n)
+			tr$write <- cumsum(c(1, ceiling(tr$nrows[1:(tr$n-1)]/yfact)))
+			tr$nrows[tr$n] <-  nrow(xx) - tr$row[tr$n] + 1
+			tr$outrows <- ceiling(tr$nrows/yfact)
+			
+			pb <- pbCreate(tr$n, label='aggregate', ...)
+			x <- readStart(x, ...)	
+
+			out <- writeStart(out, filename=filename, ...)
+			for (i in 1:tr$n) {
+				dims[1] <- as.integer(tr$nrows[i])
+				vals <- getValuesBlock(x, tr$row[i], tr$nrows[i], 1, lastcol, lyrs)
+				if (addlyrs > 0) {
+					add <- rep(NA, nrow(vals)*addlyrs)
+					vals <- c(vals, add)
+				}
+				vals <- .Call("aggregate_get", as.double(vals), as.integer(dims), PACKAGE='raster')
+				vals <- matrix(vals, nrow=xyzfact)
+				vals <- apply(vals, 2, fun, na.rm=na.rm)
+				out <- writeValues(out, matrix(vals, ncol=nl), tr$write[i])
+				pbStep(pb, i) 
+			}
+			pbClose(pb)
+			out <- writeStop(out)
+			x <- readStop(x)
+
+			return(out)	
+
+		}
 	}
 	
 	if (!is.na(op) & doC) {
@@ -87,7 +187,6 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 		
 			xx <- brick(x, values=FALSE)
 			if (!expand) {
-				xx <- brick(x, values=FALSE)
 				nrow(xx) <- (nrow(x) %/% yfact) * yfact
 			}		
 			tr <- blockSize(xx, minrows=yfact)
@@ -365,3 +464,4 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 #r <- raster()
 #r[] = 1:ncell(r)
 #.aggtest(r, 5, 'min', doC=T)
+#aggregate(s, c(2,1,3), 'min', expand=F)

@@ -14,7 +14,11 @@ if (!isGeneric("zoom")) {
 
 setMethod('zoom', signature(x='Raster'), 
 function(x, ext=drawExtent(), maxpixels=100000, layer=1, new=TRUE, useRaster=TRUE, ...) {
-	ext <- ext  # force to start with drawing before creating a new graphics device
+	if (is.function(ext)) {
+		ext <- ext  # force to start with drawing before creating a new graphics device
+	} else {
+		ext <- extent(ext)
+	}
 	if (new) { 
 		dev.new() 
 	}
@@ -37,10 +41,32 @@ function(x, ext=drawExtent(), maxpixels=100000, layer=1, new=TRUE, useRaster=TRU
 
 setMethod('zoom', signature(x='Spatial'), 
 function(x, ext=drawExtent(), new=TRUE, ...) {
-	ext <- ext  # force to start with drawing before creating a new graphics device
-	if (new) { dev.new() }
+	if (is.function(ext)) {
+		ext <- ext  # force to start with drawing before creating a new graphics device
+	} else {
+		ext <- extent(ext)
+	}
+	if (new) { 
+		dev.new() 
+	}
 	sp::plot(x, xlim=c(ext@xmin, ext@xmax), ylim=c(ext@ymin, ext@ymax), ...)
 	return(invisible(ext))
 }
 )
 
+
+
+setMethod('zoom', signature(x='missing'), 
+function(x, ext=drawExtent(), new=TRUE, ...) {
+	if (is.function(ext)) {
+		ext <- ext  # force to start with drawing before creating a new graphics device
+	} else {
+		ext <- extent(ext)
+	}
+	if (new) { 
+		dev.new() 
+	}
+	plot(0, xlim=c(ext@xmin, ext@xmax), ylim=c(ext@ymin, ext@ymax), type='n', ...)
+	return(invisible(ext))
+}
+)

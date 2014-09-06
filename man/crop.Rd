@@ -30,6 +30,9 @@ If \code{x} is a Raster* object, the Extent is aligned to \code{x}. Areas includ
 
 \details{
 Objects from which an Extent can be extracted/created include RasterLayer, RasterStack, RasterBrick and objects of the Spatial* classes from the sp package. You can check this with the \code{\link[raster]{extent}} function. New Extent objects can be also be created with function \code{\link{extent}} and \code{\link{drawExtent}} by clicking twice on a plot.
+
+To crop by row and column numbers you can create an extent like this (for Raster \code{x}, row 5 to 10, column 7 to 12)
+\code{crop(x, extent(x, 5, 10, 7, 15))}
 }
 
 \value{
@@ -45,6 +48,9 @@ r <- raster(nrow=45, ncol=90)
 r[] <- 1:ncell(r)
 e <- extent(-160, 10, 30, 60)
 rc <- crop(r, e)	
+
+# use row and column numbers:
+rc2 <- crop(r, extent(r, 5, 10, 7, 15))
 
 # crop Raster* with Spatial* object
 b <- as(extent(6, 6.4, 49.75, 50), 'SpatialPolygons')

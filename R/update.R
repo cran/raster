@@ -275,8 +275,8 @@ function(object, v, cell, band) {
 			stop('update is currently only supported with the ncdf library, not with the ncdf4 library')
 		}
 
-		nc <- open.ncdf(object@file@name, write=TRUE)
-		on.exit( close.ncdf(nc) )
+		nc <- ncdf::open.ncdf(object@file@name, write=TRUE)
+		on.exit( ncdf::close.ncdf(nc) )
 		zvar <- object@data@zvar
 		dims <- nc$var[[zvar]]$ndims
 		
@@ -288,11 +288,11 @@ function(object, v, cell, band) {
 			startrow <- rowFromCell(object, cell)
 			startcol <- colFromCell(object, cell)
 			if (nc$var[[zvar]]$ndims == 2) {
-				try ( put.var.ncdf(nc, zvar, v, start=c(startcol, startrow), count=c(ncol(v), nrow(v))) )
+				try ( ncdf::put.var.ncdf(nc, zvar, v, start=c(startcol, startrow), count=c(ncol(v), nrow(v))) )
 			} else if (nc$var[[zvar]]$ndims == 3) {
-				try ( put.var.ncdf(nc, zvar, v, start=c(startcol, startrow, band), count=c(ncol(v), nrow(v), 1)) )
+				try ( ncdf::put.var.ncdf(nc, zvar, v, start=c(startcol, startrow, band), count=c(ncol(v), nrow(v), 1)) )
 			} else if (nc$var[[zvar]]$ndims == 4) {
-				try ( put.var.ncdf(nc, zvar, v, start=c(startcol, startrow, object@data@level, band), count=c(ncol(v), nrow(v), 1, 1)) )
+				try ( ncdf::put.var.ncdf(nc, zvar, v, start=c(startcol, startrow, object@data@level, band), count=c(ncol(v), nrow(v), 1, 1)) )
 			}
 			
 		} else {
@@ -306,22 +306,22 @@ function(object, v, cell, band) {
 				if (nr == 1) {
 					#v <- as.matrix(v)
 					if (nc$var[[zvar]]$ndims == 2) {
-						try ( put.var.ncdf(nc, zvar, v, start=c(cols[1], rows), count=c(length(cols), 1)) )
+						try ( ncdf::put.var.ncdf(nc, zvar, v, start=c(cols[1], rows), count=c(length(cols), 1)) )
 					} else if (nc$var[[zvar]]$ndims == 3) {
-						try ( put.var.ncdf(nc, zvar, v, start=c(cols[1], rows, band), count=c(length(cols), 1, 1)) )
+						try ( ncdf::put.var.ncdf(nc, zvar, v, start=c(cols[1], rows, band), count=c(length(cols), 1, 1)) )
 					} else if (nc$var[[zvar]]$ndims == 4) {
-						try ( put.var.ncdf(nc, zvar, v, start=c(cols[1], rows, object@data@level, band), count=c(length(cols), 1, 1, 1)) )
+						try ( ncdf::put.var.ncdf(nc, zvar, v, start=c(cols[1], rows, object@data@level, band), count=c(length(cols), 1, 1, 1)) )
 					}
 				} else {	
 					offset <- c(cols[1], rows[1])
 					ncols <- object@ncols - cols[1]
 					vv <- v[1:ncols]
 					if (nc$var[[zvar]]$ndims == 2) {
-						try ( put.var.ncdf(nc, zvar, vv, start=c(cols[1], rows), count=c(length(cols), 1)) )
+						try ( ncdf::put.var.ncdf(nc, zvar, vv, start=c(cols[1], rows), count=c(length(cols), 1)) )
 					} else if (nc$var[[zvar]]$ndims == 3) {
-						try ( put.var.ncdf(nc, zvar, vv, start=c(cols[1], rows, band), count=c(length(cols), 1, 1)) )
+						try ( ncdf::put.var.ncdf(nc, zvar, vv, start=c(cols[1], rows, band), count=c(length(cols), 1, 1)) )
 					} else if (nc$var[[zvar]]$ndims == 4) {
-						try ( put.var.ncdf(nc, zvar, vv, start=c(cols[1], rows, object@data@level, band), count=c(length(cols), 1, 1, 1)) )
+						try ( ncdf::put.var.ncdf(nc, zvar, vv, start=c(cols[1], rows, object@data@level, band), count=c(length(cols), 1, 1, 1)) )
 					}
 					v <- v[-(1:nc)]
 					if (nr > 2) {
@@ -329,20 +329,20 @@ function(object, v, cell, band) {
 						nrows <- nr-2
 						n <- nrows * object@ncols
 						if (nc$var[[zvar]]$ndims == 2) {
-							try ( put.var.ncdf(nc, zvar, vv, start=c(1, rows), count=c(ncols, 1)) )
+							try ( ncdf::put.var.ncdf(nc, zvar, vv, start=c(1, rows), count=c(ncols, 1)) )
 						} else if (nc$var[[zvar]]$ndims == 3) {
-							try ( put.var.ncdf(nc, zvar, vv, start=c(1, rows, band), count=c(ncols, 1, 1)) )
+							try ( ncdf::put.var.ncdf(nc, zvar, vv, start=c(1, rows, band), count=c(ncols, 1, 1)) )
 						} else if (nc$var[[zvar]]$ndims == 4) {
-							try ( put.var.ncdf(nc, zvar, vv, start=c(1, rows, object@data@level, band), count=c(ncols, 1, 1, 1)) )
+							try ( ncdf::put.var.ncdf(nc, zvar, vv, start=c(1, rows, object@data@level, band), count=c(ncols, 1, 1, 1)) )
 						}
 						v <- v[-(1:n)]
 					}
 					if (nc$var[[zvar]]$ndims == 2) {
-						try ( put.var.ncdf(nc, zvar, vv, start=c(1, rows), count=c(1, rows[nr])) )
+						try ( ncdf::put.var.ncdf(nc, zvar, vv, start=c(1, rows), count=c(1, rows[nr])) )
 					} else if (nc$var[[zvar]]$ndims == 3) {
-						try ( put.var.ncdf(nc, zvar, vv, start=c(1, rows, band), count=c(1, rows[nr], 1)) )
+						try ( ncdf::put.var.ncdf(nc, zvar, vv, start=c(1, rows, band), count=c(1, rows[nr], 1)) )
 					} else if (nc$var[[zvar]]$ndims == 4) {
-						try ( put.var.ncdf(nc, zvar, vv, start=c(1, rows, object@data@level, band), count=c(1, rows[nr], 1, 1)) )
+						try ( ncdf::put.var.ncdf(nc, zvar, vv, start=c(1, rows, object@data@level, band), count=c(1, rows[nr], 1, 1)) )
 					}
 				} 
 			} else {
@@ -350,15 +350,15 @@ function(object, v, cell, band) {
 				cols <- colFromCell(object, cell)
 				if (nc$var[[zvar]]$ndims == 2) {
 					for (i in 1:length(cell)) {
-						try ( put.var.ncdf(nc, zvar, v[i], start=c(cols[i], rows[i]), count=c(1, 1)) )
+						try ( ncdf::put.var.ncdf(nc, zvar, v[i], start=c(cols[i], rows[i]), count=c(1, 1)) )
 					}
 				} else if (nc$var[[zvar]]$ndims == 3) {
 					for (i in 1:length(cell)) {
-						try ( put.var.ncdf(nc, zvar, v[i], start=c(cols[i], rows[i], band), count=c(1, 1, 1)) )
+						try ( ncdf::put.var.ncdf(nc, zvar, v[i], start=c(cols[i], rows[i], band), count=c(1, 1, 1)) )
 					}
 				} else if (nc$var[[zvar]]$ndims == 4) {
 					for (i in 1:length(cell)) {
-						try ( put.var.ncdf(nc, zvar, v[i], start=c(cols[i], rows[i], object@data@level, band), count=c(1, 1, 1, 1)) )
+						try ( ncdf::put.var.ncdf(nc, zvar, v[i], start=c(cols[i], rows[i], object@data@level, band), count=c(1, 1, 1, 1)) )
 					}
 				}
 			}
@@ -369,9 +369,9 @@ function(object, v, cell, band) {
 
 .updateGDAL <- function(object, v, cell, band, setminmax) {
 	gdal <- new("GDALDataset", filename(object))
-	on.exit( GDAL.close(gdal) )
+	on.exit( rgdal::GDAL.close(gdal) )
 
-	dr <- getDriverName(getDriver(gdal))
+	dr <- rgdal::getDriverName(rgdal::getDriver(gdal))
 	if (! dr %in% .gdalWriteFormats()[,1]) {
 		stop('cannot update this file format (GDAL driver)')
 	}
@@ -380,7 +380,7 @@ function(object, v, cell, band) {
 
 		startrow <- rowFromCell(object, cell) - 1
 		startcol <- colFromCell(object, cell) - 1
-		putRasterData(gdal, t(v), band=band, offset= c(startrow, startcol) )
+		rgdal::putRasterData(gdal, t(v), band=band, offset= c(startrow, startcol) )
 
 	} else {
 		if (length(cell) == 1) {
@@ -391,27 +391,27 @@ function(object, v, cell, band) {
 			cols <- unique(cols)
 			nr <- length(rows)
 			if (nr == 1) {
-				putRasterData(gdal, v, band=band, offset=c(rows, cols[1]))
+				rgdal::putRasterData(gdal, v, band=band, offset=c(rows, cols[1]))
 			} else {
 				offset <- c(rows[1], cols[1])
 				nc <- object@ncols - cols[1]
-				putRasterData(gdal, v[1:nc], band=band, offset=offset)
+				rgdal::putRasterData(gdal, v[1:nc], band=band, offset=offset)
 				v <- v[-(1:nc)]
 				if (nr > 2) {
 					nrows <- nr-2
 					n <- nrows * object@ncols
-					putRasterData(gdal, t(matrix(v[1:n], ncol=object@ncols, byrow=TRUE)), band=band, offset=c(rows[2], 0))
+					rgdal::putRasterData(gdal, t(matrix(v[1:n], ncol=object@ncols, byrow=TRUE)), band=band, offset=c(rows[2], 0))
 					v <- v[-(1:n)]
 				}
 				if (length(v) > 0) {
-					putRasterData(gdal, v, band=band, offset=c(rows[nr], 0))
+					rgdal::putRasterData(gdal, v, band=band, offset=c(rows[nr], 0))
 				}
 			} 
 		} else {
 			rows <- rowFromCell(object, cell) - 1
 			cols <- colFromCell(object, cell) - 1
 			for (i in 1:length(cell)) {
-				putRasterData(gdal, v[i], band=band, offset=c(rows[i], cols[i]))
+				rgdal::putRasterData(gdal, v[i], band=band, offset=c(rows[i], cols[i]))
 			} 
 		}
 			
@@ -420,7 +420,7 @@ function(object, v, cell, band) {
 	if (setminmax) {	
 		b <- new("GDALRasterBand", gdal, band)
 		statistics <- c(object@data@min, object@data@max, NA, NA)
-		GDALcall(b, "SetStatistics", statistics)	
+		rgdal::GDALcall(b, "SetStatistics", statistics)	
 	}
 
 	return(object)

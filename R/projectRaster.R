@@ -71,7 +71,7 @@ projectExtent <- function(object, crs) {
 	
 	}
 	
-	res <- rawTransform( projfrom, projto, nrow(xy), xy[,1], xy[,2] )
+	res <- rgdal::rawTransform( projfrom, projto, nrow(xy), xy[,1], xy[,2] )
 	
 	x <- res[[1]]
 	y <- res[[2]]
@@ -109,7 +109,7 @@ projectExtent <- function(object, crs) {
 	y1 <- y - 0.5 * res[2]
 	y2 <- y + 0.5 * res[2]
 	xy <- cbind(c(x1, x2, x, x), c(y, y, y1, y2))
-	pXY <- rawTransform( projection(raster), crs, nrow(xy), xy[,1], xy[,2] )
+	pXY <- rgdal::rawTransform( projection(raster), crs, nrow(xy), xy[,1], xy[,2] )
 	pXY <- cbind(pXY[[1]], pXY[[2]])
 	out <- c((pXY[2,1] - pXY[1,1]), (pXY[4,2] - pXY[3,2]))
 	if (any(is.na(res))) {
@@ -254,7 +254,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 		tr <- blockSize(to, minblocks=nodes)
 		pb <- pbCreate(tr$n, label='projectRaster', ...)
 
-		clusterExport(cl, c('tr', 'to', 'from', 'e', 'nl', 'projto_int', 'projfrom', 'method'), envir=environment())
+		snow::clusterExport(cl, c('tr', 'to', 'from', 'e', 'nl', 'projto_int', 'projfrom', 'method'), envir=environment())
 		
 		clFun <- function(i) {
 			start <- cellFromRowCol(to, tr$row[i], 1)
@@ -265,7 +265,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 			v <- matrix(nrow=length(cells), ncol=nl)
 			if (nrow(xy) > 0) {
 				ci <- match(cellFromXY(to, xy), cells)
-				xy <- rawTransform(projto_int, projfrom, nrow(xy), xy[,1], xy[,2])
+				xy <- rgdal::rawTransform(projto_int, projfrom, nrow(xy), xy[,1], xy[,2])
 				xy <- cbind(xy[[1]], xy[[2]])
 				v[ci, ] <- .xyValues(from, xy, method=method)
 			} 
@@ -274,9 +274,9 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 	
 	
 		# for debugging
-		# clusterExport(cl,c("tr", "projto", "projfrom", "method", "from", "to"))
+		# snow::clusterExport(cl,c("tr", "projto", "projfrom", "method", "from", "to"))
         for (i in 1:nodes) {
-			sendCall(cl[[i]], clFun, list(i), tag=i)
+			snow::sendCall(cl[[i]], clFun, list(i), tag=i)
 		}
 		        
 		if (inMemory) {
@@ -284,7 +284,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 
 			for (i in 1:tr$n) {
 				pbStep(pb, i)
-				d <- recvOneData(cl)
+				d <- snow::recvOneData(cl)
 				if (! d$value$success) {
 					print(d)
 					stop('cluster error')
@@ -294,7 +294,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 				v[start:end, ] <- d$value$value
 				ni <- nodes+i
 				if (ni <= tr$n) {
-					sendCall(cl[[d$node]], clFun, list(ni), tag=ni)
+					snow::sendCall(cl[[d$node]], clFun, list(ni), tag=ni)
 				}
 			}
 			
@@ -310,7 +310,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 
 			for (i in 1:tr$n) {
 				pbStep(pb, i)
-				d <- recvOneData(cl)
+				d <- snow::recvOneData(cl)
 				if (! d$value$success ) { 
 					print(d)
 					stop('cluster error') 
@@ -318,7 +318,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 				to <- writeValues(to, d$value$value, tr$row[d$value$tag])
 				ni <- nodes+i
 				if (ni <= tr$n) {
-					sendCall(cl[[d$node]], clFun, list(ni), tag=ni)
+					snow::sendCall(cl[[d$node]], clFun, list(ni), tag=ni)
 				}
 			}
 			pbClose(pb)
@@ -337,7 +337,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 			xy <- coordinates(to) 
 			xy <- subset(xy, xy[,1] > e@xmin & xy[,1] < e@xmax)
 			cells <- cellFromXY(to, xy)
-			xy <- rawTransform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
+			xy <- rgdal::rawTransform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
 			xy <- cbind(xy[[1]], xy[[2]])
 			to[cells] <- .xyValues(from, xy, method=method)
 			
@@ -357,7 +357,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 				xy <- subset(xy, xy[,1] > e@xmin & xy[,1] < e@xmax)
 				if (nrow(xy) > 0) {
 					ci <- match(cellFromXY(to, xy), cells)
-					xy <- rawTransform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
+					xy <- rgdal::rawTransform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2] )
 					xy <- cbind(xy[[1]], xy[[2]])
 					v <- matrix(nrow=length(cells), ncol=nl)
 					v[ci, ] <- .xyValues(from, xy, method=method)

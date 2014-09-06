@@ -1,14 +1,16 @@
 \name{getData}
 \alias{getData}
+\alias{ccodes}
 
 \title{Get geographic data }
 
 \description{
-Get geographic data for anywhere in the world. Data are read from files that are first downloaded if necessary.
+Get geographic data for anywhere in the world. Data are read from files that are first downloaded if necessary. Function \code{ccodes} returns country names and the ISO codes
 }
 
 \usage{
 getData(name, download=TRUE, path='', ...)
+ccodes()
 }
 
 \arguments{

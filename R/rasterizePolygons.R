@@ -152,6 +152,9 @@
 			stop('invalid value for fun')
 		}
 		doFun <- FALSE
+		if (fun == 'count') {
+			field = 1
+		}
 	} else {
 		doFun <- TRUE
 	}

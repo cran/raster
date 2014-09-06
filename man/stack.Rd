@@ -16,13 +16,13 @@
 \title{Create a RasterStack object}
 
 \description{
-A RasterStack is a collection of RasterLayer objects with the same spatial extent and resolution. A RasterStack can be created from RasterLayer objects, or from raster files, or both. It can also be created from SpatialPixels or SpatialGrid objects.
+A RasterStack is a collection of RasterLayer objects with the same spatial extent and resolution. A RasterStack can be created from RasterLayer objects, or from raster files, or both. It can also be created from a SpatialPixelsDataFrame or a SpatialGridDataFrame object.
 }
 
 \usage{
 \S4method{stack}{character}(x, ..., bands=NULL, varname="", native=FALSE, RAT=TRUE, quick=FALSE)
 
-\S4method{stack}{Raster}(x, ...)
+\S4method{stack}{Raster}(x, ..., layers=NULL)
 
 \S4method{stack}{missing}(x)
 
@@ -33,6 +33,7 @@ A RasterStack is a collection of RasterLayer objects with the same spatial exten
 \arguments{
 \item{x}{filename (character), Raster* object, missing (to create an empty RasterStack), SpatialGrid*, SpatialPixels*, or list (of filenames and/or Raster* objects). If \code{x} is a list, additional arguments \code{...} are ignored}
 \item{bands}{integer. which bands (layers) of the file should be used (default is all layers)}
+\item{layers}{integer (or character with layer names) indicating which layers of a RasterBrick should be used (default is all layers)}
 \item{native}{logical. If \code{TRUE} native drivers are used instead of gdal drivers (where available, such as for  BIL and Arc-ASCII files)}
 \item{RAT}{logical. If \code{TRUE} a raster attribute table is created for files that have one}
 \item{quick}{logical. If \code{TRUE} the extent and resolution of the objects are not compared. This speeds up the creation of the RasteStack but should be use with great caution. Only use this option when you are absolutely sure that all the data in all the files are aligned, and you need to create RasterStack for many (>100) files}

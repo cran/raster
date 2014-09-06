@@ -37,7 +37,7 @@ slopeAspect <- function(dem, filename='', out=c('slope', 'aspect'), unit='radian
 	}
 	
 	lonlat <- isLonLat(dem)
-	if (!lonlat & .couldBeLonLat(dem)) {
+	if (!lonlat & couldBeLonLat(dem)) {
 		warning('assuming CRS is longitude/latitude')
 		lonlat <- TRUE
 	}

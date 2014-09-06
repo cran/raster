@@ -23,7 +23,7 @@ beginCluster <- function(n, type='SOCK', nice, exclude=NULL) {
 #		cat('cluster type:', type, '\n')
 #	}
 	
-	cl <- makeCluster(n, type) 
+	cl <- snow::makeCluster(n, type) 
 	cl <- .addPackages(cl, exclude=exclude)
 	options(rasterClusterObject = cl)
 	options(rasterClusterCores = length(cl))
@@ -35,7 +35,7 @@ beginCluster <- function(n, type='SOCK', nice, exclude=NULL) {
         if (.Platform$OS.type == 'unix') { 
             cmd <- paste("renice",nice,"-p")
             foo <- function() system(paste(cmd, Sys.getpid()))
-            clusterCall(cl,foo) 
+            snow::clusterCall(cl,foo) 
         } else { 
             warning("argument 'nice' only supported on UNIX like operating systems") 
         } 
@@ -48,7 +48,7 @@ endCluster <- function() {
 	options(rasterCluster = FALSE)
 	cl <- options('rasterClusterObject')[[1]]
 	if (! is.null(cl)) {
-		stopCluster( cl )
+		snow::stopCluster( cl )
 		options(rasterClusterObject = NULL)
 	}
 }
@@ -84,7 +84,7 @@ returnCluster <- function() {
 	i <- which( pkgs %in% c(exclude, "stats", "graphics", "grDevices", "utils", "datasets", "methods", "base") )
 	pkgs <- rev( pkgs[-i] )
 	for ( pk in pkgs ) {
-		clusterCall(cl, library, pk, character.only=TRUE )
+		snow::clusterCall(cl, library, pk, character.only=TRUE )
 	}
 	return(cl)
 }

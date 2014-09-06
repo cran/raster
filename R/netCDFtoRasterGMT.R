@@ -18,14 +18,14 @@
 		
 	} else {
 		options(rasterNCDF4 = FALSE)
-#		nc <- open.ncdf(filename)
-#		on.exit( close.ncdf(nc) )		
-	#	conv <- att.get.ncdf(nc, 0, "Conventions")
-		dims <- get.var.ncdf(nc, "dimension", 1)
-		xr <- get.var.ncdf(nc, "x_range", 1)
-		yr <- get.var.ncdf(nc, "y_range", 1)
-		zr <- get.var.ncdf(nc, "z_range", 1)
-		sp <- get.var.ncdf(nc, "spacing", 1)
+#		nc <- ncdf::open.ncdf(filename)
+#		on.exit( ncdf::close.ncdf(nc) )		
+	#	conv <- ncdf::att.get.ncdf(nc, 0, "Conventions")
+		dims <- ncdf::get.var.ncdf(nc, "dimension", 1)
+		xr <- ncdf::get.var.ncdf(nc, "x_range", 1)
+		yr <- ncdf::get.var.ncdf(nc, "y_range", 1)
+		zr <- ncdf::get.var.ncdf(nc, "z_range", 1)
+		sp <- ncdf::get.var.ncdf(nc, "spacing", 1)
 	} 
 	zvar = 'z'
 	#datatype <- .getRasterDTypeFromCDF( nc$var[[zvar]]$prec )

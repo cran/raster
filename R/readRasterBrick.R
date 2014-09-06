@@ -175,18 +175,18 @@
 	#use GDAL  			
         offs <- c((startrow - 1), (startcol - 1))
         reg <- c(nrows, ncols)
-        con <- GDAL.open(object@file@name, silent = TRUE)
+        con <- rgdal::GDAL.open(object@file@name, silent = TRUE)
 
-#		result <- getRasterData(con, offset=offs, region.dim=reg)
+#		result <- rgdal::getRasterData(con, offset=offs, region.dim=reg)
 #		result <- do.call(cbind, lapply(1:nlayers(object), function(i) as.vector(result[,,i])))
 # just as fast, it seems:
         result <- matrix(nrow = ncols * nrows, ncol = nlayers(object))
         for (b in 1:object@data@nlayers) {
-            result[, b] <- getRasterData(con, offset = offs, 
+            result[, b] <- rgdal::getRasterData(con, offset = offs, 
                 region.dim = reg, band = b)
         }
 
-        closeDataset(con)
+        rgdal::closeDataset(con)
         result[result == object@file@nodatavalue] <- NA
 		
 	}

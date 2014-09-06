@@ -1,6 +1,7 @@
 \name{Options}
 
 \alias{rasterOptions}
+\alias{tmpDir}
 
 
 \title{Global options for the raster package}
@@ -13,12 +14,17 @@ Most of these options are used when writing files to disk. They can be ignored b
 The default location is returned by \code{rasterTmpDir}. It is the same as that of the R temp directory but you can change it (for the current session) with \code{rasterOptions(tmpdir="path")}. 
 
 To permanently set any of these options, you can add them to \code{<your R installation>/etc/Rprofile.site>}. For example, to change the default directory used to save temporary files, add a line like this: \code{options(rasterTmpDir='c:/temp/')} to that file. All temporary raster files in that folder that are older than 24 hrs are deleted when the raster package is loaded.
+
+Function \code{tmpDir} returns the location of the temporary files
 }
 
 \usage{
 rasterOptions(format, overwrite, datatype, tmpdir, tmptime, progress, 
      timer, chunksize, maxmemory, todisk, setfileext, tolerance, 
-     standardnames, depracatedwarnings, addheader, default=FALSE)		
+     standardnames, depracatedwarnings, addheader, default=FALSE)	
+
+
+tmpDir(create=TRUE)	 
 }
 
 
@@ -38,8 +44,8 @@ rasterOptions(format, overwrite, datatype, tmpdir, tmptime, progress,
 \item{standardnames}{logical. Default is \code{TRUE}. Should \code{\link{names}} be standardized to be syntactically valid names (using \code{\link{make.names}})}
 \item{depracatedwarnings}{logical. If \code{TRUE} (the default) a warning is generated when a depracated (obsolete) function is used}
 \item{addheader}{character. If not equal to \code{''} (the default) an additional header file is written when a raster format file (grd/gri) is written. Supported formats are as in \code{\link{hdr}}}
-
 \item{default}{logical. If \code{TRUE}, all options are set to their default values}
+\item{create}{logical. If \code{TRUE}, the temporary files directory is created if it does not exist}
 }
 
 \value{

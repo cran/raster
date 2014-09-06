@@ -11,29 +11,29 @@ if (!isGeneric("rotate")) {
 
 
 setMethod('rotate', signature(x='Raster'), 
-	function(x, ...) {
+	function(x, filename='', ...) {
 		e <- extent(x)
-		xrange <- e@xmax - e@xmin
-		inverse <- FALSE
-		if (xrange < 350 | xrange > 370 | e@xmin < -10 | e@xmax > 370) {
-			if (xrange < 350 | xrange > 370 | e@xmin < -190 | e@xmax > 190) {
-				warning('this does not look like an appropriate object for this function')
-			} else {
-				inverse <- TRUE
-			}
-		}
-		hx <- e@xmin + xrange / 2
-		r1 <- crop(x, extent(e@xmin, hx, e@ymin, e@ymax))
-		r2 <- crop(x, extent(hx, e@xmax, e@ymin, e@ymax))
-		if (inverse) {
-			r1@extent@xmin <- r2@extent@xmax
-			r1@extent@xmax <- r1@extent@xmin + 0.5 * xrange
+		ext1 <- extent(0, 180, -90, 90)
+		if (is.null(intersect(e, ext1 ))) {
+			r1 <- NULL
 		} else {
-			r2@extent@xmin <- r2@extent@xmin - xrange
-			r2@extent@xmax <- r2@extent@xmax - xrange
+			r1 <- crop(x, ext1)
+		}		
+		ext2 <- extent(180, 360+res(x)[1], -90, 90)
+		if (is.null(intersect(e, ext2 ))) {
+			r2 <- NULL
+		} else {
+			r2 <- crop(x, ext2)
+			r2 <- shift(r2, -360)
 		}
 		ln <- names(x)
-		out <- merge(r1, r2, overlap=FALSE, ...)
+		if (is.null(r1)) {
+			out <- r2
+		} else if (is.null(r2)) {
+			out <- r1		
+		} else {
+			out <- merge(r1, r2, overlap=FALSE)
+		}
 		names(out) <- names(x)
 		out@z <- x@z
 		
@@ -43,6 +43,9 @@ setMethod('rotate', signature(x='Raster'),
 			projection(out) <- gsub("[[:space:]]\\+over", "", p)
 		}
 		
+		if (filename != '') {
+			out <- writeRaster(out, filename, ...)
+		}
 		return(out)
 	}
 )

@@ -4,44 +4,27 @@
 
 \alias{contour}
 \alias{contour,RasterLayer-method}
-\alias{contour,RasterStackBrick-method}
 
 \title{Contour plot}
 
 \description{
-Contour plot of a RasterLayer. This is a generic function, in this package implemented for RasterLayer objects.
+Contour plot of a RasterLayer. 
 }
 
 \usage{
-contour(x, ...) 
+\S4method{contour}{RasterLayer}(x, maxpixels=100000, ...)
 }
 
 \arguments{
-  \item{x}{A Raster* object}
-  \item{...}{Any argument that can be passed to \code{\link[graphics]{contour}} (graphics package)}  
+  \item{x}{Raster* object}
+  \item{maxpixels}{maximum number of pixels used to create the contours}
+  \item{...}{any argument that can be passed to \code{\link[graphics]{contour}} (graphics package)}  
 }
 
-
-\section{Methods}{
-\describe{
-
-\code{contour(x, y=1, maxpixels=100000, ...)}
-
-\tabular{rll}{
-\tab \code{x} \tab RasterLayer object \cr
-\tab \code{y} \tab The layer number (integer > 0) if x is a RasterStack or RasterBrick \cr
-\tab \code{maxpixels}  \tab  Maximum number of pixels used to create the contours  \cr
-\tab \code{...}  \tab  Any argument that can be passed to \code{\link[graphics]{contour}} (graphics package) \cr
-}
-}}
 
 \seealso{ 
-\code{\link{persp}}, \code{\link{filledContour} }
-
-The rasterVis package has more advanced plotting methods for Raster* objects.
+\code{\link{persp}}, \code{\link{filledContour}}, \code{\link{rasterToContour} }
 }
-
-
 
 \examples{
 r <- raster(system.file("external/test.grd", package="raster"))

@@ -32,7 +32,7 @@
 		if (ncdf4) {
 			cal <- ncdf4::ncatt_get(nc, "time", "calendar")
 		} else {
-			cal <- att.get.ncdf(nc, "time", "calendar")		
+			cal <- ncdf::att.get.ncdf(nc, "time", "calendar")		
 		}
 		if (! cal$hasatt ) {
 			greg <- TRUE
@@ -136,9 +136,9 @@
 		
 	} else {
 		options(rasterNCDF4 = FALSE)
-		nc <- open.ncdf(filename)
-		on.exit( close.ncdf(nc) )		
-		conv <- att.get.ncdf(nc, 0, "Conventions")
+		nc <- ncdf::open.ncdf(filename)
+		on.exit( ncdf::close.ncdf(nc) )		
+		conv <- ncdf::att.get.ncdf(nc, 0, "Conventions")
 	} 
 	
 	
@@ -250,19 +250,19 @@
 		
 		
 	} else {
-		a <- att.get.ncdf(nc, zvar, "long_name")
+		a <- ncdf::att.get.ncdf(nc, zvar, "long_name")
 		if (a$hasatt) { long_name <- a$value }
-		a <- att.get.ncdf(nc, zvar, "units")
+		a <- ncdf::att.get.ncdf(nc, zvar, "units")
 		if (a$hasatt) { unit <- a$value }
 
-		a <- att.get.ncdf(nc, zvar, "grid_mapping")
+		a <- ncdf::att.get.ncdf(nc, zvar, "grid_mapping")
 		if ( a$hasatt ) { 
 			try(proj <- .getCRSfromGridMap3(nc, a$value), silent=TRUE)
 		} else {
-			a <- att.get.ncdf(nc, zvar, "projection")
+			a <- ncdf::att.get.ncdf(nc, zvar, "projection")
 			if ( a$hasatt ) { 
 				projection  <- a$value 
-				a <- att.get.ncdf(nc, zvar, "projection_format")
+				a <- ncdf::att.get.ncdf(nc, zvar, "projection_format")
 				if ( a$hasatt ) { 
 					projection_format  <- a$value 
 					if (isTRUE(projection_format == "PROJ.4")) {
@@ -271,8 +271,8 @@
 				}
 			}
 		}
-		natest <- att.get.ncdf(nc, zvar, "_FillValue")
-		natest2 <- att.get.ncdf(nc, zvar, "missing_value")		
+		natest <- ncdf::att.get.ncdf(nc, zvar, "_FillValue")
+		natest2 <- ncdf::att.get.ncdf(nc, zvar, "missing_value")		
 	}
 
 	if (is.na(proj)) {
@@ -349,7 +349,14 @@
 			if (is.na(band)) {
 				r@data@band <- as.integer(1)
 			} else {
-				r@data@band <- as.integer( min(max(1, band), r@file@nbands) )
+				band <- as.integer(band)
+				if ( band > nbands(r) ) {
+					stop(paste("band too high. Should be between 1 and", nbands))
+				} 
+				if ( band < 1) { 
+					stop(paste("band should be 1 or higher"))		
+				}			
+				r@data@band <- band
 			}
 			r@z <- list( getZ(r)[r@data@band] )
 		} 

@@ -26,8 +26,8 @@
 		if (is.open) {
 			nc <- x@file@con
 		} else {
-			nc <- open.ncdf(x@file@name)
-			on.exit( close.ncdf(nc) )
+			nc <- ncdf::open.ncdf(x@file@name)
+			on.exit( ncdf::close.ncdf(nc) )
 		}	
 		ncdf4 <- FALSE
 	}
@@ -42,7 +42,7 @@
 		if (ncdf4) {
 			d <- ncdf4::ncvar_get( nc, varid=zvar,  start=start, count=count )		
 		} else {
-			d <- get.var.ncdf( nc,  varid=zvar,  start=start, count=count )
+			d <- ncdf::get.var.ncdf( nc,  varid=zvar,  start=start, count=count )
 		}
 		if (col > 1 | ncols < ncx) {
 			d <- matrix(d, ncol=ncx, byrow=TRUE)
@@ -57,7 +57,7 @@
 		if (ncdf4) {
 			d <- ncdf4::ncvar_get( nc, varid=zvar,  start=start, count=count )		
 		} else {
-			d <- get.var.ncdf( nc,  varid=zvar,  start=start, count=count )
+			d <- ncdf::get.var.ncdf( nc,  varid=zvar,  start=start, count=count )
 		}
 	} else if (nc$var[[zvar]]$ndims == 3) {
 		start <- c(col, row, x@data@band)
@@ -65,7 +65,7 @@
 		if (ncdf4) {
 			d <- ncdf4::ncvar_get(nc, varid=zvar, start=start, count=count)
 		} else {
-			d <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
+			d <- ncdf::get.var.ncdf(nc, varid=zvar, start=start, count=count)
 		}
 		
 	} else {
@@ -75,7 +75,7 @@
 			if (ncdf4) {
 				d <- ncdf4::ncvar_get(nc, varid=zvar, start=start, count=count)
 			} else {
-				d <- get.var.ncdf(nc, varid=zvar, start=start, count=count)			
+				d <- ncdf::get.var.ncdf(nc, varid=zvar, start=start, count=count)			
 			}
 		} else {
 			start <- c(col, row, x@data@band, x@data@level)
@@ -83,7 +83,7 @@
 			if (ncdf4) {
 				d <- ncdf4::ncvar_get(nc, varid=zvar, start=start, count=count)
 			} else {
-				d <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
+				d <- ncdf::get.var.ncdf(nc, varid=zvar, start=start, count=count)
 			}
 		}
 	}
@@ -151,8 +151,8 @@
 		if (is.open) {
 			nc <- x@file@con
 		} else {
-			nc <- open.ncdf(x@file@name)
-			on.exit( close.ncdf(nc) )
+			nc <- ncdf::open.ncdf(x@file@name)
+			on.exit( ncdf::close.ncdf(nc) )
 		}	
 		ncdf4 <- FALSE
 	}
@@ -175,7 +175,7 @@
 	if (ncdf4) {
 		d <- ncdf4::ncvar_get(nc, varid=zvar, start=start, count=count)	
 	} else {
-		d <- get.var.ncdf(nc, varid=zvar, start=start, count=count)
+		d <- ncdf::get.var.ncdf(nc, varid=zvar, start=start, count=count)
 	}
 	
 

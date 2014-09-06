@@ -39,20 +39,30 @@ setMethod('as.data.frame', signature(x='Raster'),
 	function(x, row.names = NULL, optional = FALSE, xy=FALSE, na.rm=FALSE, ...) {
 
 		if (!canProcessInMemory(x, 4) & na.rm) {
+			r <- raster(x)
+			ncx <- ncol(r)
 			tr <- blockSize(x)
 			pb <- pbCreate(tr$n, label='as.data.frame', ...)
 			x <- readStart(x)
 			v <- NULL
 			for (i in 1:tr$n) {
-				start <- (tr$row[i]-1) * ncol(x) + 1
-				end <- start + tr$nrows[i] * ncol(x) - 1
-				vv <- na.omit(cbind(start:end, getValues(x, row=tr$row[i], nrows=tr$nrows[i])))
+				start <- (tr$row[i]-1) * ncx + 1
+				end <- start + tr$nrows[i] * ncx - 1
+				vv <- cbind(start:end, getValues(x, row=tr$row[i], nrows=tr$nrows[i]))
+				if (xy) {
+					XY <- data.frame(xyFromCell(r, start:end))
+					vv <- na.omit(vv, XY)
+				}
 				v <- rbind(v, vv)
 				pbStep(pb, i) 	
 			}
 			x <- readStop(x)
 		} else {
 			v <- getValues(x)
+			if (xy) {
+				XY <- data.frame(xyFromCell(x, 1:ncell(x)))
+				v <- cbind(XY, v)
+			}
 			if (na.rm) {
 				v <- na.omit(cbind(1:ncell(x), v))
 			}
@@ -63,7 +73,10 @@ setMethod('as.data.frame', signature(x='Raster'),
 			rownames(v) <- as.character(v[,1])
 			v <- v[,-1,drop=FALSE]
 		} 
-		colnames(v) <- names(x)  # for nlayers = 1
+		
+		if (nlayers(x) == 1) {
+			colnames(v)[ncol(v)] <- names(x)  # for nlayers = 1
+		}
 				
 		i <- is.factor(x)
 		if (any(is.factor(x))) {
@@ -76,15 +89,16 @@ setMethod('as.data.frame', signature(x='Raster'),
 		#			}
 		#		}
 			} else {
-				v <- .insertFacts(x, v, 1:nlayers(x))
+				nl <- nlayers(x)
+				if (ncol(v) > nl) {
+					rnge1 <- 1:(ncol(v)-nl)
+					rnge2 <- (ncol(v)-nl+1):ncol(v)
+					v <- cbind(v[, rnge1], .insertFacts(x, v[, rnge2], 1:nl))
+				} else {
+					v <- .insertFacts(x, v, 1:nl)
+				}
 			}
 		}
-		
-		if (xy) {
-			xy <- data.frame(xyFromCell(x, 1:ncell(x)))
-			v <- cbind(xy, v)
-		}
-		
 		v
 	}
 )

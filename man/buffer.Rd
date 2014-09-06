@@ -19,7 +19,7 @@ Note that the distance unit of the buffer \code{width} parameter is meters if th
 \item{x}{RasterLayer object}
 \item{width}{Numeric. Number > 0. Unit is meter if \code{x} has a longitude/latitude CRS, or mapunits in other cases}
 \item{filename}{Character. Filename for the output RasterLayer (optional)}
-\item{doEdge}{Logical. If \code{TRUE}, the \code{\link{edge}} function is called first. This may be efficient in cases where you compute a buffer around very large areas. Calling edge determines the edge cells that matter for distance computation}
+\item{doEdge}{Logical. If \code{TRUE}, the \code{\link{boundaries}} function is called first. This may be efficient in cases where you compute a buffer around very large areas because \code{boundaries} determines the edge cells that matter for distance computation}
 \item{...}{Additional arguments as for \code{\link{writeRaster}}}
 }
 

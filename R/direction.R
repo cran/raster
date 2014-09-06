@@ -14,7 +14,7 @@ setMethod('direction', signature(x='RasterLayer'),
 function(x, filename='', degrees=FALSE, from=FALSE, doEdge=FALSE, ...) {
 
 	out <- raster(x)
-	if (.couldBeLonLat(out)) { 
+	if (couldBeLonLat(out)) { 
 		longlat=TRUE 
 	} else { 
 		longlat=FALSE 
@@ -24,7 +24,7 @@ function(x, filename='', degrees=FALSE, from=FALSE, doEdge=FALSE, ...) {
 	from <- as.integer(from)
 	
 	if (doEdge) {
-		r <- raster::edge(x, classes=FALSE, type='inner', asNA=TRUE, progress=.progress(...)) 
+		r <- boundaries(x, classes=FALSE, type='inner', asNA=TRUE, progress=.progress(...)) 
 		pts <- try(  rasterToPoints(r, fun=function(z){ z>0 } )[,1:2, drop=FALSE] )
 	} else {
 		pts <- try(  rasterToPoints(x)[,1:2, drop=FALSE] )

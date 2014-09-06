@@ -113,7 +113,7 @@ RasterLayer, RasterStack, and RasterBrick objects are, as a group, referred to a
     \code{\link{distanceFromPoints}} \tab Shortest distance to any point in a set of points \cr
     \code{\link{direction}} \tab Direction (azimuth) to or from cells that are not \code{NA}\cr
     \code{\link{focal}} \tab Focal (neighborhood; moving window) functions \cr
-    \code{\link{edge}} \tab Edge detection \cr
+    \code{\link{boundaries}} \tab Detection of boundaries (edges)\cr
     \code{\link{clump}} \tab Find clumps (patches) \cr
     \code{\link{adjacent}} \tab Identify cells that are adjacent to a set of cells on a raster \cr
     \code{\link{area}} \tab Compute area of cells (for longitude/latitude data) \cr

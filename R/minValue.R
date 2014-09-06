@@ -93,7 +93,7 @@ setMethod('maxValue', signature(x='RasterLayer'),
 
 		if ( x@data@haveminmax ) {
 			v <- x@data@max
-			if (isTRUE( v == Inf)) {
+			if (isTRUE( v == -Inf)) {
 				v <- NA
 			} else {
 				if (! inMemory(x) ) {
@@ -114,7 +114,7 @@ setMethod('maxValue', signature(x='RasterBrick'),
 	
 		if ( x@data@haveminmax ) {
 			v <- x@data@max
-			v[v == Inf] <- NA
+			v[!is.finite(v)] <- NA
 			if (! inMemory(x) ) {
 				v <- v * x@data@gain + x@data@offset
 			}	

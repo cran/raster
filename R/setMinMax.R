@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  June 2008
 # Version 0.9
 # Licence GPL v3
@@ -50,9 +50,6 @@ function(x) {
 
 setMethod('setMinMax', signature(x='RasterBrick'), 
 function(x) {
-	w <- getOption('warn')
-	on.exit(options('warn' = w))
-	options('warn'=-1) 
 	
 	inMem <- inMemory(x)
 

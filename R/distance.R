@@ -27,7 +27,7 @@ function(x, filename='', doEdge=TRUE, ...) {
 	out <- raster(x)
 	filename <- trim(filename)
 	
-	if (.couldBeLonLat(x)) { 
+	if (couldBeLonLat(x)) { 
 		longlat=TRUE 
 	} else { 
 		longlat=FALSE 

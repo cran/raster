@@ -8,7 +8,7 @@
 
 
 
-.asRaster <- function(x, col, breaks=NULL, fun=NULL, r=NULL, colNA=NA) {
+.asRaster <- function(x, col, breaks=NULL, r=NULL, colNA=NA) {
 	if (!is.null(breaks)) {
 		if (is.logical(x)) {
 			x <- x * 1
@@ -16,9 +16,9 @@
 		x[] <- as.numeric(cut(as.vector(x), breaks, include.lowest=TRUE))
 		
 	} else {
-		if (is.function(fun)) {
-			x[] <- fun(x)
-		}
+		#if (is.function(fun)) {
+		#	x[] <- fun(x)
+		#}
 		if (is.null(r)) {
 			r <- range(x, na.rm=TRUE)
 		}
@@ -43,9 +43,26 @@
     lab.breaks=NULL, axis.args=NULL, legend.args = NULL, interpolate=FALSE, box=TRUE, breaks=NULL, 
 	zlim=NULL, zlimcol=NULL, fun=NULL, asp, colNA = NA, ...) {
 
-
+	ffun <- NULL
+	if (is.character(fun)) {
+		if (fun %in% c('sqrt', 'log')) {
+			if (fun == 'sqrt') {
+				ffun <- fun
+				fun <- sqrt
+			} else {
+				ffun <- fun
+				fun <- log
+			}
+		} else {
+			fun - NULL
+		}
+	} else {
+		fun <- NULL
+	}
+	
+	
  	if (missing(asp)) {
-		if (.couldBeLonLat(x, warnings=FALSE)) {
+		if (couldBeLonLat(x, warnings=FALSE)) {
 			ym <- mean(c(x@extent@ymax, x@extent@ymin))
 			asp <- 1/cos((ym * pi)/180)
 		} else {
@@ -57,6 +74,9 @@
 
 	e <- as.vector(t(bbox(extent(x))))
 	x <- as.matrix(x)
+	if (!is.null(fun)) {
+		x <- fun(x)
+	}
 	x[is.infinite(x)] <- NA
 	if (!is.null(zlim)) {
 		if (!is.null(zlimcol)) {
@@ -78,7 +98,7 @@
 	if (! is.finite(zrange[1])) {
 		legend <- FALSE 
 	} else {
-		x <- .asRaster(x, col, breaks, fun, zrange, colNA)
+		x <- .asRaster(x, col, breaks, zrange, colNA)
 	}
 	
     old.par <- par(no.readonly = TRUE)
@@ -150,12 +170,36 @@
 			
 			if (is.null(breaks)) {
 				mult <- round(max(1, 100 / length(col) ))
-				xx <- .asRaster( ((mult*length(col)):1)/mult, col, fun=fun, colNA=colNA) 
+				xx <- .asRaster( ((mult*length(col)):1)/mult, col, colNA=colNA) 
 			} else {
-				xx <- rev(.asRaster(midpoints, col, breaks=breaks, fun=fun, colNA=colNA))
+				xx <- rev(.asRaster(midpoints, col, breaks=breaks, colNA=colNA))
 			}
 
 			rasterImage(xx, 0, minz, 1, maxz, interpolate=FALSE)
+			if (!is.null(ffun)) {
+				at <- axTicks(2)
+				axis.args$at <- at
+				if (ffun=='sqrt') {
+					at <- at^2
+					if (max(at) > 5) {
+						at <- round(at, 0)
+					} else {
+						at <- round(at, 1)
+					}
+					at <- unique(at)
+					axis.args$at <- sqrt(at)
+				} else {
+					at <- exp(at)
+					if (max(at) > 5) {
+						at <- round(at, 0)
+					} else {
+						at <- round(at, 1)
+					}
+					at <- unique(at)
+					axis.args$at <- log(at)
+				}
+				axis.args$labels <- at
+			}
 			do.call("axis", axis.args)
 			box()
 		} else {
@@ -163,9 +207,9 @@
 			
 			if (is.null(breaks)) {
 				mult <- round(max(1, 100 / length(col) ))
-				xx <- t(.asRaster((1:(mult*length(col)))/mult, col, fun=fun, colNA=colNA ))
+				xx <- t(.asRaster((1:(mult*length(col)))/mult, col, colNA=colNA ))
 			} else {
-				xx <- t(.asRaster(midpoints, col, breaks=breaks, fun=fun, colNA=colNA))
+				xx <- t(.asRaster(midpoints, col, breaks=breaks, colNA=colNA))
 			}
 			rasterImage(xx, minz, 0, maxz, 1, interpolate=FALSE)
 			do.call("axis", axis.args)

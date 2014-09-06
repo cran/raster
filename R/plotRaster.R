@@ -8,7 +8,7 @@
 .plotraster <- function(object, col=rev(terrain.colors(25)), maxpixels=100000, axes=TRUE, xlab='', ylab='', ext=NULL, asp, xlim, ylim, add=FALSE, addfun=NULL, main, ...) {
 
   	if (missing(asp)) {
-		if (.couldBeLonLat(object, warnings=FALSE)) {
+		if (couldBeLonLat(object, warnings=FALSE)) {
 #			ym <- mean(object@extent@ymax + object@extent@ymin)
 #			asp <- min(5, 1/cos((ym * pi)/180))
 			asp = NA

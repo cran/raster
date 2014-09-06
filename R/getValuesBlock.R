@@ -12,6 +12,7 @@ if (!isGeneric("getValuesBlock")) {
 
 setMethod('getValuesBlock', signature(x='RasterStack'), 
 	function(x, row=1, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs) {
+		stopifnot(hasValues(x))
 		stopifnot(row <= x@nrows)
 		stopifnot(col <= x@ncols)
 		stopifnot(nrows > 0)
@@ -28,7 +29,7 @@ setMethod('getValuesBlock', signature(x='RasterStack'),
 		if (missing(lyrs)) {
 			lyrs <- 1:nlyrs
 		} else {
-			lyrs <- lyrs[lyrs %in% 1:nl]
+			lyrs <- lyrs[lyrs %in% 1:nlyrs]
 			if (length(lyrs) == 0) {
 				stop("no valid layers selected")
 			}
@@ -68,6 +69,7 @@ setMethod('getValuesBlock', signature(x='RasterStack'),
 
 setMethod('getValuesBlock', signature(x='RasterBrick'), 
 	function(x, row=1, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs) {
+		stopifnot(hasValues(x))
 		row <- max(1, round(row))
 		col <- max(1, round(col))
 		stopifnot(row <= x@nrows)

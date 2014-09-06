@@ -66,6 +66,14 @@
 	if (!is.null(offset)) {
 		return ( .rasterFromASCIIFile(x, offset, ...) )
 	}
+
+           ## MDSumner, NSIDC data
+        if (fileext %in% c(".BIN")) {
+            r <- .rasterFromNSIDCFile(x)
+            if (!is.null(r)) return(r)
+        }
+
+
 	if(!native) {
 		if (! .requireRgdal(FALSE) )  {
 			native <- TRUE
@@ -92,13 +100,13 @@
 		}
 
 	}
-	
+
 	# old IDRISI format
 	if ( fileext == ".DOC" ) {
 		if (file.exists( extension(x, '.img'))) {
 			return( .rasterFromIDRISIFile(x, old=TRUE, ...))
 		}
-	} 
+	}
 
 	if ( fileext %in% c(".SGRD", ".SDAT") ) {
 		r <-  .rasterFromSAGAFile(x, ...)
@@ -107,11 +115,6 @@
 		} # else use gdal
 	}
 
-    ## MDSumner, NSIDC data
-    if (fileext %in% c(".BIN")) {
-        r <- .rasterFromNSIDCFile(x)
-        if (!is.null(r)) return(r)  ## otherwise continue to GDAL
-    }
 
 
 	if (! .requireRgdal(FALSE) ) {

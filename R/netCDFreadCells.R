@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date: June 2010
 # Version 1.0
 # Licence GPL v3
@@ -14,7 +14,7 @@
 	} 
 	
 
-	if (canProcessInMemory(r, 2)) {
+	if (canProcessInMemory(x, 2)) {
 	# read only rows needed	
 		row1 <- rowFromCell(x, min(cells))
 		row2 <- rowFromCell(x, max(cells))
@@ -45,9 +45,9 @@
 		getfun <- ncdf4::ncvar_get
 	
 	} else {
-		nc <- open.ncdf(x@file@name)
-		on.exit( close.ncdf(nc) )
-		getfun <- get.var.ncdf
+		nc <- ncdf::open.ncdf(x@file@name)
+		on.exit( ncdf::close.ncdf(nc) )
+		getfun <- ncdf::get.var.ncdf
 	}
 	
 	if (nc$var[[zvar]]$ndims == 1) {
@@ -107,7 +107,9 @@
 
 .readBrickCellsNetCDF <- function(x, cells, layer, nl) {
 
-		
+	i <- which(!is.na(cells))
+	
+	
 	if (length(cells) > 1000) {
 		if (canProcessInMemory(x, 2)) {
 # read all
@@ -124,7 +126,9 @@
 	dim3 <- x@data@dim3
 	cols <- colFromCell(x, cells)
 	rows <- rowFromCell(x, cells)
-	if ( x@file@toptobottom ) { rows <- x@nrows - rows + 1 }
+	if ( x@file@toptobottom ) { 
+		rows <- x@nrows - rows + 1 
+	}
 		
 
 	if (getOption('rasterNCDF4')) {
@@ -133,32 +137,33 @@
 		getfun <- ncdf4::ncvar_get
 	
 	} else {
-		nc <- open.ncdf(x@file@name)
-		on.exit( close.ncdf(nc) )
-		getfun <- get.var.ncdf
+		nc <- ncdf::open.ncdf(x@file@name)
+		on.exit( ncdf::close.ncdf(nc) )
+		getfun <- ncdf::get.var.ncdf
 	}
 	
 	
 	# this needs to be optimized. Read chunks and extract cells
+	j <- which(!is.na(cells))
 	if (nc$var[[zvar]]$ndims == 2) {
 		count <- c(1, 1)
-		res <- matrix(nrow=length(cells), ncol=1)
-		for (i in 1:length(cells)) {
+		res <- matrix(NA, nrow=length(cells), ncol=1)
+		for (i in j) {
 			start <- c(cols[i], rows[i])
 			res[i] <- getfun(nc, varid=zvar, start=start, count=count)
 		}	
 	} else if (nc$var[[zvar]]$ndims == 3) {
 		count <- c(1, 1, nl)
-		res <- matrix(nrow=length(cells), ncol=nl)
-		for (i in 1:length(cells)) {
+		res <- matrix(NA, nrow=length(cells), ncol=nl)
+		for (i in j) {
 			start <- c(cols[i], rows[i], layer)
 			res[i,] <- getfun(nc, varid=zvar, start=start, count=count)
 		}	
 	} else {
 		if (x@data@dim3 == 4) {
 			count <- c(1, 1, 1, nl)
-			res <- matrix(nrow=length(cells), ncol=nl)
-			for (i in 1:length(cells)) {
+			res <- matrix(NA, nrow=length(cells), ncol=nl)
+			for (i in j) {
 				start <- c(cols[i], rows[i], x@data@level, layer)
 				res[i,] <- getfun(nc, varid=zvar, start=start, count=count)
 			}	
@@ -178,4 +183,7 @@
 	res[res == x@file@nodatavalue] <- NA
 	return(res) 
 }
+
+
+
 

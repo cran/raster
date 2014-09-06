@@ -47,8 +47,8 @@
 		rowcol <- cbind(rows, cols)[order(cols),]
 		if (rowcol[1,1] == rowcol[2,1]) {
 			# entire line segment in row
-			add = rowcol[1,2]:rowcol[2,2]
-			add = subset(add, add>0 & add<=ncol(rs))
+			add <- rowcol[1,2]:rowcol[2,2]
+			add <- subset(add, add>0 & add<=ncol(rs))
 			res <- c(res, add)
 		} else {
 			if (rowcol[1,1] == rownr  ) {

@@ -75,15 +75,15 @@ function(x, y, method="bilinear", filename="", ...)  {
 			.xyValues(x, xy, method=method)
 		}
 
-		clusterExport(cl, c('x', 'y', 'tr', 'method'), envir=environment())
+		snow::clusterExport(cl, c('x', 'y', 'tr', 'method'), envir=environment())
 		
         for (ni in 1:nodes) {
-			sendCall(cl[[ni]], clFun, list(ni), tag=ni)
+			snow::sendCall(cl[[ni]], clFun, list(ni), tag=ni)
 		}
 
 		if (inMemory) {
 			for (i in 1:tr$n) {
-				d <- recvOneData(cl)
+				d <- snow::recvOneData(cl)
 				if (! d$value$success) {
 					stop('cluster error')
 				}
@@ -93,7 +93,7 @@ function(x, y, method="bilinear", filename="", ...)  {
 
 				ni <- ni + 1
 				if (ni <= tr$n) {
-					sendCall(cl[[d$node]], clFun, list(ni), tag=ni)
+					snow::sendCall(cl[[d$node]], clFun, list(ni), tag=ni)
 				}
 				pbStep(pb)
 			}
@@ -105,11 +105,11 @@ function(x, y, method="bilinear", filename="", ...)  {
 		} else {
 		
 			for (i in 1:tr$n) {
-				d <- recvOneData(cl)
+				d <- snow::recvOneData(cl)
 				y <- writeValues(y, d$value$value, tr$row[d$value$tag])
 				ni <- ni + 1
 				if (ni <= tr$n) {
-					sendCall(cl[[d$node]], clFun, list(ni), tag=ni)
+					snow::sendCall(cl[[d$node]], clFun, list(ni), tag=ni)
 				}
 				pbStep(pb)
 			}

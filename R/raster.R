@@ -253,8 +253,12 @@ setMethod('raster', signature(x='RasterBrick'),
 				r@data@min <- x@data@min[dindex]
 				r@data@max <- x@data@max[dindex]
 				ln <- x@data@names[dindex]
-				if (! is.na(ln) ) { r@data@names <- ln }
-				zv <- unlist(x@z[1])[dindex]
+				if (! is.na(ln) ) { 
+					r@data@names <- ln 
+				}
+				#zv <- unlist(x@z[1])[dindex]
+				zv <- NULL
+				try( zv <- x@z[[1]][dindex], silent=TRUE )
 				if (! is.null(zv) ) { 
 					r@z <- list(zv)
 				}

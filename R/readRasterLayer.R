@@ -144,11 +144,11 @@
 		offs <- c((startrow-1), (startcol-1)) 
 		reg <- c(nrows, ncols)
 		if ( object@file@open ) {
-			result <- getRasterData(object@file@con, offset=offs, region.dim=reg, band=object@data@band)
+			result <- rgdal::getRasterData(object@file@con, offset=offs, region.dim=reg, band=object@data@band)
 		} else {
-			con <- GDAL.open(object@file@name, silent=TRUE)
-			result <- getRasterData(con, offset=offs, region.dim=reg, band=object@data@band)
-			closeDataset(con)
+			con <- rgdal::GDAL.open(object@file@name, silent=TRUE)
+			result <- rgdal::getRasterData(con, offset=offs, region.dim=reg, band=object@data@band)
+			rgdal::closeDataset(con)
 		}
 		result <- as.vector(result)
 		

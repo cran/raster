@@ -54,7 +54,7 @@ setMethod('select', signature(x='Spatial'),
 
 		if (inherits(x, 'SpatialPolygons')) {
 			stopifnot(require(rgeos))
-			int <- gIntersects(x, e, byid=TRUE)
+			int <- rgeos::gIntersects(x, e, byid=TRUE)
 			int <- apply(int, 2, any)
 			if (any(int)) {
 				x <- x[int, ]
@@ -67,7 +67,7 @@ setMethod('select', signature(x='Spatial'),
 			
 		} else if (inherits(x, 'SpatialLines')) {
 			stopifnot(require(rgeos))
-			int <- gIntersects(x, e, byid=TRUE)
+			int <- rgeos::gIntersects(x, e, byid=TRUE)
 			int <- apply(int, 2, any)
 			if (any(int)) {
 				x <- x[int, ]

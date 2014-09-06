@@ -5,6 +5,7 @@
 \alias{union}
 \alias{union,Extent,Extent-method}
 \alias{union,SpatialPolygons,SpatialPolygons-method}
+\alias{union,SpatialPolygons,missing-method}
 
 
 \title{ 
@@ -14,7 +15,9 @@ Union Extent or SpatialPolygons* objects
 \description{
 Extent objects: Objects are combined into their union. See \code{\link{crop}} and \code{\link{extend}} to union a Raster object with an Extent object.
 
-SpatialPolygons* objects. Overlapping polygons are intersected, other spatial objects are appended. Tabular attributes are joined.
+Two SpatialPolygons* objects. Overlapping polygons (between layers, not within layers) are intersected, other spatial objects are appended. Tabular attributes are joined.
+
+Single SpatialPolygons* object. Overlapping polygons are intersected. Original attributes are lost. New attributes allow for determining how many, and which, polygons overlapped. 
 }
 
 \usage{
@@ -22,11 +25,12 @@ SpatialPolygons* objects. Overlapping polygons are intersected, other spatial ob
 
 \S4method{union}{SpatialPolygons,SpatialPolygons}(x, y)
 
+\S4method{union}{SpatialPolygons,missing}(x, y)
 }
 
 \arguments{
   \item{x}{Extent or SpatialPolygons* object}
-  \item{y}{Same as \code{x}}
+  \item{y}{Same as \code{x} or missing}
 } 
 
 \value{

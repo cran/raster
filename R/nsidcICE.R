@@ -15,9 +15,14 @@
     hyes <- hemi %in% c("s", "n")
     if(!(!is.na(dts) & fyes & vyes & hyes)) return(NULL)
 
+    ## NSIDC projection and grid size
+    ## https://nsidc.org/data/polar_stereo/ps_grids.html
+    ## http://spatialreference.org/ref/?search=nsidc
+    ## Hughes 1980 ellipsoid, True Scale Lat is +/-70
+
     if (hemi == "s") {
-        ## NSIDC projection and grid size for the Southern Hemisphere (not North yet)
-        prj <-  "+proj=stere +lat_0=-90 +lat_ts=-71 +lon_0=0 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0"
+        prj <-  "+proj=stere +lat_0=-90 +lat_ts=-70 +lon_0=0 +k=1 +x_0=0 +y_0=0 +a=6378273 +b=6356889.449 +units=m +no_defs"
+
         dims <- c(316L, 332L)
         ext <- c(-3950000, 3950000, -3950000, 4350000)
     } else {

@@ -47,7 +47,7 @@ setMethod('KML', signature(x='RasterLayer'),
 
 function (x, filename, col=rev(terrain.colors(255)), colNA=NA, maxpixels=100000, blur=1, zip='', overwrite=FALSE, ...) {
 
-    if (! .couldBeLonLat(x)) { 
+    if (! couldBeLonLat(x)) { 
         stop("CRS of x must be longitude / latitude")
 	}
 	
@@ -83,7 +83,7 @@ function (x, filename, col=rev(terrain.colors(255)), colNA=NA, maxpixels=100000,
 	} else {
 		par(mar=c(0,0,0,0))	
 	}
-	image(x, col=col, axes=FALSE, useRaster=TRUE, ...)
+	image(x, col=col, axes=FALSE, useRaster=TRUE, maxpixels=maxpixels, ...)
 	dev.off()
 
 	name <- names(x)[1]

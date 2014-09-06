@@ -24,7 +24,7 @@
 			sethook <- TRUE
 		}	
 		if (missing(asp)) {
-			if (.couldBeLonLat(x)) {
+			if (couldBeLonLat(x)) {
 				ym <- mean(c(x@extent@ymax, x@extent@ymin))
 				asp <- 1/cos((ym * pi)/180)
 			} else {

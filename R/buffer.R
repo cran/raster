@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date : September 2009
 # Version 0.9
 # Licence GPL v3
@@ -16,7 +16,7 @@ function(x, width=0, filename='', doEdge=FALSE, ...) {
 	stopifnot(width > 0)
 
 	if (doEdge) {
-		r <- raster::edge(x, classes=FALSE, type='inner', progress=.progress(...)) 
+		r <- boundaries(x, classes=FALSE, type='inner', progress=.progress(...)) 
 		pts <- try(  rasterToPoints(r, fun=function(z){ z>0 } )[,1:2, drop=FALSE] )
 	} else {
 		pts <- try(  rasterToPoints(x)[,1:2, drop=FALSE] )
@@ -31,7 +31,7 @@ function(x, width=0, filename='', doEdge=FALSE, ...) {
 	out <- raster(x)
 	filename <- trim(filename)
 	
-	if (.couldBeLonLat(x)) { 
+	if (couldBeLonLat(x)) { 
 		longlat=TRUE 
 	} else { 
 		longlat=FALSE 

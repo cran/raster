@@ -102,17 +102,17 @@ setAs('Raster', 'SpatialGridDataFrame',
 
 # To sp vector objects	
 
-setAs('RasterLayer', 'SpatialPolygons', 
+setAs('Raster', 'SpatialPolygons', 
 	function(from){ 
-		r <- rasterToPolygons(from)
+		r <- rasterToPolygons(from[[1]])
 		as(r, 'SpatialPolygons')
 	}
 )
 
-setAs('RasterLayer', 'SpatialPolygonsDataFrame', 
+setAs('Raster', 'SpatialPolygonsDataFrame', 
 	function(from){ 
-		return( rasterToPolygons(from)) 
-	}
+		return( rasterToPolygons(from) ) 
+	} 
 )
 
 setAs('Raster', 'SpatialPoints', 

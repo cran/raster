@@ -14,7 +14,7 @@ if (!isGeneric("erase")) {
 	for (i in xln:1) {
 		z <- x[i,]
 		for (j in 1:yln) {
-			z <- gDifference(z, y[j,])
+			z <- rgeos::gDifference(z, y[j,])
 			if (is.null(z)) {
 				break
 			}
@@ -54,7 +54,7 @@ setMethod(erase, signature(x='SpatialPolygons', y='SpatialPolygons'),
 
 		y <- aggregate(y)
 		
-		int <- gIntersects(x, y, byid=TRUE)
+		int <- rgeos::gIntersects(x, y, byid=TRUE)
 		int1 <- apply(int, 2, any)
 		int2 <- apply(int, 1, any)
 				

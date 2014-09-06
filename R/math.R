@@ -121,8 +121,9 @@ setMethod("Math", signature(x='RasterLayerSparse'),
 
 setMethod("Math2", signature(x='Raster'), 
 	function (x, digits=0) {
-		digits <- max(0, digits)
-
+		
+		digits <- round(digits)
+		
 		if (nlayers(x) > 1) {
 			r <- brick(x, values=FALSE)
 		} else {
@@ -132,7 +133,7 @@ setMethod("Math2", signature(x='Raster'),
 		if (canProcessInMemory(r, 3)) {
 			r <- setValues(r, callGeneric( getValues(x), digits))
 		} else {
-			if (digits == 0) {
+			if (digits <= 0) {
 				datatype <- 'INT4S'
 			} else {
 				datatype <- .datatype()

@@ -17,7 +17,7 @@
 		pixtype <- 'real'
 	}
 
-	if (.couldBeLonLat(x)) {
+	if (couldBeLonLat(x)) {
 		refsystem <- 'latlong'
 		refunits <- 'degrees';
 	} else {

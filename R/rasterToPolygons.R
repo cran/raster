@@ -21,27 +21,37 @@ rasterToPolygons <- function(x, fun=NULL, n=4, na.rm=TRUE, digits=12, dissolve=F
 		xyv <- cbind(xyFromCell(x, 1:ncell(x)), getValues(x))
 		x <- clearValues(x)
 		if (na.rm) {
-			nas <- apply(xyv[,3:ncol(xyv), drop=FALSE], 1, function(x)all(is.na(x)))
+			nas <- apply(xyv[,3:ncol(xyv), drop=FALSE], 1, function(x) all(is.na(x)))
 			xyv <- xyv[!nas,  ,drop=FALSE]
 		}
 		if (!is.null(fun)) {
-			xyv <- subset(xyv, fun(xyv[,3]))
+			if (nrow(xyv) > 0) {
+				xyv <- subset(xyv, fun(xyv[,3]))
+			}
 		}
 	} else {
 		tr <- blockSize(x)
 		xyv <- matrix(ncol=3, nrow=0)
+		nl <- nlayers(x)
 		for (i in 1:tr$n) {
 			start <- cellFromRowCol(x, tr$row[i], 1)
 			end <- start+tr$nrows[i]*ncol(x)-1
 			xyvr <- cbind(xyFromCell(x, start:end), getValues(x, row=tr$row[i], nrows=tr$nrows[i]))
 			if (na.rm) {
-				nas <- apply(xyvr[,3:ncol(xyvr), drop=FALSE], 1, function(x)all(is.na(x)))
-				xyvr <- xyvr[!nas, ]
+				if (nl > 1) {
+					nas <- apply(xyvr[,3:ncol(xyvr), drop=FALSE], 1, function(x) all(is.na(x)))
+				} else {
+					nas <- is.na(xyvr[,3])
+				}
+				xyvr <- xyvr[!nas, ,drop=FALSE]
 			}
-			if (!is.null(fun)) {
-				xyvr <- subset(xyvr, fun(xyvr[,3]))
+			if (nrow(xyvr) > 0) {
+				if (!is.null(fun)) {
+					xyvr <- subset(xyvr, fun(xyvr[,3,drop=FALSE]))
+				}
+				rownames(xyvr) <- NULL
+				xyv <- rbind(xyv, xyvr)
 			}
-			xyv <- rbind(xyv, xyvr)
 		}
 	}
 	colnames(xyv) <- c('x', 'y', names(x))

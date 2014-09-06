@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-.xyvBuf <- function(object, xy, buffer, fun=NULL, na.rm=TRUE, layer, nl, cellnumbers=FALSE, small=FALSE) { 
+.xyvBuf <- function(object, xy, buffer, fun=NULL, na.rm=TRUE, layer, nl, cellnumbers=FALSE, small=FALSE, onlycells=FALSE) { 
 
 	buffer <- abs(buffer)
 	if (length(buffer == 1)) {
@@ -14,14 +14,19 @@
 	}
 	buffer[is.na(buffer)] <- 0
 
-	if (! is.null(fun)) { 
+	if (onlycells) {
+		cellnumbers <- TRUE
+		fun <- NULL
+		small <- TRUE
+		object <- raster(object)
+	} else if (! is.null(fun)) { 
 		cellnumbers <- FALSE 
 	}
 	
 	cv <- list()
 	obj <- raster(object) 
 # ?	centralcells <- cellFromXY(obj, xy)
-	if (.couldBeLonLat(obj)) { 
+	if (couldBeLonLat(obj)) { 
 		# from m to degrees
 		bufy <- buffer / 111319.5
 		ymx <- pmin(90, xy[,2] + bufy)
@@ -44,7 +49,11 @@
 			if (is.na(s)) {
 				cv[[i]] <- NA
 			} else {
-				value <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
+				if (onlycells) {
+					value <- i
+				} else {
+					value <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
+				}
 				cell <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
 				coords <- xyFromCell(obj, cell)
 				if (cellnumbers) {
@@ -85,14 +94,18 @@
 			flush.console()
 
 	
-			clusterExport(cl, c('object', 'obj', 'cellnumbers'), envir=environment())
+			snow::clusterExport(cl, c('object', 'obj', 'cellnumbers'), envir=environment())
 			
 			clFun2 <- function(i, xy, rn, rx, cn, cx) {
 				s <- sum(rn, rx, cn, cx)
 				if (is.na(s)) {
 					return(NA)
 				} else {
-					value <- getValuesBlock(object, rn, rx-rn+1, cn, cx-cn+1)
+					if (onlycells) {
+						value <- i
+					} else {
+						value <- getValuesBlock(object, rn, rx-rn+1, cn, cx-cn+1)
+					}
 					cell <- cellFromRowColCombine(obj, rn:rx, cn:cx)
 					coords <- xyFromCell(obj, cell)
 					if (cellnumbers) {
@@ -110,10 +123,10 @@
 			}
 
 			for (i in 1:nodes) {
-				sendCall(cl[[i]], clFun2, list(i, xy[i, ,drop=FALSE], rn[i], rx[i], cn[i], cx[i]), tag=i)
+				snow::sendCall(cl[[i]], clFun2, list(i, xy[i, ,drop=FALSE], rn[i], rx[i], cn[i], cx[i]), tag=i)
 			}
 			for (i in 1:nrow(xy)) {
-				d <- recvOneData(cl)
+				d <- snow::recvOneData(cl)
 				if (! d$value$success) {
 					print(d)
 					stop('cluster error')
@@ -122,7 +135,7 @@
 				}
 				ni <- nodes + i
 				if (ni <= nrow(xy)) {
-					sendCall(cl[[d$node]], clFun2, list(ni, xy[i, ,drop=FALSE], rn[i], rx[i], cn[i], cx[i]), tag=i)
+					snow::sendCall(cl[[d$node]], clFun2, list(ni, xy[i, ,drop=FALSE], rn[i], rx[i], cn[i], cx[i]), tag=i)
 				}
 			}
 		} else {
@@ -131,7 +144,11 @@
 				if (is.na(s)) {
 					cv[[i]] <- NA
 				} else {
-					value <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
+					if (onlycells) {
+						value <- i
+					} else {
+						value <- getValuesBlock(object, rn[i], rx[i]-rn[i]+1, cn[i], cx[i]-cn[i]+1)
+					}
 					cell <- cellFromRowColCombine(obj, rn[i]:rx[i], cn[i]:cx[i])
 					coords <- xyFromCell(obj, cell)
 					if (cellnumbers) {
@@ -153,7 +170,11 @@
 		i <- sapply(cv, function(x) length(x)==0)
 		if (any(i)) { 
 			i <- which(i)
-			vv <- extract(object, xy[i, ,drop=FALSE], na.rm=na.rm, layer=layer, nl=nl, cellnumbers=cellnumbers)
+			if (onlycells) {
+				vv <- cbind(cellFromXY(object, xy[i, ,drop=FALSE]), NA)
+			} else {
+				vv <- extract(object, xy[i, ,drop=FALSE], na.rm=na.rm, layer=layer, nl=nl, cellnumbers=cellnumbers)
+			}
 			if (NCOL(vv) > 1) {
 				for (j in 1:length(i)) {
 					cv[[ i[j] ]] <- vv[j, ]
@@ -198,4 +219,7 @@
 	}
 	return(cv)
 }
+ 
+
+ 
  

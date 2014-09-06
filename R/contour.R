@@ -16,16 +16,8 @@ setMethod("contour", signature(x='RasterLayer'),
 )
 
 
-setMethod("contour", signature(x='RasterStackBrick'), 
-	function(x, y=1, maxpixels=100000, ...)  {
-		y <- min(max(1, y), nlayers(x))
-		x <- raster(x, y) 
-		contour(x=x, maxpixels=maxpixels, ...)
-	}	
-)
 
-
-rasterToContour <- function(x,maxpixels=100000,...) {
+rasterToContour <- function(x, maxpixels=100000, ...) {
 	x <- sampleRegular(x, size=maxpixels, asRaster=TRUE, useGDAL=TRUE)
 	cL <- contourLines(x=xFromCol(x,1:ncol(x)), y=yFromRow(x, nrow(x):1), z=t((getValues(x, format='matrix'))[nrow(x):1,]), ...)
 	
@@ -52,6 +44,7 @@ rasterToContour <- function(x,maxpixels=100000,...) {
     }
     SL <- SpatialLines(res, proj4string = projection(x, asText=FALSE))
     SpatialLinesDataFrame(SL, data = df)
+	
 }
 
 

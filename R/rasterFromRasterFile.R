@@ -167,11 +167,13 @@
 	prj <- .getProj(prj, crs)
 	
 	if (band < 1) {
-		band <- 1
-		warning('band set to 1')
+		stop("band must be 1 or larger")
+		#band <- 1
+		#warning('band set to 1')
 	} else if  (band > nbands) {
-		band <- nbands
-		warning('band set to ', nbands)
+		stop(paste("band too high. Should be between 1 and", nbands))
+		#band <- nbands
+		#warning('band set to ', nbands)
 	}
 	
 	minval <- minval[1:nbands]

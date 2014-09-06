@@ -1,8 +1,7 @@
 \name{boundaries}
 
-\alias{edge}
-\alias{edges}
 \alias{boundaries}
+\alias{edge}
 \alias{boundaries,RasterLayer-method}
   
 \title{boundaries (edges) detection}
@@ -12,23 +11,26 @@ Detect boundaries (edges). boundaries are cells that have more than one class in
 }
 
 \usage{
-\S4method{boundaries}{RasterLayer}(x, filename="", type='inner', classes=FALSE, directions=8, ...)
+\S4method{boundaries}{RasterLayer}(x, type='inner', classes=FALSE, directions=8, asNA=FALSE, filename="", ...)
+
 edge(x, ...)
-edges(x, ...)
 }
 
 \arguments{
 \item{x}{RasterLayer object}
-\item{filename}{Character. Filename for the output RasterLayer (optional)}
-\item{type}{Character. 'inner' or 'outer'}
-\item{classes}{Character. Logical. If \code{TRUE} all different values are (after rounding) distinguished, as well as \code{NA}. If \code{FALSE} (the default) only edges between \code{NA} and non-\code{NA} cells are considered}
-\item{directions}{Integer. Which cells are considered adjacent? Should be 8 (Queen's case) or 4 (Rook's case)}
-\item{...}{Additional arguments as for \code{\link{writeRaster}}} 
+\item{type}{character. 'inner' or 'outer'}
+\item{classes}{character. Logical. If \code{TRUE} all different values are (after rounding) distinguished, as well as \code{NA}. If \code{FALSE} (the default) only edges between \code{NA} and non-\code{NA} cells are considered}
+\item{directions}{integer. Which cells are considered adjacent? Should be 8 (Queen's case) or 4 (Rook's case)}
+\item{asNA}{logical. If \code{TRUE}, non-edges are returned as \code{NA} instead of zero}
+\item{filename}{character. Filename for the output RasterLayer (optional)}
+\item{...}{additional arguments as for \code{\link{writeRaster}}} 
 }
 
 \value{
 RasterLayer. Cell values are either 1 (a border) or 0 (not a border), or \code{NA}
 }
+
+\note{'edge' is obsolete and should not be used. It will be removed from this pacakge}
 
 \seealso{ \code{\link{focal}}, \code{\link{clump}} }
 

@@ -149,7 +149,7 @@ f <- paste(baseurl, "nsidc0081_nrt_nasateam_seaice/south/nt_20130114_f17_nrt_s.b
 # or northern hemisphere
 # f <- paste(baseurl, "nsidc0081_nrt_nasateam_seaice/north/nt_20130105_f17_nrt_n.bin", sep='')
 
-download.file(f, basename(f), mode = "wb")
+if (!file.exists(basename(f))) download.file(f, basename(f), mode = "wb")
 ice <- raster(basename(f))
 }
 }

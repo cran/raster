@@ -6,7 +6,7 @@
 
 
 setMethod('extract', signature(x='Raster', y='SpatialPolygons'), 
-function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FALSE, df=FALSE, layer, nl, factors=FALSE, sp=FALSE, ...){ 
+function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=TRUE, df=FALSE, layer, nl, factors=FALSE, sp=FALSE, ...){ 
 
 	px <- projection(x, asText=FALSE)
 	comp <- compareCRS(px, projection(y), unknown=TRUE)
@@ -22,7 +22,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 	npol <- length(y@polygons)
 	res <- list()
 	res[[npol+1]] <- NA
-
+	
 	if (!is.null(fun)) {
 		cellnumbers <- FALSE
 	    if (weights) {
@@ -31,16 +31,45 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 				if (!isTRUE(test)) {
 					warning('"fun" was changed to "mean"; other functions cannot be used when "weights=TRUE"' )
 				}
-			}	
+			}
+			fun <- function(x, ...) {
+				# some complexity here because different layers could 
+				# have different NA cells
+				if ( is.null(x) ) {
+					return(rep(NA, nl))
+				}
+				w <- x[,nl+1]
+				x <- x[,-(nl+1), drop=FALSE]
+				x <- x * w
+				w <- matrix(rep(w, nl), ncol=nl)
+				w[is.na(x)] <- NA
+				w <- colSums(w, na.rm=TRUE)
+				x <- apply(x, 1, function(X) { X / w } )
+				if (!is.null(dim(x))) {
+					rowSums(x, na.rm=na.rm)
+				} else {
+					sum(x, na.rm=na.rm)
+				}
+			}
 		}
+		
 		if (sp) {
 			df <- TRUE
 		}
+		
+		doFun <- TRUE
+		
 	} else {
 		if (sp) {
 			sp <- FALSE
+			df <- FALSE
 			warning('argument sp=TRUE is ignored if fun=NULL')
+		} else if (df) {
+			df <- FALSE
+			warning('argument df=TRUE is ignored if fun=NULL')
 		}
+		
+		doFun <- FALSE
 	}
 	
 	if (missing(layer)) {
@@ -64,6 +93,8 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 		return(res[1:npol])
 	}
 	
+
+	
 	rr <- raster(x)
 	
 	pb <- pbCreate(npol, label='extract', ...)
@@ -76,7 +107,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 		flush.console()
 
 		
-		clusterExport(cl, c('rsbb', 'rr', 'weights', 'addres', 'cellnumbers', 'small'), envir=environment())
+		snow::clusterExport(cl, c('rsbb', 'rr', 'weights', 'addres', 'cellnumbers', 'small'), envir=environment())
 		clFun <- function(i, pp) {
 			spbb <- bbox(pp)
 		
@@ -88,8 +119,8 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 					rc <- .polygonsToRaster(pp, rc, getCover=TRUE, silent=TRUE)
 					rc[rc==0] <- NA
 					xy <- rasterToPoints(rc)
-					weight <- xy[,3] / 100
-					xy <- xy[,-3,drop=FALSE]
+					weight <- xy[,3] / sum(xy[,3])
+					xy <- xy[, -3, drop=FALSE]
 				} else {
 					rc <- .polygonsToRaster(pp, rc, silent=TRUE)
 					xy <- rasterToPoints(rc)[,-3,drop=FALSE]
@@ -118,7 +149,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 							cell <- unique(unlist(lapply(xy, function(z) cellFromXY(x, z))))
 							value <- .cellValues(x, cell, layer=layer, nl=nl)
 							if (weights) {
-								weight=0
+								weight=rep(1/NROW(value), NROW(value))
 								if (cellnumbers) {
 									r <- cbind(cell, value, weight)
 								} else {
@@ -141,18 +172,29 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 		}
 		
         for (ni in 1:nodes) {
-			sendCall(cl[[ni]], clFun, list(ni, y[ni,]), tag=ni)
+			snow::sendCall(cl[[ni]], clFun, list(ni, y[ni,]), tag=ni)
 		}
 		
 		for (i in 1:npol) {
-			d <- recvOneData(cl)
+			d <- snow::recvOneData(cl)
 			if (! d$value$success) {
 				stop('cluster error at polygon: ', i)
 			}
-			res[[d$value$tag]] <- d$value$value
+
+			if (doFun) {
+				if (!is.null(d$value$value)) {
+					if (nl > 1 & !weights) {
+						res[[i]] <- apply(d$value$value, 2, fun, na.rm=na.rm)							
+					} else { 
+						res[[d$value$tag]] <- fun(d$value$value)
+					}
+				}
+			} else {
+				res[[d$value$tag]] <- d$value$value
+			}
 			ni <- ni + 1
 			if (ni <= npol) {
-				sendCall(cl[[d$node]], clFun, list(ni, y[ni,]), tag=ni)
+				snow::sendCall(cl[[d$node]], clFun, list(ni, y[ni,]), tag=ni)
 			}
 			pbStep(pb, i)
 		}
@@ -170,7 +212,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 					rc <- .polygonsToRaster(pp, rc, getCover=TRUE, silent=TRUE)
 					rc[rc==0] <- NA
 					xy <- rasterToPoints(rc)
-					weight <- xy[,3] / 100
+					weight <- xy[,3] / sum(xy[,3])
 					xy <- xy[,-3,drop=FALSE]
 				} else {
 					rc <- .polygonsToRaster(pp, rc, silent=TRUE)
@@ -202,8 +244,12 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 						cell <- unique(unlist(lapply(xy, function(z) cellFromXY(x, z))))
 						value <- .cellValues(x, cell, layer=layer, nl=nl)
 						if (weights) {
-							weight=0
-							res[[i]] <- cbind(cell, value, weight)
+							weight=rep(1/NROW(value), NROW(value))
+							if (cellnumbers) {
+								res[[i]] <- cbind(cell, value, weight)
+							} else {
+								res[[i]] <- cbind(value, weight)
+							}
 						} else if (cellnumbers) {
 							res[[i]] <- cbind(cell, value)					
 						} else {
@@ -211,6 +257,15 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 						}
 					} # else do nothing; res[[i]] <- NULL
 				} 
+				if (doFun) {
+					if (!is.null(res[[i]])) {
+						if (nl > 1 & !weights) {
+							res[[i]] <- apply(res[[i]], 2, fun, na.rm=na.rm)							
+						} else {
+							res[[i]] <- fun(res[[i]])
+						}
+					}
+				}	
 			}
 			pbStep(pb)
 		}
@@ -218,44 +273,28 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=FA
 	res <- res[1:npol]
 	pbClose(pb)
 
+	
 	if (! is.null(fun)) {
-		if (weights) {
-			if (nl > 1) {
-				meanfunc <- function(x) {
-					if (!is.null(x)) { 
-			# some complexity here because differnt layers could 
-			# have different NA cells
-						w <- x[,nl+1]
-						x <- x[,-(nl+1)]
-						x <- x * w
-						w <- matrix(rep(w, nl), ncol=nl)
-						w[is.na(x)] <- NA
-						w <- colSums(w, na.rm=TRUE)
-						x <- apply(x, 1, function(X) { X / w } )
-						res <- rowSums(x, na.rm=na.rm) 
-					} else {
-						return( NULL )
-					}	
-				}
-				res <- t(sapply(res, meanfunc))
+		# try to simplify
+		i <- sapply(res, length)
+		if (length(unique(i[i != 0])) == 1) {
+			if (any(i == 0)) {
+				lng <- length(res)
+				v <- do.call(rbind, res)
+				res <- matrix(NA, nrow=lng, ncol=ncol(v))
+				res[which(i > 0), ] <- v
 			} else {
-			
-				res <- sapply(res, function(x) if (!is.null(x)){ sum(apply(x, 1, prod)) / sum(x[,2])} else NA  )
-				
+				res <- do.call(rbind, res)
 			}
-			
 		} else {
-			i <- sapply(res, is.null)
-			if (nl > 1) {
-				j <- matrix(ncol=nl, nrow=length(res))
-				j[!i] <- t(sapply(res[!i], function(x) apply(x, 2, FUN=fun, na.rm=na.rm)))
-				colnames(j) <- names(x)[layer:(layer+nl-1)]
-			} else {
-				j <- vector(length=length(i))
-				j[i] <- NA
-				j[!i] <- sapply(res[!i], FUN=fun, na.rm=na.rm)
+			if (sp) {
+				warning('cannot return a sp object because the data length varies between polygons')
+				sp <- FALSE
+				df <- FALSE
+			} else if (df) {
+				warning('cannot return a data.frame because the data length varies between polygons')
+				df <- FALSE
 			}
-			res <- j
 		}
 	}
 	

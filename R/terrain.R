@@ -75,7 +75,7 @@ terrain <- function(x, opt='slope', unit='radians', neighbors=8, filename='', ..
 		stopifnot(neighbors %in% c(4, 8))
 		stopifnot(! is.na(projection(x)) )
 		lonlat <- isLonLat(out)
-		if (!lonlat & .couldBeLonLat(out)) {
+		if (!lonlat & couldBeLonLat(out)) {
 			warning('assuming CRS is longitude/latitude')
 			lonlat <- TRUE
 		}

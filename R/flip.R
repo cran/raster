@@ -15,8 +15,11 @@ setMethod('flip', signature(x='RasterLayer', direction='ANY'),
 		filename <- trim(filename)
 		outRaster <- raster(x)
 
-		if (direction[1] == 1) { direction <- 'x'
-		} else if (direction[1] == 2) { direction <- 'y' }
+		if (direction[1] == 1) { 
+			direction <- 'x'
+		} else if (direction[1] == 2) { 
+			direction <- 'y' 
+		}
 		if (!(direction %in% c('y', 'x'))) {
 			stop('direction should be "y" or "x"')
 		}
@@ -80,8 +83,11 @@ setMethod('flip', signature(x='RasterStackBrick', direction='ANY'),
 		filename <- trim(filename)
 		outRaster <- brick(x, values=FALSE)
 
-		if (direction[1] == 1) { direction <- 'x'
-		} else if (direction[1] == 2) { direction <- 'y' }
+		if (direction[1] == 1) { 
+			direction <- 'x'
+		} else if (direction[1] == 2) { 
+			direction <- 'y' 
+		}
 		if (!(direction %in% c('y', 'x'))) {
 			stop('directions should be y or x')
 		}
