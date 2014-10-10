@@ -2,24 +2,21 @@
 
 \alias{init}
 
-\title{Intitialize}
+\title{Intitialize a Raster object with values}
 
 \description{
-Create a new RasterLayer with values reflecting a cell property: \code{v} from 'x', 'y', 'col', 'row', or 'cell'. Alternatively, a function can be used. In that case, cell values are initialized without reference to pre-existing values. E.g., initialize with a random number (\code{fun=runif}).
-Either supply an argument to \code{fun}, or to \code{v}, but not both.
+Create a new RasterLayer with values reflecting a cell property: 'x', 'y', 'col', 'row', or 'cell'. Alternatively, a function can be used. In that case, cell values are initialized without reference to pre-existing values. E.g., initialize with a random number (\code{fun=\link{runif}}). While there are more direct ways of achieving this for small objects (see examples) for which a vector with all values can be created in memory, the \code{init} function will also work for Raster* objects with many cells.
 }
 
 \usage{
-init(x, fun, v, filename="", ...) 
+init(x, fun, filename="", ...) 
 }
 
 \arguments{
-  \item{x}{A Raster* object}
-  \item{fun}{The function to be applied. This must be a function that can take the number of cells as a single argument to return a vector of values with a length equal to the number of cells}
-  \item{v}{'x', 'y', 'row', 'col', or 'cell'}
-  \item{filename}{Output filename}
+  \item{x}{Raster* object}
+  \item{fun}{function to be applied. This must be a function that can take the number of cells as a single argument to return a vector of values with a length equal to the number of cells, such as \code{fun=runif}. You can also supply one of the following character values: 'x', 'y', 'row', 'col', or 'cell' to get the x or coordinate, row, col or cell number}
+  \item{filename}{character. Optional output filename}
   \item{...}{Additional arguments as for \code{\link{writeRaster}}}  
-
 }
 
 
@@ -27,12 +24,14 @@ init(x, fun, v, filename="", ...)
 RasterLayer
 }
 
-
+\note{
+For backwards compatibility, the character values valid for \code{fun} can also be passed as named argument \code{v}
+}
 
 \examples{
 r <- raster(ncols=36, nrows=18)
 
-x <- init(r, v='cell')
+x <- init(r, fun='cell')
 
 y <- init(r, fun=runif)
 
@@ -41,7 +40,7 @@ y <- init(r, fun=runif)
 set1f <- function(x){rep(1, x)}
 z1 <- init(r, fun=set1f, filename='test.grd', overwrite=TRUE)
 
-# equivalent to
+# This is equivalent to (but not memory safe):
 z2 <- setValues(r, rep(1, ncell(r)))
 # or  
 r[] <- rep(1, ncell(r))

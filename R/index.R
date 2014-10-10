@@ -1,8 +1,19 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  January 2009
 # Version 0.9
 # Licence GPL v3
 
+
+setMethod("[", c("Extent", "numeric", "missing"),
+function(x, i, j, ... ,drop=TRUE) {
+	x <- as.vector(x)
+	x[i]
+})
+
+setMethod("[", c("Extent", "missing", "missing"),
+function(x, i, j, ... ,drop=TRUE) {
+	as.vector(x)
+})
 
 setMethod("[", c("Raster", "Spatial", "missing"),
 function(x, i, j, ... ,drop=TRUE) {

@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date: Sept 2009 / revised June 2010
 # Version 1.0
 # Licence GPL v3

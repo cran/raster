@@ -1,4 +1,4 @@
-\name{corrLocal}
+\name{corLocal}
 
 \docType{methods}
 

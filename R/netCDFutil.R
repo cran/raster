@@ -39,18 +39,43 @@
 			g$standard_parallel <- NULL
 		}
 	}
-	vals <- unlist(g)
 	vars <- names(g)
+	vals <- as.vector(unlist(g))
 	i <- match(vars, m[,1])
-	if (any(is.na(i))) {
-		warning("could not process the CRS")
-		print(as.matrix(g))
+	if (all(is.na(i))) {
+		gg <- cbind(vars, vals)
+		mtxt <- paste(apply(gg, 1, function(x) paste(x, collapse='=')), collapse='; ')
+		warning("cannot process the CRS\n", mtxt)
 		return(NA)
+	} else if (any(is.na(i))) {
+		vr <- vars[is.na(i)]
+		vl <- vals[is.na(i)]
+		gg <- cbind(vr, vl)
+		mtxt <- paste(apply(gg, 1, function(x) paste(x, collapse='=')), collapse='; ')
+		warning("cannot process these parts of the CRS:\n", mtxt)
+		vars <- vars[!is.na(i)]
+		vals <- vals[!is.na(i)]
+		i <- na.omit(i)
 	}
 	tab <- cbind(m[i,], vals)
+	p <- which(tab[,2] == '+proj')
+	if (length(p) == 0) {
+		warning("cannot create a valid CRS\n", mtxt)
+		return(NA)	
+	} else {
+		tab <- rbind(tab[p, ], tab[-p, ])
+	}
 	j <- match(tab[1,3], prj[,1])
 	tab[1,3] <- prj[j,2]
-	paste(apply(tab[,2:3], 1, function(x)paste(x, collapse='=')), collapse=' ')
+	cr <- paste(apply(tab[,2:3], 1, function(x) paste(x, collapse='=')), collapse=' ')
+	crtst <- try(CRS(cr), silent=TRUE)
+	if (class(crtst) == 'try-error') {
+		mtxt <- paste(m, collapse='; ')
+		warning("cannot create a valid CRS\n", mtxt)
+		return(NA)
+	} else {
+		return(cr)
+	}
 }
 
 

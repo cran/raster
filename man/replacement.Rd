@@ -19,6 +19,7 @@
 \alias{[<-,Raster,missing,numeric-method}
 \alias{[<-,Raster,Spatial,missing-method}
 \alias{[<-,Raster,Extent,missing-method}
+\alias{[<-,Extent,numeric,missing-method}
 
 \alias{$<-,Raster-method}
 \alias{$,Raster-method}

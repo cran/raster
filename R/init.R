@@ -1,15 +1,23 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  June 2008
-# Version 0.9
+# Version 1.0
 # Licence GPL v3
 
-init <- function(x, fun, v, filename="", ...) {
-	if (missing(fun) & missing(v)) {
-		stop('provide either a function "fun" or an option "v"')
-	}
-	if (missing(fun)) {
-		v = tolower(v[1])
-		stopifnot (v %in% c('x', 'y', 'row', 'col', 'cell'))
+init <- function(x, fun='cell', filename="", ...) {
+
+	vv <- list(...)$v
+	v <- NULL
+	if (!is.null(vv)) {
+		if (vv %in% c('x', 'y', 'row', 'col', 'cell', 'chess')) {
+			v <- vv
+		}
+	} else if (is.character(fun) ) {
+		fun <- tolower(fun[1])
+		if (fun %in% c('x', 'y', 'row', 'col', 'cell', 'chess')) {
+			v <- fun
+		} else {
+			stop("argument 'fun' is a character variable, but not one of 'x', 'y', 'row', 'col', 'cell', or 'chess'")
+		}
 	}
 
 	out <- raster(x)
@@ -23,7 +31,7 @@ init <- function(x, fun, v, filename="", ...) {
 		}
 	}
 	
-	if (missing(fun)) {
+	if (!is.null(v)) {
 		if ( inmem ) {
 			if (v == 'cell') { 
 				out <- setValues(out, 1:ncell(out)) 
@@ -35,6 +43,17 @@ init <- function(x, fun, v, filename="", ...) {
 				out <- setValues(out, rep(1:ncol(out), times=nrow(out)))
 			} else if (v == 'x') { 
 				out <- setValues(out, rep(xFromCol(out, 1:ncol(out)), times=nrow(out))) 
+			} else if (v == 'chess') {
+				if ((ncol(out) %% 2) == 1) {
+					out <- setValues(out, c(rep(c(0,1), floor(ncell(out)/2)), 0))
+				} else {
+					rs <- c(rep(c(0,1), ncol(out) / 2), rep(c(1,0), ncol(out) / 2))
+					rs <- rep(rs, floor(nrow(out) / 2))
+					if ((nrow(out) %% 2) == 1) {
+						rs <- c(rs, rep(c(0,1), ncol(out) / 2))
+					}
+					out <- setValues(out, rs)	
+				}
 			}
 		} else {
 			out <- writeStart(out, filename=filename, ...)
@@ -53,6 +72,8 @@ init <- function(x, fun, v, filename="", ...) {
 				} else if (v == 'y') { 
 					r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)	
 					out <- writeValues(out, rep(yFromRow(out, r), each=ncol(out)), tr$row[i])
+				} else if (v == 'chess') { 
+					stop('not implemented for large files yet')
 				}
 				pbStep(pb, i)
 			}

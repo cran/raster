@@ -32,8 +32,6 @@ None
 
 \seealso{ \code{\link{plot}}, \code{\link{spplot}}, \code{\link{plotRGB}} }
 
-\author{Robert J. Hijmans}
-
 \examples{
 b <- brick(system.file("external/rlogo.grd", package="raster"))
 animate(b, n=1)

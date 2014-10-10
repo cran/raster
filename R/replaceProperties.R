@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  January 2009
 # Version 0.9
 # Licence GPL v3
@@ -17,22 +17,38 @@
 
 
 'xmin<-' <- function(x, value) {
-	x@extent@xmin <- value
+	if (inherits(x, 'Extent')) {
+		x@xmin <- value
+	} else {
+		x@extent@xmin <- value
+	}
 	return(x)
 }
 
 'xmax<-' <- function(x, value) {
-	x@extent@xmax <- value
+	if (inherits(x, 'Extent')) {
+		x@xmax <- value
+	} else {
+		x@extent@xmax <- value
+	}
 	return(x)
 }
 
 'ymin<-' <- function(x, value) {
-	x@extent@ymin <- value
+	if (inherits(x, 'Extent')) {
+		x@ymin <- value
+	} else {
+		x@extent@ymin <- value
+	}
 	return(x)
 }
 
 'ymax<-' <- function(x, value) {
-	x@extent@ymax <- value
+	if (inherits(x, 'Extent')) {
+		x@ymax <- value
+	} else {
+		x@extent@ymax <- value
+	}
 	return(x)
 }
 

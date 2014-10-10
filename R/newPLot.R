@@ -6,7 +6,7 @@
 
 
 # Adaptations for the raster package:
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  May 2010
 # Version 1.0
 # Licence GPL v3

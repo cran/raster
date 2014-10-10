@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  May 2009
 # Version 0.9
 # Licence GPL v3
@@ -64,11 +64,12 @@ rasterTmpFile <- function(prefix='raster_tmp_')  {
 	d <- tmpDir()
 
 	while(TRUE) {
-	#	f <- paste(gsub(' ', '_', gsub(':', '', as.character(Sys.time()))), '_', paste(round(runif(5)*10), collapse=""), sep='')
 	# added pid as suggested by Daniel Schlaepfer to avoid overlapping file names when running parallel processes and using set.seed() in each node
-		f <- paste(gsub(" ", "_", gsub(":", "", as.character(Sys.time()))), "_", Sys.getpid(), "_", paste(sample(0:9,5,replace=TRUE),collapse=''), sep = "")
-		tmpf <- paste(d, prefix, f, extension, sep="")
-		if (! file.exists(tmpf)) break
+		f <- paste(gsub(" ", "_", gsub(":", "", as.character(Sys.time()))), "_", Sys.getpid(), "_", paste(sample(0:9,5,replace=TRUE),collapse=''), extension, sep = "")
+		tmpf <- normalizePath(file.path(d, f), winslash = "/", mustWork=FALSE)
+		if (! file.exists(tmpf)) {
+			break
+		}
 	}
 	
 	if (getOption('verbose')) { 

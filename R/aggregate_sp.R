@@ -70,10 +70,21 @@ function(x, vars=NULL, sums=NULL, dissolve=TRUE, ...) {
 		crs <- x@proj4string
 		dc <- apply(dat, 1, function(y) paste(as.character(y), collapse='_'))
 		dc <- data.frame(oid=1:length(dc), v=as.integer(as.factor(dc)))
-		id <- dc[!duplicated(dc$v), ,drop=FALSE]
-		id <- id[order(id$v), ]
+		id <- dc[!duplicated(dc$v), , drop=FALSE]
 
+		if (nrow(id) == nrow(dat)) {
+			# nothing to aggregate
+			if (hd) {
+				x@data <- dat
+			} else {
+				x <- as(x, 'SpatialPolygons')
+			}
+			return(x)
+		}
+
+		id <- id[order(id$v), ]
 		dat <- dat[id[,1], ,drop=FALSE]
+		
 		if (!is.null(sums)) {
 			out <- list()
 			for (i in 1:length(sums)) {
@@ -105,7 +116,13 @@ function(x, vars=NULL, sums=NULL, dissolve=TRUE, ...) {
 			if (version_GEOS0() < "3.3.0") {
 				x <- lapply(1:nrow(id), function(y) spChFIDs(gUnionCascaded(x[dc[dc$v==y,1],]), as.character(y)))
 			} else {
-				x <- lapply(1:nrow(id), function(y) spChFIDs(rgeos::gUnaryUnion(x[dc[dc$v==y,1],]), as.character(y)))
+				x <- lapply(1:nrow(id), 
+						function(y) {
+							z <- x[dc[dc$v==y, 1], ]
+							try( z <- rgeos::gUnaryUnion(z), silent=TRUE )
+							spChFIDs(z, as.character(y))
+						} 
+					)
 			}	
 		} else {
 			x <- lapply(1:nrow(id), function(y) spChFIDs(aggregate(x[dc[dc$v==y,1],], dissolve=FALSE), as.character(y)))

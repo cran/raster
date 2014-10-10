@@ -2,7 +2,6 @@
 
 \docType{methods}
 
-
 \alias{[[,Raster,ANY,ANY-method}
 
 \alias{[,Raster,Spatial,missing-method}
@@ -14,6 +13,8 @@
 \alias{[,Raster,matrix,missing-method}
 \alias{[,Raster,missing,missing-method}
 \alias{[,Raster,logical,missing-method}
+\alias{[,Extent,numeric,missing-method}
+\alias{[,Extent,missing,missing-method}
 
 
 \title{Indexing to extract values of a Raster* object}

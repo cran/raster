@@ -316,7 +316,7 @@ tmpDir <- function(create=TRUE) {
 	if (is.null(d)) {
 		d <- .tmppath()
 	}
-	lastchar <- substr(d, nchar(d), nchar(d))
+	#lastchar <- substr(d, nchar(d), nchar(d))
 	# if (lastchar == '/' | lastchar == '\\') {
 	#	d <- substr( d, 1, nchar(d)-1 )
 	#}

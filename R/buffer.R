@@ -9,6 +9,13 @@ if (!isGeneric('buffer')) {
 		standardGeneric('buffer'))
 }	
 
+setMethod('buffer', signature(x='Spatial'), 
+function(x, width=1, dissolve=TRUE, ...) {
+	stopifnot(require(rgeos))
+	rgeos::gBuffer(x, byid=!dissolve, width=width, ...)
+}
+)
+
 
 setMethod('buffer', signature(x='RasterLayer'), 
 function(x, width=0, filename='', doEdge=FALSE, ...) {

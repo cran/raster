@@ -64,7 +64,22 @@ setMethod("which.min", "RasterStackBrick",
 			}	
 			return( setValues(r, y) )
 		} else {
-			stop('not yet implemented for large objects')
+			tr <- blockSize(x)
+			x <- readStart(x)	
+			out <- raster(x)
+			out <- writeStart(out, '')
+			for (i in 1:tr$n) {
+				v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
+				j <- rowSums(is.na(v)) < nl
+				y <- rep(NA, nrow(v))	
+				if (sum(j) > 0) {
+					y[j] <- apply(v[j,], 1, which.min)
+				}	
+				out <- writeValues(out, y, tr$row[i])
+			}
+			out <- writeStop(out)
+			x <- readStop(x)
+			return(out)
 		}
 	} 
 )
@@ -84,9 +99,27 @@ setMethod("which.max", "RasterStackBrick",
 			}	
 			return( setValues(r, y) )
 		} else {
-			stop('not yet implemented for large objects')
+			tr <- blockSize(x)
+			x <- readStart(x)	
+			out <- raster(x)
+			out <- writeStart(out, '')
+			for (i in 1:tr$n) {
+				v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
+				j <- rowSums(is.na(v)) < nl
+				y <- rep(NA, nrow(v))	
+				if (sum(j) > 0) {
+					y[j] <- apply(v[j,], 1, which.max)
+				}	
+				out <- writeValues(out, y, tr$row[i])
+			}
+			out <- writeStop(out)
+			x <- readStop(x)
+			return(out)	
 		}
 	} 
 )
-	
-	
+
+
+
+ 
+

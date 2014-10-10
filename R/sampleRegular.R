@@ -21,37 +21,14 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 	rotated <- rotated(x)
 	
 	if (is.null(ext)) {
-		if (size >= ncell(x)) {
-			if (asRaster) { 
-				if (!rotated) {
-					return(x) 
-				}
-			} else { 
-				if (cells) {
-					return(cbind(1:ncell(x), values(x)))
-				} else {
-					return(values(x)) 
-				}
-			}
-		}
 		rcut <- raster(x)
 		firstrow <- 1
 		lastrow <- nrow(rcut)
 		firstcol <- 1
 		lastcol <- ncol(rcut)
-		
 	} else {
-	
 		rcut <- crop(raster(x), ext)
 		ext <- extent(rcut)
-		if (size >= ncell(rcut)) {
-			x <- crop(x, ext)
-			if (asRaster) { 
-				return(x) 
-			} else { 
-				return(getValues(x)) 
-			}
-		}
 		yr <- yres(rcut)
 		xr <- xres(rcut)
 		firstrow <- rowFromY(x, ext@ymax-0.5 *yr)
@@ -59,35 +36,51 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 		firstcol <- colFromX(x, ext@xmin+0.5*xr)
 		lastcol <- colFromX(x, ext@xmax-0.5*xr)
 	}
-	
 
-	Y <- X <- sqrt(ncell(rcut)/size)
-	nr <- max(1, floor((lastrow - firstrow + 1) / Y))
-	nc <- max(1, floor((lastcol - firstcol + 1) / X))
-
-	rows <- (lastrow - firstrow + 1)/nr * 1:nr + firstrow - 1
-	rows <- rows - (0.5 * (lastrow - firstrow + 1)/nr)
-	cols <- (lastcol - firstcol + 1)/nc * 1:nc  + firstcol - 1
-	cols <- cols - (0.5 * (lastcol - firstcol + 1)/nc)
-
-	cols <- unique(round(cols))
-	rows <- unique(round(rows))
-	cols <- cols[cols>0]
-	rows <- rows[rows>0]
-	nr <- length(rows)
-	nc <- length(cols)
-	
-
-	if (fromDisk(x)) {
-		
-		if (cells | any(rotated | .driver(x, FALSE) != 'gdal')) { 
-			useGDAL <- FALSE 
+	allx <- FALSE
+	if (size >= ncell(rcut)) {
+		if (!is.null(ext)) {
+			x <- crop(x, ext)
 		}
-		if (useGDAL) {
+		if (asRaster & !rotated) {
+			return(x)
+		}
+		
+		nr <- nrow(rcut)
+		nc <- ncol(rcut)
+		allx <- TRUE
+		
+	} else {
+		Y <- X <- sqrt(ncell(rcut)/size)
+		nr <- max(1, floor((lastrow - firstrow + 1) / Y))
+		nc <- max(1, floor((lastcol - firstcol + 1) / X))
+
+		rows <- (lastrow - firstrow + 1)/nr * 1:nr + firstrow - 1
+		rows <- rows - (0.5 * (lastrow - firstrow + 1)/nr)
+		cols <- (lastcol - firstcol + 1)/nc * 1:nc  + firstcol - 1
+		cols <- cols - (0.5 * (lastcol - firstcol + 1)/nc)
+
+		cols <- unique(round(cols))
+		rows <- unique(round(rows))
+		cols <- cols[cols > 0]
+		rows <- rows[rows > 0]
+		nr <- length(rows)
+		nc <- length(cols)
+	}
+	
+	
+	if (fromDisk(x) & useGDAL) {
+
+		if ( any(rotated | .driver(x, FALSE) != 'gdal') ) { 
+
+			useGDAL <- FALSE 
+			
+		} else {
+		
 			offs <- c(firstrow,firstcol)-1
 			reg <- c(nrow(rcut), ncol(rcut))-1
 			
-			if (inherits(x, 'RasterStack')) {
+			if ( nl > 1 ) {
 				
 				v <- matrix(NA, ncol=nl, nrow=prod(nr, nc))
 				
@@ -109,15 +102,15 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 				}
 				
 			} else {
-				if (nl == 1) {
-					band <- bandnr(x)
-				} else {
-					band <- NULL
-				}
+			
+				band <- bandnr(x)
 				con <- rgdal::GDAL.open(x@file@name, silent=TRUE)
 				v <- rgdal::getRasterData(con, band=band, offset=offs, region.dim=reg, output.dim=c(nr, nc)) 
 				rgdal::closeDataset(con)
-				
+
+				v <- matrix(v, ncol=1)
+				colnames(v) <- names(x)
+		
 				if (x@data@gain != 1 | x@data@offset != 0) {
 					v <- v * x@data@gain + x@data@offset
 				}
@@ -129,7 +122,7 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 						v[v == x@file@nodatavalue] <- NA
 					}
 				}
-				colnames(v) <- names(x)
+				
 			}
 	
 			if (asRaster) {
@@ -163,15 +156,16 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 				if (sp) {
 					warning("'sp=TRUE' is ignored when 'useGDAL=TRUE'")
 				}
-
-				
 				return( v )
 			}
 		}
 	}
 	
-	cell <- cellFromRowCol(x, rep(rows, each=nc), rep(cols, times=nr))
-	
+	if (allx) {
+		cell <- 1:ncell(rcut)
+	} else {
+		cell <- cellFromRowCol(x, rep(rows, each=nc), rep(cols, times=nr))
+	}
 	
 	if (asRaster) {
 		if (rotated) {
@@ -187,6 +181,17 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 			m <- .xyValues(x, xy)
 			
 		} else {
+			
+			if (allx) {
+				if (!is.null(ext)) {
+					return(crop(x, ext))
+				} else {
+					return(x)
+				}
+			} 
+			
+			
+			cell <- cellFromRowCol(x, rep(rows, each=nc), rep(cols, times=nr))
 			m <- .cellValues(x, cell)
 
 			if (is.null(ext))  {
@@ -202,6 +207,7 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 		if (nl > 1) {
 			outras <- brick(outras, nl=nl)
 		}
+		
 		outras <- setValues(outras, m)
 		names(outras) <- names(x)
 		if (any(is.factor(x))) {
@@ -210,7 +216,12 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 		return(outras)
 		
 	} else {
-	
+		
+		if (allx) {
+			cell <= 1:ncell(rcut)
+		} else {
+			cell <- cellFromRowCol(x, rep(rows, each=nc), rep(cols, times=nr))
+		}
 		m <- NULL
 		nstart <- 1
 		if (xy) {
@@ -225,7 +236,7 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 		colnames(m)[nstart:(nstart+nl-1)] <- names(x)
 
 		if (sp) {
-			m <- SpatialPointsDataFrame(xyFromCell(x, cell), data.frame(m), proj4string=projection(x, asText=FALSE))
+			m <- SpatialPointsDataFrame(xyFromCell(x, cell), data.frame(m), proj4string=crs(x))
 		}
 		
 		return(m)

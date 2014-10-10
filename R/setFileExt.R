@@ -1,5 +1,5 @@
 # raster package
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  June 2008
 # Version 0.9
 # Licence GPL v3

@@ -48,7 +48,7 @@ function(x, y) {
 	subsx <- apply(subs, 2, any)
 	subsy <- apply(subs, 1, any)
 		
-	int  <- rgeos::gIntersection(x[subsx,], y[subsy,], byid=TRUE, drop_not_poly=TRUE)
+	int  <- rgeos::gIntersection(x[subsx,], y[subsy,], byid=TRUE, drop_lower_td=TRUE)
 #	if (inherits(int, "SpatialCollections")) {
 #		if (is.null(int@polyobj)) { # merely touching, no intersection
 #			#warning('polygons do not intersect')
@@ -77,6 +77,10 @@ function(x, y) {
 		int <- SpatialPolygonsDataFrame(int, dat)
 	}
 	
+	if (length(int) > 0) {
+		j <- which(gIsValid(int, byid=TRUE, reason=FALSE))
+		int <- int[j, ]
+	}
 	int	
 } 
 )

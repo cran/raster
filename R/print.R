@@ -1,4 +1,4 @@
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # Date :  April 2012
 # Version 1.0
 # Licence GPL v3
@@ -76,7 +76,7 @@ setMethod ('print' , 'Spatial',
 			hasData <- TRUE
 			nc <- ncol(x@data)
 		}
-		
+		ln <- 1
 		if (inherits(x, 'SpatialPixels')) {
 			isRaster <- TRUE
 			cr <- x@grid@cells.dim
@@ -91,14 +91,17 @@ setMethod ('print' , 'Spatial',
 			cs <- x@grid@cellsize
 			cat ('resolution  : ', cs[1], ', ', cs[2], '  (x, y)\n', sep="")		
 			
-		} else {		
-			cat('features    :' , length(x), '\n')
+		} else {
+			ln <- length(x)
+			cat('features    :' , ln, '\n')
 		}
 		
 		e <- bbox(x)
-		cat('extent      : ' , e[1,1], ', ', e[1,2], ', ', e[2,1], ', ', e[2,2], '  (xmin, xmax, ymin, ymax)\n', sep="")
-		cat('coord. ref. :' , projection(x, TRUE), '\n')
+		if (ln > 0) {
+			cat('extent      : ' , e[1,1], ', ', e[1,2], ', ', e[2,1], ', ', e[2,2], '  (xmin, xmax, ymin, ymax)\n', sep="")
+		}
 		
+		cat('coord. ref. :' , projection(x, TRUE), '\n')
 		
 		if (hasData) {
 			x <- x@data
