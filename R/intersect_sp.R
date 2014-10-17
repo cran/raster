@@ -78,7 +78,7 @@ function(x, y) {
 	}
 	
 	if (length(int) > 0) {
-		j <- which(gIsValid(int, byid=TRUE, reason=FALSE))
+		j <- which(rgeos::gIsValid(int, byid=TRUE, reason=FALSE))
 		int <- int[j, ]
 	}
 	int	

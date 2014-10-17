@@ -27,7 +27,7 @@ if (!isGeneric("erase")) {
 		}
 	}
 	if (length(x) > 0) {
-		j <- which(gIsValid(x, byid=TRUE, reason=FALSE))
+		j <- which(rgeos::gIsValid(x, byid=TRUE, reason=FALSE))
 	#j <- which(gArea(x, byid=TRUE) > 0)			
 		x <- x[j,]
 		rn <- rn[j]			

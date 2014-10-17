@@ -1,5 +1,5 @@
-a7b4587c3ade25c8038b0a8cd7b38f98 *ChangeLog
-d6f98d2f9c60c4042fb20db50cdbdb04 *DESCRIPTION
+4efad15336a0d9754f8b687497a7efb8 *ChangeLog
+fee1783b6c995c35dc438e89cb54dd06 *DESCRIPTION
 61bf4757263ec109dd427321fbba1a4f *NAMESPACE
 ff1eb91a5f7c57ee50a4db11388b4996 *R/AAAClasses.R
 43b16cca8694ad491d95894dbdfd38ae *R/GDALtransient.R
@@ -84,7 +84,7 @@ cfd4f010f7dc39c5932035e1c756e6eb *R/distanceFromPoints.R
 10ed815853ebddbf00b1abdca824e0b5 *R/drawPoly.R
 a2be44b8b3b744ba279ee3b6bd59bf94 *R/drivers.R
 28d4608948b3e427ca4e442cf212d1be *R/dropLayer.R
-b4801fd8352fcbeec7f44830803cb44a *R/erase.R
+19510f6349d3bf54f811bbe2a6124fc0 *R/erase.R
 852e27416f338b967574d0c9f12478e3 *R/extend.R
 c6ac59751d71ecc3fbb15a02af3c723c *R/extension.R
 043ec50fb180bfe2d7441d04c194895e *R/extent.R
@@ -142,7 +142,7 @@ e190febaaf6081efcb916599ad3a0bf8 *R/inifile.R
 f590d5b5c82c554d8265d45ba6918498 *R/intDataType.R
 e7b42375dac1684994bf439ff28bd796 *R/interpolate.R
 09523474c864ff53f7228810e0f59445 *R/intersect.R
-450fdcab2124449ee5bfb85302142a93 *R/intersect_sp.R
+1bc0b73feceb0553be5af76bb92e1875 *R/intersect_sp.R
 c5676dcb0c5c3f3833ec20a24b8ee273 *R/is.na.R
 ce2ca43a6799d6836d765ac9d8841e4b *R/isLonLat.R
 e63ad61ce8492ebb87810e06494a314f *R/kernelDens.R
@@ -237,7 +237,7 @@ a5be497e4e0638602623c1f0959b0f0b *R/replaceProperties.R
 44b3d4bd0cb4468de32ef50a9223ef16 *R/resolution.R
 2d269c0e36d7f8991e1d34d09b1cd8f7 *R/rotate.R
 9dd4df6c93eafdfb6a11943bae811cba *R/roundExtent.R
-26d83c418f400cd3a2947651d13d74c2 *R/rowMinMax.R
+4c00c3fdaeb68e7c317cf4a014bd1d45 *R/rowMinMax.R
 2ccc462906a1bca62b6a2c95cd4857d3 *R/sampleInt.R
 6b97c026741ad3c0ae313b5b16eb5877 *R/sampleRandom.R
 0a41864ea73b44052d8c2fcdb4977e23 *R/sampleRegular.R
@@ -303,12 +303,12 @@ d3f6c1b7c1d8451f3c3ab0a9c6a30430 *R/zzz.R
 0663c246ff0b6537a49a7c304176c5ed *build/vignette.rds
 a94726b5fe30cefa04751b932db7c919 *inst/doc/Raster.R
 9de33024cc89fed0f391aeea590c077c *inst/doc/Raster.Rnw
-34503d6fde8f6b9558a619b81e752f22 *inst/doc/Raster.pdf
+10f70d3b0c4f235e6613dde62303384c *inst/doc/Raster.pdf
 b6fcfef34634bc078b1c981282fe4159 *inst/doc/functions.R
 b6b8b6c45360d7509cc8e05fe48414c4 *inst/doc/functions.Rnw
-3b0d1c1d38f9beac32c5350c8d406f48 *inst/doc/functions.pdf
+2f294fdb6da3e081c89ec7ac00c9fffc *inst/doc/functions.pdf
 cdf4af6595c744554a8b1e658c524cef *inst/doc/rasterfile.Rnw
-fd01c4b0f7d2a15d972a67dcb1f97f4e *inst/doc/rasterfile.pdf
+e0622524ac5788bb3544d143d297ac91 *inst/doc/rasterfile.pdf
 9d0338e72f3892a289ef07ef2e0d6e16 *inst/external/countries.csv
 833b7982adb38dd5d7999f12ae42c8ed *inst/external/lux.dbf
 e729936bf5360b37a15365fc295a1901 *inst/external/lux.prj
@@ -429,7 +429,7 @@ ea69a893695287d97d231cfd66abba56 *man/overlay.Rd
 8b60acde113e0a28afba5c361bfa5d04 *man/plot.Rd
 13c0949cde91923c5abd05a6cbbabe2e *man/plotRGB.Rd
 2da864f99586216f86fb9045c8f0b50f *man/pointdistance.Rd
-6345df0622697f5d93db7b88f73f45ec *man/predict.Rd
+01b74f022cb618ed085a82dc52cc88e5 *man/predict.Rd
 7003f2539896b6b7cb35a40f604f7ddb *man/programming.Rd
 1b156a2e2b69e92da713f561bc06a03c *man/projectRaster.Rd
 4187ff1c97c2d42e3fd85d49d298a22b *man/projection.Rd
