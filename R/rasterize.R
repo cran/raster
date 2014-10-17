@@ -48,7 +48,7 @@ setMethod('rasterize', signature(x='SpatialLines', y='Raster'),
 
 
 setMethod('rasterize', signature(x='SpatialPolygons', y='Raster'), 
-	function(x, y, field, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue='all', filename="", getCover=FALSE, silent=FALSE, ...){ 
+	function(x, y, field, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue='all', filename="", getCover=FALSE, silent=TRUE, ...){ 
 	
 		.polygonsToRaster(x, y, field=field, fun=fun, background=background, mask=mask, update=update, updateValue=updateValue, filename=filename, getCover=getCover, silent=silent, ...)
 	

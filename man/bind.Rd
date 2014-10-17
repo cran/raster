@@ -6,6 +6,7 @@
 \alias{bind,SpatialPolygons,SpatialPolygons-method}
 \alias{bind,SpatialLines,SpatialLines-method}
 \alias{bind,SpatialPoints,SpatialPoints-method}
+\alias{bind,data.frame,data.frame-method}
 
 \title{ 
 Bind Spatial* objects
@@ -21,19 +22,26 @@ Bind (append) Spatial* objects into a single object. All objects must be of the 
 \S4method{bind}{SpatialLines,SpatialLines}(x, y, ..., keepnames=FALSE)
 
 \S4method{bind}{SpatialPoints,SpatialPoints}(x, y, ..., keepnames=FALSE)
+
+\S4method{bind}{data.frame,data.frame}(x, y, ..., variables=NULL)
 }
 
 
 \arguments{
- \item{x}{Spatial* object}
- \item{y}{Spatial* object}
+ \item{x}{Spatial* object or data.frame}
+ \item{y}{Spatial* object or data.frame}
  \item{...}{Additional Spatial* objects}
  \item{keepnames}{Logical. If \code{TRUE} the row.names are kept (if unique)} 
+ \item{variables}{character. Variable (column) names to keep, If \code{NULL}, all variables are kept} 
 }
 
 \value{
 Spatial* object
 }
+
+
+\seealso{ \code{\link[sp]{merge}} }
+
 
 \examples{
 if (require(rgdal) & require(rgeos)) {

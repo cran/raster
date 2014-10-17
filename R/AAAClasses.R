@@ -1,5 +1,5 @@
 # R classes for raster (grid) type spatial data
-# Robert J. Hijmans, r.hijmans@gmail.com
+# Robert J. Hijmans
 # November 2008
 # Version 1.0
 # Licence GPL v3

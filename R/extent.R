@@ -158,3 +158,40 @@ setMethod('extent', signature(x='GridTopology'),
 		return(e)
     }
 )
+
+
+setMethod("[", c("Extent", "numeric", "missing"),
+function(x, i, j, ... ,drop=TRUE) {
+	x <- as.vector(x)
+	i <- as.integer(i)
+	i <- i[i %in% 1:4]
+	x[i]
+})
+
+setMethod("[", c("Extent", "missing", "missing"),
+function(x, i, j, ... ,drop=TRUE) {
+	as.vector(x)
+})
+
+setReplaceMethod("[", c("Extent","numeric","missing"),
+	function(x, i, j, value) {
+		i <- as.integer(i)
+		i <- i[i %in% 1:4]
+		if (length(i) == 0) {
+			return(x)
+		}
+		y <- as.vector(x)
+		y[i] <- value
+		if (y[1] >= y[2]) {
+			stop('invalid extent. xmin should be greater than xmax')
+		}
+		if (y[3] >= y[4]) {
+			stop('invalid extent. ymin should be greater than ymax')
+		}
+		x@xmin <- y[1]
+		x@xmax <- y[2]
+		x@ymin <- y[3]
+		x@ymax <- y[4]
+		return(x)
+	}
+)

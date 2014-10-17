@@ -93,11 +93,13 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 		if (! is.null(ext)) {
 			xx <- crop(x, ext)
 			nc <- ncell(xx)
+			if (size > nc) {
+				size <- nc
+				warning('size set to the number of cells within "ext": ', size)
+			}
 		}
 			
 		if (size >= nc) {
-			
-			#warning('size > ncell(x)')
 			
 			if (is.null(ext)) {
 				x <- getValues(x)

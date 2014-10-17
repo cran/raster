@@ -1,6 +1,5 @@
 # R function for the raster package
 # Author: Robert J. Hijmans
-# contact: r.hijmans@gmail.com
 # Date : January 2009
 # Version 0.9
 # Licence GPL v3

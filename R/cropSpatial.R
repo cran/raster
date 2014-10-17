@@ -69,7 +69,7 @@ setMethod('crop', signature(x='Spatial', y='ANY'),
 			
 			return( SpatialPolygonsDataFrame(y, data) )
 		} else {
-			y <- rgeos::gIntersection(x, y, drop_not_poly=TRUE)
+			y <- rgeos::gIntersection(x, y, drop_lower_td=TRUE)
 			#if (inherits(y, "SpatialCollections")) {
 			#	y <- y@polyobj
 			#}

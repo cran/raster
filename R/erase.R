@@ -26,8 +26,15 @@ if (!isGeneric("erase")) {
 			x@polygons[i] <- z@polygons
 		}
 	}
-	if (length(rn) > 0) {
-		row.names(x) <- rn
+	if (length(x) > 0) {
+		j <- which(gIsValid(x, byid=TRUE, reason=FALSE))
+	#j <- which(gArea(x, byid=TRUE) > 0)			
+		x <- x[j,]
+		rn <- rn[j]			
+	
+		if (length(rn) > 0) {
+			row.names(x) <- rn
+		}
 	}
 	x
 }
@@ -75,7 +82,7 @@ setMethod(erase, signature(x='SpatialPolygons', y='SpatialPolygons'),
 		}
 			
 		if (length(part2@polygons) > 1) {	
-			part2 <- aggregate(part2, v=colnames(part2@data))
+			part2 <- aggregate(part2, colnames(part2@data))
 		}
 		if (dropframe) {
 			return( as(part2, 'SpatialPolygons') )

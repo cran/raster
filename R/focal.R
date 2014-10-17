@@ -94,9 +94,9 @@ function(x, w, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=FAL
 		pad <- TRUE
 	}
 
-	if (NAonly) {
-		na.rm <- TRUE
-	}
+#	if (NAonly) {
+#		na.rm <- TRUE
+#	}
 	
 	dofun <- TRUE
 	domean <- FALSE

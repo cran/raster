@@ -66,10 +66,9 @@ function(x, y, value=NA, filename='', ...) {
 	}
 	out@data@names <- names(x)
 	out <- setExtent(out, y, keepres=TRUE)
-	if (is.factor(x)) {
-#		if (is.na(value)) {
-			levels(out) <- levels(x)
-#		}	
+	if (any(is.factor(x))) {
+#		if (is.na(value)) { perhaps need to check if value is a level
+		levels(out) <- levels(x)
 	}
 
 	
@@ -109,32 +108,52 @@ function(x, y, value=NA, filename='', ...) {
 		
 	} else { 
 	
+		tr <- blockSize(out)
+		tr$old <- rep(TRUE, tr$n)
 		startrow <- rowFromY(out, yFromRow(x, 1))
 		endrow <- rowFromY(out, yFromRow(x, nrow(x)))
+		if (endrow < nrow(out) | startrow > 1) {
+			if (nrow(out) > endrow) {
+				continuerow <- endrow + 1
+			} else {
+				continuerow <- NULL
+			}
+			tr$row <- sort(unique(c(tr$row, startrow, continuerow)))
+			tr$nrows <- c(tr$row[-1], nrow(out)+1) - tr$row
+			tr$n <- length(tr$row)
+			tr$old <- (tr$row <= endrow) & ((tr$row+tr$nrows-1) >= startrow)
+		}
 		startcol <- colFromX(out, xFromCol(x, 1))
 		endcol <- colFromX(out, xFromCol(x, ncol(x)))
 		
-		tr <- blockSize(out)
-		tr$row <- sort(unique(c(tr$row, startrow, endrow+1)))
-		tr$nrows <- c(tr$row[-1], nrow(out)+1) - tr$row
-		tr$n <- length(tr$row)
-			
 		pb <- pbCreate(tr$n, label='extend', ...)
 		if (dtp) {
 			out <- writeStart(out, filename=filename, datatype=datatype, ... )
 		} else {
 			out <- writeStart(out, filename=filename, ... )		
 		}
-		for (i in 1:tr$n) {
-			d <- matrix(value, nrow=tr$nrows[i] * ncol(out), ncol=nlayers(out))
-			if (tr$row[i] <= endrow & (tr$row[i]+tr$nrows[i]-1) >= startrow) {
-				cells <- startcol:endcol + rep((0:(tr$nrows[i]-1)) * ncol(out), each=endcol-startcol+1)
-				d[cells, ] <- getValues(x, (tr$row[i]-startrow+1), tr$nrows[i])
-			}
-			out <- writeValues(out, d, tr$row[i])
-			pbStep(pb, i) 			
-		}
 		
+		if ((startcol == 1) & endcol == ncol(out)) { # to make it faster for this case
+			for (i in 1:tr$n) {
+				if (tr$old[i]) {
+					d <- getValues(x, (tr$row[i]-startrow+1), tr$nrows[i])
+				} else {
+					d <- matrix(value, nrow=tr$nrows[i] * ncol(out), ncol=nlayers(out))
+				}
+				out <- writeValues(out, d, tr$row[i])
+				pbStep(pb, i) 			
+			}		
+		} else {
+			for (i in 1:tr$n) {
+				d <- matrix(value, nrow=tr$nrows[i] * ncol(out), ncol=nlayers(out))
+				if (tr$old[i]) {
+					cells <- startcol:endcol + rep((0:(tr$nrows[i]-1)) * ncol(out), each=endcol-startcol+1)
+					d[cells, ] <- getValues(x, (tr$row[i]-startrow+1), tr$nrows[i])
+				}
+				out <- writeValues(out, d, tr$row[i])
+				pbStep(pb, i) 			
+			}
+		}
 		pbClose(pb)
 		out <- writeStop(out)
 		return(out)

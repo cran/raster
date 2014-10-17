@@ -32,7 +32,7 @@ If \code{x} represents points, each point is assigned to a grid cell. Points tha
 	
 \S4method{rasterize}{SpatialPolygons,Raster}(x, y, field, fun='last', background=NA, 
     mask=FALSE, update=FALSE, updateValue='all', filename="", 
-    getCover=FALSE, silent=FALSE, ...)
+    getCover=FALSE, silent=TRUE, ...)
 }
 
 \arguments{
@@ -42,7 +42,7 @@ If \code{x} represents points, each point is assigned to a grid cell. Points tha
 
 \item{field}{numeric or character. The value(s) to be transferred. This can be a single number, or a vector of numbers that has the same length as the number of spatial features (points, lines, polygons). If \code{x} is a Spatial*DataFrame, this can be the column name of the variable to be transferred. If missing, the attribute index is used (i.e. numbers from 1 to the number of features). You can also provide a vector with the same length as the number of spatial features, or a matrix where the number of rows matches the number of spatial features}
 
-\item{fun}{function or character. To determine what values to assign to cells that are covered by multiple spatial features. You can use functions such as \code{min, max}, or \code{mean}, or one of the following character values: \code{'first'}, \code{'last'}, \code{'count'}, \code{'sum'}, \code{'min'} or \code{'max'}. The default value is \code{'last'}. 
+\item{fun}{function or character. To determine what values to assign to cells that are covered by multiple spatial features. You can use functions such as \code{min, max}, or \code{mean}, or one of the following character values: \code{'first'}, \code{'last'}, \code{'count'}. The default value is \code{'last'}. 
 
 
 If \code{x} represents points, \code{fun} must accept a \code{na.rm} argument, either explicitly or through 'dots'. This means that \code{fun=length} fails, but \code{fun=function(x,...)length(x)} works, although it ignores the \code{na.rm} argument. To use the \code{na.rm} argument you can use a function like this: fun=function(x, na.rm){if (na.rm) length(na.omit(x)) else (length(x)}, or use a function that removes \code{NA} values in all cases, like this function to compute the number of unique values "richness": \code{fun=function(x, ...) {length(unique(na.omit(x)))} }. 
@@ -145,7 +145,7 @@ p3 <- Polygons(list(Polygon(rbind(c(-125,0), c(0,60), c(40,5), c(15,-45), c(-125
 pols <- SpatialPolygons( list( p1 , p2, p3) )
 
 r <- raster(ncol=90, nrow=45)
-r <- rasterize(pols, r, fun='sum')
+r <- rasterize(pols, r, fun=sum)
 
 
 \dontrun{

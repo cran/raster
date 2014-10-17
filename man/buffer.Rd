@@ -2,6 +2,8 @@
 
 \alias{buffer}
 \alias{buffer,RasterLayer-method}
+\alias{buffer,Spatial-method}
+
 
 \title{buffer}
 
@@ -13,20 +15,21 @@ Note that the distance unit of the buffer \code{width} parameter is meters if th
 
 \usage{
 \S4method{buffer}{RasterLayer}(x, width=0, filename='', doEdge=FALSE, ...)
+
+\S4method{buffer}{Spatial}(x, width=1, dissolve=TRUE, ...)
 }
 
 \arguments{
-\item{x}{RasterLayer object}
-\item{width}{Numeric. Number > 0. Unit is meter if \code{x} has a longitude/latitude CRS, or mapunits in other cases}
-\item{filename}{Character. Filename for the output RasterLayer (optional)}
-\item{doEdge}{Logical. If \code{TRUE}, the \code{\link{boundaries}} function is called first. This may be efficient in cases where you compute a buffer around very large areas because \code{boundaries} determines the edge cells that matter for distance computation}
+\item{x}{RasterLayer or Spatial* object}
+\item{width}{numeric > 0. Unit is meter if \code{x} has a longitude/latitude CRS, or mapunits in other cases}
+\item{filename}{character. Filename for the output RasterLayer (optional)}
+\item{doEdge}{logical. If \code{TRUE}, the \code{\link{boundaries}} function is called first. This may be efficient in cases where you compute a buffer around very large areas because \code{boundaries} determines the edge cells that matter for distance computation}
+\item{dissolve}{logical. If \code{TRUE}, buffer geometries of overlapping polygons are dissolved and all geometries are aggregated and attributes (the data.frame) are dropped}
 \item{...}{Additional arguments as for \code{\link{writeRaster}}}
 }
 
 
-
-
-\value{RasterLayer}
+\value{RasterLayer or SpatialPolygons* object}
 
 \seealso{
 \code{\link[raster]{distance}},  \code{\link[raster]{gridDistance}},  \code{\link[raster]{pointDistance}}  

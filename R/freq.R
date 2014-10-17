@@ -14,7 +14,7 @@ setMethod('freq', signature(x='RasterLayer'),
 	function(x, digits=0, value=NULL, useNA="ifany", progress='', ...) {
 		
 		if (!is.null(value)) {
-			return(.count(x, value, digits=digits, progress=progress, ...))
+			return( .count(x, value, digits=digits, progress=progress, ...) )
 		}
 	
 		if (canProcessInMemory(x, 3)) {
@@ -35,6 +35,12 @@ setMethod('freq', signature(x='RasterLayer'),
 				pbStep(pb, i)
 			}
 			res <- tapply(z[,2], z[,1], sum)	
+			z <- z[is.na(z[,1]), ]
+			if (nrow(z) > 0) {
+				z <- sum(z[,2])
+				names(z) <- "NA"
+				res <- c(res, z)
+			}
 			pbClose(pb)		
 		}
 	

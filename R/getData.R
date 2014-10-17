@@ -1,5 +1,5 @@
 # Download geographic data and return as R object
-# Author: Robert J. Hijmans, r.hijmans@gmail.com
+# Author: Robert J. Hijmans
 # License GPL3
 # Version 0.9
 # October 2008

@@ -10,6 +10,18 @@ add orientation fixes for AVISO currents and similar NetCDFs lacking metadata on
 add VRT output to saveStack
 Fix lines falling between the cracks in extract (calling rasterzeLines): https://stat.ethz.ch/pipermail/r-sig-geo/2014-May/020973.html
 
+--- 10-October-2014, version: 2.3-10
+new function: localFun
+bug fixes:
+- in 'freq', useNA='always' did not return counts for NA values for large raster files.
+- rasterize with polygons did not accept a non-character function anymore. Reported by Sarah Lehnen.
+- invalid polygons errors are now handled by union/erase/intersect.
+- fixed plotting bug due to a change in sampleRegular.
+- sampleRegular ignored xy=TRUE when size >= ncell(x). Reported by Oscar Perpiñan Lamigueiro.
+- in 'freq', useNA='always' did not return counts for NA values for large raster files.
+- extend failed in some cases (when only extending rows). Reported by Anja Klisch
+- plotRGB failed in some cases. Reported by Anja Klisch
+
 --- 5-September-2014, version: 2.3-0
 Improvement of ENVI hdr file (WKT projection) suggested by Loïc Dutrieux	
 expanded corLocal to RasterStackBrick	

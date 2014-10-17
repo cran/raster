@@ -12,7 +12,15 @@ if (!isGeneric("rotate")) {
 
 setMethod('rotate', signature(x='Raster'), 
 	function(x, filename='', ...) {
+		
 		e <- extent(x)
+		xrange <- e@xmax - e@xmin
+		if (xrange < 350 | xrange > 370 | e@xmin < -10 | e@xmax > 370) {
+			if (xrange < 350 | xrange > 370 | e@xmin < -190 | e@xmax > 190) {	 
+				warning('this does not look like an appropriate object for this function')
+			}
+		}
+		
 		ext1 <- extent(0, 180, -90, 90)
 		if (is.null(intersect(e, ext1 ))) {
 			r1 <- NULL

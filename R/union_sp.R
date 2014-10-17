@@ -44,53 +44,19 @@ function(x, y) {
 		x <- intersect(x, y)
 		x <- list(dif1, dif2, x)
 		x <- x[!sapply(x, is.null)]
-		i <- sapply(x, length) # 
-		x <- x[ i > 0]
+
+		i <- sapply(x, length) > 0 
+		x <- x[ i ]
 		if (length(x) > 1) {
 			x <- do.call(bind, x)
 		} else {
 			x <- x[[1]]
 		}
-		
-		# remove slivers
-		area <- sapply(x@polygons, function(i) slot(i, 'area'))
-		x <- x[area > 0, ]
 	}
 
 	x
 }
 )
-
-
-
-...simpleUnion <- function(x, y) {
-	subs <- rgeos::gIntersects(x, y)
-	if (!any(subs)) {
-		x@polygons <- c(x@polygons, y@polygons)
-		x <- spChFIDs(x, as.character(1:length(x)))
-	} else {
-		dif1 <- erase(x, y)
-		dif2 <- erase(y, x)
-		x <- intersect(x, y)
-		x <- list(dif1, dif2, x)
-		x <- x[!sapply(x, is.null)]
-		i <- sapply(x, length) # 
-		x <- x[ i > 0]
-		y <- x[[1]]
-		if (length(x) == 2) {
-			y@polygons <- c(y@polygons, x[[2]]@polygons)
-		} else if (length(x) == 3) {
-			y@polygons <- c(y@polygons, x[[2]]@polygons, x[[3]]@polygons)		
-		}
-		# remove slivers
-		y <- spChFIDs(y, as.character(1:length(y)))
-		area <- sapply(y@polygons, function(i) slot(i, 'area'))
-		x <- y[area > 0, ]
-	}
-	
-	x
-}
-
 
 
 

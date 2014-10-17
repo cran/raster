@@ -5,7 +5,7 @@
 
 
 # name overlap with igraph
-edge <- function(x, ...) {
+..edge <- function(x, ...) {
 	warning('"edge" is obsolete and will be removed from this package. Use the "boundaries" function instead')
 	boundaries(x, ...)
 	warning('"edge" is obsolete and will be removed from this package. Use the "boundaries" function instead')

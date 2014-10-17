@@ -16,7 +16,7 @@ pointDistance(p1, p2, lonlat, allpairs=FALSE, ...)
 \item{p1}{x and y coordinate of first (set of) point(s), either as c(x, y), matrix(ncol=2), or SpatialPoints*. }
 \item{p2}{x and y coordinate of second (set of) second point(s) (like for \code{p1}). If this argument is missing, a distance matrix is computed for \code{p1} }
 \item{lonlat}{logical. If \code{TRUE}, coordinates should be in degrees; else they should represent planar ('Euclidean') space (e.g. units of meters) }
-\item{allpairs}{logical. If \code{TRUE}}
+\item{allpairs}{logical. Only relevant if the number of points in \code{x} and \code{y} is the same. If \code{FALSE} the distance between each point in \code{x} with the corresponding point in \code{y} is returned. If \code{TRUE} a full distance matrix is returned }
 \item{...}{Additional arguments. Can be used to set the radius, \code{r}, of the world (modeled as a sphere), when \code{lonlat=TRUE} Default is \code{r=6378137} }
 }
 

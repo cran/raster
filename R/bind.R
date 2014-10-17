@@ -25,6 +25,37 @@ if (!isGeneric("bind")) {
 }	
 
 
+setMethod('bind', signature(x='data.frame', y='data.frame'), 
+function(x, y, ..., variables=NULL) {
+	x <- .frbind(x, y)
+	if (!is.null(variables)) {
+		variables <- as.character(na.omit(variables))
+		if (length(variables) > 1) {
+			x <- x[, which(colnames(x) %in% variables), drop=FALSE]
+		} else {
+			variables <- NULL
+		}
+	}
+	dots <- list(...)
+	if (length(dots) > 1) {
+		for (i in 1:length(dots)) {
+			d <- dots[[i]]
+			if (!inherits(d, 'data.frame')) {
+				next
+			}
+			if (!is.null(variables)) {
+				d <- d[, which(colnames(d) %in% variables), drop=FALSE]
+			}
+			if (nrow(d) > 0) {
+				x <- .frbind(x, d)
+			}
+		}
+	}
+	x
+}
+)
+
+
 setMethod('bind', signature(x='SpatialPolygons', y='SpatialPolygons'), 
 function(x, y, ..., keepnames=FALSE) {
 

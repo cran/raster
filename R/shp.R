@@ -43,17 +43,19 @@ setMethod('shapefile', signature(x='Spatial'),
 				} else {
 					x <- as(x, 'SpatialPoints')				
 				}
-			} else if (inherits(x, 'SpatialGrid')| inherits(x, 'SpatialPixels')) {
+				warning('Writing SpatialPixels to a shapefile. Writing to a raster file format might be more desireable')
+				
+			} else if ( inherits(x, 'SpatialGrid') ) {
 				stop('These data cannot be written to a shapefile')
 			}
 			
 			if (!.hasSlot(x, 'data')) {
 				if (inherits(x, 'SpatialPolygons')) {
-					x <- SpatialPolygonsDataFrame(x, data.frame(ID=1:length(row.names(x))))
+					x <- SpatialPolygonsDataFrame(x, data.frame(ID=1:length(x)), match.ID=FALSE)
 				} else if (inherits(x, 'SpatialLines')) {
-					x <- SpatialLinesDataFrame(x, data.frame(ID=1:length(row.names(x))))
+					x <- SpatialLinesDataFrame(x, data.frame(ID=1:length(x)), match.ID=FALSE)
 				} else if (inherits(x, 'SpatialPoints')) {
-					x <- SpatialPointsDataFrame(x, data.frame(ID=1:length(row.names(x))))
+					x <- SpatialPointsDataFrame(x, data.frame(ID=1:length(x)), match.ID=FALSE)
 				} else {
 					stop('These data cannot be written to a shapefile')
 				}
