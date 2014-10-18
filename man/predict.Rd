@@ -141,7 +141,7 @@ spplot(r4)
 
 # cforest example with factors argument
 v$red <- as.factor(round(v$red/100))
-logo[[1]] <- round(logo[[1]]/100)
+logo$red <- round(logo[[1]]/100)
 library(party)
 m <- cforest(pa~., control=cforest_unbiased(mtry=3), data=v)
 f <- list(levels(v$red))

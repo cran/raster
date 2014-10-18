@@ -20,7 +20,7 @@ bug fixes:
 - sampleRegular ignored xy=TRUE when size >= ncell(x). Reported by Oscar Perpiñan Lamigueiro.
 - in 'freq', useNA='always' did not return counts for NA values for large raster files.
 - extend failed in some cases (when only extending rows). Reported by Anja Klisch
-- plotRGB failed in some cases. Reported by Anja Klisch
+- plotRGB failed in some cases. Reported by Mike Sumner
 
 --- 5-September-2014, version: 2.3-0
 Improvement of ENVI hdr file (WKT projection) suggested by Loïc Dutrieux	
