@@ -6,7 +6,7 @@
 
 
 setMethod('extract', signature(x='Raster', y='SpatialPolygons'), 
-function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=TRUE, df=FALSE, layer, nl, factors=FALSE, sp=FALSE, ...){ 
+function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, normalizeWeights=TRUE, cellnumbers=FALSE, small=TRUE, df=FALSE, layer, nl, factors=FALSE, sp=FALSE, ...){ 
 
 	px <- projection(x, asText=FALSE)
 	comp <- compareCRS(px, projection(y), unknown=TRUE)
@@ -119,7 +119,11 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=TR
 					rc <- .polygonsToRaster(pp, rc, getCover=TRUE, silent=TRUE)
 					rc[rc==0] <- NA
 					xy <- rasterToPoints(rc)
-					weight <- xy[,3] / sum(xy[,3])
+					if (normalizeWeights) {
+						weight <- xy[,3] / sum(xy[,3])
+					} else {
+						weight <- xy[,3] / 100
+					}
 					xy <- xy[, -3, drop=FALSE]
 				} else {
 					rc <- .polygonsToRaster(pp, rc, silent=TRUE)
@@ -212,7 +216,11 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=TR
 					rc <- .polygonsToRaster(pp, rc, getCover=TRUE, silent=TRUE)
 					rc[rc==0] <- NA
 					xy <- rasterToPoints(rc)
-					weight <- xy[,3] / sum(xy[,3])
+					if (normalizeWeights) {
+						weight <- xy[,3] / sum(xy[,3])
+					} else {
+						weight <- xy[,3] / 100			
+					}
 					xy <- xy[,-3,drop=FALSE]
 				} else {
 					rc <- .polygonsToRaster(pp, rc, silent=TRUE)
@@ -244,7 +252,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE, small=TR
 						cell <- unique(unlist(lapply(xy, function(z) cellFromXY(x, z))))
 						value <- .cellValues(x, cell, layer=layer, nl=nl)
 						if (weights) {
-							weight=rep(1/NROW(value), NROW(value))
+							weight <- rep(1/NROW(value), NROW(value))
 							if (cellnumbers) {
 								res[[i]] <- cbind(cell, value, weight)
 							} else {

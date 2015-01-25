@@ -43,7 +43,7 @@ if (!isGeneric("erase")) {
 setMethod(erase, signature(x='SpatialPolygons', y='SpatialPolygons'),
     function(x, y, ...){ 
 	
-		require(rgeos)
+		requireNamespace("rgeos")
 
 		if (! identical(x@proj4string, y@proj4string) ) {
 			warning('non identical CRS')

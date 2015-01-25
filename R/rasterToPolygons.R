@@ -97,7 +97,7 @@ rasterToPolygons <- function(x, fun=NULL, n=4, na.rm=TRUE, digits=12, dissolve=F
 	sp <- SpatialPolygons(sp, proj4string=projection(x, FALSE))
 	sp <- SpatialPolygonsDataFrame(sp, data.frame(xyv[,3:ncol(xyv),drop=FALSE]), match.ID=FALSE)
 	if (dissolve) {
-		if(! require(rgeos) ) {
+		if(! requireNamespace("rgeos") ) {
 			warning('package rgeos is not available. Cannot dissolve')
 		} else {
 			sp <- aggregate(sp, names(sp))

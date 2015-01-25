@@ -101,11 +101,11 @@ setMethod('readStop', signature(x='RasterStack'),
 		try( close(x@file@con), silent = TRUE )
 	} else if (driver == 'netcdf') {
 		if (isTRUE(getOption('rasterNCDF4'))) {
-			ncdf4::nc_close(x@file@con)
+			try( ncdf4::nc_close(x@file@con), silent=TRUE)
 		} else {
-			ncdf::close.ncdf(x@file@con)
+			try( ncdf::close.ncdf(x@file@con), silent=TRUE)
 		}	
-	} else if (driver == 'ascii') {	}
+	} #else if (driver == 'ascii') {	}
 	
 	x@file@open <- FALSE
 	attr(x@file, 'con') <- NULL

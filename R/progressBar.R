@@ -21,7 +21,7 @@ pbCreate <- function(nsteps, progress, style=3, label='Progress', ...) {
 		#if (.Platform$OS.type == "windows" ) {
 		#	pb <- winProgressBar(title=tit, min=0 , max=nsteps, width = 300, label='starting')
 		#} else {
-		require(tcltk)
+		requireNamespace("tcltk")
 		pb <- tcltk::tkProgressBar(title=tit, min=0, max=nsteps, width = 300, label='starting')
 		#}
 	} else {

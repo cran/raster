@@ -59,7 +59,7 @@ setReplaceMethod("[", c("RasterLayer","missing","missing"),
 
 	nl <- nlayers(x)
   # recycling
-	if (nl > 1) {
+	if (nl > 1 & recycle > 0) {
 		rec2 <- ceiling(nl / recycle)
 		if (rec2 > 1) {
 			add <- ncell(x)*recycle * (0:(rec2-1))

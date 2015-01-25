@@ -11,10 +11,7 @@ if (!isGeneric("trim")) {
 
 setMethod('trim', signature(x='character'), 
 	function(x, ...) {
-		f <- function(s) {
-			return( gsub('^[[:space:]]+', '',  gsub('[[:space:]]+$', '', s) ) )
-		}
-		return(unlist(lapply(x, f)))
+		gsub("^\\s+|\\s+$", "", x)
 	}
 )
 
@@ -23,10 +20,9 @@ setMethod('trim', signature(x='data.frame'),
 		for (i in 1:ncol(x)) {
 			if (class(x[,i]) == 'character') {
 				x[,i] <- trim(x[,i])
-			}
-			if (class(x[,i]) == 'factor') {
+			} else if (class(x[,i]) == 'factor') {
 				x[,i] <- as.factor(trim(as.character(x[,i])))
-			}			
+			}	
 		}
 		return(x)
 	}

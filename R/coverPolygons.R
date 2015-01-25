@@ -13,7 +13,7 @@ if (!isGeneric("cover")) {
 setMethod('cover', signature(x='SpatialPolygons', y='SpatialPolygons'), 
 	function(x, y, ..., identity=FALSE){ 
 	
-	stopifnot(require(rgeos))
+	stopifnot(requireNamespace("rgeos"))
 	
 	yy <- list(y, ...)
 

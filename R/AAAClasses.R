@@ -302,6 +302,7 @@ setClass ('.RasterQuad',
 
 #setClassUnion("RasterStackBrickList", c("RasterStack", "RasterBrick", "RasterList"))
 
+setClassUnion("SpatialVector", c("SpatialPoints", "SpatialLines", "SpatialPolygons"))
 
 
 setClass ('.RasterList',

@@ -84,7 +84,7 @@
 .NCDFversion4 <- function() {
 
 	loadNCDF <- function() {
-		if (!require(ncdf)) {
+		if (!requireNamespace("ncdf")) {
 			stop('To open ncdf files, you need to first install package "ncdf" or "ncdf4"') 
 		}
 		options(rasterNCDF4 = FALSE)
@@ -95,7 +95,7 @@
 
 	if (is.null(ncdf4)) {
 		if (length(find.package("ncdf4", quiet=TRUE)) > 0) {
-			if (require(ncdf4, quietly=TRUE)) {
+			if (requireNamespace("ncdf4", quietly=TRUE)) {
 				options(rasterNCDF4 = TRUE)
 				ncdf4 <- TRUE
 				

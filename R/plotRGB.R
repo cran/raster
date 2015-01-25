@@ -87,7 +87,7 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, inte
 	
 	z <- matrix(z, nrow=nrow(r), ncol=ncol(r), byrow=T)
 
-	require(grDevices)
+	requireNamespace("grDevices")
 	bb <- as.vector(t(bbox(r)))
 
 	

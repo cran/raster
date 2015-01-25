@@ -25,16 +25,20 @@
 
 couldBeLonLat <- function(x, warnings=TRUE) {
 	crsLL <- isLonLat(x)
-	crsNA <- is.na(crsLL)
+	crsNA <- is.na(projection(x))
 	e <- extent(x)
 	extLL <- (e@xmin > -365 & e@xmax < 365 & e@ymin > -90.1 & e@ymax < 90.1) 
 	if (extLL & isTRUE(crsLL)) { 
 		return(TRUE)
 	} else if (extLL & crsNA) {
-		if (warnings) warning('CRS is NA. Assuming it is longitude/latitude')
+		if (warnings) {
+			warning('CRS is NA. Assuming it is longitude/latitude')
+		}
 		return(TRUE)
 	} else if (isTRUE(crsLL)) {
-		if (warnings) warning('raster has a longitude/latitude CRS, but coordinates do not match that')
+		if (warnings) {
+			warning('raster has a longitude/latitude CRS, but coordinates do not match that')
+		}
 		return(TRUE)
 	} else {
 		return(FALSE) 	

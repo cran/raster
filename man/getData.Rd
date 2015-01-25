@@ -38,11 +38,26 @@ If \code{name} is 'SRTM' you must provide 'lon' and 'lat' arguments (longitude a
 
 \code{getData('SRTM', lon=5, lat=45)}
 
-If \code{name='worldclim'} you must also provide a variable name 'var=', and a resolution 'res='. Valid variables names are 'tmin', 'tmax', 'prec' and 'bio'. Valid resolutions are 0.5, 2.5, 5, and 10 (minutes of a degree). In the case of res=0.5, you must also provide a lon and lat argument for a tile; for the lower resolutions global data will be downloaded. In all cases there are 12 (monthly) files for each variable except for 'bio' which contains 19 files.
+If \code{name='worldclim'} you must also provide arguments \code{var}, and a resolution \code{res}. Valid variables names are 'tmin', 'tmax', 'prec' and 'bio'. Valid resolutions are 0.5, 2.5, 5, and 10 (minutes of a degree). In the case of \code{res=0.5}, you must also provide a \code{lon} and \code{lat} argument for a tile; for the lower resolutions global data will be downloaded. In all cases there are 12 (monthly) files for each variable except for 'bio' which contains 19 files.
 
 \code{getData('worldclim', var='tmin', res=0.5, lon=5, lat=45)}
 
 \code{getData('worldclim', var='bio', res=10)}
+
+
+To get (projected) future climate data (CMIP5), you must provide arguments \code{var} and \code{res} as above. Only resolutions 2.5, 5, and 10 are currently available. In addition, you need to provide \code{model}, \code{rcp} and \code{year}. For example,
+
+\code{getData('CMIP5', var='tmin', res=10, rcp=85, model='AC', year=70)}
+
+function (var, model, rcp, year, res, lon, lat, path, download = TRUE) 
+
+'model' should be one of "AC", "BC", "CC", "CE", "CN", "GF", "GD", "GS", "HD", "HG", "HE", "IN", "IP", "MI", "MR", "MC", "MP", "MG", or  "NO".
+
+'rcp' should be one of 26, 45, 60, or 85.
+
+'year' should be 50 or 70
+
+Not all combinations are available. See www.worldclim.org for details.
 }
 
 \references{

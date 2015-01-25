@@ -9,8 +9,8 @@ canProcessInMemory <- function(x, n=4) {
 
 # for testing purposes	
 #	rasterOptions(format='GTiff') 
-#	require(ncdf)
-#	require(rgdal)
+#	requireNamespace("ncdf")
+#	requireNamespace("rgdal")
 #	rasterOptions(format='big.matrix')
 #	rasterOptions(format='CDF')
 #	rasterOptions(overwrite=TRUE)

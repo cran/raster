@@ -1,4 +1,4 @@
-# Oscar Perpiñan Lamigueiro
+# Oscar Perpinan Lamigueiro
 
 zApply <- function(x, by, fun=mean, name='', ...){
 	z <- getZ(x)

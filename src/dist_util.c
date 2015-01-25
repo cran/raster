@@ -121,7 +121,7 @@ double distVinEll(double lon1, double lat1, double lon2, double lat2, double a, 
 			lambda = L + (1.-C) * f * sinAlpha * (sigma + C*sinSigma*(cos2SigmaM+C*cosSigma*(-1.+2.*cos2SigmaM*cos2SigmaM)));
 			
 			iterLimit = iterLimit - 1;
-			cont = (abs(lambda-lambdaP) > 1e-12 && iterLimit > 0);
+			cont = (fabs(lambda-lambdaP) > 1e-12 && iterLimit > 0);
 		} 
 		
 		if (iterLimit==0) {

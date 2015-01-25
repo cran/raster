@@ -11,8 +11,10 @@
 		
 	ncdf4 <- .NCDFversion4()
 		
-	filename = trim(filename)
-	if (filename == '') { stop('provide a filename') }
+	filename <- trim(filename)
+	if (filename == '') { 
+		stop('provide a filename') 
+	}
 	extension(filename) <- .defaultExtension(format='CDF')
 	if (file.exists(filename) & !overwrite) {
 		stop('file exists, use overwrite=TRUE to overwrite it')
@@ -33,57 +35,80 @@
 		yunit = 'meter' # probably
 	}
 	
-	if (missing(zunit)) {
-		zunit <- 'unknown'
-	}
-	if (missing(zname)) {
-		zname <- 'value'
-	}
+
 	if (missing(varname))  {
 		if (nl == 1) {
 			varname <- names(x)
-		} else if (!is.null(names(x@z))) {
-			varname <- names(x@z)
 		} else {
-			varname <- 'variable'
+			#varname <- x@title
+			varname <- attr(x@data, 'zvar')
+			if (is.null(varname)) {
+				varname <- names(x@z)
+				if (is.null(varname)) {
+					varname <- 'variable'
+				}
+			}
 		}
 	}	
 	x@title <- varname
 	if (missing(varunit))  varunit <- ''
 	if (missing(longname))  longname <- varname
+
+	if (inherits(x, 'RasterBrick')) {
+		zv <- 1:nl
+		z <- getZ(x)
+		if (!is.null(z)) {
+			if (!any(is.na(z))) {
+				cls <- substr(class(z)[1], 1, 4)
+				z <- as.numeric(z)
+				if (!any(is.na(z))) {
+					zv[] <- z
+					if (cls[1] %in% c('Date', 'POSI')) {
+						if (missing(zatt)) {
+							if (missing(zname)) {
+								zname <- 'time'
+							}
+							if (cls == 'Date') {
+								zatt <- list('units=days since 1970-01-01 00:00:00')
+								zunit <- 'days'
+							} else {
+								zatt <- list('units=seconds since 1970-01-01 00:00:00')							
+								zunit <- 'seconds'
+							}
+						}
+					}
+				} else {
+					warning('z-values cannot be converted to numeric')
+				}
+			} else {
+				warning('z-values contain NA')
+			}
+		}
+	}
+	if (missing(zname)) {
+		zname <- 'z'
+	}
+	if (missing(zunit)) {
+		zunit <- 'unknown'
+	}
 	
 	if (ncdf4) {
 	
 		xdim <- ncdf4::ncdim_def( xname, xunit, xFromCol(x, 1:ncol(x)) )
 		ydim <- ncdf4::ncdim_def( yname, yunit, yFromRow(x, 1:nrow(x)) )
 		if (inherits(x, 'RasterBrick')) {
-			zv <- 1:nl
-			z <- getZ(x)
-			if (!is.null(z)) {
-				if (!any(is.na(z))) {
-					z <- as.numeric(z)
-					if (!any(is.na(z))) {
-						zv[] <- z
-					} else {
-						warning('z-values cannot be converted to numeric')
-					}
-				} else {
-					warning('z-values contain NA')
-				}
-			}
-
 			zdim <- ncdf4::ncdim_def( zname, zunit, zv, unlim=TRUE )
-			vardef <- ncdf4::ncvar_def( varname, varunit, list(xdim,ydim,zdim), NAvalue(x), prec = datatype )
+			vardef <- ncdf4::ncvar_def( varname, varunit, list(xdim, ydim, zdim), NAvalue(x), prec = datatype )
 			#vardef <- ncdf::var.def.ncdf( varname, varunit, list(xdim,ydim,zdim), -3.4e+38 )
 		} else {
 			#vardef <- ncdf::var.def.ncdf( varname, varunit, list(xdim,ydim), -3.4e+38 )
-			vardef <- ncdf4::ncvar_def( varname, varunit, list(xdim,ydim), NAvalue(x), prec = datatype )
+			vardef <- ncdf4::ncvar_def( varname, varunit, list(xdim, ydim), NAvalue(x), prec = datatype )
 		}
 		nc <- ncdf4::nc_create(filename, vardef)
 
 		if (! missing(zatt)){
 			for (i in 1:length(zatt)) {
-				a <- trim(unlist(strsplit(zatt[i], '=')))
+				a <- trim(unlist(strsplit(zatt[[i]], '=')))
 				ncdf4::ncatt_put(nc, zname, a[1], a[2])	
 			}
 		}
@@ -129,22 +154,6 @@
 		xdim <- ncdf::dim.def.ncdf( xname, xunit, xFromCol(x, 1:ncol(x)) )
 		ydim <- ncdf::dim.def.ncdf( yname, yunit, yFromRow(x, 1:nrow(x)) )
 		if (inherits(x, 'RasterBrick')) {
-
-			zv <- 1:nl
-			z <- getZ(x)
-			if (!is.null(z)) {
-				if (!any(is.na(z))) {
-					z <- as.numeric(z)
-					if (!any(is.na(z))) {
-						zv[] <- z
-					} else {
-						warning('z-values cannot be converted to numeric')
-					}
-				} else {
-					warning('z-values contain NA')
-				}
-			}
-
 			zdim <- ncdf::dim.def.ncdf( zname, zunit, zv, unlim=TRUE )
 			vardef <- ncdf::var.def.ncdf( varname, varunit, list(xdim,ydim,zdim), NAvalue(x), prec = datatype )
 			#vardef <- ncdf::var.def.ncdf( varname, varunit, list(xdim,ydim,zdim), -3.4e+38 )

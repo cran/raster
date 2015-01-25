@@ -1,8 +1,3 @@
-# minor changes from function by Sebastian Kranz <skr...@uni-bonn.de>
-#http://www.mail-archive.com/r-devel@r-project.org/msg20044.html
-
-
-## overflows in ASAN
 
 .rowMin <- function(x, na.rm=TRUE) {
   #.Call("minmax", as.double(t(x)), as.integer(c(NROW(x), NCOL(x), 0, isTRUE(na.rm))), PACKAGE='raster')

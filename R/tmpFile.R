@@ -5,7 +5,7 @@
 
 
 .fileSaveDialog <- function(filetypes="") {
-	if (! require(tcltk) ) {
+	if (! requireNamespace("tcltk") ) {
 		stop('you need to install the tcltk library')
 	}
 	if (filetypes == "") {
@@ -15,7 +15,7 @@
 }
 
 .fileOpenDialog <- function(filetypes="") {
-	if (! require(tcltk) ) {
+	if (! requireNamespace("tcltk") ) {
 		stop('you need to install the tcltk library')
 	}
 	if (filetypes == "") {

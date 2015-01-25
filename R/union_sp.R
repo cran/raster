@@ -12,7 +12,7 @@ if (!isGeneric("union")) {
 setMethod('union', signature(x='SpatialPolygons', y='SpatialPolygons'), 
 function(x, y) {
 
-	stopifnot(require(rgeos))
+	stopifnot(requireNamespace("rgeos"))
 
 	x <- spChFIDs(x, as.character(1:length(x)))
 	y <- spChFIDs(y, as.character(1:length(y)))
@@ -63,7 +63,7 @@ function(x, y) {
 
 setMethod('union', signature(x='SpatialPolygons', y='missing'), 
 function(x, y) {
-	stopifnot(require(rgeos))
+	stopifnot(requireNamespace("rgeos"))
 	n <- length(x)
 	if (n < 2) {
 		return(x)

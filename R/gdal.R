@@ -9,7 +9,7 @@
 
 	w <- getOption('warn')
 	options('warn'=-1) 
-	x <- isTRUE( try( require(rgdal, quietly=TRUE ) ) )
+	x <- isTRUE( try( requireNamespace("rgdal", quietly=TRUE ) ) )
 	options('warn'= w) 
 	
 	if (! isTRUE(y) ) {

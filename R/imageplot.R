@@ -37,11 +37,7 @@
         if (!add) {
             par(plt = bigplot)
         }
-		if (R.Version()$minor >= 13) {
-			image(x, y, z, add = add, col = col, useRaster=useRaster, ...)
-		} else {
-			image(x, y, z, add = add, col = col, ...)
-		}
+		image(x, y, z, add = add, col = col, useRaster=useRaster, ...)
         big.par <- par(no.readonly = TRUE)
     } else {
 		box <- FALSE
@@ -73,31 +69,15 @@
 		}
 		if (!horizontal) {
 			if (is.null(breaks)) {
-				if (R.Version()$minor >= 13) {
-					image(ix, iy, iz, xaxt="n", yaxt="n", xlab="", ylab="", col=col, useRaster=useRaster)
-				} else {
-					image(ix, iy, iz, xaxt="n", yaxt="n", xlab="", ylab="", col=col)				
-				}
+				image(ix, iy, iz, xaxt="n", yaxt="n", xlab="", ylab="", col=col, useRaster=useRaster)
 			} else {
-				if (R.Version()$minor >= 13) {
-					image(ix, iy, iz, xaxt="n", yaxt="n", xlab = "", ylab = "", col=col, breaks=breaks, useRaster=useRaster)
-				} else {
-					image(ix, iy, iz, xaxt="n", yaxt="n", xlab = "", ylab = "", col=col, breaks=breaks)				
-				}
+				image(ix, iy, iz, xaxt="n", yaxt="n", xlab = "", ylab = "", col=col, breaks=breaks, useRaster=useRaster)
 			}
 		} else {
 			if (is.null(breaks)) {
-				if (R.Version()$minor >= 13) {
-					image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col, useRaster=useRaster)
-				} else {
-					image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col)				
-				}
+				image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col, useRaster=useRaster)
 			} else {
-				if (R.Version()$minor >= 13) {
-					image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col, breaks = breaks, useRaster=useRaster)
-				} else {
-					image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col, breaks = breaks)
-				}
+				image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col, breaks = breaks, useRaster=useRaster)
 			}
 		}
 		do.call("axis", axis.args)

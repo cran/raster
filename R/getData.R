@@ -261,7 +261,9 @@ ccodes <- function() {
 	}
 	files <- c(paste(path, bilfiles, sep=''), paste(path, hdrfiles, sep=''))
 	fc <- sum(file.exists(files))
-	if (fc < 24) {
+	
+	
+	if ( fc < length(files) ) {
 		if (!file.exists(zipfile)) {
 			if (download) {
 				.download(theurl, zipfile)

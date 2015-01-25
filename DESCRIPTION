@@ -1,8 +1,8 @@
 Package: raster
 Type: Package
-Title: raster: Geographic data analysis and modeling
-Version: 2.3-12
-Date: 2014-10-17
+Title: Geographic data analysis and modeling
+Version: 2.3-24
+Date: 2015-1-25
 Depends: methods, sp (>= 1.0-13), R (>= 2.15.0)
 Suggests: rgdal (>= 0.8-12), rgeos (>= 0.3-8), ncdf, ncdf4, igraph,
         snow, tcltk, rasterVis
@@ -32,8 +32,8 @@ Author: Robert J. Hijmans [cre, aut],
 Maintainer: Robert J. Hijmans <r.hijmans@gmail.com>
 Repository: CRAN
 Repository/R-Forge/Project: raster
-Repository/R-Forge/Revision: 3058
-Repository/R-Forge/DateTimeStamp: 2014-10-17 15:53:41
-Date/Publication: 2014-10-18 07:24:38
-Packaged: 2014-10-17 16:36:37 UTC; rforge
+Repository/R-Forge/Revision: 3087
+Repository/R-Forge/DateTimeStamp: 2015-01-27 04:59:05
+Date/Publication: 2015-01-27 09:16:59
+Packaged: 2015-01-27 05:06:07 UTC; rforge
 NeedsCompilation: yes

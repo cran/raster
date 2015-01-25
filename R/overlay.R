@@ -45,7 +45,7 @@ function(x, y, ..., fun, filename="", unstack=TRUE){
 	if (ln < 1) { 
 		stop('no Rasters') 
 	}
-	if (ln > 2) { 
+	if (ln > 1) { 
 		compareRaster(x) 
 	}
 	

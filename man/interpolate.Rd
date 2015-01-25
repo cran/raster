@@ -47,12 +47,15 @@ r <- raster(system.file("external/test.grd", package="raster"))
 ra <- aggregate(r, 10)
 xy <- data.frame(xyFromCell(ra, 1:ncell(ra)))
 v <- getValues(ra)
+# fit a model
 tps <- Tps(xy, v)
 p <- raster(r)
+# use model to predict values for all locations
 p <- interpolate(p, tps)
 p <- mask(p, r)
 plot(p)
-se <- interpolate(p, tps, fun=predict.se)
+# change the fun from predict to fields::predictSE to get the TPS standard error
+se <- interpolate(p, tps, fun=predictSE)
 se <- mask(se, r)
 plot(se)
 

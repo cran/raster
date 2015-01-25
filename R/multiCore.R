@@ -5,7 +5,7 @@
 
 
 beginCluster <- function(n, type='SOCK', nice, exclude=NULL) {
-	if (! require(snow) ) {
+	if (! requireNamespace("snow") ) {
 		stop('you need to install the "snow" package')
 	}
 

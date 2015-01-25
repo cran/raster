@@ -9,13 +9,6 @@ setMethod("mean", signature(x='Raster'),
 	function(x, ..., trim=NA, na.rm=FALSE){
 		
 		if (!is.na(trim)) {	warning("argument 'trim' is ignored") }
-		
-		if (as.integer(R.Version()$minor) < 15) {
-			old <- TRUE
-		} else {
-			old <- FALSE
-		}
-
 
 		dots <- list(...)
 		if (length(dots) > 0) {
@@ -30,11 +23,7 @@ setMethod("mean", signature(x='Raster'),
 		if (is.null(add)) {
 			if (canProcessInMemory(x)) {
 				x <- getValues(x)
-				if (old) {
-					x <- setValues(out, rowMeans(x, na.rm=na.rm))
-				} else {
-					x <- setValues(out, .rowMeans(x, nc, d[3], na.rm=na.rm))
-				}
+				x <- setValues(out, .rowMeans(x, nc, d[3], na.rm=na.rm))
 				return(x)
 			}
 
@@ -42,20 +31,11 @@ setMethod("mean", signature(x='Raster'),
 			pb <- pbCreate(tr$n, label='mean')
 			out <- writeStart(out, filename="")
 			x <- readStart(x, ...)
-			if (old) {
-				for (i in 1:tr$n) {
-					v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
-					v <- rowMeans(v, na.rm=na.rm)
-					out <- writeValues(out, v, tr$row[i])
-					pbStep(pb, i)
-				}
-			} else {
-				for (i in 1:tr$n) {
-					v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
-					v <- .rowMeans(v, tr$nrows[i]*d[2], d[3], na.rm=na.rm)
-					out <- writeValues(out, v, tr$row[i])
-					pbStep(pb, i)
-				}
+			for (i in 1:tr$n) {
+				v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
+				v <- .rowMeans(v, tr$nrows[i]*d[2], d[3], na.rm=na.rm)
+				out <- writeValues(out, v, tr$row[i])
+				pbStep(pb, i)
 			}
 			pbClose(pb)
 			x <- readStop(x)
@@ -69,11 +49,7 @@ setMethod("mean", signature(x='Raster'),
 					x <- getValues(x)
 					x <- t(apply(x, 1, function(i) c(i, add)))
 				}
-				if (old) {
-					x <- setValues(out, rowMeans(x, na.rm=na.rm))				
-				} else {
-					x <- setValues(out, .rowMeans(x, nc, d3, na.rm=na.rm))
-				}
+				x <- setValues(out, .rowMeans(x, nc, d3, na.rm=na.rm))
 				return(x)
 			}
 
@@ -81,22 +57,12 @@ setMethod("mean", signature(x='Raster'),
 			pb <- pbCreate(tr$n, label='mean')
 			out <- writeStart(out, filename="")
 			x <- readStart(x, ...)
-			if (old) {
-				for (i in 1:tr$n) {
-					v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
-					v <- t(apply(v, 1, function(i) c(i, add)))
-					v <- rowMeans(v, na.rm=na.rm)
-					out <- writeValues(out, v, tr$row[i])
-					pbStep(pb, i)
-				}			
-			} else {
-				for (i in 1:tr$n) {
-					v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
-					v <- t(apply(v, 1, function(i) c(i, add)))
-					v <- .rowMeans(v, tr$nrows[i]*d[2], d3, na.rm=na.rm)
-					out <- writeValues(out, v, tr$row[i])
-					pbStep(pb, i)
-				}
+			for (i in 1:tr$n) {
+				v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
+				v <- t(apply(v, 1, function(i) c(i, add)))
+				v <- .rowMeans(v, tr$nrows[i]*d[2], d3, na.rm=na.rm)
+				out <- writeValues(out, v, tr$row[i])
+				pbStep(pb, i)
 			}
 			pbClose(pb)
 			x <- readStop(x)
@@ -111,44 +77,24 @@ setMethod("mean", signature(x='Raster'),
 
 .sum <- function(x, add=NULL, na.rm=FALSE){
 
-	if (as.integer(R.Version()$minor) < 15) {
-		old <- TRUE
-	} else {
-		old <- FALSE
-	}
-
-
 	out <- raster(x)
 	d <- dim(x)
 	nc <- ncell(out)
 
 	if (is.null(add)) {	
 		if (canProcessInMemory(x)) {
-			if (old) {
-				return(  setValues(out, rowSums(getValues(x), na.rm=na.rm)) )
-			} else {
-				return(  setValues(out, .rowSums(getValues(x), nc, d[3], na.rm=na.rm)) )
-			}
+			return(  setValues(out, .rowSums(getValues(x), nc, d[3], na.rm=na.rm)) )
 		}
 		tr <- blockSize(x)
 		pb <- pbCreate(tr$n, label='sum')
 		out <- writeStart(out, filename="")
 		x <- readStart(x)		
 		
-		if (old) {
-			for (i in 1:tr$n) {
-				v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
-				v <- rowSums(v, na.rm=na.rm)
-				out <- writeValues(out, v, tr$row[i])
-				pbStep(pb, i)
-			}		
-		} else {
-			for (i in 1:tr$n) {
+		for (i in 1:tr$n) {
 				v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
 				v <- .rowSums(v, tr$nrows[i]*d[2], d[3], na.rm=na.rm)
 				out <- writeValues(out, v, tr$row[i])
 				pbStep(pb, i)
-			}
 		}
 		pbClose(pb)
 		x <- readStop(x)		
@@ -161,31 +107,18 @@ setMethod("mean", signature(x='Raster'),
 		d3 <- d[3] + 1
 		
 		if (canProcessInMemory(x)) {
-			if (old) {
-				return( setValues(out, rowSums(cbind(getValues(x), add), na.rm=na.rm)) )
-			} else {
-				return( setValues(out, .rowSums(cbind(getValues(x), add), nc, d3, na.rm=na.rm)) )
-			}
+			return( setValues(out, .rowSums(cbind(getValues(x), add), nc, d3, na.rm=na.rm)) )
 		}
 
 		tr <- blockSize(x)
 		pb <- pbCreate(tr$n, label='sum')
 		out <- writeStart(out, filename="")
 		x <- readStart(x)		
-		if (old) {
-			for (i in 1:tr$n) {
-				v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
-				v <- rowSums(cbind(v, add), na.rm=na.rm)
-				out <- writeValues(out, v, tr$row[i])
-				pbStep(pb, i)
-			}
-		} else {
-			for (i in 1:tr$n) {
+		for (i in 1:tr$n) {
 				v <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
 				v <- .rowSums(cbind(v, add), tr$nrows[i]*d[2], d3, na.rm=na.rm)
 				out <- writeValues(out, v, tr$row[i])
 				pbStep(pb, i)
-			}
 		}
 		pbClose(pb)
 		x <- readStop(x)
