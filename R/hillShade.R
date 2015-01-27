@@ -1,4 +1,4 @@
-# Author: Andrew Bevan, Oscar Perpiñán Lamigueiro, and Robert J. Hijmans
+# Author: Andrew Bevan, Oscar Perpinan Lamigueiro, and Robert J. Hijmans
 # Date : March 2010
 # Version 1.0
 # Licence GPL v3

@@ -63,7 +63,7 @@
 		z <- as.raster(z, max=max(z)) #, na.rm=TRUE))
 	}
 
-	require(grDevices)
+	requireNamespace("grDevices")
 	bb <- as.vector(t(bbox(x)))
 
 	if (! add) {

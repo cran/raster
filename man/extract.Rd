@@ -9,27 +9,32 @@
 \alias{extract,Raster,SpatialPoints-method}
 \alias{extract,Raster,SpatialLines-method}
 \alias{extract,Raster,SpatialPolygons-method}
-\alias{extract,SpatialPolygons,SpatialPoints-method}
 \alias{extract,Raster,Extent-method}
+\alias{extract,SpatialPolygons,SpatialPoints-method}
+\alias{extract,SpatialPolygons,data.frame-method}
+\alias{extract,SpatialPolygons,matrix-method}
 
 \title{Extract values from Raster objects}
 
 \description{
-Extract values from a Raster* object at the locations of other spatial data (that is, perform a spatial query). You can use coordinates (points), lines, polygons or an Extent (rectangle) object. You can also use cell numbers to extract values. 
+Extract values from a Raster* object at the locations of other spatial data. You can use coordinates (points), lines, polygons or an Extent (rectangle) object. You can also use cell numbers to extract values. 
 
 If \code{y} represents points, \code{extract} returns the values of a Raster* object for the cells in which a set of points fall.
 If \code{y} represents lines, the \code{extract} method returns the values of the cells of a Raster* object that are touched by a line. If \code{y} represents polygons, the \code{extract} method returns the values of the cells of a Raster* object that are covered by a polygon. A cell is covered if its center is inside the polygon (but see the \code{weights} option for considering partly covered cells; and argument \code{small} for getting values for small polygons anyway).
+
+It is also possible to extract values for point locations from SpatialPolygons.
 }
 
 \usage{
 \S4method{extract}{Raster,matrix}(x, y, method='simple', buffer=NULL, small=FALSE, cellnumbers=FALSE, 
-     fun=NULL, na.rm=TRUE, layer, nl, df=FALSE, factors=FALSE, ...)
+   fun=NULL, na.rm=TRUE, layer, nl, df=FALSE, factors=FALSE, ...)
 
 \S4method{extract}{Raster,SpatialLines}(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer,
-     nl, factors=FALSE, along=FALSE, sp=FALSE, ...)
+   nl, factors=FALSE, along=FALSE, sp=FALSE, ...)
 
-\S4method{extract}{Raster,SpatialPolygons}(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, cellnumbers=FALSE,
-     small=TRUE, df=FALSE, layer, nl, factors=FALSE, sp=FALSE, ...)
+\S4method{extract}{Raster,SpatialPolygons}(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, 
+   normalizeWeights=TRUE, cellnumbers=FALSE, small=TRUE, df=FALSE, layer, nl, 
+   factors=FALSE, sp=FALSE, ...)
 
 
 \S4method{extract}{SpatialPolygons,SpatialPoints}(x, y, ...)
@@ -52,9 +57,11 @@ If \code{y} represents lines, the \code{extract} method returns the values of th
 
 \item{cellnumbers}{logical. If \code{cellnumbers=TRUE}, cell-numbers will also be returned (if no \code{fun} argument is  supplied, and when extracting values with points, if \code{buffer} is \code{NULL})}
 
-\item{df}{logical. If \code{df=TRUE}, results will be returned as a data.frame. The first column is a sequential ID, the other column(s) are the extracted values.}
+\item{df}{logical. If \code{df=TRUE}, results will be returned as a data.frame. The first column is a sequential ID, the other column(s) are the extracted values}
 
-\item{weights}{logical. If \code{TRUE}, the function returns, for each polygon, a matrix with the cell values and the approximate fraction of each cell that is covered by the polygon(rounded to 1/100). The weights can be used for averaging; see examples. This option can be useful (but slow) if the polygons are small relative to the cells size of the Raster* object.}
+\item{weights}{logical. If \code{TRUE}, the function returns, for each polygon, a matrix with the cell values and the approximate fraction of each cell that is covered by the polygon(rounded to 1/100); unless \code{normalizeWeights=TRUE}, in which case they add up to one. The weights can be used for averaging; see examples. This option can be useful (but slow) if the polygons are small relative to the cells size of the Raster* object}
+
+\item{normalizeWeights}{logical. If \code{TRUE}, weights are normalized such that they add up to one for each polygon}
 
 \item{factors}{logical. If \code{TRUE}, factor values are returned, else their integer representation is returned}
 
@@ -146,7 +153,7 @@ unlist(lapply(v, function(x) if (!is.null(x)) mean(x, na.rm=TRUE) else NA ))
 # v <- extract(r, polys, weights=TRUE, fun=mean)
 # equivalent to:
 # v <- extract(r, polys, weights=TRUE)
-# sapply(v, function(x) if (!is.null(x)) {sum(apply(x, 1, prod)) / sum(x[,2])} else NA  )
+# sapply(v, function(x) if (!is.null(x)) {sum(apply(x, 1, prod)) / sum(x[,2])} else NA)
 
 
 ###############################

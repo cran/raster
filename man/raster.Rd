@@ -145,12 +145,20 @@ r5 <- raster(s, 3)
 # from NSIDC sea ice concentration file
 baseurl <- "ftp://sidads.colorado.edu/pub/DATASETS/"
 # southern hemisphere
-f <- paste(baseurl, "nsidc0081_nrt_nasateam_seaice/south/nt_20130114_f17_nrt_s.bin", sep='')
+f1 <- paste(baseurl, 
+ "nsidc0051_gsfc_nasateam_seaice/final-gsfc/south/daily/2013/nt_20130114_f17_v01_s.bin",
+ sep='')
 # or northern hemisphere
-# f <- paste(baseurl, "nsidc0081_nrt_nasateam_seaice/north/nt_20130105_f17_nrt_n.bin", sep='')
+f2 <- paste(baseurl, 
+ "nsidc0051_gsfc_nasateam_seaice/final-gsfc/north/daily/2013/nt_20130105_f17_v01_n.bin",
+ sep='')
+     
+if (!file.exists(basename(f1))) download.file(f1, basename(f1), mode = "wb")
+ice1 <- raster(basename(f1))
 
-if (!file.exists(basename(f))) download.file(f, basename(f), mode = "wb")
-ice <- raster(basename(f))
+if (!file.exists(basename(f2))) download.file(f2, basename(f2), mode = "wb")
+ice2 <- raster(basename(f2))
+     
 }
 }
 

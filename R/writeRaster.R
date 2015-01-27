@@ -51,7 +51,7 @@ function(x, filename, format, ...) {
 		if (isTRUE(any(is.factor(x)))) {
 			levels(r) <- levels(x)
 		}
-		r <- setZ(r, getZ(x))
+		#r <- setZ(r, getZ(x))
 		r <- writeStop(r)
 		pbClose(pb)
 		return(r)

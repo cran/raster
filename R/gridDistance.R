@@ -18,7 +18,7 @@ setMethod("gridDistance", signature("RasterLayer"),
 
 function(x, origin, omit=NULL, filename="", ...) {
 
-	if( !require(igraph)) {
+	if( !requireNamespace("igraph")) {
 		stop('you need to install the igraph0 package to be able to use this function')
 	}
 	if (missing(origin)) {

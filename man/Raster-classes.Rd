@@ -10,6 +10,7 @@
 \alias{RasterBrick-class}
 \alias{RasterStackBrick-class}
 \alias{VectorLayer-class}
+\alias{SpatialVector-class}
 
 
 \alias{print,Raster-method}

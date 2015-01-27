@@ -8,7 +8,7 @@ setMethod('aggregate', signature(x='SpatialPolygons'),
 function(x, vars=NULL, sums=NULL, dissolve=TRUE, ...) {
 
 	if (dissolve) {
-		stopifnot(require(rgeos))
+		stopifnot(requireNamespace("rgeos"))
 	}
 	
 	if (! .hasSlot(x, 'data') ) {

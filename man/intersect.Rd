@@ -6,9 +6,9 @@
 \alias{intersect,Extent,ANY-method}
 \alias{intersect,Raster,ANY-method}
 \alias{intersect,SpatialPolygons,SpatialPolygons-method}
-\alias{intersect,SpatialPoints,Raster-method}
+\alias{intersect,SpatialLines,SpatialPolygons-method}
 \alias{intersect,SpatialPoints,SpatialPolygons-method}
-\alias{intersect,SpatialPoints,ANY-method}
+\alias{intersect,SpatialVector,ANY-method}
 
 \title{ 
 Intersect
@@ -31,11 +31,11 @@ SpatialPoints* objects: Only the points that overlap with the extent of object \
 
 \S4method{intersect}{SpatialPolygons,SpatialPolygons}(x, y)
 
-\S4method{intersect}{SpatialPoints,ANY}(x, y)
-
-\S4method{intersect}{SpatialPoints,Raster}(x, y)
+\S4method{intersect}{SpatialLines,SpatialPolygons}(x, y)
 
 \S4method{intersect}{SpatialPoints,SpatialPolygons}(x, y)
+
+\S4method{intersect}{SpatialVector,ANY}(x, y)
 }
 
 \arguments{

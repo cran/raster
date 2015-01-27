@@ -259,7 +259,7 @@
 #	if( dataSize(x) * (ncell(x) * nbands(x) + x@file@offset) !=  file.info(valuesfile)$size ) {
 	
 #	if (driver == 'big.matrix') {
-#		require(bigmemory)
+#		requireNamespace("bigmemory")
 #		x@file@name <- valuesfile
 #		dscfile <- extension(valuesfile, 'big.dsc')
 #		attr(x@file, 'big.matrix') <- attach.big.matrix(dscfile)

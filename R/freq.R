@@ -21,6 +21,7 @@ setMethod('freq', signature(x='RasterLayer'),
 	
 			d <- round(getValues(x), digits=digits)
 			res <- table( d, useNA=useNA )
+			res <- cbind(as.numeric(names(res)), as.vector(res))
 		
 		} else {
 		
@@ -34,17 +35,16 @@ setMethod('freq', signature(x='RasterLayer'),
 				z <- rbind(z, res)
 				pbStep(pb, i)
 			}
-			res <- tapply(z[,2], z[,1], sum)	
-			z <- z[is.na(z[,1]), ]
-			if (nrow(z) > 0) {
+			res <- tapply(z[,2], as.character(z[,1]), sum)	
+			res <- cbind(as.numeric(names(res)), as.vector(res))
+			z <- z[is.na(z[,1]), ,drop=FALSE]
+			if (isTRUE(nrow(z) > 0)) {
 				z <- sum(z[,2])
-				names(z) <- "NA"
-				res <- c(res, z)
+				res <- rbind(res, c(NA, z))
 			}
 			pbClose(pb)		
 		}
 	
-		res <- cbind(as.numeric(unlist(as.vector(dimnames(res)))), as.vector(res))
 		colnames(res) <- c('value', 'count')
 		return(res)
 	}

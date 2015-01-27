@@ -106,11 +106,7 @@ function (x, filename, time=NULL, col=rev(terrain.colors(255)), colNA=NA, maxpix
 			par(mar=c(0,0,0,0))	
 		}
 		
-		if (R.Version()$minor >= 13) {
-			image(x[[i]], col=col, axes=FALSE, useRaster=TRUE, maxpixels=maxpixels, ...)
-		} else {
-			image(x[[i]], col=col, axes=FALSE, maxpixels=maxpixels, ...)
-		}
+		image(x[[i]], col=col, axes=FALSE, useRaster=TRUE, maxpixels=maxpixels, ...)
 		dev.off()
 		a <- c("<GroundOverlay>", paste("\t<name>", name[i], "</name>", sep=''))
 		if (dotime) {

@@ -26,10 +26,10 @@ setMethod('crop', signature(x='Spatial', y='ANY'),
 		y@proj4string <- x@proj4string
 		
 		if (inherits(x, 'SpatialPolygons')) {
-			stopifnot(require(rgeos))
+			stopifnot(requireNamespace("rgeos"))
 			.cropSpatialPolygons(x, y, ...)
 		} else if (inherits(x, 'SpatialLines')) {
-			stopifnot(require(rgeos))
+			stopifnot(requireNamespace("rgeos"))
 			.cropSpatialLines(x, y, ...)
 		} else if (inherits(x, 'SpatialPoints')) {
 			.cropSpatialPoints(x, y, ...)

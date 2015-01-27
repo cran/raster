@@ -32,7 +32,7 @@ if (!isGeneric("clump")) {
 setMethod('clump', signature(x='RasterLayer'), 
 function(x, filename='', directions=8, gaps=TRUE, ...) {
 
-	if( !require(igraph)) {
+	if( !requireNamespace("igraph")) {
 		stop('you need to install the igraph package to be able to use this function')
 	}
 

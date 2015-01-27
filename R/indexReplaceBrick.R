@@ -146,10 +146,6 @@ setReplaceMethod("[[", c("RasterBrick", "numeric", "missing"),
 )
 
 
-
-
-
-
 setReplaceMethod("[", c("RasterStackBrick", "Raster", "missing"),
 	function(x, i, j, value) {
 	
@@ -166,7 +162,7 @@ setReplaceMethod("[", c("RasterStackBrick", "Raster", "missing"),
 		if (nl < nlayers(x)) {
 			.replace(x, i, value=value, recycle=nl)
 		} else {
-			.replace(x, i, value=value, recycle=1) 
+			.replace(x, i, value=value, recycle=0) 
 		}
 	}
 )

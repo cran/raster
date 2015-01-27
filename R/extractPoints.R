@@ -20,31 +20,6 @@ function(x, y, ...){
 
 
 
-setMethod('extract', signature(x='SpatialPolygons', y='SpatialPoints'), 
-function(x, y, ...){ 
-	
-	stopifnot(require(rgeos))
-	
-	if (! identical(proj4string(x), proj4string(y)) ) {
-		warning('non identical CRS')
-		y@proj4string <- x@proj4string
-	}
-    i <- rgeos::gIntersects(y, x, byid=TRUE)
-	
-	j <- cbind(1:length(y), rep(1:length(x), each=length(y)), as.vector(t(i)))
-	j <- j[j[,3] == 1, -3]
-	colnames(j) <- c('point.ID', 'poly.ID')
-	if (.hasSlot(x, 'data')) {
-		r <- data.frame(j, x@data[j[,2], ,drop=FALSE], row.names=NULL)
-	} else {
-		r <- data.frame(j, row.names=NULL)
-	}
-	q <- data.frame(point.ID = 1:length(y))
-	merge(q, r, by='point.ID', all=TRUE)
-})
-
-
-
 setMethod('extract', signature(x='Raster', y='SpatialPoints'), 
 function(x, y, ..., df=FALSE, sp=FALSE){ 
 	px <- projection(x, asText=FALSE)

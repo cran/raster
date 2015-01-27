@@ -59,7 +59,7 @@ SEXP edge(SEXP d, SEXP dim, SEXP classes, SEXP type, SEXP directions) {
 				for (j = 1; j < (ncol-1); j++) {
 					cell = i*ncol+j;
 					xval[cell] = falseval;
-					if ( (xd[cell] == R_NaInt) ) {
+					if ( xd[cell] == R_NaInt ) {
 						xval[cell] = R_NaInt;
 						for (k=0; k < dirs; k++) {			
 							if ( xd[cell+ r[k] * ncol + c[k] ] != R_NaInt ) {

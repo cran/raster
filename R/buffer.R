@@ -11,7 +11,7 @@ if (!isGeneric('buffer')) {
 
 setMethod('buffer', signature(x='Spatial'), 
 function(x, width=1, dissolve=TRUE, ...) {
-	stopifnot(require(rgeos))
+	stopifnot(requireNamespace("rgeos"))
 	rgeos::gBuffer(x, byid=!dissolve, width=width, ...)
 }
 )
