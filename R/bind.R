@@ -25,6 +25,18 @@ if (!isGeneric("bind")) {
 }	
 
 
+setMethod('bind', signature(x='data.frame', y='missing'), 
+	function(x, y, ..., variables=NULL) {
+		if (!is.null(variables)) {
+			variables <- as.character(na.omit(variables))
+			if (length(variables) > 1) {
+				x <- x[, which(colnames(x) %in% variables), drop=FALSE]
+			} 
+		}
+		return(x)
+	}
+)
+
 setMethod('bind', signature(x='data.frame', y='data.frame'), 
 function(x, y, ..., variables=NULL) {
 	x <- .frbind(x, y)

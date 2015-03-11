@@ -64,9 +64,9 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, normalizeWeights=TRUE, cell
 			sp <- FALSE
 			df <- FALSE
 			warning('argument sp=TRUE is ignored if fun=NULL')
-		} else if (df) {
-			df <- FALSE
-			warning('argument df=TRUE is ignored if fun=NULL')
+		#} else if (df) {
+		#	df <- FALSE
+		#	warning('argument df=TRUE is ignored if fun=NULL')
 		}
 		
 		doFun <- FALSE
@@ -107,7 +107,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, normalizeWeights=TRUE, cell
 		flush.console()
 
 		
-		snow::clusterExport(cl, c('rsbb', 'rr', 'weights', 'addres', 'cellnumbers', 'small'), envir=environment())
+		parallel::clusterExport(cl, c('rsbb', 'rr', 'weights', 'addres', 'cellnumbers', 'small'), envir=environment())
 		clFun <- function(i, pp) {
 			spbb <- bbox(pp)
 		
@@ -176,11 +176,11 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, normalizeWeights=TRUE, cell
 		}
 		
         for (ni in 1:nodes) {
-			snow::sendCall(cl[[ni]], clFun, list(ni, y[ni,]), tag=ni)
+			.sendCall(cl[[ni]], clFun, list(ni, y[ni,]), tag=ni)
 		}
 		
 		for (i in 1:npol) {
-			d <- snow::recvOneData(cl)
+			d <- .recvOneData(cl)
 			if (! d$value$success) {
 				stop('cluster error at polygon: ', i)
 			}
@@ -198,7 +198,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, normalizeWeights=TRUE, cell
 			}
 			ni <- ni + 1
 			if (ni <= npol) {
-				snow::sendCall(cl[[d$node]], clFun, list(ni, y[ni,]), tag=ni)
+				.sendCall(cl[[d$node]], clFun, list(ni, y[ni,]), tag=ni)
 			}
 			pbStep(pb, i)
 		}
@@ -270,7 +270,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, normalizeWeights=TRUE, cell
 						if (nl > 1 & !weights) {
 							res[[i]] <- apply(res[[i]], 2, fun, na.rm=na.rm)							
 						} else {
-							res[[i]] <- fun(res[[i]])
+							res[[i]] <- fun(res[[i]], na.rm=na.rm)
 						}
 					}
 				}	
@@ -299,9 +299,9 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, normalizeWeights=TRUE, cell
 				warning('cannot return a sp object because the data length varies between polygons')
 				sp <- FALSE
 				df <- FALSE
-			} else if (df) {
-				warning('cannot return a data.frame because the data length varies between polygons')
-				df <- FALSE
+			#} else if (df) {
+				#warning('cannot return a data.frame because the data length varies between polygons')
+				#df <- FALSE
 			}
 		}
 	}

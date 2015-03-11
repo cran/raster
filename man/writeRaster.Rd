@@ -44,6 +44,9 @@ This can be useful when writing files to be read by applications intolerant of u
 (see \url{http://www.gdal.org/frmt_gtiff.html})
 
 NetCDF files have the following additional, optional, arguments: \code{varname}, \code{varunit}, \code{longname}, \code{xname}, \code{yname}, \code{zname}, \code{zunit}
+
+\code{prj}: Logical. If \code{TRUE}, the crs is written to a .prj file. This can be useful 
+when writing to an ascii file or another file type that does not store the crs
 }
 
 \item{bylayer}{if \code{TRUE}, write a seperate file for each layer}

@@ -10,7 +10,7 @@ setAs('data.frame', 'SpatialPolygons',
 			pp <- list()
 			for (j in 1:length(p)) {
 				ss <- s[s$part==p[j], ]
-				pol <- Polygon(as.matrix(ss)[,5:6])
+				pol <- Polygon( as.matrix(ss[,c('x', 'y')] ))
 				if (ss$hole[1]) {
 					pol@hole <- TRUE
 				}
@@ -51,7 +51,7 @@ setAs('data.frame', 'SpatialLines',
 			pp <- list()
 			for (j in 1:length(p)) {
 				ss <- s[s$part==p[j], ]
-				ln <- Line(as.matrix(ss)[,c('x', 'y')])
+				ln <- Line(as.matrix(ss[,c('x', 'y')]))
 				pp[[j]] <- ln
 			}
 			sp[[i]] <- Lines(pp, as.character(i))

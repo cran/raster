@@ -93,7 +93,7 @@ setMethod('as.data.frame', signature(x='Raster'),
 				if (ncol(v) > nl) {
 					rnge1 <- 1:(ncol(v)-nl)
 					rnge2 <- (ncol(v)-nl+1):ncol(v)
-					v <- cbind(v[, rnge1], .insertFacts(x, v[, rnge2], 1:nl))
+					v <- cbind(v[, rnge1], .insertFacts(x, v[, rnge2, drop=FALSE], 1:nl))
 				} else {
 					v <- .insertFacts(x, v, 1:nl)
 				}

@@ -7,6 +7,7 @@
 \alias{bind,SpatialLines,SpatialLines-method}
 \alias{bind,SpatialPoints,SpatialPoints-method}
 \alias{bind,data.frame,data.frame-method}
+\alias{bind,data.frame,missing-method}
 
 \title{ 
 Bind Spatial* objects

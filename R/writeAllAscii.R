@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-.writeAscii <- function(x, filename, datatype='FLT4S', ...) {
+.writeAscii <- function(x, filename, datatype='FLT4S', prj=FALSE, ...) {
 
 	v <- getValues(x)
 
@@ -33,8 +33,17 @@
 
 	write.table(v, x@file@name, append = TRUE, quote = FALSE, sep = " ", eol = "\n", dec = ".", row.names = FALSE, col.names = FALSE)
 
+	if (prj) {
+		crs <- crs(x, asText=T)
+		if (!is.na(crs)) {
+			if (.requireRgdal(FALSE)) { 
+				writeLines(rgdal::showWKT(crs), extension(filename, 'prj') )
+			}
+		}
+	}	
+	
 	return( .stopAsciiWriting(x) )
-		
+	
 }
  
  

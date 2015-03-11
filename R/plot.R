@@ -11,13 +11,28 @@ if (!isGeneric("plot")) {
 
 
 setMethod("plot", signature(x='Raster', y='ANY'), 
-	function(x, y, maxpixels=500000, col, alpha=1, colNA=NA, add=FALSE, ext=NULL, useRaster=TRUE, interpolate=FALSE, addfun=NULL, nc, nr, maxnl=16, main, ...)  {
-	
-		if (alpha < 1) {
-			alpha <- max(alpha, 0) * 255 + 1
-			a <- c(0:9, LETTERS[1:6])
-			alpha <- paste(rep(a, each=16), rep(a, times=16), sep='')[alpha]
-			col <- paste(substr(col, 1, 7), alpha, sep="")
+	function(x, y, maxpixels=500000, col, alpha=NULL, colNA=NA, add=FALSE, ext=NULL, useRaster=TRUE, interpolate=FALSE, addfun=NULL, nc, nr, maxnl=16, main, ...)  {
+
+		hasNoCol <- missing(col)
+		if (hasNoCol) {
+			col <- rev(terrain.colors(255))
+		}
+			
+		if (!is.null(alpha)) {	
+			if (inherits(alpha, 'RasterLayer')) {
+				if (!compareRaster(x, alpha)) {
+					alpha <- NULL
+				}
+			} else {
+				alpha <- pmax(pmin(alpha, 1), 0)
+				if (length(alpha) == 1) {
+					alpha <- alpha * 255 + 1
+					a <- c(0:9, LETTERS[1:6])
+					alpha <- paste(rep(a, each=16), rep(a, times=16), sep='')[alpha]
+					col <- paste(substr(col, 1, 7), alpha, sep="")
+					alpha <- NULL
+				}
+			}
 		}
 		
 		nl <- nlayers(x)
@@ -25,11 +40,6 @@ setMethod("plot", signature(x='Raster', y='ANY'),
 			stop('Raster object has no cell values')
 		}
 
-		hasNoCol <- missing(col)
-		if (hasNoCol) {
-			col <- rev(terrain.colors(255))
-		}
-		
 		if (nl == 1) {
 			if (inherits(x, 'RasterStackBrick')) {
 				x <- raster(x, 1)
@@ -47,7 +57,7 @@ setMethod("plot", signature(x='Raster', y='ANY'),
 			} else if (! useRaster) {
 				.plotraster(x, col=col, maxpixels=maxpixels, add=add, ext=ext, main=main, addfun=addfun, ...) 
 			} else {
-				.plotraster2(x, col=col, maxpixels=maxpixels, add=add, ext=ext, interpolate=interpolate, colNA=colNA, main=main, addfun=addfun, facvar=facvar, ...) 
+				.plotraster2(x, col=col, maxpixels=maxpixels, add=add, ext=ext, interpolate=interpolate, colNA=colNA, main=main, addfun=addfun, facvar=facvar, alpha=alpha, ...) 
 				#.plot2(x, col=col, maxpixels=maxpixels, ...)
 			}
 			return(invisible(NULL))
@@ -75,7 +85,7 @@ setMethod("plot", signature(x='Raster', y='ANY'),
 			if ( (length(x@legend@colortable) > 0) & hasNoCol) {
 				.plotCT(x, maxpixels=maxpixels, ext=ext, interpolate=interpolate, main=main[y], addfun=addfun, ...)
 			} else if (useRaster) {
-				.plotraster2(x, col=col, colNA=colNA, maxpixels=maxpixels, main=main[y], ext=ext, interpolate=interpolate, addfun=addfun, ...) 
+				.plotraster2(x, col=col, colNA=colNA, maxpixels=maxpixels, main=main[y], ext=ext, interpolate=interpolate, addfun=addfun, , alpha=alpha, ...) 
 			} else {
 				.plotraster(x, col=col, maxpixels=maxpixels, main=main[y], ext=ext, addfun=addfun, ...) 
 			}
@@ -121,7 +131,7 @@ setMethod("plot", signature(x='Raster', y='ANY'),
 					.plotCT(obj, maxpixels=maxpixels, ext=ext, interpolate=interpolate, main=main, addfun=addfun, ...)
 				} else if (useRaster) {
 					.plotraster2(obj, col=col, maxpixels=maxpixels, xaxt=xa, yaxt=ya, main=main[y[i]], 
-						ext=ext, interpolate=interpolate, colNA=colNA, addfun=addfun, ...) 
+						ext=ext, interpolate=interpolate, colNA=colNA, addfun=addfun, alpha=alpha, ...) 
 				} else {
 					.plotraster(obj, col=col, maxpixels=maxpixels, xaxt=xa, yaxt=ya, main=main[y[i]], 
 						ext=ext, interpolate=interpolate, addfun=addfun, ...) 

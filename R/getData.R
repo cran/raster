@@ -160,7 +160,7 @@ ccodes <- function() {
 	if (!res %in% c(2.5, 5, 10)) {
 		stop('resolution should be one of: 2.5, 5, 10')
 	}
-	if (res==2.5) { res <- '2-5' }
+	if (res==2.5) { res <- '2_5' }
 	var <- tolower(var[1])
 	vars <- c('tmin', 'tmax', 'prec', 'bio')
 	stopifnot(var %in% vars)

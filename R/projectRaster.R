@@ -254,7 +254,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 		tr <- blockSize(to, minblocks=nodes)
 		pb <- pbCreate(tr$n, label='projectRaster', ...)
 
-		snow::clusterExport(cl, c('tr', 'to', 'from', 'e', 'nl', 'projto_int', 'projfrom', 'method'), envir=environment())
+		parallel::clusterExport(cl, c('tr', 'to', 'from', 'e', 'nl', 'projto_int', 'projfrom', 'method'), envir=environment())
 		
 		clFun <- function(i) {
 			start <- cellFromRowCol(to, tr$row[i], 1)
@@ -274,9 +274,9 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 	
 	
 		# for debugging
-		# snow::clusterExport(cl,c("tr", "projto", "projfrom", "method", "from", "to"))
+		# parallel::clusterExport(cl,c("tr", "projto", "projfrom", "method", "from", "to"))
         for (i in 1:nodes) {
-			snow::sendCall(cl[[i]], clFun, list(i), tag=i)
+			.sendCall(cl[[i]], clFun, list(i), tag=i)
 		}
 		        
 		if (inMemory) {
@@ -284,7 +284,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 
 			for (i in 1:tr$n) {
 				pbStep(pb, i)
-				d <- snow::recvOneData(cl)
+				d <- .recvOneData(cl)
 				if (! d$value$success) {
 					print(d)
 					stop('cluster error')
@@ -294,7 +294,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 				v[start:end, ] <- d$value$value
 				ni <- nodes+i
 				if (ni <= tr$n) {
-					snow::sendCall(cl[[d$node]], clFun, list(ni), tag=ni)
+					.sendCall(cl[[d$node]], clFun, list(ni), tag=ni)
 				}
 			}
 			
@@ -310,7 +310,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 
 			for (i in 1:tr$n) {
 				pbStep(pb, i)
-				d <- snow::recvOneData(cl)
+				d <- .recvOneData(cl)
 				if (! d$value$success ) { 
 					print(d)
 					stop('cluster error') 
@@ -318,7 +318,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 				to <- writeValues(to, d$value$value, tr$row[d$value$tag])
 				ni <- nodes+i
 				if (ni <= tr$n) {
-					snow::sendCall(cl[[d$node]], clFun, list(ni), tag=ni)
+					.sendCall(cl[[d$node]], clFun, list(ni), tag=ni)
 				}
 			}
 			pbClose(pb)

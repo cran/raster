@@ -8,7 +8,7 @@
 
 
 
-.asRaster <- function(x, col, breaks=NULL, r=NULL, colNA=NA) {
+.asRaster <- function(x, col, breaks=NULL, r=NULL, colNA=NA, alpha=NULL) {
 	if (!is.null(breaks)) {
 		if (is.logical(x)) {
 			x <- x * 1
@@ -33,6 +33,9 @@
 	if (!is.na(colNA)) {
 		x[is.na(x)] <- rgb(t(col2rgb(colNA)), maxColorValue=255)
 	}
+	if (!is.null(alpha)) {
+		x[] <- paste(substr(as.vector(x), 1, 7), t(alpha), sep='')
+	}
 	as.raster(x)
 }
 	
@@ -41,8 +44,25 @@
     legend.shrink=0.5, legend.width=0.6, legend.mar = ifelse(horizontal, 3.1, 5.1),
 	legend.lab=NULL, graphics.reset=FALSE, bigplot = NULL, smallplot = NULL, legend.only = FALSE, 
     lab.breaks=NULL, axis.args=NULL, legend.args = NULL, interpolate=FALSE, box=TRUE, breaks=NULL, 
-	zlim=NULL, zlimcol=NULL, fun=NULL, asp, colNA = NA, ...) {
+	zlim=NULL, zlimcol=NULL, fun=NULL, asp, colNA = NA, alpha=NULL, ...) {
 
+	
+	if (!is.null(alpha)) {
+			if (is.vector(alpha)) {
+				alpha <- matrix(alpha, nrow=nrow(x), ncol=ncol(x), byrow=TRUE)
+			}
+			alpha <- as.matrix(alpha)
+			alpha[alpha < 0] <- 0
+			alpha[alpha > 1] <- 1
+			alpha[is.na(alpha)] <- 1
+			alpha <- alpha * 255 + 1
+			a <- c(0:9, LETTERS[1:6])
+			a <- paste(rep(a, each=16), rep(a, times=16), sep='')
+			a <- a[alpha]
+			alpha <- matrix(a, nrow(alpha), ncol(alpha), byrow=TRUE) 
+	}
+		
+	
 	ffun <- NULL
 	if (is.character(fun)) {
 		if (fun %in% c('sqrt', 'log')) {
@@ -70,8 +90,6 @@
 		}		
 	}
 	
-
-
 	e <- as.vector(t(bbox(extent(x))))
 	x <- as.matrix(x)
 	if (!is.null(fun)) {
@@ -98,7 +116,7 @@
 	if (! is.finite(zrange[1])) {
 		legend <- FALSE 
 	} else {
-		x <- .asRaster(x, col, breaks, zrange, colNA)
+		x <- .asRaster(x, col, breaks, zrange, colNA, alpha=alpha)		
 	}
 	
     old.par <- par(no.readonly = TRUE)

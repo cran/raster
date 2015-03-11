@@ -67,7 +67,7 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, fa
 		cat('Using cluster with', nodes, 'nodes\n')
 		flush.console()
 
-		snow::clusterExport(cl, c('rsbb', 'rr', 'addres', 'cellnumbers'), envir=environment())
+		parallel::clusterExport(cl, c('rsbb', 'rr', 'addres', 'cellnumbers'), envir=environment())
 		clFun <- function(i, pp) {
 			spbb <- bbox(pp)
 			if (! (spbb[1,1] > rsbb[1,2] | spbb[1,2] < rsbb[1,1] | spbb[2,1] > rsbb[2,2] | spbb[2,2] < rsbb[2,1]) ) {
@@ -88,18 +88,18 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, fa
 		}
 		
         for (ni in 1:nodes) {
-			snow::sendCall(cl[[ni]], clFun, list(ni, y[ni,]), tag=ni)
+			.sendCall(cl[[ni]], clFun, list(ni, y[ni,]), tag=ni)
 		}
 		
 		for (i in 1:nlns) {
-			d <- snow::recvOneData(cl)
+			d <- .recvOneData(cl)
 			if (! d$value$success) {
 				stop('cluster error at polygon: ', i)
 			}
 			res[[d$value$tag]] <- d$value$value
 			ni <- ni + 1
 			if (ni <= nlns) {
-				snow::sendCall(cl[[d$node]], clFun, list(ni, y[ni,]), tag=ni)
+				.sendCall(cl[[d$node]], clFun, list(ni, y[ni,]), tag=ni)
 			}
 			pbStep(pb)
 		}	

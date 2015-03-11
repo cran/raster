@@ -123,14 +123,9 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 				}
 				zx = xd[i-1] * xw[0] + xd[i+1] * xw[1];
 				zy = xd[i-ncol] * yw[0] + xd[i+ncol] * yw[1];
-				xval[i+addn] = atan( sqrt( pow(zy, 2) + pow(zx, 2) ) );
+				xval[i+addn] = sqrt( pow(zy, 2) + pow(zx, 2) ) ;
 			}
-			if (unit == 0) {
-				double adj = 180 / M_PI;
-				for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
-					xval[i+addn] = xval[i+addn] * adj;
-				}
-			}
+			
 	
 		} else {
 		
@@ -143,15 +138,22 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 			for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 				zx = xd[i-1] * xw[0] + xd[i+1] * xw[1];
 				zy = xd[i-ncol] * yw[0] + xd[i+ncol] * yw[1];
-				xval[i+addn] = atan( sqrt( pow(zy, 2) + pow(zx, 2) ) );
-			}
-			if (unit == 0) {
-				double adj = 180 / M_PI;
-				for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
-					xval[i+addn] = xval[i+addn] * adj;
-				}
+				xval[i+addn] = sqrt( pow(zy, 2) + pow(zx, 2)  );
 			}
 		}
+
+		if (unit == 0) {
+			double adj = 180 / M_PI;
+			for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
+				xval[i+addn] = atan(xval[i+addn]) * adj;
+			}
+		} else if (unit == 1) {
+			for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
+				xval[i+addn] = atan(xval[i+addn]);
+			}
+		} 
+		
+		
 		add++;		
 	} 
 
@@ -241,14 +243,8 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 						+ xd[i+1-ncol] * xw[3] + xd[i+1] * xw[4] + xd[i+1+ncol] * xw[5];
 				zy = xd[i-1-ncol] * yw[0] + xd[i-1+ncol] * yw[1] + xd[i-ncol] * yw[2] 
 						+ xd[i+ncol] * yw[3] + xd[i+1-ncol] * yw[4] + xd[i+1+ncol] * yw[5];
-				xval[i+addn] = atan( sqrt( pow(zy, 2) + pow(zx, 2) ) );
+				xval[i+addn] = sqrt( pow(zy, 2) + pow(zx, 2)  );
 								
-			}
-			if (unit == 0) {
-				double adj = 180 / M_PI;
-				for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
-					xval[i+addn] = xval[i+addn] * adj;
-				}
 			}
 			
 		} else {
@@ -264,16 +260,21 @@ SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP ge
 						+ xd[i+1-ncol] * xw[3] + xd[i+1] * xw[4] + xd[i+1+ncol] * xw[5];
 				zy = xd[i-1-ncol] * yw[0] + xd[i-1+ncol] * yw[1] + xd[i-ncol] * yw[2] 
 						+ xd[i+ncol] * yw[3] + xd[i+1-ncol] * yw[4] + xd[i+1+ncol] * yw[5];
-				xval[i+addn] = atan( sqrt( pow(zy, 2) + pow(zx, 2) ) );
+				xval[i+addn] = sqrt( pow(zy, 2) + pow(zx, 2) );
 
 			}
-			if (unit == 0) {
-				double adj = 180 / M_PI;
-				for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
-					xval[i+addn] = xval[i+addn] * adj;
-				}
-			}
 		}
+
+		if (unit == 0) {
+			double adj = 180 / M_PI;
+			for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
+				xval[i+addn] = atan(xval[i+addn]) * adj;
+			}
+		} else if (unit == 1) {
+			for (i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
+				xval[i+addn] = atan(xval[i+addn]);
+			}
+		} 
 		
 		add++;
 		

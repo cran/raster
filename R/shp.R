@@ -17,7 +17,7 @@ setMethod('shapefile', signature(x='character'),
 		stopifnot(file.exists(extension(x, '.shx')))
 		stopifnot(file.exists(extension(x, '.dbf')))
 		fn <- extension(basename(x), '')
-		readOGR(dirname(x), fn, stringsAsFactors=stringsAsFactors, verbose=verbose, ...) 		
+		rgdal::readOGR(dirname(x), fn, stringsAsFactors=stringsAsFactors, verbose=verbose, ...) 		
 	}
 )
 
