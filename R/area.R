@@ -173,14 +173,14 @@ setMethod('area', signature(x='RasterStackBrick'),
 				return(vv)
 			}
 
-			snow::clusterExport(cl, c('tr', 'dx', 'dy', 'out', 'nl'), envir=environment())
+			parallel::clusterExport(cl, c('tr', 'dx', 'dy', 'out', 'nl'), envir=environment())
 			
 		    for (i in 1:nodes) {
-				snow::sendCall(cl[[i]], clFun, list(i), tag=i)
+				.sendCall(cl[[i]], clFun, list(i), tag=i)
 			}
 
 			for (i in 1:tr$n) {
-				d <- snow::recvOneData(cl)
+				d <- .recvOneData(cl)
 				if (! d$value$success ) { 
 					print(d)
 					stop('cluster error') 
@@ -196,8 +196,8 @@ setMethod('area', signature(x='RasterStackBrick'),
 				}
 
 				if ((nodes + i) <= tr$n) {
-#					snow::sendCall(cl[[d$node]], clFun, list(nodes+i, tr, dx, dy, out, nl), tag=nodes+i)
-					snow::sendCall(cl[[d$node]], clFun, list(nodes+i), tag=nodes+i)
+#					.sendCall(cl[[d$node]], clFun, list(nodes+i, tr, dx, dy, out, nl), tag=nodes+i)
+					.sendCall(cl[[d$node]], clFun, list(nodes+i), tag=nodes+i)
 				}
 				pbStep(pb, i) 	
 			}		

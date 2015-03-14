@@ -21,7 +21,7 @@
 		
 		if (canProcessInMemory(x)) {
 			v <- getValuesFocal(x, 1, nrow(x), ngb=ngb, array=TRUE)
-			v <- snow::parApply(cl, v, 1, fun)
+			v <- parallel::parApply(cl, v, 1, fun)
 			out <- setValues(out, v)
 			if (filename != '') {
 				out <- writeRaster(out, filename, ...)
@@ -34,7 +34,7 @@
 			out <- writeStart(out, filename=filename, ...)
 			for (i in 1:tr$n) {
 				v <- getValuesFocal(x, tr$row[i], tr$nrows[i], ngb=ngb, array=TRUE)
-				v <- snow::parApply(cl, v, 1, fun)
+				v <- parallel::parApply(cl, v, 1, fun)
 				out <- writeValues(out, v, tr$row[i])
 			}
 		}

@@ -285,7 +285,7 @@ setMethod('cellStats', signature(x='RasterLayer'),
 				if (stat == "mean" ) {
 					return( mean(x, na.rm=na.rm) )
 				} else if (stat == "sum" ) {
-					return( sum(x, na.rm=na.rm) )
+					return( sum(as.double(x), na.rm=na.rm ) )
 				} else if (stat == 'countNA') { 
 					return( sum(is.na(x)) )
 				} else if (stat == "range" ) {
@@ -397,7 +397,7 @@ setMethod('cellStats', signature(x='RasterLayer'),
 				cnt <- cnt + cells
 			
 			} else if (stat=='sum') {
-				st <- sum(d, na.rm=na.rm) + st
+				st <- sum(as.double(d), na.rm=na.rm) + st
 
 			} else if (stat == 'sd') {
 				st <- sum(d, na.rm=na.rm) + st

@@ -11,7 +11,7 @@ clusterR <- function(x, fun, args=NULL, export=NULL, filename='', cl=NULL, m=2, 
 		on.exit( returnCluster() )
 	}
 	if (!is.null(export)) {
-		snow::clusterExport(cl, export)	
+		parallel::clusterExport(cl, export)	
 	}
 	
 	nodes <- length(cl)
@@ -47,14 +47,14 @@ clusterR <- function(x, fun, args=NULL, export=NULL, filename='', cl=NULL, m=2, 
 	}
 	
 	for (i in 1:nodes) {
-		snow::sendCall(cl[[i]], clusfun, list(fun, i), tag=i)
+		.sendCall(cl[[i]], clusfun, list(fun, i), tag=i)
 	}
  	
 	if (canProcessInMemory(x)) {
 
 		for (i in 1:tr$n) {
 			pbStep(pb, i)
-			d <- snow::recvOneData(cl)
+			d <- .recvOneData(cl)
 			if (! d$value$success ) { 
 				print(d$value$value)
 				stop('cluster error') 
@@ -72,7 +72,7 @@ clusterR <- function(x, fun, args=NULL, export=NULL, filename='', cl=NULL, m=2, 
 			res[cellFromRowCol(out, tr$row[j], 1):cellFromRowCol(out, tr$row2[j], ncol(out)), ] <- d$value$value
 			ni <- nodes + i
 			if (ni <= tr$n) {
-				snow::sendCall(cl[[d$node]], clusfun, list(fun, ni), tag=ni)
+				.sendCall(cl[[d$node]], clusfun, list(fun, ni), tag=ni)
 			}
 		}
 		out <- setValues(out, res)
@@ -87,7 +87,7 @@ clusterR <- function(x, fun, args=NULL, export=NULL, filename='', cl=NULL, m=2, 
 		for (i in 1:tr$n) {
 			pbStep(pb, i)
 			
-			d <- snow::recvOneData(cl)
+			d <- .recvOneData(cl)
 			if (! d$value$success ) { stop('cluster error') }
 
 			if (i ==1) {
@@ -101,7 +101,7 @@ clusterR <- function(x, fun, args=NULL, export=NULL, filename='', cl=NULL, m=2, 
 			out <- writeValues(out, d$value$value, tr$row[d$value$tag])
 			ni <- nodes + i
 			if (ni <= tr$n) {
-				snow::sendCall(cl[[d$node]], clusfun, list(fun, ni), tag=ni)
+				.sendCall(cl[[d$node]], clusfun, list(fun, ni), tag=ni)
 			}
 		}
 		out <- writeStop(out)
@@ -173,12 +173,12 @@ clusterR <- function(x, fun, args=NULL, export=NULL, filename='', cl=NULL, m=2, 
 	if (canPiM) {
 
 		for (i in 1:nodes) {
-			snow::sendCall(cl[[i]], clusfun, list(fun, i), tag=i)
+			.sendCall(cl[[i]], clusfun, list(fun, i), tag=i)
 		}
 		
 		for (i in 1:tr$n) {
 			pbStep(pb, i)
-			d <- snow::recvOneData(cl)
+			d <- .recvOneData(cl)
 			if (! d$value$success ) { stop('cluster error') }
 
 			if (i ==1) {
@@ -193,7 +193,7 @@ clusterR <- function(x, fun, args=NULL, export=NULL, filename='', cl=NULL, m=2, 
 			res[cellFromRowCol(out, tr$row[j], 1):cellFromRowCol(out, tr$row2[j], ncol(out)), ] <- d$value$value
 			ni <- nodes + i
 			if (ni <= tr$n) {
-				snow::sendCall(cl[[d$node]], clusfun, list(fun, ni), tag=ni)
+				.sendCall(cl[[d$node]], clusfun, list(fun, ni), tag=ni)
 			}
 		}
 		out <- setValues(out, res)
@@ -215,17 +215,17 @@ clusterR <- function(x, fun, args=NULL, export=NULL, filename='', cl=NULL, m=2, 
 		out <- writeValues(out, r, 1)
 		
 		for (i in 1:nodes) {
-			snow::sendCall(cl[[i]], clusfun, list(fun, i+1), tag=i+1)
+			.sendCall(cl[[i]], clusfun, list(fun, i+1), tag=i+1)
 		}
 
 		for (i in 2:tr$n) {
 			pbStep(pb, i)
-			d <- snow::recvOneData(cl)
+			d <- .recvOneData(cl)
 			if (! d$value$success ) { stop('cluster error') }
 			
 			ni <- nodes + i
 			if (ni <= tr$n) {
-				snow::sendCall(cl[[d$node]], clusfun, list(fun, ni), tag=ni)
+				.sendCall(cl[[d$node]], clusfun, list(fun, ni), tag=ni)
 			}
 		}
 		

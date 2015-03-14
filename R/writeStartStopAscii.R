@@ -58,7 +58,9 @@
 #		raster@data@min <- as.logical(raster@data@min)
 #		raster@data@max <- as.logical(raster@data@max)
 	}
+	
 	return( raster( x@file@name ) )
+
 }		
 
  

@@ -97,6 +97,8 @@ z1 <- clusterR(s, calc, args=list(fun=f3), export='a')
 # you can write your own parallel function instead of using clusterR
 # get cluster object created with beginCluster
 cl <- getCluster()  
+
+library(parallel)
 clusterExport(cl, "a")
 z2 <- calc(s, fun=function(x){ parApply(cl, x, 1, f3)} )
 # set flag that cluster is available again

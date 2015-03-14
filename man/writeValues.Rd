@@ -27,8 +27,8 @@ writeStop(x)
 
 \arguments{
   \item{x}{Raster* object}
-  \item{filename}{Output filename}
-  \item{...}{Additional arguments as for \code{\link{writeRaster}}}
+  \item{filename}{character. Output file name}
+  \item{...}{additional arguments as for \code{\link{writeRaster}}}
   \item{v}{vector (RasterLayer) or matrix (RasterBrick) of values}
   \item{start}{Integer. Row number (counting starts at 1) from where to start writing \code{v}}
 

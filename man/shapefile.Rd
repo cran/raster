@@ -34,6 +34,18 @@ These are simple wrapper functions around readOGR and writeOGR (rgdal package).
 Spatial*DataFrame (reading). Nothing is returned when writing a shapefile.
 }
 
+\examples{
+if (require(rgdal)) {
+
+filename <- system.file("external/lux.shp", package="raster")
+filename
+p <- shapefile(filename)
+
+\dontrun{
+shapefile(p, 'copy.shp')
+}
+}
+}
 
 \keyword{spatial}
 

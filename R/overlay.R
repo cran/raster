@@ -4,6 +4,11 @@
 # Licence GPL v3
 # version 1, April 2012
 
+if (!isGeneric("overlay"))
+    setGeneric("overlay", function(x, y, ...)
+        standardGeneric("overlay"))
+
+		
 setMethod('overlay', signature(x='Raster', y='Raster'), 
 function(x, y, ..., fun, filename="", recycle=TRUE){ 
 	if (missing(fun)) { 

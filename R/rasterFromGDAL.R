@@ -117,6 +117,20 @@
 	fixGeoref <- FALSE
 	try( fixGeoref <- .gdFixGeoref(mdata), silent=TRUE )
 
+	# for ENVI files
+	bnames <- unique(mdata[grep("Band_", mdata)])
+	if (length(bnames) > 0) {
+		bn <- sapply(strsplit(bnames, '='), function(x) x[2])
+		bi <- gsub("Band_", "", sapply(strsplit(bnames, '='), function(x) x[1]))
+		bnames <- try(bn[order(as.integer(bi))], silent=TRUE)
+		if (class(bnames)=='try-error') {
+			bnames <- NULL
+		}
+	} else {
+		bnames <- NULL
+	}
+		
+	
 	if (type == 'RasterBrick') {
 	
 		r <- brick(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs="")
@@ -203,7 +217,11 @@
 	}
 	
 	if (type == 'RasterBrick') {
-		names(r) <- rep(gsub(" ", "_", extension(basename(filename), "")), nbands)
+		if (length(bnames) == nlayers(r)) {
+			names(r) <- bnames		
+		} else {
+			names(r) <- rep(gsub(" ", "_", extension(basename(filename), "")), nbands)
+		}
 	} else {
 		lnames <- gsub(" ", "_", extension(basename(filename), ""))
 		if (nbands > 1) {

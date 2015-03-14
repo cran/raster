@@ -25,8 +25,8 @@ function(x, vars=NULL, sums=NULL, dissolve=TRUE, ...) {
 	
 	if (isTRUE(is.null(vars))) {
 		if (dissolve) {
-			if (version_GEOS() < "3.3.0") {
-				x <- gUnionCascaded(x)
+			if (rgeos::version_GEOS() < "3.3.0") {
+				x <- rgeos::gUnionCascaded(x)
 			} else {
 				x <- rgeos::gUnaryUnion(x)
 			}
@@ -113,8 +113,8 @@ function(x, vars=NULL, sums=NULL, dissolve=TRUE, ...) {
 			x <- as(x, 'SpatialPolygons')
 		}
 		if (dissolve) {
-			if (version_GEOS0() < "3.3.0") {
-				x <- lapply(1:nrow(id), function(y) spChFIDs(gUnionCascaded(x[dc[dc$v==y,1],]), as.character(y)))
+			if (rgeos::version_GEOS0() < "3.3.0") {
+				x <- lapply(1:nrow(id), function(y) spChFIDs(rgeos::gUnionCascaded(x[dc[dc$v==y,1],]), as.character(y)))
 			} else {
 				x <- lapply(1:nrow(id), 
 						function(y) {

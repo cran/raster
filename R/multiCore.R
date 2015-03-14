@@ -4,9 +4,14 @@
 # Licence GPL v3
 
 
+.recvOneData <- eval(parse(text="parallel:::recvOneData"))
+
+.sendCall <- eval(parse(text="parallel:::sendCall"))
+
+
 beginCluster <- function(n, type='SOCK', nice, exclude=NULL) {
-	if (! requireNamespace("snow") ) {
-		stop('you need to install the "snow" package')
+	if (! requireNamespace("parallel") ) {
+		stop('you need to install the "parallel" package')
 	}
 
 	if (exists('raster_Cluster_raster_Cluster', envir=.GlobalEnv)) {
@@ -23,7 +28,7 @@ beginCluster <- function(n, type='SOCK', nice, exclude=NULL) {
 #		cat('cluster type:', type, '\n')
 #	}
 	
-	cl <- snow::makeCluster(n, type) 
+	cl <- parallel::makeCluster(n, type) 
 	cl <- .addPackages(cl, exclude=exclude)
 	options(rasterClusterObject = cl)
 	options(rasterClusterCores = length(cl))
@@ -35,7 +40,7 @@ beginCluster <- function(n, type='SOCK', nice, exclude=NULL) {
         if (.Platform$OS.type == 'unix') { 
             cmd <- paste("renice",nice,"-p")
             foo <- function() system(paste(cmd, Sys.getpid()))
-            snow::clusterCall(cl,foo) 
+            parallel::clusterCall(cl,foo) 
         } else { 
             warning("argument 'nice' only supported on UNIX like operating systems") 
         } 
@@ -48,7 +53,7 @@ endCluster <- function() {
 	options(rasterCluster = FALSE)
 	cl <- options('rasterClusterObject')[[1]]
 	if (! is.null(cl)) {
-		snow::stopCluster( cl )
+		parallel::stopCluster( cl )
 		options(rasterClusterObject = NULL)
 	}
 }
@@ -84,7 +89,7 @@ returnCluster <- function() {
 	i <- which( pkgs %in% c(exclude, "stats", "graphics", "grDevices", "utils", "datasets", "methods", "base") )
 	pkgs <- rev( pkgs[-i] )
 	for ( pk in pkgs ) {
-		snow::clusterCall(cl, library, pk, character.only=TRUE )
+		parallel::clusterCall(cl, library, pk, character.only=TRUE )
 	}
 	return(cl)
 }

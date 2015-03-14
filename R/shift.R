@@ -39,10 +39,12 @@ setMethod('shift', signature(object='SpatialPolygons'),
 		a$x <- a$x + x
 		a$y <- a$y + y
 		if (inherits(object, 'SpatialPolygonsDataFrame')) {
-			as(a, 'SpatialPolygonsDataFrame')	
+			a <- as(a, 'SpatialPolygonsDataFrame')	
 		} else {
-			as(a, 'SpatialPolygons')			
+			a <- as(a, 'SpatialPolygons')			
 		}
+		crs(a) <- crs(object)
+		return(object)
 	}
 )
 
@@ -54,11 +56,20 @@ setMethod('shift', signature(object='SpatialLines'),
 		a$x <- a$x + x
 		a$y <- a$y + y
 		if (inherits(object, 'SpatialLinesDataFrame')) {
-			as(a, 'SpatialLinesDataFrame')	
+			a <- as(a, 'SpatialLinesDataFrame')	
 		} else {
-			as(a, 'SpatialLines')			
+			a <- as(a, 'SpatialLines')			
 		}
+		crs(a) <- crs(object)
+		return(object)
 	}
 )
 
+setMethod('shift', signature(object='SpatialPoints'),
+    function(object, x=0, y=0, ...) {
+		object@coords[,1] <- object@coords[,1] + x
+		object@coords[,2] <- object@coords[,2] + y
+        return(object)
+    }
+)
 

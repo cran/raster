@@ -7,8 +7,6 @@
 \description{
 
 Compute slope, aspect and other terrain characteristics from a raster with elevation data. The elevation data should be in map units (typically meter) for projected (planar) raster data. They should be in meters when the coordinate reference system (CRS) is longitude/latitude. 
-
-This function is the replacement for the deprecated function \code{\link{slopeAspect}}
 }
 
 \usage{
@@ -19,9 +17,9 @@ terrain(x, opt='slope', unit='radians', neighbors=8, filename='', ...)
 \arguments{
   \item{x}{RasterLayer object with elevation values. Values should have the same unit as the map units, or in meters when the crs is longitude/latitude}
   \item{opt}{Character vector containing one or more of these options: slope, aspect, TPI, TRI, roughness, flowdir (see Details)}
-  \item{unit}{Character. 'degrees' or 'radians'. Only relevant for slope and aspect }
+  \item{unit}{Character. 'degrees', 'radians' or 'tangent'. Only relevant for slope and aspect. If 'tangent' is selected that is used for slope, but for aspect 'degrees' is used (as 'tangent' has no meaning for aspect) }
   \item{neighbors}{Integer. Indicating how many neighboring cells to use to compute slope for any cell. Either 8 (queen case) or 4 (rook case). Only used for slope and aspect, see Details}
-  \item{filename}{Character. Filename. optional}
+  \item{filename}{Character. Output filename (optional)}
   \item{...}{Standard additional arguments for writing Raster* objects to file}
 }
 
@@ -72,10 +70,6 @@ Ritter, P., 1987. A vector-based slope and aspect generation algorithm. Photogra
 
 Wilson, M.F.J., O'Connell, B., Brown, C., Guinan, J.C., Grehan, A.J., 2007. Multiscale terrain analysis of multibeam bathymetry data for habitat mapping on the continental slope. Marine Geodesy 30: 3-35.
 }
-
-
-
-
 
 
 \examples{

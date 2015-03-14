@@ -276,10 +276,16 @@
 	}
 
 	if (is.na(proj)) {
-		if (((tolower(substr(nc$var[[zvar]]$dim[[dims[1]]]$name, 1, 3)) == 'lon')  &
-		    ( tolower(substr(nc$var[[zvar]]$dim[[dims[2]]]$name, 1, 3)) == 'lat' ) ) & 
-		    ( xrange[1] < -181 | xrange[2] > 361 | yrange[1] < -91 | yrange[2] > 91 )) {
-				proj <- '+proj=longlat +datum=WGS84'
+		if ((tolower(substr(nc$var[[zvar]]$dim[[dims[1]]]$name, 1, 3)) == 'lon')  &
+		   ( tolower(substr(nc$var[[zvar]]$dim[[dims[2]]]$name, 1, 3)) == 'lat' ) ) {
+				if ( yrange[1] > -91 | yrange[2] < 91 ) {
+					if ( xrange[1] > -181 | xrange[2] < 181 ) {
+						proj <- '+proj=longlat +datum=WGS84'
+					} else if ( xrange[1] > -1 | xrange[2] < 361 ) {
+						proj <- '+proj=longlat +lon_wrap=180 +datum=WGS84'
+					}
+				}
+			
 		}
 	} 
 		

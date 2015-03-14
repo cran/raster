@@ -78,8 +78,9 @@ function(x, y) {
 	u <- x[1,]
 	names(u) <- 'ID.1'
 	for (i in 2:n) {
-		u <- union(u, x[i, ])
-		names(u)[i] <- paste('ID.', i, sep='')
+		z <- x[i, ]
+		names(z) <- paste('ID.', i, sep='')
+		u <- union(u, z)
 	}
 	
 	u@data[!is.na(u@data)] <- 1

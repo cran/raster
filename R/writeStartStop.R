@@ -16,7 +16,7 @@ if (!isGeneric('writeStop')) {
 
 
 setMethod('writeStart', signature(x='RasterLayer', filename='character'), 
-function(x, filename, options=NULL, format, ...) {
+function(x, filename, options=NULL, format, prj=FALSE, ...) {
 
 	if (trim(filename) == '') { 
 		filename <- rasterTmpFile() 
@@ -39,12 +39,21 @@ function(x, filename, options=NULL, format, ...) {
 	} else {
 		x <- .startGDALwriting(x, filename, options=options, format=filetype, ...)
 	}		
+	
+	if (prj) {
+		crs <- crs(x, asText=T)
+		if (!is.na(crs)) {
+			if (.requireRgdal(FALSE)) { 
+				writeLines(rgdal::showWKT(crs(x, asText=TRUE)), extension(filename, 'prj') )
+			}
+		}
+	}
 	return(x)
 })
 
 
 setMethod('writeStart', signature(x='RasterBrick', filename='character'), 
-function(x, filename, options=NULL, format, ...) {
+function(x, filename, options=NULL, format, prj=FALSE, ...) {
 
 	if (trim(filename) == '') { 
 		filename <- rasterTmpFile() 
@@ -66,6 +75,16 @@ function(x, filename, options=NULL, format, ...) {
 	} else {
 		x <- .startGDALwriting(x, filename, options=options, format=filetype, ...) 
 	}
+	
+	if (prj) {
+		crs <- crs(x, asText=T)
+		if (!is.na(crs)) {
+			if (.requireRgdal(FALSE)) { 
+				writeLines(rgdal::showWKT(crs), extension(filename, 'prj') )
+			}
+		}
+	}	
+	
 	return(x)
 })
 
