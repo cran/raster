@@ -4,7 +4,6 @@
 \alias{as.data.frame,Raster-method}
 \alias{as.data.frame,SpatialPolygons-method}
 \alias{as.data.frame,SpatialLines-method}
-\alias{as.data.frame,SpatialPoints-method}
   
 
 \title{Get a data.frame with raster cell values, or coerce SpatialPolygons, Lines, or Points to a data.frame}
@@ -21,15 +20,13 @@ The methods for Spatial* objects allow for easy creation of a data.frame with th
 
 \usage{
 \S4method{as.data.frame}{Raster}(x, row.names=NULL, optional=FALSE, xy=FALSE, 
-              na.rm=FALSE, ...)
+              na.rm=FALSE, long=FALSE, ...)
 
 \S4method{as.data.frame}{SpatialPolygons}(x, row.names=NULL, optional=FALSE,
               xy=FALSE, centroids=TRUE, sepNA=FALSE, ...)
 
 \S4method{as.data.frame}{SpatialLines}(x, row.names=NULL, optional=FALSE, 
               xy=FALSE, sepNA=FALSE, ...)
-
-\S4method{as.data.frame}{SpatialPoints}(x, row.names=NULL, optional=FALSE, xy=TRUE, ...)
 }
 
 \arguments{
@@ -38,6 +35,7 @@ The methods for Spatial* objects allow for easy creation of a data.frame with th
  \item{optional}{logical. If \code{TRUE}, setting row names and converting column names (to syntactic names: see make.names) is optional}
  \item{xy}{logical. If \code{TRUE}, also return the spatial coordinates}
  \item{na.rm}{logical. If \code{TRUE}, remove rows with NA values. This can be particularly useful for very large datasets with many NA values}
+ \item{long}{logical. If \code{TRUE}, values are \code{\link{reshape}d} from a wide to a long format}
  \item{centroids}{logical. If \code{TRUE} return the centroids instead of all spatial coordinates (only relevant if \code{xy=TRUE})}
  \item{sepNA}{logical. If \code{TRUE} the parts of the spatial objects are separated by lines that are \code{NA} (only if \code{xy=TRUE} and, for polygons, if \code{centroids=FALSE}}
  \item{...}{Additional arguments (none)} 

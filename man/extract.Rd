@@ -128,7 +128,7 @@ extract(r, xy[1:3,], buffer=1000000, fun=mean)
 
 cds1 <- rbind(c(-50,0), c(0,60), c(40,5), c(15,-45), c(-10,-25))
 cds2 <- rbind(c(80,20), c(140,60), c(160,0), c(140,-55))
-lines <- SpatialLines(list(Lines(list(Line(cds1)), "1"), Lines(list(Line(cds2)), "2") ))
+lines <- spLines(cds1, cds2)
 
 extract(r, lines)
 
@@ -137,8 +137,7 @@ extract(r, lines)
 ###############################
 cds1 <- rbind(c(-180,-20), c(-160,5), c(-60, 0), c(-160,-60), c(-180,-20))
 cds2 <- rbind(c(80,0), c(100,60), c(120,0), c(120,-55), c(80,0))
-polys <- SpatialPolygons(list(Polygons(list(Polygon(cds1)), 1), 
-                              Polygons(list(Polygon(cds2)), 2)))
+polys <- spPolygons(cds1, cds2)
 
 #plot(r)
 #plot(polys, add=TRUE)

@@ -4,9 +4,11 @@
 # Licence GPL v3
 # version 1, April 2012
 
-if (!isGeneric("overlay"))
-    setGeneric("overlay", function(x, y, ...)
-        standardGeneric("overlay"))
+
+if (!isGeneric('overlay')) {
+	setGeneric('overlay', function(x, y, ...) 
+		standardGeneric('overlay'))
+}
 
 		
 setMethod('overlay', signature(x='Raster', y='Raster'), 

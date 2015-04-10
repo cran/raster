@@ -20,7 +20,7 @@ GearyLocal(x, w=matrix(1, 3, 3))
 
 \arguments{
   \item{x}{RasterLayer}
-  \item{w}{Spatial weights. Either a single number or a vector of two numbers to define a neighborhood (as in \code{\link{focal}}) or a rectangular matrix with uneven sides}
+  \item{w}{Spatial weights defined by or a rectangular matrix with uneven sides (as in \code{\link{focal}}) }
 }
 
 

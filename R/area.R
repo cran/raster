@@ -28,9 +28,14 @@ if (!isGeneric("area")) {
 setMethod('area', signature(x='SpatialPolygons'), 
 	function(x, ...) {
 		if (couldBeLonLat(x)) {
-			warning('polygon area in square degrees is not very meaningful')
+			warning('polygon area in square degrees is not very meaningful; use geosphere::areaPolygon for these polygons')
 		}
-		sapply(x@polygons, function(i) slot(i, 'area'))
+		if (requireNamespace("rgeos")) {
+			rgeos::gArea(x, byid=TRUE)
+		} else {	
+			warning('install rgeos for better area estimation')
+			sapply(x@polygons, function(i) slot(i, 'area'))
+		}
 	}
 )	
 

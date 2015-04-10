@@ -5,10 +5,13 @@
 \alias{intersect}
 \alias{intersect,Extent,ANY-method}
 \alias{intersect,Raster,ANY-method}
+\alias{intersect,SpatialVector,ANY-method}
+
 \alias{intersect,SpatialPolygons,SpatialPolygons-method}
 \alias{intersect,SpatialLines,SpatialPolygons-method}
+\alias{intersect,SpatialPolygons,SpatialLines-method}
 \alias{intersect,SpatialPoints,SpatialPolygons-method}
-\alias{intersect,SpatialVector,ANY-method}
+\alias{intersect,SpatialPolygons,SpatialPoints-method}
 
 \title{ 
 Intersect

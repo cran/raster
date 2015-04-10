@@ -119,14 +119,14 @@
 		colnr <- (x - xmin(object)) / xres(object)
 		i <- colnr %% 1 == 0
 		colnr[!i] <- trunc(colnr[!i]) + 1 
-		colnr[colnr==0] <- 1
+		colnr[colnr <= 0] <- 1
 		colnr
 	}
 
 
 	rightColFromX <- function ( object, x )	{
 		colnr <- trunc((x - xmin(object)) / xres(object)) + 1 
-		colnr[ x == xmax(object) ] <- object@ncols
+		colnr[ colnr > ncol(object) ] <- object@ncols
 		colnr
 	}
 

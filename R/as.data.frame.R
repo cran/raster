@@ -36,7 +36,7 @@ if (!isGeneric("as.data.frame")) {
 
 
 setMethod('as.data.frame', signature(x='Raster'), 
-	function(x, row.names = NULL, optional = FALSE, xy=FALSE, na.rm=FALSE, ...) {
+	function(x, row.names = NULL, optional = FALSE, xy=FALSE, na.rm=FALSE, long=FALSE, ...) {
 
 		if (!canProcessInMemory(x, 4) & na.rm) {
 			r <- raster(x)
@@ -99,6 +99,21 @@ setMethod('as.data.frame', signature(x='Raster'),
 				}
 			}
 		}
+	
+		if (long) {
+			nc <- (ncol(v) - nlayers(x) + 1):ncol(v)
+			times <- getZ(x)
+			timevar <- 'Z'
+			if (is.null(times)) {
+				times <- names(x)
+				timevar <- 'layer'
+			} 
+			v <- reshape(v, direction='long', varying=nc, v.names='value', timevar=timevar, times=times)	
+			v[ncol(v)] = NULL  # id column
+			rownames(v) <- NULL
+			#v$layer <- names(x)[v$layer]
+		}
+		
 		v
 	}
 )
@@ -225,29 +240,6 @@ setMethod('as.data.frame', signature(x='SpatialLines'),
 	}
 )
 
-
-setMethod('as.data.frame', signature(x='SpatialPoints'), 
-	function(x, row.names=NULL, optional=FALSE, xy=TRUE, ...) {
-
-		if (!xy) {
-			if (.hasSlot(x, 'data')) {
-				return( x@data )
-			} else {
-				return(NULL)
-			}
-		}
-				
-		nobj <- length(x)
-		d <- coordinates(x)
-		if (.hasSlot(x, 'data')) {
-			d <- cbind(d, x@data)
-		}
-
-		colnames(d)[1:2] <- c('x', 'y')
-		rownames(d) <- NULL
-		as.data.frame(d, row.names=row.names, optional=optional, ...)
-	}
-)
 
 
 

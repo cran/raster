@@ -86,6 +86,11 @@ function(x, y) {
 )
 
 
+setMethod('intersect', signature(x='SpatialPolygons', y='SpatialLines'), 
+function(x, y) {
+	intersect(y, x)
+}
+)
 
 setMethod('intersect', signature(x='SpatialLines', y='SpatialPolygons'), 
 function(x, y) {
@@ -162,6 +167,40 @@ function(x, y) {
 } 
 )
 
+
+setMethod('intersect', signature(x='SpatialPolygons', y='SpatialPoints'), 
+function(x, y) {
+	intersect(y, x)
+}
+)
+
+setMethod('intersect', signature(x='SpatialPoints', y='SpatialPolygons'), 
+function(x, y) {
+
+	stopifnot(requireNamespace("rgeos"))
+	
+	if (! identical(proj4string(x), proj4string(y)) ) {
+		warning('non identical CRS')
+		y@proj4string <- x@proj4string
+	}
+    i <- rgeos::gIntersects(y, x, byid=TRUE)
+	
+	j <- cbind(1:length(y), rep(1:length(x), each=length(y)), as.vector(t(i)))
+	j <- j[j[,3] == 1, -3]
+	j <- j[order(j[,2]), ]
+	x <- x[j[,2], ]
+	
+	if (.hasSlot(y, 'data')) {
+		d <- y@data[j[,1], ]
+		if (!.hasSlot(x, 'data')) {
+			x <- SpatialPointsDataFrame(x, d)
+		} else {
+			x@data <- cbind(x@data, d)
+		}
+	} 
+	x
+}
+)
 
 
 setMethod('intersect', signature(x='SpatialVector', y='ANY'), 

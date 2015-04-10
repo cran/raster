@@ -105,6 +105,56 @@
 }
 
 
+
+
+.rasterizeLineLength <- function(x, r, background=NA, filename="", ...) {
+
+	stopifnot(requireNamespace("rgeos"))
+	r <- raster(r)
+
+	if (canProcessInMemory(r, n=8)) {
+		r[] <- 1:ncell(r)
+		
+		rp <- rasterToPolygons(r)
+		rp <- intersect(x, rp)
+		lengths <- rgeos::gLength(rp, byid=TRUE) / 1000
+		
+		n <- tapply(lengths, data.frame(rp)[, names(r)], sum)
+		
+		out <- setValues(r, background)
+		out[as.integer(names(n))] <- n
+		if (filename != '') {
+			out <- writeRaster(out, filename, ...)
+		}
+		return(out)
+		
+	} else {
+	
+		out <- raster(r)
+		tr <- blockSize(out)
+		pb <- pbCreate(tr$n, label='rasterize', ...)
+		out <- writeStart(out, filename=filename, ...)
+		nc <- ncol(out)
+		for (i in 1:tr$n) {
+			y <- crop(r, extent(r, tr$row[i], tr$row[i] + tr$nrows[i] - 1, 1, nc))
+			y[] <- 1:ncell(y)
+			rp <- rasterToPolygons(y, na.rm=FALSE)
+			rp <- intersect(x, rp)
+			lengths <- rgeos::gLength(rp, byid=TRUE) / 1000
+			n <- tapply(lengths, data.frame(rp)[, names(y)], sum)
+			v <- rep(background, ncell(y))
+			v[as.integer(names(n))] <- n 
+			out <- writeValues(out, v, tr$row[i])
+			pbStep(pb)
+		}
+		pbClose(pb)
+		out <- writeStop(out)
+		return(out)
+	}
+}
+
+
+
 .linesToRaster <- function(lns, x, field, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue="all", filename="", ...) {
 
 	dots <- list(...)
@@ -117,6 +167,7 @@
 	if (mask & update) { 
 		stop('use either "mask=TRUE" OR "update=TRUE" (or neither)')
 	}
+	
 	if (update) {
 		if (!is.numeric(updateValue)) {
 			if (is.na(updateValue)) {
@@ -129,10 +180,19 @@
 
 	
 	if (is.character(fun)) {
-		if (!(fun %in% c('first', 'last', 'sum', 'min', 'max', 'count'))) {
+		if (!(fun %in% c('first', 'last', 'sum', 'min', 'max', 'count', 'length'))) {
 			stop('invalid character value for fun')
 		}
 		doFun <- FALSE
+		if (fun == 'length') {
+			if (mask) {
+				fun <- 'first'
+			} else if (update) {
+				stop('cannot do update with length yet --- come back later...')
+			} else {
+				return(.rasterizeLineLength(lns, x, background=background, update=FALSE, updateValue="all", filename="", ...) )
+			}
+		}
 	} else {
 		doFun <- TRUE
 	}
