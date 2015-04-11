@@ -97,6 +97,7 @@
 	layernames <- ''
 	zvalues <- ''
 	zclass <- NULL
+	colortable <- NULL
 	
 	isCat <- FALSE
 	ratnames <- rattypes <- ratvalues <- NULL
@@ -107,61 +108,56 @@
 	#match(c("MINX", "MAXX", "MINY", "MAXY", "XMIN", "XMAX", "YMIN", "YMAX", "ROWS", "COLUMNS", "NROWS", "NCOLS"), toupper(ini[,2]))
 	
 	for (i in 1:length(ini[,1])) {
-		if (ini[i,2] == "MINX") { xn <- as.numeric(ini[i,3]) } 
-		else if (ini[i,2] == "MAXX") { xx <- as.numeric(ini[i,3]) } 
-		else if (ini[i,2] == "MINY") { yn <- as.numeric(ini[i,3]) } 
-		else if (ini[i,2] == "MAXY") { yx <- as.numeric(ini[i,3]) } 
-		else if (ini[i,2] == "XMIN") { xn <- as.numeric(ini[i,3]) } 
-		else if (ini[i,2] == "XMAX") { xx <- as.numeric(ini[i,3]) } 
-		else if (ini[i,2] == "YMIN") { yn <- as.numeric(ini[i,3]) } 
-		else if (ini[i,2] == "YMAX") { yx <- as.numeric(ini[i,3]) } 
-		else if (ini[i,2] == "ROWS") { nr <- as.integer(ini[i,3]) }  
-		else if (ini[i,2] == "COLUMNS") { nc <- as.integer(ini[i,3]) } 
-		else if (ini[i,2] == "NROWS") { nr <- as.integer(ini[i,3]) } 
-		else if (ini[i,2] == "NCOLS") { nc <- as.integer(ini[i,3]) } 
-		
-	
-		else if (ini[i,2] == "MINVALUE") { 
+		if (ini[i,2] == "MINX") { xn <- as.numeric(ini[i,3]) 
+		} else if (ini[i,2] == "MAXX") { xx <- as.numeric(ini[i,3]) 
+		} else if (ini[i,2] == "MINY") { yn <- as.numeric(ini[i,3]) 
+		} else if (ini[i,2] == "MAXY") { yx <- as.numeric(ini[i,3]) 
+		} else if (ini[i,2] == "XMIN") { xn <- as.numeric(ini[i,3]) 
+		} else if (ini[i,2] == "XMAX") { xx <- as.numeric(ini[i,3]) 
+		} else if (ini[i,2] == "YMIN") { yn <- as.numeric(ini[i,3]) 
+		} else if (ini[i,2] == "YMAX") { yx <- as.numeric(ini[i,3]) 
+		} else if (ini[i,2] == "ROWS") { nr <- as.integer(ini[i,3]) 
+		} else if (ini[i,2] == "COLUMNS") { nc <- as.integer(ini[i,3]) 
+		} else if (ini[i,2] == "NROWS") { nr <- as.integer(ini[i,3]) 
+		} else if (ini[i,2] == "NCOLS") { nc <- as.integer(ini[i,3]) 
+		} else if (ini[i,2] == "MINVALUE") { 
 			options('warn'=-1) 
-			try ( minval <-  as.numeric(unlist(strsplit(ini[i,3], ':'))), silent = TRUE ) 
+			try ( minval <-  as.numeric(unlist(strsplit(ini[i,3], ':'), use.names=FALSE)), silent = TRUE ) 
 			options('warn' = w)
-		}
-		else if (ini[i,2] == "MAXVALUE") { 
+		} else if (ini[i,2] == "MAXVALUE") { 
 			options('warn'=-1) 
-			try ( maxval <-  as.numeric(unlist(strsplit(ini[i,3], ':'))), silent = TRUE ) 
+			try ( maxval <-  as.numeric(unlist(strsplit(ini[i,3], ':')), use.names=FALSE), silent = TRUE ) 
 			options('warn' = w)
-		}
-		else if (ini[i,2] == "VALUEUNIT") { try ( maxval <-  as.numeric(unlist(strsplit(ini[i,3], ':'))), silent = TRUE ) }
-		else if (ini[i,2] == "CATEGORICAL") { try ( isCat <-  as.logical(unlist(strsplit(ini[i,3], ':'))), silent = TRUE ) }
+		} else if (ini[i,2] == "VALUEUNIT") { try ( maxval <-  as.numeric(unlist(strsplit(ini[i,3], ':')), use.names=FALSE), silent = TRUE) 
+		} else if (ini[i,2] == "CATEGORICAL") { try ( isCat <-  as.logical(unlist(strsplit(ini[i,3], ':')), use.names=FALSE), silent = TRUE ) 
 				
 		#else if (ini[i,2] == "RATROWS") { ratrows <- as.integer(ini[i,3]) }
-		else if (ini[i,2] == "RATNAMES") { ratnames <- unlist(strsplit(ini[i,3], ':')) }
-		else if (ini[i,2] == "RATTYPES") { rattypes <- unlist(strsplit(ini[i,3], ':')) }
-		else if (ini[i,2] == "RATVALUES") { ratvalues <- unlist(strsplit(ini[i,3], ':')) }
-		
-		else if (ini[i,2] == "LEVELS") { try ( catlevels <-  unlist(strsplit(ini[i,3], ':')), silent = TRUE ) }
-		
-		else if (ini[i,2] == "NODATAVALUE") { 
+		} else if (ini[i,2] == "RATNAMES") { ratnames <- unlist(strsplit(ini[i,3], ':'), use.names=FALSE) 
+		} else if (ini[i,2] == "RATTYPES") { rattypes <- unlist(strsplit(ini[i,3], ':'), use.names=FALSE)
+		} else if (ini[i,2] == "RATVALUES") { ratvalues <- unlist(strsplit(ini[i,3], ':'), use.names=FALSE)
+		} else if (ini[i,2] == "LEVELS") { try ( catlevels <-  unlist(strsplit(ini[i,3], ':'), use.names=FALSE ), silent = TRUE)
+		} else if (ini[i,2] == "COLORTABLE") { try ( colortable <-  unlist(strsplit(ini[i,3], ':'), use.names=FALSE), silent = TRUE ) 
+		} else if (ini[i,2] == "NODATAVALUE") { 
 			if (ini[i,3] == 'NA') {
 				nodataval <- as.double(NA)
 			} else {
 				nodataval <- as.numeric(ini[i,3]) 
 			}
-		} 
-		else if (ini[i,2] == "DATATYPE") { inidatatype <- ini[i,3] } 
-		else if (ini[i,2] == "BYTEORDER") { byteorder <- ini[i,3] } 
-		else if (ini[i,2] == "NBANDS") { nbands <- as.integer(ini[i,3]) } 
-		else if (ini[i,2] == "BANDORDER") { bandorder <- ini[i,3] }  
-		else if (ini[i,2] == "PROJECTION") { prj <- ini[i,3] } 
-		else if (ini[i,2] == "LAYERNAME") { layernames <- ini[i,3] } 
-		else if (ini[i,2] == "ZVALUES") { zvalues <- ini[i,3] } 
-		else if (ini[i,2] == "ZCLASS") { zclass <- ini[i,3] } 
+		} else if (ini[i,2] == "DATATYPE") { inidatatype <- ini[i,3] 
+		} else if (ini[i,2] == "BYTEORDER") { byteorder <- ini[i,3] 
+		} else if (ini[i,2] == "NBANDS") { nbands <- as.integer(ini[i,3]) 
+		} else if (ini[i,2] == "BANDORDER") { bandorder <- ini[i,3] 
+		} else if (ini[i,2] == "PROJECTION") { prj <- ini[i,3] 
+		} else if (ini[i,2] == "LAYERNAME") { layernames <- ini[i,3] 
+		} else if (ini[i,2] == "ZVALUES") { zvalues <- ini[i,3] 
+		} else if (ini[i,2] == "ZCLASS") { zclass <- ini[i,3] } 
     }  
 	
 	if (!is.na(prj)) {
 		if (prj == 'GEOGRAPHIC') { prj <- "+proj=longlat" 
-		} else if (prj == 'UNKNOWN') { prj <- NA 
-		} else if (prj == 'NA') { prj <- NA }
+		} else if (prj == 'UNKNOWN' | prj == 'NA') { 
+			prj <- NA 
+		}
 	}
 
 	prj <- .getProj(prj, crs)
@@ -226,6 +222,12 @@
 		if (!is.null(zclass)) {
 			if (zclass == 'Date') {
 				try( zvalues <- as.Date(zvalues), silent=TRUE )
+
+			# by Stefan Schlaffer
+			} else if (length(grep("POSIXt",zclass)) > 0 & length(zvalues) == nbands*3) {
+				zvalues <- sapply(seq(1,nbands*3,3), function(i) paste0(zvalues[c(i,i+1,i+2)], collapse=":"))
+				try( zvalues <- as.POSIXct(strptime(zvalues, "%Y-%m-%d %H:%M:%S", tz="UTC")), silent=TRUE )
+
 			} else {
 				try( zvalues <- as(zvalues, zclass), silent=TRUE )
 			}
@@ -269,6 +271,10 @@
 		if( (dataSize(x) * ncell(x) * nbands(x))  !=  file.info(valuesfile)$size ) {
 			warning('size of values file does not match the number of cells (given the data type)')
 #		}
+	}
+
+	if (!is.null(colortable)) {
+		x@legend@colortable <- colortable
 	}
 	
 	x@history <- metadata

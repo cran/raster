@@ -61,7 +61,7 @@ setMethod('shapefile', signature(x='Spatial'),
 				}
 			}
 		}
-		writeOGR(x, filename, layer, driver='ESRI Shapefile', overwrite_layer=overwrite, ...)
+		rgdal::writeOGR(x, filename, layer, driver='ESRI Shapefile', overwrite_layer=overwrite, ...)
 	}
 )
 

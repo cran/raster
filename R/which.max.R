@@ -26,7 +26,7 @@ setMethod("which.max", "RasterLayer",
 			v <- values(x)
 			return(which( v >= m))
 		}
-		x <- x >= m - 0.000001
+		x <- x >= m - 0.00000001
 		pts <- rasterToPoints(x, function(y) y == 1)
 		cellFromXY(x, pts[,1:2,drop=FALSE])
 	} 

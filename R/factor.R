@@ -149,6 +149,10 @@ setMethod('levels', signature(x='Raster'),
 setMethod('levels<-', signature(x='Raster'), 
 	function(x, value) {
 		
+		if (is.null(value)) {
+			return(x)
+		}
+		
 		isfact <- is.factor(x)
 
 		if (inherits(x, 'RasterLayer')) {

@@ -2,10 +2,10 @@
 
 \alias{rasterFromXYZ}
 
-\title{ Create a RasterLayer from x, y, z values }
+\title{ Create a Raster* object from x, y, z values }
 
 \description{
-Create a RasterLayer from x, y, and z values. x and y must be on a regular grid. If the resolution is not supplied, it is assumed to be the minimum distance between x and y coordinates, but a resolution of up to 10 times smaller is evaluated if a regular grid can otherwise not be created. 
+Create a Raster* object from x, y and z values. x and y represent spatial coordinates and must be on a regular grid. If the resolution is not supplied, it is assumed to be the minimum distance between x and y coordinates, but a resolution of up to 10 times smaller is evaluated if a regular grid can otherwise not be created. z values can be single or multiple columns (variables)
 If the exact properties of the RasterLayer are known beforehand, it may be preferable to simply create a new RasterLayer with the raster function instead, compute cell numbers and assign the values with these (see example below).
 }
 
@@ -14,17 +14,17 @@ rasterFromXYZ(xyz, res=c(NA,NA), crs=NA, digits=5)
 }
 
 \arguments{
-\item{xyz}{matrix or data.frame with three columns: x and y coordinates, and value z}
+\item{xyz}{matrix or data.frame with at least three columns: x and y coordinates, and values (z). There may be several 'z' variables (columns)}
 \item{res}{numeric. The x and y cell resolution (optional)}
 \item{crs}{CRS object or a character string describing a projection and datum in PROJ.4 format}
 \item{digits}{numeric, indicating the requested precision for detecting whether points are on a regular grid (a low number of digits is a low precision)}
 }
 
 \value{
-RasterLayer
+RasterLayer or RasterBrick
 }
 
-\seealso{ For random-like point distributions, see \code{\link{rasterize}} }
+\seealso{See \code{\link{rasterize} for points that are not on a regular grid} }
 
 
 

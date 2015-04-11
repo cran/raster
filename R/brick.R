@@ -53,14 +53,18 @@ setMethod('brick', signature(x='RasterLayer'),
 		
 		filename <- trim(filename)
 		dots <- list(...)
-		if (is.null(dots$format)) { format <- .filetype(filename=filename) } 
-		if (is.null(dots$datatype)) { datatype <- .datatype() }
-		if (is.null(dots$overwrite)) { overwrite <- .overwrite() }
-		if (is.null(dots$progress)) { progress <- .progress() }
+		fformat <- dots$format
+		if (is.null(fformat)) { fformat <- .filetype(filename=filename) } 
+		datatype <- dots$datatype
+		if (is.null(datatype)) { datatype <- .datatype() }
+		overwrite <- dots$overwrite
+		if (is.null(overwrite)) { overwrite <- .overwrite() }
+		progress <- dots$progress
+		if (is.null(progress)) { progress <- .progress() }
 
 		x <- stack(x, ...)
 		
-		brick(x, values=values, filename=filename, format=format, datatype=datatype, overwrite=overwrite, progress=progress)
+		brick(x, values=values, filename=filename, format=fformat, datatype=datatype, overwrite=overwrite, progress=progress)
 	}
 )
 

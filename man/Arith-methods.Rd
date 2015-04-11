@@ -4,6 +4,8 @@
 
 \alias{Arith-methods}
 \alias{+,SpatialPolygons,SpatialPolygons-method}
+\alias{+,SpatialLines,SpatialLines-method}
+\alias{+,SpatialPoints,SpatialPoints-method}
 \alias{-,SpatialPolygons,SpatialPolygons-method}
 \alias{*,SpatialPolygons,SpatialPolygons-method}
 
@@ -22,7 +24,7 @@ When using multiple RasterStack or RasterBrick objects, the number of layers of 
 In addition to arithmetic with Raster* objects, the following operations are supported for SpatialPolygons* objects.
 Given SpatialPolygon objects \code{x} and \code{y}:
 
-\code{x+y} is the same as \code{\link{union}(x, y)}
+\code{x+y} is the same as \code{\link{union}(x, y)}. For SpatialLines* and SpatialPoints* it is equivalent to \code{\link{bind}(x, y)}
 
 \code{x*y} is the same as \code{\link{intersect}(x, y)}
 

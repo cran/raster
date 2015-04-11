@@ -12,7 +12,16 @@
 		
 	filename <- .setFileExtensionHeader(filename, filetype)
 	fnamevals <- .setFileExtensionValues(filename, filetype)
-	datatype <- .datatype(...)
+	
+	if (length(x@legend@colortable) > 1) {
+		if (is.null(list(...)$datatype)) {
+			datatype <- 'INT1U'
+		} else {
+			datatype <- .datatype(...)
+		}
+	} else {
+		datatype <- .datatype(...)
+	}
 	
 	if (filetype %in% c('SAGA', 'IDRISI')) {
 		if (datatype == 'FLT8S') {

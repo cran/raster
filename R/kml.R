@@ -35,7 +35,7 @@ setMethod('KML', signature(x='Spatial'),
 		}
 		
 		name <- deparse(substitute(x))
-		writeOGR(x, filename, name, 'KML')
+		rgdal::writeOGR(x, filename, name, 'KML')
 		.zipKML(filename, '', zip, overwrite=overwrite) 
 	}
 )

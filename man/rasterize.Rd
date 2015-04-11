@@ -42,7 +42,7 @@ If \code{x} represents points, each point is assigned to a grid cell. Points tha
 
 \item{field}{numeric or character. The value(s) to be transferred. This can be a single number, or a vector of numbers that has the same length as the number of spatial features (points, lines, polygons). If \code{x} is a Spatial*DataFrame, this can be the column name of the variable to be transferred. If missing, the attribute index is used (i.e. numbers from 1 to the number of features). You can also provide a vector with the same length as the number of spatial features, or a matrix where the number of rows matches the number of spatial features}
 
-\item{fun}{function or character. To determine what values to assign to cells that are covered by multiple spatial features. You can use functions such as \code{min, max}, or \code{mean}, or one of the following character values: \code{'first'}, \code{'last'}, \code{'count'}. The default value is \code{'last'}. 
+\item{fun}{function or character. To determine what values to assign to cells that are covered by multiple spatial features. You can use functions such as \code{min, max}, or \code{mean}, or one of the following character values: \code{'first'}, \code{'last'}, \code{'count'}. The default value is \code{'last'}. In the case of SpatialLines*, \code{'length'} is also allowed (currently for planar coordinate systems only).
 
 
 If \code{x} represents points, \code{fun} must accept a \code{na.rm} argument, either explicitly or through 'dots'. This means that \code{fun=length} fails, but \code{fun=function(x,...)length(x)} works, although it ignores the \code{na.rm} argument. To use the \code{na.rm} argument you can use a function like this: fun=function(x, na.rm){if (na.rm) length(na.omit(x)) else (length(x)}, or use a function that removes \code{NA} values in all cases, like this function to compute the number of unique values "richness": \code{fun=function(x, ...) {length(unique(na.omit(x)))} }. 
@@ -111,8 +111,7 @@ cds1 <- rbind(c(-180,-20), c(-140,55), c(10, 0), c(-140,-60))
 cds2 <- rbind(c(-10,0), c(140,60), c(160,0), c(140,-55))
 cds3 <- rbind(c(-125,0), c(0,60), c(40,5), c(15,-45))
 
-lines <- SpatialLines(list(Lines(list(Line(cds1)), "1"), 
-     Lines(list(Line(cds2)), "2"), Lines(list(Line(cds3)), "3") ))
+lines <- spLines(cds1, cds2, cds3)
 
 r <- raster(ncols=90, nrows=45)
 r <- rasterize(lines, r)
@@ -139,10 +138,11 @@ plot(r)
 
 p1 <- rbind(c(-180,-20), c(-140,55), c(10, 0), c(-140,-60), c(-180,-20))
 hole <- rbind(c(-150,-20), c(-100,-10), c(-110,20), c(-150,-20))
-p1 <- Polygons(list(Polygon(p1), Polygon(hole, hole=TRUE)), 1)
-p2 <- Polygons(list(Polygon(rbind(c(-10,0), c(140,60), c(160,0), c(140,-55), c(-10,0)))), 2)
-p3 <- Polygons(list(Polygon(rbind(c(-125,0), c(0,60), c(40,5), c(15,-45), c(-125,0)))), 3)
-pols <- SpatialPolygons( list( p1 , p2, p3) )
+p1 <- list(p1, hole)
+p2 <- rbind(c(-10,0), c(140,60), c(160,0), c(140,-55), c(-10,0))
+p3 <- rbind(c(-125,0), c(0,60), c(40,5), c(15,-45), c(-125,0))
+
+pols <- spPolygons(p1, p2, p3)
 
 r <- raster(ncol=90, nrow=45)
 r <- rasterize(pols, r, fun=sum)

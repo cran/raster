@@ -26,3 +26,15 @@ setMethod("-", signature(e1='SpatialPolygons', e2='SpatialPolygons'),
 #		crop(e1, e2)
 #	}
 #)
+
+setMethod("+", signature(e1='SpatialPoints', e2='SpatialPoints'),
+    function(e1, e2){ 
+		bind(e1, e2)
+	}
+)
+
+setMethod("+", signature(e1='SpatialLines', e2='SpatialLines'),
+    function(e1, e2){ 
+		bind(e1, e2)
+	}
+)

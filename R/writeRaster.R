@@ -54,12 +54,14 @@ function(x, filename, format, ...) {
 		#r <- setZ(r, getZ(x))
 		r <- writeStop(r)
 		pbClose(pb)
-		return(r)
+		return(invisible(r))
 	}
 
 	if (.isNativeDriver(filetype)) {
 		out <- raster(x)
 		try( out@history <- x@history, silent=TRUE)
+		levels(out) <- levels(x)
+		out@legend@colortable <- x@legend@colortable
 		out <- .startRasterWriting(out, filename, format=filetype, ...)
 		out <- writeValues(out, values(x), 1)
 		return( .stopRasterWriting(out) )
@@ -78,7 +80,7 @@ function(x, filename, format, ...) {
 	} else { 
 		x <- .writeGDALall(x, filename=filename, format=filetype, ...)
 	}
-	return(x)
+	return(invisible(x))
 }	
 )
 
@@ -141,7 +143,7 @@ function(x, filename, format, bylayer=FALSE, suffix='numbers', ...) {
 			x <- stack(x)
 		}
 		layers <- lapply(1:nl, function(i) writeRaster(x[[i]], filename=filename[i], format=filetype, ...))	
-		return(stack(layers))
+		return(invisible(stack(layers)))
 	}
 	
 
@@ -186,7 +188,7 @@ function(x, filename, format, bylayer=FALSE, suffix='numbers', ...) {
 			pbClose(pb)
 		}
 		out <- .stopRasterWriting(out)
-		return( out )
+		return( invisible(out) )
 	}  
 	
 	# else 
@@ -203,7 +205,7 @@ function(x, filename, format, bylayer=FALSE, suffix='numbers', ...) {
 			x <- .writeGDALall(x, filename=filename, format=filetype, ...) 
 		}
 		
-		return(x)
+		return(invisible(x))
 		
 	} else {
 			
@@ -227,7 +229,7 @@ function(x, filename, format, bylayer=FALSE, suffix='numbers', ...) {
 		b <- writeStop(b)
 		x <- readStop(x)
 		pbClose(pb)
-		return(b)	
+		return(invisible(b))	
 	} 
 }
 )

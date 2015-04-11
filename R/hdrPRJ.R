@@ -11,7 +11,7 @@
 		if (class(p4s) != 'try-error') {
 			prjfile <- filename(x)
 			extension(prjfile) <- '.prj'
-			cat(p4s, file=filename)
+			cat(p4s, file=prjfile)
 		} else {
 			return(FALSE)
 		}

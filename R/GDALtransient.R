@@ -6,9 +6,6 @@
 # based on  create2GDAL and rgdal::saveDataset from the rgdal package
 # authors: Timothy H. Keitt, Roger Bivand, Edzer Pebesma, Barry Rowlingson
 
-
-
-
 .getGDALtransient <- function(r, filename, options, NAflag, ...)  {
 
 	.GDALnodatavalue <- function(x){
@@ -28,11 +25,21 @@
 	ct <- r@legend@colortable
 	if (length(ct) > 0 ) {
 		hasCT <- TRUE
+		if (is.null(list(...)$datatype)) {
+			datatype <- 'INT1U'
+		} else {
+			datatype <- .datatype(...)
+		}
 	} else {
 		hasCT <- FALSE
+		datatype <- .datatype(...)
+	}
+	isFact <- is.factor(r)
+	if (any(isFact)) {
+		v <- levels(r)
 	}
 	r <- raster(r)
-	datatype <- .datatype(...)
+
 	overwrite <- .overwrite(...)
 	gdalfiletype <- .filetype(filename=filename, ...)
 
@@ -46,7 +53,7 @@
 		if (!overwrite) {
 			stop("filename exists; use overwrite=TRUE")
 		} else if (!file.remove( filename)) {
-			stop("cannot delete existing file. permission denied.")
+			stop("cannot delete existing file; permission denied.")
 		}
 	}	
 
@@ -80,7 +87,18 @@
 		b <- new("GDALRasterBand", transient, i)
 		rgdal::GDALcall(b, "SetNoDataValue", NAflag)
 		if (hasCT) {
-			rgdal::GDALcall(b, "SetRasterColorTable", t(col2rgb(ct, TRUE)))
+			rgdal::GDALcall(b, "SetRasterColorTable", ct)
+		}
+		if (isFact[i]) {
+			vv <- v[[i]]
+			if (NCOL(vv) > 1) {
+				rn <- data.frame(IDID=0:max(vv[,1]))
+				rnvv <- merge(rn, vv, by=1, all.x=TRUE)
+				rnvv <- rnvv[order(rnvv[,1]), ]
+				cnms <- as.character(rnvv[,2])
+				cnms[is.na(cnms)] <- ''
+				rgdal::GDALcall(b, "SetCategoryNames", cnms)
+			}
 		}
 	}
 	

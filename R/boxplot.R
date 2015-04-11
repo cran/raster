@@ -48,7 +48,7 @@ setMethod('boxplot', signature(x='RasterLayer'),
 			}	
 			cn <- colnames(s)
 			f <- as.formula(paste(cn[1], '~', cn[2]))
-			boxplot(f, data=x, ...)
+			boxplot(f, data=s, ...)
 		}	
 	}
 )
