@@ -75,7 +75,7 @@ rasterToPolygons <- function(x, fun=NULL, n=4, na.rm=TRUE, digits=12, dissolve=F
 		cr[,c(2,6)] <- xyv[,1] 
 		cr[,3:5] <- xyv[,1] + xr
 		cr[,c(10:12,18)] <- xyv[,2] + yr
-		cr[,c(13:17)] <- xyv[,2] 
+		cr[,c(13,17)] <- xyv[,2] 
 		cr[,14:16] <- xyv[,2] - yr
 	} else if (n == 16) {
 		cr <- matrix(ncol=34, nrow=nrow(xyv))
