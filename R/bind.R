@@ -28,7 +28,7 @@ if (!isGeneric("bind")) {
 setMethod('bind', signature(x='data.frame', y='missing'), 
 	function(x, y, ..., variables=NULL) {
 		if (!is.null(variables)) {
-			variables <- as.character(na.omit(variables))
+			variables <- as.character(stats::na.omit(variables))
 			if (length(variables) > 1) {
 				x <- x[, which(colnames(x) %in% variables), drop=FALSE]
 			} 
@@ -41,7 +41,7 @@ setMethod('bind', signature(x='data.frame', y='data.frame'),
 function(x, y, ..., variables=NULL) {
 	x <- .frbind(x, y)
 	if (!is.null(variables)) {
-		variables <- as.character(na.omit(variables))
+		variables <- as.character(stats::na.omit(variables))
 		if (length(variables) > 1) {
 			x <- x[, which(colnames(x) %in% variables), drop=FALSE]
 		} else {
@@ -102,7 +102,7 @@ function(x, y, ..., keepnames=FALSE) {
 		}
 
 		ln <- sapply(rwn, length)
-		rnu <- .uniqueNames(unlist(rwn))
+		rnu <- .uniqueNames(unlist(rwn, use.names = FALSE))
 		end <- cumsum(ln)
 		start <- c(0, end[-length(end)]) + 1
 		for (i in 1:length(x)) {
@@ -121,9 +121,9 @@ function(x, y, ..., keepnames=FALSE) {
 		}
 
 		if (all(cls == 'SpatialPolygonsDataFrame')) {
-			dat <- lapply( x, function(x) { slot(x, 'data') } )
+			dat <- lapply( x, function(x) { methods::slot(x, 'data') } )
 			dat <- do.call(.frbind, dat)
-			x <- sapply(x, function(y) as(y, 'SpatialPolygons'))
+			x <- sapply(x, function(y) methods::as(y, 'SpatialPolygons'))
 			x <- do.call( rbind, x)
 			rownames(dat) <- row.names(x)
 			return( SpatialPolygonsDataFrame(x, dat) )
@@ -133,7 +133,7 @@ function(x, y, ..., keepnames=FALSE) {
 		dat <- NULL
 #		dataFound <- FALSE
 		for (i in 1:length(x)) {
-			if (.hasSlot(x[[i]], 'data')) {
+			if (methods::.hasSlot(x[[i]], 'data')) {
 #				dataFound <- TRUE
 				if (is.null(dat)) {
 					dat <- x[[i]]@data
@@ -151,7 +151,7 @@ function(x, y, ..., keepnames=FALSE) {
 			}
 		}
 #		if (! dataFound ) { return( do.call(rbind, x) ) }
-		x <- sapply(x, function(x) as(x, 'SpatialPolygons'))
+		x <- sapply(x, function(x) methods::as(x, 'SpatialPolygons'))
 		x <- do.call(rbind, x)
 		SpatialPolygonsDataFrame(x, dat)
 }
@@ -193,7 +193,7 @@ setMethod('bind', signature(x='SpatialLines', y='SpatialLines'),
 		}
 
 		ln <- sapply(rwn, length)
-		rnu <- .uniqueNames(unlist(rwn))
+		rnu <- .uniqueNames(unlist(rwn, use.names = FALSE))
 		end <- cumsum(ln)
 		start <- c(0, end[-length(end)]) + 1
 		for (i in 1:length(x)) {
@@ -212,9 +212,9 @@ setMethod('bind', signature(x='SpatialLines', y='SpatialLines'),
 		}
 
 		if (all(cls == 'SpatialLinesDataFrame')) {
-			dat <- lapply( x, function(x) { slot(x, 'data') } )
+			dat <- lapply( x, function(x) { methods::slot(x, 'data') } )
 			dat <- do.call(.frbind, dat)
-			x <- sapply(x, function(y) as(y, 'SpatialLines'))
+			x <- sapply(x, function(y) methods::as(y, 'SpatialLines'))
 			x <- do.call( rbind, x)
 			rownames(dat) <- row.names(x)
 			return( SpatialLinesDataFrame(x, dat) )
@@ -224,7 +224,7 @@ setMethod('bind', signature(x='SpatialLines', y='SpatialLines'),
 		dat <- NULL
 #		dataFound <- FALSE
 		for (i in 1:length(x)) {
-			if (.hasSlot(x[[i]], 'data')) {
+			if (methods::.hasSlot(x[[i]], 'data')) {
 #				dataFound <- TRUE
 				if (is.null(dat)) {
 					dat <- x[[i]]@data
@@ -242,7 +242,7 @@ setMethod('bind', signature(x='SpatialLines', y='SpatialLines'),
 			}
 		}
 #		if (! dataFound ) { return( do.call(rbind, x) ) }
-		x <- sapply(x, function(x) as(x, 'SpatialLines'))
+		x <- sapply(x, function(x) methods::as(x, 'SpatialLines'))
 		x <- do.call(rbind, x)
 		SpatialLinesDataFrame(x, dat)
 }
@@ -269,7 +269,7 @@ setMethod('bind', signature(x='SpatialPoints', y='SpatialPoints'),
 		}
 
 		ln <- sapply(rwn, length)
-		rnu <- .uniqueNames(unlist(rwn))
+		rnu <- .uniqueNames(unlist(rwn, use.names = FALSE))
 		end <- cumsum(ln)
 		start <- c(0, end[-length(end)]) + 1
 		for (i in 1:length(x)) {
@@ -288,9 +288,9 @@ setMethod('bind', signature(x='SpatialPoints', y='SpatialPoints'),
 		}
 
 		if (all(cls == 'SpatialPointsDataFrame')) {
-			dat <- lapply( x, function(x) { slot(x, 'data') } )
+			dat <- lapply( x, function(x) { methods::slot(x, 'data') } )
 			dat <- do.call(.frbind, dat)
-			x <- sapply(x, function(y) as(y, 'SpatialPoints'))
+			x <- sapply(x, function(y) methods::as(y, 'SpatialPoints'))
 			x <- do.call( rbind, x)
 			rownames(dat) <- row.names(x)
 			return( SpatialPointsDataFrame(x, dat) )
@@ -298,7 +298,7 @@ setMethod('bind', signature(x='SpatialPoints', y='SpatialPoints'),
 		
 		dat <- NULL
 		for (i in 1:length(x)) {
-			if (.hasSlot(x[[i]], 'data')) {
+			if (methods::.hasSlot(x[[i]], 'data')) {
 				if (is.null(dat)) {
 					dat <- x[[i]]@data
 				} else {
@@ -315,7 +315,7 @@ setMethod('bind', signature(x='SpatialPoints', y='SpatialPoints'),
 			}
 		}
 #		if (! dataFound ) { return( do.call(rbind, x) ) }
-		x <- sapply(x, function(x) as(x, 'SpatialPoints'))
+		x <- sapply(x, function(x) methods::as(x, 'SpatialPoints'))
 		x <- do.call(rbind, x)
 		SpatialPoinsDataFrame(x, dat)
 }

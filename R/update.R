@@ -16,7 +16,7 @@ function(object, v, cell) {
 	}
 
 	band <- bandnr(object)
-	cell <- na.omit(round(cell))
+	cell <- stats::na.omit(round(cell))
 
 	driver <- object@file@driver
 	if (.isNativeDriver(driver)) {
@@ -64,7 +64,7 @@ function(object, v, cell, band) {
 
 	stopifnot(band > 0 & band <= nbands(object))
 
-	cell <- na.omit(round(cell))
+	cell <- stats::na.omit(round(cell))
 
 	datatype <- object@file@datanotation
 	dtype <- substr(datatype, 1, 3)
@@ -368,7 +368,7 @@ function(object, v, cell, band) {
 
 
 .updateGDAL <- function(object, v, cell, band, setminmax) {
-	gdal <- new("GDALDataset", filename(object))
+	gdal <- methods::new("GDALDataset", filename(object))
 	on.exit( rgdal::GDAL.close(gdal) )
 
 	dr <- rgdal::getDriverName(rgdal::getDriver(gdal))
@@ -418,7 +418,7 @@ function(object, v, cell, band) {
 	}
 
 	if (setminmax) {	
-		b <- new("GDALRasterBand", gdal, band)
+		b <- methods::new("GDALRasterBand", gdal, band)
 		statistics <- c(object@data@min, object@data@max, NA, NA)
 		rgdal::GDALcall(b, "SetStatistics", statistics)	
 	}
@@ -487,7 +487,7 @@ function(object, v, cell, band) {
 
 .updateMinMax <- function(object, v, cell, band) {
 	setminmax <- FALSE
-	v <- na.omit(v) 
+	v <- stats::na.omit(v) 
 	newmin <- FALSE
 	newmax <- FALSE
 	if (length(v) > 0) {
@@ -510,9 +510,9 @@ function(object, v, cell, band) {
 			oldv <- getValuesBlock(object, rc[1], nrow(v), rc[2], ncol(v))
 		} else {
 			if (length(cell) == 1) {
-				oldv <- na.omit(.cellValues(object, cell:(cell+length(v)-1)))
+				oldv <- stats::na.omit(.cellValues(object, cell:(cell+length(v)-1)))
 			} else {
-				oldv <- na.omit(.cellValues(object, cell))
+				oldv <- stats::na.omit(.cellValues(object, cell))
 			}
 		}
 		if (length(oldv) > 0) {

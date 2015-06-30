@@ -24,8 +24,8 @@
 	xngb[] <- rep(1:ncol(ngb), each=nrow(ngb)) - cc 
 	yngb[] <- rep(nrow(ngb):1, ncol(ngb)) - (nrow(ngb)-rc+1)
 	ngb[ngb != 1] <- NA
-	xngb <- na.omit(as.vector( xngb * rs[1] * ngb))
-	yngb <- na.omit(as.vector( yngb * rs[2] * ngb))
+	xngb <- stats::na.omit(as.vector( xngb * rs[1] * ngb))
+	yngb <- stats::na.omit(as.vector( yngb * rs[2] * ngb))
 		
 	xy <- xyFromCell(x, cells)
 	X <- apply(xy[,1,drop=FALSE], 1, function(z) z + xngb )
@@ -125,7 +125,7 @@ adjacent <- function(x, cells, directions=4, pairs=TRUE, target=NULL, sorted=FAL
 				ID <- rep(1:length(cells), directions)
 			}
 
-			d <- na.omit(cbind(ID, cell, cellFromXY(x, d)))
+			d <- stats::na.omit(cbind(ID, cell, cellFromXY(x, d)))
 			attr(d, 'na.action') <- NULL
 			colnames(d) <- c('id', 'from', 'to')
 			if (! is.null(target)) {
@@ -133,7 +133,7 @@ adjacent <- function(x, cells, directions=4, pairs=TRUE, target=NULL, sorted=FAL
 			}
 			
 		} else {
-			d <- na.omit(cbind(cell, cellFromXY(x, d)))
+			d <- stats::na.omit(cbind(cell, cellFromXY(x, d)))
 			attr(d, 'na.action') <- NULL
 			colnames(d) <- c('from', 'to')
 			if (! is.null(target)) {
@@ -144,7 +144,7 @@ adjacent <- function(x, cells, directions=4, pairs=TRUE, target=NULL, sorted=FAL
 			d <- d[order(d[,1], d[,2]),]
 		}
 	} else {
-		d <- as.vector(unique(na.omit(cellFromXY(x, d))))
+		d <- as.vector(unique(stats::na.omit(cellFromXY(x, d))))
 		if (! is.null(target)) {
 			d <- intersect(d, target)
 		}

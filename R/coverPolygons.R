@@ -74,12 +74,12 @@ setMethod('cover', signature(x='SpatialPolygons', y='SpatialPolygons'),
 		x <- spChFIDs(x, as.character(1:length(x)))
 		y <- spChFIDs(y, as.character(1:length(y)))
 
-		if (.hasSlot(x, 'data')) {
+		if (methods::.hasSlot(x, 'data')) {
 			xnames <- colnames(x@data)
 		} else {
 			xnames <-NULL
 		}
-		if (.hasSlot(y, 'data')) {
+		if (methods::.hasSlot(y, 'data')) {
 			ynames <- colnames(y@data)
 		} else {
 			ynames <-NULL

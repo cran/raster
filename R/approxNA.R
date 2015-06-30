@@ -70,10 +70,10 @@ function(x, filename="", method="linear", yleft, yright, rule=1, f=0, ties=mean,
 	tr <- blockSize(out)
 	pb <- pbCreate(tr$n, label='approxNA', ...)
 	out <- writeStart(out, filename=filename, ...)
-
+    nc <- ncol(out)
 	for (j in 1:tr$n) {
 		v <- getValues(x, row=tr$row[j], nrows=tr$nrows[j])
-		s <- rowSums(is.na(v))
+		s <- .rowSums(is.na(v),tr$nrows[j], nc)
 		if (isTRUE(NArule)) {
 			j <- s == (nl-1) # one non-NA only
 			if (length(j) > 0 ) {

@@ -6,6 +6,7 @@
 \alias{plot,Raster,ANY-method}
 \alias{plot,Raster,Raster-method}
 \alias{plot,Extent,missing-method}
+\alias{lines,RasterLayer-method}
 
 \title{Plot a Raster* object}
 

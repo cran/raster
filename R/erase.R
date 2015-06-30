@@ -50,7 +50,7 @@ setMethod(erase, signature(x='SpatialPolygons', y='SpatialPolygons'),
 			y@proj4string <- x@proj4string
 		}
 		
-		if (!.hasSlot(x, 'data')) {
+		if (!methods::.hasSlot(x, 'data')) {
 			d <- data.frame(ID=1:length(x@polygons))
 			rownames(d) <- row.names(x)
 			x <- SpatialPolygonsDataFrame(x, data=d)
@@ -85,7 +85,7 @@ setMethod(erase, signature(x='SpatialPolygons', y='SpatialPolygons'),
 			part2 <- aggregate(part2, colnames(part2@data))
 		}
 		if (dropframe) {
-			return( as(part2, 'SpatialPolygons') )
+			return( methods::as(part2, 'SpatialPolygons') )
 		} else {
 			return( part2 )
 		}

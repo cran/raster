@@ -11,7 +11,7 @@
 	
 	splitasc <- function(s) {
 		s <- trim(s)
-		spl <- unlist(strsplit(s, ''))
+		spl <- unlist(strsplit(s, ''), use.names = FALSE)
 		pos <- which(spl==' ')[1]
 		first <- substr(s, 1, (pos-1))
 		second <- substr(s, (pos+1), nchar(s))
@@ -24,7 +24,7 @@
 	lines <- readLines(con, n=offset)
 	close(con)
 	ini <- lapply(lines, splitasc) 
-	ini <- matrix(unlist(ini), ncol=2, byrow=TRUE)
+	ini <- matrix(unlist(ini, use.names = FALSE), ncol=2, byrow=TRUE)
 	
 	ini[,1] = toupper(ini[,1]) 
 	

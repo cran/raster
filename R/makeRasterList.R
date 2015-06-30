@@ -11,7 +11,7 @@
 			compareRaster(x[[1]], r)  
 		}
 		return( c(x, r) )
-	} else if (! extends(class(r), 'Raster')) {
+	} else if (! methods::extends(class(r), 'Raster')) {
 		if (giveError) {
 			stop('... arguments must be a filename or objects that extend the Raster class')
 		} else {
@@ -35,9 +35,9 @@
 .makeRasterList <- function(..., compare=FALSE, giveError=FALSE, unstack=TRUE) {
 	arg <- list(...)
 	x <- list()
-	for (i in seq(along=arg)) {
+	for (i in seq(along.with=arg)) {
 		if (class(arg[[i]]) == 'list') {
-			for (j in seq(along=arg[[i]])) {
+			for (j in seq(along.with=arg[[i]])) {
 				x <- .addToList(x, arg[[i]][[j]], compare=compare, giveError=giveError, unstack=unstack) 
 			}
 		} else {

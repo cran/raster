@@ -13,14 +13,14 @@
 
 	sethook <- FALSE
 	if (!add) {
-		plot.new()
+		graphics::plot.new()
 		if (missing(axes)) {
 			axes <- FALSE
 		} 
 		if (!axes) {
 			# if (main != "") { } else {
-			old.par <- par(no.readonly = TRUE) 
-			par(plt=c(0,1,0,1))
+			old.par <- graphics::par(no.readonly = TRUE) 
+			graphics::par(plt=c(0,1,0,1))
 			sethook <- TRUE
 		}	
 		if (missing(asp)) {
@@ -69,7 +69,7 @@
 	if (! add) {
 		plot(c(bb[1], bb[2]), c(bb[3], bb[4]), type = "n", xlab=xlab, ylab=ylab, asp=asp, axes=axes, main=main, ...)
 	}
-	rasterImage(z, bb[1], bb[3], bb[2], bb[4], interpolate=interpolate, ...)
+	graphics::rasterImage(z, bb[1], bb[3], bb[2], bb[4], interpolate=interpolate, ...)
 	
 	if (!is.null(addfun)) {
 		if (is.function(addfun)) {
@@ -82,7 +82,7 @@
 			w <- getOption('warn')
 			on.exit(options('warn' = w))
 			options('warn'=-1) 
-		    on.exit(par(old.par))
+		    on.exit(graphics::par(old.par))
 			}, 	action="replace")
 		setHook("plot.new", function(...) setHook("plot.new", NULL, "replace"))
 	}

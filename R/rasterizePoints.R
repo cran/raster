@@ -38,11 +38,11 @@
 		} else {
 			if (na.rm) {
 				if (fun == 'first') {
-					fun <- function(x, ...) { na.omit(x[1]) }
+					fun <- function(x, ...) { stats::na.omit(x[1]) }
 				} else if (fun == 'last') {
-					fun <- function(x, ...) { x <- na.omit(x); x[length(x)] }
+					fun <- function(x, ...) { x <- stats::na.omit(x); x[length(x)] }
 				} else if (fun == 'count') {
-					fun <- function(x, ...) length(na.omit(x))
+					fun <- function(x, ...) length(stats::na.omit(x))
 				}
 			} else {
 				if (fun == 'first') {

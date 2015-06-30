@@ -34,7 +34,7 @@ rasterToPoints <- function(x, fun=NULL, spatial=FALSE, ...) {
 			notna <- apply(xyv[,3:ncol(xyv)], 1, function(x){ sum(is.na(x)) < length(x) })
 			xyv <- xyv[notna, ,drop=FALSE]
 		} else {
-			xyv <- na.omit(xyv)
+			xyv <- stats::na.omit(xyv)
 			attr(xyv, 'na.action') <- NULL
 		}
 		if (!is.null(fun)) {

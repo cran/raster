@@ -13,7 +13,7 @@ if (!isGeneric('subset')) {
 setMethod('subset', signature(x='RasterStack'), 
 function(x, subset, drop=TRUE, filename='', ...) {
 	if (is.character(subset)) {
-		i <- na.omit(match(subset, names(x)))
+		i <- stats::na.omit(match(subset, names(x)))
 		if (length(i)==0) {
 			stop('invalid layer names')
 		} else if (length(i) < length(subset)) {
@@ -51,7 +51,7 @@ function(x, subset, drop=TRUE, filename='', ...) {
 	}
 
 	if (is.character(subset)) {
-		i <- na.omit(match(subset, names(x)))
+		i <- stats::na.omit(match(subset, names(x)))
 		if (length(i)==0) {
 			stop('invalid layer names')
 		} else if (length(i) < length(subset)) {

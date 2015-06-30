@@ -1,4 +1,5 @@
 import(sp)
+import(Rcpp)
 importFrom("methods", Ops, Math)
 importFrom("graphics", hist, lines, image, contour, persp, pairs, text, boxplot)
 importFrom("grDevices", as.raster)

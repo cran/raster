@@ -101,9 +101,9 @@ function (x, filename, time=NULL, col=rev(terrain.colors(255)), colNA=NA, maxpix
 	for (i in 1:nl) {
 		png(filename = imagefile[i], width=max(480, blur*ncol(x)), height=max(480,blur*nrow(x)), bg="transparent")
 		if (!is.na(colNA)) {
-			par(mar=c(0,0,0,0), bg=colNA)
+			graphics::par(mar=c(0,0,0,0), bg=colNA)
 		} else {
-			par(mar=c(0,0,0,0))	
+			graphics::par(mar=c(0,0,0,0))	
 		}
 		
 		image(x[[i]], col=col, axes=FALSE, useRaster=TRUE, maxpixels=maxpixels, ...)

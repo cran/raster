@@ -70,7 +70,7 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 		}
 
 		if (na.rm) { 
-			x <- na.omit(x)
+			x <- stats::na.omit(x)
 		}
 
 		if (is.matrix(x)) {
@@ -118,7 +118,7 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 				}
 			}
 			if (na.rm) { 
-				x <- na.omit(x) 
+				x <- stats::na.omit(x) 
 				# get rid of omit attributes
 				if (is.matrix(x)) {
 					d <- dim(x)
@@ -150,7 +150,7 @@ function(x, size, na.rm=TRUE, ext=NULL, cells=FALSE, rowcol=FALSE, xy=FALSE, sp=
 			}
 			
 			if (na.rm) {
-				x <- na.omit(x)
+				x <- stats::na.omit(x)
 				if (is.matrix(x)) {
 					d <- dim(x)
 					x <- matrix(as.vector(x), d[1], d[2])

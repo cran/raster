@@ -109,7 +109,7 @@ function(x, row, nrows, ngb, names=FALSE, padValue=NA, array=FALSE, ...) {
 		} else {
 			dnms <- list(NULL, NULL, names(x))
 		}
-		mm <- array(unlist(mm), c(nrow(mm[[1]]), ncol(mm[[1]]), length(mm)), dimnames=dnms )
+		mm <- array(unlist(mm, use.names = FALSE), c(nrow(mm[[1]]), ncol(mm[[1]]), length(mm)), dimnames=dnms )
 	} else  {
 		names(mm) <- names(x)
 	}

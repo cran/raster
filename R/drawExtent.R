@@ -8,11 +8,11 @@
 
 drawExtent <- function(show=TRUE, col="red") {
 	if (show) {
-		loc1 <- locator(n=1, type="p", pch='+', col=col)
+		loc1 <- graphics::locator(n=1, type="p", pch='+', col=col)
 	} else {
-		loc1 <- locator(n=1)	
+		loc1 <- graphics::locator(n=1)	
 	}
-	loc2 <- locator(n=1)
+	loc2 <- graphics::locator(n=1)
 	loc <- rbind(unlist(loc1), unlist(loc2))
 	e <- extent(min(loc[,'x']), max(loc[,'x']), min(loc[,'y']), max(loc[,'y']))
 	if (e@xmin == e@xmax) {

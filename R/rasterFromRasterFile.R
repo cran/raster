@@ -56,7 +56,7 @@
 		if (type[i] == 'Date') {
 			try(value <- as.Date(value))
 		} else {
-			try(value <- as(value, type[i]))
+			try(value <- methods::as(value, type[i]))
 		}
 		if (is.na(v2[i])) {
 			a[[v1[i]]] <- value
@@ -229,7 +229,7 @@
 				try( zvalues <- as.POSIXct(strptime(zvalues, "%Y-%m-%d %H:%M:%S", tz="UTC")), silent=TRUE )
 
 			} else {
-				try( zvalues <- as(zvalues, zclass), silent=TRUE )
+				try( zvalues <- methods::as(zvalues, zclass), silent=TRUE )
 			}
 		}
 		if (type == 'RasterBrick') {

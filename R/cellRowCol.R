@@ -82,14 +82,9 @@ rowColFromCell <- function(object, cell) {
 }
 
 cellFromRowCol <- function(object, rownr, colnr) {
-	object <- raster(object)
-	rownr <- round(rownr)
-	colnr <- round(colnr)
-	rownr[rownr < 1 | rownr > nrow(object)] <- NA
-	colnr[colnr < 1 | colnr > ncol(object)] <- NA	
-	# recycle if length(rownr) != length(colnr)
-	x <- cbind(rownr, colnr)
-	as.vector((x[,1]-1) * ncol(object) + x[,2])
+	rows <- object@nrows
+	cols <- object@ncols
+	.doCellFromRowCol(rows, cols, rownr, colnr)
 }
 
 

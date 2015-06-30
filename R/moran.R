@@ -9,7 +9,7 @@
 	# not memory safe	
 	adj <- adjacent(x, 1:ncell(x), target=1:ncell(x), directions=8, pairs=TRUE)
 	z <- x - cellStats(x, mean)
-	wZiZj <- na.omit(z[adj[,1]] * z[adj[,2]])
+	wZiZj <- stats::na.omit(z[adj[,1]] * z[adj[,2]])
 	z2 <- cellStats(z*z, sum)
 	NS0 <- (ncell(z)-cellStats(z, 'countNA')) / length(wZiZj)
 	mI <- NS0 * sum(wZiZj) / z2
@@ -57,7 +57,7 @@ MoranLocal <- function(x, w=matrix(1,3,3)) {
 	lz <- focal(z, w=w, na.rm=TRUE, pad=TRUE) / W
 		
 	n <- ncell(x) - cellStats(x, 'countNA')
-	s2 <-  cellStats(x, sd)^2 
+	s2 <- cellStats(x, 'sd')^2 
 	# adjust variance denominator from n-1 to n 
 	s2 <- (s2 * (n-1)) / n 
 

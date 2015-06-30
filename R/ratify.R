@@ -27,7 +27,7 @@ ratify <- function(x, filename='', count=FALSE, ...) {
 .unweightRAT <- function(rat, fun='mean') {
 
 	fun <- .makeTextFun(fun)
-	x <- na.omit(rat) 
+	x <- stats::na.omit(rat) 
 	cols <- 3:ncol(x)
 
 	cls <- sapply(x[,cols,drop=FALSE], class)
@@ -106,7 +106,7 @@ deratify <- function(x, att=NULL, layer=1, complete=FALSE, drop=TRUE, fun='mean'
 	nms <- colnames(RAT)
 	if (!is.null(att)) {
 		if (is.character(att)) {
-			att <- na.omit(match(att, nms))
+			att <- stats::na.omit(match(att, nms))
 			if (length(att) == 0) {
 				stop("argument 'att' does not include valid names")
 			}

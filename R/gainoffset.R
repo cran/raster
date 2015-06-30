@@ -48,7 +48,7 @@ gain <- function(x) {
 				if (fromDisk(z)) {
 					z@data@offset <- value
 				} else {
-					z <- z + offset
+					z <- z + value
 				}
 				return(z) 
 			} 

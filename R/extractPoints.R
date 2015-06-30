@@ -34,7 +34,7 @@ function(x, y, ..., df=FALSE, sp=FALSE){
 	}
 	if (sp) {
 		v <- .xyValues(x, coordinates(y), ..., df=TRUE)
-		if (!.hasSlot(y, 'data')) {
+		if (!methods::.hasSlot(y, 'data')) {
 			y <- SpatialPointsDataFrame(y,  v[, -1, drop=FALSE])
 		} else {
 			y@data <- cbind(y@data, v[, -1, drop=FALSE])
@@ -99,7 +99,12 @@ function(x, y, ..., df=FALSE, sp=FALSE){
 			res <- data.frame(cbind(ID=1:NROW(res), res))
 		}
 		lyrs <- layer:(layer-1+nl)
-		colnames(res) <- c('ID', names(object)[lyrs])
+		if (cellnumbers) {
+			cn <- c('ID', 'cells', names(object)[lyrs])
+		} else {
+			cn <- c('ID', names(object)[lyrs])		
+		}
+		colnames(res) <- cn
 
 		if (any(is.factor(object)) & factors) {
 			v <- res[, -1, drop=FALSE]

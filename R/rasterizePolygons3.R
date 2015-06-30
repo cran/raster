@@ -117,7 +117,7 @@
 	polx <- polx[1:cnt]
 	poly <- poly[1:cnt]
 	
-	cat('Found', npol, 'region(s) and', cnt, 'polygon(s)\n') 
+	message('Found', npol, 'region(s) and', cnt, 'polygon(s)') 
 		
 	if (!canProcessInMemory(x)) {
 		if (filename == "") {

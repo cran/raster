@@ -18,7 +18,8 @@ setMethod("image", signature(x='RasterLayer'),
 
 		x <- sampleRegular(x, maxpixels, asRaster=TRUE, useGDAL=TRUE)
 		y <- yFromRow(x, nrow(x):1)
-		value <- t(as.matrix(x)[nrow(x):1,])
+# drop=F fix by Daniel Schlaepfer for single row image
+		value <- t(as.matrix(x)[nrow(x):1, ,drop=FALSE])
 		x <- xFromCol(x,1:ncol(x))
 #		if (colortab) {
 #			image(x=x, y=y, z=value, col=coltab[value], useRaster=useRaster, ...)

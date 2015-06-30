@@ -90,8 +90,8 @@
 			cl <- getCluster()
 			on.exit( returnCluster() )
 			nodes <- min(nrow(xy), length(cl))
-			cat('Using cluster with', nodes, 'nodes\n')
-			flush.console()
+			message('Using cluster with', nodes, 'nodes')
+			utils::flush.console()
 
 	
 			parallel::clusterExport(cl, c('object', 'obj', 'cellnumbers'), envir=environment())
@@ -121,7 +121,7 @@
 					return(pd)
 				}
 			}
-
+			.sendCall <- eval( parse( text="parallel:::sendCall") )
 			for (i in 1:nodes) {
 				.sendCall(cl[[i]], clFun2, list(i, xy[i, ,drop=FALSE], rn[i], rx[i], cn[i], cx[i]), tag=i)
 			}
@@ -200,7 +200,7 @@
 	if (! is.null(fun)) {
 		if (na.rm) {
 			fun2 <- function(x){
-						x <- na.omit(x)
+						x <- stats::na.omit(x)
 						if (length(x) > 0) { return(fun(x)) 
 						} else { return(NA) 
 						}
@@ -209,11 +209,11 @@
 			fun2 <- fun
 		}
 		if (inherits(object, 'RasterLayer')) {
-			cv <- unlist(lapply(cv, fun2))
+			cv <- unlist(lapply(cv, fun2), use.names = FALSE)
 		} else {
 			np <- length(cv)
 			cv <- lapply(cv, function(x) {apply(x,2,fun2)})
-			cv <- matrix(unlist(cv), nrow=np, byrow=TRUE)
+			cv <- matrix(unlist(cv, use.names = FALSE), nrow=np, byrow=TRUE)
 			colnames(cv) <- nms
 		}
 	}

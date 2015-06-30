@@ -10,7 +10,6 @@ if (!isGeneric("cut")) {
 }	
 
 setMethod('cut', signature(x='Raster'), 
-
 function(x, breaks, ..., filename='', format, datatype='INT2S', overwrite, progress)  {
 	
 	if (! hasValues(x) ) { 
@@ -30,9 +29,9 @@ function(x, breaks, ..., filename='', format, datatype='INT2S', overwrite, progr
 	if (canProcessInMemory(out, n=nl*2 + 2)) {
 
 		if (nl > 1) {
-			values(out) <- apply(getValues(x), 2, function(x) as.numeric(cut(x, breaks=breaks, ...)))
+			values(out) <- apply(getValues(x), 2, function(x) as.numeric(cut(x, breaks=breaks, labels=FALSE, ...)))
 		} else {
-			values(out) <- as.numeric(cut(getValues(x), breaks=breaks, ...))
+			values(out) <- as.numeric(cut(getValues(x), breaks=breaks, labels=FALSE, ...))
 		}
 		if ( filename != "" ) { 
 			out <- writeRaster(out, filename=filename, format=format, datatype=datatype, overwrite=overwrite, progress=progress )
@@ -47,9 +46,9 @@ function(x, breaks, ..., filename='', format, datatype='INT2S', overwrite, progr
 			breaks <- round(breaks)
 			stopifnot(breaks > 1)
 			probs <- c(0, 1:breaks * 1/breaks)
-			breaks <- na.omit(sampleRegular(x, 10000, useGDAL=TRUE))
+			breaks <- stats::na.omit(sampleRegular(x, 10000, useGDAL=TRUE))
 			warning('breaks are approximate, based on a sample of ', length(breaks), ' cells that are not NA')
-			breaks <- quantile(, probs, names=FALSE)
+			breaks <- stats::quantile(breaks, probs, names=FALSE)
 			breaks[1] <- -Inf
 			breaks[length(breaks)] <- Inf
 		}
@@ -61,14 +60,14 @@ function(x, breaks, ..., filename='', format, datatype='INT2S', overwrite, progr
 		if (nl > 1) {
 			for (i in 1:tr$n) {
 				res <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
-				res <- apply(res, 2, function(x) as.numeric(cut(x, breaks=breaks, ...)))
+				res <- apply(res, 2, function(x) as.numeric(cut(x, breaks=breaks, labels=FALSE, ...)))
 				out <- writeValues(out, res, tr$row[i])
 				pbStep(pb, i)
 			}
 		} else {
 			for (i in 1:tr$n) {
 				res <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
-				res <- as.numeric(cut(res, breaks=breaks, ...))
+				res <- as.numeric(cut(res, breaks=breaks, labels=FALSE, ...))
 				out <- writeValues(out, res, tr$row[i])
 				pbStep(pb, i)
 			}

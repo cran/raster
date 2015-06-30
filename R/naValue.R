@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 .naChanged <- function(x) {
-	if (.hasSlot(x@file, 'NAchanged')) {
+	if (methods::.hasSlot(x@file, 'NAchanged')) {
 		return(x@file@NAchanged)
 	} else {
 		return(TRUE)

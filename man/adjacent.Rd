@@ -63,7 +63,9 @@ r[] <- round(runif(ncell(r)) * 5)
 a <- adjacent(r, 1:ncell(r), 4, pairs=TRUE)
 tb <- table(r[a[,1]], r[a[,2]])
 tb
-plot(raster(tb[], xmn=-0.5, xmx=5.5, ymn=-0.5, ymx=5.5))
+# make a matrix out of the 'table' object
+tb <- unclass(tb)
+plot(raster(tb, xmn=-0.5, xmx=5.5, ymn=-0.5, ymx=5.5))
 }
 
 \keyword{spatial}

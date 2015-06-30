@@ -29,8 +29,8 @@ function(x, y) {
 		return(NULL)
 	}
 		
-	xdata <- .hasSlot(x, 'data')
-	ydata <- .hasSlot(y, 'data')
+	xdata <- methods::.hasSlot(x, 'data')
+	ydata <- methods::.hasSlot(y, 'data')
 	dat <- NULL
 	if (xdata & ydata) {
 		nms <- .goodNames(c(colnames(x@data), colnames(y@data)))
@@ -88,7 +88,22 @@ function(x, y) {
 
 setMethod('intersect', signature(x='SpatialPolygons', y='SpatialLines'), 
 function(x, y) {
-	intersect(y, x)
+
+	requireNamespace("rgeos")
+		
+	if (! identical(proj4string(x), proj4string(y)) ) {
+		warning('non identical CRS')
+		y@proj4string <- x@proj4string
+	}	
+	
+	subs <- rgeos::gIntersects(x, y, byid=TRUE)
+	if (sum(subs)==0) {
+		warning('lines and polygons do not intersect')
+		return(NULL)
+	}
+
+	i <- which(apply(subs, 2, any))
+	x[i, ]
 }
 )
 
@@ -111,8 +126,8 @@ function(x, y) {
 		return(NULL)
 	}
 		
-	xdata <- .hasSlot(x, 'data')
-	ydata <- .hasSlot(y, 'data')
+	xdata <- methods::.hasSlot(x, 'data')
+	ydata <- methods::.hasSlot(y, 'data')
 	dat <- NULL
 	if (xdata & ydata) {
 		nms <- .goodNames(c(colnames(x@data), colnames(y@data)))
@@ -168,54 +183,115 @@ function(x, y) {
 )
 
 
-setMethod('intersect', signature(x='SpatialPolygons', y='SpatialPoints'), 
+setMethod('intersect', signature(x='SpatialLines', y='SpatialLines'), 
 function(x, y) {
-	intersect(y, x)
+	stopifnot(requireNamespace("rgeos"))
+
+	if (! identical(proj4string(x), proj4string(y)) ) {
+		warning('non identical CRS')
+		y@proj4string <- x@proj4string
+	} 
+	
+	
+	xdata <- methods::.hasSlot(x, 'data')
+	ydata <- methods::.hasSlot(y, 'data')
+	if (! any(c(xdata, ydata))) {
+		return(  rgeos::gIntersection(y, x, byid=TRUE) )
+	}
+	
+	x <- spChFIDs(x, as.character(1:length(x)))
+	y <- spChFIDs(y, as.character(1:length(y)))
+	
+	z <- rgeos::gIntersection(y, x, byid=TRUE)
+	
+	if (is.null(z)) {
+		z <- SpatialPoints(cbind(0,0), proj4string=crs(x))
+		return( z[-1, ] )
+	}
+	
+	if (inherits(z, 'SpatialCollections')) {
+		z <- z@pointobj
+	}
+	
+	s <- strsplit(spChFIDs(z), ' ')
+	s <- matrix(as.integer(unlist(s)), ncol=2, byrow=TRUE)
+	
+	if (xdata & ydata) {
+		nms <- .goodNames(c(colnames(x@data), colnames(y@data)))
+		xnames <- nms[1:ncol(x@data)]
+		ynames <- nms[(ncol(x@data)+1):length(nms)]
+		xd <- x@data[s[,2], ]
+		yd <- y@data[s[,1], ]
+		d <- cbind(xd, yd)
+		colnames(d) <- c(xnames, ynames)
+	} else if (xdata) {
+		d <- x@data[s[,2], ]
+	} else if (ydata) {
+		d <- y@data[s[,1], ]
+	}
+	row.names(d) <- NULL
+	row.names(z) <- as.character(1:length(z))
+	SpatialPointsDataFrame(z, d)
 }
 )
 
-setMethod('intersect', signature(x='SpatialPoints', y='SpatialPolygons'), 
-function(x, y) {
 
+
+setMethod('intersect', signature(x='SpatialPolygons', y='SpatialPoints'), 
+function(x, y) {
+	
 	stopifnot(requireNamespace("rgeos"))
 	
 	if (! identical(proj4string(x), proj4string(y)) ) {
 		warning('non identical CRS')
 		y@proj4string <- x@proj4string
-	}
-    i <- rgeos::gIntersects(y, x, byid=TRUE)
-	
-	j <- cbind(1:length(y), rep(1:length(x), each=length(y)), as.vector(t(i)))
-	j <- j[j[,3] == 1, -3]
-	j <- j[order(j[,2]), ]
-	x <- x[j[,2], ]
-	
-	if (.hasSlot(y, 'data')) {
-		d <- y@data[j[,1], ]
-		if (!.hasSlot(x, 'data')) {
-			x <- SpatialPointsDataFrame(x, d)
-		} else {
-			x@data <- cbind(x@data, d)
-		}
 	} 
-	x
+	
+	i <- rgeos::gIntersects(x, y, byid=TRUE)
+	i <- which(apply(i, 2, any))
+	x[i, ]
 }
 )
 
 
-setMethod('intersect', signature(x='SpatialVector', y='ANY'), 
+setMethod('intersect', signature(x='SpatialPoints', y='ANY'), 
 function(x, y) {
-	y <- extent(y)
-	if (inherits(x, 'SpatialPoints')) {
+	
+	if (inherits(y, 'SpatialLines')) {
+		stop('intersect of SpatialPoints and Lines is not supported because of numerical inaccuracies.\nUse "buffer", to create SpatialPoygons from the lines and use that in intersect.\nOr see rgeos::gIntersection')
+	}
+
+	if (! identical(proj4string(x), proj4string(y)) ) {
+		warning('non identical CRS')
+		y@proj4string <- x@proj4string
+	} 
+	
+	if (inherits(y, 'SpatialPolygons')) {
+	
+		stopifnot(requireNamespace("rgeos"))
+		i <- rgeos::gIntersects(y, x, byid=TRUE)
+	
+		j <- cbind(1:length(y), rep(1:length(x), each=length(y)), as.vector(t(i)))
+		j <- j[j[,3] == 1, -3]
+		j <- j[order(j[,2]), ]
+		x <- x[j[,2], ]
+		
+		if (methods::.hasSlot(y, 'data')) {
+			d <- y@data[j[,1], ]
+			if (!methods::.hasSlot(x, 'data')) {
+				x <- SpatialPointsDataFrame(x, d)
+			} else {
+				x@data <- cbind(x@data, d)
+			}
+		} 
+		return(x)
+		
+	} else {
+		y <- extent(y)
 		xy <- coordinates(x)
 		i <- xy[,1] >= y@xmin & xy[,1] <= y@xmax & xy[,2] >= y@ymin & xy[,2] <= y@ymax
 		x[i, ]
-	} else {
-		y <- as(y, 'SpatialPolygons')
-		crs(y) <- crs(x)
-		intersect(x, y)
 	}
 }
 )
-
 

@@ -5,7 +5,7 @@
 
 
 .commonDataType <- function(dtype) {
-	dtype <- as.vector(unlist(dtype))
+	dtype <- as.vector(unlist(dtype, use.names = FALSE))
 	dtype <- unique(dtype)
 	if (length(dtype)==1) {
 		datatype <- dtype

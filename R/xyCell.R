@@ -56,9 +56,11 @@ cellFromXY <- function(object, xy) {
 		cr <- object@rotation@transfun(xy, inv=TRUE)
 		cell <- (cr[,2]-1) * object@ncols + cr[,1]
 	} else {
-		rownr <- rowFromY(object, y) - 1
-		colnr <- colFromX(object, x)
-		cell <- rownr * object@ncols + colnr
+		cell <- .doCellFromXY(
+			object@ncols, object@nrows,
+			object@extent@xmin, object@extent@xmax,
+			object@extent@ymin, object@extent@ymax, 
+			x, y)
 	}
 	return(cell)
 }
@@ -95,19 +97,21 @@ rowFromY <- function ( object, y )	{
 xyFromCell <- function(object, cell, spatial=FALSE) {
 	if (rotated(object)) {
 		xy <- object@rotation@transfun( 
-			cbind(colFromCell(object, cell), rowFromCell(object, cell)) 
+			cbind(x=colFromCell(object, cell), y=rowFromCell(object, cell)) 
 		)
 		
 	} else {
-		xy <- matrix(data=NA, ncol=2, nrow=length(cell))
-		xy[,1] <- .xFromCol(object, .colFromCell(object, cell))
-		xy[,2] <- .yFromRow(object, .rowFromCell(object, cell))
-		xy[cell < 1 | cell > ncell(object), ] <- NA
+		xy <- .doXYFromCell(
+			object@ncols, object@nrows,
+			object@extent@xmin, object@extent@xmax,
+			object@extent@ymin, object@extent@ymax,
+			cell
+		)
+		dimnames(xy) <- list(NULL, c("x", "y"))
 	}
-	colnames(xy) <- c("x", "y")	
 
 	if (spatial) {
-		xy <- SpatialPoints(na.omit(xy), projection(object, asText=FALSE))
+		xy <- SpatialPoints(stats::na.omit(xy), crs(object))
 	}
 	return(xy)
 }

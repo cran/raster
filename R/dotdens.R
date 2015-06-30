@@ -2,7 +2,7 @@
 # Based on maptools:dotsInPolys by Roger Bivand
 
 
-.dotdensity <- function(p, field, x=1, type="regular", seed=0,...) {
+.dotdensity <- function(p, field, x=1, type="regular", seed=0, sp=FALSE, ...) {
 	set.seed(seed)
 	stopifnot(inherits(p, 'SpatialPolygons'))
     n <- length(p)
@@ -46,7 +46,14 @@
 			}
 		}
     }
-    do.call("rbind", res)
+    res <- do.call("rbind", res)
+	colnames(res)[1:2] <- c('x', 'y')
+	if (sp) {
+		res <- data.frame(res)
+		coordinates(res) <- ~ x+y 
+		crs(res) <- crs(p)
+	}
+	res
 }
 
 

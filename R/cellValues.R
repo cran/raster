@@ -31,7 +31,7 @@
 		
 			if (inMemory(x)) {
 				cells[cells < 1 | cells > ncell(x)] <- NA
-				if (length(na.omit(cells)) == 0) {
+				if (length(stats::na.omit(cells)) == 0) {
 					return(cells)
 				}
 				result <- x@data@values[cells, lyrs, drop=FALSE] 

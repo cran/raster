@@ -62,7 +62,7 @@ setClass ('BasicRaster',
 		z = list()
 	),
 	validity = function(object) {
-		validObject(extent(object))
+		methods::validObject(extent(object))
 		c1 <- (object@ncols > 0)
 		if (!c1) { stop('ncols < 1') }
 		c2 <- (object@nrows > 0)

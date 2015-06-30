@@ -37,7 +37,7 @@ Calculate focal ("moving window") values for the neighborhood of focal cells usi
 \details{
 \code{focal} uses a matrix of weights for the neighborhood of the focal cells. The default function is \code{sum}. It is computationally much more efficient to adjust the weights-matrix than to use another function through the \code{fun} argument. Thus while the following two statements are equivalent (if there are no \code{NA} values), the first one is faster than the second one:
 
-\code{a <- focal(x, w=matrix(1/9, nc=3, nc=3))}
+\code{a <- focal(x, w=matrix(1/9, nc=3, nr=3))}
 
 \code{b <- focal(x, w=matrix(1,3,3), fun=mean)}
 

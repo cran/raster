@@ -10,7 +10,7 @@
 	
 	if (length(cells) < 1) {
 #		cat(cells,"\n")
-#		flush.console()
+#		utils::flush.console()
 		return(NULL)
 	}
 	
@@ -19,7 +19,7 @@
 	
 	cells <- cbind(1:length(cells), cells)
 	cells <- cells[order(cells[,2]), ,drop=FALSE]
-	uniquecells <- sort(na.omit(unique(cells[,2])))
+	uniquecells <- sort(stats::na.omit(unique(cells[,2])))
 	uniquecells <- uniquecells[(uniquecells > 0) & (uniquecells <= ncell(x))]
 	if (length(uniquecells) == 0) {
 		return( matrix(NA, nrow=nrow(cells), ncol=length(layers)) )
@@ -126,7 +126,11 @@
 
 	nl <- nlayers(x)
 	if (nl == 1) {
-		layers <- bandnr(x)
+		if (inherits(x, 'RasterLayer')) {
+			layers <- bandnr(x)
+		} else {
+			layers <- 1		
+		}
 	}
 	laysel <- length(layers)
 	
@@ -140,9 +144,6 @@
 	con <- rgdal::GDAL.open(x@file@name, silent=TRUE)
 	
 	if (laysel == 1) {
-		if (nl == 1) {
-			bandnr(x)
-		}
 		for (i in 1:length(rows)) {
 			offs <- c(rows[i]-1, 0) 
 			v <- rgdal::getRasterData(con, offset=offs, region.dim=c(1, nc), band = layers)
@@ -223,7 +224,7 @@
 		x <- readStart(x)
 	}
 
-	for (i in seq(along=cells)) {
+	for (i in seq(along.with=cells)) {
 		seek(x@file@con, cells[i])
 		res[i] <- readBin(x@file@con, what=dtype, n=1, size=dsize, endian=byteord, signed=signed) 
 	}

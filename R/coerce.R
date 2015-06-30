@@ -30,8 +30,8 @@ setAs('Raster', 'SpatialPixels',
 		sp <- rasterToPoints(from, fun=NULL, spatial=FALSE)
 		
 		r <- raster(from)
-		sp <- SpatialPoints(sp[,1:2], proj4string= projection(r, FALSE))
-		grd <- as(r, 'GridTopology')
+		sp <- SpatialPoints(sp[,1:2], proj4string= crs(r))
+		grd <- methods::as(r, 'GridTopology')
 		SpatialPixels(points=sp, grid=grd)
 	}
 )
@@ -44,9 +44,9 @@ setAs('Raster', 'SpatialPixelsDataFrame',
 		v <- rasterToPoints(from, fun=NULL, spatial=FALSE)
 
 		r <- raster(from)
-		sp <- SpatialPoints(v[,1:2], proj4string= projection(r, FALSE))
+		sp <- SpatialPoints(v[,1:2], proj4string= crs(r))
 
-		grd <- as(r, 'GridTopology')
+		grd <- methods::as(r, 'GridTopology')
 		
 		if (ncol(v) > 2) {
 			v <- data.frame(v[, 3:ncol(v), drop = FALSE])
@@ -73,9 +73,8 @@ setAs('Raster', 'SpatialGrid',
 			stop('\n Cannot coerce because the object is rotated.\n Either coerce to SpatialPoints* from\n or first use the "rectify" function')
 		}	
 		r <- raster(from)
-		crs <- projection(r, FALSE)
-		grd <- as(r, 'GridTopology')
-		SpatialGrid(grd, proj4string=crs)
+		grd <- methods::as(r, 'GridTopology')
+		SpatialGrid(grd, proj4string=crs(r))
 	}
 )
 
@@ -86,11 +85,10 @@ setAs('Raster', 'SpatialGridDataFrame',
 		}	
 
 		r <- raster(from)
-		crs <- projection(r, FALSE)
-		grd <- as(r, 'GridTopology')
+		grd <- methods::as(r, 'GridTopology')
 
 		if (hasValues(from)) {
-			sp <- SpatialGridDataFrame(grd, proj4string=crs, data=as.data.frame(from))
+			sp <- SpatialGridDataFrame(grd, proj4string=crs(r), data=as.data.frame(from))
 		} else { 
 			warning('object has no values, returning a "SpatialGrid" object')
 			sp  <- SpatialGrid(grd, proj4string=crs)
@@ -105,7 +103,7 @@ setAs('Raster', 'SpatialGridDataFrame',
 setAs('Raster', 'SpatialPolygons', 
 	function(from){ 
 		r <- rasterToPolygons(from[[1]])
-		as(r, 'SpatialPolygons')
+		methods::as(r, 'SpatialPolygons')
 	}
 )
 
@@ -131,9 +129,17 @@ setAs('Raster', 'SpatialPointsDataFrame',
 setAs('Extent', 'SpatialPolygons', 
 	function(from){ 
 		p <- rbind(c(from@xmin, from@ymin), c(from@xmin, from@ymax), c(from@xmax, from@ymax), c(from@xmax, from@ymin), c(from@xmin, from@ymin) )
-		SpatialPolygons(list(Polygons(list(Polygon(p)), 1))) 
+		SpatialPolygons(list(Polygons(list(Polygon(p)), '1'))) 
 	}
 )
+
+setAs('Extent', 'SpatialLines', 
+	function(from){ 
+		p <- rbind(c(from@xmin, from@ymin), c(from@xmin, from@ymax), c(from@xmax, from@ymax), c(from@xmax, from@ymin), c(from@xmin, from@ymin) )
+		SpatialLines(list(Lines(list(Line(p)), '1'))) 
+	}
+)
+
 
 setAs('Extent', 'SpatialPoints', 
 	function(from){ 
@@ -157,9 +163,9 @@ setAs('SpatialPixels', 'RasterLayer',
 
 setAs('SpatialGrid', 'BasicRaster', 
 	function(from){ 
-		to <- new('BasicRaster')
+		to <- methods::new('BasicRaster')
 		to@extent <- extent(from)
-		projection(to) <- from@proj4string
+		crs(to) <- from@proj4string
 		dim(to) <- c(from@grid@cells.dim[2], from@grid@cells.dim[1])	
 		return(to)
 	}
@@ -168,9 +174,9 @@ setAs('SpatialGrid', 'BasicRaster',
 
 setAs('SpatialPixels', 'BasicRaster', 
 	function(from){ 
-		to <- new('BasicRaster')
+		to <- methods::new('BasicRaster')
 		to@extent <- extent(from)
-		projection(to) <- from@proj4string
+		crs(to) <- from@proj4string
 		dim(to) <- c(from@grid@cells.dim[2], from@grid@cells.dim[1])	
 		return(to)
 	}
@@ -226,8 +232,8 @@ setAs('STFDF', 'RasterBrick',
 
 setAs('STSDF', 'RasterBrick', 
 	function(from) {
-		from <- as(from, 'STFDF')
-		as(from, 'RasterBrick')
+		from <- methods::as(from, 'STFDF')
+		methods::as(from, 'RasterBrick')
 	}
 )
 
@@ -259,20 +265,16 @@ setAs('RasterLayer', 'matrix',
 	function(from){ return( getValues(from, format='matrix')) }
 )
 
+
+#setAs('RasterLayerSparse', 'RasterLayer', function(from){ raster(from) } )
+
 setAs('RasterLayer', 'RasterLayerSparse', 
 	function(from){ 
-		x <- new('RasterLayerSparse', from)
-		v <- na.omit(cbind(1:ncell(from), getValues(from)))
+		x <- methods::new('RasterLayerSparse')
+		v <- stats::na.omit(cbind(1:ncell(from), getValues(from)))
 		setValues(x, v[,2], v[,1])
 	}
 )
-
-setAs('RasterLayerSparse', 'RasterLayer', 
-	function(from){
-		raster(from)
-	}
-)
-
 
 
 

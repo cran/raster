@@ -5,7 +5,7 @@
 \title{Distance between points}
 
 \description{
-Calculate the geographic distance between two (sets of) points on a sphere (\code{lonlat=TRUE}) or on a plane (\code{lonlat=FALSE}). If both sets do not have the same number of points, the distance between each pair of points is given. If both sets have the same number of points, the distance between each point and the corresponding point in the other set is given, except if \code{allpairs=TRUE}.
+Calculate the geographic distance between two (sets of) points on the WGS ellipsoid (\code{lonlat=TRUE}) or on a plane (\code{lonlat=FALSE}). If both sets do not have the same number of points, the distance between each pair of points is given. If both sets have the same number of points, the distance between each point and the corresponding point in the other set is given, except if \code{allpairs=TRUE}.
 }
 
 \usage{
@@ -17,7 +17,7 @@ pointDistance(p1, p2, lonlat, allpairs=FALSE, ...)
 \item{p2}{x and y coordinate of second (set of) second point(s) (like for \code{p1}). If this argument is missing, a distance matrix is computed for \code{p1} }
 \item{lonlat}{logical. If \code{TRUE}, coordinates should be in degrees; else they should represent planar ('Euclidean') space (e.g. units of meters) }
 \item{allpairs}{logical. Only relevant if the number of points in \code{x} and \code{y} is the same. If \code{FALSE} the distance between each point in \code{x} with the corresponding point in \code{y} is returned. If \code{TRUE} a full distance matrix is returned }
-\item{...}{Additional arguments. Can be used to set the radius, \code{r}, of the world (modeled as a sphere), when \code{lonlat=TRUE} Default is \code{r=6378137} }
+\item{...}{Additional arguments. None implemented }
 }
 
 \value{
@@ -29,7 +29,7 @@ If \code{p2} is missing, a distance matrix is returned
 The \code{geosphere} package has many additional distance functions and other functions that operate on spherical coordinates}
 
 
-\author{Robert J. Hijmans and Jacob van Etten }
+\author{Robert J. Hijmans and Jacob van Etten. The distance for longitude/latitude data uses GeographicLib by C.F.F. Karney}
 
 \examples{
 a <- cbind(c(1,5,55,31),c(3,7,20,22))

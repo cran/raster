@@ -31,7 +31,7 @@ setMethod('freq', signature(x='RasterLayer'),
 			for (i in 1:tr$n) {
 				d <- round(getValuesBlock(x, row=tr$row[i], nrows=tr$nrows[i]), digits=digits)
 				res <- table(d, useNA=useNA )
-				res <- cbind(as.numeric(unlist(as.vector(dimnames(res)))), as.vector(res))
+				res <- cbind(as.numeric(unlist(as.vector(dimnames(res)), use.names = FALSE)), as.vector(res))
 				z <- rbind(z, res)
 				pbStep(pb, i)
 			}
@@ -127,7 +127,7 @@ setMethod('freq', signature(x='RasterStackBrick'),
 			if (is.na(value)) {
 				x <- sum(is.na(getValues(x)))
 			} else {
-				v <- na.omit(round(getValues(x), digits=digits))
+				v <- stats::na.omit(round(getValues(x), digits=digits))
 				x <- sum(v == value)
 			}
 			return(x)
@@ -140,7 +140,7 @@ setMethod('freq', signature(x='RasterStackBrick'),
 				if (is.na(value)) {
 					r <- r + sum(is.na(v))
 				} else {
-					v <- na.omit(round(v, digits=digits))
+					v <- stats::na.omit(round(v, digits=digits))
 					r <- r + sum(v == value)
 				}
 				pbStep(pb, i)

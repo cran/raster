@@ -100,7 +100,7 @@ setMethod('interpolate', signature(object='Raster'),
 		
 			if (xyOnly) {
 				p <- xyFromCell(predrast, ablock + (tr$row[i]-1) * ncol(predrast)) 
-				p <- na.omit(p)
+				p <- stats::na.omit(p)
 				blockvals <- data.frame(x=p[,1], y=p[,2])
 			} else {
 				blockvals <- data.frame(getValuesBlock(object, row=rr, nrows=tr$nrows[i], firstcol, ncols))
@@ -141,7 +141,7 @@ setMethod('interpolate', signature(object='Raster'),
 			} else {  
 			
 				if (na.rm) {  
-					blockvals <- na.omit(blockvals)		
+					blockvals <- stats::na.omit(blockvals)		
 				}
 				if (nrow(blockvals) == 0 ) {
 					predv <- napred
@@ -150,9 +150,9 @@ setMethod('interpolate', signature(object='Raster'),
 				}
 
 				if (class(predv)[1] == 'list') {
-					predv = unlist(predv)
+					predv <- unlist(predv, use.names = FALSE)
 					if (length(predv) != nrow(blockvals)) {
-						predv = matrix(predv, nrow=nrow(blockvals))
+						predv <- matrix(predv, nrow=nrow(blockvals))
 					}					
 				}
 				if (isTRUE(dim(predv)[2] > 1)) {

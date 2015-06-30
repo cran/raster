@@ -6,7 +6,7 @@
 
 
 .startWriteCDF <- function(x, filename, datatype='FLT4S', overwrite=FALSE, att, 
-		varname, varunit, varatt, longname, xname, yname, zname, zunit, zatt, NAflag, ...) {
+		varname, varunit, varatt, longname, xname, yname, zname, zunit, zatt, NAflag, force_v4=FALSE, ...) {
 
 		
 	ncdf4 <- .NCDFversion4()
@@ -98,13 +98,13 @@
 		ydim <- ncdf4::ncdim_def( yname, yunit, yFromRow(x, 1:nrow(x)) )
 		if (inherits(x, 'RasterBrick')) {
 			zdim <- ncdf4::ncdim_def( zname, zunit, zv, unlim=TRUE )
-			vardef <- ncdf4::ncvar_def( varname, varunit, list(xdim, ydim, zdim), NAvalue(x), prec = datatype )
+			vardef <- ncdf4::ncvar_def( varname, varunit, list(xdim, ydim, zdim), NAvalue(x), prec = datatype, ... )
 			#vardef <- ncdf::var.def.ncdf( varname, varunit, list(xdim,ydim,zdim), -3.4e+38 )
 		} else {
 			#vardef <- ncdf::var.def.ncdf( varname, varunit, list(xdim,ydim), -3.4e+38 )
-			vardef <- ncdf4::ncvar_def( varname, varunit, list(xdim, ydim), NAvalue(x), prec = datatype )
+			vardef <- ncdf4::ncvar_def( varname, varunit, list(xdim, ydim), NAvalue(x), prec = datatype, ... )
 		}
-		nc <- ncdf4::nc_create(filename, vardef)
+		nc <- ncdf4::nc_create(filename, vardef, force_v4=force_v4)
 
 		if (! missing(zatt)){
 			for (i in 1:length(zatt)) {
@@ -242,7 +242,7 @@
 
 .writeValuesCDF <- function(x, v, start=1) {
 
-	rsd <- na.omit(v) 
+	rsd <- stats::na.omit(v) 
 	if (length(rsd) > 0) {
 		x@data@min <- min(x@data@min, rsd)
 		x@data@max <- max(x@data@max, rsd)
@@ -285,7 +285,7 @@
 		lstart <- layer
 		lend <- layer	
 
-		rsd <- na.omit(v) 
+		rsd <- stats::na.omit(v) 
 		if (length(rsd) > 0) {
 			x@data@min[layer] <- min(x@data@min[layer], rsd)
 			x@data@max[layer] <- max(x@data@max[layer], rsd)

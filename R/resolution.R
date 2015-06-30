@@ -21,7 +21,7 @@
 	nc <- max(1, round( (bb@xmax - bb@xmin) / xr ))
 	nr <- max(1, round( (bb@ymax - bb@ymin) / yr ))
 	if (nr != x@nrows | nc != x@ncols) {
-		if (extends(class(x), "Raster")) {
+		if (methods::extends(class(x), "Raster")) {
 			x <- clearValues(x)
 		}
 	}

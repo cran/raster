@@ -15,7 +15,7 @@ pbCreate <- function(nsteps, progress, style=3, label='Progress', ...) {
 	}
 	
 	if (progress=='text') {
-		pb <- txtProgressBar(min=0, max=nsteps, style=style)
+		pb <- utils::txtProgressBar(min=0, max=nsteps, style=style)
 	} else if (progress %in% c('window', 'tcltk', 'windows')) {
 		tit <- paste(label, ' (', nsteps, ' steps)', sep='')
 		#if (.Platform$OS.type == "windows" ) {
@@ -35,9 +35,9 @@ pbCreate <- function(nsteps, progress, style=3, label='Progress', ...) {
 
 pbStep <- function(pb, step=NULL, label='') {
 	pbclass <- class(pb)
-	if (pbclass=="txtProgressBar") {
+	if (pbclass=="utils::txtProgressBar") {
 		if (is.null(step)) { step = pb$getVal() + 1 }
-		setTxtProgressBar(pb, step)
+		utils::setTxtProgressBar(pb, step)
 	} else if (pbclass=="tkProgressBar") {
 		if (is.null(step)) { step = pb$getVal() + 1 }
 		tcltk::setTkProgressBar(pb, step, label=paste(label, step))	
@@ -49,7 +49,7 @@ pbStep <- function(pb, step=NULL, label='') {
 
 pbClose <- function(pb, timer) {
 	pbclass <- class(pb)
-	if (pbclass=="txtProgressBar") {
+	if (pbclass=="utils::txtProgressBar") {
 		cat("\n\r")
 		close(pb)
 	} else if (pbclass=="tkProgressBar") {

@@ -11,12 +11,13 @@ Read or write a shapefile
 
 \description{
 Reading and writing of "ESRI shapefile" format spatial data. Only the three vector types (points, lines, and polygons) can be stored in shapefiles. 
-These are simple wrapper functions around readOGR and writeOGR (rgdal package).
+These are simple wrapper functions around readOGR and writeOGR (rgdal package). 
+A shapefile should consist of at least four files: .shp (the geomotry), .dbf (the attributes), .shx (the index that links the two, and .prj (the coordinate reference system). If the .prj file is missing, a warning is given. If any other file is missing an error occurs (although one could in principle recover the .shx from the .shp file). Additional files are ignored.
 }
 
 
 \usage{
-\S4method{shapefile}{character}(x, stringsAsFactors=FALSE, verbose=FALSE, ...)
+\S4method{shapefile}{character}(x, stringsAsFactors=FALSE, verbose=FALSE, warnPRJ=TRUE, ...)
 
 \S4method{shapefile}{Spatial}(x, filename='', overwrite=FALSE, ...)
 }
@@ -24,9 +25,10 @@ These are simple wrapper functions around readOGR and writeOGR (rgdal package).
 \arguments{
   \item{x}{character (a file name, when reading a shapefile) or Spatial* object (when writing a shapefile)}
   \item{filename}{character. Filename to write a shapefile}
-  \item{overwrite}{Logical. Overwrite existing shapefile?}
-  \item{verbose}{Logical. If \code{TRUE}, information about the file is printed}
-  \item{stringsAsFactors}{Logical. If \code{TRUE}, strings are converted to factors}
+  \item{overwrite}{logical. Overwrite existing shapefile?}
+  \item{verbose}{logical. If \code{TRUE}, information about the file is printed}
+  \item{warnPRJ}{logical. If \code{TRUE}, a warning is given if there is no .prj file}
+  \item{stringsAsFactors}{logical. If \code{TRUE}, strings are converted to factors}
   \item{...}{Additional arguments passed to rgdal functions readOGR or writeOGR}
 }
 

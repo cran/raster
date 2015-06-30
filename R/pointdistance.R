@@ -38,39 +38,35 @@
 
 .distm <- function (x, longlat) {
 	if (longlat) { 
-		fun <- .haversine 
+		n <- nrow(x)
+		dm <- matrix(ncol = n, nrow = n)
+		dm[cbind(1:n, 1:n)] <- 0
+		if (n > 1) {
+			for (i in 2:n) {
+				j = 1:(i - 1)
+				dm[i, j] = .geodist(x[i, 1], x[i, 2], x[j, 1], x[j, 2])
+			}
+		}
+		return(dm)
 	} else { 
 		return(.planedist2(x, x))
-	#	fun <- .planedist
 	}
-    n = nrow(x)
-    dm = matrix(ncol = n, nrow = n)
-    dm[cbind(1:n, 1:n)] = 0
-    if (n == 1) {
-        return(dm)
-    }
-    for (i in 2:n) {
-        j = 1:(i - 1)
-        dm[i, j] = fun(x[i, 1], x[i, 2], x[j, 1], x[j, 2])
-    }
-    return(dm)
 }
 
 
 .distm2 <- function (x, y, longlat) {
 	if (longlat) { 
-		fun <- .haversine 
+		n <- nrow(x)
+		m <- nrow(y)
+		dm <- matrix(ncol=m, nrow=n)
+		for (i in 1:n) {
+			dm[i,] <- .geodist(x[i, 1], x[i, 2], y[, 1], y[, 2])
+		}
+		return(dm)
 	} else { 
 		return(.planedist2(x, y))
 		# fun <- .planedist
 	}
-	n = nrow(x)
-	m = nrow(y)
-	dm = matrix(ncol=m, nrow=n)
-	for (i in 1:n) {
-		dm[i,] = fun(x[i, 1], x[i, 2], y[, 1], y[, 2])
-	}
-	return(dm)
 }
 
 
@@ -80,8 +76,15 @@ pointDistance <- function (p1, p2, lonlat, allpairs=FALSE, ...) {
 	if (!is.null(longlat)) {
 		lonlat <- longlat
 	}
+
 	if (missing(lonlat)) {
-		stop('you must provide a "lonlat" argument (TRUE/FALSE)')
+		if (isLonLat(p1)) {
+			lonlat <- TRUE
+		} else if (! is.na(projection(p1)) ) {
+			lonlat <- FALSE		
+		} else {
+			stop('you must provide a "lonlat" argument (TRUE/FALSE)')
+		}
 	}
 	stopifnot(is.logical(lonlat)) 
 	
@@ -103,7 +106,8 @@ pointDistance <- function (p1, p2, lonlat, allpairs=FALSE, ...) {
 	}
 	
 	if (lonlat ) {
-		return( .haversine(p1[,1], p1[,2], p2[,1], p2[,2], r=6378137) )
+#		return( .haversine(p1[,1], p1[,2], p2[,1], p2[,2], r=6378137) )
+		return( .geodist(p1[,1], p1[,2], p2[,1], p2[,2]) )
 	} else { 
 		return( .planedist(p1[,1], p1[,2], p2[,1], p2[,2]) )
 	}
@@ -123,8 +127,15 @@ pointDistance <- function (p1, p2, lonlat, allpairs=FALSE, ...) {
 }
 
 
+.geodist <- function(x1, y1, x2, y2, a=6378137, f=1/298.257223563) {
+	# recycle
+    p <- cbind(x1, y1, x2, y2)
+	
+	.Call("inversegeodesic", as.double(p[,1]), as.double(p[,2]), as.double(p[,3]), as.double(p[,4]), as.double(a), as.double(f), PACKAGE='raster')
+}
 
-.haversine <- function(x1, y1, x2, y2, r=6378137) {
+
+.old_haversine <- function(x1, y1, x2, y2, r=6378137) {
 	adj <- pi / 180
 	x1 <- x1 * adj
 	y1 <- y1 * adj

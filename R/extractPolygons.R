@@ -27,7 +27,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, normalizeWeights=TRUE, cell
 		cellnumbers <- FALSE
 	    if (weights) {
 			if (!is.null(fun)) {
-				test <- try(slot(fun, 'generic') == 'mean', silent=TRUE)
+				test <- try(methods::slot(fun, 'generic') == 'mean', silent=TRUE)
 				if (!isTRUE(test)) {
 					warning('"fun" was changed to "mean"; other functions cannot be used when "weights=TRUE"' )
 				}
@@ -103,10 +103,10 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, normalizeWeights=TRUE, cell
 		cl <- getCluster()
 		on.exit( returnCluster() )
 		nodes <- min(npol, length(cl)) 
-		cat('Using cluster with', nodes, 'nodes\n')
-		flush.console()
+		message('Using cluster with', nodes, 'nodes')
+		utils::flush.console()
 
-		
+		.sendCall <- eval( parse( text="parallel:::sendCall") )
 		parallel::clusterExport(cl, c('rsbb', 'rr', 'weights', 'addres', 'cellnumbers', 'small'), envir=environment())
 		clFun <- function(i, pp) {
 			spbb <- bbox(pp)
@@ -150,7 +150,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, normalizeWeights=TRUE, cell
 						xy <- lapply(ppp, function(z)z@coords)
 						xy <- xy[!ishole]
 						if (length(xy) > 0) {
-							cell <- unique(unlist(lapply(xy, function(z) cellFromXY(x, z))))
+							cell <- unique(unlist(lapply(xy, function(z) cellFromXY(x, z)), use.names = FALSE))
 							value <- .cellValues(x, cell, layer=layer, nl=nl)
 							if (weights) {
 								weight=rep(1/NROW(value), NROW(value))
@@ -249,7 +249,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, normalizeWeights=TRUE, cell
 					xy <- lapply(ppp, function(z)z@coords)
 					xy <- xy[!ishole]
 					if (length(xy) > 0) {
-						cell <- unique(unlist(lapply(xy, function(z) cellFromXY(x, z))))
+						cell <- unique(unlist(lapply(xy, function(z) cellFromXY(x, z))), use.names = FALSE)
 						value <- .cellValues(x, cell, layer=layer, nl=nl)
 						if (weights) {
 							weight <- rep(1/NROW(value), NROW(value))
@@ -342,7 +342,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, normalizeWeights=TRUE, cell
 			return(res)
 		}
 		
-		if (! .hasSlot(y, 'data') ) {
+		if (! methods::.hasSlot(y, 'data') ) {
 			y <- SpatialPolygonsDataFrame(y, res[, -1, drop=FALSE])
 		} else {
 			y@data <- cbind(y@data, res[, -1, drop=FALSE])

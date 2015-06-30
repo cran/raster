@@ -11,11 +11,11 @@ if (!isGeneric("plot")) {
 
 
 setMethod("plot", signature(x='Raster', y='ANY'), 
-	function(x, y, maxpixels=500000, col, alpha=NULL, colNA=NA, add=FALSE, ext=NULL, useRaster=TRUE, interpolate=FALSE, addfun=NULL, nc, nr, maxnl=16, main, ...)  {
+	function(x, y, maxpixels=500000, col, alpha=NULL, colNA=NA, add=FALSE, ext=NULL, useRaster=TRUE, interpolate=FALSE, addfun=NULL, nc, nr, maxnl=16, main, npretty=0, ...)  {
 
 		hasNoCol <- missing(col)
 		if (hasNoCol) {
-			col <- rev(terrain.colors(255))
+			col <- rev(grDevices::terrain.colors(255))
 		}
 			
 		if (!is.null(alpha)) {	
@@ -57,7 +57,7 @@ setMethod("plot", signature(x='Raster', y='ANY'),
 			} else if (! useRaster) {
 				.plotraster(x, col=col, maxpixels=maxpixels, add=add, ext=ext, main=main, addfun=addfun, ...) 
 			} else {
-				.plotraster2(x, col=col, maxpixels=maxpixels, add=add, ext=ext, interpolate=interpolate, colNA=colNA, main=main, addfun=addfun, facvar=facvar, alpha=alpha, ...) 
+				.plotraster2(x, col=col, maxpixels=maxpixels, add=add, ext=ext, interpolate=interpolate, colNA=colNA, main=main, addfun=addfun, facvar=facvar, alpha=alpha, npretty=npretty, ...) 
 				#.plot2(x, col=col, maxpixels=maxpixels, ...)
 			}
 			return(invisible(NULL))
@@ -76,7 +76,7 @@ setMethod("plot", signature(x='Raster', y='ANY'),
 				y <- match(y, names(x))
 			}
 			y <- unique(as.integer(round(y)))
-			y <- na.omit(y)
+			y <- stats::na.omit(y)
 		}
 		
 		
@@ -105,9 +105,9 @@ setMethod("plot", signature(x='Raster', y='ANY'),
 				nc <- ceiling(nl / nr)
 			}
 		
-			old.par <- par(no.readonly = TRUE) 
-			on.exit(par(old.par))
-			par(mfrow=c(nr, nc), mar=c(2, 2, 2, 4))
+			old.par <- graphics::par(no.readonly = TRUE) 
+			on.exit(graphics::par(old.par))
+			graphics::par(mfrow=c(nr, nc), mar=c(2, 2, 2, 4))
 			xa='n'
 			rown=1
 			coln=0
@@ -143,3 +143,12 @@ setMethod("plot", signature(x='Raster', y='ANY'),
 )	
 
 
+setMethod("lines", signature(x='RasterLayer'),
+function(x, ...) {
+	if(prod(dim(x)) < 50000) {
+		stop('too many lines')
+	}
+	x <- methods::as(x, 'SpatialPolygons')
+	lines(x, ...)
+}
+)

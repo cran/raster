@@ -14,6 +14,8 @@ clusterR <- function(x, fun, args=NULL, export=NULL, filename='', cl=NULL, m=2, 
 		parallel::clusterExport(cl, export)	
 	}
 	
+	.sendCall <- eval( parse( text="parallel:::sendCall") )
+
 	nodes <- length(cl)
 	
 	out <- raster(x)
@@ -132,6 +134,8 @@ clusterR <- function(x, fun, args=NULL, export=NULL, filename='', cl=NULL, m=2, 
 	pb <- pbCreate(tr$n, label='clusterR', ...)
 
 	canPiM <- canProcessInMemory(x)
+	
+	.sendCall <- eval( parse( text="parallel:::sendCall") )
 	
 	if (!is.null(args)) {
 		stopifnot(is.list(args))

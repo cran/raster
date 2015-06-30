@@ -599,7 +599,7 @@ tmpDir <- function(create=TRUE) {
 
 .removeRasterOptions <- function(x) {
 	y <- list()
-	for (i in seq(along=x)) {
+	for (i in seq(along.with=x)) {
 		if (!trim(x[[i]]) == "# Options for the 'raster' package" & !substr(trim(x[[i]]),1,14) == 'options(raster') {
 			y <- c(y, x[[i]])
 		}

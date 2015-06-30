@@ -46,7 +46,7 @@
 		#}
 		
 		for (i in 1:nl) {
-			b <- new("GDALRasterBand", x@file@transient, i)
+			b <- methods::new("GDALRasterBand", x@file@transient, i)
 			rgdal::GDALcall(b, "SetStatistics", as.double(statistics[i,]))
 		}
 	}

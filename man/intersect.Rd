@@ -3,28 +3,30 @@
 \docType{methods}
 
 \alias{intersect}
+
 \alias{intersect,Extent,ANY-method}
 \alias{intersect,Raster,ANY-method}
-\alias{intersect,SpatialVector,ANY-method}
+\alias{intersect,SpatialPoints,ANY-method}
 
 \alias{intersect,SpatialPolygons,SpatialPolygons-method}
-\alias{intersect,SpatialLines,SpatialPolygons-method}
 \alias{intersect,SpatialPolygons,SpatialLines-method}
-\alias{intersect,SpatialPoints,SpatialPolygons-method}
 \alias{intersect,SpatialPolygons,SpatialPoints-method}
+
+\alias{intersect,SpatialLines,SpatialPolygons-method}
+\alias{intersect,SpatialLines,SpatialLines-method}
 
 \title{ 
 Intersect
 }
 
 \description{
-Extent objects: Returns the intersection, i.e. the area of overlap of two Extent objects. The second argument can also be any argument from which an Extent object can be extracted. 
+It depends on the classes of the \code{x} and \code{y} what is returned. 
 
-If the first object is a Raster* object: this function is equivalent to \code{\link{crop}}. 
+If \code{x} is a Raster* object the extent of \code{y} is used, irrespective of the class of code{y}, and a Raster* is returned. This is equivalent to \code{\link{crop}}. 
 
-SpatialPolygons* objects: Only the overlapping areas (if any) are returned. For SpatialPolygonDataFrame objects, the data.frames are also merged. 
+If \code{x} is a Spatial* object, a new Spatial* object is returned. If \code{x} or \code{y} has a data.frame, these are also returned (after merging if necessary) as part of a Spatial*DataFrame, and this is how \code{intersect} is different from \code{rgeos::gIntersection} on which it depends. 
 
-SpatialPoints* objects: Only the points that overlap with the extent of object \code{y} are returned.  
+Intersecting SpatialPoints* with SpatialPoints* uses the extent (bounding box) of \code{y} to get the intersection. Intersecting of SpatialPoints* and SpatialLines* is not supported because of numerical inaccuracies with that. You can use \code{\link{buffer}}, to create SpatialPoygons* from SpatialLines* and use that in intersect. Or try \code{\link[rgeos]{gIntersection}}. 
 }
 
 \usage{
@@ -32,22 +34,36 @@ SpatialPoints* objects: Only the points that overlap with the extent of object \
 
 \S4method{intersect}{Raster,ANY}(x, y)
 
+\S4method{intersect}{SpatialPoints,ANY}(x, y)
+
 \S4method{intersect}{SpatialPolygons,SpatialPolygons}(x, y)
+
+\S4method{intersect}{SpatialPolygons,SpatialLines}(x, y)
+
+\S4method{intersect}{SpatialPolygons,SpatialPoints}(x, y)
 
 \S4method{intersect}{SpatialLines,SpatialPolygons}(x, y)
 
-\S4method{intersect}{SpatialPoints,SpatialPolygons}(x, y)
-
-\S4method{intersect}{SpatialVector,ANY}(x, y)
+\S4method{intersect}{SpatialLines,SpatialLines}(x, y)
 }
 
 \arguments{
-  \item{x}{Extent, Raster*, SpatialPolygons* or SpatialPoints* object}
-  \item{y}{same as \code{x}. Except when \code{x} is a Raster* or SpatialPoints* object, this should be an Extent object, or any object from which an Extent can be extracted}
+  \item{x}{Extent, Raster*, SpatialPolygons*, SpatialLines* or SpatialPoints* object}
+  \item{y}{same as for \code{x}}
 } 
 
 \value{
-Extent, Raster*, or SpatialPolygons object
+if \code{x} is an Extent object: Extent
+
+if \code{x} is a Raster* object: Raster*
+
+if \code{x} is a SpatialPoints* object: SpatialPoints*
+
+if \code{x} is a SpatialPolygons* object: SpatialPolygons*
+
+if \code{x} is a SpatialLines* object and if \code{y} is a SpatialLines* object: SpatialPoints*
+
+if \code{x} is a SpatialLines* object and if \code{y} is a SpatialPolygons* object: SpatialLines*
 }
 
 \seealso{

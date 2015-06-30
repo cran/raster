@@ -15,8 +15,8 @@ projectExtent <- function(object, crs) {
 	dm[2] <- max(10, dm[2])
 	dim(object) <- dm
 	
-	validObject(projection(object, asText=FALSE))
-	validObject(projection(crs, asText=FALSE))
+	methods::validObject(projection(object, asText=FALSE))
+	methods::validObject(projection(crs, asText=FALSE))
 	projfrom <- projection(object)
 	projto <- projection(crs)
 	
@@ -140,7 +140,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 	.requireRgdal()
 
 	
-	validObject( projection(from, asText=FALSE) )
+	methods::validObject( projection(from, asText=FALSE) )
 	projfrom <- projection(from)
 	if (is.na(projfrom)) { 
 		stop("input projection is NA") 
@@ -195,8 +195,8 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 		}	
 	}
 	
-	validObject(to)
-	validObject(projection(to, asText=FALSE))
+	methods::validObject(to)
+	methods::validObject(projection(to, asText=FALSE))
 
 	#if (identical(projfrom, projto)) {
 	#	warning('projections of "from" and "to" are the same')
@@ -213,7 +213,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 	
 #	pbb <- projectExtent(to, projection(from))
 #	bb <- intersect(extent(pbb), extent(from))
-#	validObject(bb)
+#	methods::validObject(bb)
 
 	if (!method %in% c('bilinear', 'ngb')) { 
 		stop('invalid method') 
@@ -248,8 +248,8 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 
 		nodes <- min(ceiling(to@nrows/10), length(cl)) # at least 10 rows per node
 		
-		cat('Using cluster with', nodes, 'nodes\n')
-		flush.console()
+		message('Using cluster with', nodes, 'nodes')
+		utils::flush.console()
 		
 		tr <- blockSize(to, minblocks=nodes)
 		pb <- pbCreate(tr$n, label='projectRaster', ...)
@@ -272,7 +272,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 			return(v)
 		}
 	
-	
+		.sendCall <- eval( parse( text="parallel:::sendCall") )	
 		# for debugging
 		# parallel::clusterExport(cl,c("tr", "projto", "projfrom", "method", "from", "to"))
         for (i in 1:nodes) {

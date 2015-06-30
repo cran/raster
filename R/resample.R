@@ -13,7 +13,7 @@ if (!isGeneric("resample")) {
 setMethod('resample', signature(x='Raster', y='Raster'), 
 function(x, y, method="bilinear", filename="", ...)  {
 	
-	# y do: compare projections of x and y
+	# to do: compare projections of x and y
 		
 	ln <- names(x)
 	nl <- nlayers(x)
@@ -32,18 +32,22 @@ function(x, y, method="bilinear", filename="", ...)  {
 	}
 	if (method == 'ngb') method <- 'simple'
 	
-	rres <- res(y) / res(x)
-	resdif <- max(rres)
-	if (resdif > 2) {
-		ag <- pmax(1, floor(rres-1))
-		if (max(ag) > 1) {
-			if (method == 'bilinear') {
-				x <- aggregate(x, ag, 'mean')
-			} else {  
-				x <- aggregate(x, ag, modal)
+	skipaggregate <- isTRUE(list(...)$skipaggregate)
+	if (!skipaggregate) {
+		rres <- res(y) / res(x)
+		resdif <- max(rres)
+		if (resdif > 2) {
+			ag <- pmax(1, floor(rres-1))
+			if (max(ag) > 1) {
+				if (method == 'bilinear') {
+					x <- aggregate(x, ag, 'mean')
+				} else {  
+					x <- aggregate(x, ag, modal)
+				}
 			}
 		}
 	}
+	
 	e <- .intersectExtent(x, y, validate=TRUE)
 	
 	filename <- trim(filename)
@@ -63,8 +67,8 @@ function(x, y, method="bilinear", filename="", ...)  {
 		
 		nodes <- min(ceiling(y@nrows/10), length(cl)) # at least 10 rows per node
 		
-		cat('Using cluster with', nodes, 'nodes\n')
-		flush.console()
+		message('Using cluster with', nodes, 'nodes')
+		utils::flush.console()
 		
 		tr <- blockSize(y, minblocks=nodes, n=nl*4*nodes)
 		pb <- pbCreate(tr$n, label='resample', ...)
@@ -76,7 +80,7 @@ function(x, y, method="bilinear", filename="", ...)  {
 		}
 
 		parallel::clusterExport(cl, c('x', 'y', 'tr', 'method'), envir=environment())
-		
+		.sendCall <- eval( parse( text="parallel:::sendCall") )
         for (ni in 1:nodes) {
 			.sendCall(cl[[ni]], clFun, list(ni), tag=ni)
 		}

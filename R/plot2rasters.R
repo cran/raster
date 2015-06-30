@@ -108,9 +108,9 @@ setMethod("plot", signature(x='Raster', y='Raster'),
 				nc <- ceiling(nl / nr)
 			}
 			
-			old.par <- par(no.readonly = TRUE) 
-			on.exit(par(old.par))
-			par(mfrow=c(nr, nc), mar=c(4, 4, 2, 2))
+			old.par <- graphics::par(no.readonly = TRUE) 
+			on.exit(graphics::par(old.par))
+			graphics::par(mfrow=c(nr, nc), mar=c(4, 4, 2, 2))
 			
 			
 			if (! gridded) {
@@ -144,7 +144,7 @@ setMethod("plot", signature(x='Raster', y='Raster'),
 
 
 .plotdens <- function(x, y, nc, nr, asp=NULL, xlim=NULL, ylim=NULL, ...) {
-	xy <- na.omit(cbind(x,y))
+	xy <- stats::na.omit(cbind(x,y))
 	if (nrow(xy) == 0) {
 		stop('only NA values (in this sample?)')
 	}

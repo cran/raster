@@ -30,8 +30,8 @@ function(x, y) {
 		
 	} else {
 	
-		xdata <- .hasSlot(x, 'data')
-		ydata <- .hasSlot(y, 'data')
+		xdata <- methods::.hasSlot(x, 'data')
+		ydata <- methods::.hasSlot(y, 'data')
 		if (xdata & ydata) {
 			nms <- .goodNames(c(colnames(x@data), colnames(y@data)))
 			colnames(x@data) <- nms[1:ncol(x@data)]
@@ -68,8 +68,8 @@ function(x, y) {
 	if (n < 2) {
 		return(x)
 	}
-	if (.hasSlot(x, 'data')) {
-		x <- as(x, 'SpatialPolygons')
+	if (methods::.hasSlot(x, 'data')) {
+		x <- methods::as(x, 'SpatialPolygons')
 	}
 	
 	x <- spChFIDs(x, as.character(1:length(x)))

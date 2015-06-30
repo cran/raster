@@ -25,7 +25,7 @@ function(x, y, ...) {
 	x@xmax <- x@xmax + y[2]
 	x@ymin <- x@ymin - y[3]
 	x@ymax <- x@ymax + y[4]
-	validObject(x)
+	methods::validObject(x)
 	x
 }
 )
@@ -62,7 +62,7 @@ function(x, y, value=NA, filename='', ...) {
 		leg <- x@legend
 	} else {
 		out <- brick(x, values=FALSE)	
-		leg <- new('.RasterLegend')
+		leg <- methods::new('.RasterLegend')
 	}
 	out@data@names <- names(x)
 	out <- setExtent(out, y, keepres=TRUE)

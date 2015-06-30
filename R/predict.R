@@ -68,6 +68,7 @@ setMethod('predict', signature(object='Raster'),
 					stop('duplicate names in Raster* object: ', lyrnames)
 				}
 				f <- names( which(dataclasses == 'factor') )
+				f <- f[f %in% names(object)]
 				if (length(f) > 0) { 
 					haveFactor <- TRUE 
 					factlevels <- list()
@@ -145,7 +146,7 @@ setMethod('predict', signature(object='Raster'),
 				if (inf.rm) {
 					blockvals[!is.finite(as.matrix(blockvals))] <- NA
 				}
-				blockvals <- na.omit(blockvals)						
+				blockvals <- stats::na.omit(blockvals)						
 			}
 
 			nrb <- nrow(blockvals)
@@ -156,7 +157,7 @@ setMethod('predict', signature(object='Raster'),
 				predv <- fun(model, blockvals, ...)
 		
 				if (class(predv)[1] == 'list') {
-					predv <- unlist(predv)
+					predv <- unlist(predv, use.names = FALSE)
 					if (length(predv) != nrow(blockvals)) {
 						predv <- matrix(predv, nrow=nrow(blockvals))
 					}					

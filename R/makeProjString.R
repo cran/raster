@@ -61,7 +61,7 @@
 #			datumname <- as.vector(dat[which(dat[,1]==datum), 2])
 		}
 	}
-	cat("Projection: ", projname[1], "\n")
+	# cat("Projection: ", projname[1], "\n")
 	crs <- .newCRS(pstr)
 	if (asText) { 
 		return(trim(crs@projargs))

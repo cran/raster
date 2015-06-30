@@ -26,7 +26,7 @@ setAs('data.frame', 'SpatialPolygons',
 
 setAs('data.frame', 'SpatialPolygonsDataFrame',
 	function(from) {
-		x <- as(from, 'SpatialPolygons')
+		x <- methods::as(from, 'SpatialPolygons')
 		if (ncol(from) > 6) {
 			d <- unique(from[, -c(2:6), drop=FALSE])
 			rownames(d) <- d$object
@@ -63,7 +63,7 @@ setAs('data.frame', 'SpatialLines',
 
 setAs('data.frame', 'SpatialLinesDataFrame',
 	function(from) {
-		x <- as(from, 'SpatialLines')
+		x <- methods::as(from, 'SpatialLines')
 		if (ncol(from) > 5) {
 			d <- unique(from[, -c(2:5), drop=FALSE])
 			rownames(d) <- d$object
