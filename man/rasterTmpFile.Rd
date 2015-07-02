@@ -14,7 +14,7 @@ Temporary files are automatically removed at the start of each session. During a
 }
 
 \usage{
-rasterTmpFile(prefix='raster_tmp_')
+rasterTmpFile(prefix='r_tmp_')
 showTmpFiles()
 removeTmpFiles(h=24)
 }

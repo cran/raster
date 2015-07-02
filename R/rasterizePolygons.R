@@ -10,7 +10,7 @@
 		return( data.frame(v=rep(1, length=n)) )
 	
 	} else if (missing(field)) {
-		if (.hasSlot(obj, 'data')) {
+		if (methods::.hasSlot(obj, 'data')) {
 			putvals <- obj@data
 			cn <- validNames(c('ID', colnames(putvals)))
 			cn[1] <- 'ID'
@@ -26,12 +26,12 @@
 
 		
 	} else if (is.character(field) ) {
-		if (.hasSlot(obj, 'data')) {
+		if (methods::.hasSlot(obj, 'data')) {
 			nms <- names(obj)
 			if (length(field) <= length(nms)) {
 				m <- match(field, nms)
 				if (!all(is.na(m))) {
-					m <- na.omit(m)
+					m <- stats::na.omit(m)
 					return(obj@data[, m, drop=FALSE])
 				}
 			}
@@ -191,9 +191,9 @@
 
 	if (is.character(fun)) {
 		if (fun=='first') {
-			fun <- function(x, ...){ na.omit(x)[1] } 
+			fun <- function(x, ...){ stats::na.omit(x)[1] } 
 		} else if (fun=='last') {
-			fun <- function(x, ...){ rev(na.omit(x))[1] }
+			fun <- function(x, ...){ rev(stats::na.omit(x))[1] }
 		} else if (fun == 'count') {
 			fun <- function(x, ...){ sum(!is.na(x)) }
 			field <- 1
@@ -228,7 +228,7 @@
 	}
 	
 	if (! silent) { 
-		cat('Found', npol, 'region(s) and', cnt, 'polygon(s)\n') 
+		message('Found', npol, 'region(s) and', cnt, 'polygon(s)') 
 	}
 	
 	polinfo <- subset(polinfo, polinfo[,1] <= cnt, drop=FALSE)

@@ -19,7 +19,7 @@ Local functions for two RasterLayer objects (using a focal neighborhood)
 \arguments{
   \item{x}{RasterLayer or RasterStack/RasterBrick}
   \item{y}{object of the same class as \code{x}, and with the same number of layers}
-  \item{ngb}{neighborhood size. Either a single integer or a vector of two integers c(nrow, ncol)}
+  \item{ngb}{integer. rectangular neighbourhood size. Either a single integer or a vector of two integers c(rows, cols), such as c(3,3) to have a 3 x 3 focal window}
   \item{fun}{function}
   \item{filename}{character. Output filename (optional)}
   \item{...}{additional arguments as for \code{\link{writeRaster}}}

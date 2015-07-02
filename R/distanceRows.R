@@ -35,7 +35,7 @@
 		y <- yFromRow(r, tr$row[i]) - (0:(tr$nrows[i]-1)) * yres(r)
 		y <- rep(y, each=ncol(r))
 		xyv <- cbind(x,y,v)
-		from <- na.omit(xyv)[,1:2]
+		from <- stats::na.omit(xyv)[,1:2]
 		if (isTRUE(nrow(from)==0)) {
 			pbStep(pb, i) 			
 			next

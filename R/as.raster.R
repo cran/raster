@@ -29,5 +29,5 @@ function(x, maxpixels=50000, col=rev(terrain.colors(255)), ...) {
 #e <- as.vector(t(bbox(extent(r))))
 #a <- as.raster(r)
 #plot(e[1:2], e[3:4], type = "n", xlab="", ylab="")
-#rasterImage(a, e[1], e[3], e[2], e[4])
+#graphics::rasterImage(a, e[1], e[3], e[2], e[4])
  

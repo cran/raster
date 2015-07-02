@@ -59,6 +59,7 @@ function(x, filename, format, ...) {
 
 	if (.isNativeDriver(filetype)) {
 		out <- raster(x)
+		names(out) <- names(x)
 		try( out@history <- x@history, silent=TRUE)
 		levels(out) <- levels(x)
 		out@legend@colortable <- x@legend@colortable

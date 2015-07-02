@@ -8,33 +8,27 @@
 
 .bilinearValue <- function(raster, xyCoords, layer, n) {
 
-	
-	bilinear_old <- function(x, y, x1, x2, y1, y2, v) {
-		v <- v / ((x2-x1)*(y2-y1))
-		return( v[,1]*(x2-x)*(y2-y) + v[,3]*(x-x1)*(y2-y) + v[,2]*(x2-x)*(y-y1) + v[,4]*(x-x1)*(y-y1) )
-		#div <- (x2-x1)*(y2-y1)
-		#return ( (v[,1]/div)*(x2-x)*(y2-y) + (v[,3]/div)*(x-x1)*(y2-y) + (v[,2]/div)*(x2-x)*(y-y1) + (v[,4]/div)*(x-x1)*(y-y1) )
-	}
-	
-	bilinear <- function(xy, x, y, v) {
-		v <- v / ((x[2,]-x[1,])*(y[2,]-y[1,]))
-		return(	v[,1]*(x[2,]-xy[,1])*(y[2,]-xy[,2]) + v[,3]*(xy[,1]-x[1,])*(y[2,]-xy[,2]) + 
-				v[,2]*(x[2,]-xy[,1])*(xy[,2]-y[1,]) + v[,4]*(xy[,1]-x[1,])*(xy[,2]-y[1,]) )
-	}
-	
+	#bilinear <- function(xy, x, y, v) {
+	#	.doBilinear(xy, x, y, v)
+	#}
+
 	r <- raster(raster)
 	nls <- nlayers(raster)
-	
+
 	four <- fourCellsFromXY(r, xyCoords, duplicates=FALSE)
-	
+
 	xy4 <- matrix(xyFromCell(r, as.vector(four)), ncol=8)
-	x <- apply(xy4[,1:4,drop=FALSE], 1, range)
-	y <- apply(xy4[,5:8,drop=FALSE], 1, range)
-	xy4 <- cbind(c(x[1,], x[1,], x[2,], x[2,]), c(y[1,], y[2,], y[1,], y[2,]))
+	x <- rbind(.doSpmin(xy4[,1], xy4[,3]), .doSpmax(xy4[,1], xy4[,3]))
+	y <- rbind(.doSpmin(xy4[,5], xy4[,6]), .doSpmax(xy4[,5], xy4[,6]))
+	# data.frame is faster than cbind in this case (less copying?)
+	xy4 <- data.frame(
+		x = c(x[1,], x[1,], x[2,], x[2,]),
+		y = c(y[1,], y[2,], y[1,], y[2,])
+	)
 	cells <- cellFromXY(r, xy4)
 
 	w <- getOption('warn')
-	options('warn'=-1) 
+	options('warn'=-1)
 	row1 <- rowFromCell(r, min(cells, na.rm=TRUE))
 	options('warn' = w)
 	if (is.na(row1)) {
@@ -44,11 +38,11 @@
 			return(matrix(NA, nrow= nrow(xyCoords), ncol=nls))
 		}
 	}
-	
+
 	nrows <- rowFromCell(r, max(cells, na.rm=TRUE)) - row1 + 1
 	offs <- cellFromRowCol(r, row1, 1) - 1
 	cells <- cells - offs
-	
+
 	if (nls == 1) {
 		vv <- getValues(raster, row1, nrows)
 		v <- matrix( vv[cells], ncol=4)
@@ -70,17 +64,17 @@
 			vmean <- rep(rowMeans(vv, na.rm=TRUE), 4)
 			vv[is.na(vv)] <- vmean[is.na(vv)]
 #			res[i] <- bilinear(xyCoords[i,1], xyCoords[i,2], x[1,i], x[2,i], y[1,i], y[2,i], vv)
-			res[i] <- bilinear(xyCoords[i,,drop=FALSE], x[,i,drop=FALSE], y[,i,drop=FALSE], vv)
+			res[i] <- .doBilinear(xyCoords[i,,drop=FALSE], x[,i,drop=FALSE], y[,i,drop=FALSE], vv)
 		}
 		i <- rs==0
 		if (sum(i) > 0) {
 #			res[i] <- bilinear(xyCoords[i,1], xyCoords[i,2], x[1,i], x[2,i], y[1,i], y[2,i], v[i,])
-			res[i] <- bilinear(xyCoords[i, ,drop=FALSE], x[,i,drop=FALSE], y[,i,drop=FALSE], v[i,,drop=FALSE])
+			res[i] <- .doBilinear(xyCoords[i, ,drop=FALSE], x[,i,drop=FALSE], y[,i,drop=FALSE], v[i,,drop=FALSE])
 		}
 		res
-		
+
 	} else {
-	
+
 		if (missing(layer)) { layer <- 1 }
 		if (missing(n)) { n <- (nls-layer+1) }
 		lyrs <- layer:(layer+n-1)
@@ -91,7 +85,7 @@
 		cv <- cvv[cells,]
 		for (j in 1:ncol(cv)) {
 			v <- matrix(cv[, j], ncol=4)
-			
+
 			res <- rep(NA, nrow(v))
 			rs <- rowSums(is.na(v))
 			i <- rs==3
@@ -108,11 +102,11 @@
 				vv[is.na(vv[,4]),4] <- vv[is.na(vv[,4]),3]
 				vmean <- rep(rowMeans(vv, na.rm=TRUE), 4)
 				vv[is.na(vv)] <- vmean[is.na(vv)]
-				res[i] <- bilinear(xyCoords[i,,drop=FALSE], x[,i,drop=FALSE], y[,i,drop=FALSE], vv)
+				res[i] <- .doBilinear(xyCoords[i,,drop=FALSE], x[,i,drop=FALSE], y[,i,drop=FALSE], vv)
 			}
 			i <- rs==0
 			if (sum(i) > 0) {
-				res[i] <- bilinear(xyCoords[i,,drop=FALSE], x[,i,drop=FALSE], y[,i,drop=FALSE], v[i,,drop=FALSE])
+				res[i] <- .doBilinear(xyCoords[i,,drop=FALSE], x[,i,drop=FALSE], y[,i,drop=FALSE], v[i,,drop=FALSE])
 			}
 
 			allres[,j] <- res

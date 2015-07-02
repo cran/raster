@@ -3,7 +3,7 @@
 
 .destair <- function(x, keepExtent=TRUE) {
 
-	pts <- as.data.frame(as(x, 'SpatialPolygons'), xy=TRUE, centroids=FALSE)
+	pts <- data.frame(geom(methods::as(x, 'SpatialPolygons')))
 	
 	if (keepExtent) {
 		bb <- bbox(x)
@@ -34,11 +34,11 @@
 		pts[ptsy2,6] <- bb[2,2]
 	}
 	
-	r <- as(pts, 'SpatialPolygons')
+	r <- methods::as(pts, 'SpatialPolygons')
 	row.names(r) <- row.names(x)
 	proj4string(r) <- proj4string(x)
 	
-	if (.hasSlot(x, 'data')) {
+	if (methods::.hasSlot(x, 'data')) {
 		r <- SpatialPolygonsDataFrame(r, x@data)
 	}
 	

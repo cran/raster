@@ -137,6 +137,19 @@ x2 <- calc(s, fun)
 fun <- function(x) { lm(x ~ time)$coefficients }
 x3 <- calc(s, fun)
 
+
+### A much (> 100 times) faster approach is to directly use 
+### linear algebra and pre-compute some constants
+
+## add 1 for a model with an intercept
+X <- cbind(1, time)
+
+## pre-computing constant part of least squares
+invXtX <- solve(t(X) \%*\% X) \%*\% t(X)
+
+## much reduced regression model; [2] is to get the slope
+quickfun <- function(y) (invXtX \%*\% y)[2]
+x4 <- calc(s, quickfun) 
 }
 
 

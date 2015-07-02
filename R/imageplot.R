@@ -11,12 +11,12 @@
 # University Corporation for Atmospheric Research
 # Licensed under the GPL -- www.gpl.org/licenses/gpl.html
     legend.shrink = 0.5, legend.width = 0.6, legend.mar = ifelse(horizontal, 3.1, 5.1), legend.lab = NULL, graphics.reset = FALSE, 
-    bigplot = NULL, smallplot = NULL, legend.only = FALSE, col = heat.colors(nlevel), 
+    bigplot = NULL, smallplot = NULL, legend.only = FALSE, col = grDevices::heat.colors(nlevel), 
     lab.breaks = NULL, axis.args = NULL, legend.args = NULL, midpoint = FALSE, box=TRUE, useRaster=FALSE, ...) {
 
 	zlim <- range(z, na.rm = TRUE)
 
-    old.par <- par(no.readonly = TRUE)
+    old.par <- graphics::par(no.readonly = TRUE)
     if (add) {
         big.plot <- old.par$plt
     }
@@ -35,10 +35,10 @@
 	
     if (!legend.only) {
         if (!add) {
-            par(plt = bigplot)
+            graphics::par(plt = bigplot)
         }
 		image(x, y, z, add = add, col = col, useRaster=useRaster, ...)
-        big.par <- par(no.readonly = TRUE)
+        big.par <- graphics::par(no.readonly = TRUE)
     } else {
 		box <- FALSE
 	}
@@ -46,7 +46,7 @@
 	
 	if (legend) {
 		if ((smallplot[2] < smallplot[1]) | (smallplot[4] < smallplot[3])) {
-			par(old.par)
+			graphics::par(old.par)
 			stop("plot region too small to add legend\n")
 		}
 		ix <- 1
@@ -57,7 +57,7 @@
 		iy <- midpoints
 		iz <- matrix(iy, nrow = 1, ncol = length(iy))
 		breaks <- list(...)$breaks
-		par(new=TRUE, pty = "m", plt=smallplot, err = -1)
+		graphics::par(new=TRUE, pty = "m", plt=smallplot, err = -1)
 		if (!is.null(breaks)) {
 			if (is.null(lab.breaks)) {
 				lab.breaks <- as.character(breaks)
@@ -81,33 +81,33 @@
 			}
 		}
 		do.call("axis", axis.args)
-		box()
+		graphics::box()
 	
 		if (!is.null(legend.lab)) {
 			legend.args <- list(text = legend.lab, side = ifelse(horizontal, 1, 4), line = legend.mar - 2)
 		}
 		if (!is.null(legend.args)) {
-			do.call(mtext, legend.args)
+			do.call(graphics::mtext, legend.args)
 		}
 	}
-	mfg.save <- par()$mfg
+	mfg.save <- graphics::par()$mfg
     if (graphics.reset | add) {
-        par(old.par)
-        par(mfg = mfg.save, new = FALSE)
+        graphics::par(old.par)
+        graphics::par(mfg = mfg.save, new = FALSE)
     } else {
-        par(big.par)
-        par(plt = big.par$plt, xpd = FALSE)
-        par(mfg = mfg.save, new = FALSE)
+        graphics::par(big.par)
+        graphics::par(plt = big.par$plt, xpd = FALSE)
+        graphics::par(mfg = mfg.save, new = FALSE)
     }
 	
-	if (!add & box ) box()
+	if (!add & box ) graphics::box()
     invisible()
 }
 
 
 
 
-.polyimage <- function (x, y, z, col = heat.colors(64), transparent.color = "white", 
+.polyimage <- function (x, y, z, col = grDevices::heat.colors(64), transparent.color = "white", 
 # fields, Tools for spatial data
 # Copyright 2004-2007, Institute for Mathematics Applied Geosciences
 # University Corporation for Atmospheric Research
@@ -127,7 +127,7 @@
 		t(temp.addcol(x))
 	}
 
-    drapecolor <- function (z, col = heat.colors(64), zlim = NULL, transparent.color = "white", midpoint = TRUE) {
+    drapecolor <- function (z, col = grDevices::heat.colors(64), zlim = NULL, transparent.color = "white", midpoint = TRUE) {
 		eps <- 1e-07
 		if (is.null(zlim)) {
 			zlim <- range(c(z), na.rm = TRUE)
@@ -170,7 +170,7 @@
             y[i, 2:N], rep(NA, Nm1))
         xp <- c(t(xp))
         yp <- c(t(yp))
-        polygon(xp, yp, border = NA, col = c(zcol[i, 1:Nm1]))
+        graphics::polygon(xp, yp, border = NA, col = c(zcol[i, 1:Nm1]))
     }
 }
 
@@ -181,16 +181,16 @@
 # University Corporation for Atmospheric Research
 # Licensed under the GPL -- www.gpl.org/licenses/gpl.html
     horizontal = FALSE, legend.mar = NULL, bigplot = NULL, smallplot = NULL, ...) {
-    old.par <- par(no.readonly = TRUE)
+    old.par <- graphics::par(no.readonly = TRUE)
     if (is.null(smallplot)) 
         stick <- TRUE
     else stick <- FALSE
     if (is.null(legend.mar)) {
         legend.mar <- ifelse(horizontal, 3.1, 5.1)
     }
-    char.size <- ifelse(horizontal, par()$cin[2]/par()$din[2], 
-        par()$cin[1]/par()$din[1])
-    offset <- char.size * ifelse(horizontal, par()$mar[1], par()$mar[4])
+    char.size <- ifelse(horizontal, graphics::par()$cin[2]/graphics::par()$din[2], 
+        graphics::par()$cin[1]/graphics::par()$din[1])
+    offset <- char.size * ifelse(horizontal, graphics::par()$mar[1], graphics::par()$mar[4])
     legend.width <- char.size * legend.width
     legend.mar <- legend.mar * char.size
     if (is.null(smallplot)) {

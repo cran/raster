@@ -58,7 +58,7 @@ setMethod('rasterize', signature(x='SpatialPolygons', y='Raster'),
 setMethod('rasterize', signature(x='Extent', y='Raster'), 
 	function(x, y, field, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue='all', filename="", getCover=FALSE, silent=TRUE, ...){ 
 	
-		x <- as(x, 'SpatialPolygons')
+		x <- methods::as(x, 'SpatialPolygons')
 		.polygonsToRaster(x, y, field=field, fun=fun, background=background, mask=mask, update=update, updateValue=updateValue, filename=filename, getCover=getCover, silent=silent,...)
 	
 	}

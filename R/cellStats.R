@@ -17,7 +17,7 @@
 			f <- paste(deparse(fun), collapse = "\n")
 			if (f == paste(deparse(mean), collapse = "\n")) {
 				fun <- 'mean' 
-			} else if (f == paste(deparse(sd), collapse = "\n")) {
+			} else if (f == paste(deparse(stats::sd), collapse = "\n")) {
 				fun <- 'sd' 
 			} else if (f == paste(deparse(range), collapse = "\n")) {
 				fun <- 'range' 
@@ -82,7 +82,7 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 				
 				} else if (stat == 'sd') { 
 					
-					st <- apply(x, 2, sd, na.rm=na.rm) 
+					st <- apply(x, 2, stats::sd, na.rm=na.rm) 
 					if (! asSample) {
 						if (na.rm) {
 							n <- colSums(! is.na(x))
@@ -113,7 +113,7 @@ setMethod('cellStats', signature(x='RasterStackBrick'),
 						n <- nrow(x)
 					}
 					if (asSample) {
-						sdx <- apply(x, 2, sd, na.rm=na.rm)
+						sdx <- apply(x, 2, stats::sd, na.rm=na.rm)
 					} else {
 						sdx <- apply(x, 2, function(x) sqrt(sum((x-mean(x, na.rm=na.rm))^2, na.rm=na.rm)/n))
 					}
@@ -295,10 +295,10 @@ setMethod('cellStats', signature(x='RasterLayer'),
 				} else if (stat == "max" ) {
 					return( max(x, na.rm=na.rm) )
 				} else if (stat == "sd" ) {
-					st <- sd(x, na.rm=na.rm)
+					st <- stats::sd(x, na.rm=na.rm)
 					if (! asSample) {
 						if (na.rm) {
-							n <- length(na.omit(x))
+							n <- length(stats::na.omit(x))
 						} else {
 							n <- length(x)
 						}
@@ -320,10 +320,10 @@ setMethod('cellStats', signature(x='RasterLayer'),
 					
 				} else if (stat == "skew" ) {
 					if (na.rm) {
-						x <- na.omit(x)
+						x <- stats::na.omit(x)
 					}
 					if (asSample) {
-						sdx <- sd(x)
+						sdx <- stats::sd(x)
 					} else {
 						sdx <- sqrt(sum((x-mean(x))^2)/(length(x)))
 					}

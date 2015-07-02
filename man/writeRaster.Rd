@@ -31,6 +31,8 @@ unless this default value was changed with \code{\link{rasterOptions}}}
 	
 \code{overwrite}: Logical. If TRUE, "filename" will be overwritten if it exists
 	
+\code{progress}: Character. Set a value to show a progress bar. Valid values are "text" and "window".
+
 \code{NAflag}: Numeric. To overwrite the default value used to represent \code{NA} in a file 
 	
 \code{bandorder}: Character. 'BIL', 'BIP', or 'BSQ'. For 'native' file formats only.

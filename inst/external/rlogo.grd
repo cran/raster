@@ -8,7 +8,7 @@ xmin= 0
 ymin= 0 
 xmax= 101 
 ymax= 77 
-projection= +proj=merc
+projection= +proj=merc +datum=WGS84
 [data] 
 datatype= FLT4S 
 byteorder= little 

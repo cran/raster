@@ -1,13 +1,5 @@
-\name{Extent coordinates}
+\name{Extreme coordinates}
 
-\alias{xmin,BasicRaster-method}
-\alias{xmax,BasicRaster-method}
-\alias{ymin,BasicRaster-method}
-\alias{ymax,BasicRaster-method}
-\alias{xmin,Extent-method}
-\alias{xmax,Extent-method}
-\alias{ymin,Extent-method}
-\alias{ymax,Extent-method}
 \alias{xmin}
 \alias{xmax}
 \alias{ymin}
@@ -17,11 +9,24 @@
 \alias{ymin<-}
 \alias{ymax<-}
 
+\alias{xmin,BasicRaster-method}
+\alias{xmax,BasicRaster-method}
+\alias{ymin,BasicRaster-method}
+\alias{ymax,BasicRaster-method}
+\alias{xmin,Extent-method}
+\alias{xmax,Extent-method}
+\alias{ymin,Extent-method}
+\alias{ymax,Extent-method}
+\alias{xmin,Spatial-method}
+\alias{xmax,Spatial-method}
+\alias{ymin,Spatial-method}
+\alias{ymax,Spatial-method}
+
   
 \title{Coordinates of the Extent of a Raster object}
 
 \description{
-These functions return or set the extreme coordinates of a Raster* object. 
+These functions return or set the extreme coordinates of a Raster* object; and return them for Spatial* objects.
 }
 
 \usage{
@@ -34,7 +39,6 @@ xmin(x) <- value
 xmax(x) <- value
 ymin(x) <- value
 ymax(x) <- value
-
 }
 
 \arguments{
@@ -48,8 +52,6 @@ a single number
 }
 
 \seealso{ \code{\link[raster]{extent}},  \code{\link[raster]{dimensions}} }
-
-
 
 
 \examples{

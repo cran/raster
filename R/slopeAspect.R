@@ -50,7 +50,7 @@ slopeAspect <- function(dem, filename='', out=c('slope', 'aspect'), unit='radian
 		zx <- focal(dem, w=fX)
 		
 		y <- yFromRow(dem, 1:nrow(dem))
-		dx <- .haversine(-dx, y, dx, y) / 2
+		dx <- .geodist(-dx, y, dx, y) / 2
 		zx <- t( t(zx) / dx)
 		
 	} else {

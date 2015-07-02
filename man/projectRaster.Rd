@@ -63,6 +63,7 @@ With such data you may need to adjust the returned object. E.g. do \code{ymax(ob
 RasterLayer or RasterBrick object.
 }
 
+\author{Robert J. Hijmans and Joe Cheng}
 
 
 \seealso{

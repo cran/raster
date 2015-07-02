@@ -203,7 +203,7 @@
 	}
 	
 	if (inherits(lns, 'SpatialPolygons')) {
-		lns <- as(lns, "SpatialLines")
+		lns <- methods::as(lns, "SpatialLines")
 	}
 	if (! inherits(lns, 'SpatialLines')) {
 		stop('lns should be, or inherit from, a SpatialLines* object')
@@ -274,7 +274,7 @@
 						#  line part entirely outside of row. do nothing
 					} else {
 						aline <- lns@lines[[i]]@Lines[[j]]@coords
-						#cat(i, "\n"); flush.console();
+						#cat(i, "\n"); utils::flush.console();
 						colnrs <- .getCols(rstr, r, aline, line1, line2)
 						if ( length(colnrs) > 0 ) {	
 							rvtmp <- rv1

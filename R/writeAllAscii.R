@@ -31,7 +31,7 @@
 	}
 	v <- matrix(v, ncol=ncol(x), byrow=TRUE)
 
-	write.table(v, x@file@name, append = TRUE, quote = FALSE, sep = " ", eol = "\n", dec = ".", row.names = FALSE, col.names = FALSE)
+	utils::write.table(v, x@file@name, append = TRUE, quote = FALSE, sep = " ", eol = "\n", dec = ".", row.names = FALSE, col.names = FALSE)
 
 	if (prj) {
 		crs <- crs(x, asText=T)

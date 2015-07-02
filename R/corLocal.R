@@ -28,18 +28,18 @@ setMethod('corLocal', signature(x='RasterLayer', y='RasterLayer'),
 			if (test)  {
 				v <- matrix(NA, ncol=2, nrow=ncell(x))
 				for (i in 1:ncell(x)) {
-					z <- na.omit(cbind(vx[i,], vy[i,]))	
+					z <- stats::na.omit(cbind(vx[i,], vy[i,]))	
 					if (nrow(z) > 2) {
-						a <- cor.test(z[,1], z[,2], method=method)
+						a <- stats::cor.test(z[,1], z[,2], method=method)
 						v[i, ] <- c(a$estimate, a$p.value)
 					}
 				}
 			} else {
 				v <- rep(NA, nrow=ncell(x))
 				for (i in 1:ncell(x)) {
-					z <- na.omit(cbind(vx[i,], vy[i,]))	
+					z <- stats::na.omit(cbind(vx[i,], vy[i,]))	
 					if (nrow(z) > 2) {
-						v[i] <- cor(z[,1], z[,2], method=method)
+						v[i] <- stats::cor(z[,1], z[,2], method=method)
 					}
 				}
 			}
@@ -59,9 +59,9 @@ setMethod('corLocal', signature(x='RasterLayer', y='RasterLayer'),
 					vy <- getValuesFocal(y, tr$row[i], tr$nrows[i], ngb=ngb)
 					v <- matrix(NA, ncol=2, nrow=nrow(vx))
 					for (j in 1:nrow(vx)) {
-						z <- na.omit(cbind(vx[j,], vy[j,]))	
+						z <- stats::na.omit(cbind(vx[j,], vy[j,]))	
 						if (nrow(z) > 2) {
-							a <- cor.test(z[,1], z[,2], method=method)
+							a <- stats::cor.test(z[,1], z[,2], method=method)
 							v[j, ] <- c(a$estimate, a$p.value)
 						}
 					}
@@ -73,9 +73,9 @@ setMethod('corLocal', signature(x='RasterLayer', y='RasterLayer'),
 					vy <- getValuesFocal(y, tr$row[i], tr$nrows[i], ngb=ngb)
 					v <- rep(NA, nrow(vx))
 					for (j in 1:length(v)) {
-						z <- na.omit(cbind(vx[j,], vy[j,]))	
+						z <- stats::na.omit(cbind(vx[j,], vy[j,]))	
 						if (nrow(z) > 2) {
-							v[j] <- cor(z[,1], z[,2], method=method)
+							v[j] <- stats::cor(z[,1], z[,2], method=method)
 						}
 					}
 					out <- writeValues(out, v, tr$row[i])
@@ -118,18 +118,18 @@ setMethod('corLocal', signature(x='RasterStackBrick', y='RasterStackBrick'),
 			if (test)  {
 				v <- matrix(NA, ncol=2, nrow=ncell(x))
 				for (i in 1:ncell(x)) {
-					z <- na.omit(cbind(vx[i,], vy[i,]))	
+					z <- stats::na.omit(cbind(vx[i,], vy[i,]))	
 					if (nrow(z) > 2) {
-						a <- cor.test(z[,1], z[,2], method=method)
+						a <- stats::cor.test(z[,1], z[,2], method=method)
 						v[i, ] <- c(a$estimate, a$p.value)
 					}
 				}
 			} else {
 				v <- rep(NA, nrow=ncell(x))
 				for (i in 1:ncell(x)) {
-					z <- na.omit(cbind(vx[i,], vy[i,]))	
+					z <- stats::na.omit(cbind(vx[i,], vy[i,]))	
 					if (nrow(z) > 2) {
-						v[i] <- cor(z[,1], z[,2], method=method)
+						v[i] <- stats::cor(z[,1], z[,2], method=method)
 					}
 				}
 			}
@@ -149,9 +149,9 @@ setMethod('corLocal', signature(x='RasterStackBrick', y='RasterStackBrick'),
 					vy <- getValues(y, tr$row[i], tr$nrows[i])
 					v <- matrix(NA, ncol=2, nrow=nrow(vx))
 					for (j in 1:nrow(vx)) {
-						z <- na.omit(cbind(vx[j,], vy[j,]))	
+						z <- stats::na.omit(cbind(vx[j,], vy[j,]))	
 						if (nrow(z) > 2) {
-							a <- cor.test(z[,1], z[,2], method=method)
+							a <- stats::cor.test(z[,1], z[,2], method=method)
 							v[j, ] <- c(a$estimate, a$p.value)
 						}
 					}
@@ -163,9 +163,9 @@ setMethod('corLocal', signature(x='RasterStackBrick', y='RasterStackBrick'),
 					vy <- getValues(y, tr$row[i], tr$nrows[i])
 					v <- rep(NA, nrow(vx))
 					for (j in 1:length(v)) {
-						z <- na.omit(cbind(vx[j,], vy[j,]))	
+						z <- stats::na.omit(cbind(vx[j,], vy[j,]))	
 						if (nrow(z) > 2) {
-							v[j] <- cor(z[,1], z[,2], method=method)
+							v[j] <- stats::cor(z[,1], z[,2], method=method)
 						}
 					}
 					out <- writeValues(out, v, tr$row[i])

@@ -29,7 +29,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 
 .download <- function(aurl, filename) {
 	fn <- paste(tempfile(), '.download', sep='')
-	res <- download.file(url=aurl, destfile=fn, method="auto", quiet = FALSE, mode = "wb", cacheOK = TRUE)
+	res <- utils::download.file(url=aurl, destfile=fn, method="auto", quiet = FALSE, mode = "wb", cacheOK = TRUE)
 	if (res == 0) {
 		w <- getOption('warn')
 		on.exit(options('warn' = w))
@@ -50,7 +50,7 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 
 ccodes <- function() {
 	path <- paste(system.file(package="raster"), "/external", sep='')
-	d <- read.csv(paste(path, "/countries.csv", sep=""), stringsAsFactors=FALSE, encoding="UTF-8")
+	d <- utils::read.csv(paste(path, "/countries.csv", sep=""), stringsAsFactors=FALSE, encoding="UTF-8")
 	return(as.matrix(d))
 }
 
@@ -118,10 +118,10 @@ ccodes <- function() {
 			theurl <- paste("http://biogeo.ucdavis.edu/data/gadm2/R/", country, '_adm', level, ".RData", sep="")
 			.download(theurl, filename)
 			if (!file.exists(filename))	{ 
-				cat("\nCould not download file -- perhaps it does not exist \n") 
+				message("\nCould not download file -- perhaps it does not exist") 
 			}
 		} else {
-			cat("\nFile not available locally. Use 'download = TRUE'\n")
+			message("\nFile not available locally. Use 'download = TRUE'")
 		}
 	}	
 	if (file.exists(filename)) {
@@ -142,10 +142,10 @@ ccodes <- function() {
 			theurl <- paste("http://biogeo.ucdavis.edu/data/diva/misc/countries.RData", sep="")
 			.download(theurl, filename)
 			if (!file.exists(filename)) {
-				cat("\nCould not download file -- perhaps it does not exist \n") 
+				message("\nCould not download file -- perhaps it does not exist") 
 			}
 		} else {
-			cat("\nFile not available locally. Use 'download = TRUE'\n")
+			message("\nFile not available locally. Use 'download = TRUE'")
 		}
 	}	
 	if (file.exists(filename)) {
@@ -157,10 +157,17 @@ ccodes <- function() {
 
 
 .cmip5 <- function(var, model, rcp, year, res, lon, lat, path, download=TRUE) {
-	if (!res %in% c(2.5, 5, 10)) {
+	if (!res %in% c(0.5, 2.5, 5, 10)) {
 		stop('resolution should be one of: 2.5, 5, 10')
 	}
-	if (res==2.5) { res <- '2_5' }
+	if (res==2.5) { 
+		res <- '2_5m' 
+    } else if (res == 0.5) {
+        res <- "30s"
+    } else {
+		res <- paste(res, 'm', sep='')
+	}
+	
 	var <- tolower(var[1])
 	vars <- c('tmin', 'tmax', 'prec', 'bio')
 	stopifnot(var %in% vars)
@@ -181,11 +188,11 @@ ccodes <- function() {
 		return(invisible(NULL))
 	}
 	
-	path <- paste(path, '/cmip5/', res, 'm/', sep='')
+	path <- paste(path, '/cmip5/', res, '/', sep='')
 	dir.create(path, recursive=TRUE, showWarnings=FALSE)
 
 	zip <- tolower(paste(model, rcp, var, year, '.zip', sep=''))
-	theurl <- paste('http://biogeo.ucdavis.edu/data/climate/cmip5/', res, 'm/', zip, sep='')
+	theurl <- paste('http://biogeo.ucdavis.edu/data/climate/cmip5/', res, '/', zip, sep='')
 
 	zipfile <- paste(path, zip, sep='')
 	if (var == 'bi') {
@@ -201,13 +208,13 @@ ccodes <- function() {
 			if (download) {
 				.download(theurl, zipfile)
 				if (!file.exists(zipfile))	{ 
-					cat("\n Could not download file -- perhaps it does not exist \n") 
+					message("\n Could not download file -- perhaps it does not exist") 
 				}
 			} else {
-				cat("\nFile not available locally. Use 'download = TRUE'\n")
+				message("\nFile not available locally. Use 'download = TRUE'")
 			}
 		}	
-		unzip(zipfile, exdir=dirname(zipfile))
+		utils::unzip(zipfile, exdir=dirname(zipfile))
 	}
 	stack(paste(path, tifs, sep=''))
 }
@@ -268,13 +275,13 @@ ccodes <- function() {
 			if (download) {
 				.download(theurl, zipfile)
 				if (!file.exists(zipfile))	{ 
-					cat("\n Could not download file -- perhaps it does not exist \n") 
+					message("\n Could not download file -- perhaps it does not exist") 
 				}
 			} else {
-				cat("\nFile not available locally. Use 'download = TRUE'\n")
+				message("\nFile not available locally. Use 'download = TRUE'")
 			}
 		}	
-		unzip(zipfile, exdir=dirname(zipfile))
+		utils::unzip(zipfile, exdir=dirname(zipfile))
 		for (h in paste(path, hdrfiles, sep='')) {
 			x <- readLines(h)
 			x <- c(x[1:14], 'PIXELTYPE     SIGNEDINT', x[15:length(x)])
@@ -312,13 +319,13 @@ ccodes <- function() {
 				theurl <- paste("http://biogeo.ucdavis.edu/data/diva/", mskpath, name, "/", country, mskname, name, ".zip", sep="")
 				.download(theurl, zipfilename)
 				if (!file.exists(zipfilename))	{ 
-					cat("\nCould not download file -- perhaps it does not exist \n") 
+					message("\nCould not download file -- perhaps it does not exist") 
 				}
 			} else {
-				cat("\nFile not available locally. Use 'download = TRUE'\n")
+				message("\nFile not available locally. Use 'download = TRUE'")
 			}
 		}
-		ff <- unzip(zipfilename, exdir=dirname(zipfilename))
+		ff <- utils::unzip(zipfilename, exdir=dirname(zipfilename))
 		if (!keepzip) {
 			file.remove(zipfilename)
 		}
@@ -336,7 +343,7 @@ ccodes <- function() {
 			rs <- raster(f)
 		} else {
 			rs <- sapply(f, raster)
-			cat('returning a list of RasterLayer objects\n')
+			message('returning a list of RasterLayer objects')
 			return(rs)
 		}
 	}
@@ -373,10 +380,10 @@ ccodes <- function() {
 						.download(theurl, zipfilename)
 					}
 				}
-			} else {cat('file not available locally, use download=TRUE\n') }	
+			} else {message('file not available locally, use download=TRUE') }	
 		}
 		if (file.exists(zipfilename)) { 
-			unzip(zipfilename, exdir=dirname(zipfilename))
+			utils::unzip(zipfilename, exdir=dirname(zipfilename))
 			file.remove(zipfilename)
 		}	
 	}

@@ -160,7 +160,7 @@ setMethod('brick', signature(x='Extent'),
 		nc = as.integer(round(ncols))
 		if (nc < 1) { stop("ncols should be > 0") }
 		if (nr < 1) { stop("nrows should be > 0") }
-		b <- new("RasterBrick", extent=bb, ncols=nc, nrows=nr)
+		b <- methods::new("RasterBrick", extent=bb, ncols=nc, nrows=nr)
 		projection(b) <- crs
 		nl <- max(round(nl), 0)
 		b@data@nlayers <- as.integer(nl)
@@ -206,9 +206,9 @@ setMethod('brick', signature(x='SpatialGrid'),
 setMethod('brick', signature(x='SpatialPixels'), 
 	function(x) {
 		if (inherits( x, 'SpatialPixelsDataFrame')) {
-			x <- as(x, 'SpatialGridDataFrame')
+			x <- methods::as(x, 'SpatialGridDataFrame')
 		} else {	
-			x <- as(x, 'SpatialGrid')
+			x <- methods::as(x, 'SpatialGrid')
 		}
 		return(brick(x))
 	}
@@ -275,7 +275,7 @@ setMethod('brick', signature(x='big.matrix'),
 
 setMethod('brick', signature(x='kasc'), 
 	function(x) {
-		as(x, 'RasterBrick')
+		methods::as(x, 'RasterBrick')
 	}
 )
 
@@ -284,7 +284,7 @@ setMethod('brick', signature(x='kasc'),
 
 setMethod('brick', signature(x='grf'), 
 	function(x) {
-		as(x, 'RasterBrick')
+		methods::as(x, 'RasterBrick')
 	}
 )
 

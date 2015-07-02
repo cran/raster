@@ -65,9 +65,9 @@ setMethod('as.character', signature(x='CRS'),
 
 projection <- function(x, asText=TRUE) {
 
-	if (extends(class(x), "BasicRaster")) { 
+	if (methods::extends(class(x), "BasicRaster")) { 
 		x <- x@crs 
-	} else if (extends(class(x), "Spatial")) { 
+	} else if (methods::extends(class(x), "Spatial")) { 
 		x <- x@proj4string
 	} else if (class(x) == 'character') { 
 		if (asText) {

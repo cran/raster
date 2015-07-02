@@ -37,9 +37,9 @@ setMethod("Arith", signature(e1='Raster', e2='Raster'),
 		
 		if (canProcessInMemory(r, 4)) {
 			if (nl1 == nl2 ) {
-				return( setValues(r, values=callGeneric( getValues(e1), getValues(e2))) )
+				return( setValues(r, values=methods::callGeneric( getValues(e1), getValues(e2))) )
 			} else {
-				return( setValues(r, matrix(callGeneric( as.vector(getValues(e1)), as.vector(getValues(e2))), ncol=nl)) )
+				return( setValues(r, matrix(methods::callGeneric( as.vector(getValues(e1)), as.vector(getValues(e2))), ncol=nl)) )
 			}
 			
 		} else {
@@ -53,7 +53,7 @@ setMethod("Arith", signature(e1='Raster', e2='Raster'),
 				for (i in 1:tr$n) {
 					v1 <- getValues(e1, row=tr$row[i], nrows=tr$nrows[i])
 					v2 <- getValues(e2, row=tr$row[i], nrows=tr$nrows[i])
-					v <- callGeneric( v1, v2 )
+					v <- methods::callGeneric( v1, v2 )
 					r <- writeValues(r, v, tr$row[i])
 					pbStep(pb, i) 	
 				}
@@ -61,7 +61,7 @@ setMethod("Arith", signature(e1='Raster', e2='Raster'),
 				for (i in 1:tr$n) {
 					v1 <- as.vector(getValues(e1, row=tr$row[i], nrows=tr$nrows[i]))
 					v2 <- as.vector(getValues(e2, row=tr$row[i], nrows=tr$nrows[i]))
-					v <- matrix(callGeneric( v1, v2 ), ncol=nl)
+					v <- matrix(methods::callGeneric( v1, v2 ), ncol=nl)
 					r <- writeValues(r, v, tr$row[i])
 					pbStep(pb, i) 	
 				}
@@ -89,7 +89,7 @@ setMethod("Arith", signature(e1='RasterLayer', e2='numeric'),
 			if (length(e2) > ncell(r)) {
 				e2 <- e2[1:ncell(r)]
 			}
-			return ( setValues(r,  callGeneric(as.numeric(getValues(e1)), e2) ) )
+			return ( setValues(r,  methods::callGeneric(as.numeric(getValues(e1)), e2) ) )
 			
 		} else {
 			tr <- blockSize(e1)
@@ -100,13 +100,13 @@ setMethod("Arith", signature(e1='RasterLayer', e2='numeric'),
 			if (length(e2) > 0) {
 				for (i in 1:tr$n) {
 					e <- .getAdjustedE(r, tr, i, e2)
-					v <- callGeneric(getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), e)
+					v <- methods::callGeneric(getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), e)
 					r <- writeValues(r, v, tr$row[i])
 					pbStep(pb, i) 	
 				}
 			} else {
 				for (i in 1:tr$n) {
-					v <- callGeneric( getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), e2 )
+					v <- methods::callGeneric( getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), e2 )
 					r <- writeValues(r, v, tr$row[i])
 					pbStep(pb, i)
 				}
@@ -131,7 +131,7 @@ setMethod("Arith", signature(e1='numeric', e2='RasterLayer'),
 			if (length(e1) > ncell(r)) {
 				e1 <- e1[1:ncell(r)]
 			}
-			return ( setValues(r,  callGeneric(e1, getValues(e2)) ) )
+			return ( setValues(r,  methods::callGeneric(e1, getValues(e2)) ) )
 			
 		} else {
 			tr <- blockSize(e2)
@@ -142,13 +142,13 @@ setMethod("Arith", signature(e1='numeric', e2='RasterLayer'),
 			if (length(e1) > 0) {
 				for (i in 1:tr$n) {
 					e <- .getAdjustedE(r, tr, i, e1)
-					v <- callGeneric(e, getValues(e2, row=tr$row[i], nrows=tr$nrows[i]))
+					v <- methods::callGeneric(e, getValues(e2, row=tr$row[i], nrows=tr$nrows[i]))
 					r <- writeValues(r, v, tr$row[i])
 					pbStep(pb, i) 	
 				}
 			} else {
 				for (i in 1:tr$n) {
-					v <- callGeneric(e1, getValues(e2, row=tr$row[i], nrows=tr$nrows[i]))
+					v <- methods::callGeneric(e1, getValues(e2, row=tr$row[i], nrows=tr$nrows[i]))
 					r <- writeValues(r, v, tr$row[i])
 					pbStep(pb, i)
 				}
@@ -169,7 +169,7 @@ setMethod("Arith", signature(e1='RasterLayerSparse', e2='numeric'),
 	
 		if (!hasValues(e1)) { stop('RasterLayerSparse has no values') }
 		stopifnot(length(e2) == 1)
-		setValues(e1,  callGeneric(as.numeric(e1@data@values), e2))
+		setValues(e1,  methods::callGeneric(as.numeric(e1@data@values), e2))
 	}
 )
 
@@ -177,7 +177,7 @@ setMethod("Arith", signature(e1='numeric', e2='RasterLayerSparse'),
     function(e1, e2){ 
 		if (!hasValues(e2)) { stop('RasterLayerSparse has no values') }
 		stopifnot(length(e1) == 1)
-		setValues(e2,  callGeneric(as.numeric(e2@data@values), e1) )
+		setValues(e2,  methods::callGeneric(as.numeric(e2@data@values), e1) )
 	}
 )
 
@@ -185,14 +185,14 @@ setMethod("Arith", signature(e1='numeric', e2='RasterLayerSparse'),
 setMethod("Arith", signature(e1='RasterLayer', e2='logical'),
     function(e1, e2){ 
 		e2 <- as.integer(e2)
-		callGeneric(e1, e2)
+		methods::callGeneric(e1, e2)
 	}
 )
 
 setMethod("Arith", signature(e1='logical', e2='RasterLayer'),
     function(e1, e2){ 
 		e1 <- as.integer(e1)
-		callGeneric(e1, e2)
+		methods::callGeneric(e1, e2)
 	}
 )
 
@@ -213,7 +213,7 @@ setMethod("Arith", signature(e1='RasterStackBrick', e2='numeric'),
 			names(b) <- names(e1)
 			
 			if (canProcessInMemory(e1, 3)) {
-				return( setValues(b, t(callGeneric( t(getValues(e1)), e2))) )
+				return( setValues(b, t(methods::callGeneric( t(getValues(e1)), e2))) )
 			}
 			
 			tr <- blockSize(b)
@@ -222,7 +222,7 @@ setMethod("Arith", signature(e1='RasterStackBrick', e2='numeric'),
 			e1 <- readStart(e1)
 
 			for (i in 1:tr$n) {
-				v <- t (callGeneric( t(getValues(e1, row=tr$row[i], nrows=tr$nrows[i])), e2) )
+				v <- t (methods::callGeneric( t(getValues(e1, row=tr$row[i], nrows=tr$nrows[i])), e2) )
 				b <- writeValues(b, v, tr$row[i])
 				pbStep(pb, i)
 			}
@@ -238,7 +238,7 @@ setMethod("Arith", signature(e1='RasterStackBrick', e2='numeric'),
 		names(b) <- names(e1)
 		
 		if (canProcessInMemory(e1, 3)) {
-			return ( setValues(b,  callGeneric(getValues(e1), e2) ) )
+			return ( setValues(b,  methods::callGeneric(getValues(e1), e2) ) )
 		} else {
 			tr <- blockSize(b)
 			pb <- pbCreate(tr$n, label='arith')
@@ -246,7 +246,7 @@ setMethod("Arith", signature(e1='RasterStackBrick', e2='numeric'),
 			e1 <- readStart(e1)
 
 			for (i in 1:tr$n) {
-				v <- callGeneric( getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), e2)
+				v <- methods::callGeneric( getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), e2)
 				b <- writeValues(b, v, tr$row[i])
 				pbStep(pb, i)
 			}
@@ -276,7 +276,7 @@ setMethod("Arith", signature(e1='numeric', e2='RasterStackBrick'),
 			names(b) <- names(e2)
 			
 			if (canProcessInMemory(e2, 3)) {
-				return( setValues(b, t(callGeneric( e1, t(getValues(e2))))) )
+				return( setValues(b, t(methods::callGeneric( e1, t(getValues(e2))))) )
 			}
 			
 			tr <- blockSize(b)
@@ -285,7 +285,7 @@ setMethod("Arith", signature(e1='numeric', e2='RasterStackBrick'),
 
 			b <- writeStart(b, filename=rasterTmpFile())
 			for (i in 1:tr$n) {
-				v <- t (callGeneric( e1, t(getValues(e2, row=tr$row[i], nrows=tr$nrows[i]))) )
+				v <- t (methods::callGeneric( e1, t(getValues(e2, row=tr$row[i], nrows=tr$nrows[i]))) )
 				b <- writeValues(b, v, tr$row[i])
 				pbStep(pb, i)
 			}
@@ -301,7 +301,7 @@ setMethod("Arith", signature(e1='numeric', e2='RasterStackBrick'),
 		names(b) <- names(e2)
 		
 		if (canProcessInMemory(e2, 3)) {
-			return ( setValues(b,  callGeneric(e1, getValues(e2)) ) )
+			return ( setValues(b,  methods::callGeneric(e1, getValues(e2)) ) )
 		} else {
 	
 			tr <- blockSize(b)
@@ -309,7 +309,7 @@ setMethod("Arith", signature(e1='numeric', e2='RasterStackBrick'),
 			b <- writeStart(b, filename=rasterTmpFile())
 			e2 <- readStart(e2)
 			for (i in 1:tr$n) {
-				v <- callGeneric( e1, getValues(e2, row=tr$row[i], nrows=tr$nrows[i]))
+				v <- methods::callGeneric( e1, getValues(e2, row=tr$row[i], nrows=tr$nrows[i]))
 				b <- writeValues(b, v, tr$row[i])
 				pbStep(pb, i)
 			}
@@ -325,14 +325,14 @@ setMethod("Arith", signature(e1='numeric', e2='RasterStackBrick'),
 setMethod("Arith", signature(e1='RasterStackBrick', e2='logical'),  # for Arith with NA
     function(e1, e2){ 
 		e2 <- as.integer(e2)
-		callGeneric(e1, e2)
+		methods::callGeneric(e1, e2)
 	}
 )
 
 setMethod("Arith", signature(e1='logical', e2='RasterStackBrick'),
     function(e1, e2){ 
 		e1 <- as.integer(e1)
-		callGeneric(e1, e2)
+		methods::callGeneric(e1, e2)
 	}
 )
 
@@ -347,19 +347,19 @@ setMethod("Arith", signature(e1='Extent', e2='numeric'),
 			x1 = e2[1]
 			x2 = e2[2]
 		} else if (length(e2) == 4) {
-			return(extent(callGeneric(as.vector(e1), e2)))
+			return(extent(methods::callGeneric(as.vector(e1), e2)))
 		} else {
 			stop('On an Extent object, you can only use Arith with a single number or with two numbers')
 		}
 
 		r <- e1@xmax - e1@xmin
-		d <- callGeneric(r, x1)
+		d <- methods::callGeneric(r, x1)
 		d <- (d - r) / 2
 		e1@xmax <- e1@xmax + d
 		e1@xmin <- e1@xmin - d
 		
 		r <- e1@ymax - e1@ymin
-		d <- callGeneric(r, x2)
+		d <- methods::callGeneric(r, x2)
 		d <- (d - r) / 2
 		e1@ymax <- e1@ymax + d
 		e1@ymin <- e1@ymin - d
@@ -369,7 +369,7 @@ setMethod("Arith", signature(e1='Extent', e2='numeric'),
 
 setMethod("Arith", signature(e1='numeric', e2='Extent'),
     function(e1, e2){ 
-		callGeneric(e2,e1)
+		methods::callGeneric(e2,e1)
 	}
 )
 

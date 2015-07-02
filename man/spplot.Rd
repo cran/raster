@@ -5,6 +5,7 @@
 \alias{spplot}
 \alias{spplot,Raster-method}
 \alias{spplot,SpatialPoints-method}
+\alias{lines,SpatialPolygons-method}
 
 
 \title{Use spplot to plot a Raster* object}

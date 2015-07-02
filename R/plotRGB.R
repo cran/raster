@@ -55,7 +55,7 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, inte
 		}
 	}
 	
-	RGB <- na.omit(RGB)
+	RGB <- stats::na.omit(RGB)
 	
 	if (!is.null(stretch)) {
 		stretch = tolower(stretch)
@@ -77,12 +77,12 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, inte
 	
 	naind <- as.vector( attr(RGB, "na.action") )
 	if (!is.null(naind)) {
-		bg <- col2rgb(colNA)
-		bg <- rgb(bg[1], bg[2], bg[3], alpha=bgalpha, max=255)
+		bg <- grDevices::col2rgb(colNA)
+		bg <- grDevices::rgb(bg[1], bg[2], bg[3], alpha=bgalpha, max=255)
 		z <- rep( bg, times=ncell(r))
-		z[-naind] <- rgb(RGB[,1], RGB[,2], RGB[,3], alpha=alpha, max=scale)
+		z[-naind] <- grDevices::rgb(RGB[,1], RGB[,2], RGB[,3], alpha=alpha, max=scale)
 	} else {
-		z <- rgb(RGB[,1], RGB[,2], RGB[,3], alpha=alpha, max=scale)
+		z <- grDevices::rgb(RGB[,1], RGB[,2], RGB[,3], alpha=alpha, max=scale)
 	}
 	
 	z <- matrix(z, nrow=nrow(r), ncol=ncol(r), byrow=T)
@@ -92,7 +92,7 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, inte
 
 	
 	if (!add) {
-		if (!axes) par(plt=c(0,1,0,1))
+		if (!axes) graphics::par(plt=c(0,1,0,1))
 
 		if (is.null(asp)) {
 			if (couldBeLonLat(x)) {
@@ -104,19 +104,22 @@ function(x, r=1, g=2, b=3, scale, maxpixels=500000, stretch=NULL, ext=NULL, inte
 			}
 		}
 		
-		plot(NA, NA, xlim=c(bb[1], bb[2]), ylim=c(bb[3], bb[4]), type = "n", xaxs='i', yaxs='i', xlab=xlab, ylab=ylab, asp=asp, axes=FALSE, ...)
+		xlim=c(bb[1], bb[2])
+		ylim=c(bb[3], bb[4])
+		
+		plot(NA, NA, xlim=xlim, ylim=ylim, type = "n", xaxs='i', yaxs='i', xlab=xlab, ylab=ylab, asp=asp, axes=FALSE, ...)
 		if (axes) {
-			xticks <- axTicks(1, c(xmin(r), xmax(r), 4))
-			yticks <- axTicks(2, c(ymin(r), ymax(r), 4))
+			xticks <- graphics::axTicks(1, c(xmin(r), xmax(r), 4))
+			yticks <- graphics::axTicks(2, c(ymin(r), ymax(r), 4))
 			if (xres(r) %% 1 == 0) xticks = round(xticks)
 			if (yres(r) %% 1 == 0) yticks = round(yticks)
-			axis(1, at=xticks)
-			axis(2, at=yticks, las = 1)
-			#axis(3, at=xticks, labels=FALSE, lwd.ticks=0)
-			#axis(4, at=yticks, labels=FALSE, lwd.ticks=0)
+			graphics::axis(1, at=xticks)
+			graphics::axis(2, at=yticks, las = 1)
+			#graphics::axis(3, at=xticks, labels=FALSE, lwd.ticks=0)
+			#graphics::axis(4, at=yticks, labels=FALSE, lwd.ticks=0)
 		}
 	}
-	rasterImage(z, bb[1], bb[3], bb[2], bb[4], interpolate=interpolate, ...)
+	graphics::rasterImage(z, bb[1], bb[3], bb[2], bb[4], interpolate=interpolate, ...)
 	
 	if (!is.null(addfun)) {
 		if (is.function(addfun)) {

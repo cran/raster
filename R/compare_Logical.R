@@ -92,13 +92,13 @@ setMethod("Compare", signature(e1='Raster', e2='logical'),
 
 			if (canProcessInMemory(r, 3)) {
 				dataType(r) <- 'LOG1S'
-				r <- setValues(r, values=t(callGeneric(t(getValues(e1)), e2 ) )	)
+				r <- setValues(r, values=t(methods::callGeneric(t(getValues(e1)), e2 ) )	)
 			} else {
 				tr <- blockSize(r)
 				pb <- pbCreate(tr$n)
 				r <- writeStart(r, filename=rasterTmpFile(), datatype='LOG1S', overwrite=TRUE )
 				for (i in 1:tr$n) {
-					v <- t(callGeneric( t(getValues(e1, row=tr$row[i], nrows=tr$nrows[i])), e2))
+					v <- t(methods::callGeneric( t(getValues(e1, row=tr$row[i], nrows=tr$nrows[i])), e2))
 					r <- writeValues(r, v, tr$row[i])
 					pbStep(pb, i) 
 				}
@@ -113,7 +113,7 @@ setMethod("Compare", signature(e1='Raster', e2='logical'),
 				if (length(e2) > ncell(r)) {
 					e2 <- e2[1:ncell(r)]
 				}
-				r <- setValues(r, values=callGeneric(getValues(e1), e2 ) )			
+				r <- setValues(r, values=methods::callGeneric(getValues(e1), e2 ) )			
 			} else {
 				tr <- blockSize(r)
 				pb <- pbCreate(tr$n)
@@ -122,13 +122,13 @@ setMethod("Compare", signature(e1='Raster', e2='logical'),
 				if (length(e2) > 0) {
 					for (i in 1:tr$n) {
 						e <- .getAdjustedE(r, tr, i, e2)
-						v <- callGeneric(getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), e)
+						v <- methods::callGeneric(getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), e)
 						r <- writeValues(r, v, tr$row[i])
 						pbStep(pb, i) 
 					}
 				} else {
 					for (i in 1:tr$n) {
-						v <- callGeneric(getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), e2)
+						v <- methods::callGeneric(getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), e2)
 						r <- writeValues(r, v, tr$row[i])
 						pbStep(pb, i)
 					}
@@ -145,7 +145,7 @@ setMethod("Compare", signature(e1='Raster', e2='logical'),
 
 setMethod("Compare", signature(e1='logical', e2='Raster'),
 	function(e1,e2){
-		callGeneric(e2, e1)
+		methods::callGeneric(e2, e1)
 	}
 )
 
@@ -172,13 +172,13 @@ setMethod("Compare", signature(e1='Raster', e2='numeric'),
 
 			if (canProcessInMemory(r, 3)) {
 				dataType(r) <- 'LOG1S'
-				r <- setValues(r, values=t(callGeneric(t(getValues(e1)), e2 ) )	)
+				r <- setValues(r, values=t(methods::callGeneric(t(getValues(e1)), e2 ) )	)
 			} else {
 				tr <- blockSize(r)
 				pb <- pbCreate(tr$n)
 				r <- writeStart(r, filename=rasterTmpFile(), datatype='LOG1S', overwrite=TRUE )
 				for (i in 1:tr$n) {
-					v <- t(callGeneric( t(getValues(e1, row=tr$row[i], nrows=tr$nrows[i])), e2))
+					v <- t(methods::callGeneric( t(getValues(e1, row=tr$row[i], nrows=tr$nrows[i])), e2))
 					r <- writeValues(r, v, tr$row[i])
 					pbStep(pb, i) 
 				}
@@ -193,7 +193,7 @@ setMethod("Compare", signature(e1='Raster', e2='numeric'),
 				if (length(e2) > ncell(r)) {
 					e2 <- e2[1:ncell(r)]
 				}
-				r <- setValues(r, values=callGeneric(getValues(e1), e2))
+				r <- setValues(r, values=methods::callGeneric(getValues(e1), e2))
 			} else {
 				tr <- blockSize(r)
 				pb <- pbCreate(tr$n)
@@ -202,13 +202,13 @@ setMethod("Compare", signature(e1='Raster', e2='numeric'),
 				if (length(e2) > 0) {
 					for (i in 1:tr$n) {
 						e <- .getAdjustedE(r, tr, i, e2)
-						v <- callGeneric(getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), e)
+						v <- methods::callGeneric(getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), e)
 						r <- writeValues(r, v, tr$row[i])
 						pbStep(pb, i) 
 					}
 				} else {
 					for (i in 1:tr$n) {
-						v <- callGeneric(getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), e2)
+						v <- methods::callGeneric(getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), e2)
 						r <- writeValues(r, v, tr$row[i])
 						pbStep(pb, i)
 					}
@@ -229,7 +229,7 @@ setMethod("Compare", signature(e1='Raster', e2='numeric'),
 
 setMethod("Compare", signature(e1='numeric', e2='Raster'),
 	function(e1,e2){
-		callGeneric(e2, e1)
+		methods::callGeneric(e2, e1)
 	}
 )	
 
@@ -257,13 +257,13 @@ setMethod("Compare", signature(e1='Raster', e2='Raster'),
 		
 		if (canProcessInMemory(r, 3)) {
 			dataType(r) <- 'LOG1S'
-			r <- setValues(r, callGeneric(getValues(e1), getValues(e2)))
+			r <- setValues(r, methods::callGeneric(getValues(e1), getValues(e2)))
 		} else {
 			tr <- blockSize(r)
 			pb <- pbCreate(tr$n)
 			r <- writeStart(r, filename=rasterTmpFile(), datatype='LOG1S', overwrite=TRUE )
 			for (i in 1:tr$n) {
-				v <- callGeneric(getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), getValues(e2, row=tr$row[i], nrows=tr$nrows[i]))
+				v <- methods::callGeneric(getValues(e1, row=tr$row[i], nrows=tr$nrows[i]), getValues(e2, row=tr$row[i], nrows=tr$nrows[i]))
 				r <- writeValues(r, v, tr$row[i])
 				pbStep(pb, i) 
 			}
@@ -298,13 +298,13 @@ setMethod("Logic", signature(e1='Raster', e2='Raster'),
 		
 		if (canProcessInMemory(r, 3)) {
 			dataType(r) <- 'LOG1S'
-			r <- setValues(r, callGeneric(.asLogical(getValues(e1)), .asLogical(getValues(e2))))
+			r <- setValues(r, methods::callGeneric(.asLogical(getValues(e1)), .asLogical(getValues(e2))))
 		} else {
 			tr <- blockSize(r)
 			pb <- pbCreate(tr$n)
 			r <- writeStart(r, filename=rasterTmpFile(), datatype='LOG1S', overwrite=TRUE )
 			for (i in 1:tr$n) {
-				v <- callGeneric(.asLogical(getValues(e1, row=tr$row[i], nrows=tr$nrows[i])), .asLogical(getValues(e2, row=tr$row[i], nrows=tr$nrows[i])))
+				v <- methods::callGeneric(.asLogical(getValues(e1, row=tr$row[i], nrows=tr$nrows[i])), .asLogical(getValues(e2, row=tr$row[i], nrows=tr$nrows[i])))
 				r <- writeValues(r, v, tr$row[i])
 				pbStep(pb, i) 
 			}
@@ -318,10 +318,10 @@ setMethod("Logic", signature(e1='Raster', e2='Raster'),
 
 setMethod("Compare", signature(e1='Extent', e2='Extent'),
 	function(e1,e2){
-		a <- callGeneric(e2@xmin, e1@xmin)
-		b <- callGeneric(e1@xmax, e2@xmax)
-		c <- callGeneric(e2@ymin, e1@ymin)
-		d <- callGeneric(e1@ymax, e2@ymax)
+		a <- methods::callGeneric(e2@xmin, e1@xmin)
+		b <- methods::callGeneric(e1@xmax, e2@xmax)
+		c <- methods::callGeneric(e2@ymin, e1@ymin)
+		d <- methods::callGeneric(e1@ymax, e2@ymax)
 		a & b & c & d
 	}
 )	

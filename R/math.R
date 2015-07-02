@@ -70,7 +70,7 @@ setMethod("Math", signature(x='Raster'),
 		} else {
 		
 			if (canProcessInMemory(r, 3)) {
-				r <- setValues(r, callGeneric(getValues(x)))
+				r <- setValues(r, methods::callGeneric(getValues(x)))
 			} else {
 				if (funname %in% c('floor', 'ceiling', 'trunc')) {
 					datatype <- 'INT4S'
@@ -84,7 +84,7 @@ setMethod("Math", signature(x='Raster'),
 				x <- readStart(x)
 
 				for (i in 1:tr$n) {
-					v <- callGeneric( getValues(x, row=tr$row[i], nrows=tr$nrows[i]) )
+					v <- methods::callGeneric( getValues(x, row=tr$row[i], nrows=tr$nrows[i]) )
 					r <- writeValues(r, v, tr$row[i])
 					pbStep(pb, i) 
 				}
@@ -112,7 +112,7 @@ setMethod("Math", signature(x='RasterLayerSparse'),
 		if (substr(funname, 1, 3) == 'cum' ) { 
 			setValues(x, do.call(funname, list(x@data@values)))
 		} else {
-			setValues(x, callGeneric(x@data@values))
+			setValues(x, methods::callGeneric(x@data@values))
 		}
 	}
 )
@@ -131,7 +131,7 @@ setMethod("Math2", signature(x='Raster'),
 		}
 
 		if (canProcessInMemory(r, 3)) {
-			r <- setValues(r, callGeneric( getValues(x), digits))
+			r <- setValues(r, methods::callGeneric( getValues(x), digits))
 		} else {
 			if (digits <= 0) {
 				datatype <- 'INT4S'
@@ -145,7 +145,7 @@ setMethod("Math2", signature(x='Raster'),
 			x <- readStart(x)
 		
 			for (i in 1:tr$n) {
-				v <- callGeneric( getValues(x, row=tr$row[i], nrows=tr$nrows[i]), digits )
+				v <- methods::callGeneric( getValues(x, row=tr$row[i], nrows=tr$nrows[i]), digits )
 				r <- writeValues(r, v, tr$row[i])
 				pbStep(pb, i) 
 			}

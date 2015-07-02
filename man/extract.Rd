@@ -59,7 +59,7 @@ It is also possible to extract values for point locations from SpatialPolygons.
 
 \item{df}{logical. If \code{df=TRUE}, results will be returned as a data.frame. The first column is a sequential ID, the other column(s) are the extracted values}
 
-\item{weights}{logical. If \code{TRUE}, the function returns, for each polygon, a matrix with the cell values and the approximate fraction of each cell that is covered by the polygon(rounded to 1/100); unless \code{normalizeWeights=TRUE}, in which case they add up to one. The weights can be used for averaging; see examples. This option can be useful (but slow) if the polygons are small relative to the cells size of the Raster* object}
+\item{weights}{logical. If \code{TRUE} and \code{normalizeWeights=FALSE}, the function returns, for each polygon, a matrix with the cell values and the approximate fraction of each cell that is covered by the polygon(rounded to 1/100). If \code{TRUE} and  \code{normalizeWeights=TRUE} the weights are normalized such that they add up to one. The weights can be used for averaging; see examples. This option can be useful (but slow) if the polygons are small relative to the cells size of the Raster* object}
 
 \item{normalizeWeights}{logical. If \code{TRUE}, weights are normalized such that they add up to one for each polygon}
 

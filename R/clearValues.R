@@ -25,7 +25,7 @@ clearValues <- function(x) {
 	} else if (inherits(x, "RasterLayer" )) {
 		x <- .clearRaster(x)
 	} else if (inherits(x, "RasterStack") ) {
-		for (i in seq(along=nlayers(x))) {
+		for (i in seq(along.with=nlayers(x))) {
 			if (fromDisk(x@layers[[i]])) {
 				x@layers[[i]] <- .clearRaster(x@layers[[i]])
 			}

@@ -14,7 +14,7 @@ if (!isGeneric("click")) {
 .getClicks <- function(...) {
 	res <- list()
 	while(TRUE) {
-		loc <- locator(1, ...)
+		loc <- graphics::locator(1, ...)
 		if (is.null(loc)) break
 		res <- c(res, loc)
 	}
@@ -24,13 +24,13 @@ if (!isGeneric("click")) {
 
 
 .getCellFromClick <- function(x, n, type, id, ...) {
-	loc <- locator(n, type, ...)
+	loc <- graphics::locator(n, type, ...)
 	xyCoords <- cbind(x=loc$x, y=loc$y)
 	if (id) {
 		text(xyCoords, labels=1:n)
 	}
 	cells <- cellFromXY(x, xyCoords)
-	cells <- unique(na.omit(cells))
+	cells <- unique(stats::na.omit(cells))
 	if (length(cells) == 0 ) { 
 		stop('no valid cells selected') 
 	}
@@ -41,7 +41,7 @@ if (!isGeneric("click")) {
 
 setMethod('click', signature(x='missing'), 
 	function(x, n=1, type="n", ...) {
-		loc <- locator(n, type, ...)
+		loc <- graphics::locator(n, type, ...)
 		cbind(x=loc$x, y=loc$y)
 	}
 )
@@ -52,7 +52,7 @@ setMethod('click', signature(x='SpatialGrid'),
 		r <- raster(x)
 		cells <- .getCellFromClick(r, n, type, id, ...)
 		
-		if (.hasSlot(x, 'data')) {
+		if (methods::.hasSlot(x, 'data')) {
 			value <- x@data[cells, ,drop=FALSE]
 		} else {
 			value <- NULL
@@ -74,7 +74,7 @@ setMethod('click', signature(x='SpatialPixels'),
 		r <- raster(x)
 		cells <- .getCellFromClick(r, n, type, id, ...)
 		
-		if (.hasSlot(x, 'data')) {
+		if (methods::.hasSlot(x, 'data')) {
 			value <- x@data[cells, ,drop=FALSE]
 		} else {
 			value <- NULL
@@ -121,12 +121,12 @@ setMethod('click', signature(x='Raster'),
 	n <- max(n, 1)
 	while (i < n) {
 		i <- i + 1
-		loc <- locator(1, type, ...)
+		loc <- graphics::locator(1, type, ...)
 		xyCoords <- cbind(x=loc$x, y=loc$y)
 		if (id) { 
 			text(xyCoords, labels=i) 
 		}
-		cells <- na.omit(cellFromXY(x, xyCoords))
+		cells <- stats::na.omit(cellFromXY(x, xyCoords))
 		if (length(cells) == 0) break
 		
 		value <- extract(x, cells)
@@ -140,7 +140,7 @@ setMethod('click', signature(x='Raster'),
 		} 
 		if (show) {
 			print(value)
-			flush.console()
+			utils::flush.console()
 		}
 		if (is.null(dim(value))) { 
 			value <- matrix(value)
@@ -161,7 +161,7 @@ setMethod('click', signature(x='Raster'),
 	
 setMethod('click', signature(x='SpatialPolygons'),
 	function(x, n=1, id=FALSE, xy=FALSE, type="n", ...) {
-		loc <- locator(n, type, ...)
+		loc <- graphics::locator(n, type, ...)
 		xyCoords <- cbind(x=loc$x, y=loc$y)
 		if (id) {
 			text(xyCoords, labels=1:n)
@@ -171,7 +171,7 @@ setMethod('click', signature(x='SpatialPolygons'),
 		xyCoords@proj4string <- x@proj4string
 		i <- which(!is.na(over(x, xyCoords)))
 		if (length(i) > 0) {
-			if (.hasSlot(x, 'data')) {
+			if (methods::.hasSlot(x, 'data')) {
 				x <- x@data[i,]
 			} else {
 				x <- row.names(x)[i]
@@ -190,11 +190,11 @@ setMethod('click', signature(x='SpatialPolygons'),
 
 setMethod('click', signature(x='SpatialLines'), 
 	function(x, ...) {
-		e <- as(drawExtent(), 'SpatialPolygons')
+		e <- methods::as(drawExtent(), 'SpatialPolygons')
 		e@proj4string <- x@proj4string
 		i <- which(!is.na(over(x, e)))
 		if (length(i) > 0) {
-			if (.hasSlot(x, 'data')) {
+			if (methods::.hasSlot(x, 'data')) {
 				x <- x@data[i,]
 			} else {
 				x <- row.names(x)[i]
@@ -208,11 +208,11 @@ setMethod('click', signature(x='SpatialLines'),
 
 setMethod('click', signature(x='SpatialPoints'), 
 	function(x, ...) {
-		e <- as(drawExtent(), 'SpatialPolygons')
+		e <- methods::as(drawExtent(), 'SpatialPolygons')
 		e@proj4string <- x@proj4string
 		i <- which(!is.na(over(x, e)))
 		if (length(i) > 0) {
-			if (.hasSlot(x, 'data')) {
+			if (methods::.hasSlot(x, 'data')) {
 				x <- x@data[i,]
 			} else {
 				x <- row.names(x)[i]

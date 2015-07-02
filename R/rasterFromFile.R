@@ -46,12 +46,17 @@
 	#if (isTRUE(GMT)) {
 	#	return(.rasterObjectFromCDF_GMT(x))
 	#}
-	if (( fileext %in% c(".NC", ".NCF", ".NC4", ".CDF", ".NCDF", ".NETCDF")) | (isTRUE(ncdf))) {
+	if (( fileext %in% c(".HE5", ".NC", ".NCF", ".NC4", ".CDF", ".NCDF", ".NETCDF")) | (isTRUE(ncdf))) {
 		return ( .rasterObjectFromCDF(x, type=objecttype, band=band, ...) )
 		# return ( .rasterFromCDF(x, objecttype, ...) )
 	}
 	if ( fileext == ".GRD") {
-		if (requireNamespace("ncdf")) {
+		if (requireNamespace("ncdf4")) {
+			if (.isNetCDF(x)) {
+				# return ( .rasterFromCDF(x, objecttype, ...) )
+				return ( .rasterObjectFromCDF(x, type=objecttype, band=band, ...) )
+			}
+		} else if (requireNamespace("ncdf")) {
 			if (.isNetCDF(x)) {
 				# return ( .rasterFromCDF(x, objecttype, ...) )
 				return ( .rasterObjectFromCDF(x, type=objecttype, band=band, ...) )

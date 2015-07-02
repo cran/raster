@@ -61,11 +61,13 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, fa
 	pb <- pbCreate(nlns, label='extract', ...)
 	
 	if (.doCluster()) {
+		.sendCall <- eval( parse( text="parallel:::sendCall") )
+
 		cl <- getCluster()
 		on.exit( returnCluster() )
 		nodes <- min(nlns, length(cl)) 
-		cat('Using cluster with', nodes, 'nodes\n')
-		flush.console()
+		message('Using cluster with', nodes, 'nodes')
+		utils::flush.console()
 
 		parallel::clusterExport(cl, c('rsbb', 'rr', 'addres', 'cellnumbers'), envir=environment())
 		clFun <- function(i, pp) {
@@ -172,7 +174,7 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, fa
 			return(res)
 		}
 	
-		if (! .hasSlot(y, 'data') ) {
+		if (! methods::.hasSlot(y, 'data') ) {
 			y <- SpatialLinesDataFrame(y,  res[, -1, drop=FALSE])
 		} else {
 			y@data <- cbind(y@data,  res[, -1, drop=FALSE])
@@ -210,7 +212,7 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, fa
 	
 	pb <- pbCreate(nlns, label='extract', ...)
 	
-	y <- as.data.frame(y, xy=TRUE)	
+	y <- data.frame(geom(y)	)
 	for (i in 1:nlns) {
 		yp <- y[y$object == i, ]
 		nparts <- max(yp$part)

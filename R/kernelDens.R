@@ -7,7 +7,7 @@
     h <- h/4
     ax <- outer(gx, x, "-")/h[1L]
     ay <- outer(gy, y, "-")/h[2L]
-    tcrossprod(matrix(dnorm(ax), , nx), matrix(dnorm(ay), , nx))/(nx * h[1L] * h[2L])
+    tcrossprod(matrix(stats::dnorm(ax), , nx), matrix(stats::dnorm(ay), , nx))/(nx * h[1L] * h[2L])
 }
 
 
@@ -16,9 +16,9 @@
 	
 	.bandwidth.nrd <- function(x) {
 	### this function is from the MASS package
-		r <- quantile(x, c(0.25, 0.75))
+		r <- stats::quantile(x, c(0.25, 0.75))
 		h <- (r[2L] - r[1L])/1.34
-		4 * 1.06 * min(sqrt(var(x)), h) * length(x)^(-1/5)
+		4 * 1.06 * min(sqrt(stats::var(x)), h) * length(x)^(-1/5)
 	}
 	
     if(missing(bandwidth)) {

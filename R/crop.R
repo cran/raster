@@ -36,7 +36,7 @@ function(x, y, filename='', snap='near', datatype=NULL, ...) {
 	if (class(y) == "try-error") {
 		stop('Cannot get an Extent object from argument y')
 	}
-	validObject(y)
+	methods::validObject(y)
 	
 
 	out <- .copyWithProperties(x)	

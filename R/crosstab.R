@@ -65,7 +65,7 @@ setMethod('crosstab', signature(x='RasterStackBrick', y='missing'),
 				}
 			}
 			f <- eval(parse(text=paste('Freq ~ ', paste(nms , collapse='+'))))
-			res <- xtabs(f, data=res)
+			res <- stats::xtabs(f, data=res)
 			
 		}
 		
@@ -110,7 +110,7 @@ setMethod('crosstab', signature(x='RasterStackBrick', y='missing'),
 				pbStep(pb, i)
 			}
 			pbClose(pb)
-			res = xtabs(count~first+second, data=res)
+			res <- stats::xtabs(count~first+second, data=res)
 		}
 		
 		if (long) {

@@ -15,7 +15,7 @@ setMethod('summary', signature(object='RasterLayer'),
 	function(object, maxsamp=100000, ...) {
 		
 		if ( inMemory(object) ) {
-			sm <- as.matrix( quantile( object@data@values, na.rm=TRUE) )
+			sm <- as.matrix( stats::quantile( object@data@values, na.rm=TRUE) )
 			sm <- c(sm, sum(is.na( object@data@values) ))
 			
 		} else if (  fromDisk(object) ) {
@@ -27,7 +27,7 @@ setMethod('summary', signature(object='RasterLayer'),
 				v <- getValues(object)
 				nas <- sum(is.na(v))
 			}
-			sm <- quantile(v, na.rm=TRUE)
+			sm <- stats::quantile(v, na.rm=TRUE)
 			sm <- c(sm, nas)
 			
 		} else {

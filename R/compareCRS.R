@@ -47,7 +47,7 @@ compareCRS <- function(x, y, unknown=FALSE, verbatim=FALSE, verbose=FALSE) {
 			return(TRUE)
 		} else {
 			if (verbose) {
-				cat('Unknown CRS\n')
+				message('Unknown CRS')
 			}
 			return(FALSE) 
 		}
@@ -64,7 +64,7 @@ compareCRS <- function(x, y, unknown=FALSE, verbatim=FALSE, verbose=FALSE) {
 		if (verbose) {
 			i <- which(!i)
 			for (j in i) {
-				cat('+',x[j,1], ':  ', x[j,2],' != ', y[j,2], '\n', sep='') 
+				message('+',x[j,1], ':  ', x[j,2],' != ', y[j,2], '\n')
 			}
 		}
 		return(FALSE)

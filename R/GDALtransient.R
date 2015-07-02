@@ -73,18 +73,18 @@
 		options <- c(options, "COMPRESS=LZW")
 	}
 
-	driver <- new("GDALDriver", gdalfiletype)
+	driver <- methods::new("GDALDriver", gdalfiletype)
 	
-    transient <- try( new("GDALTransientDataset", driver=driver, rows=r@nrows, cols=r@ncols, bands=nbands, type=dataformat, fname=filename, options=options, handle=NULL), silent=TRUE)
+    transient <- try( methods::new("GDALTransientDataset", driver=driver, rows=r@nrows, cols=r@ncols, bands=nbands, type=dataformat, fname=filename, options=options, handle=NULL), silent=TRUE)
  	if (class(transient) == 'try-error') {
 		if (dataformat == "Float64") {
 			dataformat <- "Float32"
 		}
-	    transient <- new("GDALTransientDataset", driver=driver, rows=r@nrows, cols=r@ncols, bands=nbands, type=dataformat, fname=filename, options=options, handle=NULL)
+	    transient <- methods::new("GDALTransientDataset", driver=driver, rows=r@nrows, cols=r@ncols, bands=nbands, type=dataformat, fname=filename, options=options, handle=NULL)
 	}
 
 	for (i in 1:nbands) {
-		b <- new("GDALRasterBand", transient, i)
+		b <- methods::new("GDALRasterBand", transient, i)
 		rgdal::GDALcall(b, "SetNoDataValue", NAflag)
 		if (hasCT) {
 			rgdal::GDALcall(b, "SetRasterColorTable", ct)

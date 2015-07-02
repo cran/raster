@@ -97,7 +97,7 @@
 		}
 	
 		crd <- trans(cbind(c(0, 0, nc, nc), c(0, nr, 0, nr))+0.5)
-		rot <- new(".Rotation")
+		rot <- methods::new(".Rotation")
 		
 		gtr <- gdalinfo[c('ll.x', 'res.x', 'oblique.x', NA, 'oblique.y', 'res.y')]
 		gtr[4] <- yx
@@ -208,7 +208,7 @@
 
 
 	if (fixGeoref) {
-		cat('Fixing "AREA_OR_POINT=Point" georeference\n')
+		message('Fixing "AREA_OR_POINT=Point" georeference')
 		rs <- res(r)
 		xmin(r) <- xmin(r) - 0.5 * rs[1]
 		xmax(r) <- xmax(r) - 0.5 * rs[1]
@@ -270,7 +270,7 @@
 						# this is really a color table
 						rats[i] <- FALSE
 						if (is.null(ct)) { 
-							r@legend@colortable <- rgb(dr$Red, dr$Green, dr$Blue, dr$Opacity)
+							r@legend@colortable <- grDevices::rgb(dr$Red, dr$Green, dr$Blue, dr$Opacity)
 						}
 						next
 					} else {

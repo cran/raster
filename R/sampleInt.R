@@ -29,7 +29,7 @@ sampleInt <- function(n, size, replace=FALSE) {
 		samp <- NULL
 
 		while (! done) {
-			f <- ceiling(runif(size * 1.1) * n)
+			f <- ceiling(stats::runif(size * 1.1) * n)
 			samp <- unique(c(samp, f))
 			if (length(samp) >= size) {
 				samp <- samp[1:size]
@@ -47,7 +47,7 @@ sampleInt <- function(n, size, replace=FALSE) {
 		}
 		
 	} else {
-		samp <- ceiling(runif( size ) * n)
+		samp <- ceiling(stats::runif( size ) * n)
 	}
 	
 	return( samp )

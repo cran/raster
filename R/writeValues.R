@@ -44,7 +44,7 @@ setMethod('writeValues', signature(x='RasterLayer', v='vector'),
 			}
 		}
 		
-		rsd <- na.omit(v) # min and max values
+		rsd <- stats::na.omit(v) # min and max values
 		if (length(rsd) > 0) {
 			x@data@min <- min(x@data@min, rsd)
 			x@data@max <- max(x@data@max, rsd)
@@ -106,7 +106,7 @@ setMethod('writeValues', signature(x='RasterLayer', v='vector'),
 			}
 					
 			v <- matrix(v, ncol=ncol(x), byrow=TRUE)
-			write.table(v, x@file@name, append = TRUE, quote = FALSE, sep = " ", eol = "\n", dec = ".", row.names = FALSE, col.names = FALSE)
+			utils::write.table(v, x@file@name, append = TRUE, quote = FALSE, sep = " ", eol = "\n", dec = ".", row.names = FALSE, col.names = FALSE)
 			options(scipen=opsci)
 			
 		} else {

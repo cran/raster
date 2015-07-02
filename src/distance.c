@@ -1,13 +1,6 @@
 /* Robert Hijmans, October 2011 */
 
-#include <R.h>
 #include <Rinternals.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <Rmath.h>
-#include "Rdefines.h"
-#include "R_ext/Rdynload.h"
 #include "dist_util.h"
 #include "util.h"
 

@@ -7,6 +7,12 @@
 setReplaceMethod("[", c("RasterLayer", "RasterLayer", "missing"),
 	function(x, i, j, value) {
 
+		i <- crop(i, x)
+		
+		if (inherits(value, 'RasterLayer')) {
+			value <- getValues(value)
+		}
+		
 		if (! hasValues(i) ) {
 			i <- cellsFromExtent(x, i)
 			
@@ -14,7 +20,10 @@ setReplaceMethod("[", c("RasterLayer", "RasterLayer", "missing"),
 			i <- as.logical( getValues(i) )
 		
 		} else {
-			i <- cellsFromExtent(x, i)
+			j <- as.logical( getValues(i) )
+			i <- cellsFromExtent(x, i)[j]
+			x[i] <- value
+			return(x)
 		}		
 	
 		.replace(x, i, value=value, recycle=1) 
@@ -54,7 +63,7 @@ setReplaceMethod("[", c("RasterLayer","missing","missing"),
 	#	if (! is.numeric(i)) { 
 	#		i <- as.integer(i) 
 	#	}
-		i <- na.omit(i)
+		i <- stats::na.omit(i)
 	}
 
 	nl <- nlayers(x)

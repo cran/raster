@@ -66,7 +66,13 @@
 			zname <- 'z-value'
 		}
 		zclass <- class(z)
-		z <- as.character(z)
+		# suggested by Michael Sumner
+		if (inherits(z, "POSIXct")) {  
+			z <- format(z, "%Y-%m-%d %H:%M:%S", tz="UTC")
+		} else {
+			z <- as.character(z)
+		}		
+		
 		cat("zvalues=", paste(c(zname, z), collapse=':'), "\n", file = thefile, sep='')
 		cat("zclass=", zclass, "\n", file = thefile, sep='')
 	}

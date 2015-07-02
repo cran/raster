@@ -6,7 +6,7 @@
 
 
 stackOpen <- function(stackfile) {
-	f <- read.table(stackfile, as.is=FALSE, strip.white=TRUE)
+	f <- utils::read.table(stackfile, as.is=FALSE, strip.white=TRUE)
 	if (dim(f)[2] > 1) {
 		s <- stack(as.vector(f[,1]), bands=as.vector(f[,2]))
 	} else {
@@ -17,7 +17,7 @@ stackOpen <- function(stackfile) {
 }
 
 ..stackOpen <- function(stackfile, quick=FALSE) {
-	f <- read.table(stackfile, as.is=FALSE, strip.white=TRUE)
+	f <- utils::read.table(stackfile, as.is=FALSE, strip.white=TRUE)
 	if (quick) {
 		if (dim(f)[2] > 1) {
 			s <- .quickStack(f[,1], f[,2], f[,3])	
@@ -46,9 +46,9 @@ stackSave <- function(x, filename) {
 		stop("cannot save a RasterStack that has layers that only exist in memory. Use writeRaster first/instead.")
 	}
 	if (any(info[,2] != '1')) {
-		write.table(info, filename, row.names=FALSE, col.names=FALSE)
+		utils::write.table(info, filename, row.names=FALSE, col.names=FALSE)
 	} else {
-		write.table(info[,1], filename, row.names=FALSE, col.names=FALSE)
+		utils::write.table(info[,1], filename, row.names=FALSE, col.names=FALSE)
 	}
 	x@filename <- filename
 	return(x)

@@ -12,7 +12,7 @@ if (!isGeneric("stack")) {
 
 setMethod("stack", signature(x='missing'), 
 function(x) {
-	return(new("RasterStack"))
+	return(methods::new("RasterStack"))
 	}
 )
 
@@ -89,7 +89,7 @@ function(x, bands=NULL, native=FALSE, RAT=TRUE, ...) {
 		hd <- sapply(x, function(i) hasValues(i) )
 		if (!all(hd)) {
 			if (sum(hd) == 0) {
-				s <- new("RasterStack")
+				s <- methods::new("RasterStack")
 				s@nrows <- x[[1]]@nrows
 				s@ncols <- x[[1]]@ncols
 				s@extent <- x[[1]]@extent
@@ -102,7 +102,7 @@ function(x, bands=NULL, native=FALSE, RAT=TRUE, ...) {
 		if (length(x) > 1) {
 			compareRaster(x)
 		}
-		s <- new("RasterStack")
+		s <- methods::new("RasterStack")
 		s@nrows <- x[[1]]@nrows
 		s@ncols <- x[[1]]@ncols
 		s@extent <- x[[1]]@extent
@@ -136,7 +136,7 @@ function(x, bands=NULL, native=FALSE, RAT=TRUE, ...) {
 	} 
 
 	j <- 1
-	for (i in seq(along=x)) {
+	for (i in seq(along.with=x)) {
 		if (is.character(x[[i]])) {
 			if (!is.null(bands)) {
 				for (b in bands) {
@@ -169,7 +169,7 @@ function(x, bands=NULL, native=FALSE, RAT=TRUE, ...) {
 					}
 				}
 			}
-		} else if (extends(class(x[[i]]), "Raster")) {
+		} else if (methods::extends(class(x[[i]]), "Raster")) {
 			if (inherits(x[[i]], 'RasterStackBrick')) {
 			# commented on 2012/11/21 because bands should 
 			# only refer to files, not to layers in Raster objects
@@ -200,9 +200,9 @@ function(x, bands=NULL, native=FALSE, RAT=TRUE, ...) {
 	if ( length(r) == 1 ) {
 		r <- r[[1]]
 		if ( hasValues(r) ) {
-			return( addLayer( new("RasterStack"), r) )
+			return( addLayer( methods::new("RasterStack"), r) )
 		} else {
-			x <- new("RasterStack")
+			x <- methods::new("RasterStack")
 			x@nrows <- r@nrows
 			x@ncols <- r@ncols
 			x@extent <- r@extent
@@ -214,7 +214,7 @@ function(x, bands=NULL, native=FALSE, RAT=TRUE, ...) {
 			return(x)
 		}
 	} else {
-		return(addLayer(new("RasterStack"), r))
+		return(addLayer(methods::new("RasterStack"), r))
 	}
 }
 )
@@ -231,7 +231,7 @@ setMethod("stack", signature(x='SpatialGridDataFrame'),
 
 setMethod("stack", signature(x='SpatialPixelsDataFrame'), 
 	function(x, ...) {
-		x <- as(x, 'SpatialGridDataFrame')
+		x <- methods::as(x, 'SpatialGridDataFrame')
 		.stackFromBrick(brick(x), ...)
 	}
 )
@@ -240,6 +240,6 @@ setMethod("stack", signature(x='SpatialPixelsDataFrame'),
 
 setMethod('stack', signature(x='kasc'), 
 	function(x) {
-		as(x, 'RasterStack')
+		methods::as(x, 'RasterStack')
 	}
 )

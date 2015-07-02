@@ -63,7 +63,7 @@ GearyLocal <- function(x,  w=matrix(1, 3, 3)) {
 	w2[] <- 1
 	Eij <- focal(x, w=w2, fun=fun, na.rm=TRUE, pad=TRUE)
 
-	s2 <-  cellStats(x, sd)^2 
+	s2 <-  cellStats(x, 'sd')^2 
 	if (ncell(x) < 1000000) { n <- ncell(x) - cellStats(x, 'countNA' )
 	} else { n <- ncell(x) }
 	

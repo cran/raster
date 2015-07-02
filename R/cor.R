@@ -9,13 +9,13 @@
 		}
 		
 		if (canProcessInMemory(x, nlayers(x)*4)) {
-			s <- na.omit(getValues(x))
-			s <- cor(s)
+			s <- stats::na.omit(getValues(x))
+			s <- stats::cor(s)
 		} else {
 			msk <- sum(x, na.rm=FALSE)
 			x <- mask(x, msk)
-			mx <- cellStats(x, mean)
-			sx <- cellStats(x, sd)
+			mx <- cellStats(x, 'mean')
+			sx <- cellStats(x, 'sd')
 			nc <- ncell(x)
 			s <- matrix(NA, nrow=n, ncol=n)
 			for (i in 1:(nl-1)) {

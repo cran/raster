@@ -42,7 +42,7 @@ setMethod('select', signature(x='Spatial'),
 		use <- substr(tolower(use), 1, 3)
 		stopifnot(use %in% c('rec', 'pol'))
 		if (use == 'rec') {
-			e <- as(drawExtent(), 'SpatialPolygons')
+			e <- methods::as(drawExtent(), 'SpatialPolygons')
 		} else {
 			e <- drawPoly()
 		}
@@ -80,16 +80,16 @@ setMethod('select', signature(x='Spatial'),
 			
 		} else if (inherits(x, 'SpatialGrid')) {
 			cls <- class(x)
-			if (.hasSlot(x, 'data')) {
-				x <- as(x, 'SpatialPointsDataFrame')
+			if (methods::.hasSlot(x, 'data')) {
+				x <- methods::as(x, 'SpatialPointsDataFrame')
 			} else {
-				x <- as(x, 'SpatialPoints')			
+				x <- methods::as(x, 'SpatialPoints')			
 			}
 			i <- which(!is.na(over(x, e)))
 			if (length(i) > 0) {
 				x <- x[i,]
 				gridded(x) <- TRUE
-				x <- as(x, cls)
+				x <- methods::as(x, cls)
 				if (draw) {
 					sp::plot(x, col=col, cex=size, add=TRUE)
 				}
@@ -99,15 +99,15 @@ setMethod('select', signature(x='Spatial'),
 
 		} else if (inherits(x, 'SpatialPixels')) {
 			cls <- class(x)
-			if (.hasSlot(x, 'data')) {
-				x <- as(x, 'SpatialPointsDataFrame')
+			if (methods::.hasSlot(x, 'data')) {
+				x <- methods::as(x, 'SpatialPointsDataFrame')
 			} else {
-				x <- as(x, 'SpatialPoints')			
+				x <- methods::as(x, 'SpatialPoints')			
 			}
 			i <- which(!is.na(over(x, e)))
 			if (length(i) > 0) {
 				x <- x[i,]
-				x <- as(x, cls)
+				x <- methods::as(x, cls)
 				if (draw) {
 					points(x, col=col, cex=size)
 				}

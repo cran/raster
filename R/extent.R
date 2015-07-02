@@ -68,7 +68,7 @@ setMethod('extent', signature(x='BasicRaster'),
 		}
 		
 		e <- extent(sort(c(xn, xx)), sort(c(yn, yx)))
-		if (validObject(e)) { 
+		if (methods::validObject(e)) { 
 			return(e) 
 		}
 	}
@@ -77,7 +77,7 @@ setMethod('extent', signature(x='BasicRaster'),
 setMethod('extent', signature(x='Spatial'), 
 	function(x){ 
 		bndbox <- bbox(x)
-		e <- new('Extent')
+		e <- methods::new('Extent')
 		e@xmin <- bndbox[1,1]
 		e@xmax <- bndbox[1,2]
 		e@ymin <- bndbox[2,1]
@@ -93,7 +93,7 @@ setMethod('extent', signature(x='matrix'),
 			stop('matrix should have dimensions of at least 2 by 2') }		
 		if (d[2] > 2) {
 			stop('matrix should not have more than 2 columns') }		
-		e <- new('Extent')
+		e <- methods::new('Extent')
 		if (nrow(x) == 2) {
 		# assuming a 'sp' bbox object
 			e@xmin <- min(x[1,])
@@ -122,7 +122,7 @@ setMethod('extent', signature(x='numeric'),
 			warning('more elements than expected (should be 4)')
 		}
 		names(x) <- NULL
-		e <- new('Extent')
+		e <- methods::new('Extent')
 		e@xmin <- x[1]
 		e@xmax <- x[2]
 		e@ymin <- x[3]
@@ -150,7 +150,7 @@ setMethod('extent', signature(x='GridTopology'),
 		cco <- x@cellcentre.offset
 		cs <- x@cellsize
 		cdim <- x@cells.dim
-		e <- new('Extent')
+		e <- methods::new('Extent')
 		e@xmin <- cco[1] - cs[1]/2
 		e@xmax <- e@xmin + cs[1] * cdim[1]
 		e@ymin <- cco[2] - cs[2]/2

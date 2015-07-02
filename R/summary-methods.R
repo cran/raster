@@ -7,7 +7,7 @@
 	lst <- list(...)
 	if (length(lst) > 0 ) {
 		i <- sapply(lst, function(x) class(x) %in% c('logical', 'integer', 'numeric'))
-		add <- unlist(lst[i])
+		add <- unlist(lst[i], use.names = FALSE)
 	} else {
 		add <- NULL
 	}

@@ -27,7 +27,7 @@ function(x, filename='', col=rainbow(25),  breaks=NULL, alpha=FALSE, colNA='whit
 		}
 		x <- col[x]
 		if (!is.na(colNA)) {
-			x[is.na(x)] <- rgb(t(col2rgb(colNA)), maxColorValue=255)
+			x[is.na(x)] <- grDevices::rgb(t(grDevices::col2rgb(colNA)), maxColorValue=255)
 		}
 		x
 	}
@@ -76,7 +76,7 @@ function(x, filename='', col=rainbow(25),  breaks=NULL, alpha=FALSE, colNA='whit
 
 		
 		x <- getCols(x, col, breaks, zrange, colNA)
-		x <- col2rgb(x, alpha=alpha)
+		x <- grDevices::col2rgb(x, alpha=alpha)
 		out <- setValues(out, t(x))
 		
 		if (filename != '') {
@@ -112,7 +112,7 @@ function(x, filename='', col=rainbow(25),  breaks=NULL, alpha=FALSE, colNA='whit
 				} 
 			}
 			v <- getCols(v, col, breaks, zrange, colNA)
-			v <- col2rgb(as.vector(v), alpha=alpha)
+			v <- grDevices::col2rgb(as.vector(v), alpha=alpha)
 			out <- writeValues(out, t(v), tr$row[i])
 			pbStep(pb)
 		}

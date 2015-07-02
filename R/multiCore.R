@@ -4,10 +4,8 @@
 # Licence GPL v3
 
 
+
 .recvOneData <- eval(parse(text="parallel:::recvOneData"))
-
-.sendCall <- eval(parse(text="parallel:::sendCall"))
-
 
 beginCluster <- function(n, type='SOCK', nice, exclude=NULL) {
 	if (! requireNamespace("parallel") ) {
@@ -20,12 +18,12 @@ beginCluster <- function(n, type='SOCK', nice, exclude=NULL) {
 
 	if (missing(n)) {
 		n <- .detectCores()
-		cat(n, 'cores detected\n')
+		message(n, 'cores detected')
 	}
 
 #	if (missing(type)) {
 #		type <- getClusterOption("type")
-#		cat('cluster type:', type, '\n')
+#		message('cluster type:', type)
 #	}
 	
 	cl <- parallel::makeCluster(n, type) 

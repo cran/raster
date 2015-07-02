@@ -34,7 +34,9 @@ setMethod ('print', 'Raster',
 				}
 			# cat('levels      :' , paste(object@data@levels, collapse=', '), '\n')
 			# cat('labels      :' , paste(object@data@labels, collapse=', '), '\n')
-			} else callNextMethod(x, ...)
+			} else {
+				methods::callNextMethod(x, ...)
+			}
 		}
 	}
 )
@@ -72,7 +74,7 @@ setMethod ('print' , 'Spatial',
 		cat('class       :' , class(x), '\n')
 		isRaster <- hasData <- FALSE
 		nc <- 0
-		if (.hasSlot(x, 'data')) {
+		if (methods::.hasSlot(x, 'data')) {
 			hasData <- TRUE
 			nc <- ncol(x@data)
 		}
@@ -131,6 +133,7 @@ setMethod ('print' , 'Spatial',
 			}
 
 			w <- pmax(nchar(ln), nchar(minv), nchar(maxv))
+			w[is.na(w)] <- 2
 			m <- rbind(ln, minv, maxv)
 			
 			# a loop because 'width' is not recycled by format

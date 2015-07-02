@@ -14,7 +14,7 @@ setMethod('density', signature(x='Raster'),
 
 		if (nlayers(x)==1) {
 			d <- sampleRegular(x, maxpixels, useGDAL=TRUE)
-			x <- density(na.omit(d))
+			x <- density(stats::na.omit(d))
 			if (plot) {
 				if (missing(main)) {
 					main=''
@@ -34,7 +34,7 @@ setMethod('density', signature(x='Raster'),
 			y <- layer
 		}
 		y <- unique(as.integer(round(y)))
-		y <- na.omit(y)
+		y <- stats::na.omit(y)
 		y <- y[ y >= 1 & y <= nlayers(x) ]
 		nl <- length(y)
 		if (nl == 0) {stop('no existing layers selected')}
@@ -54,12 +54,12 @@ setMethod('density', signature(x='Raster'),
 			nr <- ceiling(nl / nc)
 			
 			
-			mfrow <- par("mfrow")
+			mfrow <- graphics::par("mfrow")
 			spots <- mfrow[1] * mfrow[2]
 			if (spots < nl) {
-				old.par <- par(no.readonly = TRUE) 
-				on.exit(par(old.par))
-				par(mfrow=c(nr, nc))
+				old.par <- graphics::par(no.readonly = TRUE) 
+				on.exit(graphics::par(old.par))
+				graphics::par(mfrow=c(nr, nc))
 			}
 			for (i in 1:length(y)) {	
 				r <- raster(x, y[i])

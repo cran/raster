@@ -11,7 +11,7 @@
 \description{
 Trim (shrink) a Raster* object by removing outer rows and columns that all have the same value (e.g. NA).
 
-Or remove the whitespace before or after a string of characters (or a matrix, or the chracter values in a data.frame).
+Or remove the whitespace before or after a string of characters (or a matrix, or the character values in a data.frame).
 }
 
 \usage{
@@ -42,7 +42,7 @@ r[200] <- 6
 s <- trim(r) 
 
 
-trim("   hi folks   ")
+trim("    hi folks    !   ")
 }
 
 \keyword{spatial}

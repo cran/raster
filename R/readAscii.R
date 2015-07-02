@@ -54,7 +54,7 @@
 	colrow[,2] <- rowFromCell(raster, cells)
 	colrow[,3] <- cells
 	colrow[,4] <- NA
-	rows <- na.omit(unique(colrow[order(colrow[,2]), 2]))
+	rows <- stats::na.omit(unique(colrow[order(colrow[,2]), 2]))
 	for (i in 1:length(rows)) {
 		v <- .readRowsAscii(raster, rows[i], 1, 1, raster@ncols)
 		thisrow <- colrow[colrow[,2] == rows[i], , drop=FALSE]

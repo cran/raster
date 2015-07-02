@@ -31,7 +31,7 @@
 	}
 	x[] <- col[x]
 	if (!is.na(colNA)) {
-		x[is.na(x)] <- rgb(t(col2rgb(colNA)), maxColorValue=255)
+		x[is.na(x)] <- grDevices::rgb(t(grDevices::col2rgb(colNA)), maxColorValue=255)
 	}
 	if (!is.null(alpha)) {
 		x[] <- paste(substr(as.vector(x), 1, 7), t(alpha), sep='')
@@ -44,7 +44,7 @@
     legend.shrink=0.5, legend.width=0.6, legend.mar = ifelse(horizontal, 3.1, 5.1),
 	legend.lab=NULL, graphics.reset=FALSE, bigplot = NULL, smallplot = NULL, legend.only = FALSE, 
     lab.breaks=NULL, axis.args=NULL, legend.args = NULL, interpolate=FALSE, box=TRUE, breaks=NULL, 
-	zlim=NULL, zlimcol=NULL, fun=NULL, asp, colNA = NA, alpha=NULL, ...) {
+	zlim=NULL, zlimcol=NULL, fun=NULL, asp, colNA = NA, alpha=NULL, npretty=0, ...) {
 
 	
 	if (!is.null(alpha)) {
@@ -81,8 +81,9 @@
 	}
 	
 	
+	lonlat <- .couldBeLonLat(x, warnings=FALSE)
  	if (missing(asp)) {
-		if (couldBeLonLat(x, warnings=FALSE)) {
+		if (lonlat) {
 			ym <- mean(c(x@extent@ymax, x@extent@ymin))
 			asp <- 1/cos((ym * pi)/180)
 		} else {
@@ -119,7 +120,7 @@
 		x <- .asRaster(x, col, breaks, zrange, colNA, alpha=alpha)		
 	}
 	
-    old.par <- par(no.readonly = TRUE)
+    old.par <- graphics::par(no.readonly = TRUE)
     if (add) {
         big.plot <- old.par$plt
     }
@@ -141,16 +142,28 @@
 		box <- FALSE
 	} else {
         if (!add) {
-            par(plt = bigplot)
-			plot(NA, NA, xlim=e[1:2], ylim=e[3:4], type = "n", , xaxs ='i', yaxs = 'i', asp=asp, ...)
-        }
-		rasterImage(x, e[1], e[3], e[2], e[4], interpolate=interpolate)
-        big.par <- par(no.readonly = TRUE)
+            graphics::par(plt = bigplot)
+			if (lonlat & (npretty > 0)) {
+				lX <- pretty(e[1]:e[2], npretty)	
+				lX <- lX[lX >= -180 & lX <= 180]
+				lY <- pretty(e[3]:e[4], npretty)
+				lY <- lY[lY >= -90 & lY <= 90]
+				labelsX <- parse(text=paste(lX, "^o", sep=""))
+				labelsY <- parse(text=paste(lY, "^o", sep=""))
+				plot(NA, NA, xlim=e[1:2], ylim=e[3:4], type = "n", , xaxs ='i', yaxs = 'i', asp=asp, axes = FALSE, ...)
+				graphics::axis(1, lX, labels=labelsX)
+				graphics::axis(2, lY, labels=labelsY)
+			} else {
+				plot(NA, NA, xlim=e[1:2], ylim=e[3:4], type = "n", , xaxs ='i', yaxs = 'i', asp=asp, ...)
+			}
+		}	
+		graphics::rasterImage(x, e[1], e[3], e[2], e[4], interpolate=interpolate)
+		big.par <- graphics::par(no.readonly = TRUE)
     } 
 	
 	if (legend) {
 		if ((smallplot[2] < smallplot[1]) | (smallplot[4] < smallplot[3])) {
-			par(old.par)
+			graphics::par(old.par)
 			stop("plot region is too small. Cannot add a legend\n")
 		}
 		ix <- 1
@@ -166,7 +179,7 @@
 		}
 
 
-		par(new=TRUE, pty = "m", plt=smallplot, err = -1)
+		graphics::par(new=TRUE, pty = "m", plt=smallplot, err = -1)
 		
 		if (!is.null(breaks)) {
 			binwidth <- (maxz - minz)/100
@@ -193,9 +206,9 @@
 				xx <- rev(.asRaster(midpoints, col, breaks=breaks, colNA=colNA))
 			}
 
-			rasterImage(xx, 0, minz, 1, maxz, interpolate=FALSE)
+			graphics::rasterImage(xx, 0, minz, 1, maxz, interpolate=FALSE)
 			if (!is.null(ffun)) {
-				at <- axTicks(2)
+				at <- graphics::axTicks(2)
 				axis.args$at <- at
 				if (ffun=='sqrt') {
 					at <- at^2
@@ -218,8 +231,8 @@
 				}
 				axis.args$labels <- at
 			}
-			do.call("axis", axis.args)
-			box()
+			do.call(graphics::axis, axis.args)
+			graphics::box()
 		} else {
 			plot(NA, NA, ylim=c(0, 1), xlim=c(minz, maxz), type="n", xlab="", ylab="", xaxs ='i', yaxs = 'i', axes=FALSE)
 			
@@ -229,29 +242,30 @@
 			} else {
 				xx <- t(.asRaster(midpoints, col, breaks=breaks, colNA=colNA))
 			}
-			rasterImage(xx, minz, 0, maxz, 1, interpolate=FALSE)
+			graphics::rasterImage(xx, minz, 0, maxz, 1, interpolate=FALSE)
 			do.call("axis", axis.args)
-			box()
+			graphics::box()
 		}
 	
 		if (!is.null(legend.lab)) {
 			legend.args <- list(text = legend.lab, side = ifelse(horizontal, 1, 4), line = legend.mar - 2)
 		}
 		if (!is.null(legend.args)) {
-			do.call(mtext, legend.args)
+			do.call(graphics::mtext, legend.args)
 		}
 	}
 	
-	mfg.save <- par()$mfg
+	mfg.save <- graphics::par()$mfg
 	if (graphics.reset | add) {
-		par(old.par)
-		par(mfg = mfg.save, new = FALSE)
+		graphics::par(old.par)
+		graphics::par(mfg = mfg.save, new = FALSE)
 	} else {
-		par(big.par)
-		par(plt = big.par$plt, xpd = FALSE)
-		par(mfg = mfg.save, new = FALSE)
+		graphics::par(big.par)
+		graphics::par(plt = big.par$plt, xpd = FALSE)
+		graphics::par(mfg = mfg.save, new = FALSE)
 	}
-	if (!add & box ) box()
+	if (!add & box ) graphics::box()
 	invisible()
 	
 }
+

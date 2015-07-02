@@ -18,7 +18,7 @@
 
 .strSplitOnLastToken <- function(s, token="=") {
 	# not used here
-	pos <- unlist(strsplit(s, ''))
+	pos <- unlist(strsplit(s, ''), use.names = FALSE)
 	pos <- max(which(pos==token))
 	if (!is.finite(pos)) {
 		return(c(s, NA)) 

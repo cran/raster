@@ -27,7 +27,7 @@ This approach (predict a fitted model to raster data) is commonly used in remote
   \item{fun}{function. Default value is 'predict', but can be replaced with e.g. predict.se (depending on the type of model), or your own custom function.}
   \item{ext}{Extent object to limit the prediction to a sub-region of \code{x} }
   \item{const}{data.frame. Can be used to add a constant for which there is no Raster object for model predictions. Particularly useful if the constant is a character-like factor value for which it is currently not possible to make a RasterLayer }
-  \item{index}{integer. To select the column if predict.'model' returns a matrix with multiple columns }
+  \item{index}{integer. To select the column(s) to use if predict.'model' returns a matrix with multiple columns }
   \item{na.rm}{logical. Remove cells with \code{NA} values in the predictors before solving the model (and return a \code{NA} value for those cells). This option prevents errors with models that cannot handle \code{NA} values. In most other cases this will not affect the output. An exception is when predicting with a boosted regression trees model because these return predicted values even if some (or all!) variables are \code{NA} }
   \item{inf.rm}{logical. Remove cells with values that are not finite (some models will fail with -Inf/Inf values). This option is ignored when \code{na.rm=FALSE}}
  \item{factors}{list with levels for factor variables. The list elements should be named with names that correspond to names in \code{object} such that they can be matched. This argument may be omitted for standard models such as 'glm' as the predict function will extract the levels from the \code{model} object, but it is necessary in some other cases (e.g. cforest models from the party package)}
@@ -80,8 +80,7 @@ a <- matrix(c(22, 33, 64, 85, 92, 94, 59, 27, 30, 64, 60, 33, 31, 9,
 
 # extract values for points
 xy <- rbind(cbind(1, p), cbind(0, a))
-v <- data.frame(cbind(xy[,1], extract(logo, xy[,2:3])))
-colnames(v)[1] <- 'pa'
+v <- data.frame(cbind(pa=xy[,1], extract(logo, xy[,2:3])))
 
 #build a model, here an example with glm 
 model <- glm(formula=pa~., data=v)
@@ -108,7 +107,7 @@ r2 <- predict(logo, model, fun=predfun, index=1:2)
 
 \dontrun{
 # You can use multiple cores to speed up the predict function
-# by calling it via the clusterR function
+# by calling it via the clusterR function (you may need to install the snow package)
 beginCluster()
 r1c <- clusterR(logo, predict, args=list(model))
 r2c <- clusterR(logo, predict, args=list(model=model, fun=predfun, index=1:2))
@@ -125,6 +124,23 @@ x <- predict(logo, pca, index=1:3)
 plot(x)
 
 \dontrun{
+# partial least square regression
+library(pls)
+model <- plsr(formula=pa~., data=v)
+# this returns an array:
+predict(model, v[1:5,])
+# write a function to turn that into a matrix
+pfun <- function(x, data) {
+   y <- predict(x, data)
+   d <- dim(y)
+   dim(y) <- c(prod(d[1:2]), d[3])
+   y
+}
+
+pp <- predict(logo, model, fun=pfun, index=1:3)
+
+# Random Forest
+
 library(randomForest)
 rfmod <- randomForest(pa ~., data=v)
 
@@ -139,9 +155,12 @@ rfmod2 <- randomForest(pa ~., data=vv)
 r4 <- predict(logo, rfmod2, type='prob', index=1:2)
 spplot(r4)
 
-# cforest example with factors argument
+
+# cforest (other Random Forest implementation) example with factors argument
+
 v$red <- as.factor(round(v$red/100))
 logo$red <- round(logo[[1]]/100)
+
 library(party)
 m <- cforest(pa~., control=cforest_unbiased(mtry=3), data=v)
 f <- list(levels(v$red))
@@ -154,6 +173,7 @@ library(class)
 cl <- factor(c(rep(1, nrow(p)), rep(0, nrow(a))))
 train <- extract(logo, rbind(p, a))
 k <- calc(logo, function(x) as.integer(as.character(knn(train, x, cl))))
+
 }
 }
 

@@ -28,3 +28,9 @@ movingFun <- function(x, n, fun=mean, type='around', circular=FALSE, na.rm=FALSE
     apply(m, MARGIN=1, FUN=fun, na.rm=na.rm)
 }
 
+
+.roll <- function(x, n) {
+# by Josh O'Brien
+    x[(seq_along(x) - (n+1)) %% length(x) + 1]
+}
+

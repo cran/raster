@@ -65,3 +65,24 @@ function(x) {
 })
 
 
+setMethod('xmin', signature(x='Spatial'), 
+function(x) {
+	return(extent(x)@xmin)
+})
+
+setMethod('xmax', signature(x='Spatial'), 
+function(x) {
+	return(extent(x)@xmax)
+})
+
+setMethod('ymin', signature(x='Spatial'), 
+function(x) {
+	return(extent(x)@ymin)
+})
+
+setMethod('ymax', signature(x='Spatial'), 
+function(x) {
+	return(extent(x)@ymax)
+})
+
+

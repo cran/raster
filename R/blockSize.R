@@ -13,7 +13,7 @@ blockSize <- function(x, chunksize, n=nlayers(x), minblocks=4, minrows=1) {
 		bs <- chunksize
 	}
 	
-	blockrows <- try(slot(x@file, 'blockrows'), silent=TRUE)
+	blockrows <- try(methods::slot(x@file, 'blockrows'), silent=TRUE)
 	if (class(blockrows) == 'try-error') {
 		blockrows <- 1
 	}

@@ -10,12 +10,12 @@ setMethod('crop', signature(x='Spatial', y='ANY'),
 	
 		if (! inherits(y, 'SpatialPolygons')) {
 			if (inherits(y, 'Extent')) {
-				y <- as(y, 'SpatialPolygons')
+				y <- methods::as(y, 'SpatialPolygons')
 				y@proj4string <- x@proj4string
 			} else { 
 				y <- extent(y)
-				validObject(y)
-				y <- as(y, 'SpatialPolygons')
+				methods::validObject(y)
+				y <- methods::as(y, 'SpatialPolygons')
 			}
 			y@proj4string <- x@proj4string		
 		}
@@ -47,7 +47,7 @@ setMethod('crop', signature(x='Spatial', y='ANY'),
 		rnx <- row.names(x)
 		row.names(x) <- as.character(1:length(rnx))
 		
-		if (.hasSlot(x, 'data')) {
+		if (methods::.hasSlot(x, 'data')) {
 			
 			# to keep the correct IDs
 			# in future versions of rgeos, this intermediate step won't be necessary
@@ -84,7 +84,7 @@ setMethod('crop', signature(x='Spatial', y='ANY'),
 		rnx <- row.names(x)
 		row.names(x) <- as.character(1:length(rnx))
 
-		if (.hasSlot(x, 'data')) {
+		if (methods::.hasSlot(x, 'data')) {
 		
 			# in future versions of rgeos, this intermediate step should not be necessary
 			i <- as.vector( rgeos::gIntersects(x, y, byid=TRUE) )

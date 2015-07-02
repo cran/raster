@@ -18,7 +18,7 @@ function(x, y, ...){
 	j <- cbind(1:length(y), rep(1:length(x), each=length(y)), as.vector(t(i)))
 	j <- j[j[,3] == 1, -3]
 	colnames(j) <- c('point.ID', 'poly.ID')
-	if (.hasSlot(x, 'data')) {
+	if (methods::.hasSlot(x, 'data')) {
 		r <- data.frame(j, x@data[j[,2], ,drop=FALSE], row.names=NULL)
 	} else {
 		r <- data.frame(j, row.names=NULL)

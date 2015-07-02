@@ -36,7 +36,7 @@
 
 
 .arrow <- function(d, xy=click(), head=0.1, ...) {
-	arrows(xy[1], xy[2], xy[1], xy[2]+d, length=head, ...)
+	graphics::arrows(xy[1], xy[2], xy[1], xy[2]+d, length=head, ...)
 	lines(rbind(xy, rbind(cbind(xy[1], xy[2]-d))), ...)
 	text(xy[1,1], xy[1,2]-(0.25*d), 'N')
 }
@@ -45,7 +45,7 @@
 scalebar <- function(d, xy=NULL, type='line', divs=2, below='', lonlat=NULL, label, adj=c(0.5, -0.5), lwd=2, ...){
 
 	stopifnot(type %in% c('line', 'bar'))
-	pr <- par()
+	pr <- graphics::par()
 	if (is.null(lonlat)) {
 		if ( pr$usr[1] > -181 & pr$usr[2] < 181 &  pr$yaxp[1] > -200 &  pr$yaxp[2] < 200  ) {
 			lonlat <- TRUE
@@ -104,8 +104,8 @@ scalebar <- function(d, xy=NULL, type='line', divs=2, below='', lonlat=NULL, lab
 		
 		if (divs==2) {
 			half <- xy[1] + dd / 2
-			polygon(c(xy[1], xy[1], half, half), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='white')
-			polygon(c(half, half, xy[1]+dd, xy[1]+dd ), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='black')
+			graphics::polygon(c(xy[1], xy[1], half, half), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='white')
+			graphics::polygon(c(half, half, xy[1]+dd, xy[1]+dd ), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='black')
 			if (missing(label)) {
 				label <- c('0', '', d)
 			}
@@ -121,10 +121,10 @@ scalebar <- function(d, xy=NULL, type='line', divs=2, below='', lonlat=NULL, lab
 			half <- xy[1] + dd / 2
 			q3 <- xy[1] + 3 * dd / 4
 			end <- xy[1] + dd 
-			polygon(c(xy[1], xy[1], q1, q1), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='white')
-			polygon(c(q1, q1, half, half), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='black')
-			polygon(c(half, half, q3, q3 ), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='white')
-			polygon(c(q3, q3, end, end), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='black')
+			graphics::polygon(c(xy[1], xy[1], q1, q1), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='white')
+			graphics::polygon(c(q1, q1, half, half), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='black')
+			graphics::polygon(c(half, half, q3, q3 ), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='white')
+			graphics::polygon(c(q3, q3, end, end), c(xy[2], xy[2]+lwd, xy[2]+lwd, xy[2]), col='black')
 			if (missing(label)) {
 				label <- c('0', round(0.5*d), d)
 			}
