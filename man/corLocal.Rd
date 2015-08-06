@@ -47,7 +47,7 @@ b <- stack(system.file("external/rlogo.grd", package="raster"))
 b[[2]] <- flip(b[[2]], 'y') + runif(ncell(b))
 b[[1]] <- b[[1]] + runif(ncell(b))
 
-x <- corLocal(b[[1]], b[[2]] )
+x <- corLocal(b[[1]], b[[2]], test=TRUE )
 plot(x)
 
 # only cells where the p-value < 0.1

@@ -190,7 +190,7 @@ setMethod('click', signature(x='SpatialPolygons'),
 
 setMethod('click', signature(x='SpatialLines'), 
 	function(x, ...) {
-		e <- methods::as(drawExtent(), 'SpatialPolygons')
+		e <- as(drawExtent(), 'SpatialPolygons')
 		e@proj4string <- x@proj4string
 		i <- which(!is.na(over(x, e)))
 		if (length(i) > 0) {
@@ -208,7 +208,7 @@ setMethod('click', signature(x='SpatialLines'),
 
 setMethod('click', signature(x='SpatialPoints'), 
 	function(x, ...) {
-		e <- methods::as(drawExtent(), 'SpatialPolygons')
+		e <- as(drawExtent(), 'SpatialPolygons')
 		e@proj4string <- x@proj4string
 		i <- which(!is.na(over(x, e)))
 		if (length(i) > 0) {

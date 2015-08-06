@@ -55,7 +55,7 @@
 	
 	x <- raster(ncols=nc, nrows=nr, xmn=xn, ymn=yn, xmx=xx, ymx=yx, crs=crs)
 
-	if (nchar(layernames) > 1) {
+	if (.nchar(layernames) > 1) {
 		# lnams <- unlist(strsplit(layernames, ':'))
 		lnams <- layernames
 	} else {

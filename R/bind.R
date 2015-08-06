@@ -123,7 +123,7 @@ function(x, y, ..., keepnames=FALSE) {
 		if (all(cls == 'SpatialPolygonsDataFrame')) {
 			dat <- lapply( x, function(x) { methods::slot(x, 'data') } )
 			dat <- do.call(.frbind, dat)
-			x <- sapply(x, function(y) methods::as(y, 'SpatialPolygons'))
+			x <- sapply(x, function(y) as(y, 'SpatialPolygons'))
 			x <- do.call( rbind, x)
 			rownames(dat) <- row.names(x)
 			return( SpatialPolygonsDataFrame(x, dat) )
@@ -151,7 +151,7 @@ function(x, y, ..., keepnames=FALSE) {
 			}
 		}
 #		if (! dataFound ) { return( do.call(rbind, x) ) }
-		x <- sapply(x, function(x) methods::as(x, 'SpatialPolygons'))
+		x <- sapply(x, function(x) as(x, 'SpatialPolygons'))
 		x <- do.call(rbind, x)
 		SpatialPolygonsDataFrame(x, dat)
 }
@@ -214,7 +214,7 @@ setMethod('bind', signature(x='SpatialLines', y='SpatialLines'),
 		if (all(cls == 'SpatialLinesDataFrame')) {
 			dat <- lapply( x, function(x) { methods::slot(x, 'data') } )
 			dat <- do.call(.frbind, dat)
-			x <- sapply(x, function(y) methods::as(y, 'SpatialLines'))
+			x <- sapply(x, function(y) as(y, 'SpatialLines'))
 			x <- do.call( rbind, x)
 			rownames(dat) <- row.names(x)
 			return( SpatialLinesDataFrame(x, dat) )
@@ -242,7 +242,7 @@ setMethod('bind', signature(x='SpatialLines', y='SpatialLines'),
 			}
 		}
 #		if (! dataFound ) { return( do.call(rbind, x) ) }
-		x <- sapply(x, function(x) methods::as(x, 'SpatialLines'))
+		x <- sapply(x, function(x) as(x, 'SpatialLines'))
 		x <- do.call(rbind, x)
 		SpatialLinesDataFrame(x, dat)
 }
@@ -290,10 +290,10 @@ setMethod('bind', signature(x='SpatialPoints', y='SpatialPoints'),
 		if (all(cls == 'SpatialPointsDataFrame')) {
 			dat <- lapply( x, function(x) { methods::slot(x, 'data') } )
 			dat <- do.call(.frbind, dat)
-			x <- sapply(x, function(y) methods::as(y, 'SpatialPoints'))
+			x <- sapply(x, function(y) as(y, 'SpatialPoints'))
 			x <- do.call( rbind, x)
 			rownames(dat) <- row.names(x)
-			return( SpatialPointsDataFrame(x, dat) )
+			return( sp::SpatialPointsDataFrame(x, dat) )
 		}
 		
 		dat <- NULL
@@ -315,9 +315,9 @@ setMethod('bind', signature(x='SpatialPoints', y='SpatialPoints'),
 			}
 		}
 #		if (! dataFound ) { return( do.call(rbind, x) ) }
-		x <- sapply(x, function(x) methods::as(x, 'SpatialPoints'))
+		x <- sapply(x, function(x) as(x, 'SpatialPoints'))
 		x <- do.call(rbind, x)
-		SpatialPoinsDataFrame(x, dat)
+		SpatialPointsDataFrame(x, dat)
 }
 )
 

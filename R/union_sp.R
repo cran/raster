@@ -69,7 +69,7 @@ function(x, y) {
 		return(x)
 	}
 	if (methods::.hasSlot(x, 'data')) {
-		x <- methods::as(x, 'SpatialPolygons')
+		x <- as(x, 'SpatialPolygons')
 	}
 	
 	x <- spChFIDs(x, as.character(1:length(x)))

@@ -45,9 +45,9 @@ setMethod('shapefile', signature(x='Spatial'),
 		} else {
 			if (inherits(x, 'SpatialPixels')) {
 				if (methods::.hasSlot(x, 'data')) {
-					x <- methods::as(x, 'SpatialPointsDataFrame')
+					x <- as(x, 'SpatialPointsDataFrame')
 				} else {
-					x <- methods::as(x, 'SpatialPoints')				
+					x <- as(x, 'SpatialPoints')				
 				}
 				warning('Writing SpatialPixels to a shapefile. Writing to a raster file format might be more desirable')
 				

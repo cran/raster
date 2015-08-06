@@ -63,7 +63,7 @@ function(x, by=NULL, sums=NULL, dissolve=TRUE, vars=NULL, ...) {
 			# sp::aggregate is not exported 
 			# solution by Matt Strimas-Mackey
 			spAgg <- get('aggregate', envir=as.environment("package:sp"))
-			spAgg(x, by, ..., dissolve=dissolve)
+			return( spAgg(x, by, ..., dissolve=dissolve) )
 		}
 	}
 	
@@ -125,7 +125,7 @@ function(x, by=NULL, sums=NULL, dissolve=TRUE, vars=NULL, ...) {
 			if (hd) {
 				x@data <- dat
 			} else {
-				x <- methods::as(x, 'SpatialPolygons')
+				x <- as(x, 'SpatialPolygons')
 			}
 			return(x)
 		}
@@ -140,7 +140,7 @@ function(x, by=NULL, sums=NULL, dissolve=TRUE, vars=NULL, ...) {
 
 		
 		if (hd) {
-			x <- methods::as(x, 'SpatialPolygons')
+			x <- as(x, 'SpatialPolygons')
 		}
 		
 		if (dissolve) {
@@ -168,14 +168,15 @@ function(x, by=NULL, sums=NULL, dissolve=TRUE, vars=NULL, ...) {
 )
 
 
-.aggregate.SpatialLines <- function(x, by=NULL, sums=NULL, ...) {
-	
+setMethod('aggregate', signature(x='SpatialLines'), 
+function(x, by=NULL, sums=NULL, ...) {
+
 	if (!is.null(by)) {
 		if (!is.character(by)) {
 			# sp::aggregate is not exported 
 			# solution by Matt Strimas-Mackey
 			spAgg <- get('aggregate', envir=as.environment("package:sp"))
-			spAgg(x, by, ...)
+			return( spAgg(x, by, ...) )			
 		}
 	}
 	
@@ -219,7 +220,7 @@ function(x, by=NULL, sums=NULL, dissolve=TRUE, vars=NULL, ...) {
 			if (hd) {
 				x@data <- dat
 			} else {
-				x <- methods::as(x, 'SpatialLines')
+				x <- as(x, 'SpatialLines')
 			}
 			return(x)
 		}
@@ -233,9 +234,9 @@ function(x, by=NULL, sums=NULL, dissolve=TRUE, vars=NULL, ...) {
 		}
 		
 		if (hd) {
-			x <- methods::as(x, 'SpatialLines')
+			x <- as(x, 'SpatialLines')
 		}
-		x <- lapply(1:nrow(id), function(y) spChFIDs(aggregate(x[dc[dc$v==y,1],], dissolve=FALSE), as.character(y)))
+		x <- lapply(1:nrow(id), function(y) spChFIDs(aggregate(x[dc[dc$v==y,1],]), as.character(y)))
 		
 		x <- do.call(rbind, x)
 		x@proj4string <- crs
@@ -243,6 +244,6 @@ function(x, by=NULL, sums=NULL, dissolve=TRUE, vars=NULL, ...) {
 		SpatialLinesDataFrame(x, dat, FALSE)
 	}
 }
-
+)
 
 

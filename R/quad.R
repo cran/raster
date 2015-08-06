@@ -16,7 +16,7 @@ setMethod('.quad', signature(x='missing'),
 				crs=NA
 			}
 		}
-		b <- quad(e, nrows=nrows, ncols=ncols, crs=crs, levels=levels, steps=steps)
+		b <- .quad(e, nrows=nrows, ncols=ncols, crs=crs, levels=levels, steps=steps)
 		return(b)
 	}
 )

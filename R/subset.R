@@ -43,12 +43,6 @@ function(x, subset, drop=TRUE, filename='', ...) {
 setMethod('subset', signature(x='Raster'),
 function(x, subset, drop=TRUE, filename='', ...) {
 
-	if (inherits(x, 'RasterLayer')) {
-		if (filename != '') {
-			x <- writeRaster(x, filename, ...)
-		}
-		return(x)
-	}
 
 	if (is.character(subset)) {
 		i <- stats::na.omit(match(subset, names(x)))
@@ -65,6 +59,21 @@ function(x, subset, drop=TRUE, filename='', ...) {
 	if (! all(subset %in% 1:nl)) {
 		stop('not a valid subset')
 	}
+	
+	# now _after_ checking for valid names and adding the possibility to
+	# subset a RasterLayer multiple times. Fixed/suggested by Benjamin Leutner 
+	if (inherits(x, 'RasterLayer')) {
+		if (length(subset) > 1) { 
+			x <-  stack(lapply(subset, function(...) x))
+		}
+		if (filename != '') {
+			x <- writeRaster(x, filename, ...)
+		}
+		return(x)
+	}
+	
+	
+	
 	#if (nl==1) {return(x)} # this does not drop
 	
 	# probably not needed any more, due to removing 

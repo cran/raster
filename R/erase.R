@@ -85,7 +85,7 @@ setMethod(erase, signature(x='SpatialPolygons', y='SpatialPolygons'),
 			part2 <- aggregate(part2, colnames(part2@data))
 		}
 		if (dropframe) {
-			return( methods::as(part2, 'SpatialPolygons') )
+			return( as(part2, 'SpatialPolygons') )
 		} else {
 			return( part2 )
 		}

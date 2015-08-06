@@ -8,7 +8,7 @@
 getData <- function(name='GADM', download=TRUE, path='', ...) {
 	path <- .getDataPath(path)
 	if (name=='GADM') {
-		.GADM(..., download=download, path=path)
+		.GADM(..., download=download, path=path, version=2.7)
 	} else if (name=='SRTM') {
 		.SRTM(..., download=download, path=path)
 	} else if (name=='alt') {
@@ -57,22 +57,28 @@ ccodes <- function() {
 
 .getCountry <- function(country='') {
 	country <- toupper(trim(country[1]))
-#	if (nchar(country) < 3) {
+#	if (.nchar(country) < 3) {
 #		stop('provide a 3 letter ISO country code')
 #	}
 	cs <- ccodes()
-	try (cs <- toupper(cs))
+	cs <- toupper(cs)
 
-	iso3 <- substr(toupper(country), 1, 3)
+	iso3 <- substr(country, 1, 3)
 	if (iso3 %in% cs[,2]) {
 		return(iso3)
 	} else {
-		iso2 <- substr(toupper(country), 1, 3)
+		iso2 <- substr(country, 1, 2)
 		if (iso2 %in% cs[,3]) {
 			i <- which(country==cs[,3])
 			return( cs[i,2] )
 		} else if (country %in% cs[,1]) {
 			i <- which(country==cs[,1])
+			return( cs[i,2] )
+		} else if (country %in% cs[,4]) {
+			i <- which(country==cs[,4])
+			return( cs[i,2] )
+		} else if (country %in% cs[,5]) {
+			i <- which(country==cs[,5])
 			return( cs[i,2] )
 		} else {
 			stop('provide a valid name or 3 letter ISO country code; you can get a list with: getData("ISO3")')
@@ -86,10 +92,10 @@ ccodes <- function() {
 	if (path=='') {
 		path <- .dataloc()
 	} else {
-		if (substr(path, nchar(path)-1, nchar(path)) == '//' ) {
-			p <- substr(path, 1, nchar(path)-2)		
-		} else if (substr(path, nchar(path), nchar(path)) == '/'  | substr(path, nchar(path), nchar(path)) == '\\') {
-			p <- substr(path, 1, nchar(path)-1)
+		if (substr(path, .nchar(path)-1, .nchar(path)) == '//' ) {
+			p <- substr(path, 1, .nchar(path)-2)		
+		} else if (substr(path, .nchar(path), .nchar(path)) == '/'  | substr(path, .nchar(path), .nchar(path)) == '\\') {
+			p <- substr(path, 1, .nchar(path)-1)
 		} else {
 			p <- path
 		}
@@ -97,38 +103,51 @@ ccodes <- function() {
 			stop('path does not exist: ', path)
 		}
 	}
-	if (substr(path, nchar(path), nchar(path)) != '/' & substr(path, nchar(path), nchar(path)) != '\\') {
+	if (substr(path, .nchar(path), .nchar(path)) != '/' & substr(path, .nchar(path), .nchar(path)) != '\\') {
 		path <- paste(path, "/", sep="")
 	}
 	return(path)
 }
 
 
-.GADM <- function(country, level, download, path) {
+.GADM <- function(country, level, download, path, version) {
 #	if (!file.exists(path)) {  dir.create(path, recursive=T)  }
 
 	country <- .getCountry(country)
 	if (missing(level)) {
-		stop('provide a "level=" argument; levels can be 0, 1, or 2 for most countries, and higer for some')
+		stop('provide a "level=" argument; levels can be 0, 1, or 2 for most countries, and higher for some')
 	}
 	
-	filename <- paste(path, country, '_adm', level, ".RData", sep="")
+	filename <- paste(path, 'GADM_', version, '_', country, '_adm', level, ".rds", sep="")
 	if (!file.exists(filename)) {
 		if (download) {
-			theurl <- paste("http://biogeo.ucdavis.edu/data/gadm2/R/", country, '_adm', level, ".RData", sep="")
+		
+			baseurl <- paste0("http://biogeo.ucdavis.edu/data/gadm", version)
+			if (version == 2) {
+				theurl <- paste(baseurl, '/R/', country, '_adm', level, ".RData", sep="")
+			} else {
+				theurl <- paste(baseurl, '/rds/', country, '_adm', level, ".rds", sep="")			
+			}
+			
 			.download(theurl, filename)
 			if (!file.exists(filename))	{ 
 				message("\nCould not download file -- perhaps it does not exist") 
 			}
 		} else {
-			message("\nFile not available locally. Use 'download = TRUE'")
+			message("File not available locally. Use 'download = TRUE'")
 		}
 	}	
 	if (file.exists(filename)) {
-		thisenvir = new.env()
-		data <- get(load(filename, thisenvir), thisenvir)
+		if (version == 2) {
+			thisenvir <- new.env()
+			data <- get(load(filename, thisenvir), thisenvir)
+		} else {
+			data <- readRDS(filename)
+		}
 		return(data)
-	} 
+	} else {
+		return(NULL)
+	}
 }
 
 
@@ -139,18 +158,19 @@ ccodes <- function() {
 	filename <- paste(path, 'countries.RData', sep="")
 	if (!file.exists(filename)) {
 		if (download) {
-			theurl <- paste("http://biogeo.ucdavis.edu/data/diva/misc/countries.RData", sep="")
+			theurl <- paste("http://biogeo.ucdavis.edu/data/gadm2.6/countries_gadm26.rds", sep="")
 			.download(theurl, filename)
 			if (!file.exists(filename)) {
 				message("\nCould not download file -- perhaps it does not exist") 
 			}
 		} else {
-			message("\nFile not available locally. Use 'download = TRUE'")
+			message("File not available locally. Use 'download = TRUE'")
 		}
 	}	
 	if (file.exists(filename)) {
-		thisenvir = new.env()
-		data <- get(load(filename, thisenvir), thisenvir)
+		#thisenvir = new.env()
+		#data <- get(load(filename, thisenvir), thisenvir)
+		data <- readRDS(filename)
 		return(data)
 	} 
 }
@@ -211,7 +231,7 @@ ccodes <- function() {
 					message("\n Could not download file -- perhaps it does not exist") 
 				}
 			} else {
-				message("\nFile not available locally. Use 'download = TRUE'")
+				message("File not available locally. Use 'download = TRUE'")
 			}
 		}	
 		utils::unzip(zipfile, exdir=dirname(zipfile))
@@ -278,7 +298,7 @@ ccodes <- function() {
 					message("\n Could not download file -- perhaps it does not exist") 
 				}
 			} else {
-				message("\nFile not available locally. Use 'download = TRUE'")
+				message("File not available locally. Use 'download = TRUE'")
 			}
 		}	
 		utils::unzip(zipfile, exdir=dirname(zipfile))
@@ -322,7 +342,7 @@ ccodes <- function() {
 					message("\nCould not download file -- perhaps it does not exist") 
 				}
 			} else {
-				message("\nFile not available locally. Use 'download = TRUE'")
+				message("File not available locally. Use 'download = TRUE'")
 			}
 		}
 		ff <- utils::unzip(zipfilename, exdir=dirname(zipfilename))
@@ -335,7 +355,7 @@ ccodes <- function() {
 	} else {
 		#patrn <- paste(country, '.', mskname, name, ".grd", sep="")
 		#f <- list.files(path, pattern=patrn)
-		f <- ff[substr(ff, nchar(ff)-3, nchar(ff)) == '.grd']
+		f <- ff[substr(ff, .nchar(ff)-3, .nchar(ff)) == '.grd']
 		if (length(f)==0) {
 			warning('something went wrong')
 			return(NULL)

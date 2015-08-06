@@ -3,7 +3,7 @@
     n <- gsub('^[[:space:]]+', '',  gsub('[[:space:]]+$', '', x) )
     nn <- n
     n <- gsub('[^[:alnum:]]', '_', n)
-    n[nchar(n) > 10] <- gsub('_', '', n[nchar(n) > 10])
+    n[.nchar(n) > 10] <- gsub('_', '', n[.nchar(n) > 10])
     n[n==''] <- 'field'
     n <- gsub('^[^[:alpha:]]', 'X', n)
     n <- substr(n, 1, 10)

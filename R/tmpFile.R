@@ -80,8 +80,8 @@ rasterTmpFile <- function(prefix='r_tmp_')  {
 
 
 .removeTrailingSlash <- function(d) {
-		if (substr(d, nchar(d), nchar(d)) == '/') { d <- substr(d, 1, nchar(d)-1) }
-		if (substr(d, nchar(d), nchar(d)) == '\\') { d <- substr(d, 1, nchar(d)-1) }
+		if (substr(d, .nchar(d), .nchar(d)) == '/') { d <- substr(d, 1, .nchar(d)-1) }
+		if (substr(d, .nchar(d), .nchar(d)) == '\\') { d <- substr(d, 1, .nchar(d)-1) }
 		return(d)
 }
 

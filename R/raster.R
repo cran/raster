@@ -374,16 +374,16 @@ setMethod('raster', signature(x='SpatialPixels'),
 	function(x, layer=1, values=TRUE){
 		if (inherits(x, 'SpatialPixelsDataFrame')) {
 			if (layer < 1) {
-				x <- methods::as(x, 'SpatialGrid')
+				x <- as(x, 'SpatialGrid')
 			} else {
-				x <- methods::as(x[layer], 'SpatialGridDataFrame')
+				x <- as(x[layer], 'SpatialGridDataFrame')
 				return(raster(x, values=values))
 			}	
 		} else {
-			x <- methods::as(x, 'SpatialGrid')
+			x <- as(x, 'SpatialGrid')
 			return(raster(x))		
 		}
-		return(r)
+		return(x)
 	}
 )
 
@@ -391,7 +391,7 @@ setMethod('raster', signature(x='SpatialPixels'),
 
 setMethod('raster', signature(x='im'), 
 	function(x, crs) {
-		r <- methods::as(x, 'RasterLayer')
+		r <- as(x, 'RasterLayer')
 		if (!missing(crs)) {
 			projection(r) <- crs
 		}
@@ -403,7 +403,7 @@ setMethod('raster', signature(x='im'),
 
 setMethod('raster', signature(x='kasc'), 
 	function(x, crs) {
-		x <- methods::as(x, 'RasterLayer')
+		x <- as(x, 'RasterLayer')
 		if (missing(crs)) {
 			e <- x@extent
 			if (e@xmin > -360.1 & e@xmax < 360.1 & e@ymin > -90.1 & e@ymax < 90.1) { 
@@ -421,7 +421,7 @@ setMethod('raster', signature(x='kasc'),
 
 setMethod('raster', signature(x='asc'), 
 	function(x, crs) {
-		x <- methods::as(x, 'RasterLayer')
+		x <- as(x, 'RasterLayer')
 		if (missing(crs)) {
 			e <- x@extent
 			if (e@xmin > -360.1 & e@xmax < 360.1 & e@ymin > -90.1 & e@ymax < 90.1) { 
@@ -438,7 +438,7 @@ setMethod('raster', signature(x='asc'),
 	
 setMethod('raster', signature(x='kde'), 
 	function(x, crs) {
-		x <- methods::as(x, 'RasterLayer')
+		x <- as(x, 'RasterLayer')
 		if (missing(crs)) {
 			e <- x@extent
 			if (e@xmin > -360.1 & e@xmax < 360.1 & e@ymin > -90.1 & e@ymax < 90.1) { 
@@ -466,7 +466,7 @@ setMethod('raster', signature(x='grf'),
 				stop('i is higher than the number of simulations in x')
 			}
 		}
-		methods::as(x, 'RasterLayer')
+		as(x, 'RasterLayer')
 	}
 )
 

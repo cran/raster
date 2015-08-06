@@ -161,16 +161,16 @@ setMethod ('show' , 'RasterBrick',
 				}
 				
 				
-				n <- nchar(ln)
+				n <- .nchar(ln)
 				if (nl > 5) {
 					b <- n > 26
 					if (any(b)) {
 						mid <- floor(n/2)
-						ln[b] <- paste(substr(ln[b], 1, 9), '//', substr(ln[b], nchar(ln[b])-9, nchar(ln[b])), sep='')
+						ln[b] <- paste(substr(ln[b], 1, 9), '//', substr(ln[b], .nchar(ln[b])-9, .nchar(ln[b])), sep='')
 					}
 				}
 				
-				w <- pmax(nchar(ln), nchar(minv), nchar(maxv))
+				w <- pmax(.nchar(ln), .nchar(minv), .nchar(maxv))
 				m <- rbind(ln, minv, maxv)
 				# a loop because 'width' is not recycled by format
 				for (i in 1:ncol(m)) {
@@ -239,11 +239,11 @@ setMethod ('show' , 'RasterStack',
 			if (nl > mnr) {
 				ln <- c(ln[1:mnr], '...')
 			}
-			n <- nchar(ln)
+			n <- .nchar(ln)
 			if (nl > 5) {
 				b <- n > 26
 				if (any(b)) {
-					ln[b] <- paste(substr(ln[b], 1, 9), '//', substr(ln[b], nchar(ln[b])-9, nchar(ln[b])), sep='')
+					ln[b] <- paste(substr(ln[b], 1, 9), '//', substr(ln[b], .nchar(ln[b])-9, .nchar(ln[b])), sep='')
 				}
 			}
 			
@@ -260,7 +260,7 @@ setMethod ('show' , 'RasterStack',
 					minv <- c(minv[1:mnr], '...')
 					maxv <- c(maxv[1:mnr], '...')
 				}
-				w <- pmax(nchar(ln), nchar(minv), nchar(maxv))
+				w <- pmax(.nchar(ln), .nchar(minv), .nchar(maxv))
 				m <- rbind(ln, minv, maxv)
 				# a loop because 'width' is not recycled by format
 				for (i in 1:ncol(m)) {

@@ -33,9 +33,11 @@ setMethod('KML', signature(x='Spatial'),
 				stop('file exists, use "overwrite=TRUE" to overwrite it')
 			}
 		}
-		
-		name <- deparse(substitute(x))
-		rgdal::writeOGR(x, filename, name, 'KML')
+		name <- list(...)$name
+		if (is.null(name)) {
+			name <- deparse(substitute(x))
+		}
+		rgdal::writeOGR(x, filename, name, 'KML', ...)
 		.zipKML(filename, '', zip, overwrite=overwrite) 
 	}
 )
@@ -97,7 +99,9 @@ function (x, filename, col=rev(terrain.colors(255)), colNA=NA, maxpixels=100000,
 	
     kml <- c(kml, kmname, icon, latlonbox, footer)
 	
-    cat(paste(kml, sep="", collapse="\n"), file=kmlfile, sep="")
+	f <- file(kmlfile, 'wt', encoding='UTF-8')
+    cat(paste(kml, sep="", collapse="\n"), file=f, sep="")
+	close(f)
 	
 	.zipKML(kmlfile, imagefile, zip, overwrite=overwrite)
 }

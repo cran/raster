@@ -35,7 +35,7 @@ setMethod('corLocal', signature(x='RasterLayer', y='RasterLayer'),
 					}
 				}
 			} else {
-				v <- rep(NA, nrow=ncell(x))
+				v <- rep(NA, ncell(x))
 				for (i in 1:ncell(x)) {
 					z <- stats::na.omit(cbind(vx[i,], vy[i,]))	
 					if (nrow(z) > 2) {
@@ -125,7 +125,7 @@ setMethod('corLocal', signature(x='RasterStackBrick', y='RasterStackBrick'),
 					}
 				}
 			} else {
-				v <- rep(NA, nrow=ncell(x))
+				v <- rep(NA, ncell(x))
 				for (i in 1:ncell(x)) {
 					z <- stats::na.omit(cbind(vx[i,], vy[i,]))	
 					if (nrow(z) > 2) {
