@@ -3,7 +3,7 @@ focal for multi-layer objects
 step-size option for focal
 support for RasterQuad (4 dimensional) objects
 add equivalent to "subsWithNA" to reclassify
-move resample (bilinear interp. (and add other options)) and rasterize/(lines, polygons) to C or RCpp
+move rasterize/(lines, polygons) to C
 function for affine transformation
 add AMSR-E ice products and other raw binary products
 add orientation fixes for AVISO currents and similar NetCDFs lacking metadata on the internal CRS
@@ -11,7 +11,16 @@ add VRT output to saveStack
 Fix lines falling between the cracks in extract (calling rasterzeLines): https://stat.ethz.ch/pipermail/r-sig-geo/2014-May/020973.html
 allow setting a 'spatial window'
 
+
 --- current version
+Andrei Mirt send a bug fix for corLocal
+namespace now captures all functions from other packages
+.nchar to replace nchar to avoid R version problem
+Sebastian Bock reported a bug in raster:::.circular.weight
+various minor fixes
+
+
+--- 2-July-2015, version: 2.4-15
 Improved geodesic algorithm (GeograhicLib by C.F.F. Karney) for pointDistance and other lon/lat distance computations, and to compute the area of an ellipsoidal polygon
 significant speed improvement for bilinear resample / projection (by Joe Cheng) 
 new functions colSums and rowSums

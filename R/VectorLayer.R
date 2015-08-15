@@ -37,14 +37,14 @@ setClass ('VectorLayer',
 
 setMethod("plot", signature(x='VectorLayer'),
 function(x, ...) {
-	x <- methods::as(x, 'Spatial')
+	x <- as(x, 'Spatial')
 	plot(x, ...)
 }
 )
 
 setMethod("spplot", signature(obj='VectorLayer'),
 function(obj, ...) {
-	obj <- methods::as(obj, 'Spatial')
+	obj <- as(obj, 'Spatial')
 	spplot(obj, ...)
 }
 )
@@ -87,7 +87,7 @@ setMethod ('show' , 'VectorLayer',
 				maxv <- c(maxv, '...')
 			}
 
-			w <- pmax(nchar(ln), nchar(minv), nchar(maxv))
+			w <- pmax(.nchar(ln), .nchar(minv), .nchar(maxv))
 			m <- rbind(ln, minv, maxv)
 				# a loop because 'width' is not recycled by format
 			for (i in 1:ncol(m)) {
@@ -171,11 +171,11 @@ setAs('SpatialPoints', 'VectorLayer',
 setAs('VectorLayer', 'Spatial', 
 	function(from) {
 		if (from@type == 'polygons') {
-			methods::as(from, 'SpatialPolygons')
+			as(from, 'SpatialPolygons')
 		} else if (from@type == 'lines') {
-			methods::as(from, 'SpatialLines')
+			as(from, 'SpatialLines')
 		} else if (from@type == 'points') {
-			methods::as(from, 'SpatialPoints')
+			as(from, 'SpatialPoints')
 		}
 	}
 )

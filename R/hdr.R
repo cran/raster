@@ -16,7 +16,7 @@ hdr <- function(x, format, extension='.wld') {
 #		}
 #	} else {
 #		fn <- trim(as.character(filename[1]))
-#		if (nchar(fn) < 1) {
+#		if (.nchar(fn) < 1) {
 #			stop('invalid filename')
 #		}
 #		x@file@name == fn

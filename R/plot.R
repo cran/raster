@@ -15,7 +15,7 @@ setMethod("plot", signature(x='Raster', y='ANY'),
 
 		hasNoCol <- missing(col)
 		if (hasNoCol) {
-			col <- rev(grDevices::terrain.colors(255))
+			col <- rev(terrain.colors(255))
 		}
 			
 		if (!is.null(alpha)) {	
@@ -148,7 +148,7 @@ function(x, ...) {
 	if(prod(dim(x)) < 50000) {
 		stop('too many lines')
 	}
-	x <- methods::as(x, 'SpatialPolygons')
+	x <- as(x, 'SpatialPolygons')
 	lines(x, ...)
 }
 )

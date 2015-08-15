@@ -107,11 +107,15 @@ function(x, row, nrows, format='') {
 	row <- min(x@nrows, max(1, row))
 	endrow <- max(min(x@nrows, row+nrows-1), row)
 	nrows <- endrow - row + 1
+	nc <- ncol(x)
+	
+	startcell <- cellFromRowCol(row, 1)
+	lastcell <- cellFromRowCol(endrow, nc)
 	
 	if (inMemory(x)){
 		i <- which(x@index >= startcell & x@index <= lastcell)
 		if (length(i) > 0) {
-			v <- cellFromRowColCombine(x, row:lastrow, col:lastcol)
+			v <- cellFromRowColCombine(x, row:endrow, 1:nc)
 			m <- match(i, v)
 			v[] <- NA
 			v[m] <- x@data@values[i]	

@@ -203,7 +203,7 @@
 	}
 	
 	if (inherits(lns, 'SpatialPolygons')) {
-		lns <- methods::as(lns, "SpatialLines")
+		lns <- as(lns, "SpatialLines")
 	}
 	if (! inherits(lns, 'SpatialLines')) {
 		stop('lns should be, or inherit from, a SpatialLines* object')

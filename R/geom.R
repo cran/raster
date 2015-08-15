@@ -49,7 +49,7 @@ setMethod('geom', signature(x='SpatialPolygons'),
 setMethod('geom', signature(x='SpatialLines'), 
 	function(x, sepNA=FALSE, ...) {
 			
-		nobj <- length(x@lines)
+		nobs <- length(x@lines)
 		objlist <- list()
 		cnt <- 0
 		if (sepNA) {
@@ -64,7 +64,7 @@ setMethod('geom', signature(x='SpatialLines'),
 				cnt <- cnt+nsubobj
 			}
 		} else {
-			for (i in 1:nobj) {
+			for (i in 1:nobs) {
 				nsubobj <- length(x@lines[[i]]@Lines)
 				ps <- lapply(1:nsubobj, function(j) cbind(j, j+cnt, x@lines[[i]]@Lines[[j]]@coords))
 				objlist[[i]] <- cbind(i, do.call(rbind, ps))

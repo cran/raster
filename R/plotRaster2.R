@@ -4,7 +4,7 @@
 # Licence GPL v3
 
 
-.plotraster2 <- function(object, col=rev(grDevices::terrain.colors(250)), maxpixels=100000, xlab='', ylab='', ext=NULL, xlim, ylim, add=FALSE, addfun=NULL, colNA=NA, main, facvar=0, alpha=NULL, ...) {
+.plotraster2 <- function(object, col=rev(terrain.colors(250)), maxpixels=100000, xlab='', ylab='', ext=NULL, xlim, ylim, add=FALSE, addfun=NULL, colNA=NA, main, facvar=0, alpha=NULL, ...) {
 
  	if ( ! hasValues(object) ) { 
 		stop('no values associated with this RasterLayer')

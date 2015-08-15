@@ -132,7 +132,7 @@ setMethod ('print' , 'Spatial',
 				maxv <- c(maxv, '...')
 			}
 
-			w <- pmax(nchar(ln), nchar(minv), nchar(maxv))
+			w <- pmax(.nchar(ln), .nchar(minv), .nchar(maxv))
 			w[is.na(w)] <- 2
 			m <- rbind(ln, minv, maxv)
 			

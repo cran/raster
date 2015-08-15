@@ -52,7 +52,7 @@
 	x@file@offset <- dfoffset
 	x@file@toptobottom <- toptobottom
 
-	if (nchar(layernames) > 1) {
+	if (.nchar(layernames) > 1) {
 		lnams <- unlist(strsplit(layernames, ':'))
 	} else {
 		lnams <- gsub(" ", "_", extension(basename(filename), ""))

@@ -5,9 +5,10 @@
 \alias{aggregate}
 \alias{aggregate,Raster-method}
 \alias{aggregate,SpatialPolygons-method}
+\alias{aggregate,SpatialLines-method}
 
 
-\title{Aggregate raster cells or SpatialPolygons}
+\title{Aggregate raster cells or SpatialPolygons/Lines}
 
 \description{
 Raster* objects: 

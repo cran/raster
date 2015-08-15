@@ -231,7 +231,7 @@ setMethod("stack", signature(x='SpatialGridDataFrame'),
 
 setMethod("stack", signature(x='SpatialPixelsDataFrame'), 
 	function(x, ...) {
-		x <- methods::as(x, 'SpatialGridDataFrame')
+		x <- as(x, 'SpatialGridDataFrame')
 		.stackFromBrick(brick(x), ...)
 	}
 )
@@ -240,6 +240,6 @@ setMethod("stack", signature(x='SpatialPixelsDataFrame'),
 
 setMethod('stack', signature(x='kasc'), 
 	function(x) {
-		methods::as(x, 'RasterStack')
+		as(x, 'RasterStack')
 	}
 )

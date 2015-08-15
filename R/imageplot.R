@@ -11,7 +11,7 @@
 # University Corporation for Atmospheric Research
 # Licensed under the GPL -- www.gpl.org/licenses/gpl.html
     legend.shrink = 0.5, legend.width = 0.6, legend.mar = ifelse(horizontal, 3.1, 5.1), legend.lab = NULL, graphics.reset = FALSE, 
-    bigplot = NULL, smallplot = NULL, legend.only = FALSE, col = grDevices::heat.colors(nlevel), 
+    bigplot = NULL, smallplot = NULL, legend.only = FALSE, col = heat.colors(nlevel), 
     lab.breaks = NULL, axis.args = NULL, legend.args = NULL, midpoint = FALSE, box=TRUE, useRaster=FALSE, ...) {
 
 	zlim <- range(z, na.rm = TRUE)
@@ -107,7 +107,7 @@
 
 
 
-.polyimage <- function (x, y, z, col = grDevices::heat.colors(64), transparent.color = "white", 
+.polyimage <- function (x, y, z, col = heat.colors(64), transparent.color = "white", 
 # fields, Tools for spatial data
 # Copyright 2004-2007, Institute for Mathematics Applied Geosciences
 # University Corporation for Atmospheric Research
@@ -127,7 +127,7 @@
 		t(temp.addcol(x))
 	}
 
-    drapecolor <- function (z, col = grDevices::heat.colors(64), zlim = NULL, transparent.color = "white", midpoint = TRUE) {
+    drapecolor <- function (z, col = heat.colors(64), zlim = NULL, transparent.color = "white", midpoint = TRUE) {
 		eps <- 1e-07
 		if (is.null(zlim)) {
 			zlim <- range(c(z), na.rm = TRUE)

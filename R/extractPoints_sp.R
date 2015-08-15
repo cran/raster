@@ -16,7 +16,7 @@ function(x, y, ...){
     i <- rgeos::gIntersects(y, x, byid=TRUE)
 	
 	j <- cbind(1:length(y), rep(1:length(x), each=length(y)), as.vector(t(i)))
-	j <- j[j[,3] == 1, -3]
+	j <- j[j[,3] == 1, -3, drop=FALSE]
 	colnames(j) <- c('point.ID', 'poly.ID')
 	if (methods::.hasSlot(x, 'data')) {
 		r <- data.frame(j, x@data[j[,2], ,drop=FALSE], row.names=NULL)

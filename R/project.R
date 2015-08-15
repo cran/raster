@@ -27,7 +27,7 @@ setMethod('.project', signature(x='SpatialGrid'),
 		} else {
 			y <- projectRaster(y, ...)
 		}
-		methods::as(y, class(x))
+		as(y, class(x))
 	}
 )
 
@@ -41,7 +41,7 @@ setMethod('.project', signature(x='SpatialPixels'),
 		} else {
 			y <- projectRaster(y, ...)
 		}
-		methods::as(y, class(x))
+		as(y, class(x))
 	}
 )
 

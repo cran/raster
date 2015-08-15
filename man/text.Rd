@@ -15,21 +15,22 @@ Plots labels, that is a textual (rather than color) representation of values, on
 }
 
 \usage{
-\S4method{text}{RasterLayer}(x, labels, digits=0, fun=NULL, ...)
+\S4method{text}{RasterLayer}(x, labels, digits=0, fun=NULL, halo=FALSE, ...)
 
-\S4method{text}{RasterStackBrick}(x, labels, digits=0, fun=NULL, ...)
+\S4method{text}{RasterStackBrick}(x, labels, digits=0, fun=NULL, halo=FALSE, ...)
 
-\S4method{text}{SpatialPolygons}(x, labels, ...)
+\S4method{text}{SpatialPolygons}(x, labels, halo=FALSE, ...)
 
-\S4method{text}{SpatialPoints}(x, labels, ...)
+\S4method{text}{SpatialPoints}(x, labels, halo=FALSE, ...)
 }
 
 \arguments{
   \item{x}{Raster*, SpatialPoints* or SpatialPolygons* object}
-  \item{labels}{Character. Optional. Vector of labels with \code{length(x)} or a variable name from \code{names(x)}}
-  \item{digits}{Integer. how many digits should be used?}
-  \item{fun}{Function to subset the values plotted (as in \code{\link{rasterToPoints}})}
-  \item{...}{Additional arguments to pass to graphics function \code{\link[graphics]{text}} }
+  \item{labels}{character. Optional. Vector of labels with \code{length(x)} or a variable name from \code{names(x)}}
+  \item{digits}{integer. how many digits should be used?}
+  \item{fun}{function to subset the values plotted (as in \code{\link{rasterToPoints}})}
+  \item{halo}{logical. If \code{TRUE} a 'halo' is printed around the text. If \code{TRUE}, additional arguments \code{hc='white'} and \code{hw=0.1} can be modified to set the color and width of the halo}
+  \item{...}{additional arguments to pass to graphics function \code{\link[graphics]{text}} }
 }
 
 \seealso{
@@ -43,6 +44,9 @@ r <- raster(nrows=4, ncols=4)
 r <- setValues(r, 1:ncell(r))
 plot(r)
 text(r)
+
+plot(r)
+text(r, halo=TRUE, hb='blue', col='white', hw=0.2)
 
 plot(r, col=bpy.colors(5))
 text(r, fun=function(x){x<5 | x>12}, col=c('red', 'white'), vfont=c("sans serif", "bold"), cex=2)

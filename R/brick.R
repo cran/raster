@@ -206,9 +206,9 @@ setMethod('brick', signature(x='SpatialGrid'),
 setMethod('brick', signature(x='SpatialPixels'), 
 	function(x) {
 		if (inherits( x, 'SpatialPixelsDataFrame')) {
-			x <- methods::as(x, 'SpatialGridDataFrame')
+			x <- as(x, 'SpatialGridDataFrame')
 		} else {	
-			x <- methods::as(x, 'SpatialGrid')
+			x <- as(x, 'SpatialGrid')
 		}
 		return(brick(x))
 	}
@@ -275,7 +275,7 @@ setMethod('brick', signature(x='big.matrix'),
 
 setMethod('brick', signature(x='kasc'), 
 	function(x) {
-		methods::as(x, 'RasterBrick')
+		as(x, 'RasterBrick')
 	}
 )
 
@@ -284,7 +284,7 @@ setMethod('brick', signature(x='kasc'),
 
 setMethod('brick', signature(x='grf'), 
 	function(x) {
-		methods::as(x, 'RasterBrick')
+		as(x, 'RasterBrick')
 	}
 )
 

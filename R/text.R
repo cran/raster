@@ -9,8 +9,28 @@ if (!isGeneric("text")) {
 		standardGeneric("text"))
 }	
 
+
+.haloText <- function(x, y=NULL, labels, col='black', hc='white', hw=0.1, ... ) {
+# with minor modifications from
+#From: Greg Snow <Greg.Snow <at> imail.org>
+#Subject: Re: Text Contrast in a Plot
+#Newsgroups: gmane.comp.lang.r.general
+#Date: 2009-04-24 21:23:25 GMT
+
+	xy <- xy.coords(x,y)
+	xo <- hw * strwidth('A')
+	yo <- hw * strheight('A')
+
+	theta <- seq(pi/4, 2*pi, length.out=8*hw*10)  
+	for (i in theta) {
+		text( xy$x + cos(i)*xo, xy$y + sin(i)*yo, labels, col=hc, ... )
+	}
+	text(xy$x, xy$y, labels, col=col, ... )
+}
+
+
 setMethod('text', signature(x='RasterLayer'), 
-	function(x, labels, digits=0, fun=NULL, ...) {
+	function(x, labels, digits=0, fun=NULL, halo=FALSE, ...) {
 		x <- rasterToPoints(x, fun=fun, spatial=FALSE)
 		if (missing(labels)) {
 			if (NCOL(x) > 2) {
@@ -19,12 +39,16 @@ setMethod('text', signature(x='RasterLayer'),
 				labels <- 1:NROW(x)
 			}
 		}
-		text(x[,1], x[,2], labels, ...)
+		if (halo) {
+			.haloText(x[,1], x[,2], labels, ...)
+		} else {
+			text(x[,1], x[,2], labels, ...)
+		}
 	}
 )
 
 setMethod('text', signature(x='RasterStackBrick'), 
-	function(x, labels, digits=0, fun=NULL, ...) {
+	function(x, labels, digits=0, fun=NULL, halo=FALSE, ...) {
 		if (missing(labels)) {
 			labels <- 1
 		}
@@ -40,13 +64,17 @@ setMethod('text', signature(x='RasterStackBrick'),
 			x <- rasterToPoints(x, fun=fun, spatial=FALSE)
 			labels <- as.character(round(x[,3], digits=digits) )
 		}
-		text(x[,1], x[,2], labels, ...)
+		if (halo) {
+			.haloText(x[,1], x[,2], labels, ...)
+		} else {
+			text(x[,1], x[,2], labels, ...)
+		}
 	}
 )
 
 
 setMethod('text', signature(x='SpatialPolygons'), 
-	function(x, labels, ...) {
+	function(x, labels, halo=FALSE, ...) {
 		if (missing(labels)) {
 			labels <- 1
 		}
@@ -64,14 +92,18 @@ setMethod('text', signature(x='SpatialPolygons'),
 			labels <- as.character(labels)
 		}
 		
-		xy <- coordinates(x)		
-		text(xy[,1], xy[,2], labels, ...)
+		xy <- coordinates(x)
+		if (halo) {
+			.haloText(xy[,1], xy[,2], labels, ...)
+		} else {
+			text(xy[,1], xy[,2], labels, ...)
+		}
 	}
 )
 
 
 setMethod('text', signature(x='SpatialPoints'), 
-	function(x, labels, ...) {
+	function(x, labels, halo=FALSE, ...) {
 
 		if (missing(labels)) {
 			labels <- 1
@@ -91,7 +123,11 @@ setMethod('text', signature(x='SpatialPoints'),
 		}
 
 		xy <- coordinates(x)		
-		text(xy[,1], xy[,2], labels, ...)
+		if (halo) {
+			.haloText(xy[,1], xy[,2], labels, ...)
+		} else {
+			text(xy[,1], xy[,2], labels, ...)
+		}
 	}
 )
 
