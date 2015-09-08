@@ -38,12 +38,11 @@ setMethod('shift', signature(object='SpatialPolygons'),
 		a <- data.frame(geom(object))
 		a$x <- a$x + x
 		a$y <- a$y + y
-		if (inherits(object, 'SpatialPolygonsDataFrame')) {
-			a <- as(a, 'SpatialPolygonsDataFrame')	
-		} else {
-			a <- as(a, 'SpatialPolygons')			
-		}
+		a <- as(a, 'SpatialPolygons')			
 		crs(a) <- crs(object)
+		if (inherits(object, 'SpatialPolygonsDataFrame')) {
+			a <- SpatialPolygonsDataFrame(a, data.frame(object),match.ID = FALSE )	
+		}
 		return(a)
 	}
 )

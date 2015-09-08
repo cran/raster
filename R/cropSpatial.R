@@ -55,7 +55,7 @@ setMethod('crop', signature(x='Spatial', y='ANY'),
 			if (sum(i) == 0) {
 				return(NULL)
 			}
-			y <- rgeos::gIntersection(x[i,], y, byid=TRUE)
+			y <- rgeos::gIntersection(x[i,], y, byid=TRUE, drop_lower_td=TRUE)
 			if (inherits(y, "SpatialCollections")) {
 				y <- y@polyobj
 			}

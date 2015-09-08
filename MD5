@@ -1,5 +1,5 @@
 0bb2d50aff9595dc2a7661766a514887 *ChangeLog
-c5254b533081442d4686f37ab424b25f *DESCRIPTION
+f4eec5eb7f89cef3c2f38dda9d424f8e *DESCRIPTION
 d87ca15543b966bd980ed68e7678ced9 *NAMESPACE
 2a5b959a5312693f06e67a78d5a6aca9 *R/AAAClasses.R
 ffca55abffdbd54f7ed4f313c9717e50 *R/GDALtransient.R
@@ -64,7 +64,7 @@ c44f02dac5ed1513104a937e333558e7 *R/corLocal.R
 6ccadc53c774cd6b62936b422675909b *R/coverBrick.R
 4fc92a911acca7b42e53896fa46f0d7d *R/coverPolygons.R
 b9ff83b1902ae220541af05a7c2ede20 *R/crop.R
-05242835dcec6c76d2fa742df51e99af *R/cropSpatial.R
+5ddcd2f3cb6c24db72a03f9dc0fe69a9 *R/cropSpatial.R
 b4fc69fd701e8bd685674d5cadd748b1 *R/crosstab.R
 d483e19e1a87f84fe5b8a396e4798385 *R/cut.R
 f67450ded7249f479ba4173d37bf555b *R/cv.R
@@ -257,7 +257,7 @@ ad1d6cd41053c783a4a150c151c843f6 *R/setFileExt.R
 3f27ae95635d13ccb856556ee4194399 *R/setMinMax.R
 e9fb60af53ac1495b5c78d7177bf301e *R/setValues.R
 f1e1b942bee3ed1d13ee7979e4143393 *R/setZ.R
-364bde2def782e68c9e30b0f0e3ad6d8 *R/shift.R
+efeadeda9cfe23394bb0917c095adda6 *R/shift.R
 a474bab8ab47f47bf59c5d983a12376d *R/show.R
 60ab8da7398861682cff498ef8e5029d *R/shp.R
 b73646d482fd7f5d4b94aa8f841010cd *R/simplifyPols.R
@@ -308,15 +308,15 @@ f443b9533859037555eab82ac7f274df *R/xyValuesBuffer.R
 d0b3104768d09ac06a6b7e81bc30d95a *R/zonal.R
 98cd1db38cdde2a1e5de1878166e4ee7 *R/zoom.R
 d3f6c1b7c1d8451f3c3ab0a9c6a30430 *R/zzz.R
-da7a600c5f8b6f9b7c16337ae46d9bf1 *build/vignette.rds
-a94726b5fe30cefa04751b932db7c919 *inst/doc/Raster.R
+754a6bd2a2b4ca69c6cb8a3f7733d828 *build/vignette.rds
+3be3d2c26ecebd5c98af396455417f24 *inst/doc/Raster.R
 9de33024cc89fed0f391aeea590c077c *inst/doc/Raster.Rnw
-f28623e82bb20c336bd6e0b6587b643f *inst/doc/Raster.pdf
-b6fcfef34634bc078b1c981282fe4159 *inst/doc/functions.R
+51740ecc8e8a80d8f58cba4e0fe9a99a *inst/doc/Raster.pdf
+8513b7865ba30fef7caa5ea4dc9f3ee2 *inst/doc/functions.R
 b6b8b6c45360d7509cc8e05fe48414c4 *inst/doc/functions.Rnw
-27573ecee39ffd883467990937f554b3 *inst/doc/functions.pdf
+14eb81a9ed6bda7008792c4304382d3e *inst/doc/functions.pdf
 cdf4af6595c744554a8b1e658c524cef *inst/doc/rasterfile.Rnw
-678e83a2a9d94a6f4ad5a304b3c11845 *inst/doc/rasterfile.pdf
+f84133119d0f83f2c3082589d8e68173 *inst/doc/rasterfile.pdf
 26306708ea992ae29974751120e0d4fd *inst/external/countries.csv
 833b7982adb38dd5d7999f12ae42c8ed *inst/external/lux.dbf
 e729936bf5360b37a15365fc295a1901 *inst/external/lux.prj
