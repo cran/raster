@@ -136,9 +136,13 @@ scalebar <- function(d, xy=NULL, type='line', divs=2, below='', lonlat=NULL, lab
 			text(end, xy[2],labels=label[3], adj=adj,...)
 		}
 			
-		if (below != "") {
-			adj[2] <- -adj[2]
-			text(xy[1]+(0.5*dd), xy[2], labels=below, adj=adj,...)
-		}
+	}
+	if (below!= "") {
+		adj[2] <- -adj[2]
+		if (type=="line"){
+		   #Add a bit of space to account for the line
+      		   adj[2] <- adj[2] + .8
+    		}
+		text(xy[1]+(0.5*dd), xy[2], labels=below, adj=adj,...)
 	}
 }
