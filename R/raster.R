@@ -20,6 +20,7 @@ setMethod('raster', signature(x='missing'),
 			if (ext@xmin > -360.01 & ext@xmax < 360.01 & ext@ymin > -90.01 & ext@ymax < 90.01) { 
 				crs <- CRS("+proj=longlat +datum=WGS84")
 			} else {
+				# if sp >= 1.2.1  crs <- CRS(as.character(NA), doCheckCRSArgs=FALSE)
 				crs <- CRS(as.character(NA))
 			}
 		} else {

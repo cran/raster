@@ -35,7 +35,7 @@ pbCreate <- function(nsteps, progress, style=3, label='Progress', ...) {
 
 pbStep <- function(pb, step=NULL, label='') {
 	pbclass <- class(pb)
-	if (pbclass=="utils::txtProgressBar") {
+	if (pbclass=="txtProgressBar") {
 		if (is.null(step)) { step = pb$getVal() + 1 }
 		utils::setTxtProgressBar(pb, step)
 	} else if (pbclass=="tkProgressBar") {
@@ -49,7 +49,7 @@ pbStep <- function(pb, step=NULL, label='') {
 
 pbClose <- function(pb, timer) {
 	pbclass <- class(pb)
-	if (pbclass=="utils::txtProgressBar") {
+	if (pbclass=="txtProgressBar") {
 		cat("\n\r")
 		close(pb)
 	} else if (pbclass=="tkProgressBar") {

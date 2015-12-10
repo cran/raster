@@ -95,8 +95,9 @@ function(x, y, filename='', snap='near', datatype=NULL, ...) {
 		pbClose(pb)
 	}
 
-	out@legend <- leg
-
+	if (!inherits(out, 'RasterStack')) {
+		out@legend <- leg
+	}
 	return(out)
 }
 )

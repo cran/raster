@@ -47,7 +47,9 @@ rasterFromXYZ <- function(xyz, res=c(NA, NA), crs=NA, digits=5) {
 	
 	y <- sort(unique(xyz[,2]))
 	dy <- y[-1] - y[-length(y)]
-	dy <- round(dy, digits)
+	# probably a mistake to use the line below 
+	# Gareth Davies suggested that it be removed 
+	# dy <- round(dy, digits)
 	
 	if (is.na(res[2])) {
 		ry <- min(dy)

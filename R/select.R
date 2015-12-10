@@ -80,7 +80,7 @@ setMethod('select', signature(x='Spatial'),
 			
 		} else if (inherits(x, 'SpatialGrid')) {
 			cls <- class(x)
-			if (methods::.hasSlot(x, 'data')) {
+			if (.hasSlot(x, 'data')) {
 				x <- as(x, 'SpatialPointsDataFrame')
 			} else {
 				x <- as(x, 'SpatialPoints')			
@@ -99,7 +99,7 @@ setMethod('select', signature(x='Spatial'),
 
 		} else if (inherits(x, 'SpatialPixels')) {
 			cls <- class(x)
-			if (methods::.hasSlot(x, 'data')) {
+			if (.hasSlot(x, 'data')) {
 				x <- as(x, 'SpatialPointsDataFrame')
 			} else {
 				x <- as(x, 'SpatialPoints')			

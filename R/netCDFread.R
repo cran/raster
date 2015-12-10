@@ -4,32 +4,17 @@
 # Licence GPL v3
 
 
-
-
-
 .readRowsNetCDF <- function(x, row, nrows=1, col=1, ncols=(ncol(x)-col+1)) {
 
 	if ( x@file@toptobottom ) { 
 		row <- x@nrows - row - nrows + 2 
 	}
 	is.open <- x@file@open
-	if (isTRUE(getOption('rasterNCDF4'))) {
-		if (is.open) {
-			nc <- x@file@con
-		} else {
-			nc <- ncdf4::nc_open(x@file@name)
-			on.exit( ncdf4::nc_close(nc) )		
-		}
-		ncdf4 <- TRUE	
-	
+	if (is.open) {
+		nc <- x@file@con
 	} else {
-		if (is.open) {
-			nc <- x@file@con
-		} else {
-			nc <- ncdf::open.ncdf(x@file@name)
-			on.exit( ncdf::close.ncdf(nc) )
-		}	
-		ncdf4 <- FALSE
+		nc <- ncdf4::nc_open(x@file@name)
+		on.exit( ncdf4::nc_close(nc) )		
 	}
 	
 	zvar <- x@data@zvar
@@ -39,11 +24,7 @@
 		ncx <- ncol(x)
 		start <- (row-1) * ncx + 1
 		count <- nrows * ncx 
-		if (ncdf4) {
-			d <- ncdf4::ncvar_get( nc, varid=zvar,  start=start, count=count )		
-		} else {
-			d <- ncdf::get.var.ncdf( nc,  varid=zvar,  start=start, count=count )
-		}
+		d <- ncdf4::ncvar_get( nc, varid=zvar,  start=start, count=count )		
 		if (col > 1 | ncols < ncx) {
 			d <- matrix(d, ncol=ncx, byrow=TRUE)
 			d <- d[, col:(col+ncols-1)]
@@ -54,37 +35,21 @@
 	} else if (nc$var[[zvar]]$ndims == 2) {
 		start <- c(col, row)
 		count <- c(ncols, nrows)
-		if (ncdf4) {
-			d <- ncdf4::ncvar_get( nc, varid=zvar,  start=start, count=count )		
-		} else {
-			d <- ncdf::get.var.ncdf( nc,  varid=zvar,  start=start, count=count )
-		}
+		d <- ncdf4::ncvar_get( nc, varid=zvar,  start=start, count=count )		
 	} else if (nc$var[[zvar]]$ndims == 3) {
 		start <- c(col, row, x@data@band)
 		count <- c(ncols, nrows, 1)
-		if (ncdf4) {
-			d <- ncdf4::ncvar_get(nc, varid=zvar, start=start, count=count)
-		} else {
-			d <- ncdf::get.var.ncdf(nc, varid=zvar, start=start, count=count)
-		}
+		d <- ncdf4::ncvar_get(nc, varid=zvar, start=start, count=count)
 		
 	} else {
 		if (x@data@dim3 == 4) {
 			start <- c(col, row, x@data@level, x@data@band)
 			count <- c(ncols, nrows, 1, 1)
-			if (ncdf4) {
-				d <- ncdf4::ncvar_get(nc, varid=zvar, start=start, count=count)
-			} else {
-				d <- ncdf::get.var.ncdf(nc, varid=zvar, start=start, count=count)			
-			}
+			d <- ncdf4::ncvar_get(nc, varid=zvar, start=start, count=count)
 		} else {
 			start <- c(col, row, x@data@band, x@data@level)
 			count <- c(ncols, nrows, 1, 1)
-			if (ncdf4) {
-				d <- ncdf4::ncvar_get(nc, varid=zvar, start=start, count=count)
-			} else {
-				d <- ncdf::get.var.ncdf(nc, varid=zvar, start=start, count=count)
-			}
+			d <- ncdf4::ncvar_get(nc, varid=zvar, start=start, count=count)
 		}
 	}
 	
@@ -138,25 +103,12 @@
 	stopifnot(nrows > 0)
 	stopifnot(ncols > 0)
 
-	if (getOption('rasterNCDF4')) {
-		if (is.open) {
-			nc <- x@file@con
-		} else {
-			nc <- ncdf4::nc_open(x@file@name)
-			on.exit( ncdf4::nc_close(nc) )		
-		}
-		ncdf4 <- TRUE
-	
+	if (is.open) {
+		nc <- x@file@con
 	} else {
-		if (is.open) {
-			nc <- x@file@con
-		} else {
-			nc <- ncdf::open.ncdf(x@file@name)
-			on.exit( ncdf::close.ncdf(nc) )
-		}	
-		ncdf4 <- FALSE
+		nc <- ncdf4::nc_open(x@file@name)
+		on.exit( ncdf4::nc_close(nc) )		
 	}
-	
 	zvar <- x@data@zvar
 	
 	if (nc$var[[zvar]]$ndims == 4) {
@@ -172,11 +124,7 @@
 		count <- c(ncols, nrows,  nn)
 	}
 	
-	if (ncdf4) {
-		d <- ncdf4::ncvar_get(nc, varid=zvar, start=start, count=count)	
-	} else {
-		d <- ncdf::get.var.ncdf(nc, varid=zvar, start=start, count=count)
-	}
+	d <- ncdf4::ncvar_get(nc, varid=zvar, start=start, count=count)	
 	
 
 	#if (!is.na(x@file@nodatavalue)) { 	d[d==x@file@nodatavalue] <- NA	}

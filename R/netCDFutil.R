@@ -4,23 +4,6 @@
 # Licence GPL v3
 
 
-
-.getCRSfromGridMap3 <- function(nc, gridmap) {
-	m <- matrix(c("grid_mapping_name", "+proj", "false_easting", "+x_0","false_northing", "+y_0", "scale_factor_at_projection_origin", "+k_0", "scale_factor_at_central_meridian", "+k_0", "standard_parallel", "+lat_1", "standard_parallel1", "+lat_1", "standard_parallel2", "+lat_2", "longitude_of_central_meridian", "+lon_0", "longitude_of_projection_origin", "+lon_0", "latitude_of_projection_origin", "+lat_0", "straight_vertical_longitude_from_pole", "+lon_0"), ncol=2, byrow=TRUE)
-	g <- list()
-	for (i in 1:nrow(m)) {
-		a <- ncdf::att.get.ncdf(nc, gridmap, m[i,1])
-		if (a$hasatt) {
-			lst <- list(a$value)
-			names(lst) <- m[i,1]
-			g <- c(g, lst)
-		}
-	}
-	.getCRSfromGridMap4(g)
-}
-
-
-
 .getCRSfromGridMap4 <- function(g) {
 # based on info at 
 # http://trac.osgeo.org/gdal/wiki/NetCDF_ProjectionTestingStatus
@@ -77,39 +60,6 @@
 		return(cr)
 	}
 }
-
-
-
-
-.NCDFversion4 <- function() {
-
-	loadNCDF <- function() {
-		if (!requireNamespace("ncdf")) {
-			stop('To open ncdf files, you need to first install package "ncdf" or "ncdf4"') 
-		}
-		options(rasterNCDF4 = FALSE)
-		return(FALSE)
-	}
-	
-	ncdf4 <- getOption('rasterNCDF4')
-
-	if (is.null(ncdf4)) {
-		if (length(find.package("ncdf4", quiet=TRUE)) > 0) {
-			if (requireNamespace("ncdf4", quietly=TRUE)) {
-				options(rasterNCDF4 = TRUE)
-				ncdf4 <- TRUE
-				
-			} else {
-				ncdf4 <- loadNCDF()
-			}
-			
-		} else {
-			ncdf4 <- loadNCDF()
-		}
-	}
-	return(ncdf4)
-}
-
 
 
 .isNetCDF <- function(x) {

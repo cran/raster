@@ -133,7 +133,7 @@ function(x, y, ..., keepnames=FALSE) {
 		dat <- NULL
 #		dataFound <- FALSE
 		for (i in 1:length(x)) {
-			if (methods::.hasSlot(x[[i]], 'data')) {
+			if (.hasSlot(x[[i]], 'data')) {
 #				dataFound <- TRUE
 				if (is.null(dat)) {
 					dat <- x[[i]]@data
@@ -153,7 +153,7 @@ function(x, y, ..., keepnames=FALSE) {
 #		if (! dataFound ) { return( do.call(rbind, x) ) }
 		x <- sapply(x, function(x) as(x, 'SpatialPolygons'))
 		x <- do.call(rbind, x)
-		SpatialPolygonsDataFrame(x, dat)
+		SpatialPolygonsDataFrame(x, dat, match.ID=FALSE)
 }
 )
 
@@ -224,7 +224,7 @@ setMethod('bind', signature(x='SpatialLines', y='SpatialLines'),
 		dat <- NULL
 #		dataFound <- FALSE
 		for (i in 1:length(x)) {
-			if (methods::.hasSlot(x[[i]], 'data')) {
+			if (.hasSlot(x[[i]], 'data')) {
 #				dataFound <- TRUE
 				if (is.null(dat)) {
 					dat <- x[[i]]@data
@@ -237,14 +237,14 @@ setMethod('bind', signature(x='SpatialLines', y='SpatialLines'),
 					dat[1:length(x[[i]]@lines),] <- NA
 					rownames(dat) <- row.names(x[[i]])
 				} else {
-					dat[(nrow(dat)+1):(nrow(dat)+nrow(x[[i]]@coords)),] <- NA
+					dat[(nrow(dat)+1):(nrow(dat) + length(x[[i]])), ] <- NA
 				}	
 			}
 		}
 #		if (! dataFound ) { return( do.call(rbind, x) ) }
 		x <- sapply(x, function(x) as(x, 'SpatialLines'))
 		x <- do.call(rbind, x)
-		SpatialLinesDataFrame(x, dat)
+		SpatialLinesDataFrame(x, dat, match.ID=FALSE)
 }
 )
 
@@ -298,7 +298,7 @@ setMethod('bind', signature(x='SpatialPoints', y='SpatialPoints'),
 		
 		dat <- NULL
 		for (i in 1:length(x)) {
-			if (methods::.hasSlot(x[[i]], 'data')) {
+			if (.hasSlot(x[[i]], 'data')) {
 				if (is.null(dat)) {
 					dat <- x[[i]]@data
 				} else {

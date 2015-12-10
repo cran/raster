@@ -18,7 +18,7 @@
 	}
 	out <- as(data.frame(out), 'SpatialPolygons')
 	proj4string(out) <- proj4string(p)
-	if (methods::.hasSlot(p, 'data')) {
+	if (.hasSlot(p, 'data')) {
 		out <- SpatialPolygonsDataFrame(out, p@data)
 	}
 	out

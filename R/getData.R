@@ -8,7 +8,7 @@
 getData <- function(name='GADM', download=TRUE, path='', ...) {
 	path <- .getDataPath(path)
 	if (name=='GADM') {
-		.GADM(..., download=download, path=path, version=2.7)
+		.GADM(..., download=download, path=path, version=2.8)
 	} else if (name=='SRTM') {
 		.SRTM(..., download=download, path=path)
 	} else if (name=='alt') {

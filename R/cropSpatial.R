@@ -47,7 +47,7 @@ setMethod('crop', signature(x='Spatial', y='ANY'),
 		rnx <- row.names(x)
 		row.names(x) <- as.character(1:length(rnx))
 		
-		if (methods::.hasSlot(x, 'data')) {
+		if (.hasSlot(x, 'data')) {
 			
 			# to keep the correct IDs
 			# in future versions of rgeos, this intermediate step won't be necessary
@@ -84,7 +84,7 @@ setMethod('crop', signature(x='Spatial', y='ANY'),
 		rnx <- row.names(x)
 		row.names(x) <- as.character(1:length(rnx))
 
-		if (methods::.hasSlot(x, 'data')) {
+		if (.hasSlot(x, 'data')) {
 		
 			# in future versions of rgeos, this intermediate step should not be necessary
 			i <- as.vector( rgeos::gIntersects(x, y, byid=TRUE) )

@@ -12,25 +12,31 @@
 \alias{as.vector,Raster-method}
   
  
-\title{Get a matrix with raster cell values}
+\title{Get a vector, matrix, or array with raster cell values}
 
 \description{
+\code{as.vector} returns a vector of cell values. For a RasterLayer it is equivalent to getValues(x). 
+
 \code{as.matrix} returns all values of a Raster* object as a matrix. For RasterLayers, rows and columns in the matrix represent rows and columns in the RasterLayer object. For other Raster* objects, the matrix returned by \code{as.matrix} has columns for each layer and rows for each cell. 
 
 \code{as.array} returns an array of matrices that are like those returned by \code{as.matrix} for a RasterLayer
 
 If there is insufficient memory to load all values, you can use \code{\link{getValues}} or \code{\link{getValuesBlock}} to read chunks of the file.
 
+\code{as.matrix} and \code{as.vector} can also be used to obtain the coordinates from an Extent object.
 }
 
 \usage{
 as.matrix(x, ...)
 as.array(x, ...)
-as.vector(x, mode="any")
+
+\S4method{as.vector}{Extent}(x, mode='any')
+
+\S4method{as.vector}{Raster}(x, mode='any')
 }
 
 \arguments{
- \item{x}{ Raster* or (for as.matrix and as.vector) Extent object }
+ \item{x}{ Raster* or (for \code{as.matrix} and \code{as.vector}) Extent object }
  \item{mode}{ character string giving an atomic mode or "list", or "any" }
  \item{...}{ additional arguments: 
  

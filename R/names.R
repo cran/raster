@@ -44,7 +44,7 @@ setMethod('labels', signature(object='Raster'),
 	
 setMethod('names', signature(x='Raster'), 
 	function(x) { 
-		if (methods::.hasSlot(x@data, 'names')) {
+		if (.hasSlot(x@data, 'names')) {
 			ln <- x@data@names
 		} else {
 			ln <- x@layernames		
@@ -85,7 +85,7 @@ setMethod('names<-', signature(x='Raster'),
 			})
 			
 		} else {
-			if (methods::.hasSlot(x@data, 'names')) {
+			if (.hasSlot(x@data, 'names')) {
 				x@data@names <- value
 			} else {
 				x@layernames <- value		

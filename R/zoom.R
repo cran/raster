@@ -25,7 +25,7 @@ function(x, ext=drawExtent(), maxpixels=100000, layer=1, new=TRUE, useRaster=TRU
 	if (nlayers(x) > 1) { 
 		x <- raster(x, layer) 
 	}
-	if (length(x@legend@colortable) > 0) {
+	if (length(colortable(x)) > 0) {
 		.plotCT(x, maxpixels=maxpixels, ext=ext, ...)
 	} else if (useRaster) {
 		.plotraster2(x, maxpixels=maxpixels, ext=ext, ...) 	

@@ -66,7 +66,7 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, fa
 		cl <- getCluster()
 		on.exit( returnCluster() )
 		nodes <- min(nlns, length(cl)) 
-		message('Using cluster with', nodes, 'nodes')
+		message('Using cluster with ', nodes, ' nodes')
 		utils::flush.console()
 
 		parallel::clusterExport(cl, c('rsbb', 'rr', 'addres', 'cellnumbers'), envir=environment())
@@ -174,7 +174,7 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, fa
 			return(res)
 		}
 	
-		if (! methods::.hasSlot(y, 'data') ) {
+		if (!.hasSlot(y, 'data') ) {
 			y <- SpatialLinesDataFrame(y,  res[, -1, drop=FALSE])
 		} else {
 			y@data <- cbind(y@data,  res[, -1, drop=FALSE])

@@ -13,12 +13,21 @@ allow setting a 'spatial window'
 
 
 --- current version
+package ncdf is now obsolete and no longer supported (use ncdf4 instead)
+Major bug fixes:
+Extraction of values with xy or cellnumber from a ncdf file where 'level' is the fourth variable (and time third, in stead of the other way around) did not work correctly. Reported by John Gross
+rasterize(..., getCover=TRUE) did not work properly. Reported by Sam Tomlinso
+Minor bug fixes:
+in rasterFromXYZ (by Gareth Davies)
+in crop (by Florian Detsch)
+in stack (http://stackoverflow.com/questions/32564932/r-import-two-or-more-selected-bands-from-an-image-stack)
+
+--- 8-September-2015, version: 2.4-20
 Andrei Mirt send a bug fix for corLocal
 namespace now captures all functions from other packages
 .nchar to replace nchar to avoid R version problem
 Sebastian Bock reported a bug in raster:::.circular.weight
 various minor fixes
-
 
 --- 2-July-2015, version: 2.4-15
 Improved geodesic algorithm (GeograhicLib by C.F.F. Karney) for pointDistance and other lon/lat distance computations, and to compute the area of an ellipsoidal polygon

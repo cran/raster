@@ -13,7 +13,7 @@
 	filename <- .setFileExtensionHeader(filename, filetype)
 	fnamevals <- .setFileExtensionValues(filename, filetype)
 	
-	if (length(x@legend@colortable) > 1) {
+	if (length(colortable(x)) > 1) {
 		if (is.null(list(...)$datatype)) {
 			datatype <- 'INT1U'
 		} else {

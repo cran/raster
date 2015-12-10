@@ -7,7 +7,7 @@
 #	fn <- paste(wd, '/rasterOptions_', pkg.info[["Version"]], sep='')
 #	.loadOptions(fn)
 
-	try( removeTmpFiles( .tmptime() ), silent=TRUE ) 
+#	try( removeTmpFiles( .tmptime() ), silent=TRUE ) 
 	return(invisible(0))
 }
 

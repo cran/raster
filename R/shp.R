@@ -44,7 +44,7 @@ setMethod('shapefile', signature(x='Spatial'),
 			stop('To write a shapefile you need to provide an object of class Spatial*')
 		} else {
 			if (inherits(x, 'SpatialPixels')) {
-				if (methods::.hasSlot(x, 'data')) {
+				if (.hasSlot(x, 'data')) {
 					x <- as(x, 'SpatialPointsDataFrame')
 				} else {
 					x <- as(x, 'SpatialPoints')				
@@ -55,7 +55,7 @@ setMethod('shapefile', signature(x='Spatial'),
 				stop('These data cannot be written to a shapefile')
 			}
 			
-			if (!methods::.hasSlot(x, 'data')) {
+			if (!.hasSlot(x, 'data')) {
 				if (inherits(x, 'SpatialPolygons')) {
 					x <- SpatialPolygonsDataFrame(x, data.frame(ID=1:length(x)), match.ID=FALSE)
 				} else if (inherits(x, 'SpatialLines')) {

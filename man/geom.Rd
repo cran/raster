@@ -20,7 +20,7 @@ Extract the coordinates of a Spatial object
 
 \arguments{
   \item{x}{SpatialPolygons*, SpatialLines*, or SpatialPoints* object}
-  \item{sepNA}{logical. If \code{TRUE}, geometries are separated by an row with \code{NA} values}
+  \item{sepNA}{logical. If \code{TRUE}, geometries are separated by a row with \code{NA} values}
   \item{...}{additional arguments, none implemented}
 }
 

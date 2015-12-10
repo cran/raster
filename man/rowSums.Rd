@@ -7,10 +7,10 @@
 \alias{colSums}
 \alias{colSums,Raster-method}
 
-\title{rowSum and colSum for Raster objects}
+\title{rowSums and colSums for Raster objects}
 
 \description{
-Sum row or clolumn values of Raster objects
+Sum values of Raster objects by row or column. 
 }
 
 \usage{
@@ -29,6 +29,9 @@ Sum row or clolumn values of Raster objects
 vector (if \code{x} is a RasterLayer) or matrix
 }
 
+\seealso{
+See \code{\link{cellStats}} for summing all cells values
+}
 
 \examples{
 r <- raster(ncols=2, nrows=5)

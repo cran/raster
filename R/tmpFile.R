@@ -126,7 +126,7 @@ showTmpFiles <- function() {
 			} else {
 				ff <- f
 				extension(ff) <- ''
-				ff <- paste(unique(ff), '\n')
+				ff <- paste(unique(ff), '\n', sep='')
 				cat(ff)
 			}
 		} else {

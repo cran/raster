@@ -50,7 +50,6 @@
 
 .stackFromBrick <- function(b, bands=NULL) {
 
-
 	nbands <- nlayers(b)
 	if (is.null(bands)) {
 		bands <- 1:nbands
@@ -63,6 +62,7 @@
 			bands <- 1:nbands
 		}
 	}
+	bands <- as.integer(bands)
 
 	havemnmx <- b@data@haveminmax
 	if (havemnmx) {

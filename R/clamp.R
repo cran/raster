@@ -13,7 +13,7 @@ if (!isGeneric("clamp")) {
 setMethod('clamp', signature(x='Raster'), 
 function(x, lower=-Inf, upper=Inf, useValues=TRUE, filename='', ...) {
 	if (!hasValues(x)) return(x)
-	range <- as.numeric(c(lower[1], upper[1]))
+	range <- sort(as.numeric(c(lower[1], upper[1])))
 	nl <- nlayers(x)
 	if (nl > 1) {
 		out <- brick(x, values=FALSE)

@@ -50,7 +50,7 @@ setMethod(erase, signature(x='SpatialPolygons', y='SpatialPolygons'),
 			y@proj4string <- x@proj4string
 		}
 		
-		if (!methods::.hasSlot(x, 'data')) {
+		if (!.hasSlot(x, 'data')) {
 			d <- data.frame(ID=1:length(x@polygons))
 			rownames(d) <- row.names(x)
 			x <- SpatialPolygonsDataFrame(x, data=d)

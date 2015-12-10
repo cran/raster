@@ -21,7 +21,7 @@ setMethod('KML', signature(x='Spatial'),
 			}
 		}
 		
-		if (! methods::.hasSlot(x, 'data') ) {
+		if (!.hasSlot(x, 'data') ) {
 			x <- addAttrToGeom(x, data.frame(id=1:length(x)), match.ID=FALSE)
 		}
 		

@@ -51,11 +51,7 @@ setMethod('readStart', signature(x='RasterStack'),
 			x@file@open <- TRUE
 		}
 	} else if (driver == 'netcdf') {
-		if (isTRUE(getOption('rasterNCDF4'))) {
-			attr(x@file, 'con') <- ncdf4::nc_open(x@file@name)
-		} else {
-			attr(x@file, 'con') <- ncdf::open.ncdf(x@file@name)
-		}
+		attr(x@file, 'con') <- ncdf4::nc_open(x@file@name)
 		x@file@open <- TRUE
 #	} else if (driver == 'ascii') { # cannot be opened
 	}	
@@ -100,11 +96,7 @@ setMethod('readStop', signature(x='RasterStack'),
 	} else if (.isNativeDriver(driver))  {
 		try( close(x@file@con), silent = TRUE )
 	} else if (driver == 'netcdf') {
-		if (isTRUE(getOption('rasterNCDF4'))) {
-			try( ncdf4::nc_close(x@file@con), silent=TRUE)
-		} else {
-			try( ncdf::close.ncdf(x@file@con), silent=TRUE)
-		}	
+		try( ncdf4::nc_close(x@file@con), silent=TRUE)
 	} #else if (driver == 'ascii') {	}
 	
 	x@file@open <- FALSE

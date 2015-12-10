@@ -180,7 +180,7 @@ setMethod('area', signature(x='RasterStackBrick'),
 			cl <- getCluster()
 			on.exit( returnCluster() )
 			nodes <- min(nrow(out), length(cl))	
-			message( 'Using cluster with', nodes, 'nodes' )
+			message('Using cluster with ', nodes, ' nodes')
 			utils::flush.console()		
 				
 			tr <- blockSize(out, minblocks=nodes)

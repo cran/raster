@@ -36,7 +36,6 @@ RasterLayer or RasterBrick object.
 }
 
 
-
 \seealso{ \code{\link[raster]{merge}}, \code{\link[raster]{extend}}}
 
 \examples{
@@ -55,6 +54,14 @@ s1 <- stack(r1, r1*2)
 s2 <- stack(r2, r2/2)
 s3 <- stack(r3, r3*4)
 m2 <- mosaic(s1, s2, s3, fun=min)
+
+# if you have a list of Raster objects, you can use do.call
+x <- list(r1, r2, r3)
+names(x)[1:2] <- c('x', 'y')
+x$fun <- mean
+x$na.rm <- TRUE
+
+y <- do.call(mosaic, x)
 
 }
 

@@ -30,8 +30,8 @@ function(x, y) {
 		
 	} else {
 	
-		xdata <- methods::.hasSlot(x, 'data')
-		ydata <- methods::.hasSlot(y, 'data')
+		xdata <-.hasSlot(x, 'data')
+		ydata <-.hasSlot(y, 'data')
 		if (xdata & ydata) {
 			nms <- .goodNames(c(colnames(x@data), colnames(y@data)))
 			colnames(x@data) <- nms[1:ncol(x@data)]
@@ -68,7 +68,7 @@ function(x, y) {
 	if (n < 2) {
 		return(x)
 	}
-	if (methods::.hasSlot(x, 'data')) {
+	if (.hasSlot(x, 'data')) {
 		x <- as(x, 'SpatialPolygons')
 	}
 	

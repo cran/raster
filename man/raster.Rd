@@ -102,7 +102,7 @@ If \code{x} represents a \bold{NetCDF} file, the following additional variable i
 
 \code{level}: integer > 0 (default=1). To select the 'level' (4th dimension variable) to use, if the file has 4 dimensions, e.g. to create a RasterBrick of weather over time at a certain height. \cr
 
-To use NetCDF files the \code{ncdf} or the \code{ncdf4} package needs to be available. If both are available, \code{ncdf4} is used. Only the \code{ncdf4} package can read the most recent version (4) of the netCDF format (as well as older versions), for windows it not available on CRAN but can be downloaded \href{http://cirrus.ucsd.edu/~pierce/ncdf/}{here}. It is assumed that these files follow, or are compatible with, the CF convention (The GMT format may also work). If the ncdf file does not have a standard extension (which is used to recognize the file format), you can use argument \code{ncdf=TRUE} to indicate the format.
+To use NetCDF files the \code{ncdf4} package needs to be available. It is assumed that these files follow, or are compatible with, the CF-1 convention (The GMT format may also work). If the ncdf file does not have a standard extension (which is used to recognize the file format), you can use argument \code{ncdf=TRUE} to indicate the format.
 
 
 If \code{x} is a \code{Spatial} or an \code{Extent} object, additional arguments are for the method with signature \code{'missing'}

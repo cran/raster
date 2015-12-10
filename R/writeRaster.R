@@ -62,7 +62,7 @@ function(x, filename, format, ...) {
 		names(out) <- names(x)
 		try( out@history <- x@history, silent=TRUE)
 		levels(out) <- levels(x)
-		out@legend@colortable <- x@legend@colortable
+		out@legend@colortable <- colortable(x)
 		out <- .startRasterWriting(out, filename, format=filetype, ...)
 		out <- writeValues(out, values(x), 1)
 		return( .stopRasterWriting(out) )

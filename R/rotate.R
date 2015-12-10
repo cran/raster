@@ -21,13 +21,14 @@ setMethod('rotate', signature(x='Raster'),
 			}
 		}
 		
-		ext1 <- extent(0, 180, -90, 90)
+		xr <- xres(x)
+		ext1 <- extent(-xr, 180, -100, 100)
 		if (is.null(intersect(e, ext1 ))) {
 			r1 <- NULL
 		} else {
 			r1 <- crop(x, ext1)
 		}		
-		ext2 <- extent(180, 360+res(x)[1], -90, 90)
+		ext2 <- extent(180, 360+xr, -100, 100)
 		if (is.null(intersect(e, ext2 ))) {
 			r2 <- NULL
 		} else {

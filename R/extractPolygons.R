@@ -103,7 +103,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, normalizeWeights=TRUE, cell
 		cl <- getCluster()
 		on.exit( returnCluster() )
 		nodes <- min(npol, length(cl)) 
-		message('Using cluster with', nodes, 'nodes')
+		message('Using cluster with ', nodes, ' nodes')
 		utils::flush.console()
 
 		.sendCall <- eval( parse( text="parallel:::sendCall") )
@@ -342,7 +342,7 @@ function(x, y, fun=NULL, na.rm=FALSE, weights=FALSE, normalizeWeights=TRUE, cell
 			return(res)
 		}
 		
-		if (! methods::.hasSlot(y, 'data') ) {
+		if (!.hasSlot(y, 'data') ) {
 			y <- SpatialPolygonsDataFrame(y, res[, -1, drop=FALSE])
 		} else {
 			y@data <- cbind(y@data, res[, -1, drop=FALSE])

@@ -10,7 +10,7 @@
 		return( data.frame(v=rep(1, length=n)) )
 	
 	} else if (missing(field)) {
-		if (methods::.hasSlot(obj, 'data')) {
+		if (.hasSlot(obj, 'data')) {
 			putvals <- obj@data
 			cn <- validNames(c('ID', colnames(putvals)))
 			cn[1] <- 'ID'
@@ -26,7 +26,7 @@
 
 		
 	} else if (is.character(field) ) {
-		if (methods::.hasSlot(obj, 'data')) {
+		if (.hasSlot(obj, 'data')) {
 			nms <- names(obj)
 			if (length(field) <= length(nms)) {
 				m <- match(field, nms)
@@ -184,7 +184,9 @@
 	if (ncol(pvals) > 1) {
 		rstr@data@isfactor <- TRUE
 		rstr@data@attributes <- list(pvals)
-		if (!(fun %in% c('first', 'last'))) {
+		if (!is.character(fun)) {
+			stop('when rasterizing multiple values you must use "fun=first" or "fun=last"')
+		} else if (!(fun %in% c('first', 'last'))) {
 			stop('when rasterizing multiple values you must use "fun=first" or "fun=last"')
 		}
 	}
@@ -228,7 +230,7 @@
 	}
 	
 	if (! silent) { 
-		message('Found', npol, 'region(s) and', cnt, 'polygon(s)') 
+		message('Found', npol, ' region(s) and ', cnt, ' polygon(s)') 
 	}
 	
 	polinfo <- subset(polinfo, polinfo[,1] <= cnt, drop=FALSE)
@@ -427,13 +429,15 @@
 			myline <- rbind(c(lxmin,ly), c(lxmax,ly))
 			holes <- holes1
 			if (length(subpol[,1]) > 0) { 		
-				updateHoles = FALSE
+
+			updateHoles <- FALSE
 				lastpolnr <- subpol[1,6]
+				rvtmp <- rv1
 				for (i in 1:length(subpol[,1])) {
 					if (i == length(subpol[,1])) { 
-						updateHoles = TRUE 
+						updateHoles <- TRUE 
 					} else if (subpol[i+1,6] > lastpolnr) {
-						updateHoles = TRUE 
+						updateHoles <- TRUE 
 						lastpolnr <- subpol[i+1,6]
 					}
 					
@@ -441,7 +445,9 @@
 					intersection <- .intersectLinePolygon(myline, mypoly@coords)
 					x <- sort(intersection[,1])
 					if (length(x) > 0) {
-						rvtmp <- rv1
+						#if (length(subpol[,1]) > 3 & i ==2) { 		
+						#	print('4')						
+						#}
 						if ( sum(x[-length(x)] == x[-1]) > 0 ) {
 					# single node intersection going out of polygon ....
 							spPnts <- SpatialPoints(xyFromCell(rstr, cellFromRowCol(rstr, rep(r, ncol(rstr)), 1:ncol(rstr))))
@@ -476,13 +482,13 @@
 								}
 							}
 						}
-						rv <- pmax(rv, rvtmp)
-					}
-					if (updateHoles) {
-						holes <- holes < 1
-						rv[holes] <- 0
-						holes <- holes1
-						updateHoles = FALSE	
+						if (updateHoles) {
+							holes <- holes < 1
+							rvtmp[holes] <- 0
+							holes <- holes1
+							updateHoles <- FALSE
+							rv <- pmax(rv, rvtmp)	
+						}
 					}
 				}
 			}
@@ -508,6 +514,7 @@
 }
 
 
+#x = .polygoncover(rstr, "", polinfo, lxmin, lxmax, pollist)
 
 
 .polygonsToRaster2 <- function(p, raster, field=0, filename="", ...) {

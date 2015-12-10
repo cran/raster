@@ -22,7 +22,7 @@
 
 
     nbands <- nlayers(r)
-	ct <- r@legend@colortable
+	ct <- colortable(r)
 	if (length(ct) > 0 ) {
 		hasCT <- TRUE
 		if (is.null(list(...)$datatype)) {

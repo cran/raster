@@ -6,16 +6,10 @@
 
 .stackCDF <- function(filename, varname='', bands='') {
 
-	ncdf4 <- .NCDFversion4()
+	stopifnot(requireNamespace("ncdf4"))
 
-	if (ncdf4) {
-		nc <- ncdf4::nc_open(filename)
-		on.exit( ncdf4::nc_close(nc) )		
-		
-	} else {
-		nc <- ncdf::open.ncdf(filename)
-		on.exit( ncdf::close.ncdf(nc) )		
-	} 
+	nc <- ncdf4::nc_open(filename)
+	on.exit( ncdf4::nc_close(nc) )		
 
 	zvar <- .varName(nc, varname)
 	dims <- nc$var[[zvar]]$ndims	
@@ -42,7 +36,7 @@
 		st@z <- list( nc$var[[zvar]]$dim[[dim3]]$vals[bands] )
 		names(st@z) <- nc$var[[zvar]]$dim[[dim3]]$units
 		if ( nc$var[[zvar]]$dim[[dim3]]$name == 'time' ) {	
-			try( st <- .doTime(st, nc, zvar, dim3, ncdf4)  )
+			try( st <- .doTime(st, nc, zvar, dim3)  )
 		}
 		nms <- as.character(st@z[[1]])
 		st@layers <- lapply(bands, function(x){

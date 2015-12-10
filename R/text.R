@@ -80,7 +80,7 @@ setMethod('text', signature(x='SpatialPolygons'),
 		}
 		
 		if (length(labels)  == 1) {
-			if (methods::.hasSlot(x, 'data')) {
+			if (.hasSlot(x, 'data')) {
 				if (labels %in% names(x)) {
 					labels <- x@data[, labels]
 				}
@@ -110,7 +110,7 @@ setMethod('text', signature(x='SpatialPoints'),
 		}
 		
 		if (length(labels)  == 1) {
-			if (methods::.hasSlot(x, 'data')) {
+			if (.hasSlot(x, 'data')) {
 				if (labels %in% names(x)) {
 					labels <- x@data[, labels]
 				}

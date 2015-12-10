@@ -48,20 +48,11 @@
 	#}
 	if (( fileext %in% c(".HE5", ".NC", ".NCF", ".NC4", ".CDF", ".NCDF", ".NETCDF")) | (isTRUE(ncdf))) {
 		return ( .rasterObjectFromCDF(x, type=objecttype, band=band, ...) )
-		# return ( .rasterFromCDF(x, objecttype, ...) )
-	}
+	} 
 	if ( fileext == ".GRD") {
-		if (requireNamespace("ncdf4")) {
-			if (.isNetCDF(x)) {
-				# return ( .rasterFromCDF(x, objecttype, ...) )
-				return ( .rasterObjectFromCDF(x, type=objecttype, band=band, ...) )
-			}
-		} else if (requireNamespace("ncdf")) {
-			if (.isNetCDF(x)) {
-				# return ( .rasterFromCDF(x, objecttype, ...) )
-				return ( .rasterObjectFromCDF(x, type=objecttype, band=band, ...) )
-			}
-		}
+		if (.isNetCDF(x)) {
+			return ( .rasterObjectFromCDF(x, type=objecttype, band=band, ...) )
+		} 
 	}
 
 	if ( fileext == ".BIG" | fileext == ".BRD") {

@@ -1,7 +1,11 @@
 
 
 colortable <- function(x) {
-	x@legend@colortable
+	if (.hasSlot(x, 'legend')) {
+		x@legend@colortable
+	} else {
+		logical(0)
+	}
 }
 
 

@@ -21,10 +21,10 @@ See the \code{rasterVis} package for more advanced (trellis/lattice) plotting of
 \usage{
 \S4method{plot}{Raster,ANY}(x, y, maxpixels=500000, col, alpha=NULL,
    colNA=NA, add=FALSE, ext=NULL, useRaster=TRUE, interpolate=FALSE, 
-   addfun=NULL, nc, nr, maxnl=16, main, ...)
+   addfun=NULL, nc, nr, maxnl=16, main, npretty=0, ...)
    
 
-\S4method{plot}{Raster,Raster}(x, y, maxpixels=100000, cex=0.2, nc, nr, 
+\S4method{plot}{Raster,Raster}(x, y, maxpixels=100000, cex, xlab, ylab, nc, nr, 
     maxnl=16, main, add=FALSE, gridded=FALSE, ncol=25, nrow=25, ...)
 }
 
@@ -42,8 +42,11 @@ See the \code{rasterVis} package for more advanced (trellis/lattice) plotting of
   \item{interpolate}{Logical. Should the image be interpolated (smoothed)? Only used when \code{useRaster = TRUE}}
   \item{addfun}{Function to add additional items such as points or polygons to the plot (map). Typically containing statements like
         "points(xy); plot(polygons, add=TRUE)". This is particularly useful to add something to each map when plotting a multi-layer Raster* object.}
+  \item{npretty}{integer. Number of decimals for \link{pretty} lables on the axes}  
   \item{...}{Graphical parameters. Any argument that can be passed to \code{\link[fields]{image.plot}} and to \code{\link[graphics]{plot}}, 
         such as axes=FALSE, main='title', ylab='latitude'}
+  \item{xlab}{Optional. x-axis label)}
+  \item{ylab}{Optional. y-axis label)}
   \item{nc}{Optional. The number of columns to divide the plotting device in (when plotting multiple layers in a RasterLayer or RasterBrick object)}
   \item{nr}{Optional. The number of rows to divide the plotting device in (when plotting multiple layers in a RasterLayer or RasterBrick object)}
   \item{maxnl}{integer. Maximum number of layers to plot (for a multi-layer object)}

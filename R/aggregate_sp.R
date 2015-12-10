@@ -74,7 +74,7 @@ function(x, by=NULL, sums=NULL, dissolve=TRUE, vars=NULL, ...) {
 		}
 	}
 	
-	if (! methods::.hasSlot(x, 'data') ) {
+	if (!.hasSlot(x, 'data') ) {
 		hd <- FALSE
 		if (!is.null(by)) {
 			if (length(by) == length(x@polygons)) {
@@ -180,7 +180,7 @@ function(x, by=NULL, sums=NULL, ...) {
 		}
 	}
 	
-	if (! methods::.hasSlot(x, 'data') ) {
+	if (!.hasSlot(x, 'data') ) {
 		hd <- FALSE
 		if (!is.null(by)) {
 			if (length(by) == length(x@lines)) {

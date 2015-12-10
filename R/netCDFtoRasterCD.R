@@ -5,7 +5,7 @@
 # Aug 2012, adapted for use with ncdf4 library 
 
 
-.doTime <- function(x, nc, zvar, dim3, ncdf4) {
+.doTime <- function(x, nc, zvar, dim3) {
 	dodays <- TRUE
 	dohours <- FALSE
 	
@@ -29,11 +29,7 @@
 		}
 	} else if (dodays) {
 		# cal = nc$var[[zvar]]$dim[[dim3]]$calendar ?
-		if (ncdf4) {
-			cal <- ncdf4::ncatt_get(nc, "time", "calendar")
-		} else {
-			cal <- ncdf::att.get.ncdf(nc, "time", "calendar")		
-		}
+		cal <- ncdf4::ncatt_get(nc, "time", "calendar")
 		if (! cal$hasatt ) {
 			greg <- TRUE
 		} else {
@@ -125,23 +121,12 @@
 .rasterObjectFromCDF <- function(filename, varname='', band=NA, type='RasterLayer', lvar=3, level=0, 
                         warn=TRUE, dims=1:3, crs=NA, stopIfNotEqualSpaced=TRUE, ...) {
 
-	ncdf4 <- .NCDFversion4()
-	
+	stopifnot(requireNamespace("ncdf4"))
 
-	if (ncdf4) {
-		options(rasterNCDF4 = TRUE)
-		nc <- ncdf4::nc_open(filename)
-		on.exit( ncdf4::nc_close(nc) )		
-		conv <- ncdf4::ncatt_get(nc, 0, "Conventions")
+	nc <- ncdf4::nc_open(filename)
+	on.exit( ncdf4::nc_close(nc) )		
+	conv <- ncdf4::ncatt_get(nc, 0, "Conventions")
 		
-	} else {
-		options(rasterNCDF4 = FALSE)
-		nc <- ncdf::open.ncdf(filename)
-		on.exit( ncdf::close.ncdf(nc) )		
-		conv <- ncdf::att.get.ncdf(nc, 0, "Conventions")
-	} 
-	
-	
 	# assuming "CF-1.0"
 	
 	zvar <- .varName(nc, varname, warn=warn)
@@ -151,7 +136,7 @@
 	
 	if (ndims== 1) { 
 		
-		return(.rasterObjectFromCDF_GMT(nc, ncdf4))
+		return(.rasterObjectFromCDF_GMT(nc))
 		
 	} else if (ndims == 4) { 
 		if (type != 'RasterQuadBrick') {
@@ -223,58 +208,31 @@
 	unit <- ''
 	
 	proj <- NA
-	if (ncdf4) {
-		a <- ncdf4::ncatt_get(nc, zvar, "long_name")
-		if (a$hasatt) { long_name <- a$value }
-		a <- ncdf4::ncatt_get(nc, zvar, "units")
-		if (a$hasatt) { unit <- a$value }
-		a <- ncdf4::ncatt_get(nc, zvar, "grid_mapping")
-		if ( a$hasatt ) { 
-			gridmap  <- a$value 
-			atts <- ncdf4::ncatt_get(nc, gridmap)
-			try(proj <- .getCRSfromGridMap4(atts), silent=TRUE)
-		} else {
-			a <- ncdf4::ncatt_get(nc, zvar, "projection_format")
-			if ( a$hasatt ) { 
-				projection_format  <- a$value 
-				if (isTRUE(projection_format == "PROJ.4")) {
-					a <- ncdf4::ncatt_get(nc, zvar, "projection")
-					if ( a$hasatt ) { 
-						proj <- a$value 
-					}
-				}
-			}
-		}
-		natest <- ncdf4::ncatt_get(nc, zvar, "_FillValue")
-		natest2 <- ncdf4::ncatt_get(nc, zvar, "missing_value")		
-		
-		
+	a <- ncdf4::ncatt_get(nc, zvar, "long_name")
+	if (a$hasatt) { long_name <- a$value }
+	a <- ncdf4::ncatt_get(nc, zvar, "units")
+	if (a$hasatt) { unit <- a$value }
+	a <- ncdf4::ncatt_get(nc, zvar, "grid_mapping")
+	if ( a$hasatt ) { 
+		gridmap  <- a$value 
+		atts <- ncdf4::ncatt_get(nc, gridmap)
+		try(proj <- .getCRSfromGridMap4(atts), silent=TRUE)
 	} else {
-		a <- ncdf::att.get.ncdf(nc, zvar, "long_name")
-		if (a$hasatt) { long_name <- a$value }
-		a <- ncdf::att.get.ncdf(nc, zvar, "units")
-		if (a$hasatt) { unit <- a$value }
-
-		a <- ncdf::att.get.ncdf(nc, zvar, "grid_mapping")
+		a <- ncdf4::ncatt_get(nc, zvar, "projection_format")
 		if ( a$hasatt ) { 
-			try(proj <- .getCRSfromGridMap3(nc, a$value), silent=TRUE)
-		} else {
-			a <- ncdf::att.get.ncdf(nc, zvar, "projection")
-			if ( a$hasatt ) { 
-				projection  <- a$value 
-				a <- ncdf::att.get.ncdf(nc, zvar, "projection_format")
+			projection_format  <- a$value 
+			if (isTRUE(projection_format == "PROJ.4")) {
+				a <- ncdf4::ncatt_get(nc, zvar, "projection")
 				if ( a$hasatt ) { 
-					projection_format  <- a$value 
-					if (isTRUE(projection_format == "PROJ.4")) {
-						proj <- projection
-					}
+					proj <- a$value 
 				}
 			}
 		}
-		natest <- ncdf::att.get.ncdf(nc, zvar, "_FillValue")
-		natest2 <- ncdf::att.get.ncdf(nc, zvar, "missing_value")		
-	}
-
+		}
+	natest <- ncdf4::ncatt_get(nc, zvar, "_FillValue")
+	natest2 <- ncdf4::ncatt_get(nc, zvar, "missing_value")		
+		
+		
 	if (is.na(proj)) {
 		if ((tolower(substr(nc$var[[zvar]]$dim[[dims[1]]]$name, 1, 3)) == 'lon')  &
 		   ( tolower(substr(nc$var[[zvar]]$dim[[dims[2]]]$name, 1, 3)) == 'lat' ) ) {
@@ -337,11 +295,16 @@
 		r@file@nbands <- nc$var[[zvar]]$dim[[dim3]]$len
 		r@z <- list( nc$var[[zvar]]$dim[[dim3]]$vals )
 		if ( nc$var[[zvar]]$dim[[dim3]]$name == 'time' ) {
-			try( r <- .doTime(r, nc, zvar, dim3, ncdf4) )
+			try( r <- .doTime(r, nc, zvar, dim3) )
 		} else {
 			names(r@z) <- nc$var[[zvar]]$dim[[dim3]]$units
 		}
 	}
+
+	if (length(ndims)== 2 & type != 'RasterLayer') { 
+		warning('cannot make a RasterBrick from data that has only two dimensions (no time step), returning a RasterLayer instead')	
+	} 
+
 	
 	if (type == 'RasterLayer') {
 		if (is.null(band) | is.na(band)) {
@@ -368,9 +331,6 @@
 		} 
 
 	} else {
-		#if (length(ndims)== 2) { 
-		#	stop('cannot make a RasterBrick from data that has only two dimensions (no time step), use raster() instead, and then make a RasterBrick from that')	
-		#} 
 		r@data@nlayers <- r@file@nbands
 		r@data@min <- rep(Inf, r@file@nbands)
 		r@data@max <- rep(-Inf, r@file@nbands)

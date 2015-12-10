@@ -6,11 +6,13 @@
 
 \alias{intersect,Extent,ANY-method}
 \alias{intersect,Raster,ANY-method}
+
 \alias{intersect,SpatialPoints,ANY-method}
 
 \alias{intersect,SpatialPolygons,SpatialPolygons-method}
 \alias{intersect,SpatialPolygons,SpatialLines-method}
 \alias{intersect,SpatialPolygons,SpatialPoints-method}
+\alias{intersect,SpatialPolygons,ANY-method}
 
 \alias{intersect,SpatialLines,SpatialPolygons-method}
 \alias{intersect,SpatialLines,SpatialLines-method}
@@ -22,7 +24,7 @@ Intersect
 \description{
 It depends on the classes of the \code{x} and \code{y} what is returned. 
 
-If \code{x} is a Raster* object the extent of \code{y} is used, irrespective of the class of code{y}, and a Raster* is returned. This is equivalent to \code{\link{crop}}. 
+If \code{x} is a Raster* object the extent of \code{y} is used, irrespective of the class of \code{y}, and a Raster* is returned. This is equivalent to \code{\link{crop}}. 
 
 If \code{x} is a Spatial* object, a new Spatial* object is returned. If \code{x} or \code{y} has a data.frame, these are also returned (after merging if necessary) as part of a Spatial*DataFrame, and this is how \code{intersect} is different from \code{rgeos::gIntersection} on which it depends. 
 

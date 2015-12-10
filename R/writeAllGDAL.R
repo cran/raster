@@ -17,7 +17,7 @@
 	} else {
 		y <- raster(x)
 		levels(y) <- levels(x)
-		y@legend@colortable <- x@legend@colortable
+		y@legend@colortable <- colortable(x)
 		x <- getValues(x)
 		if (setStatistics) { 
 			stat <- cbind(mean(x, na.rm=TRUE), stats::sd(x, na.rm=TRUE))

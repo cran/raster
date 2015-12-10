@@ -27,7 +27,7 @@ function(x, mask, filename="", inverse=FALSE, maskvalue=NA, updatevalue=NA, upda
 	compareRaster(x, mask)
 	ln <- names(x)
 	out <- raster(x)
-	out@legend@colortable <- x@legend@colortable
+	out@legend@colortable <- colortable(x)
 	levels(out) <- levels(x)
 	names(out) <- ln		
 	

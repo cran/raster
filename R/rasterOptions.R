@@ -152,7 +152,7 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		cnt <- 1
 		options(rasterFiletype = 'raster')
 		options(rasterOverwrite = FALSE)
-		options(rasterDatatype = 'FLT8S')
+		options(rasterDatatype = 'FLT4S')
 		options(rasterProgress = 'none')
 		options(rasterTimer = FALSE)
 		options(rasterTmpDir = tmpDir(create=FALSE))
@@ -424,8 +424,8 @@ tmpDir <- function(create=TRUE) {
 		} 
 	} 
 	if (! datatype %in% c('LOG1S', 'INT1S', 'INT2S', 'INT4S', 'INT1U', 'INT2U', 'INT4U', 'FLT4S', 'FLT8S')) {
-		warning(datatype, ' is an invalid datatype, changed to "FLT8S"')
-		datatype <- 'FLT8S'
+		warning(datatype, ' is an invalid datatype value, changed to "FLT8S"')
+		datatype <- 'FLT4S'
 	}
 	return(datatype)
 }

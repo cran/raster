@@ -2,6 +2,11 @@
 # prevent directory colisions on multiuser machines by generating a unique dir
 
 .tmppath <- function() {
+
+# default temp files now inside the session tempdir. Therefore no need to add username etc.
+   return( file.path(tempdir(), 'raster', '/') )
+
+   
 # when Sys.info is NULL, use this default
 	extension <- 'user'
 	s <- Sys.info()

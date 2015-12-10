@@ -32,7 +32,7 @@
 			}		
 		}
 	}
-	coltab <- x@legend@colortable
+	coltab <- colortable(x)
 	x <- sampleRegular(x, maxpixels, ext=ext, asRaster=TRUE, useGDAL=TRUE)
 	z <- getValues(x)
 

@@ -17,6 +17,7 @@ function(x, y) {
 } )
 
 
+
 setMethod('intersect', signature(x='Extent', y='ANY'), 
 function(x, y) {
 
