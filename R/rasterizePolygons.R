@@ -141,10 +141,11 @@
 	}
 	
 	if (getCover) {
-		fun <- 'first'
-		mask <- FALSE
-		update <- FALSE
-		field <- -1
+#		fun <- 'first'
+#		mask <- FALSE
+#		update <- FALSE
+#		field <- -1
+		return (.polygoncover(p, rstr, filename, ...)) 		
 	}
 
 	if (mask & update) { 
@@ -240,9 +241,9 @@
 	lxmin <- min(spbb[1,1], rsbb[1,1]) - xres(rstr)
 	lxmax <- max(spbb[1,2], rsbb[1,2]) + xres(rstr)
 	
-	if (getCover) { 
-		return (.polygoncover(rstr, filename, polinfo, lxmin, lxmax, pollist, ...)) 
-	}
+#	if (getCover) { 
+#		return (.polygoncover(rstr, filename, polinfo, lxmin, lxmax, pollist, ...)) 
+#	}
 
 	adj <- 0.5 * xres(rstr)
 
@@ -392,7 +393,14 @@
 #plot( .polygonsToRaster(p, rstr) )
 
 
-.polygoncover <- function(rstr, filename, polinfo, lxmin, lxmax, pollist, ...) {
+.polygoncover <- function(p, x, filename, ...) {
+	d <- disaggregate(raster(x), 10)
+	r <- .polygonsToRaster(p, d, filename=filename, field=1, fun='first', background=0, mask=FALSE, update=FALSE, getCover=FALSE, silent=TRUE, ...)
+	aggregate(r, 10, sum)
+} 
+
+
+.Old_polygoncover <- function(rstr, filename, polinfo, lxmin, lxmax, pollist, ...) {
 # percentage cover per grid cell
 
 	polinfo[, 4] <- 1

@@ -37,7 +37,7 @@ as.array(x, ...)
 
 \arguments{
  \item{x}{ Raster* or (for \code{as.matrix} and \code{as.vector}) Extent object }
- \item{mode}{ character string giving an atomic mode or "list", or "any" }
+ \item{mode}{Character string giving an atomic mode (such as "numeric" or "character") or "list", or "any". Note: this argument is currently ignored!}
  \item{...}{ additional arguments: 
  
 	\code{maxpixels} Integer. To regularly subsample very large objects 

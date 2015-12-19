@@ -1,6 +1,6 @@
-8155e31284fe323b202d6cfffaba6799 *ChangeLog
-6c04dec521486a34f2738a6cee21e20f *DESCRIPTION
-13f82eea1f72e7c99e4101546bd68934 *NAMESPACE
+e2ee20304f9b0d4cdade5e936d97b400 *ChangeLog
+85dc34a3d99dd9899c6a5d5c5c8a8739 *DESCRIPTION
+2caa26b3ce357d070c40fda829f8c7c4 *NAMESPACE
 2a5b959a5312693f06e67a78d5a6aca9 *R/AAAClasses.R
 ce2b1417f64dc9d2edc50e6bdd727677 *R/GDALtransient.R
 a6d23e11649f1c93d41c9e11c931aed7 *R/Geary.R
@@ -21,7 +21,7 @@ bf04afcad4358556c49107a1520fa4de *R/arith_sp.R
 223a73282a5b7abf959de7591e3f782d *R/as.array.R
 fd3d46d6e21f9dc2e7f58fa1117365c5 *R/as.data.frame.R
 ee6916a3d85946f306b480ad1f58547a *R/as.logical.R
-b56201ecdc26a2d5cde84e8212d761fe *R/as.matrix.R
+69ac4322db0e04a858126f25e2615aa6 *R/as.matrix.R
 5e89b3f75c4989294817992ce45f924a *R/as.raster.R
 eb90d83391dc29673df6b9da3dfa7331 *R/as.spatial.R
 db8e309fda421a54a5b32ed466c94df4 *R/atan2.R
@@ -56,7 +56,7 @@ f6d126480109fc7634a8315b08dbf1c1 *R/commonDataType.R
 f0465e330c110020de7b878b6d54e115 *R/compareCRS.R
 f1b5704b4cdb92f3c9bd97ae2c2de1a2 *R/compare_Logical.R
 a290223935e80896d36675beabe177c5 *R/connection.R
-912e102f4415a82854d3b0ca5f6e5e66 *R/contour.R
+6f5fcc1f179441b5e94646e322e32bb6 *R/contour.R
 3683aa76f6958a3d6f862b4854b1925f *R/cor.R
 c44f02dac5ed1513104a937e333558e7 *R/corLocal.R
 3112262f0e64a4e969cb7af230196c5b *R/cover.R
@@ -227,7 +227,7 @@ f30b733942b5242d7a1d8423cc561bd2 *R/rasterize.R
 bd4bbf9d1e897d0ea1f5fe54e018a946 *R/rasterizeLines.R
 2ccdc350524fa4e88b4f84bfb966b7ce *R/rasterizePoints.R
 dbd3935ae5db793baf63f960f2152742 *R/rasterizePointsNGB.R
-62c249d6678cee3ac2d7779fe43d983c *R/rasterizePolygons.R
+ad6c38e26693a4c5ffee635d72a42026 *R/rasterizePolygons.R
 957bcd0311eaa1e04d51ab60eded5df0 *R/rasterizePolygons3.R
 c147c1c3ba13fd2d0543547d43770cda *R/ratify.R
 efcf32bd515d8cbf82d17da57be9b0c2 *R/read.R
@@ -255,7 +255,7 @@ e63c3a401431d2f564d51ee935ebf5d2 *R/scalebar.R
 ddb8db646ec6ad69a43f5b86cfce2257 *R/setExtent.R
 ad1d6cd41053c783a4a150c151c843f6 *R/setFileExt.R
 3f27ae95635d13ccb856556ee4194399 *R/setMinMax.R
-e9fb60af53ac1495b5c78d7177bf301e *R/setValues.R
+018a732334bf50001a81088d33f36e5d *R/setValues.R
 f1e1b942bee3ed1d13ee7979e4143393 *R/setZ.R
 25b808ef8b71a67772964733aa0cce7f *R/shift.R
 a474bab8ab47f47bf59c5d983a12376d *R/show.R
@@ -265,7 +265,7 @@ c9a5d1fc00d36410cbaa885de3f51208 *R/simplifyPols.R
 f14fc398786001fefbfa5b209a90cb2c *R/speasy.R
 38e95be9a2c690f69f2b030e41d9a4dd *R/spplot.R
 ba7f4772881292a374ed6b1c4c869191 *R/stack.R
-e4b5e4e11cf9fd7159a0205ee762185a *R/stackApply.R
+6d3611130908c83a2a0665801e0b1189 *R/stackApply.R
 6c6d872beb2eda2a4e5180db284dae29 *R/stackFile.R
 99f086cba085f4d5ed9d570dfeb7d52b *R/stackQuick.R
 3c9bab661c2685f5d24dead85fc3b468 *R/stackSelect.R
@@ -311,12 +311,12 @@ d0b3104768d09ac06a6b7e81bc30d95a *R/zonal.R
 4edc5aa9e85b444b4d05e42d8bcb7b0c *build/vignette.rds
 3be3d2c26ecebd5c98af396455417f24 *inst/doc/Raster.R
 9de33024cc89fed0f391aeea590c077c *inst/doc/Raster.Rnw
-acb578d219eac12d2866a4bb55678a52 *inst/doc/Raster.pdf
+9a15c931415936243c0e554d25f89c1e *inst/doc/Raster.pdf
 8513b7865ba30fef7caa5ea4dc9f3ee2 *inst/doc/functions.R
 b6b8b6c45360d7509cc8e05fe48414c4 *inst/doc/functions.Rnw
-16f401464e136443b496d58f3a8853a8 *inst/doc/functions.pdf
+c42bcb43f3179b88e223218d42739622 *inst/doc/functions.pdf
 420023a741c8ac112f7b995bdd8f5eed *inst/doc/rasterfile.Rnw
-afbf1283056b323ec5eb131a904e0030 *inst/doc/rasterfile.pdf
+dca01fe0f9d4bf14e883646a0ce19068 *inst/doc/rasterfile.pdf
 8b59de62929c2a6fd8a0ffc8f917da15 *inst/external/countries.csv
 833b7982adb38dd5d7999f12ae42c8ed *inst/external/lux.dbf
 e729936bf5360b37a15365fc295a1901 *inst/external/lux.prj
@@ -345,7 +345,7 @@ c708716bd7f41b1a6a4ecc1b8c54c92a *man/approxNA.Rd
 9d685916c585cabde5c3e47a8f250bb5 *man/area.Rd
 07a2c7c35155fb437779b2434afef80d *man/as.data.frame.Rd
 5ce2024690f43349a1dee5523aee521e *man/as.logical-methods.Rd
-0927f93687d30d8fb5c902b1352d70fc *man/as.matrix.Rd
+5e71b6d535c014a81e99748084758f23 *man/as.matrix.Rd
 90bf584faeaa9215c23be94c1d73cea8 *man/as.raster.Rd
 993499965f62e8b4777b8434b3ee4554 *man/atan2.Rd
 ecd32f7ab03cabbaad9dfa613f9c400b *man/autocor.Rd

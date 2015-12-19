@@ -13,12 +13,24 @@ stackApply <- function(x, indices, fun, filename='', na.rm=TRUE, ...) {
 		makemat <- FALSE  
 	}
 	
+	fnames <- FALSE
+	if (is.factor(indices)) {
+		nms <- levels(indices)
+		indices <- as.integer(indices)
+		fnames <- TRUE
+	}
 	
 	ind <- vector(length=nl)
 	# perhaps we need recycling:
 	ind[] <- indices
 	
 	uin <- unique(ind)
+	if (fnames) {
+		layernames <- paste0('level_', nms[uin]) 
+	} else {
+		layernames <- paste0('index_', uin) 
+	}
+	
 	nlout <- length(uin)
 	if (nlout > 1) {
 		out <- brick(x, values=FALSE)
@@ -26,7 +38,7 @@ stackApply <- function(x, indices, fun, filename='', na.rm=TRUE, ...) {
 	} else {
 		out <- raster(x)
 	}
-
+    names(out) <- layernames
 	filename <- trim(filename)
 
 	rowcalc <- FALSE
@@ -44,9 +56,9 @@ stackApply <- function(x, indices, fun, filename='', na.rm=TRUE, ...) {
 		pb <- pbCreate(3, label='stackApply', ...)
 		pbStep(pb)
 		if (rowcalc) {
-			v <- lapply(uin, function(i) fun(x[, ind==uin[i], drop=FALSE], na.rm=na.rm))
+			v <- lapply(uin, function(i) fun(x[, ind==i, drop=FALSE], na.rm=na.rm))
 		} else {
-			v <- lapply(uin, function(i, ...) apply(x[, ind==uin[i], drop=FALSE], 1, fun, na.rm=na.rm))
+			v <- lapply(uin, function(i, ...) apply(x[, ind==i, drop=FALSE], 1, fun, na.rm=na.rm))
 		}
 		pbStep(pb)		
 		v <- do.call(cbind, v)
@@ -82,6 +94,8 @@ stackApply <- function(x, indices, fun, filename='', na.rm=TRUE, ...) {
 	}
 
 	out <- writeStop(out)
+	# only raster format stores layer names
+    names(out) <- layernames 
 	pbClose(pb)
 	return(out)
 }

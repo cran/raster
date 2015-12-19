@@ -7,7 +7,7 @@
 if (!isGeneric('setValues')) {
 	setGeneric('setValues', function(x, values, ...)
 		standardGeneric('setValues')) 
-	}	
+}	
 
 	
 
@@ -62,14 +62,14 @@ setMethod('setValues', signature(x='RasterStack'),
 	function(x, values, layer=-1, ...) {
 		if (layer > 0) {
 			stopifnot(layer <= nlayers(x))
-			x[[layer]] <- setValues(x[[layer]], values)
+			x[[layer]] <- setValues(x[[layer]], values, ...)
 			return(x)
 		} else {
 			b <- brick(x, values=FALSE)
-			setValues(b, values)
+			setValues(b, values, ...)
 		}
 	}	
- )
+)
 	
 	
 

@@ -32,14 +32,15 @@ function(x, ...) {
 })
 
 
+# mode argument is ignored as mode=mode gave an error on R-devel
 setMethod('as.vector', signature(x='Extent'), 
-function(x,  mode = "any") {
-	as.vector(c(x@xmin, x@xmax, x@ymin, x@ymax), mode=mode)
+function(x, mode='any') {
+	as.vector(c(x@xmin, x@xmax, x@ymin, x@ymax))
 })
 
 
 setMethod('as.vector', signature(x='Raster'), 
-function(x,  mode = "any") {
-	as.vector(getValues(x), mode=mode)
+function(x, mode='any') {
+	as.vector(getValues(x))
 })
 

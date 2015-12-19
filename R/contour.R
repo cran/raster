@@ -57,5 +57,18 @@ filledContour <- function(x, y=1, maxpixels=100000, ...) {
 	X <- xFromCol(x, 1:ncol(x))
 	Y <- yFromRow(x, nrow(x):1)
 	Z <- t( matrix( getValues(x), ncol=x@ncols, byrow=TRUE)[nrow(x):1,] )
-	graphics::filled.contour(x=X,y=Y,z=Z,...)
+	
+	lonlat <- .couldBeLonLat(x, warnings=FALSE)
+	asp <- list(...)$asp
+ 	if (is.null(asp)) {
+		if (lonlat) {
+			ym <- mean(c(x@extent@ymax, x@extent@ymin))
+			asp <- 1/cos((ym * pi)/180)
+		} else {
+			asp <- 1
+		}		
+		filled.contour(x=X,y=Y,z=Z,asp=asp,...)
+	} else {
+		filled.contour(x=X,y=Y,z=Z,...)
+	}
 }
