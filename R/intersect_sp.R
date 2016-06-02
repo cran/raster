@@ -195,12 +195,24 @@ function(x, y) {
 	
 	xdata <-.hasSlot(x, 'data')
 	ydata <-.hasSlot(y, 'data')
-	if (! any(c(xdata, ydata))) {
-		return(  rgeos::gIntersection(y, x, byid=TRUE) )
-	}
-	
+
 	x <- spChFIDs(x, as.character(1:length(x)))
 	y <- spChFIDs(y, as.character(1:length(y)))
+
+	if (! any(c(xdata, ydata))) {
+		z <- rgeos::gIntersection(x, y, byid=TRUE)
+		if (is.null(z)) {
+			z <- SpatialPoints(cbind(0,0), proj4string=crs(x))
+			z <- SpatialPointsDataFrame(z,data.frame(x=0, y=0))
+			return( z[-1, ] )
+		}
+		rn <- rownames(z@coords)
+		d <- data.frame(matrix(as.integer(unlist(strsplit(rn, ' '))), ncol=2, byrow=TRUE))
+		colnames(d) <- c('x', 'y')
+		rownames(z@coords) <- NULL
+		z <- SpatialPointsDataFrame(z,d)
+		return(z)
+	}
 	
 	z <- rgeos::gIntersection(y, x, byid=TRUE)
 	
@@ -301,7 +313,7 @@ function(x, y) {
 setMethod('intersect', signature(x='SpatialPolygons', y='ANY'), 
 function(x, y) {
 	y <- extent(y)
-	y <- as(y, 'SpatialPolygns')
+	y <- as(y, 'SpatialPolygons')
 	intersect(x, y)
 }
 )

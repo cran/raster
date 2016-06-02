@@ -19,7 +19,7 @@
 		stop('file exists, use overwrite=TRUE to overwrite it')
 	}
 	dataType(x) <- datatype
-	datatype <- .getNetCDFDType(datatype)
+	ncdatatype <- .getNetCDFDType(datatype)
 	nl <- nlayers(x)
 	
 	if (couldBeLonLat(x)) {
@@ -95,9 +95,9 @@
 	ydim <- ncdf4::ncdim_def( yname, yunit, yFromRow(x, 1:nrow(x)) )
 	if (inherits(x, 'RasterBrick')) {
 		zdim <- ncdf4::ncdim_def( zname, zunit, zv, unlim=TRUE )
-		vardef <- ncdf4::ncvar_def( varname, varunit, list(xdim, ydim, zdim), NAvalue(x), prec = datatype, ... )
+		vardef <- ncdf4::ncvar_def( varname, varunit, list(xdim, ydim, zdim), NAvalue(x), prec = ncdatatype, ... )
 	} else {
-		vardef <- ncdf4::ncvar_def( varname, varunit, list(xdim, ydim), NAvalue(x), prec = datatype, ... )
+		vardef <- ncdf4::ncvar_def( varname, varunit, list(xdim, ydim), NAvalue(x), prec = ncdatatype, ... )
 	}
 	nc <- ncdf4::nc_create(filename, vardef, force_v4=force_v4)
 
@@ -112,14 +112,14 @@
 		x@file@nodatavalue <- NAflag
 	} 
 		
-	ncdf4::ncatt_put(nc, varname, '_FillValue', x@file@nodatavalue)
-	ncdf4::ncatt_put(nc, varname, 'missing_value', x@file@nodatavalue)
-	ncdf4::ncatt_put(nc, varname, 'long_name', longname)
+	ncdf4::ncatt_put(nc, varname, '_FillValue', x@file@nodatavalue, prec=ncdatatype, definemode=TRUE)
+	ncdf4::ncatt_put(nc, varname, 'missing_value', x@file@nodatavalue, prec=ncdatatype)
+	ncdf4::ncatt_put(nc, varname, 'long_name', longname, prec='text')
 
 	proj <- projection(x) 
 	if (! is.na(proj)) { 
-		ncdf4::ncatt_put(nc, varname, 'projection', proj)
-		ncdf4::ncatt_put(nc, varname, 'projection_format', 'PROJ.4')
+		ncdf4::ncatt_put(nc, 0, 'crs', proj, prec='text')
+		ncdf4::ncatt_put(nc, 0, 'crs_format', 'PROJ.4', prec='text')
 	}
 
 	if (! missing(varatt)){
@@ -129,7 +129,7 @@
 		}
 	}
 
-	ncdf4::ncatt_put(nc, 0, 'Conventions', 'CF-1.4')
+	ncdf4::ncatt_put(nc, 0, 'Conventions', 'CF-1.4', prec='text')
 	if (! missing(att)){
 		for (i in 1:length(att)) {
 			a <- trim(unlist(strsplit(att[i], '=')))
@@ -139,8 +139,8 @@
 
 		
 	pkgversion <- drop(read.dcf(file=system.file("DESCRIPTION", package='raster'), fields=c("Version")))
-	ncdf4::ncatt_put(nc, 0, 'created_by', paste('R, packages ncdf4 and raster (version ', pkgversion, ')', sep=''))
-	ncdf4::ncatt_put(nc, 0, 'date', format(Sys.time(), "%Y-%m-%d %H:%M:%S"))
+	ncdf4::ncatt_put(nc, 0, 'created_by', paste('R, packages ncdf4 and raster (version ', pkgversion, ')', sep=''), prec='text')
+	ncdf4::ncatt_put(nc, 0, 'date', format(Sys.time(), "%Y-%m-%d %H:%M:%S"), prec='text')
 
 	ncdf4::nc_close(nc)
 		

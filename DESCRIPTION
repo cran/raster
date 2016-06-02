@@ -1,8 +1,8 @@
 Package: raster
 Type: Package
 Title: Geographic Data Analysis and Modeling
-Version: 2.5-2
-Date: 2015-12-18
+Version: 2.5-8
+Date: 2016-05-31
 Depends: methods, sp (>= 1.2-0), R (>= 3.0.0)
 Suggests: rgdal (>= 0.9-1), rgeos (>= 0.3-8), ncdf4, igraph, tcltk,
         parallel, rasterVis
@@ -24,7 +24,7 @@ License: GPL (>= 3)
 URL: http://cran.r-project.org/package=raster
 ByteCompile: TRUE
 NeedsCompilation: yes
-Packaged: 2015-12-18 23:48:31 UTC; rhijmans
+Packaged: 2016-05-31 23:09:23 UTC; rhijmans
 Author: Robert J. Hijmans [cre, aut],
   Jacob van Etten [ctb],
   Joe Cheng [ctb],
@@ -37,4 +37,4 @@ Author: Robert J. Hijmans [cre, aut],
   Ashton Shortridge [ctb]
 Maintainer: Robert J. Hijmans <r.hijmans@gmail.com>
 Repository: CRAN
-Date/Publication: 2015-12-19 09:59:36
+Date/Publication: 2016-06-02 18:31:24

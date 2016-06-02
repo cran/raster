@@ -59,7 +59,7 @@
 .intersectSegments <- function(x1, y1, x2, y2, x3, y3, x4, y4) {
 # Translated by RH from LISP code by Paul Reiners
 # http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/linesegments.lisp
-# Which was tranlated from the algorithm by Paul Bourke given here: http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/
+# Which was translated from the algorithm by Paul Bourke given here: http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/
     denom  <-  ((y4 - y3) * (x2 - x1)) - ((x4 - x3) * (y2 - y1))
     ua_num  <- ((x4 - x3) *(y1 - y3)) - ((y4 - y3) * (x1 - x3))
     ub_num  <- ((x2 - x1) *(y1 - y3)) - ((y2 - y1) * (x1 - x3))
@@ -226,7 +226,7 @@
 				polinfo[cnt, 5] <- 0
 			}
 			polinfo[cnt, 6] <- i
-			pollist[cnt] <- p@polygons[[i]]@Polygons[[j]]
+			pollist[[cnt]] <- p@polygons[[i]]@Polygons[[j]]
 		}
 	}
 	

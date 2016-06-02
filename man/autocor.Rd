@@ -12,15 +12,15 @@ Compute Moran's I or Geary's C measures of global spatial autocorrelation in a R
 }
 
 \usage{
-Geary(x, w=matrix(1, 3, 3))
-Moran(x, w=matrix(1, 3, 3))
-MoranLocal(x, w=matrix(1, 3, 3))
-GearyLocal(x, w=matrix(1, 3, 3))
+Geary(x, w=matrix(c(1,1,1,1,0,1,1,1,1), 3,3))
+Moran(x, w=matrix(c(1,1,1,1,0,1,1,1,1), 3,3))
+MoranLocal(x, w=matrix(c(1,1,1,1,0,1,1,1,1), 3,3))
+GearyLocal(x, w=matrix(c(1,1,1,1,0,1,1,1,1), 3,3))
 }
 
 \arguments{
   \item{x}{RasterLayer}
-  \item{w}{Spatial weights defined by or a rectangular matrix with uneven sides (as in \code{\link{focal}}) }
+  \item{w}{Spatial weights defined by or a rectangular matrix with odd length (3, 5, ...) sides (as in \code{\link{focal}}) }
 }
 
 

@@ -28,6 +28,9 @@ if (!isGeneric("area")) {
 setMethod('area', signature(x='SpatialPolygons'), 
 	function(x, ...) {
 		if (couldBeLonLat(x)) {
+			if (!isLonLat(x)) {
+				warning('assuming that the CRS is longitude/latitude!')
+			}
 
 			a <- 6378137
 			f <- 1/298.257223563
@@ -48,10 +51,11 @@ setMethod('area', signature(x='SpatialPolygons'),
 				}
 				res[i] <- sumarea
 			}
+			res <- abs(res)
 			return(res)
 		}
 		if (requireNamespace("rgeos")) {
-			rgeos::gArea(x, byid=TRUE)
+			as.vector(rgeos::gArea(x, byid=TRUE))
 		} else {	
 			warning('install rgeos for better area estimation')
 			sapply(x@polygons, function(i) methods::slot(i, 'area'))
@@ -104,21 +108,21 @@ setMethod('area', signature(x='RasterLayer'),
 		tr <- blockSize(out)
 		pb <- pbCreate(tr$n, label='area', ...)
 
-			for (i in 1:tr$n) {
-				r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
-				vv <- dx[r] * dy / 1000000
-				vv <- rep(vv, each=out@ncols)
-				if (na.rm) {
-					a <- getValues(x, tr$row[i], tr$nrows[i])
-					vv[is.na(a)] <- NA
-				}
-				if (filename == "") {
-					v[,r] <- vv
-				} else {
-					out <- writeValues(out, vv, tr$row[i])
-				}
-				pbStep(pb, i)
+		for (i in 1:tr$n) {
+			r <- tr$row[i]:(tr$row[i]+tr$nrows[i]-1)
+			vv <- dx[r] * dy / 1000000
+			vv <- rep(vv, each=out@ncols)
+			if (na.rm) {
+				a <- getValues(x, tr$row[i], tr$nrows[i])
+				vv[is.na(a)] <- NA
 			}
+			if (filename == "") {
+				v[,r] <- vv
+			} else {
+				out <- writeValues(out, vv, tr$row[i])
+			}
+			pbStep(pb, i)
+		}
 
 		pbClose(pb)
 		

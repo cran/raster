@@ -101,11 +101,10 @@ xyFromCell <- function(object, cell, spatial=FALSE) {
 		)
 		
 	} else {
+	    e <- object@extent 
 		xy <- .doXYFromCell(
 			object@ncols, object@nrows,
-			object@extent@xmin, object@extent@xmax,
-			object@extent@ymin, object@extent@ymax,
-			cell
+			e@xmin, e@xmax, e@ymin, e@ymax, cell
 		)
 		dimnames(xy) <- list(NULL, c("x", "y"))
 	}

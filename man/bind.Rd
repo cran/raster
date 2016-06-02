@@ -6,6 +6,8 @@
 \alias{bind,SpatialPolygons,SpatialPolygons-method}
 \alias{bind,SpatialLines,SpatialLines-method}
 \alias{bind,SpatialPoints,SpatialPoints-method}
+\alias{bind,matrix,matrix-method}
+\alias{bind,matrix,missing-method}
 \alias{bind,data.frame,data.frame-method}
 \alias{bind,data.frame,missing-method}
 

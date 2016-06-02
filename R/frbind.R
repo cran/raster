@@ -50,3 +50,35 @@
 	}
 	x
 }
+
+
+.frbindMatrix <- function(x, ...) {
+
+	d <- list(...)
+	if (length(d) == 0) { return(x) }
+	
+	for (i in 1:length(d)) {
+		
+		dd <- d[[i]]
+		
+		cnx <- colnames(x)
+		cnd <- colnames(dd)
+		
+		a <- which(!cnd %in% cnx)
+		if (length(a) > 0) {
+			zz <- dd[NULL, a, drop=FALSE]
+			zz[1:nrow(x),] <- NA
+			x <- cbind(x, zz)
+		}
+
+		b <- which(!cnx %in% cnd)
+		if (length(b) > 0) {
+			zz <- x[NULL, b, drop=FALSE]
+			zz[1:nrow(dd),] <- NA
+			dd <- cbind(dd, zz)
+		}
+		
+		x <- rbind(x, dd)		
+	}
+	x
+}

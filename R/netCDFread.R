@@ -71,6 +71,11 @@
 	
 .readRowsBrickNetCDF <- function(x, row, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs) {
 
+
+	if (nlayers(x) == 1) {
+		return(.readRowsNetCDF(x=x, row=row, nrows=nrows, col=col, ncols=ncols) )
+	}
+
 	is.open <- x@file@open
 	
 	if ( x@file@toptobottom ) { 

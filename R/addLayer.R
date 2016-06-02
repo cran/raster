@@ -49,7 +49,7 @@ function(x, ...) {
 		}
 
 		nl <- 1
-		x@layers[nl] <- r 
+		x@layers[[nl]] <- r 
 		rasters <- rasters[-1]
 		if (length(rasters)==0) { return(x) }
 	}

@@ -207,7 +207,7 @@
 	long_name <- zvar
 	unit <- ''
 	
-	proj <- NA
+	prj <- NA
 	a <- ncdf4::ncatt_get(nc, zvar, "long_name")
 	if (a$hasatt) { long_name <- a$value }
 	a <- ncdf4::ncatt_get(nc, zvar, "units")
@@ -215,8 +215,8 @@
 	a <- ncdf4::ncatt_get(nc, zvar, "grid_mapping")
 	if ( a$hasatt ) { 
 		gridmap  <- a$value 
-		atts <- ncdf4::ncatt_get(nc, gridmap)
-		try(proj <- .getCRSfromGridMap4(atts), silent=TRUE)
+		try(atts <- ncdf4::ncatt_get(nc, gridmap), silent=TRUE)
+		try(prj <- .getCRSfromGridMap4(atts), silent=TRUE)
 	} else {
 		a <- ncdf4::ncatt_get(nc, zvar, "projection_format")
 		if ( a$hasatt ) { 
@@ -224,23 +224,23 @@
 			if (isTRUE(projection_format == "PROJ.4")) {
 				a <- ncdf4::ncatt_get(nc, zvar, "projection")
 				if ( a$hasatt ) { 
-					proj <- a$value 
+					prj <- a$value 
 				}
 			}
 		}
-		}
+	}
 	natest <- ncdf4::ncatt_get(nc, zvar, "_FillValue")
 	natest2 <- ncdf4::ncatt_get(nc, zvar, "missing_value")		
 		
 		
-	if (is.na(proj)) {
+	if (is.na(prj)) {
 		if ((tolower(substr(nc$var[[zvar]]$dim[[dims[1]]]$name, 1, 3)) == 'lon')  &
 		   ( tolower(substr(nc$var[[zvar]]$dim[[dims[2]]]$name, 1, 3)) == 'lat' ) ) {
 				if ( yrange[1] > -91 | yrange[2] < 91 ) {
 					if ( xrange[1] > -181 | xrange[2] < 181 ) {
-						proj <- '+proj=longlat +datum=WGS84'
+						prj <- '+proj=longlat +datum=WGS84'
 					} else if ( xrange[1] > -1 | xrange[2] < 361 ) {
-						proj <- '+proj=longlat +lon_wrap=180 +datum=WGS84'
+						prj <- '+proj=longlat +lon_wrap=180 +datum=WGS84'
 					}
 				}
 			
@@ -248,7 +248,7 @@
 	} 
 		
 		
-	crs <- .getProj(proj, crs)
+	crs <- .getProj(prj, crs)
 		
 		
 	if (type == 'RasterLayer') {
@@ -336,8 +336,6 @@
 		r@data@max <- rep(-Inf, r@file@nbands)
 		try( names(r) <- as.character(r@z[[1]]), silent=TRUE )
 	}
-	
-
 	
 	return(r)
 }

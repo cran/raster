@@ -248,6 +248,14 @@ setAs('RasterBrick', 'RasterLayer',
 	function(from){ return( raster(from)) }
 )
 
+setAs('RasterStack', 'RasterBrick', 
+	function(from){ return( brick(from)) }
+)
+
+
+setAs('RasterBrick', 'RasterStack', 
+	function(from){ return( stack(from)) }
+)
 
 setAs('RasterLayer', 'RasterStack', 
 	function(from){ return( stack(from)) }

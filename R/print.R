@@ -88,12 +88,12 @@ setMethod ('print' , 'Spatial',
 			cat ('resolution  : ', cs[1], ', ', cs[2], '  (x, y)\n', sep="")		
 			
 		} else {
-			ln <- length(x)
-			cat('features    :' , ln, '\n')
+			nf <- length(x)
+			cat('features    :' , nf, '\n')
 		}
 		
 		e <- bbox(x)
-		if (ln > 0) {
+		if (nf > 0) {
 			cat('extent      : ' , e[1,1], ', ', e[1,2], ', ', e[2,1], ', ', e[2,2], '  (xmin, xmax, ymin, ymax)\n', sep="")
 		}
 		
@@ -136,8 +136,10 @@ setMethod ('print' , 'Spatial',
 			}
 
 			cat('names       :', paste(m[1,], collapse=', '), '\n')
-			cat('min values  :', paste(m[2,], collapse=', '), '\n')
-			cat('max values  :', paste(m[3,], collapse=', '), '\n')
+			if (nf > 0) {
+				cat('min values  :', paste(m[2,], collapse=', '), '\n')
+				cat('max values  :', paste(m[3,], collapse=', '), '\n')
+			}
 			
 		}
 }

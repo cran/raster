@@ -25,11 +25,7 @@ function(x, mask, filename="", inverse=FALSE, maskvalue=NA, updatevalue=NA, upda
 	updatevalue <- updatevalue[1]
 
 	compareRaster(x, mask)
-	ln <- names(x)
-	out <- raster(x)
-	out@legend@colortable <- colortable(x)
-	levels(out) <- levels(x)
-	names(out) <- ln		
+	out <- .copyWithProperties(x)	
 	
 	if ( canProcessInMemory(x, 3)) {
 
@@ -181,7 +177,6 @@ function(x, mask, filename="", inverse=FALSE, maskvalue=NA, updatevalue=NA, upda
 
 		pbClose(pb)
 		out <- writeStop(out)
-		names(out) <- ln		
 		return(out)
 	}
 }
@@ -195,9 +190,8 @@ function(x, mask, filename="", inverse=FALSE, maskvalue=NA, updatevalue=NA, upda
 	maskvalue <- maskvalue[1]
 	updatevalue <- updatevalue[1]
 	
-	out <- brick(x, values=FALSE)
-	names(out) <- ln <- names(x)
-	levels(out) <- levels(x)
+	out <- .copyWithProperties(x)	
+
 	
 	if (canProcessInMemory(x, nlayers(x)+4)) {
 
@@ -353,7 +347,6 @@ function(x, mask, filename="", inverse=FALSE, maskvalue=NA, updatevalue=NA, upda
 		}
 		pbClose(pb)
 		out <- writeStop(out)
-		names(out) <- ln
 		return(out)
 	}
 }

@@ -49,40 +49,44 @@ getData <- function(name='GADM', download=TRUE, path='', ...) {
 }
 
 ccodes <- function() {
-	path <- paste(system.file(package="raster"), "/external", sep='')
-	d <- utils::read.csv(paste(path, "/countries.csv", sep=""), stringsAsFactors=FALSE, encoding="UTF-8")
-	return(as.matrix(d))
+	path <- system.file(package="raster")
+	#d <- utils::read.csv(paste(path, "/external/countries.csv", sep=""), stringsAsFactors=FALSE, encoding="UTF-8")
+	readRDS(file.path(path, "external/countries.rds"))
 }
 
 
 .getCountry <- function(country='') {
 	country <- toupper(trim(country[1]))
-#	if (.nchar(country) < 3) {
-#		stop('provide a 3 letter ISO country code')
-#	}
-	cs <- ccodes()
-	cs <- toupper(cs)
 
-	iso3 <- substr(country, 1, 3)
-	if (iso3 %in% cs[,2]) {
-		return(iso3)
-	} else {
-		iso2 <- substr(country, 1, 2)
-		if (iso2 %in% cs[,3]) {
-			i <- which(country==cs[,3])
-			return( cs[i,2] )
-		} else if (country %in% cs[,1]) {
-			i <- which(country==cs[,1])
-			return( cs[i,2] )
-		} else if (country %in% cs[,4]) {
-			i <- which(country==cs[,4])
-			return( cs[i,2] )
-		} else if (country %in% cs[,5]) {
-			i <- which(country==cs[,5])
-			return( cs[i,2] )
+	cs <- ccodes()
+	cs <- sapply(cs, toupper)
+	cs <- data.frame(cs, stringsAsFactors=FALSE)
+	nc <- nchar(country)
+
+	if (nc == 3) {
+		if (country %in% cs$ISO3) {
+			return(country)
 		} else {
-			stop('provide a valid name or 3 letter ISO country code; you can get a list with: getData("ISO3")')
+			stop('unknown country')
 		}
+	} else if (nc == 2) {
+		if (country %in% cs$ISO2) {
+			i <- which(country==cs$ISO2)
+			return( cs$ISO3[i] )
+		} else {
+			stop('unknown country')
+		}
+	} else if (country %in% cs[,1]) {
+		i <- which(country==cs[,1])
+		return( cs$ISO3[i] )
+	} else if (country %in% cs[,4]) {
+		i <- which(country==cs[,4])
+		return( cs$ISO3[i] )
+	} else if (country %in% cs[,5]) {
+		i <- which(country==cs[,5])
+		return( cs$ISO3[i] )
+	} else {
+		stop('provide a valid name name or 3 letter ISO country code; you can get a list with "ccodes()"')
 	}
 }
 

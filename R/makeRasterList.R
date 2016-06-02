@@ -61,3 +61,10 @@
 	return(x)
 }
 
+
+setMethod('as.list', signature(x='Raster'), 
+function(x, ...) {
+	.makeRasterList(x, ...)
+}
+)
+

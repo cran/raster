@@ -4,13 +4,13 @@
 # Licence GPL v3
 
 if (!isGeneric("distance")) {
-	setGeneric("distance", function(x, ...)
+	setGeneric("distance", function(x, y, ...)
 		standardGeneric("distance"))
 }	
 
 
-setMethod('distance', signature(x='RasterLayer'), 
-function(x, filename='', doEdge=TRUE, ...) {
+setMethod('distance', signature(x='RasterLayer', y='missing'), 
+function(x, y, filename='', doEdge=TRUE, ...) {
 	if (doEdge) {
 		r <- boundaries(x, classes=FALSE, type='inner', progress=.progress(...)) 
 		pts <- try(  rasterToPoints(r, fun=function(z){ z>0 } )[,1:2, drop=FALSE] )
@@ -75,6 +75,25 @@ function(x, filename='', doEdge=TRUE, ...) {
 	pbClose(pb)
 	out <- writeStop(out)
 	return(out)
+}
+)
+
+
+setMethod('distance', signature(x='RasterLayer', y='RasterLayer'), 
+function(x, y, ...) {
+	stats::dist(as.matrix(stack(x, y)))
+}
+)
+
+setMethod('distance', signature(x='Spatial', y='Spatial'), 
+function(x, y, ...) {
+	if (!requireNamespace("rgeos")) {
+		stop('This function needs the rgeos package to be available')
+	} 
+	stopifnot(inherits(class(x), 'SpatialVector'))
+	stopifnot(inherits(class(y), 'SpatialVector'))	
+	d <- rgeos::gDistance(x, y, byid=TRUE)
+	apply(d, 1, min)
 }
 )
 

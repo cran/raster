@@ -2,7 +2,7 @@
 // Robert Hijmans, October 2011
 
 #define USING_R 1
-#include "S.h" 
+#include "R.h" 
 
 #ifdef USING_R
 # include <R.h>

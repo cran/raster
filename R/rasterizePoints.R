@@ -38,7 +38,12 @@
 		} else {
 			if (na.rm) {
 				if (fun == 'first') {
-					fun <- function(x, ...) { stats::na.omit(x[1]) }
+					fun <- function(x, ...) { 
+						# stats::na.omit(x[1]) 
+						# fix by Daniel Schlapfer
+							stats::na.omit(x)[1]
+						}
+						
 				} else if (fun == 'last') {
 					fun <- function(x, ...) { x <- stats::na.omit(x); x[length(x)] }
 				} else if (fun == 'count') {
@@ -48,7 +53,17 @@
 				if (fun == 'first') {
 					fun <- function(x, ...) { x[1] }
 				} else if (fun == 'last') {
-					fun <- function(x, ...) { x[length(x)] }
+					fun <- function(x, ...) { 
+						# x[length(x)] 
+						# fix by Daniel Schlapfer
+						x <- stats::na.omit(x)
+						if (length(x) > 0) {
+							x[length(x)]
+						} else { 
+							NA
+						}
+
+					}
 				} else if (fun == 'count') {
 					fun <- function(x, ...) length(x)
 				}

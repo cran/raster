@@ -17,8 +17,9 @@ beginCluster <- function(n, type='SOCK', nice, exclude=NULL) {
 	}
 
 	if (missing(n)) {
-		n <- .detectCores()
-		message(n, 'cores detected')
+		n <- parallel::detectCores()
+		message(n, ' cores detected, using ', n-1)
+		n <- n-1
 	}
 
 #	if (missing(type)) {

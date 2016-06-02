@@ -18,7 +18,7 @@
 
 
 
-Moran <- function(x, w=matrix(1,3,3) ) {
+Moran <- function(x, w=matrix(c(1,1,1,1,0,1,1,1,1),3,3) ) {
 
 	z <- x - cellStats(x, mean)
 	wZiZj <- focal(z, w=w, fun='sum', na.rm=TRUE, pad=TRUE)
@@ -41,7 +41,7 @@ Moran <- function(x, w=matrix(1,3,3) ) {
 }
 
 
-MoranLocal <- function(x, w=matrix(1,3,3)) { 
+MoranLocal <- function(x, w=matrix(c(1,1,1,1,0,1,1,1,1),3,3)) { 
 	
 	z  <- x - cellStats(x, mean) 
 	#weights

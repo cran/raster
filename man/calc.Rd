@@ -114,11 +114,8 @@ rs4 <- calc(s, fun=function(x){x[1]+x[2]*x[3]})
 
 # create data
 r <- raster(nrow=10, ncol=10)
-s1 <- s2<- list()
-for (i in 1:12) {
-	s1[i] <- setValues(r, rnorm(ncell(r), i, 3) )
-	s2[i] <- setValues(r, rnorm(ncell(r), i, 3) )
-}
+s1 <- lapply(1:12, function(i) setValues(r, rnorm(ncell(r), i, 3)))
+s2 <- lapply(1:12, function(i) setValues(r, rnorm(ncell(r), i, 3)))
 s1 <- stack(s1)
 s2 <- stack(s2)
 

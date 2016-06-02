@@ -19,9 +19,9 @@ If a single mutli-layer object is provided, its layers are treated as individual
 }
 
 \usage{
-\S4method{overlay}{Raster,Raster}(x, y, ..., fun, filename="", recycle=TRUE)
+\S4method{overlay}{Raster,Raster}(x, y, ..., fun, filename="", recycle=TRUE, forcefun=FALSE)
 
-\S4method{overlay}{Raster,missing}(x, y, ..., fun, filename="", unstack=TRUE)
+\S4method{overlay}{Raster,missing}(x, y, ..., fun, filename="", unstack=TRUE, forcefun=FALSE)
 }
 
 \arguments{
@@ -32,6 +32,7 @@ If a single mutli-layer object is provided, its layers are treated as individual
   \item{filename}{Character. Output filename (optional) }
   \item{recycle}{Logical. Should layers from Raster objects with fewer layers be recycled?}  
   \item{unstack}{Logical. Should layers be ustacked before computation (i.e. does the \code{fun} refer to individual layers in a multilayer object)?}  
+  \item{forcefun}{Boolean. If \code{TRUE}, overlay will not attempt to internally use apply (it is rarely necessary to use this argument)}
 }
 
 

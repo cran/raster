@@ -93,15 +93,16 @@ deratify <- function(x, att=NULL, layer=1, complete=FALSE, drop=TRUE, fun='mean'
 			levels(x) <- .unweightRAT(RAT, fun)
 		}
 	} else if (NCOL(RAT) == 1) {
-		warning('this layer already has a single factor level (use "complete=TRUE" to remove it)')
-		return(x)
+		if (complete) {
+			x@data@isfactor <- FALSE
+			x@data@attributes <- list()
+			return(x)
+		} else {
+			warning('this layer already has a single factor level (use "complete=TRUE" to remove it)')
+			return(x)
+		}
 	}
 	
-	if (complete) {
-		x@data@isfactor <- FALSE
-		x@data@attributes <- list()
-		return(x)
-	}
 	
 	nms <- colnames(RAT)
 	if (!is.null(att)) {

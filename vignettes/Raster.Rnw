@@ -333,7 +333,7 @@ as.matrix(y)
 
 \subsection{Focal functions}
 
-There are three focal (neighorhood) functions: {\bf focal}, {\bf focalFilter}, {\bf focalNA}. These functions currently only work for RasterLayer objects. They make a computation using values in a neighborhood of cells around a focal cell, and putting the result in the focal cell of the output RasterLayer. With {\bf focal}, the neighborhood can only be a rectangle. With {\bf focalFilter}, the neighborhood is a user-defined a matrix of weights and could approximate any shape by giving some cells zero weight. The {\bf focalNA} function only computes new values for cells that are \NA in the input RasterLayer.
+The {\bf focal} function currently only works for (single layer) RasterLayer objects. It uses values in a neighborhood of cells around a focal cell, and computes a value that is stored in the focal cell of the output RasterLayer. The neighborhood is a user-defined a matrix of weights and could approximate any shape by giving some cells zero weight. It is possible to only compute new values for cells that are \NA in the input RasterLayer.
 
 
 \subsection{Distance}
@@ -341,7 +341,7 @@ There are three focal (neighorhood) functions: {\bf focal}, {\bf focalFilter}, {
 There are a number of distance related functions. {\bf distance} computes the shortest distance to cells that are not \NA. {\bf pointDistance} computes the shortest distance to any point in a set of points. {\bf gridDistance} computes the distance when following grid cells that can be traversed (e.g. excluding water bodies). {\bf direction} computes the direction towards (or from) the nearest cell that is not \NA. {\bf adjacency} determines which cells are adjacent to other cells, and {\bf pointDistance} computes distance between points. See the {\bf gdistance} package for more advanced distance calculations (cost distance, resistance distance)
 
 \subsection{Spatial configuration}
-Function {\bf clump} identifies groups of cells that are connected. {\bf edge} identifies edges, that is, transitions between cell values. {\bf area} computes the size of each grid cell (for unprojected rasters), this may be useful to, e.g. compute the area covered by a certain class on a longitude/latitude raster. 
+Function {\bf clump} identifies groups of cells that are connected. {\bf boundaries} identifies edges, that is, transitions between cell values. {\bf area} computes the size of each grid cell (for unprojected rasters), this may be useful to, e.g. compute the area covered by a certain class on a longitude/latitude raster. 
 
 <<raster-7>>=
 r <- raster(nrow=45, ncol=90)

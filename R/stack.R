@@ -140,14 +140,14 @@ function(x, bands=NULL, native=FALSE, RAT=TRUE, ...) {
 		if (is.character(x[[i]])) {
 			if (!is.null(bands)) {
 				for (b in bands) {
-					r[j] <- raster(x[[i]], band=b, native=native, RAT=RAT, ...)
+					r[[j]] <- raster(x[[i]], band=b, native=native, RAT=RAT, ...)
 					if (namesFromList) {
 						names(r[[j]]) <- paste(lstnames[i], '_', b, sep='')
 					}
 					j <- j + 1
 				}
 			} else {
-				r[j] <- raster(x[[i]], band=1, native=native, RAT=RAT, ...)
+				r[[j]] <- raster(x[[i]], band=1, native=native, RAT=RAT, ...)
 				bds <- nbands(r[[j]])
 
 				if (namesFromList) {
@@ -160,7 +160,7 @@ function(x, bands=NULL, native=FALSE, RAT=TRUE, ...) {
 				j <- j + 1
 				if (bds > 1) {
 					for (b in 2:bds) {
-						r[j] <- raster(x[[i]], band=b, native=native, RAT=RAT, ...)
+						r[[j]] <- raster(x[[i]], band=b, native=native, RAT=RAT, ...)
 							
 						if (namesFromList) {
 							names(r[[j]]) <- paste(lstnames[i], '_', b, sep='')
@@ -186,7 +186,7 @@ function(x, bands=NULL, native=FALSE, RAT=TRUE, ...) {
 					j <- j + nlayers(x[[i]])
 			#	}
 			} else {
-				r[j] <- x[[i]]
+				r[[j]] <- x[[i]]
 				if (namesFromList) {
 					names(r[[j]]) <- lstnames[i]
 				}

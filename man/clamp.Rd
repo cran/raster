@@ -2,6 +2,7 @@
 
 \alias{clamp}
 \alias{clamp,Raster-method}
+\alias{clamp,numeric-method}
 
 \title{Clamp values}
 
@@ -11,10 +12,11 @@ Clamp values to a mininum and maximum value. That is, all values below the lower
 
 \usage{
 \S4method{clamp}{Raster}(x, lower=-Inf, upper=Inf, useValues=TRUE, filename="", ...)
+\S4method{clamp}{numeric}(x, lower=-Inf, upper=Inf, ...)
 }
 
 \arguments{
-  \item{x}{RasterLayer}
+  \item{x}{RasterLayer, or numeric vector}
   \item{lower}{numeric. lowest value}
   \item{upper}{numeric. highest value}
   \item{useValues}{logical. If \code{FALSE} values outside the clamping range become \code{NA}, if \code{TRUE}, they get the extreme values}

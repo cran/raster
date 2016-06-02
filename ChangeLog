@@ -12,6 +12,12 @@ Fix lines falling between the cracks in extract (calling rasterzeLines): https:/
 allow setting a 'spatial window'
 
 --- current version
+new functions for Raster objects: as.integer, as.list
+new functions whiches.min and whiches.max (to get all layers that are which.min/max)
+added 'forcefun' argument to overlay
+atan2 now available for all Raster objects
+
+--- 19-December-2015, version: 2.5-2
 Big fixes:
 The order of the layers returned by stackApply was only as expected of the indices were sorted from 1 to n. Reported by Mark Payne
 rasterize(..., getCover=TRUE) again did not work properly. Reported by Pascal Title
@@ -26,6 +32,7 @@ Minor bug fixes:
 in rasterFromXYZ (by Gareth Davies)
 in crop (by Florian Detsch)
 in stack (http://stackoverflow.com/questions/32564932/r-import-two-or-more-selected-bands-from-an-image-stack)
+in sampleStratified (by Antoine Stevens)
 
 --- 8-September-2015, version: 2.4-20
 Andrei Mirt send a bug fix for corLocal

@@ -47,8 +47,9 @@ function(x, size, exp=10, na.rm=TRUE, xy=FALSE, ext=NULL, sp=FALSE, ...) {
 				if (nrow(y) > size) {
 					y <- y[sample(nrow(y), size),  ,drop=FALSE]
 				}
-				ys[[i]] <- y
 			}
+			# bug fix by Antoine Stevens
+			ys[[i]] <- y
 		}
 		
 	} else {

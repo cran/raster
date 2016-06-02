@@ -12,7 +12,7 @@ Merge Raster* objects
 }
 
 \description{
-Merge Raster* objects to form a new Raster object with a larger spatial extent. If objects overlap, the values get priority in the same order as the arguments, but \code{NA} values are ignored (except when \code{overlap=FALSE})
+Merge Raster* objects to form a new Raster object with a larger spatial extent. If objects overlap, the values get priority in the same order as the arguments, but \code{NA} values are ignored (except when \code{overlap=FALSE}). See \code{\link[raster]{subs}} to merge a \code{Raster*} object and a \code{data.frame}.
 }
 
 \usage{

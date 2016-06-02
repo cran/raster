@@ -64,7 +64,7 @@ setMethod('freq', signature(x='RasterStackBrick'),
 		
 		pb <- pbCreate(nl, progress=progress, label='freq')	
 		for (i in 1:nl) { 
-			res[[i]] <- freq( raster(x, i), useNA=useNA, progress='', ...) 
+			res[[i]] <- freq( raster(x, i), digits=digits, useNA=useNA, progress='', ...) 
 			pbStep(pb, i)
 		}
 		pbClose(pb)

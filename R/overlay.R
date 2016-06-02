@@ -12,7 +12,7 @@ if (!isGeneric('overlay')) {
 
 		
 setMethod('overlay', signature(x='Raster', y='Raster'), 
-function(x, y, ..., fun, filename="", recycle=TRUE){ 
+function(x, y, ..., fun, filename="", recycle=TRUE, forcefun=FALSE){ 
 	if (missing(fun)) { 
 		stop("you must supply a function 'fun'.\nE.g., 'fun=function(x,y){return(x+y)} or fun=sum'") 
 	}
@@ -27,6 +27,7 @@ function(x, y, ..., fun, filename="", recycle=TRUE){
 	lst$fun <- fun
 	lst$filename <- filename
 	lst$recycle <- recycle
+	lst$forcefun <- forcefun
 	lst$x <- x
 	do.call(.overlayList, lst)
 }
@@ -34,20 +35,19 @@ function(x, y, ..., fun, filename="", recycle=TRUE){
 
 
 setMethod('overlay', signature(x='Raster', y='missing'), 
-function(x, y, ..., fun, filename="", unstack=TRUE){ 
+function(x, y, ..., fun, filename="", unstack=TRUE, forcefun=FALSE){ 
 	if (missing(fun)) { 
 		stop("you must supply a function 'fun'.\nE.g., 'fun=function(x,y){return(x+y)} or fun=sum'") 
 	}
 	
 	x <- .makeRasterList(x, unstack=unstack)	
-	.overlayList(x, fun=fun, filename=filename, ...)
+	.overlayList(x, fun=fun, filename=filename, forcefun=forcefun, ...)
 }
 )
 
 
-.overlayList <- function(x, fun, filename="", recycle=TRUE, ...){ 
-	
-	
+.overlayList <- function(x, fun, filename="", recycle=TRUE, forcefun=FALSE, ...){ 
+
 	ln <- length(x)
 	if (ln < 1) { 
 		stop('no Rasters') 
@@ -73,7 +73,8 @@ function(x, y, ..., fun, filename="", unstack=TRUE){
 	options('warn'= w) 
 
 	test1 <- try ( apply(testmat, 1, fun) , silent=TRUE )
-	if (class(test1) != "try-error") {
+	
+	if (class(test1) != "try-error" & (!forcefun)) {
 		doapply <- TRUE
 		if (! is.null(dim(test1))) {
 			test1 <- t(test1)

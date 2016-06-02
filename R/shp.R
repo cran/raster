@@ -13,7 +13,7 @@ if (!isGeneric("shapefile")) {
 setMethod('shapefile', signature(x='character'), 
 	function(x, stringsAsFactors=FALSE, verbose=FALSE, warnPRJ=TRUE, ...) {
 		.requireRgdal() 
-		x <- normalizePath(x, winslash = "/", mustWork = TRUE)
+		x <- normalizePath(x, winslash = "/", mustWork = FALSE)
 		stopifnot(file.exists(extension(x, '.shp')))
 		stopifnot(file.exists(extension(x, '.shx')))
 		stopifnot(file.exists(extension(x, '.dbf')))

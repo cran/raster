@@ -17,11 +17,10 @@ function(x) {
 
 setMethod("unstack", signature(x='RasterBrick'), 
 function(x) {
-	rlist <- list()
-	if (nlayers(x) == 0) { return(rlist) }
-	for (i in 1:nlayers(x)) {
-		rlist[i] <- raster(x, i)
+	if (nlayers(x) == 0) { 
+		list() 
+	} else {
+		lapply(1:nlayers(x), function(i) raster(x, i))
 	}
-	return(rlist)
 } )
 
