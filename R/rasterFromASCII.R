@@ -14,7 +14,7 @@
 		spl <- unlist(strsplit(s, ''), use.names = FALSE)
 		pos <- which(spl==' ')[1]
 		first <- substr(s, 1, (pos-1))
-		second <- substr(s, (pos+1), .nchar(s))
+		second <- substr(s, (pos+1), nchar(s))
 		return(trim(c(first, second)))
 	}
 	

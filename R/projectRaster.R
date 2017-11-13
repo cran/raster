@@ -59,9 +59,10 @@ projectExtent <- function(object, crs) {
 	# added for circumpolar data:
 	if (nrow(object) > 75 & ncol(object) > 75) {
 	
-		rows <- c(seq(min(nrow(object), 25), nrow(object), by=50))
-		cols <- c(seq(min(ncol(object), 25), ncol(object), by=50))
-		xy5 <- xyFromCell(object, cellFromRowColCombine(object, rows, cols))
+		xy5 <- sampleRegular(object, 500, xy=TRUE)
+#		rows <- c(seq(min(nrow(object), 25), nrow(object), by=50))
+#		cols <- c(seq(min(ncol(object), 25), ncol(object), by=50))
+#		xy5 <- xyFromCell(object, cellFromRowColCombine(object, rows, cols))
 		
 		xy <- rbind(xy1, xy2, xy3, xy4, xy5)
 		
@@ -99,21 +100,21 @@ projectExtent <- function(object, crs) {
 }
 
 
-.computeRes <- function(raster, crs) {
+.computeRes <- function(obj, crs) {
 
-	x <- xmin(raster) + 0.5 * (xmax(raster) - xmin(raster))
-	y <- ymin(raster) + 0.5 * (ymax(raster) - ymin(raster))
-	res <- res(raster)
+	x <- xmin(obj) + 0.5 * (xmax(obj) - xmin(obj))
+	y <- ymin(obj) + 0.5 * (ymax(obj) - ymin(obj))
+	res <- res(obj)
 	x1 <- x - 0.5 * res[1]
 	x2 <- x + 0.5 * res[1]
 	y1 <- y - 0.5 * res[2]
 	y2 <- y + 0.5 * res[2]
 	xy <- cbind(c(x1, x2, x, x), c(y, y, y1, y2))
-	pXY <- rgdal::rawTransform( projection(raster), crs, nrow(xy), xy[,1], xy[,2] )
+	pXY <- rgdal::rawTransform( projection(obj), crs, nrow(xy), xy[,1], xy[,2] )
 	pXY <- cbind(pXY[[1]], pXY[[2]])
 	out <- c((pXY[2,1] - pXY[1,1]), (pXY[4,2] - pXY[3,2]))
-	if (any(is.na(res))) {
-		if (isLonLat(raster)) {
+	if (any(is.na(out))) {
+		if (isLonLat(obj)) {
 			out <- pointDistance(cbind(x1, y1), cbind(x2, y2), lonlat=TRUE)
 			out <- c(out, out)
 		} else {
@@ -139,7 +140,6 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 
 	.requireRgdal()
 
-	
 	methods::validObject( projection(from, asText=FALSE) )
 	projfrom <- projection(from)
 	if (is.na(projfrom)) { 

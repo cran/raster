@@ -4,6 +4,7 @@
 \alias{extent,Extent-method}
 \alias{extent,BasicRaster-method}
 \alias{extent,Spatial-method}
+\alias{extent,sf-method}
 \alias{extent,matrix-method}
 \alias{extent,numeric-method}
 \alias{extent,list-method}

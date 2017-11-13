@@ -16,3 +16,16 @@ function(x, y, ...){
 	y <- round(y)
 	return( .cellValues(x, y, ...) )
 })
+
+
+setMethod('extract', signature(x='Raster', y='sf'), 
+function(x, y, ...){ 
+	y <- .sf2sp(y)
+	#if (is.list(x)) {}
+	extract(x, y, ...)
+}
+)
+
+
+
+

@@ -9,6 +9,7 @@
 \alias{extract,Raster,SpatialPoints-method}
 \alias{extract,Raster,SpatialLines-method}
 \alias{extract,Raster,SpatialPolygons-method}
+\alias{extract,Raster,sf-method}
 \alias{extract,Raster,Extent-method}
 \alias{extract,SpatialPolygons,SpatialPoints-method}
 \alias{extract,SpatialPolygons,data.frame-method}

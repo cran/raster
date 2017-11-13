@@ -10,7 +10,7 @@
 \description{
 Make a Raster object with predictions from a fitted model object (for example, obtained with \code{lm}, \code{glm}). The first argument is a Raster object with the independent (predictor) variables. The \code{\link{names}} in the Raster object should exactly match those expected by the model. This will be the case if the same Raster object was used (via \code{extract}) to obtain the values to fit the model (see the example). Any type of model (e.g. glm, gam, randomForest) for which a predict method has been implemented (or can be implemented) can be used. 
 
-This approach (predict a fitted model to raster data) is commonly used in remote sensing (for the classification of satellite images) and in ecology, for \href{http://cran.r-project.org/web/packages/dismo/vignettes/sdm.pdf}{species distribution modeling}.
+This approach (predict a fitted model to raster data) is commonly used in remote sensing (for the classification of satellite images) and in ecology, for species distribution modeling.
 }
 
 \usage{
@@ -47,7 +47,7 @@ RasterLayer or RasterBrick
 }
 
 \note{
-There is a lot of general information about the use of the predict function in the  \href{http://cran.r-project.org/web/packages/dismo/vignettes/sdm.pdf}{species distribution modeling} vignette of the dismo package.
+For more on the use of the predict function see this resource on \href{http://www.rspatial.org/sdm/}{species distribution modeling}.
 }
 
 \examples{

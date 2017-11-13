@@ -31,7 +31,7 @@ rasterToPoints <- function(x, fun=NULL, spatial=FALSE, ...) {
 		
 		xyv <- cbind(xyFromCell(x, 1:ncell(x)), getValues(x))
 		if (nl > 1) {
-			notna <- apply(xyv[,3:ncol(xyv)], 1, function(x){ sum(is.na(x)) < length(x) })
+			notna <- apply(xyv[,3:ncol(xyv), drop=FALSE], 1, function(x){ sum(is.na(x)) < length(x) })
 			xyv <- xyv[notna, ,drop=FALSE]
 		} else {
 			xyv <- stats::na.omit(xyv)
@@ -81,10 +81,18 @@ rasterToPoints <- function(x, fun=NULL, spatial=FALSE, ...) {
 	}
 	
 	if (spatial) {
-		v <- data.frame(xyv[ ,-c(1:2), drop=FALSE])
-		colnames(v) <- laynam
 		crs <- projection(x, asText=FALSE)
-		return( SpatialPointsDataFrame(coords=xyv[,1:2,drop=FALSE], data=v, proj4string=crs ) )
+		if (nrow(xyv) == 0) {
+			xyv <- rbind(xyv, 0)
+			v <- data.frame(xyv[ ,-c(1:2), drop=FALSE])
+			colnames(v) <- laynam
+			s <- SpatialPointsDataFrame(coords=xyv[,1:2,drop=FALSE], data=v, proj4string=crs )
+			return(s[0,])
+		} else {
+			v <- data.frame(xyv[ ,-c(1:2), drop=FALSE])
+			colnames(v) <- laynam
+			return( SpatialPointsDataFrame(coords=xyv[,1:2,drop=FALSE], data=v, proj4string=crs ) )
+		}
 		
 	} else {
 		colnames(xyv)[3:ncol(xyv)] <- laynam

@@ -11,7 +11,7 @@
 #include "util.h"
 
 
-SEXP reclass(SEXP d, SEXP r, SEXP low, SEXP right, SEXP onlyNA, SEXP valNA) {
+SEXP _reclass(SEXP d, SEXP r, SEXP low, SEXP right, SEXP onlyNA, SEXP valNA) {
 					
 	R_len_t i, j;
 	SEXP val;

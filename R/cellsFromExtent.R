@@ -28,3 +28,17 @@ cellsFromExtent <- function(object, extent, expand=FALSE) {
 	return(cellFromRowColCombine(object, srow:erow, scol:ecol))
 }
 
+
+# By Mike Sumner
+extentFromCells <- function (object, cells) {
+	cells <- stats::na.omit(unique(round(cells)))
+	cells <- cells[cells > 0 & cells <= ncell(object)]
+	if (length(cells) < 1) {
+		stop('no valid cells')
+	}
+	r <- res(object)
+    dx <- r[1] * c(-0.5, 0.5)
+    dy <- r[2] * c(-0.5, 0.5)
+    extent(range(xFromCell(object, cells)) + dx, range(yFromCell(object, cells)) + dy)
+}
+

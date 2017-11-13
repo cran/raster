@@ -1,4 +1,5 @@
 #include <Rcpp.h>
+using namespace std;
 using namespace Rcpp;
 
 // xy: num[1:n, 1:2]

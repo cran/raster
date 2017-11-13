@@ -16,7 +16,7 @@ Or remove the whitespace before or after a string of characters (or a matrix, or
 
 \usage{
 \S4method{trim}{Raster}(x, padding=0, values=NA, filename='', ...)
-\S4method{trim}{character}(x, ...)
+\S4method{trim}{character}(x, internal=FALSE, ...)
 }
 
 \arguments{
@@ -24,6 +24,7 @@ Or remove the whitespace before or after a string of characters (or a matrix, or
   \item{values}{numeric. Value(s) based on which a Raster* should be trimmed}
   \item{padding}{integer. Number of outer rows/columns to keep}
   \item{filename}{character. Optional output filename}
+  \item{internal}{logical. If \code{TRUE}, sequential internal spaces are replaced by a single space}
   \item{...}{If \code{x} is a Raster* object: additional arguments as for \code{\link{writeRaster}}}
 }
 

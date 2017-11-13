@@ -36,7 +36,9 @@
 			r <- x@data@attributes[[1]]
 			cat("ratnames=", paste(colnames(r), collapse=':'), "\n", file = thefile, sep='')
 			cat("rattypes=", paste(sapply(r, class), collapse=':'), "\n", file = thefile, sep='')
-			cat("ratvalues=", paste(trim(as.character(as.matrix(r))), collapse=':'), "\n", file = thefile, sep='')
+			v <- trim(as.character(as.matrix(r)))
+			v <- gsub(":", "~^colon^~", v)
+			cat("ratvalues=", paste(v, collapse=':'), "\n", file = thefile, sep='')
 		} 
 		if (length(x@legend@colortable) > 1) {
 			cat("colortable=", paste(x@legend@colortable, collapse=':'), "\n", file = thefile, sep='')

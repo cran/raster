@@ -1,3 +1,4 @@
+
 # Author: Robert J. Hijmans
 # Date :  June 2008
 # Version 1.0
@@ -11,7 +12,7 @@ if (!isGeneric("getValuesBlock")) {
 
 
 setMethod('getValuesBlock', signature(x='RasterStack'), 
-	function(x, row=1, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs) {
+	function(x, row=1, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs, ...) {
 		stopifnot(hasValues(x))
 		stopifnot(row <= x@nrows)
 		stopifnot(col <= x@ncols)
@@ -52,7 +53,7 @@ setMethod('getValuesBlock', signature(x='RasterStack'),
 		}
 		
 		for (i in 1:nlyrs) {
-			xx <- x@layers[[lyrs[i]]]
+			xx <- x@layers[[i]]
 			if ( inMemory(xx) ) {			
 				res[,i] <- xx@data@values[cells]		
 			} else {
@@ -68,7 +69,7 @@ setMethod('getValuesBlock', signature(x='RasterStack'),
 
 
 setMethod('getValuesBlock', signature(x='RasterBrick'), 
-	function(x, row=1, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs) {
+	function(x, row=1, nrows=1, col=1, ncols=(ncol(x)-col+1), lyrs, ...) {
 		stopifnot(hasValues(x))
 		row <- max(1, round(row))
 		col <- max(1, round(col))
@@ -123,7 +124,7 @@ setMethod('getValuesBlock', signature(x='RasterBrick'),
 
 
 setMethod('getValuesBlock', signature(x='RasterLayer'), 
- 	function(x, row=1, nrows=1, col=1, ncols=(ncol(x)-col+1), format='') {
+ 	function(x, row=1, nrows=1, col=1, ncols=(ncol(x)-col+1), format='', ...) {
 		
 		row <- max(1, min(x@nrows, round(row[1])))
 		lastrow <- min(x@nrows, row + round(nrows[1]) - 1)
@@ -151,7 +152,10 @@ setMethod('getValuesBlock', signature(x='RasterLayer'),
 			res <- rep(NA, nrows * ncols)			
 		}
 	
-		if (format=='matrix') {
+		if (format=='m') {
+			res <- matrix(res)
+		
+		} else if (format=='matrix') {
 			res = matrix(res, nrow=nrows , ncol=ncols, byrow=TRUE )
 			colnames(res) <- col:lastcol
 			rownames(res) <- row:lastrow
@@ -165,7 +169,7 @@ setMethod('getValuesBlock', signature(x='RasterLayer'),
 
 
 setMethod('getValuesBlock', signature(x='RasterLayerSparse'), 
- 	function(x=1, row, nrows=1, col=1, ncols=(ncol(x)-col+1), format='') {
+ 	function(x=1, row, nrows=1, col=1, ncols=(ncol(x)-col+1), format='', ...) {
 		
 		row <- max(1, min(x@nrows, round(row[1])))
 		lastrow <- min(x@nrows, row + round(nrows[1]) - 1)

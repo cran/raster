@@ -15,7 +15,7 @@
 \title{Set values of a Raster object}
 
 \description{
-You can use the setValues function to assign values to a Raster* object. While you can access the 'values' slot of the objects directly, you would do that at your own peril because when setting values, multiple slots need to be changed; which is what these functions do. 
+Assign (new) values to a Raster* object.
 }
 
 \usage{
@@ -46,6 +46,12 @@ values(x) <- value
 \value{
 a Raster* object
 }
+
+
+\note{
+While you can access the 'values' slot of the objects directly, you would do that at your own peril because when setting values, multiple slots need to be changed; which is what setValues takes care of. 
+}
+ 
 
 
 \examples{ 

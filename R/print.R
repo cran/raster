@@ -65,48 +65,48 @@ setMethod ('print' , 'Spatial',
 
 .printSpatial <- function(x, ...) {
 	
-		cat('class       :' , class(x), '\n')
-		isRaster <- hasData <- FALSE
-		nc <- 0
-		if (.hasSlot(x, 'data')) {
-			hasData <- TRUE
-			nc <- ncol(x@data)
-		}
-		ln <- 1
-		if (inherits(x, 'SpatialPixels')) {
-			isRaster <- TRUE
-			cr <- x@grid@cells.dim
-			cat ('dimensions  : ', cr[2], ', ', cr[1], ', ', nrow(x@coords), ', ', nc, '  (nrow, ncol, npixels, nlayers)\n', sep="" ) 
-			cs <- x@grid@cellsize
-			cat ('resolution  : ', cs[1], ', ', cs[2], '  (x, y)\n', sep="")		
+	cat('class       :' , class(x), '\n')
+	isRaster <- hasData <- FALSE
+	nc <- 0
+	if (.hasSlot(x, 'data')) {
+		nc <- ncol(x@data)
+		hasData <- TRUE
+	}
+	ln <- 1
+	if (inherits(x, 'SpatialPixels')) {
+		isRaster <- TRUE
+		cr <- x@grid@cells.dim
+		cat ('dimensions  : ', cr[2], ', ', cr[1], ', ', nrow(x@coords), ', ', nc, '  (nrow, ncol, npixels, nlayers)\n', sep="" ) 
+		cs <- x@grid@cellsize
+		cat ('resolution  : ', cs[1], ', ', cs[2], '  (x, y)\n', sep="")		
 
-		} else if (inherits(x, 'SpatialGrid')) {
-			isRaster <- TRUE
-			cr <- x@grid@cells.dim
-			cat ('dimensions  : ', cr[2], ', ', cr[1], ', ', prod(cr), ', ', nc, '  (nrow, ncol, ncell, nlayers)\n', sep="" ) 
-			cs <- x@grid@cellsize
-			cat ('resolution  : ', cs[1], ', ', cs[2], '  (x, y)\n', sep="")		
-			
-		} else {
-			nf <- length(x)
-			cat('features    :' , nf, '\n')
+	} else if (inherits(x, 'SpatialGrid')) {
+		isRaster <- TRUE
+		cr <- x@grid@cells.dim
+		cat ('dimensions  : ', cr[2], ', ', cr[1], ', ', prod(cr), ', ', nc, '  (nrow, ncol, ncell, nlayers)\n', sep="" ) 
+		cs <- x@grid@cellsize
+		cat ('resolution  : ', cs[1], ', ', cs[2], '  (x, y)\n', sep="")		
+		
+	} else {
+		nf <- length(x)
+		cat('features    :' , nf, '\n')
+	}
+	
+	e <- bbox(x)
+	if (nf > 0) {
+		cat('extent      : ' , e[1,1], ', ', e[1,2], ', ', e[2,1], ', ', e[2,2], '  (xmin, xmax, ymin, ymax)\n', sep="")
+	}
+	
+	cat('coord. ref. :' , projection(x, TRUE), '\n')
+	
+	if (hasData) {
+		x <- x@data
+		maxnl <- 15
+		
+		if (! isRaster) {
+			cat('variables   : ', nc, '\n', sep="" ) 
 		}
-		
-		e <- bbox(x)
-		if (nf > 0) {
-			cat('extent      : ' , e[1,1], ', ', e[1,2], ', ', e[2,1], ', ', e[2,2], '  (xmin, xmax, ymin, ymax)\n', sep="")
-		}
-		
-		cat('coord. ref. :' , projection(x, TRUE), '\n')
-		
-		if (hasData) {
-			x <- x@data
-			
-			maxnl <- 15
-			
-			if (! isRaster) {
-				cat('variables   : ', nc, '\n', sep="" ) 
-			}
+		if (nc > 0) {
 			if (nc > maxnl) {
 				x <- x[, 1:maxnl]
 			}
@@ -126,7 +126,7 @@ setMethod ('print' , 'Spatial',
 				maxv <- c(maxv, '...')
 			}
 
-			w <- pmax(.nchar(ln), .nchar(minv), .nchar(maxv))
+			w <- pmax(nchar(ln), nchar(minv), nchar(maxv))
 			w[is.na(w)] <- 2
 			m <- rbind(ln, minv, maxv)
 			
@@ -136,11 +136,14 @@ setMethod ('print' , 'Spatial',
 			}
 
 			cat('names       :', paste(m[1,], collapse=', '), '\n')
-			if (nf > 0) {
+			if (nf > 1) {
 				cat('min values  :', paste(m[2,], collapse=', '), '\n')
 				cat('max values  :', paste(m[3,], collapse=', '), '\n')
+			} else if (nf == 1) {
+				cat('value       :', paste(m[2,], collapse=', '), '\n')			
 			}
-			
-		}
+		}	
+	}
 }
-	
+
+

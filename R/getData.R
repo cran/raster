@@ -96,10 +96,10 @@ ccodes <- function() {
 	if (path=='') {
 		path <- .dataloc()
 	} else {
-		if (substr(path, .nchar(path)-1, .nchar(path)) == '//' ) {
-			p <- substr(path, 1, .nchar(path)-2)		
-		} else if (substr(path, .nchar(path), .nchar(path)) == '/'  | substr(path, .nchar(path), .nchar(path)) == '\\') {
-			p <- substr(path, 1, .nchar(path)-1)
+		if (substr(path, nchar(path)-1, nchar(path)) == '//' ) {
+			p <- substr(path, 1, nchar(path)-2)		
+		} else if (substr(path, nchar(path), nchar(path)) == '/'  | substr(path, nchar(path), nchar(path)) == '\\') {
+			p <- substr(path, 1, nchar(path)-1)
 		} else {
 			p <- path
 		}
@@ -107,7 +107,7 @@ ccodes <- function() {
 			stop('path does not exist: ', path)
 		}
 	}
-	if (substr(path, .nchar(path), .nchar(path)) != '/' & substr(path, .nchar(path), .nchar(path)) != '\\') {
+	if (substr(path, nchar(path), nchar(path)) != '/' & substr(path, nchar(path), nchar(path)) != '\\') {
 		path <- paste(path, "/", sep="")
 	}
 	return(path)
@@ -205,7 +205,10 @@ ccodes <- function() {
 	stopifnot(rcp %in% rcps)
 	stopifnot(year %in% c(50, 70))
 	
-	m <- matrix(c(0,1,1,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,0,1,0,1,1,1,0,0,1,1,1,1,0,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1), ncol=4)
+	#m <- matrix(c(0,1,1,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,0,1,0,1,1,1,0,0,1,1,1,1,0,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1), ncol=4)
+	
+	m <- matrix(c(0,1,1,0,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,0,0,1,1,1,0,1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1), ncol=4)
+
 	i <- m[which(model==models), which(rcp==rcps)]
 	if (!i) {
 		warning('this combination of rcp and model is not available')
@@ -359,7 +362,7 @@ ccodes <- function() {
 	} else {
 		#patrn <- paste(country, '.', mskname, name, ".grd", sep="")
 		#f <- list.files(path, pattern=patrn)
-		f <- ff[substr(ff, .nchar(ff)-3, .nchar(ff)) == '.grd']
+		f <- ff[substr(ff, nchar(ff)-3, nchar(ff)) == '.grd']
 		if (length(f)==0) {
 			warning('something went wrong')
 			return(NULL)

@@ -21,11 +21,11 @@ double normalizeLonRad(double lon) {
 
 /* Convert degrees to radians */
 double toRad(double deg) {
-	return deg * 0.0174532925199433;
+	return( deg * 0.0174532925199433 );
 }
 
 double toDeg(double rad) {
-	return rad * 57.2957795130823 ;
+	return( rad * 57.2957795130823 );
 }
 
 

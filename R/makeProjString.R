@@ -11,7 +11,7 @@
 		prj <- CRS()
 	} else if (is.na(projs)) {
 		prj <- CRS()
-	} else if (.nchar(projs) < 3) { 
+	} else if (nchar(projs) < 3) { 
 		prj <- CRS()
 	} else {
 		projs <- trim(projs)

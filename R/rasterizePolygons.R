@@ -106,7 +106,7 @@
 			resxy <- rbind(resxy, xy)
 		}
 	}
-	return(resxy)
+	return((resxy))
 }
 
 
@@ -231,7 +231,7 @@
 	}
 	
 	if (! silent) { 
-		message('Found', npol, ' region(s) and ', cnt, ' polygon(s)') 
+		message('Found ', npol, ' region(s) and ', cnt, ' polygon(s)') 
 	}
 	
 	polinfo <- subset(polinfo, polinfo[,1] <= cnt, drop=FALSE)
@@ -284,10 +284,17 @@
 				
 				mypoly <- pollist[[subpol[i,1]]]
 				intersection <- .intersectLinePolygon(myline, mypoly@coords)
+				#if (nrow(intersection) %% 2 == 1) {
+				# this is a bit speculative
+				# not OK!
+				#	intersection <- unique(intersection)
+				#}
+
 				x <- sort(intersection[,1])
 				if (length(x) > 0) {
-					if ( sum(x[-length(x)] == x[-1]) > 0 ) {
-					# single node intersection going out of polygon ....
+					if ((nrow(intersection) %% 2 == 1) || ( sum(x[-length(x)] == x[-1]) > 0 )) {
+					# uneven number or duplicates
+					# e.g. single node intersection going out of polygon ....
 						spPnts <- SpatialPoints(xyFromCell(rstr, cellFromRowCol(rstr, rep(r, ncol(rstr)), 1:ncol(rstr))))
 						spPol <- SpatialPolygons(list(Polygons(list(mypoly), 1)))
 						over <- over(spPnts, spPol)
@@ -299,6 +306,7 @@
 						}
 						# print(paste('exit node intersection on row:', r))
 					} else {
+					
 						for (k in 1:round(nrow(intersection)/2)) {
 							l <- (k * 2) - 1		
 							x1 <- x[l]
@@ -318,7 +326,18 @@
 							x2a <- min(rxmx, max(rxmn, x2a))
 							col1 <- leftColFromX(rstr, x1a)
 							col2 <- rightColFromX(rstr, x2a)
-							if (col1 > col2) { next }
+							if (col1 > col2) { 
+								spPnts <- SpatialPoints(xyFromCell(rstr, cellFromRowCol(rstr, rep(r, ncol(rstr)), 1:ncol(rstr))))
+								spPol <- SpatialPolygons(list(Polygons(list(mypoly), 1)))
+								over <- over(spPnts, spPol)
+								if ( subpol[i, 5] == 1 ) {
+									holes[!is.na(over)] <- holes[!is.na(over)] - 1
+								} else {
+									rvtmp[!is.na(over)] <- subpol[i,4] 
+									holes[!is.na(over)] <- holes[!is.na(over)] + 1
+								}
+								next
+							}
 							if ( subpol[i, 5] == 1 ) {
 								holes[col1:col2] <- holes[col1:col2] - 1
 							} else {

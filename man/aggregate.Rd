@@ -16,9 +16,9 @@ Raster* objects:
 Aggregate a Raster* object to create a new RasterLayer or RasterBrick with a lower resolution (larger cells). 
 Aggregation groups rectangular areas to create larger cells. The value for the resulting cells is computed with a user-specified function. 
 
-SpatialPolygons:
+SpatialPolygon*:
 
-Aggregate ('dissolve') SpatialPolygons, optionally by combining polygons that have the same attributes for one or more variables.
+Aggregate a SpatialPolygon* object, optionally by combining polygons that have the same attributes for one or more variables. If the polygons touch or overlap, internal boundaries are optinally "dissolved".
 }
 
 \usage{
@@ -40,7 +40,7 @@ Aggregate ('dissolve') SpatialPolygons, optionally by combining polygons that ha
 
   \item{sums}{list with function(s) and variable(s) to summarize. This should be a list of lists in which each element of the main lists has two items. The first item is function (e.g. mean), the second element is a vector of column names (or indices) that need to summarize with that function. Be careful with character and factor variables (you can use, e.g. 'first' \code{function(x)x[1]} or 'last' \code{function(x)x[length(x)]} or \code{modal} for these variables}
   \item{vars}{deprecated. Same as \code{by}}  
-  \item{dissolve}{logical. If \code{TRUE} overlapping polygons are dissolved into single features (requires package rgeos)}  
+  \item{dissolve}{logical. If \code{TRUE} borders between touching or overlapping polygons are removed (requires package rgeos)}  
 }
 
 

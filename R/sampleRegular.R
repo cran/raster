@@ -13,7 +13,7 @@ if (!isGeneric("sampleRegular")) {
 setMethod('sampleRegular', signature(x='Raster'), 
 function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, useGDAL=FALSE, ...) {
 
-	stopifnot(hasValues(x))
+	stopifnot(hasValues(x) | isTRUE(xy))
 	
 	size <- round(size)
 	stopifnot(size > 0)
@@ -68,8 +68,8 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 		nc <- length(cols)
 	}
 	
-	
-	if (fromDisk(x) & useGDAL) {
+	hv <- hasValues(x)
+	if (fromDisk(x) & useGDAL & hv) {
 
 		if ( any(rotated | .driver(x, FALSE) != 'gdal') ) { 
 
@@ -178,7 +178,11 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 			ncol(outras) <- nc
 			nrow(outras) <- nr
 			xy <- xyFromCell(outras, 1:ncell(outras))
-			m <- .xyValues(x, xy)
+			if (hv) {
+				m <- .xyValues(x, xy)
+			} else {
+				m <- NA
+			}
 			
 		} else {
 			
@@ -192,7 +196,11 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 			
 			
 			cell <- cellFromRowCol(x, rep(rows, each=nc), rep(cols, times=nr))
-			m <- .cellValues(x, cell)
+			if (hv) {
+				m <- .cellValues(x, cell)
+			} else {
+				m <- NA
+			}
 
 			if (is.null(ext))  {
 				outras <- raster(x)
@@ -232,11 +240,18 @@ function( x, size, ext=NULL, cells=FALSE, xy=FALSE, asRaster=FALSE, sp=FALSE, us
 			m <- cbind(m, cell=cell)
 			nstart <- nstart + 1
 		} 
-		m <- cbind(m, .cellValues(x, cell))
-		colnames(m)[nstart:(nstart+nl-1)] <- names(x)
+		if (hv) {
+			m <- cbind(m, .cellValues(x, cell))
+			colnames(m)[nstart:(nstart+nl-1)] <- names(x)
+		} 
+		
 
 		if (sp) {
-			m <- SpatialPointsDataFrame(xyFromCell(x, cell), data.frame(m), proj4string=crs(x))
+			if (hv) {
+				m <- SpatialPointsDataFrame(xyFromCell(x, cell), data.frame(m), proj4string=crs(x))
+			} else {
+				m <- SpatialPoints(xyFromCell(x, cell), proj4string=crs(x))			
+			}
 		}
 		
 		return(m)

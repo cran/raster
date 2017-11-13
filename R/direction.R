@@ -19,9 +19,6 @@ function(x, filename='', degrees=FALSE, from=FALSE, doEdge=FALSE, ...) {
 	} else { 
 		longlat=FALSE 
 	}
-	longlat <- as.integer(longlat)
-	degrees <- as.integer(degrees)
-	from <- as.integer(from)
 	
 	if (doEdge) {
 		r <- boundaries(x, classes=FALSE, type='inner', asNA=TRUE, progress=.progress(...)) 
@@ -42,7 +39,7 @@ function(x, filename='', degrees=FALSE, from=FALSE, doEdge=FALSE, ...) {
 		i <- which(is.na(vals))
 		xy <- xyFromCell(out, i)
 		vals[] <- NA
-		vals[i] <- .Call('directionToNearestPoint', xy, pts, longlat, degrees, from, PACKAGE='raster')
+		vals[i] <- .Call('_raster_directionToNearestPoint', xy, pts, longlat, degrees, from, a=6378137.0, f=1/298.257223563, PACKAGE='raster')
 		out <- setValues(out, vals)
 		if (filename != '') {
 			out <- writeRaster(out, filename, ...)
@@ -63,7 +60,7 @@ function(x, filename='', degrees=FALSE, from=FALSE, doEdge=FALSE, ...) {
 		j <- which(is.na(vals))
 		vals[] <- NA
 		if (length(j) > 0) {
-			vals[j] <- .Call("directionToNearestPoint", xy[j, ,drop=FALSE], pts, longlat, degrees, from, PACKAGE='raster')
+			vals[j] <- .Call('_raster_directionToNearestPoint', xy[j, ,drop=FALSE], pts, longlat, degrees, from, a=6378137.0, f=1/298.257223563, PACKAGE='raster')
 		}
 		out <- writeValues(out, vals, tr$row[i])
 		pbStep(pb) 	

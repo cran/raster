@@ -190,7 +190,7 @@ SEXP point_in_polygon(SEXP px, SEXP py, SEXP polx, SEXP poly) {
 
 
 
-SEXP point_in_polygon2(SEXP px, SEXP py, SEXP polx, SEXP poly, SEXP id, SEXP holes) {
+SEXP _point_in_polygon2(SEXP px, SEXP py, SEXP polx, SEXP poly, SEXP id, SEXP holes) {
 	int i, j;
 	PLOT_POINT p;
 	POLYGON pol;

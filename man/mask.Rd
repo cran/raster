@@ -8,6 +8,7 @@
 \alias{mask,RasterLayer,RasterStackBrick-method}
 \alias{mask,RasterStackBrick,RasterStackBrick-method}
 \alias{mask,Raster,Spatial-method}
+\alias{mask,Raster,sf-method}
 
 \title{Mask values in a Raster object}
 
@@ -37,10 +38,10 @@ Create a new Raster* object that has the same values as \code{x}, except for the
 \item{x}{Raster* object}
 \item{mask}{Raster* object or a Spatial* object}
 \item{filename}{character. Optional output filename}
-\item{inverse}{logical. If \code{TRUE}, areas on mask that are _not_ \code{NA} are masked. This option is only relevant if ]code{maskvalue=NA}}
-\item{maskvalue}{numeric. The value in \code{mask} that indicates the cells of \code{x} that should become \code{maskvalue} (default = \code{NA})}
+\item{inverse}{logical. If \code{TRUE}, areas on mask that are _not_ the \code{maskvalue} are masked}
+\item{maskvalue}{numeric. The value in \code{mask} that indicates the cells of \code{x} that should become \code{updatevalue} (default = \code{NA})}
 \item{updatevalue}{numeric. The value that cells of \code{x} should become if they are not covered by \code{mask} (and not \code{NA})}
-\item{updateNA}{logical. If \code{TRUE}, \code{NA} values outside the masked area are also updated to the the \code{updatevalue} (only relevant if that value is not \code{NA}}
+\item{updateNA}{logical. If \code{TRUE}, \code{NA} values outside the masked area are also updated to the the \code{updatevalue} (only relevant if the \code{updatevalue} is not \code{NA}}
 \item{...}{additional arguments as in \code{\link{writeRaster}}}
 }
 

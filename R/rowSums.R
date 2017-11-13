@@ -73,7 +73,7 @@ setMethod('colSums', signature(x='Raster'),
 				s <- list()
 				for (i in 1:tr$n) {
 					v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
-					s[[i]] <- .colSums(as.matrix(v, nrow=tr$nrows[i], byrow=TRUE), tr$nrows[i], nc, na.rm=na.rm, ...)
+					s[[i]] <- .colSums(matrix(v, nrow=tr$nrows[i], byrow=TRUE), tr$nrows[i], nc, na.rm=na.rm, ...)
 				}
 				s <- colSums(matrix(unlist(s), nrow=tr$n, byrow=T))
 				return(s)
@@ -85,7 +85,7 @@ setMethod('colSums', signature(x='Raster'),
 					for (j in 1:nl) {
 						k <- (j-1) * nc + 1
 						k <- k:(k+nc-1)
-						s[i, k] <- .colSums(as.matrix(v[,j], nrow=tr$nrows[i], byrow=TRUE), tr$nrows[i], nc, na.rm=na.rm, ...)
+						s[i, k] <- .colSums(matrix(v[,j], nrow=tr$nrows[i], byrow=TRUE), tr$nrows[i], nc, na.rm=na.rm, ...)
 					}
 				}
 				s <- matrix(.colSums(s, nrow(s), ncol(s), na.rm=na.rm), ncol=nl)

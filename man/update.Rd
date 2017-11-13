@@ -19,26 +19,21 @@ See \code{\link{writeFormats}} for supported formats.
 }
 
 \usage{
-update(object, ...) 
+\S4method{update}{RasterLayer}(object, v, cell, ...)
+\S4method{update}{RasterBrick}(object, v, cell, band, ...)
 }
 
 \arguments{
   \item{object}{RasterLayer or RasterBrick that is associated with a file}
-  \item{...}{Additional arguments. 
-  
-  \code{v} - vector or matrix with new values 
-  
-  \code{cell} - cell from where to start writing. Or a vector of cell numbers if v is a vector of the same length.
-
-  \code{band} - band (layer) to update (for RasterBrick objects).
-  }  
+  \item{v}{vector or matrix with new values} 
+  \item{cell}{cell from where to start writing. Or a vector of cell numbers if v is a vector of the same length}.
+  \item{band}{band (layer) to update (for RasterBrick objects)}.
+  \item{...}{additional arguments. None implemented} 
 }
 
 \value{
 RasterLayer or RasterBrick
 }
-
-
 
 \examples{
 # setting up an example RasterLayer with file

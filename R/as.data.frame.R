@@ -48,9 +48,9 @@ setMethod('as.data.frame', signature(x='Raster'),
 				end <- start + tr$nrows[i] * ncx - 1
 				vv <- cbind(start:end, getValues(x, row=tr$row[i], nrows=tr$nrows[i]))
 				if (xy) {
-					XY <- data.frame(xyFromCell(r, start:end))
-					vv <- stats::na.omit(vv, XY)
+					vv <- cbind(vv, data.frame(xyFromCell(r, start:end)))
 				}
+				vv <- stats::na.omit(vv)
 				v <- rbind(v, vv)
 				pbStep(pb, i) 	
 			}

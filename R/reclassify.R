@@ -87,7 +87,7 @@ function(x, rcl, filename='', include.lowest=FALSE, right=TRUE, ...) {
 	}
 	
 	if (canProcessInMemory(out)) {
-		out <- setValues(out, .Call('reclass', values(x), rcl, include.lowest, right, onlyNA, valNA, NAOK=TRUE, PACKAGE='raster'))
+		out <- setValues(out, .Call('_reclass', values(x), rcl, include.lowest, right, onlyNA, valNA, NAOK=TRUE, PACKAGE='raster'))
 		if ( filename != "" ) { 
 			out <- writeRaster(out, filename=filename, ...) 
 		}
@@ -101,7 +101,7 @@ function(x, rcl, filename='', include.lowest=FALSE, right=TRUE, ...) {
 		
 		for (i in 1:tr$n) {
 			vals <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
-			vals <- .Call('reclass', vals, rcl, include.lowest, right, onlyNA, valNA, NAOK=TRUE, PACKAGE='raster')
+			vals <- .Call('_reclass', vals, rcl, include.lowest, right, onlyNA, valNA, NAOK=TRUE, PACKAGE='raster')
 			if (nl > 1) {
 				vals <- matrix(vals, ncol=nl)
 			}

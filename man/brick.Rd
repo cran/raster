@@ -61,7 +61,7 @@ A RasterBrick can be created from RasterLayer objects, from a RasterStack, or fr
 \item{xmx}{maximum x coordinate (right border)}
 \item{ymn}{minimum y coordinate (bottom border)}
 \item{ymx}{maximum y coordinate (top border)}
-\item{crs}{character or object of class CRS. PROJ4 type description of a Coordinate Reference System (map projection). If this argument is missing, and the x coordinates are withing -360 .. 360 and the y coordinates are within -90 .. 90, "+proj=longlat +datum=WGS84" is used}
+\item{crs}{character or object of class CRS. PROJ4 type description of a Coordinate Reference System (map projection). If this argument is missing, and the x coordinates are within -360 .. 360 and the y coordinates are within -90 .. 90, "+proj=longlat +datum=WGS84" is used}
 \item{transpose}{if \code{TRUE}, the values in the array are transposed}
 \item{template}{Raster* object used to set the extent, number of rows and columns and CRS}
 }

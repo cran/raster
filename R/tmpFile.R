@@ -80,8 +80,8 @@ rasterTmpFile <- function(prefix='r_tmp_')  {
 
 
 .removeTrailingSlash <- function(d) {
-		if (substr(d, .nchar(d), .nchar(d)) == '/') { d <- substr(d, 1, .nchar(d)-1) }
-		if (substr(d, .nchar(d), .nchar(d)) == '\\') { d <- substr(d, 1, .nchar(d)-1) }
+		if (substr(d, nchar(d), nchar(d)) == '/') { d <- substr(d, 1, nchar(d)-1) }
+		if (substr(d, nchar(d), nchar(d)) == '\\') { d <- substr(d, 1, nchar(d)-1) }
 		return(d)
 }
 
@@ -102,11 +102,8 @@ removeTmpFiles <- function(h=24) {
 		dif <- Sys.time() - fin$mtime
 		dif <- as.numeric(dif, units="hours")
 		
-		dif[is.na(dif)] <- h + 1
-		f <- f[dif > h]
-		if (length(f) > 1) {
-			unlink(f, recursive=TRUE)
-		}
+		f <- f[which(dif > h)]
+		unlink(f, recursive=TRUE)
 	}	
 	options('warn'=warnopt) 
 }

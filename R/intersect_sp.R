@@ -10,10 +10,21 @@ if (!isGeneric("intersect")) {
 }	
 
 
+
 setMethod('intersect', signature(x='SpatialPolygons', y='SpatialPolygons'), 
 function(x, y) {
 
 	requireNamespace("rgeos")
+
+
+#	threshold <- get_RGEOS_polyThreshold()
+#	on.exit(set_RGEOS_polyThreshold(threshold))
+#	minarea <- min(apply(bbox(union(extent(x), extent(y))), 1, diff) / 1000000, 0.00001)
+#	set_RGEOS_polyThreshold(minarea)
+#	slivers <- get_RGEOS_dropSlivers()
+#	on.exit(set_RGEOS_dropSlivers(slivers))
+#	set_RGEOS_dropSlivers(TRUE)
+    
 
 	x <- spChFIDs(x, as.character(1:length(x)))
 	y <- spChFIDs(y, as.character(1:length(y)))
@@ -78,8 +89,28 @@ function(x, y) {
 	}
 	
 	if (length(int) > 0) {
-		j <- which(rgeos::gIsValid(int, byid=TRUE, reason=FALSE))
-		int <- int[j, ]
+	
+		w <- getOption('warn')
+		on.exit(options('warn' = w))
+		options('warn'=-1) 
+	
+		j <- rgeos::gIsValid(int, byid=TRUE, reason=FALSE)
+		if (!all(j)) {
+			bad <- which(!j)
+			for (i in bad) {
+				# it could be that a part of a polygon is a sliver, but that other parts are OK
+				a <- disaggregate(int[i, ])
+				if (length(a) > 1) {
+					jj <- which(rgeos::gIsValid(a, byid=TRUE, reason=FALSE))
+					a <- a[jj, ]
+					if (length(a) > 0) {
+						int@polygons[i] <- aggregate(a)@polygons
+						j[i] <- TRUE
+					}
+				} 
+			}
+			int <- int[j,]
+		}		
 	}
 	int	
 } 
@@ -272,14 +303,14 @@ function(x, y) {
 	if (inherits(y, 'SpatialLines')) {
 		stop('intersect of SpatialPoints and Lines is not supported because of numerical inaccuracies.\nUse "buffer", to create SpatialPoygons from the lines and use that in intersect.\nOr see rgeos::gIntersection')
 	}
-
-	if (! identical(proj4string(x), proj4string(y)) ) {
-		warning('non identical CRS')
-		y@proj4string <- x@proj4string
-	} 
 	
 	if (inherits(y, 'SpatialPolygons')) {
 	
+		if (! identical(proj4string(x), proj4string(y)) ) {
+			warning('non identical CRS')
+			y@proj4string <- x@proj4string
+		} 
+
 		stopifnot(requireNamespace("rgeos"))
 		i <- rgeos::gIntersects(y, x, byid=TRUE)
 	

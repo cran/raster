@@ -10,7 +10,7 @@
 #include "R_ext/Rdynload.h"
 
 
-SEXP focal_sum(SEXP d, SEXP w, SEXP dim, SEXP rmNA, SEXP NAonly, SEXP domean) {
+SEXP _focal_sum(SEXP d, SEXP w, SEXP dim, SEXP rmNA, SEXP NAonly, SEXP domean) {
 
 	R_len_t i, j, k, q, p;
 	SEXP val;

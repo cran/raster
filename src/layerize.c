@@ -8,7 +8,7 @@
 #include "R_ext/Rdynload.h"
 
 
-SEXP layerize(SEXP d, SEXP cls, SEXP falsena) {
+SEXP _do_layerize(SEXP d, SEXP cls, SEXP falsena) {
 					
 	R_len_t i, j;
 	int *xd, *xc, *xv, vna;

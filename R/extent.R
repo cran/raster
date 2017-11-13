@@ -86,6 +86,22 @@ setMethod('extent', signature(x='Spatial'),
 	}
 )
 
+setMethod('extent', signature(x='sf'), 
+	function(x){ 
+		if (!requireNamespace("sf")) {
+			stop('Cannot do this because sf is not available')
+		}
+		b <- sf::st_bbox(x)
+		e <- methods::new('Extent')
+		e@xmin <- b[1]
+		e@xmax <- b[3]
+		e@ymin <- b[2]
+		e@ymax <- b[4]
+		return(e) 
+	}
+)
+
+
 setMethod('extent', signature(x='matrix'), 
 	function(x){ 
 		d <- dim(x)
@@ -107,7 +123,7 @@ setMethod('extent', signature(x='matrix'),
 			e@ymin <- a[3]
 			e@ymax <- a[4]
 		}
-		return(e)
+		if (validObject(e)) return(e)
 	}
 )
 	
@@ -127,7 +143,7 @@ setMethod('extent', signature(x='numeric'),
 		e@xmax <- x[2]
 		e@ymin <- x[3]
 		e@ymax <- x[4]
-		return(e)
+		if (validObject(e)) return(e)
 	}	
 )
 

@@ -63,7 +63,7 @@ NumericMatrix doXYFromCell(
     size_t col = fmod(c, ncols);
     size_t row = (c / ncols);
     result(i,0) = (col + 0.5) * xres + xmin;
-    result(i,1) = -((row + 0.5) * yres - ymax);
+    result(i,1) = ymax - (row + 0.5) * yres;
   }
   
   return result;

@@ -13,14 +13,15 @@ setMethod('cover', signature(x='RasterLayer', y='RasterLayer'),
 	function(x, y, ..., filename=''){ 
 	
 	rasters <- .makeRasterList(x, y, ...)
+	compareRaster(rasters)
+	
 	nl <- sapply(rasters, nlayers)
 	if (max(nl) > 1) {
 		stop("Only single layer (RasterLayer) objects can be used if 'x' and 'y' have a single layer")
 	} 
 		
 	outRaster <- raster(x)
-	compareRaster(c(outRaster, rasters))
-	
+		
 	filename <- trim(filename)
 	dots <- list(...)
 	if (is.null(dots$format))  { 

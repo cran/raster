@@ -10,7 +10,7 @@
 #include "R_ext/Rdynload.h"
 
 
-SEXP focal_get(SEXP d, SEXP dim, SEXP ngb) {
+SEXP _focal_get(SEXP d, SEXP dim, SEXP ngb) {
 
 	R_len_t i, j;
 	int a, aa, b;

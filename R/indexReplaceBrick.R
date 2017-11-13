@@ -183,7 +183,7 @@ setReplaceMethod("[", c("Raster", "Spatial", "missing"),
 		if (inherits(i, 'SpatialPolygons')) {
 			v <- 1:length(i@polygons)
 			v[] <- value
-			return( .polygonsToRaster(i, x, value=v, fun='last', mask=FALSE, update=TRUE, updateValue="all", silent=TRUE) )
+			return( .polygonsToRaster(i, x, field=v, fun='last', mask=FALSE, update=TRUE, updateValue="all", silent=TRUE) )
 			
 		} else if (inherits(i, 'SpatialLines')) {
 			v <- 1:length(i@lines)

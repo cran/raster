@@ -74,7 +74,7 @@
 
 		## adapted from rgdal::getGeoTransFunc
 		if (warn) {
-			warning('\n\n This file has a rotation\n Support such files is limited and results of data processing might be wrong.\n Proceed with caution & consider using the "rectify" function\n')
+			warning('\n\n This file has a rotation\n Support for such files is limited and results of data processing might be wrong.\n Proceed with caution & consider using the "rectify" function\n')
 		}
 		rotMat <- matrix(gdalinfo[c('res.x', 'oblique.x', 'oblique.y', 'res.y')], 2)
 		ysign <- attr(gdalinfo, 'ysign')

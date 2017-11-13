@@ -1,7 +1,6 @@
 --- to do
 focal for multi-layer objects
 step-size option for focal
-support for RasterQuad (4 dimensional) objects
 add equivalent to "subsWithNA" to reclassify
 move rasterize/(lines, polygons) to C
 function for affine transformation
@@ -10,15 +9,46 @@ add orientation fixes for AVISO currents and similar NetCDFs lacking metadata on
 add VRT output to saveStack
 Fix lines falling between the cracks in extract (calling rasterzeLines): https://stat.ethz.ch/pipermail/r-sig-geo/2014-May/020973.html
 allow setting a 'spatial window'
-
+Better handling of NA values in 1 byte raster files
 --- current version
+
+--- 12-Nov-2017, version: 2.6-7
+New:
+new extent objects created from a vector of coordinates are now checked for being valid. Suggested by Mike Sumner
+buffer for lon/lat points
+erase for SpatialLines with Polygons
+kernelDensity function (hidden)
+output from freq is always ordered (whether computed from disk or from in memory values). Requested by Benjamin Leutner
+
+Bug fixes:
+as.data.frame from file based rasters ingored na.rm=TRUE (unless xy=TRUE). Reported by Jean-Gabriel Elie
+getValuesBlock with lyrs argument. Reported by Antoine Stevens
+In approxNA with large files NAs were ignored and the NArule was ignored. Reported by Pablo Timoner
+isValid(raster()) failed. Reported by dww on http://stackoverflow.com/questions/37869271/how-to-dput-a-raster/37871930
+zapply passes on ... arguments to stackApply
+res() for rotated rasters was wrong https://gis.stackexchange.com/questions/259321/opening-rotated-raster-in-r (fix suggested by Spacedman)
+cover with RasterStackBrick objects could not write to file (reported by L. Wasser https://stackoverflow.com/questions/44295842/r-raster-cover-function-error-with-landsat-stacks 
+Raster Attribute Tables with labels with a colon it could not be written because the colon was used as delimiter in the grd file.
+https://stackoverflow.com/questions/46832976/why-is-crop-sometimes-introducing-nas-on-a-categorical-raster
+An error was thrown if "rasterToPoints" returned no points, and "spatial=TRUE". Instead an empty SpatialPointsDataFrame is now returned (reported and suggested by Arnaud Mosnier)
+Another error when rasterToPoints was used on a single-pixel multi-layer raster object (reported by Daniele Baisero)
+rasterize polygons bugged in some cases if a polygon node was exactly in the center of a cell. Reported by Marco Sciaini  https://gis.stackexchange.com/questions/252210/rasterize-a-spatialpolygonsdataframe-error-in-if-x2a-rxmn
+bug in projectRaster related to dateline: https://stackoverflow.com/questions/47047623/projectraster-raster-projection-of-bathymetry-data-noaa-nc-in-the-pacific
+raster::pring of a SpatialPointsDataFrame showed an error message if the data.frame had zero columns (reported by Bart Branstauber)
+Really bad bug: for Raster 'r', 'r < 50' was not equivalent to '50 > r' (the latter being wrong!). Reported by Jonathan Proctor
+Error in the correction for the standard deviation with asSample=FALSE. Reported and fix provided by Benjamin Leutner
+raster::colSums gave false results when !canProcessInMemory(x). Reported and fix provided by Peter Kullberg
+zonal(  ,stat='sd') did not work. Reported by Matt Biber
+
+--- 31-May-2016, version: 2.5-8
 new functions for Raster objects: as.integer, as.list
 new functions whiches.min and whiches.max (to get all layers that are which.min/max)
 added 'forcefun' argument to overlay
 atan2 now available for all Raster objects
+several minor fixes
 
 --- 19-December-2015, version: 2.5-2
-Big fixes:
+Bug fixes:
 The order of the layers returned by stackApply was only as expected of the indices were sorted from 1 to n. Reported by Mark Payne
 rasterize(..., getCover=TRUE) again did not work properly. Reported by Pascal Title
 as.vector gave trouble on different version (R-devel vs. R-current). Work around implemented.

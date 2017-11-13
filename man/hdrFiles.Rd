@@ -9,13 +9,14 @@ Write header files to use together with raster binary files to read the data in 
 }
 
 \usage{
-hdr(x, format, extension='.wld') 
+hdr(x, format, extension='.wld', filename='') 
 }
 
 \arguments{
   \item{x}{RasterLayer or RasterBrick object associated with a binary values file on disk }
   \item{format}{Type of header file: 'VRT', 'BIL', 'ENVI', 'ErdasRaw', 'IDRISI', 'SAGA', 'RASTER', 'WORLDFILE', 'PRJ' }
   \item{extension}{File extension, only used with an ESRI worldfile (\code{format='WORLDFILE'})}
+  \item{filename}{character. Need to be provided if \code{x} is not associated with a file}
 }
 
 \details{

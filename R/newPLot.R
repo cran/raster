@@ -153,7 +153,7 @@
 		}
 		image(x=x, y=y, z=z,  col=col, axes=FALSE, xlab=xlab, ylab=ylab, asp=asp, ...)
 		graphics::axis(1, at=xticks,  cex.axis=0.67, tcl=-0.3, mgp=c(3, 0.25, 0))
-		las = ifelse(max(.nchar(as.character(yticks)))> 5, 0, 1)
+		las = ifelse(max(nchar(as.character(yticks)))> 5, 0, 1)
 		graphics::axis(2, at=yticks, las = las,  cex.axis=0.67, tcl=-0.3, mgp=c(3, 0.75, 0) )
 		#graphics::axis(3, at=xticks, labels=FALSE, lwd.ticks=0)
 		#graphics::axis(4, at=yticks, labels=FALSE, lwd.ticks=0)

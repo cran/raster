@@ -63,11 +63,17 @@ function(x, y) {
 
 setMethod('union', signature(x='SpatialPolygons', y='missing'), 
 function(x, y) {
+
 	stopifnot(requireNamespace("rgeos"))
 	n <- length(x)
 	if (n < 2) {
 		return(x)
 	}
+	
+	if (!rgeos::gIntersects(x)) {
+		return(x)
+	}
+	
 	if (.hasSlot(x, 'data')) {
 		x <- as(x, 'SpatialPolygons')
 	}

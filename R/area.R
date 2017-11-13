@@ -31,35 +31,12 @@ setMethod('area', signature(x='SpatialPolygons'),
 			if (!isLonLat(x)) {
 				warning('assuming that the CRS is longitude/latitude!')
 			}
-
-			a <- 6378137
-			f <- 1/298.257223563
-			x <- x@polygons
-			n <- length(x)
-			res <- vector(length=n)
-			for (i in 1:n) {
-				parts <- length(x[[i]]@Polygons )
-				sumarea <- 0
-				for (j in 1:parts) {
-					crd <- x[[i]]@Polygons[[j]]@coords
-					ar <- .Call("polygonarea", as.double(crd[,1]), as.double(crd[,2]), as.double(a), as.double(f), PACKAGE='raster')
-					if (x[[i]]@Polygons[[j]]@hole) {
-						sumarea <- sumarea - ar
-					} else {
-						sumarea <- sumarea + ar
-					}
-				}
-				res[i] <- sumarea
-			}
-			res <- abs(res)
-			return(res)
+			lonlat = TRUE
+		} else {
+			lonlat = FALSE
 		}
-		if (requireNamespace("rgeos")) {
-			as.vector(rgeos::gArea(x, byid=TRUE))
-		} else {	
-			warning('install rgeos for better area estimation')
-			sapply(x@polygons, function(i) methods::slot(i, 'area'))
-		}
+		g <- geom(x)
+		.Call('_raster_get_area_polygon', PACKAGE = 'raster', g, lonlat)
 	}
 )	
 

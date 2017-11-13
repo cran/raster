@@ -10,11 +10,32 @@
 #include "Rmath.h"
 
 #include "util.h"
-#include "dist_util.h"
+
+
+double distPlane(double x1, double y1, double x2, double y2) {
+	return( sqrt(pow((x2-x1),2) + pow((y2-y1), 2)) );
+}
 
 
 
-SEXP terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP geoy) {
+double distHav(double lon1, double lat1, double lon2, double lat2, double r) {
+
+	double dLat, dLon, a;
+
+	lon1 = toRad(lon1);
+	lon2 = toRad(lon2);
+	lat1 = toRad(lat1);
+	lat2 = toRad(lat2);
+
+	dLat = lat2-lat1;
+	dLon = lon2-lon1;
+	a = sin(dLat/2.) * sin(dLat/2.) + cos(lat1) * cos(lat2) * sin(dLon/2.) * sin(dLon/2.);
+	return 2. * atan2(sqrt(a), sqrt(1.-a)) * r;
+}
+
+
+
+SEXP _do_terrain(SEXP d, SEXP dim, SEXP res, SEXP un, SEXP opt, SEXP lonlat, SEXP geoy) {
 					
 	R_len_t i, j;
 	SEXP val;

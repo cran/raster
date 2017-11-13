@@ -6,7 +6,6 @@
 distanceFromPoints <- function(object, xy, filename='', ...) {
 	
 	pts <- .pointsToMatrix(xy)
-	rm(xy)
 
 	filename <- trim(filename)
 	
@@ -19,7 +18,10 @@ distanceFromPoints <- function(object, xy, filename='', ...) {
 	out <- raster(object)
 	if (canProcessInMemory(out, 4)) {
 		xy <- xyFromCell(out, 1:ncell(out))
-		out <- setValues(out, .Call("distanceToNearestPoint", xy, pts, as.integer(longlat), PACKAGE='raster'))
+		a = 6378137.0
+		f = 1/298.257223563
+		out <- setValues(out, .Call('_raster_distanceToNearestPoint', xy,  pts, longlat, a, f , PACKAGE = 'raster'))
+
 		if (filename != '') {
 			out <- writeRaster(out, filename=filename, ...)
 		}
@@ -35,7 +37,7 @@ distanceFromPoints <- function(object, xy, filename='', ...) {
 			xy <- xy[1:(ncol(out)*tr$nrows[i]), ]
 		}
 		xy[,2] <- rep(yFromRow(out, tr$row[i]:(tr$row[i]+tr$nrows[i]-1)), each=ncol(out))
-		vals <- .Call("distanceToNearestPoint", xy, pts, as.integer(longlat), PACKAGE='raster')
+		vals <- .Call('_raster_distanceToNearestPoint', xy, pts, longlat, 0.0, 0.0, PACKAGE='raster')
 		out <- writeValues(out, vals, tr$row[i])
 		pbStep(pb) 	
 	}	

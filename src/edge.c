@@ -10,7 +10,7 @@
 #include "R_ext/Rdynload.h"
 
 
-SEXP edge(SEXP d, SEXP dim, SEXP classes, SEXP type, SEXP directions) {
+SEXP _edge(SEXP d, SEXP dim, SEXP classes, SEXP type, SEXP directions) {
 
 	R_len_t i, j;
 	SEXP val;

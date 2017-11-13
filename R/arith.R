@@ -337,33 +337,74 @@ setMethod("Arith", signature(e1='logical', e2='RasterStackBrick'),
 )
 
 
+.getE2 <- function(e2) {
+	n <- length(e2)
+	if (n == 1) {
+		e2 <- rep(e2, 4)
+	} else if (n == 2) {
+		e2 <- rep(e2, each=2)
+	} else if (n != 4) {
+		stop('use 1, 2, or 4 numbers in arithmetic operations with an Extent')
+	} 
+	e2
+}
+
+
+.multiply_Extent <- function(e1, e2) {	
+	
+	e2 <- abs(e2)
+	
+	if (length(e2) == 4) {
+		return(extent(as.vector(e1) * e2))
+	}
+	e2 <- rep_len(e2, length.out=2)
+
+	rx <- e1@xmax - e1@xmin
+	ry <- e1@ymax - e1@ymin
+	dx <- (rx * e2[1] - rx) / 2
+	dy <- (ry * e2[2] - ry) / 2
+
+	e1@xmax <- e1@xmax + dx
+	e1@xmin <- e1@xmin - dx
+	e1@ymax <- e1@ymax + dy
+	e1@ymin <- e1@ymin - dy
+	
+	return(e1)
+}
+		
+		
+.add_Extent <- function(e1, e2, g) {	
+	
+	if (length(e2) == 4) {
+		return(extent(as.vector(e1) + e2))
+	}
+	e2 <- rep_len(e2, length.out=2)
+	dx <- e2[1] / 2
+	dy <- e2[2] / 2
+	e1@xmax <- e1@xmax + dx
+	e1@xmin <- e1@xmin - dx
+	e1@ymax <- e1@ymax + dy
+	e1@ymin <- e1@ymin - dy
+	
+	return(e1)
+}
+
+
 setMethod("Arith", signature(e1='Extent', e2='numeric'),
 	function(e1, e2){ 
-	
-		if (length(e2) == 1) {
-			x1 = e2
-			x2 = e2
-		} else if (length(e2) == 2) {
-			x1 = e2[1]
-			x2 = e2[2]
-		} else if (length(e2) == 4) {
-			return(extent(methods::callGeneric(as.vector(e1), e2)))
-		} else {
-			stop('On an Extent object, you can only use Arith with a single number or with two numbers')
+		g <- as.vector(.Generic) 
+		if (g %in% c("/", "*")) {
+			if (g == '/') {
+				e2 <- 1 / e2
+			}
+			return( .multiply_Extent(e1, e2) )
+		} else if (g %in% c("+", "-")) {
+			if (g == '-') {
+				e2 <- -1 * e2
+			}
+			return( .add_Extent(e1, e2) )
 		}
-
-		r <- e1@xmax - e1@xmin
-		d <- methods::callGeneric(r, x1)
-		d <- (d - r) / 2
-		e1@xmax <- e1@xmax + d
-		e1@xmin <- e1@xmin - d
-		
-		r <- e1@ymax - e1@ymin
-		d <- methods::callGeneric(r, x2)
-		d <- (d - r) / 2
-		e1@ymax <- e1@ymax + d
-		e1@ymin <- e1@ymin - d
-		return(e1)
+		extent(methods::callGeneric(as.vector(e1), .getE2(e2)))
 	}
 )
 
@@ -373,3 +414,4 @@ setMethod("Arith", signature(e1='numeric', e2='Extent'),
 	}
 )
 
+		

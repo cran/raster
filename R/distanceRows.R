@@ -50,7 +50,7 @@
 			to <- xyv[is.na(xyv[,3]), 1:2]
 			v[] = 0
 			if ( isTRUE(nrow(to) > 0) ) {
-				v[is.na(xyv[,3])] <- .Call("distanceToNearestPoint", to, from, as.integer(longlat), PACKAGE='raster')
+				v[is.na(xyv[,3])] <- .Call('_raster_distanceToNearestPoint', to, from, longlat, 6378137.0, 1/298.257223563, PACKAGE='raster')
 			}			
 			if (hasWritten) {
 				# after the first round, compare new values with previously written values

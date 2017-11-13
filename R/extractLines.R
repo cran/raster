@@ -175,14 +175,12 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, fa
 		}
 	
 		if (!.hasSlot(y, 'data') ) {
-			y <- SpatialLinesDataFrame(y,  res[, -1, drop=FALSE])
+			y <- SpatialLinesDataFrame(y,  res[, -1, drop=FALSE], match.ID=FALSE)
 		} else {
 			y@data <- cbind(y@data,  res[, -1, drop=FALSE])
 		}
 		return(y)
 	}
-	
-	
 	res
 }
 )

@@ -73,10 +73,10 @@ setMethod('zonal', signature(x='RasterLayer', z='RasterLayer'),
 		} else {
 		
 			if (class(fun) != 'character') {
-				stop("RasterLayers cannot be processed in memory.\n You can use fun='sum', 'mean', 'stats::sd', 'min', 'max', or 'count' but not a function")
+				stop("RasterLayers cannot be processed in memory.\n You can use fun='sum', 'mean', 'sd', 'min', 'max', or 'count' but not a function")
 			}
-			if (! fun %in% c('sum', 'mean', 'stats::sd', 'min', 'max', 'count')) {
-				stop("fun can be 'sum', 'mean', 'stats::sd', 'min', 'max', or 'count'")
+			if (! fun %in% c('sum', 'mean', 'sd', 'min', 'max', 'count')) {
+				stop("fun can be 'sum', 'mean', 'sd', 'min', 'max', or 'count'")
 			}
 			sdtab <- FALSE
 			counts <- FALSE		
@@ -92,10 +92,10 @@ setMethod('zonal', signature(x='RasterLayer', z='RasterLayer'),
 			} else {
 				func1 <- func2 <- match.fun(fun)
 			}
-			if ( fun == 'mean' | fun == 'stats::sd') {
+			if ( fun == 'mean' | fun == 'sd') {
 				func1 <- func2 <- sum
 				counts <- TRUE
-				if (fun == 'stats::sd') {
+				if (fun == 'sd') {
 					sdtab <- TRUE
 				}
 			} 
@@ -186,7 +186,7 @@ setMethod('zonal', signature(x='RasterLayer', z='RasterLayer'),
 	}
 )
 
-#zonal(r, z, 'stats::sd')
+#zonal(r, z, 'sd')
 
 
 
@@ -235,10 +235,10 @@ setMethod('zonal', signature(x='RasterStackBrick', z='RasterLayer'),
 		} else {
 		
 			if (class(fun) != 'character') {
-				stop("RasterLayers cannot be processed in memory.\n You can use fun='sum', 'mean', 'stats::sd', 'min', 'max', or 'count' but not a function")
+				stop("RasterLayers cannot be processed in memory.\n You can use fun='sum', 'mean', 'sd', 'min', 'max', or 'count' but not a function")
 			}
-			if (! fun %in% c('sum', 'mean', 'stats::sd', 'min', 'max', 'count')) {
-				stop("fun can be 'sum', 'mean', 'stats::sd', 'min', 'max', or 'count'")
+			if (! fun %in% c('sum', 'mean', 'sd', 'min', 'max', 'count')) {
+				stop("fun can be 'sum', 'mean', 'sd', 'min', 'max', or 'count'")
 			}
 			sdtab <- FALSE
 			counts <- FALSE		
@@ -255,10 +255,10 @@ setMethod('zonal', signature(x='RasterStackBrick', z='RasterLayer'),
 			} else {
 				func1 <- func2 <- match.fun(fun)
 			}
-			if ( fun == 'mean' | fun == 'stats::sd') {
+			if ( fun == 'mean' | fun == 'sd') {
 				func1 <- func2 <- sum
 				counts <- TRUE
-				if (fun == 'stats::sd') {
+				if (fun == 'sd') {
 					sdtab <- TRUE
 				}
 			} 
@@ -336,6 +336,6 @@ setMethod('zonal', signature(x='RasterStackBrick', z='RasterLayer'),
 	}
 )
 
-#zonal(r, z, 'stats::sd')
+#zonal(r, z, 'sd')
 
 

@@ -43,7 +43,7 @@ function(x, y, filename='', doEdge=TRUE, ...) {
 		pbStep(pb)
 		x[] <- 0
 		xy <- xyFromCell(out, i)
-		x[i] <- .Call("distanceToNearestPoint", xy, pts, as.integer(longlat), PACKAGE='raster')
+		x[i] <- .Call('_raster_distanceToNearestPoint', xy, pts, longlat, 6378137.0, 1/298.257223563, PACKAGE='raster')
 		pbStep(pb)
 		out <- setValues(out, x)
 		if (filename != '') {
@@ -67,7 +67,7 @@ function(x, y, filename='', doEdge=TRUE, ...) {
 		j <- which(is.na(vals))
 		vals[] <- 0
 		if (length(j) > 0) {
-			vals[j] <- .Call("distanceToNearestPoint", xy[j,,drop=FALSE], pts, as.integer(longlat), PACKAGE='raster')
+			vals[j] <- .Call('_raster_distanceToNearestPoint', xy[j,,drop=FALSE], pts, longlat, 6378137.0, 1/298.257223563, PACKAGE='raster')	
 		}
 		out <- writeValues(out, vals, tr$row[i])
 		pbStep(pb) 	

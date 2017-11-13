@@ -35,6 +35,7 @@
 #9=2x64-bit double-precision complex, real-imaginary pair of double precision; 12=16-bit unsigned integer; 
 #13=32-bit unsigned long integer; 14=64-bit signed long integer; and 15=64-bit unsigned long integer.
 
+	cat("data ignore value=", .nodatavalue(r), "\n", file = thefile, sep='')
 	cat("interleave = ", r@file@bandorder, "\n", file = thefile)	
 	cat("sensor type = \n", file = thefile)		
 	

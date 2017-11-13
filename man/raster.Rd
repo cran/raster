@@ -73,7 +73,7 @@ For an overview of the functions in the raster package have a look here: \code{\
 \item{ymn}{minimum y coordinate (bottom border)}
 \item{ymx}{maximum y coordinate (top border)}
 \item{ext}{object of class Extent. If present, the arguments xmn, xmx, ymn and ynx are ignored}
-\item{crs}{character or object of class CRS. PROJ.4 type description of a Coordinate Reference System (map projection). If this argument is missing, and the x coordinates are withing -360 .. 360 and the y coordinates are within -90 .. 90, "+proj=longlat +datum=WGS84" is used. Also see under Details if \code{x} is a character (filename)}
+\item{crs}{character or object of class CRS. PROJ.4 type description of a Coordinate Reference System (map projection). If this argument is missing, and the x coordinates are within -360 .. 360 and the y coordinates are within -90 .. 90, "+proj=longlat +datum=WGS84" is used. Also see under Details if \code{x} is a character (filename)}
 \item{resolution}{numeric vector of length 1 or 2 to set the resolution (see \code{\link{res}}). If this argument is used, arguments \code{ncols} and \code{nrows} are ignored }
 \item{vals}{optional. Values for the new RasterLayer. Accepted formats are as for \code{\link{setValues}}}
 \item{origin}{minimum y coordinate (bottom border)}

@@ -4,6 +4,7 @@
 # Licence GPL v3
 
 
+
 setMethod("plot", signature(x='Raster', y='Raster'), 
 	function(x, y, maxpixels=100000, cex, xlab, ylab, nc, nr, maxnl=16, main, add=FALSE, gridded=FALSE, ncol=25, nrow=25, ...) {
 	

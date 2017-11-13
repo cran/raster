@@ -4,11 +4,17 @@
 # Licence GPL v3
 
  
-hdr <- function(x, format, extension='.wld') {
+hdr <- function(x, format, extension='.wld', filename='') {
 
-	if (inherits(x, 'RasterStack')) { stop('Only applicable to RasterLayer and RasterBrick classes (and their derivatives)') }
+	if (inherits(x, 'RasterStack')) { stop('Only applicable to RasterLayer and RasterBrick classes (and their derivates)') }
 
-	if (x@file@name == '') { stop('Object has no filename') }
+	if (x@file@name == '') { 
+		if (filename == '') {
+			stop('Object has no filename; and none provided as argument') 
+		} else {
+			x@file@name = filename
+		}
+	}
 
 #	if (missing(filename)) {
 #		if (x@file@name == '') { 
@@ -16,7 +22,7 @@ hdr <- function(x, format, extension='.wld') {
 #		}
 #	} else {
 #		fn <- trim(as.character(filename[1]))
-#		if (.nchar(fn) < 1) {
+#		if (nchar(fn) < 1) {
 #			stop('invalid filename')
 #		}
 #		x@file@name == fn

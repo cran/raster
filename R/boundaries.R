@@ -61,7 +61,7 @@ function(x, type='inner', classes=FALSE, directions=8, asNA=FALSE, filename="", 
 		}
 		x <- rbind(x[1,], x, x[nrow(x),])
 		paddim <- as.integer(dim(x))
-		x <- .Call('edge', as.integer(t(x)), paddim, classes, type, directions, NAOK=TRUE, PACKAGE='raster')
+		x <- .Call('_edge', as.integer(t(x)), paddim, classes, type, directions, NAOK=TRUE, PACKAGE='raster')
 		if (asNA) {
 			x[x==0] <- as.integer(NA)
 		}
@@ -89,7 +89,7 @@ function(x, type='inner', classes=FALSE, directions=8, asNA=FALSE, filename="", 
 		}
 		v <- as.integer(cbind(v[,1], v))
 		
-		v <- .Call('edge', v, as.integer(c(tr$nrows[1]+2, nc)),  classes, type, directions, NAOK=TRUE, PACKAGE='raster')
+		v <- .Call('_edge', v, as.integer(c(tr$nrows[1]+2, nc)),  classes, type, directions, NAOK=TRUE, PACKAGE='raster')
 		if (asNA) {
 			v[v==0] <- as.integer(NA)
 		}
@@ -105,7 +105,7 @@ function(x, type='inner', classes=FALSE, directions=8, asNA=FALSE, filename="", 
 			} else {
 				v <- rbind(v[1,], v, v[nrow(v),])
 			}
-			v <- .Call('edge', as.integer(v), as.integer(c(tr$nrows[i]+2, nc)), classes, type, directions, NAOK=TRUE, PACKAGE='raster')
+			v <- .Call('_edge', as.integer(v), as.integer(c(tr$nrows[i]+2, nc)), classes, type, directions, NAOK=TRUE, PACKAGE='raster')
 			v <- matrix(v, ncol=nc, byrow=TRUE)
 			v <- as.integer(t(v[2:(nrow(v)-1), 2:(ncol(v)-1)]))
 			out <- writeValues(out, v, tr$row[i])
@@ -120,7 +120,7 @@ function(x, type='inner', classes=FALSE, directions=8, asNA=FALSE, filename="", 
 			v <- rbind(v[1,], v, v[nrow(v),])
 		}
 		v <- as.integer(cbind(v, v[,ncol(v)]))
-		v <- .Call('edge', v, as.integer(c(tr$nrows[i]+2, nc)), classes, type, directions, NAOK=TRUE, PACKAGE='raster')
+		v <- .Call('_edge', v, as.integer(c(tr$nrows[i]+2, nc)), classes, type, directions, NAOK=TRUE, PACKAGE='raster')
 		v <- matrix(v, ncol=nc, byrow=TRUE)
 		v <- as.integer(t(v[2:(nrow(v)-1), 2:(ncol(v)-1)]))
 		out <- writeValues(out, v, tr$row[i])

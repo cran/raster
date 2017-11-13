@@ -9,7 +9,7 @@
 #include "Rdefines.h"
 #include "R_ext/Rdynload.h"
 
-SEXP focal_fun(SEXP d, SEXP w, SEXP dim, SEXP fun, SEXP NAonly, SEXP rho) {
+SEXP _focal_fun(SEXP d, SEXP w, SEXP dim, SEXP fun, SEXP NAonly, SEXP rho) {
 
 	R_len_t i, j, k, q;
     SEXP R_fcall, ans, x;	

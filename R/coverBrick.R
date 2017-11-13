@@ -4,15 +4,13 @@
 # Licence GPL v3
 
 
-if (!isGeneric("cover")) {
-	setGeneric("cover", function(x, y, ...)
-		standardGeneric("cover"))
-}	
-
 setMethod('cover', signature(x='RasterStackBrick', y='Raster'), 
 	function(x, y, ..., filename=''){ 
 
+	
 	rasters <- .makeRasterList(x, y, ..., unstack=FALSE)
+	compareRaster(rasters)
+	
 	nl <- sapply(rasters, nlayers)
 	un <- unique(nl)
 	if (length(un) > 3) {
@@ -24,12 +22,13 @@ setMethod('cover', signature(x='RasterStackBrick', y='Raster'),
 	}
 	
 	outRaster <- brick(x, values=FALSE)
+	compareRaster(rasters)
 
 	
 	filename <- trim(filename)
 	dots <- list(...)
 	if (is.null(dots$format))  { 
-		format <- .filetype(format=format, filename=filename)
+		format <- .filetype(filename=filename)
 	} else { 
 		format <- dots$format 
 	}

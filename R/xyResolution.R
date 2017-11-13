@@ -42,7 +42,7 @@ function(x) {
 setMethod('res', signature(x='BasicRaster'), 
 function(x) {
 	if (rotated(x)) {
-		return(x@rotation@geotrans[c(3,5)])
+		return(x@rotation@geotrans[c(2,6)])
 	} else {
 		e <- x@extent
 		xr <- (e@xmax - e@xmin) / x@ncols 

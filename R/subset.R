@@ -84,6 +84,7 @@ function(x, subset, drop=TRUE, filename='', ...) {
 	#}
 
 	# these values may have been changed
+	# really? how?
 	nav <- NAvalue(x)
 	e <- extent(x)
 	

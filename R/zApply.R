@@ -10,7 +10,7 @@ zApply <- function(x, by, fun=mean, name='', ...){
 	
     if (is.function(by)) { by <- by(z) }
     ##stopifnot(length(time(x)) == length(by))
-    b <- stackApply(x, as.numeric(factor(by)), match.fun(fun))
+    b <- stackApply(x, as.numeric(factor(by)), match.fun(fun), ...)
     zval <- my.sort(my.unique(by))
     b <- setZ(b, zval, name)
     names(b) <- as.character(zval)

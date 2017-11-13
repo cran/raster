@@ -9,8 +9,82 @@ if (!isGeneric('buffer')) {
 		standardGeneric('buffer'))
 }	
 
+.pointBuffer <- function(xy, d, lonlat=TRUE, a=6378137, f=1/298.257223563, crs=NA, ... ) {
+	
+	n <- list(...)$quadsegs
+	if (is.null(n)) {
+		n <- 360 
+	} else {
+		n <- n * 4
+	}
+	
+	if (length(d)==1) {
+		d <- rep(d, nrow(xy))
+	} else if (length(d) != nrow(xy)) {
+		# recycling
+		dd <- vector(length=nrow(xy))
+		dd[] <- d
+		d <- dd
+	}
+
+	n <- max(5, round(n))
+	brng <- 1:n * 360/n
+
+	pols <- list()
+
+	if (lonlat) {
+		a = 6378137.0
+		f = 1/298.257223563
+		for (i in 1:nrow(xy)) {
+			p <- cbind(xy[i,1], xy[i,2], brng, d[i])
+			
+			#r <- .Call("geodesic", as.double(p[,1]), as.double(p[,2]), as.double(p[,3]), as.double(p[,4]), as.double(a), as.double(f), PACKAGE='raster')
+			#pols[[i]] <- matrix(r, ncol=3, byrow=TRUE)[, 1:2]
+			
+			r <- .Call("_raster_dest_point", p, TRUE, a, f, PACKAGE='raster')
+			pols[[i]] <- r[,1:2]						
+		}
+	} else {
+		brng <- brng * pi/180
+		for (i in 1:nrow(xy)) {
+			x <- xy[i,1] + d[i] * cos(brng)
+			y <- xy[i,2] + d[i] * sin(brng)
+			pols[[i]] <- cbind(x, y)
+		}
+	}
+	
+	sp <- do.call(spPolygons, pols)
+	crs(sp) <- crs
+	sp
+}
+
+
+
+
 setMethod('buffer', signature(x='Spatial'), 
 function(x, width=1, dissolve=TRUE, ...) {
+
+	if (inherits(x, 'SpatialPoints')) {
+		
+		if (.couldBeLonLat(x)) {
+			if (!isLonLat(x)) {
+				warning('crs unknown, assuming lonlat')
+			}
+			lonlat=TRUE
+		} else {
+			lonlat = FALSE
+		}
+		
+		pb <- .pointBuffer(xy=coordinates(x), d=width, lonlat=lonlat, crs=crs(x), ...)
+
+		if (dissolve) {
+			pb <- aggregate(pb)
+		} else if (.hasSlot(x, 'data')) {
+			pb <- SpatialPointsDataFrame(pb, x@data, match.ID=FALSE)
+		}
+		return(pb)		
+	}
+	
 	stopifnot(requireNamespace("rgeos"))
 	rgeos::gBuffer(x, byid=!dissolve, width=width, ...)
 }
@@ -54,7 +128,7 @@ function(x, width=0, filename='', doEdge=FALSE, ...) {
 		pbStep(pb)
 		x[] <- 0
 		xy <- xyFromCell(out, i)
-		x[i] <- .Call("distanceToNearestPoint", xy, pts, as.integer(longlat), PACKAGE='raster')
+		vals <- .Call('_raster_distanceToNearestPoint', xy, pts, longlat, 6378137.0, 1/298.257223563, PACKAGE='raster')
 		pbStep(pb)
 		x[x > width] <- NA
 		x[!is.na(x)] <- 1
@@ -81,7 +155,7 @@ function(x, width=0, filename='', doEdge=FALSE, ...) {
 		j <- which(is.na(vals))
 		vals[] <- 0
 		if (length(j) > 0) {
-			vals[j] <- .Call("distanceToNearestPoint", xy[j,,drop=FALSE], pts, as.integer(longlat), PACKAGE='raster')
+			vals[j] <- .Call('_raster_distanceToNearestPoint', xy[j,,drop=FALSE], pts, longlat, 6378137.0, 1/298.257223563, PACKAGE='raster')
 		}
 		vals[vals > width] <- NA
 		vals[!is.na(vals)] <- 1

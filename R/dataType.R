@@ -23,15 +23,15 @@
 	} else if (datatype == 'SINGL') {datatype <- 'FLT4S'
 	} else if (datatype == 'REAL') {datatype <- 'FLT4S'}	
 	
-	if (.nchar(datatype) < 3) {
+	if (nchar(datatype) < 3) {
 		stop(paste('invalid datatype:', datatype))
-	} else if (.nchar(datatype) == 3) {
+	} else if (nchar(datatype) == 3) {
 		if (datatype == 'LOG') { 
 			datatype <- paste(datatype, '1S', sep='') 		
 		} else {
 			datatype <- paste(datatype, '4S', sep='') 
 		}
-	} else if (.nchar(datatype) == 4) {
+	} else if (nchar(datatype) == 4) {
 		if (datatype == 'INT1') { 
 			datatype <- paste(datatype, 'U', sep='') 
 		} else { 

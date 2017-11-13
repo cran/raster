@@ -10,6 +10,14 @@ if (!isGeneric("mask")) {
 }	
 
 
+setMethod('mask', signature(x='Raster', mask='sf'), 
+function(x, mask, ...) {
+	mask <- .sf2sp(mask)
+	mask(x, mask)
+}
+)
+
+
 setMethod('mask', signature(x='Raster', mask='Spatial'), 
 function(x, mask, filename="", inverse=FALSE, updatevalue=NA, updateNA=FALSE, ...){ 
 	mask <- rasterize(mask, x, 1, silent=TRUE)

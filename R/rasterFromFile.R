@@ -11,8 +11,8 @@
 	}
 
 	# fix for opendap https://r-forge.r-project.org/forum/message.php?msg_id=5015
-	start <- tolower(substr(x, 1, 4))
-	if (! start %in% c('http', 'ftp')) {
+	start <- tolower(substr(x, 1, 3))
+	if (! start %in% c('htt', 'ftp')) {
 		y <- NULL
 		try( y <- normalizePath( x, mustWork=TRUE), silent=TRUE )
 		if (! is.null(y)) {

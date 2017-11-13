@@ -42,7 +42,8 @@ setMethod('freq', signature(x='RasterLayer'),
 				z <- sum(z[,2])
 				res <- rbind(res, c(NA, z))
 			}
-			pbClose(pb)		
+			res <- res[order(res[,1]), ]
+			pbClose(pb)	
 		}
 	
 		colnames(res) <- c('value', 'count')

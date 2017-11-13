@@ -14,7 +14,7 @@ This is an implementation of J. Ronald Eastman's pushbroom algorithm
 #define min( a, b ) ( ((a) < (b)) ? (a) : (b) )
 
 
-SEXP broom(SEXP d, SEXP f, SEXP dm, SEXP dist, SEXP dw) {
+SEXP _broom(SEXP d, SEXP f, SEXP dm, SEXP dist, SEXP dw) {
 
 	R_len_t i, j, r;
     SEXP dis;

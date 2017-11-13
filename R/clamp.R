@@ -25,7 +25,7 @@ function(x, lower=-Inf, upper=Inf, useValues=TRUE, filename='', ...) {
 	}
 	useValues <- as.integer(useValues)
 	if (canProcessInMemory(out)) {
-		out <- setValues(out, .Call('clamp', values(x), range, useValues, NAOK=TRUE, PACKAGE='raster')) 
+		out <- setValues(out, .Call('_do_clamp', values(x), range, useValues, NAOK=TRUE, PACKAGE='raster')) 
 	} else {
 		tr <- blockSize(out)
 		pb <- pbCreate(tr$n, label='clamp', ...)
@@ -33,7 +33,7 @@ function(x, lower=-Inf, upper=Inf, useValues=TRUE, filename='', ...) {
 		
 		for (i in 1:tr$n) {
 			vals <- getValues( x, row=tr$row[i], nrows=tr$nrows[i] )
-			vals <- .Call('clamp', vals, range, useValues, NAOK=TRUE, PACKAGE='raster')
+			vals <- .Call('_do_clamp', vals, range, useValues, NAOK=TRUE, PACKAGE='raster')
 			if (nl > 1) {
 				vals <- matrix(vals, ncol=nl)
 			}

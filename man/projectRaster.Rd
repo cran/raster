@@ -47,7 +47,7 @@ Projection is performed using the PROJ.4 library accessed through the rgdal pack
 
 One of the best places to find PROJ.4 coordinate reference system descriptions is \url{http://www.spatialreference.org}. 
 
-You can also consult this page: \url{http://www.remotesensing.org/geotiff/proj_list/} to find the parameter options and names for projections.
+You can also consult this page: \url{http://geotiff.maptools.org/proj_list} to find the parameter options and names for projections.
 
 Also see \code{projInfo('proj')}, \code{projInfo('ellps')}, and \code{projInfo('datum')} for valid PROJ.4 values. 
 }
