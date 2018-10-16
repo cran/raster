@@ -3,8 +3,6 @@
 # Version 0.9
 # Licence GPL v3
 
-# based on  create2GDAL and rgdal::saveDataset from the rgdal package
-# authors: Timothy H. Keitt, Roger Bivand, Edzer Pebesma, Barry Rowlingson
 
 .getGDALtransient <- function(r, filename, options, NAflag, ...)  {
 

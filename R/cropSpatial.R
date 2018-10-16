@@ -11,7 +11,6 @@ setMethod('crop', signature(x='Spatial', y='ANY'),
 		if (! inherits(y, 'SpatialPolygons')) {
 			if (inherits(y, 'Extent')) {
 				y <- as(y, 'SpatialPolygons')
-				y@proj4string <- x@proj4string
 			} else { 
 				y <- extent(y)
 				methods::validObject(y)

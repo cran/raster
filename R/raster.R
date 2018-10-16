@@ -312,6 +312,15 @@ setMethod('raster', signature(x='Extent'),
 )
 
 
+setMethod('raster', signature(x='sf'), 
+	function(x, origin, ...){
+		x <- .sf2sp(x)
+		raster(x, origin, ...)
+		x
+	}
+)
+
+
 setMethod('raster', signature(x='Spatial'), 
 	function(x, origin, ...){
 		r <- raster(extent(x), ...)

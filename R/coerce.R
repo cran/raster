@@ -441,3 +441,26 @@ setAs('grf', 'RasterLayer',
 	}
 )
 
+
+
+# setAs('RasterStackBrick', 'big.matrix', 
+# function(from, filename="") {
+	# b <- big.matrix(ncell(from), nlayers(from), backingfile=filename )
+	# names(b) <- colnames(from)
+	# op <- options('bigmemory.allow.dimnames')
+	# options(bigmemory.allow.dimnames=TRUE)
+	# colnames(b) <- names(from)
+	# options(bigmemory.allow.dimnames=op)
+	# if (canProcessInMemory(from)) {
+		# b[]  <- as.matrix(from)
+	# } else {
+		# nc <- ncol(from)
+		# tr <- blockSize(from)
+		# for (i in 1:tr$n) {
+			# start <- ((tr$row[i]-1) * nc) + 1
+			# end <- start + (tr$nrows[i] * nc) - 1
+			# b[start:end, ] <- getValues(from, row=tr$row[i], nrows=tr$nrows[i])
+		# }
+	# }	
+	# b
+# }

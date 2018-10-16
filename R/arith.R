@@ -35,7 +35,7 @@ setMethod("Arith", signature(e1='Raster', e2='Raster'),
 		}
 
 		
-		if (canProcessInMemory(r, 4)) {
+		if (canProcessInMemory(r, 4 * nlayers(e2))) {
 			if (nl1 == nl2 ) {
 				return( setValues(r, values=methods::callGeneric( getValues(e1), getValues(e2))) )
 			} else {
@@ -212,7 +212,7 @@ setMethod("Arith", signature(e1='RasterStackBrick', e2='numeric'),
 			b <- brick(e1, values=FALSE)
 			names(b) <- names(e1)
 			
-			if (canProcessInMemory(e1, 3)) {
+			if (canProcessInMemory(e1, 4)) {
 				return( setValues(b, t(methods::callGeneric( t(getValues(e1)), e2))) )
 			}
 			
@@ -237,7 +237,7 @@ setMethod("Arith", signature(e1='RasterStackBrick', e2='numeric'),
 		b <- brick(e1, values=FALSE)
 		names(b) <- names(e1)
 		
-		if (canProcessInMemory(e1, 3)) {
+		if (canProcessInMemory(e1, 4)) {
 			return ( setValues(b,  methods::callGeneric(getValues(e1), e2) ) )
 		} else {
 			tr <- blockSize(b)
@@ -275,7 +275,7 @@ setMethod("Arith", signature(e1='numeric', e2='RasterStackBrick'),
 			b <- brick(e2, values=FALSE)
 			names(b) <- names(e2)
 			
-			if (canProcessInMemory(e2, 3)) {
+			if (canProcessInMemory(e2, 4)) {
 				return( setValues(b, t(methods::callGeneric( e1, t(getValues(e2))))) )
 			}
 			
@@ -300,7 +300,7 @@ setMethod("Arith", signature(e1='numeric', e2='RasterStackBrick'),
 		b <- brick(e2, values=FALSE)
 		names(b) <- names(e2)
 		
-		if (canProcessInMemory(e2, 3)) {
+		if (canProcessInMemory(e2, 4)) {
 			return ( setValues(b,  methods::callGeneric(e1, getValues(e2)) ) )
 		} else {
 	

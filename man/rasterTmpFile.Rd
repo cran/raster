@@ -44,18 +44,6 @@ The default path where the temporary files are stored is returned (can be change
 rasterTmpFile('mytemp_')
 showTmpFiles()
 removeTmpFiles(h=24)
-
-# It is possible (but undesirable!) to create overlapping temp file names. 
-for (i in 1:10) {
-	set.seed(0)
-	print(rasterTmpFile())
-}
-That can be avoided by using a prefix 
-for (i in 1:10) {
-	set.seed(0)
-	print(rasterTmpFile(prefix=paste('i', i, '_', sep='')))
-}
-
 }}
 
 \keyword{ spatial }

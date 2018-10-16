@@ -70,9 +70,10 @@ function(x, y) {
 		return(x)
 	}
 	
-	if (!rgeos::gIntersects(x)) {
-		return(x)
-	}
+	#if (!rgeos::gIntersects(x)) {
+	# this is a useful test, but returned topologyerrors
+	#	return(x)
+	#}
 	
 	if (.hasSlot(x, 'data')) {
 		x <- as(x, 'SpatialPolygons')
@@ -96,5 +97,15 @@ function(x, y) {
 	u
 }	
 )
+
+setMethod('union', signature(x='SpatialPoints', y='SpatialPoints'), 
+function(x, y) {
+	bind(x,y)
+})
+
+setMethod('union', signature(x='SpatialLines', y='SpatialLines'), 
+function(x, y) {
+	bind(x,y)
+})
 
 

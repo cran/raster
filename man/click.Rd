@@ -57,10 +57,11 @@ Unless the process is terminated prematurely values at at most \code{n} position
 
 
 \examples{
+\dontrun{
  r <- raster(system.file("external/test.grd", package="raster"))
-#plot(r)
-#click(r)
-#now click on the plot (map)
-}
+ plot(r)
+ click(r)
+ # now click on the plot (map)
+}}
 
 \keyword{ spatial }

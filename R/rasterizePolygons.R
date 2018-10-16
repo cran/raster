@@ -113,8 +113,72 @@
 
 
 
-.polygonsToRaster <- function(p, rstr, field, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue="all", getCover=FALSE, filename="", silent=TRUE, ...) {
+.polygonsToRaster <- function(p, rstr, field, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue="all", getCover=FALSE, filename="", silent=TRUE, faster=TRUE, ...) {
 
+
+	npol <- length(p@polygons)
+	pvals <- .getPutVals(p, field, npol, mask)
+	putvals <- pvals[,1]
+	if (ncol(pvals) > 1) {
+		rstr@data@isfactor <- TRUE
+		rstr@data@attributes <- list(pvals)
+		if (!is.character(fun)) {
+			stop('when rasterizing multiple fields you must use "fun=first" or "fun=last"')
+		} else if (!(fun %in% c('first', 'last'))) {
+			stop('when rasterizing multiple fields you must use "fun=first" or "fun=last"')
+		}
+	}
+
+
+	if (getCover) {
+		rstr <- disaggregate(raster(rstr), 10)
+		r <- .fasterize(p, rstr, rep(1, npol), background=0) 
+		return( aggregate(r, 10, mean, na.rm=TRUE, filename=filename, ...) )
+	} 
+	
+
+	
+	### new code
+	if (is.character(fun) && (ncol(pvals) == 1) && faster) {
+
+		if (fun == "last") {
+			if (mask || update) {
+				if (mask && update) stop("either use 'mask' OR 'update'")	
+				background = NA
+				r <- .fasterize(p, rstr, pvals[,1], background) 
+				if (! hasValues(r)) {
+					if (mask) { 
+						warning('there are no values to mask')
+					} else {
+						warning('there are no values to update')
+					}
+					return(r)
+				}
+				if (mask) {
+					r <- mask(rstr, r)
+				} else {
+					if (updateValue[1]=="all") {
+						r <- cover(r, rstr)
+					} else if (updateValue[1]=="NA") {
+						r <- cover(rstr, r, ...)
+					} else if (updateValue[1]=="!NA") {
+						r <- mask(cover(r, rstr), rstr, ...)
+					} else {
+						s <- stack(r, rstr)
+						r <- overlay(rstr, r, fun=function(x,y){ i = (x %in% updateValue & !is.na(y)); x[i] <- y[i]; x }, ... )
+					}
+				}
+				return(r)
+			} else {
+				r <- .fasterize(p, rstr, pvals[,1], background, filename, ...) 
+			}
+		}
+		
+	}
+	### end new code
+
+
+	
 	leftColFromX <- function ( object, x )	{
 		colnr <- (x - xmin(object)) / xres(object)
 		i <- colnr %% 1 == 0
@@ -140,13 +204,7 @@
 		filename <- rasterTmpFile()
 	}
 	
-	if (getCover) {
-#		fun <- 'first'
-#		mask <- FALSE
-#		update <- FALSE
-#		field <- -1
-		return (.polygoncover(p, rstr, filename, ...)) 		
-	}
+
 
 	if (mask & update) { 
 		stop('use either "mask" OR "update"')
@@ -412,12 +470,14 @@
 #plot( .polygonsToRaster(p, rstr) )
 
 
-.polygoncover <- function(p, x, filename, ...) {
+...polygoncover <- function(p, x, filename, ...) {
 	d <- disaggregate(raster(x), 10)
 	r <- .polygonsToRaster(p, d, filename=filename, field=1, fun='first', background=0, mask=FALSE, update=FALSE, getCover=FALSE, silent=TRUE, ...)
 	aggregate(r, 10, sum)
+	
+	
+	
 } 
-
 
 .Old_polygoncover <- function(rstr, filename, polinfo, lxmin, lxmax, pollist, ...) {
 # percentage cover per grid cell

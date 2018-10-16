@@ -105,18 +105,18 @@ setMethod('interpolate', signature(object='Raster'),
 			} else {
 				blockvals <- data.frame(getValuesBlock(object, row=rr, nrows=tr$nrows[i], firstcol, ncols))
 				colnames(blockvals) <- lyrnames # necessary if there is only one layer
-				if (haveFactor) {
-					for (i in 1:length(f)) {
-						blockvals[,f[i]] <- as.factor(blockvals[,f[i]])
-					}
-				}
-
+				
 				p <- xyFromCell(predrast, ablock + (tr$row[i]-1) * ncol(predrast)) 
 				blockvals <- cbind(data.frame( x=p[,1], y=p[,2]), blockvals) 
 
 			} 
-			if (! is.null(const)) {
+			if (!is.null(const)) {
 				blockvals <- cbind(blockvals, const)
+			}
+			if (haveFactor) {
+				for (j in 1:length(f)) {
+					blockvals[,f[j]] <- as.factor(blockvals[,f[j]])
+				}
 			}
 			
 			colnames(blockvals)[1:2] <- xyNames[1:2]

@@ -8,7 +8,7 @@
 getData <- function(name='GADM', download=TRUE, path='', ...) {
 	path <- .getDataPath(path)
 	if (name=='GADM') {
-		.GADM(..., download=download, path=path, version=2.8)
+		.GADM(..., download=download, path=path)
 	} else if (name=='SRTM') {
 		.SRTM(..., download=download, path=path)
 	} else if (name=='alt') {
@@ -114,25 +114,36 @@ ccodes <- function() {
 }
 
 
-.GADM <- function(country, level, download, path, version) {
+.GADM <- function(country, level, download, path, version=3.6, type='sp') {
 #	if (!file.exists(path)) {  dir.create(path, recursive=T)  }
 
 	country <- .getCountry(country)
 	if (missing(level)) {
 		stop('provide a "level=" argument; levels can be 0, 1, or 2 for most countries, and higher for some')
 	}
+
+	if (version > 3) {
+		if (type == 'sf') {
+			filename <- file.path(path, paste0('gadm36_', country, '_', level, "_sf.rds"))
+		} else {
+			filename <- file.path(path, paste0('gadm36_', country, '_', level, "_sp.rds"))
+		}
+	} else {
+		filename <- paste(path, 'GADM_', version, '_', country, '_', level, ".rds", sep="")	
+	}
 	
-	filename <- paste(path, 'GADM_', version, '_', country, '_adm', level, ".rds", sep="")
 	if (!file.exists(filename)) {
 		if (download) {
-		
-			baseurl <- paste0("http://biogeo.ucdavis.edu/data/gadm", version)
-			if (version == 2) {
-				theurl <- paste(baseurl, '/R/', country, '_adm', level, ".RData", sep="")
-			} else {
+			baseurl <- paste0("https://biogeo.ucdavis.edu/data/gadm", version)
+			if (version == 2.8) {
 				theurl <- paste(baseurl, '/rds/', country, '_adm', level, ".rds", sep="")			
+			} else {
+				if (type == 'sf') {
+					theurl <- paste(baseurl, '/Rsf/gadm36_', country, '_', level, "_sf.rds", sep="")			
+				} else {
+					theurl <- paste(baseurl, '/Rsp/gadm36_', country, '_', level, "_sp.rds", sep="")			
+				}
 			}
-			
 			.download(theurl, filename)
 			if (!file.exists(filename))	{ 
 				message("\nCould not download file -- perhaps it does not exist") 
@@ -142,13 +153,7 @@ ccodes <- function() {
 		}
 	}	
 	if (file.exists(filename)) {
-		if (version == 2) {
-			thisenvir <- new.env()
-			data <- get(load(filename, thisenvir), thisenvir)
-		} else {
-			data <- readRDS(filename)
-		}
-		return(data)
+		return(readRDS(filename))
 	} else {
 		return(NULL)
 	}
@@ -162,7 +167,7 @@ ccodes <- function() {
 	filename <- paste(path, 'countries.RData', sep="")
 	if (!file.exists(filename)) {
 		if (download) {
-			theurl <- paste("http://biogeo.ucdavis.edu/data/gadm2.6/countries_gadm26.rds", sep="")
+			theurl <- paste("https://biogeo.ucdavis.edu/data/gadm2.6/countries_gadm26.rds", sep="")
 			.download(theurl, filename)
 			if (!file.exists(filename)) {
 				message("\nCould not download file -- perhaps it does not exist") 
@@ -219,7 +224,7 @@ ccodes <- function() {
 	dir.create(path, recursive=TRUE, showWarnings=FALSE)
 
 	zip <- tolower(paste(model, rcp, var, year, '.zip', sep=''))
-	theurl <- paste('http://biogeo.ucdavis.edu/data/climate/cmip5/', res, '/', zip, sep='')
+	theurl <- paste('https://biogeo.ucdavis.edu/data/climate/cmip5/', res, '/', zip, sep='')
 
 	zipfile <- paste(path, zip, sep='')
 	if (var == 'bi') {
@@ -277,7 +282,7 @@ ccodes <- function() {
 			bilfiles <- paste(var, 1:19, '_', rc, '.bil', sep='')
 			hdrfiles <- paste(var, 1:19, '_', rc, '.hdr', sep='')		
 		}
-		theurl <- paste('http://biogeo.ucdavis.edu/data/climate/worldclim/1_4/tiles/cur/', zip, sep='')
+		theurl <- paste('https://biogeo.ucdavis.edu/data/climate/worldclim/1_4/tiles/cur/', zip, sep='')
 	} else {
 		zip <- paste(var, '_', res, 'm_bil.zip', sep='')
 		zipfile <- paste(path, zip, sep='')
@@ -291,7 +296,7 @@ ccodes <- function() {
 			bilfiles <- paste(var, 1:19, '.bil', sep='')
 			hdrfiles <- paste(var, 1:19, '.hdr', sep='')	
 		}
-		theurl <- paste('http://biogeo.ucdavis.edu/data/climate/worldclim/1_4/grid/cur/', zip, sep='')
+		theurl <- paste('https://biogeo.ucdavis.edu/data/climate/worldclim/1_4/grid/cur/', zip, sep='')
 	}
 	files <- c(paste(path, bilfiles, sep=''), paste(path, hdrfiles, sep=''))
 	fc <- sum(file.exists(files))
@@ -343,7 +348,7 @@ ccodes <- function() {
 		extension(zipfilename) <- '.zip'
 		if (!file.exists(zipfilename)) {
 			if (download) {
-				theurl <- paste("http://biogeo.ucdavis.edu/data/diva/", mskpath, name, "/", country, mskname, name, ".zip", sep="")
+				theurl <- paste("https://biogeo.ucdavis.edu/data/diva/", mskpath, name, "/", country, mskname, name, ".zip", sep="")
 				.download(theurl, zipfilename)
 				if (!file.exists(zipfilename))	{ 
 					message("\nCould not download file -- perhaps it does not exist") 

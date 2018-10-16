@@ -145,16 +145,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // aggregate_fun
-NumericMatrix aggregate_fun(NumericMatrix d, NumericVector dim, bool narm, int fun);
-RcppExport SEXP _raster_aggregate_fun(SEXP dSEXP, SEXP dimSEXP, SEXP narmSEXP, SEXP funSEXP) {
+NumericMatrix aggregate_fun(NumericMatrix d, NumericVector dims, bool narm, int fun);
+RcppExport SEXP _raster_aggregate_fun(SEXP dSEXP, SEXP dimsSEXP, SEXP narmSEXP, SEXP funSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type d(dSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type dim(dimSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type dims(dimsSEXP);
     Rcpp::traits::input_parameter< bool >::type narm(narmSEXP);
     Rcpp::traits::input_parameter< int >::type fun(funSEXP);
-    rcpp_result_gen = Rcpp::wrap(aggregate_fun(d, dim, narm, fun));
+    rcpp_result_gen = Rcpp::wrap(aggregate_fun(d, dims, narm, fun));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -294,8 +294,8 @@ RcppExport SEXP _edge(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP _focal_fun(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP _focal_get(SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP _focal_sum(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _point_in_polygon2(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP _reclass(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+RcppExport SEXP _rcpp_module_boot_spmod();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_raster_doBilinear", (DL_FUNC) &_raster_doBilinear, 4},
@@ -318,6 +318,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_raster_doCellFromXY", (DL_FUNC) &_raster_doCellFromXY, 8},
     {"_raster_doXYFromCell", (DL_FUNC) &_raster_doXYFromCell, 7},
     {"_raster_doFourCellsFromXY", (DL_FUNC) &_raster_doFourCellsFromXY, 9},
+    {"_rcpp_module_boot_spmod", (DL_FUNC) &_rcpp_module_boot_spmod, 0},
     {"_broom",                          (DL_FUNC) &_broom,                          6},
     {"_do_clamp",                       (DL_FUNC) &_do_clamp,                       4},
     {"_do_layerize",                    (DL_FUNC) &_do_layerize,                    3},
@@ -326,7 +327,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_focal_fun",                      (DL_FUNC) &_focal_fun,                      7},
     {"_focal_get",                      (DL_FUNC) &_focal_get,                      4},
     {"_focal_sum",                      (DL_FUNC) &_focal_sum,                      7},
-    {"_point_in_polygon2",              (DL_FUNC) &_point_in_polygon2,              6},
     {"_reclass",                        (DL_FUNC) &_reclass,                        7},
     {NULL, NULL, 0}
 };

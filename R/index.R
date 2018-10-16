@@ -124,33 +124,37 @@ function(x, i, j, ... , drop=TRUE) {
 
 
 .doExtract <- function(x, i, drop) {	
-	if (! hasValues(x) ) {
-		stop('no data associated with this Raster object')
-	}
 	if (length(i) < 1) return(NULL) 
-	
 	nacount <- sum(is.na(i))
 	if (nacount > 0) {
 		warning('some indices are invalid (NA returned)')
 	}	
-
-	if (drop) {
-		return( .cellValues(x, i) )
-		
-	} else {
+	if (!drop) {
 		i <- stats::na.omit(i)
 		r <- rasterFromCells(x, i, values=FALSE)
-		newi <- cellFromXY(r, xyFromCell(x, i))
 		if (nlayers(x) > 1) {
 			r <- brick(r)
-			v <- matrix(NA, nrow=ncell(r), ncol=nlayers(x))
-			v[newi,] <- .cellValues(x, i)
-			v <- setValues(r, v)
-			return(v)
+			if (hasValues(x)) {
+				newi <- cellFromXY(r, xyFromCell(x, i))
+				v <- matrix(NA, nrow=ncell(r), ncol=nlayers(x))			
+				v[newi,] <- .cellValues(x, i)
+				r <- setValues(r, v)
+			} 
+			return(r)
 		} else {
-			r[newi] <- .cellValues(x, i)
+			if (hasValues(x)) {
+				newi <- cellFromXY(r, xyFromCell(x, i))
+				r[newi] <- .cellValues(x, i)
+			}
 			return(r)
 		}
-	}
+	
+	} else {
+		if (! hasValues(x) ) {	
+			stop('no data associated with this Raster object')
+		}
+		return( .cellValues(x, i) )
+		
+	} 
 }
 

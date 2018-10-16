@@ -27,6 +27,8 @@ setMethod('quantile', signature(x='Raster'),
 		if (nlayers(x)==1) {
 			return(quantile(v, ...))
 		} else {
+			# t(apply(v, 2, quantile, na.rm=TRUE))
+
 			q <- stats::quantile(v[,1], ...)
 			for (i in 2:nlayers(x)) {
 				q <- rbind(q, stats::quantile(v[,i], ...))

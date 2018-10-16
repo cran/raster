@@ -1,12 +1,20 @@
 \name{xyFromCell}
 
-\alias{xFromCol}
-\alias{yFromRow}
-\alias{xyFromCell}
-\alias{xFromCell}
-\alias{yFromCell}
 
-  
+\alias{xFromCol}
+\alias{xFromCol,Raster,numeric-method}
+\alias{yFromRow}
+\alias{yFromRow,Raster,numeric-method}
+\alias{xFromCell}
+\alias{xFromCell,Raster,numeric-method}
+\alias{yFromCell}
+\alias{yFromCell,Raster,numeric-method}
+\alias{xyFromCell}
+\alias{xyFromCell,BasicRaster-method}
+\alias{xyFromCell,BasicRaster,ANY-method}
+\alias{xyFromCell,Raster-method}
+
+
 \title{Coordinates from a row, column or cell number}
 
 \description{
@@ -14,11 +22,11 @@ These functions get coordinates of the center of raster cells for a row, column,
 }
 
 \usage{
-xFromCol(object, col=1:ncol(object))
-yFromRow(object, row=1:nrow(object))
-xyFromCell(object, cell, spatial=FALSE)
-xFromCell(object, cell)
-yFromCell(object, cell)
+\S4method{xFromCol}{Raster,numeric}(object, col)
+\S4method{yFromRow}{Raster,numeric}(object, row)
+\S4method{xFromCell}{Raster,numeric}(object, cell)
+\S4method{yFromCell}{Raster,numeric}(object, cell)
+\S4method{xyFromCell}{BasicRaster,ANY}(object, cell, spatial=FALSE, ...)
 }
 
 
@@ -27,7 +35,8 @@ yFromCell(object, cell)
   \item{cell}{cell number(s)}
   \item{col}{column number; or vector of column numbers}
   \item{row}{row number; or vector of row numbers}
-  \item{spatial}{return a SpatialPoints object (sp package) instead of a matrix}
+  \item{spatial}{If \code{spatial=TRUE}, \code{xyFromCell} returns a SpatialPoints object instead of a matrix}
+  \item{...}{additional arguments. None implemented}
 }
   
 \details{

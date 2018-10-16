@@ -20,7 +20,9 @@
 		if (!axes) {
 			# if (main != "") { } else {
 			old.par <- graphics::par(no.readonly = TRUE) 
-			graphics::par(plt=c(0,1,0,1))
+			#graphics::par(plt=c(0,1,0,1))
+			graphics::par(mar=c(0,0,0,0), xaxs='i',yaxs='i')
+			
 			sethook <- TRUE
 		}	
 		if (missing(asp)) {
@@ -64,7 +66,8 @@
 	}
 
 	requireNamespace("grDevices")
-	bb <- as.vector(t(bbox(x)))
+	bb <- as.vector(extent(x))
+
 
 	if (! add) {
 		plot(c(bb[1], bb[2]), c(bb[3], bb[4]), type = "n", xlab=xlab, ylab=ylab, asp=asp, axes=axes, main=main, ...)

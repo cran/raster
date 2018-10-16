@@ -84,8 +84,7 @@ A vector for RasterLayer objects, and a matrix for RasterStack or RasterBrick ob
 \seealso{ \code{\link{getValues}, \link{getValuesFocal}}  }
 
 \examples{
-r <- raster(ncol=36, nrow=18)
-r[] <- 1:ncell(r)
+r <- raster(ncol=36, nrow=18, vals=1:(18*36))
 
 ###############################
 # extract values by cell number
@@ -126,7 +125,7 @@ extract(r, xy[1:3,], buffer=1000000, fun=mean)
 ###############################
 # extract values with lines
 ###############################
-
+r <- raster(ncol=36, nrow=18, vals=1:(18*36))
 cds1 <- rbind(c(-50,0), c(0,60), c(40,5), c(15,-45), c(-10,-25))
 cds2 <- rbind(c(80,20), c(140,60), c(160,0), c(140,-55))
 lines <- spLines(cds1, cds2)
@@ -140,10 +139,7 @@ cds1 <- rbind(c(-180,-20), c(-160,5), c(-60, 0), c(-160,-60), c(-180,-20))
 cds2 <- rbind(c(80,0), c(100,60), c(120,0), c(120,-55), c(80,0))
 polys <- spPolygons(cds1, cds2)
 
-#plot(r)
-#plot(polys, add=TRUE)
 v <- extract(r, polys)
-v
 # mean for each polygon
 unlist(lapply(v, function(x) if (!is.null(x)) mean(x, na.rm=TRUE) else NA ))
 

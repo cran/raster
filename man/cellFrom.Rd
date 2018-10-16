@@ -1,15 +1,21 @@
 \name{cellFrom}
 
 \alias{cellFromRowCol}
-\alias{cellFromRowColCombine}
+\alias{cellFromRowCol,Raster,numeric,numeric-method}
+\alias{colFromX}
+\alias{colFromX,Raster,numeric-method}
+\alias{rowFromY}
+\alias{rowFromY,Raster,numeric-method}
+\alias{cellFromXY}
+\alias{cellFromXY,BasicRaster-method}
+
 \alias{cellFromRow}
 \alias{cellFromCol}
-\alias{colFromX}
-\alias{rowFromY}
-\alias{cellFromXY}
+\alias{cellFromRowColCombine}
+\alias{fourCellsFromXY}
 \alias{cellFromLine}
 \alias{cellFromPolygon}
-\alias{fourCellsFromXY}
+
 
   
 \title{Get cell, row, or column number}

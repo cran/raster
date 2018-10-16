@@ -51,10 +51,6 @@
 
 
 
-if (!isGeneric("focal")) {
-	setGeneric("focal", function(x, ...)
-		standardGeneric("focal"))
-}	
 
 setMethod('focal', signature(x='RasterLayer'), 
 function(x, w, fun, filename='', na.rm=FALSE, pad=FALSE, padValue=NA, NAonly=FALSE, ...) {

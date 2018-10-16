@@ -1,8 +1,11 @@
 \name{rowFromCell}
 
-\alias{colFromCell}
 \alias{rowFromCell}
+\alias{rowFromCell,Raster,numeric-method}
+\alias{colFromCell}
+\alias{colFromCell,Raster,numeric-method}
 \alias{rowColFromCell}
+\alias{rowColFromCell,Raster,numeric-method}
 
   
 \title{Row or column number from a cell number}

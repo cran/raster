@@ -39,7 +39,7 @@ Raster object
 
 
 
-\seealso{ \code{\link{reclassify}, \link{cut}}}
+\seealso{ \code{\link{reclassify}, \link{clamp}, \link{cut}}}
 
 \examples{
 r <- raster(ncol=10, nrow=10)

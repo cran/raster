@@ -5,7 +5,7 @@
 
 
 
-.startWriteCDF <- function(x, filename, datatype='FLT4S', overwrite=FALSE, att, 
+.startWriteCDF <- function(x, filename, datatype='FLT4S', overwrite=FALSE, progress='', att, 
 		varname, varunit, varatt, longname, xname, yname, zname, zunit, zatt, NAflag, force_v4=FALSE, ...) {
 
 	stopifnot(requireNamespace("ncdf4"))

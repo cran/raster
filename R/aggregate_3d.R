@@ -98,7 +98,7 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 		op <- NA
 	}
 
-	# note that it is yfact, xfact, zfact.
+	# note that it is yfact, xfact, zfact
 	dims <- as.integer(c(lastrow, lastcol, length(lyrs), yfact, xfact, zfact))
 	
 	if (is.na(op)) {
@@ -118,7 +118,7 @@ function(x, fact=2, fun='mean', expand=TRUE, na.rm=TRUE, filename="", ...)  {
 			if (!expand) {
 				nrow(xx) <- (nrow(x) %/% yfact) * yfact
 			}		
-			tr <- blockSize(xx, minrows=yfact)
+			tr <- blockSize(xx, n=nlayers(x)*xfact*yfact, minrows=yfact)
 			st <- round(tr$nrows[1] / yfact) * yfact
 			tr$n <- ceiling(lastrow / st)
 			tr$row <- c(1, cumsum(rep(st, tr$n-1))+1)

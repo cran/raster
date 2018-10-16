@@ -4,11 +4,6 @@
 # Licence GPL v3
 
 
-if (!isGeneric("rasterize")) {
-	setGeneric("rasterize", function(x, y, ...)
-		standardGeneric("rasterize"))
-}	
-
 
 setMethod('rasterize', signature(x='matrix', y='Raster'), 
 	function(x, y, field, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue='all', filename="", na.rm=TRUE, ...){ 
@@ -32,8 +27,7 @@ setMethod('rasterize', signature(x='data.frame', y='Raster'),
 setMethod('rasterize', signature(x='sf', y='Raster'), 
 	function(x, y, ...) {
 		x <- .sf2sp(x)
-		#if (is.list(x)) {}
-		
+		#if (is.list(x)) {}	
 		rasterize(x, y, ...)
 	}
 )

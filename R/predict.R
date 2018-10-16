@@ -120,6 +120,9 @@ setMethod('predict', signature(object='Raster'),
 			# need to do this if using a single variable
 			colnames(blockvals) <- lyrnames
 			
+			if (! is.null(const)) {
+				blockvals <- cbind(blockvals, const)
+			} 
 			if (haveFactor) {
 				for (j in 1:length(f)) {
 					fl <- NULL
@@ -138,9 +141,6 @@ setMethod('predict', signature(object='Raster'),
 				}
 			}
 			
-			if (! is.null(const)) {
-				blockvals <- cbind(blockvals, const)
-			} 
 
 			if (na.rm) { 
 				if (inf.rm) {

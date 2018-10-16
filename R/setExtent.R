@@ -10,7 +10,7 @@
 
 setExtent <- function(x, ext, keepres=FALSE, snap=FALSE) {
 	
-	oldbb <- extent(x)
+#	oldbb <- extent(x)
 	bb <- extent(ext)
 	if (snap) {
 		bb <- alignExtent(bb, x)

@@ -3,22 +3,6 @@
 # Version 1.0
 # Licence GPL v3
 
-
-
-.uniqueNames <- function(x, sep='.') {
-	y <- as.matrix(table(x))
-	y <- y[y[,1] > 1, ,drop=F]
-	if (nrow(y) > 0) {
-		y <- rownames(y)
-		for (i in 1:length(y)) {
-			j <- which(x==y[i])
-			x[j] <- paste(x[j], sep, 1:length(j), sep='')
-		}
-	}
-	x
-}
-
-
 if (!isGeneric("bind")) {
 	setGeneric("bind", function(x, y, ...)
 		standardGeneric("bind"))
@@ -366,4 +350,14 @@ setMethod('bind', signature(x='SpatialPoints', y='SpatialPoints'),
 }
 )
 
+
+
+setMethod('bind', signature(x='list', y='missing'),
+	function(x, y, ..., keepnames=FALSE) {
+		if (length(x) < 2) { return(unlist(x)) }
+		names(x)[1:2] <- c('x', 'y')
+		x$keepnames <- keepnames
+		do.call(bind, x)
+	}
+)
 

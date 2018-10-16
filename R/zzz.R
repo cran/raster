@@ -1,5 +1,7 @@
 
-.onLoad <- function(lib, pkg)  {
+loadModule("spmod", TRUE)
+
+#.onLoad <- function(lib, pkg)  {
 #	pkg.info <- utils::packageDescription('raster') 
 #	packageStartupMessage(paste("raster ", pkg.info[["Version"]], " (", pkg.info["Date"], ")", sep=""))
 #	wd <- getwd()
@@ -8,6 +10,6 @@
 #	.loadOptions(fn)
 
 #	try( removeTmpFiles( .tmptime() ), silent=TRUE ) 
-	return(invisible(0))
-}
+#	return(invisible(0))
+#}
 

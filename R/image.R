@@ -3,10 +3,6 @@
 # Version 0.9
 # Licence GPL v3
 
-if (!isGeneric("image")) {
-	setGeneric("image", function(x,...)
-		standardGeneric("image"))
-}	
 
 setMethod("image", signature(x='RasterLayer'), 
 	function(x, maxpixels=500000, useRaster=TRUE, ...)  {

@@ -1,8 +1,8 @@
 Package: raster
 Type: Package
 Title: Geographic Data Analysis and Modeling
-Version: 2.6-7
-Date: 2017-11-12
+Version: 2.7-15
+Date: 2018-10-12
 Depends: methods, sp (>= 1.2-0), R (>= 3.0.0)
 Suggests: rgdal (>= 0.9-1), rgeos (>= 0.3-8), ncdf4, igraph, tcltk,
         parallel, rasterVis, MASS, sf
@@ -18,16 +18,29 @@ Authors@R: c(
 	person("Jonathan A.", "Greenberg", role = "ctb"),
 	person("Oscar", "Perpinan Lamigueiro", role = "ctb"),
 	person("Andrew", "Bevan", role = "ctb"),
+	person("Roger", "Bivand", role = "ctb"),
+	person("Mort", "Canty", role = "ctb"),
+	person("David", "Forrest", role = "ctb"),
+	person("Aniruddha", "Ghosh", role = "ctb"),
+	person("Duncan", "Golicher", role = "ctb"),
+	person("Josh", "Gray", role = "ctb"),
+	person("Paul", "Hiemstra", role = "ctb"),
+	person("Institute for Mathematics Applied Geosciences", role="cph"),
+	person("Charles", "Karney", role = "ctb"),
+	person("Steven", "Mosher", role = "ctb"),
+	person("Edzer", "Pebesma", role = "ctb"),
 	person("Etienne B.", "Racine", role = "ctb"),
+	person("Barry", "Rowlingson", role = "ctb"),
 	person("Ashton", "Shortridge", role = "ctb"),
-	person("Aniruddha", "Ghosh", role = "ctb")
+	person("Bill", "Venables", role = "ctb"),
+	person("Rafael", "Wueest", role = "ctb")
 	)
 Description: Reading, writing, manipulating, analyzing and modeling of gridded spatial data. The package implements basic and high-level functions. Processing of very large files is supported.
 License: GPL (>= 3)
 URL: http://www.rspatial.org/
 ByteCompile: TRUE
 NeedsCompilation: yes
-Packaged: 2017-11-13 07:31:42 UTC; rhijmans
+Packaged: 2018-10-13 20:59:59 UTC; rhijm
 Author: Robert J. Hijmans [cre, aut],
   Jacob van Etten [ctb],
   Joe Cheng [ctb],
@@ -36,9 +49,22 @@ Author: Robert J. Hijmans [cre, aut],
   Jonathan A. Greenberg [ctb],
   Oscar Perpinan Lamigueiro [ctb],
   Andrew Bevan [ctb],
+  Roger Bivand [ctb],
+  Mort Canty [ctb],
+  David Forrest [ctb],
+  Aniruddha Ghosh [ctb],
+  Duncan Golicher [ctb],
+  Josh Gray [ctb],
+  Paul Hiemstra [ctb],
+  Institute for Mathematics Applied Geosciences [cph],
+  Charles Karney [ctb],
+  Steven Mosher [ctb],
+  Edzer Pebesma [ctb],
   Etienne B. Racine [ctb],
+  Barry Rowlingson [ctb],
   Ashton Shortridge [ctb],
-  Aniruddha Ghosh [ctb]
+  Bill Venables [ctb],
+  Rafael Wueest [ctb]
 Maintainer: Robert J. Hijmans <r.hijmans@gmail.com>
 Repository: CRAN
-Date/Publication: 2017-11-13 19:30:51 UTC
+Date/Publication: 2018-10-16 19:10:03 UTC

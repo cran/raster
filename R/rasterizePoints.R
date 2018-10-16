@@ -4,7 +4,6 @@
 # Licence GPL v3
 
 
-
 .pointsToRaster <- function(xy, r, field, fun='last', background=NA, mask=FALSE, update=FALSE, updateValue='all', filename="", na.rm=TRUE, ...) {
 
 	rs <- raster(r)

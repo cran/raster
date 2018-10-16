@@ -35,7 +35,7 @@ Reclassification is done with matrix \code{rcl}, in the row order of the reclass
 Raster* object
 }
 
-\seealso{ \code{ \link{subs}, \link{cut}, \link{calc}} } 
+\seealso{ \code{ \link{subs}, \link{clamp}, \link{cut}, \link{calc}} } 
 
 
 

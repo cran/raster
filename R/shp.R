@@ -68,6 +68,8 @@ setMethod('shapefile', signature(x='Spatial'),
 			}
 		}
 		rgdal::writeOGR(x, filename, layer, driver='ESRI Shapefile', overwrite_layer=overwrite, ...)
+		#extension(filename) <- '.cpg'
+		#writeLines(encoding, filename, sep="")
 	}
 )
 

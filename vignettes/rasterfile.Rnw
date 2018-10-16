@@ -117,7 +117,7 @@ bandorder is required if nbands > 1 and ignored when nbands=1. Values can be 'BI
 
 minvalue and maxvalue indicate the minimum or maximum value in the each layer (excluding NA). If there are mulitple layers, the value are seperated by a colon.
 
-If the values are integers representing a class (e.g. land cover types such as 'forest', 'urban', 'agriculture') four additional keys are required to indicate that these are categorical data and to provide three columns for a 'Raster Attribute Table'. In this case there are three variables (ID, landocver and code). ID refers to the actual cell value, the following are attributed linked to these values. rattypes describe the data type. ID and would normally be 'integer'. Other values allowed are 'character' and 'numerical'. rastvalues gives the actual values. For example:
+If the values are integers representing a class (e.g. land cover types such as 'forest', 'urban', 'agriculture') four additional keys are required to indicate that these are categorical data and to provide three columns for a 'Raster Attribute Table'. In this case there are three variables (ID, landocver and code). ID refers to the actual cell value, the following are attributed linked to these values. rattypes describe the data type. ID and would normally be 'integer'. Other values allowed are 'character' and 'numerical'. 'ratvalues' gives the actual values. For example:
 
 categorical=TRUE
 

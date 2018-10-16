@@ -45,8 +45,8 @@
     .Call(`_raster_aggregate_get`, d, dims)
 }
 
-.aggregate_fun <- function(d, dim, narm, fun) {
-    .Call(`_raster_aggregate_fun`, d, dim, narm, fun)
+.aggregate_fun <- function(d, dims, narm, fun) {
+    .Call(`_raster_aggregate_fun`, d, dims, narm, fun)
 }
 
 .get_area_polygon <- function(d, lonlat) {

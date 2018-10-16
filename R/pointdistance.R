@@ -135,7 +135,7 @@ pointDistance <- function (p1, p2, lonlat, allpairs=FALSE, ...) {
 
 
 .planedist2 <- function(p1, p2) {
-# code by Bill Venables, CSIRO Laboratories
+# code by Bill Venables
 # https://stat.ethz.ch/pipermail/r-help/2008-February/153841.html
 	z0 <- complex(, p1[,1], p1[,2])
 	z1 <- complex(, p2[,1], p2[,2])

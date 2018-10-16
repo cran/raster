@@ -80,7 +80,7 @@ function(x, width=1, dissolve=TRUE, ...) {
 		if (dissolve) {
 			pb <- aggregate(pb)
 		} else if (.hasSlot(x, 'data')) {
-			pb <- SpatialPointsDataFrame(pb, x@data, match.ID=FALSE)
+			pb <- SpatialPolygonsDataFrame(pb, x@data, match.ID=FALSE)
 		}
 		return(pb)		
 	}
@@ -104,7 +104,9 @@ function(x, width=0, filename='', doEdge=FALSE, ...) {
 	}
 	
 	if (class(pts) == "try-error") {
-		return( .distanceRows(x, filename=filename, ...) )
+		d <- .distanceRows(x, filename=filename, ...) 
+		d <- reclassify(d, rbind(c(-1,width, 1), c(width, Inf, NA)))
+		return(d)
 	}
 	if (nrow(pts) == 0) {
 		stop('RasterLayer has no NA cells (for which to compute a distance)')
@@ -120,20 +122,21 @@ function(x, width=0, filename='', doEdge=FALSE, ...) {
 	                                                                        
 	if (canProcessInMemory(out, 6)) {
 		pb <- pbCreate(4, label='buffer', ...)
-		x <- values(x)
-		i <- which(is.na(x))
-		if (length(i) < 1) {
+		v <- values(x)
+		i <- is.na(v)
+		if (!any(i)) {
 			stop('raster has no NA values to compute distance to')
 		}
 		pbStep(pb)
-		x[] <- 0
-		xy <- xyFromCell(out, i)
+		xy <- xyFromCell(out, which(i))
 		vals <- .Call('_raster_distanceToNearestPoint', xy, pts, longlat, 6378137.0, 1/298.257223563, PACKAGE='raster')
 		pbStep(pb)
-		x[x > width] <- NA
-		x[!is.na(x)] <- 1
+		
+		v[!i] <- 1
+		v[i] <- NA^(vals > width)
+		out <- setValues(out, v)
+	
 		pbStep(pb)
-		out <- setValues(out, x)
 		if (filename != '') {
 			out <- writeRaster(out, filename=filename, ...)
 		}

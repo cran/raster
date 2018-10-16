@@ -32,7 +32,7 @@ pbCreate(nsteps, progress, style=3, label='Progress', ...)
 pbStep(pb, step=NULL, label='')
 pbClose(pb, timer)
 readStart(x, ...)
-readStop(x, ...)
+readStop(x)
 getCluster()
 returnCluster()
 }
