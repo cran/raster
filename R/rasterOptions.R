@@ -4,10 +4,8 @@
 # Licence GPL v3
 
 
-rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress, timer, chunksize, maxmemory, todisk, setfileext, tolerance, standardnames, depracatedwarnings, addheader, estimatemem, default=FALSE) {
-	
-	
-	
+rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress, timer, chunksize, maxmemory, memfrac, todisk, setfileext, tolerance, standardnames, depracatedwarnings, addheader, default=FALSE) {
+		
 	setFiletype <- function(format) {
 		if (.isSupportedFormat(format)) {	
 			options(rasterFiletype = format)	
@@ -98,7 +96,7 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
  
 	setChunksize <- function(chunksize) {
 		chunksize <- max(1, round(chunksize[1]))
-		chunksize <- min(chunksize, 10^9)
+		#chunksize <- min(chunksize, 10^7)
 		options(rasterChunkSize = chunksize )
 	}
 
@@ -111,11 +109,11 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		options(rasterMaxMemory = maxmemory )
 	}
 	
-	setEstimateMem <- function(estimatemem) {
-		if (is.logical(estimatemem)) { 
-			options(rasterEstimateMem = estimatemem )
+	setMemfrac <- function(memfrac) {
+		if (memfrac >= 0.1 & memfrac <= 0.9) {
+			options(rasterMemfrac = memfrac )
 		} else {
-			warning(paste('estimateMem argument must be a logical value'))	
+			warning(paste('memfrac argument must be a value between 0.1 and 0.9'))	
 		}
 	}
 	
@@ -168,9 +166,10 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		options(rasterTmpTime = 24*7)
 		options(rasterToDisk = FALSE)
 		options(rasterSetFileExt = TRUE)
-		options(rasterChunkSize = 10000000)
-		options(rasterMaxMemory = 100000000)
-		options(rasterEstimateMem = FALSE)
+		options(rasterChunkSize = 10^8)
+		options(rasterChunk = 10^8)
+		options(rasterMaxMemory = 10^9)
+		options(rasterMemfrac = 0.6)
 		options(rasterTolerance = 0.1)
 		options(rasterStandardNames = TRUE)
 		options(rasterDepracatedWarnings = TRUE)
@@ -191,7 +190,7 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 	if (!missing(todisk)) { setToDisk(todisk); cnt <- cnt+1 }
 	if (!missing(setfileext)) { setFileExt(setfileext); cnt <- cnt+1 }
 	if (!missing(maxmemory)) { setMaxMemorySize(maxmemory); cnt <- cnt+1 }
-	if (!missing(estimatemem)) { setEstimateMem(estimatemem); cnt <- cnt+1 }
+	if (!missing(memfrac)) { setMemfrac(memfrac); cnt <- cnt+1 }
 	if (!missing(chunksize)) { setChunksize(chunksize); cnt <- cnt+1 }
 	if (!missing(tolerance)) { setTolerance(tolerance); cnt <- cnt+1 }
 	if (!missing(standardnames)) { setStandardNames(standardnames); cnt <- cnt+1 }
@@ -209,13 +208,13 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		timer=.timer(),
 		chunksize=.chunksize(),
 		maxmemory=.maxmemory(),
+		memfrac = .memfrac(),
 		todisk=.toDisk(),
 		setfileext=.setfileext(),
 		tolerance=.tolerance(),
 		standardnames=.standardnames(),
 		depwarning=.depracatedwarnings(),
-		addheader=.addHeader(),
-		estimatemem = .estimateMem()
+		addheader=.addHeader()
 	)
 	
 	save <- FALSE
@@ -233,7 +232,7 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		oplst <- c(oplst, paste("rasterTimer=", lst$timer, sep=''))
 		oplst <- c(oplst, paste("rasterChunkSize=", lst$chunksize, sep=''))
 		oplst <- c(oplst, paste("rasterMaxMemory=", lst$maxmemory, sep=''))
-		oplst <- c(oplst, paste("rasterEstimateMem=", lst$estimatemem, sep=''))
+		oplst <- c(oplst, paste("rasterMemfrac=", lst$memfrac, sep=''))
 		oplst <- c(oplst, paste("rasterSetFileExt=", lst$setfileext, sep=''))
 		oplst <- c(oplst, paste("rasterTolerance=", lst$tolerance, sep=''))
 		oplst <- c(oplst, paste("rasterStandardNames=", lst$standardnames, sep=''))
@@ -254,7 +253,7 @@ rasterOptions <- function(format, overwrite, datatype, tmpdir, tmptime, progress
 		cat('timer         :', lst$timer, '\n')
 		cat('chunksize     :', lst$chunksize, '\n')
 		cat('maxmemory     :', lst$maxmemory, '\n')
-		cat('estimatemem   :', lst$estimatemem, '\n')
+		cat('memfrac       :', lst$memfrac, '\n')
 		cat('tmpdir        :', lst$tmpdir, '\n')
 		cat('tmptime       :', lst$tmptime, '\n')
 		cat('setfileext    :', lst$setfileext, '\n')
@@ -342,21 +341,6 @@ tmpDir <- function(create=TRUE) {
 
 
 
-.chunksize <- function(){
-	default <- 1e+08
-	d <- getOption('rasterChunkSize')
-	if (is.null(d)) {
-		return( default )
-	} 
-	d <- round(as.numeric(d[1]))
-	if (is.na(d) | d < 10000) {
-		d <- default
-	} 
-	return(d)
-}	
-
-
-
 .setfileext <- function() {
 	d <- getOption('rasterSetFileExt')
 	if (is.null(d)) {
@@ -381,19 +365,19 @@ tmpDir <- function(create=TRUE) {
 }	
 
 
-.estimateMem <- function() {
-	default <- FALSE
-	d <- getOption('rasterEstimateMem')
+.memfrac <- function() {
+	default <- 0.6
+	d <- getOption('rasterMemfrac')
 	if (is.null(d)) {
 		return( default )
 	} else {
-		return(isTRUE(d))
+		return(d)
 	}
 }
 
 
 .maxmemory <- function() {
-	default <- 1e+10
+	default <- 10^9
 	d <- getOption('rasterMaxMemory')
 	if (is.null(d)) {
 		return( default )
@@ -404,6 +388,33 @@ tmpDir <- function(create=TRUE) {
 	} 
 	return(d)
 }
+
+
+.chunksize <- function(){
+	default <- 10^8
+	d <- getOption('rasterChunkSize')
+	if (is.null(d)) {
+		return( default )
+	} 
+	d <- round(as.numeric(d[1]))
+	if (is.na(d) | d < 10000) {
+		d <- default
+	} 
+	return(d)
+}	
+
+
+.chunk <- function(){
+	d <- getOption('rasterChunk')
+	if (is.null(d)) {
+		return( .chunksize() )
+	} 
+	if (is.na(d) | d < 10000) {
+		return( .chunksize() )
+	} 
+	return(d)
+}
+
 
 
 .tolerance <- function() {

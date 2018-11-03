@@ -2,16 +2,26 @@
 focal for multi-layer objects
 step-size option for focal
 add equivalent to "subsWithNA" to reclassify
-move rasterize/(lines, polygons) to C
-function for affine transformation
 add AMSR-E ice products and other raw binary products
 add orientation fixes for AVISO currents and similar NetCDFs lacking metadata on the internal CRS
 add VRT output to saveStack
 Fix lines falling between the cracks in extract (calling rasterzeLines): https://stat.ethz.ch/pipermail/r-sig-geo/2014-May/020973.html
-allow setting a 'spatial window'
 Better handling of NA values in 1 byte raster files
 
 --- current version
+Improved estimation of available RAM with contributions by Lorenzo Busetto. RAM available is now computed on windows, linux and mac. No more that 60% of available RAM is used (if the estimated RAM needed is not too low). Not more than raster:::.maxmemory() is used; but it should now be safe to set this to Inf. If canProcessInMemory() returns FALSE, chunksize is set 25% of available RAM, or raster:::.chunksize(), whichever is lower. (set options via rasterOptions())
+
+testthat unit tests introduced by Mike Sumner and Jakub Nowosad
+as.character() for Raster objects to create the R code to re-create the Raster skeleton in examples.
+
+Bug fixes:
+fixed the link for GADM countries download. Bug reported by Loic Dutrieux
+fixed corner-case bug in alignExtent (for a small extent, touching a grid cell), affecting crop; reported by 
+Judith Mourant and Paul Fenimore
+fixed problem with subs reported by Andy Craig https://github.com/rspatial/raster/issues/17
+Previous version had a maxmemory value that was too high (reported by Lorenzo Busetto)
+
+--- 16-Oct-2018, version: 2.7-15
 faster extraction for points via GDAL
 faster rasterization of polygons
 
@@ -602,7 +612,7 @@ predict automatic removal (to NA) of factor levels not used to build the model
 --- 29-Nov-2010,  version 1.7-6
 New function as.array
 improved sampleRegular for multi-layer objects
-Code simplications for 'raster', 'stack', and 'brick' functions
+Code simplifications for 'raster', 'stack', and 'brick' functions
 raster no longer has the "values" argument (use setValues)
 When adding layers to a RasterBrick, a RasterStack will be returned.
 Fixed calc for regression functions

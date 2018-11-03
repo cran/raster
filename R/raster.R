@@ -5,6 +5,7 @@
 
 
 
+
 if ( !isGeneric("raster") ) {
 	setGeneric("raster", function(x, ...)
 		standardGeneric("raster"))
@@ -316,7 +317,6 @@ setMethod('raster', signature(x='sf'),
 	function(x, origin, ...){
 		x <- .sf2sp(x)
 		raster(x, origin, ...)
-		x
 	}
 )
 

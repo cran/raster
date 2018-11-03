@@ -8,7 +8,7 @@
 getData <- function(name='GADM', download=TRUE, path='', ...) {
 	path <- .getDataPath(path)
 	if (name=='GADM') {
-		.GADM(..., download=download, path=path)
+		.GADM(..., download=download, path=path, type='sp')
 	} else if (name=='SRTM') {
 		.SRTM(..., download=download, path=path)
 	} else if (name=='alt') {
@@ -162,12 +162,18 @@ ccodes <- function() {
 
 
 
-.countries <- function(download, path, ...) {
-#	if (!file.exists(path)) {  dir.create(path, recursive=T)  }
-	filename <- paste(path, 'countries.RData', sep="")
+.countries <- function(download, path, type='sp', ...) {
+
+	if (type == 'sf') {
+		f <- "countries_gadm36_sf.rds"
+	} else {
+		f <- "countries_gadm36_sp.rds"	
+	}
+	filename <- file.path(path, f, sep="")
+	
 	if (!file.exists(filename)) {
 		if (download) {
-			theurl <- paste("https://biogeo.ucdavis.edu/data/gadm2.6/countries_gadm26.rds", sep="")
+			theurl <- paste0("https://biogeo.ucdavis.edu/data/gadm3.6/", f)
 			.download(theurl, filename)
 			if (!file.exists(filename)) {
 				message("\nCould not download file -- perhaps it does not exist") 
