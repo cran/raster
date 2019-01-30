@@ -1,4 +1,4 @@
- \name{predict}
+\name{predict}
 
 \docType{methods}
 
@@ -21,7 +21,7 @@ This approach (predict a fitted model to raster data) is commonly used in remote
 
 
 \arguments{
-  \item{object}{Raster* object. Typicially a multi-layer type (RasterStack or RasterBrick)}
+  \item{object}{Raster* object. Typically a multi-layer type (RasterStack or RasterBrick)}
   \item{model}{fitted model of any class that has a 'predict' method (or for which you can supply a similar method as \code{fun} argument. E.g. glm, gam, or randomForest }
   \item{filename}{character. Optional output filename }
   \item{fun}{function. Default value is 'predict', but can be replaced with e.g. predict.se (depending on the type of model), or your own custom function.}
@@ -47,7 +47,7 @@ RasterLayer or RasterBrick
 }
 
 \note{
-For more on the use of the predict function see this resource on \href{http://www.rspatial.org/sdm/}{species distribution modeling}.
+For more on the use of the predict function see this resource on \href{https://www.rspatial.org/sdm/}{species distribution modeling}.
 }
 
 \examples{
@@ -157,7 +157,6 @@ spplot(r4)
 
 
 # cforest (other Random Forest implementation) example with factors argument
-
 v$red <- as.factor(round(v$red/100))
 logo$red <- round(logo[[1]]/100)
 
@@ -165,15 +164,18 @@ library(party)
 m <- cforest(pa~., control=cforest_unbiased(mtry=3), data=v)
 f <- list(levels(v$red))
 names(f) <- 'red'
-pc <- predict(logo, m, OOB=TRUE, factors=f)
+# the second argument in party:::predict.RandomForest
+# is "OOB", and not "newdata" or similar. We need to write a wrapper
+# predict function to deal with this 	
+predfun <- function(m, d, ...) predict(m, newdata=d, ...)
 
+pc <- predict(logo, m, OOB=TRUE, factors=f, fun=predfun)
 
 # knn example, using calc instead of predict
 library(class)
 cl <- factor(c(rep(1, nrow(p)), rep(0, nrow(a))))
 train <- extract(logo, rbind(p, a))
 k <- calc(logo, function(x) as.integer(as.character(knn(train, x, cl))))
-
 }
 }
 

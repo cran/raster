@@ -131,9 +131,13 @@
 
 
 	if (getCover) {
-		rstr <- disaggregate(raster(rstr), 10)
+		nc <- ncell(rstr)
+		# high precision for possibly small polygons
+		#https://stackoverflow.com/questions/53854910/issue-with-estimating-weighted-mean-from-raster-for-a-polygon-shape-in-r/
+		fctr <- ifelse(nc < 5, 100, ifelse(nc < 17, 20, 10))
+		rstr <- disaggregate(raster(rstr), fctr)
 		r <- .fasterize(p, rstr, rep(1, npol), background=0) 
-		return( aggregate(r, 10, mean, na.rm=TRUE, filename=filename, ...) )
+		return( aggregate(r, fctr, mean, na.rm=TRUE, filename=filename, ...) )
 	} 
 	
 
@@ -170,7 +174,7 @@
 				}
 				return(r)
 			} else {
-				r <- .fasterize(p, rstr, pvals[,1], background, filename, ...) 
+				return( .fasterize(p, rstr, pvals[,1], background, filename, ...) )
 			}
 		}
 		
@@ -407,13 +411,16 @@
 				}	
 								
 				if (updateHoles) {
+					updateHoles <- FALSE
 					rvtmp[holes < 1] <- NA
 					vals <- cbind(vals, rvtmp)
 					rvtmp <- rv1
+					holes <- holes1
 				}	
 			}
 		}	
 		
+		#print(vals)
 		
 		rrv <- rv1
 		if (!is.null(vals)) {

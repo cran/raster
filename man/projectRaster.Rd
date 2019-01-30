@@ -13,6 +13,10 @@ You can do this by providing the new projection as a single argument in which ca
 be adjusted (e.g. by setting its resolution) and used as a template \code{'to'} in \code{projectRaster}. 
 }
 
+\note{
+If the resolution of the output is much larger than that of the input, you should first aggregate the input such that the resolution of the input becomes more similar (perhaps a little smaller) to the output.
+}
+
 \usage{
 projectRaster(from, to, res, crs, method="bilinear", 
              alignOnly=FALSE, over=FALSE, filename="", ...) 
@@ -53,7 +57,7 @@ Also see \code{projInfo('proj')}, \code{projInfo('ellps')}, and \code{projInfo('
 }
 
 \note{
-Vector (points, lines, polygons) can be transformed with \code{\link[rgdal]{spTransform}}.
+Vector (points, lines, polygons) can be transformed with \code{\link[sp]{spTransform}}.
 
 \code{projectExtent} does not work very well when transforming projected circumpolar data to (e.g.) longitude/latitude. 
 With such data you may need to adjust the returned object. E.g. do \code{ymax(object) <- 90}
@@ -67,7 +71,7 @@ RasterLayer or RasterBrick object.
 
 
 \seealso{
-\code{\link{resample}}, \code{\link[rgdal]{CRS-class}}, \code{\link[rgdal]{projInfo}}, \code{\link[rgdal]{spTransform}}
+\code{\link{resample}}, \code{\link[rgdal]{CRS-class}}, \code{\link[rgdal]{projInfo}}, \code{\link[sp]{spTransform}}
 }
 
 \examples{

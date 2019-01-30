@@ -4,10 +4,7 @@
 # Licence GPL v3
 
 
-if (!isGeneric("readStart")) {
-	setGeneric("readStart", function(x, ...)
-		standardGeneric("readStart"))
-}	
+	
 
 setMethod('readStart', signature(x='Raster'), 
 	function(x, ...) {
@@ -51,7 +48,7 @@ setMethod('readStart', signature(x='RasterStack'),
 			x@file@open <- TRUE
 		}
 	} else if (driver == 'netcdf') {
-		attr(x@file, 'con') <- ncdf4::nc_open(x@file@name)
+		attr(x@file, 'con') <- ncdf4::nc_open(x@file@name, suppress_dimvals = TRUE)
 		x@file@open <- TRUE
 #	} else if (driver == 'ascii') { # cannot be opened
 	}	
@@ -59,12 +56,6 @@ setMethod('readStart', signature(x='RasterStack'),
 }
 
 
-
-
-if (!isGeneric("readStop")) {
-	setGeneric("readStop", function(x)
-		standardGeneric("readStop"))
-}	
 
 setMethod('readStop', signature(x='Raster'), 
 	function(x) {
