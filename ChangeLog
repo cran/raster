@@ -1,5 +1,22 @@
 
 --- current version
+Bug fixes: 
+writing very large Raster objects that were entirely in memory could fail with a "long vectors not supported yet". https://github.com/rspatial/raster/issues/33
+When creating a RasterLayer from an ascii file using the native driver and the file specifies xllcenter. Problem reported by Ram: https://stackoverflow.com/questions/54373701/error-in-if-xn-xx-missing-value-where-true-false-needed
+Error coercing raster with one non-NA value to SpatialPixelsDataFrame (ickf.se)
+https://gis.stackexchange.com/questions/314472/error-coercing-raster-with-one-non-na-value-to-spatialpixelsdataframe/
+mask with sf object ignored other arguments (Jakub Nowasad)
+improved handling of factors in "predict". Fixed a bug with gbm models (dismo) reported by Jane Elith. Also removes factor levels that are not in model for GLM (predictions become NA).
+show(Spatial*) could have the order of the min max values wrong on linux due to prepended spaces by as.matrix in apply(x, 2, range). Reported by Barry Rowlingson. 
+Fixed bug in rasterFromXYZ (if multiple layers and writing to disk) reported by Mike Nosal https://github.com/rspatial/raster/issues/49
+
+new argument "margins" to plotRGB to allow plotting whitespace around images.
+The crs is now written to ncdf files, using proj4=" "
+reclassify now keeps the layer names (suggested by Matthieu Stigler)
+modal of a single layer now returns that layer with a warning instead of throwing an error (suggested by Ben Tupper)
+
+--- 29-Jan-2019, version: 2.8-19
+
 higher precision extract with weights for small polygons. See https://stackoverflow.com/questions/53854910/issue-with-estimating-weighted-mean-from-raster-for-a-polygon-shape-in-r/
 
 fixed error with rasterize when counting overlapping polygons with holes, reported by Boris Leroy. See:
@@ -26,6 +43,7 @@ Improvement to raster::predict suggested by Roeland Kindt
 Improved estimation of available RAM with contributions by Lorenzo Busetto. RAM available is now computed on windows, linux and mac. No more that 60% of available RAM is used (if the estimated RAM needed is not too low). Not more than raster:::.maxmemory() is used; but it should now be safe to set this to Inf. If canProcessInMemory() returns FALSE, chunksize is set 25% of available RAM, or raster:::.chunksize(), whichever is lower. (set options via rasterOptions())
 
 testthat unit tests introduced by Mike Sumner and Jakub Nowosad
+
 as.character() for Raster objects to create the R code to re-create the Raster skeleton in examples.
 
 Reading point values via GDAL has become slower in 2.7-15, reverted to previous function. Thanks to Andrew Brown and Dylan Beaudette for identifying the problem.
