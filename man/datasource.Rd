@@ -3,6 +3,8 @@
 \alias{fromDisk}
 \alias{inMemory}
 \alias{hasValues}
+\alias{hasValues,BasicRaster-method}
+
 
 \title{Are values in memory and/or on disk?}
 
@@ -19,18 +21,17 @@ These are helper functons for programmers and for debugging that provide informa
 \usage{
 fromDisk(x)
 inMemory(x)
-hasValues(x)
+\S4method{hasValues}{BasicRaster}(x, ...)
 }
 
 \arguments{
   \item{x}{ Raster* object }
+  \item{\dots}{ additional arguments. None implemented }
 }
 
 \value{
-Logical value
+Logical
 }
-
-
 
 \examples{
 rs <- raster(system.file("external/test.grd", package="raster"))
@@ -48,9 +49,9 @@ fromDisk(rs)
 rs <- setValues(rs, 1:ncell(rs))
 inMemory(rs)
 fromDisk(rs)
-rs <- writeRaster(rs, filename='test', overwrite=TRUE)
-inMemory(rs)
-fromDisk(rs)
+#rs <- writeRaster(rs, filename=rasterTmpFile(), overwrite=TRUE)
+#inMemory(rs)
+#fromDisk(rs)
 }
 
 \keyword{ spatial }

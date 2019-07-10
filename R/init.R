@@ -3,7 +3,8 @@
 # Version 1.0
 # Licence GPL v3
 
-init <- function(x, fun='cell', filename="", ...) {
+setMethod("init", signature(x="Raster"), 
+function(x, fun='cell', filename="", ...) {
 
 	vv <- list(...)$v
 	v <- NULL
@@ -18,6 +19,9 @@ init <- function(x, fun='cell', filename="", ...) {
 		} else {
 			stop("argument 'fun' is a character variable, but not one of 'x', 'y', 'row', 'col', 'cell', or 'chess'")
 		}
+	} else if (is.numeric(fun)) {
+		value <- fun
+		fun <- function(...) value
 	}
 
 	out <- raster(x)
@@ -102,4 +106,4 @@ init <- function(x, fun='cell', filename="", ...) {
 	}
 	return(out)
 }
-
+)

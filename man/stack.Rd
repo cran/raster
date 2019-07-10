@@ -11,6 +11,7 @@
 \alias{stack,SpatialPixelsDataFrame-method}
 \alias{stack,SpatialGridDataFrame-method}
 \alias{stack,kasc-method}
+\alias{stack,SpatRaster-method}
 
 
 \title{Create a RasterStack object}
@@ -46,7 +47,7 @@ A RasterStack is a collection of RasterLayer objects with the same spatial exten
 RasterStack
 }
 
-\seealso{ \code{\link[raster]{addLayer}, \link[raster]{dropLayer}, \link[raster]{raster}, \link[raster]{brick}} }
+\seealso{ \code{\link[raster]{addLayer}, \link[raster:addLayer]{dropLayer}, \link[raster]{raster}, \link[raster]{brick}} }
 
 \examples{
 # file with one layer

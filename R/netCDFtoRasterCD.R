@@ -118,11 +118,12 @@
 }
 
 
-.rasterObjectFromCDF <- function(filename, varname='', band=NA, type='RasterLayer', lvar=3, level=0, 
+.rasterObjectFromCDF <- function(filename, varname='', band=NA, type='RasterLayer', lvar, level=0, 
                         warn=TRUE, dims=1:3, crs=NA, stopIfNotEqualSpaced=TRUE, ...) {
 
 	stopifnot(requireNamespace("ncdf4"))
-
+	stopifnot(type %in% c('RasterLayer', "RasterBrick"))
+	
 	nc <- ncdf4::nc_open(filename, suppress_dimvals = TRUE)
 	on.exit( ncdf4::nc_close(nc) )		
 	conv <- ncdf4::ncatt_get(nc, 0, "Conventions")
@@ -140,9 +141,20 @@
 		
 	} else if (ndims == 4) { 
 		if (type != 'RasterQuadBrick') {
+			if (missing(lvar)) {
+				nlevs3 <- nc$var[[zvar]]$dim[[3]]$len
+				nlevs4 <- nc$var[[zvar]]$dim[[4]]$len
+				if (nlevs3 > 1 & nlevs4 == 1) {
+					lvar <- 4
+				} else {
+					lvar <- 3
+				}
+			}
 			nlevs <- nc$var[[zvar]]$dim[[lvar]]$len
 			if (level <=0 ) {
 				level <- 1
+				# perhaps detect case where lvar should be 4?
+				#https://stackoverflow.com/questions/56261199/extracting-all-levels-from-netcdf-file-in-r/
 				if (nlevs > 1) {
 					warning('"level" set to 1 (there are ', nlevs, ' levels)')
 				}
@@ -217,8 +229,17 @@
  
 	long_name <- zvar
 	unit <- ''
+
+	natest <- ncdf4::ncatt_get(nc, zvar, "_FillValue")
+	natest2 <- ncdf4::ncatt_get(nc, zvar, "missing_value")		
 	
 	prj <- NA
+	minv <- maxv <- NULL
+	a <- ncdf4::ncatt_get(nc, zvar, "min")
+	if (a$hasatt) { minv <- a$value }
+	a <- ncdf4::ncatt_get(nc, zvar, "max")
+	if (a$hasatt) { maxv <- a$value }
+
 	a <- ncdf4::ncatt_get(nc, zvar, "long_name")
 	if (a$hasatt) { long_name <- a$value }
 	a <- ncdf4::ncatt_get(nc, zvar, "units")
@@ -228,23 +249,7 @@
 		gridmap  <- a$value 
 		try(atts <- ncdf4::ncatt_get(nc, gridmap), silent=TRUE)
 		try(prj <- .getCRSfromGridMap4(atts), silent=TRUE)
-	} else {
-		# deprecated
-		a <- ncdf4::ncatt_get(nc, zvar, "projection_format")
-		if ( a$hasatt ) { 
-			projection_format  <- a$value 
-			if (isTRUE(projection_format == "PROJ.4")) {
-				a <- ncdf4::ncatt_get(nc, zvar, "projection")
-				if ( a$hasatt ) { 
-					prj <- a$value 
-				}
-			}
-		}
-	}
-	natest <- ncdf4::ncatt_get(nc, zvar, "_FillValue")
-	natest2 <- ncdf4::ncatt_get(nc, zvar, "missing_value")		
-		
-		
+	}		
 	if (is.na(prj)) {
 		if ((tolower(substr(nc$var[[zvar]]$dim[[dims[1]]]$name, 1, 3)) == 'lon')  &
 		   ( tolower(substr(nc$var[[zvar]]$dim[[dims[2]]]$name, 1, 3)) == 'lat' ) ) {
@@ -259,10 +264,8 @@
 		}
 	} 
 		
-		
 	crs <- .getProj(prj, crs)
-		
-		
+				
 	if (type == 'RasterLayer') {
 		r <- raster(xmn=xrange[1], xmx=xrange[2], ymn=yrange[1], ymx=yrange[2], ncols=ncols, nrows=nrows, crs=crs)
 		names(r) <- long_name
@@ -316,7 +319,9 @@
 		if ( nc$var[[zvar]]$dim[[dim3]]$name == 'time' ) {
 			try( r <- .doTime(r, nc, zvar, dim3) )
 		} else {
-			names(r@z) <- nc$var[[zvar]]$dim[[dim3]]$units
+			vname <- nc$var[[zvar]]$dim[[dim3]]$name
+			vunit <- nc$var[[zvar]]$dim[[dim3]]$units
+			names(r@z) <- paste0(vname, " (", vunit, ")")
 		}
 	}
 
@@ -347,13 +352,26 @@
 				r@data@band <- band
 			}
 			r@z <- list( getZ(r)[r@data@band] )
+			if (!(is.null(minv) | is.null(maxv))) {
+				r@data@min <- minv[band]
+				r@data@max <- maxv[band]
+				r@data@haveminmax <- TRUE
+			}
+			
 		} 
 
 	} else {
 		r@data@nlayers <- r@file@nbands
-		r@data@min <- rep(Inf, r@file@nbands)
-		r@data@max <- rep(-Inf, r@file@nbands)
 		try( names(r) <- as.character(r@z[[1]]), silent=TRUE )
+		if (!(is.null(minv) | is.null(maxv))) {
+			r@data@min <- minv
+			r@data@max <- maxv
+			r@data@haveminmax <- TRUE
+		} else {
+			r@data@min <- rep(Inf, r@file@nbands)
+			r@data@max <- rep(-Inf, r@file@nbands)
+		}
+		
 	}
 	
 	return(r)

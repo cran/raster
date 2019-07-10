@@ -17,6 +17,7 @@
       
 \alias{factorValues}
 \alias{ratify}
+\alias{ratify,Raster-method}
 \alias{deratify}
   
 \title{Factors}
@@ -35,9 +36,9 @@ is.factor(x)
 as.factor(x)
 levels(x)
 
-factorValues(x, v, layer=1, att=NULL, append.names=FALSE)
+\S4method{ratify}{Raster}(x, filename="", count=FALSE, ...)
 
-ratify(x, filename='', count=FALSE, ...)
+factorValues(x, v, layer=1, att=NULL, append.names=FALSE)
 deratify(x, att=NULL, layer=1, complete=FALSE, drop=TRUE, fun='mean', filename='', ...) 
 
 asFactor(x, ...)
@@ -103,8 +104,8 @@ i
 factorValues(r, i)
 
 # write to file:
-rr <- writeRaster(r, 'test.grd', overwrite=TRUE)
-rr
+# rr <- writeRaster(r, rasterTmpFile(), overwrite=TRUE)
+# rr
 
 # create a single-layer factor 
 x <- deratify(r, 'landcover')

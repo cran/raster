@@ -88,3 +88,26 @@ setMethod('geom', signature(x='SpatialPoints'),
 	}
 )
 		
+
+setMethod("geom", signature(x="data.frame"), 
+	function(x, d, gt, crs, ...) {	
+		if (gt == "polygons") {
+			sp <- as(x, "SpatialPolygons")
+			if (NROW(d) > 0) {
+				sp <- sp::SpatialPolygonsDataFrame(sp, d)
+			}
+		} else if (gt == "lines") {
+			sp <- as(x, "SpatialLines")		
+			if (NROW(d) > 0) {
+				sp <- sp::SpatialLinesDataFrame(sp, d)
+			}
+		} else {
+			sp <- sp::SpatialPoints(x[,c("x", "y")])
+			if (NROW(d) > 0) {
+				sp <- sp::SpatialPointsDataFrame(sp, d)
+			}
+		}
+		crs(sp)<- crs
+		sp
+	}
+)

@@ -5,22 +5,10 @@
 
 
 # name overlap with igraph
-..edge <- function(x, ...) {
-	warning('"edge" is obsolete and will be removed from this package. Use the "boundaries" function instead')
-	boundaries(x, ...)
-	warning('"edge" is obsolete and will be removed from this package. Use the "boundaries" function instead')
-}
 
-
-
-if (!isGeneric("boundaries")) {
-	setGeneric("boundaries", function(x, ...)
-		standardGeneric("boundaries"))
-}	
 
 setMethod('boundaries', signature(x='RasterLayer'), 
 function(x, type='inner', classes=FALSE, directions=8, asNA=FALSE, filename="", ...) {
-
 
 	stopifnot( nlayers(x) == 1 )
 	stopifnot( hasValues(x) )
@@ -35,11 +23,11 @@ function(x, type='inner', classes=FALSE, directions=8, asNA=FALSE, filename="", 
 	}
 		
 	if (type=='inner') { 
-		type <- as.integer(0) 
+		type <- FALSE
 	} else { 
-		type <- as.integer(1) 
+		type <- TRUE
 	}
-	classes <- as.integer(as.logical(classes))
+	classes <- as.logical(classes)
 	directions <- as.integer(directions)
 	stopifnot(directions %in% c(4,8))
 	
@@ -61,7 +49,7 @@ function(x, type='inner', classes=FALSE, directions=8, asNA=FALSE, filename="", 
 		}
 		x <- rbind(x[1,], x, x[nrow(x),])
 		paddim <- as.integer(dim(x))
-		x <- .Call('_edge', as.integer(t(x)), paddim, classes, type, directions, NAOK=TRUE, PACKAGE='raster')
+		x <- .edge(round(t(x)), paddim, classes[1], type[1], directions[1])
 		if (asNA) {
 			x[x==0] <- as.integer(NA)
 		}
@@ -87,9 +75,9 @@ function(x, type='inner', classes=FALSE, directions=8, asNA=FALSE, filename="", 
 		} else {
 			v <- rbind(v[1,], v, v[nrow(v),])
 		}
-		v <- as.integer(cbind(v[,1], v))
+		v <- round(cbind(v[,1], v))
 		
-		v <- .Call('_edge', v, as.integer(c(tr$nrows[1]+2, nc)),  classes, type, directions, NAOK=TRUE, PACKAGE='raster')
+		v <- .edge(v, as.integer(c(tr$nrows[1]+2, nc)),  classes, type, directions)
 		if (asNA) {
 			v[v==0] <- as.integer(NA)
 		}
@@ -105,7 +93,7 @@ function(x, type='inner', classes=FALSE, directions=8, asNA=FALSE, filename="", 
 			} else {
 				v <- rbind(v[1,], v, v[nrow(v),])
 			}
-			v <- .Call('_edge', as.integer(v), as.integer(c(tr$nrows[i]+2, nc)), classes, type, directions, NAOK=TRUE, PACKAGE='raster')
+			v <- .edge(round(v), as.integer(c(tr$nrows[i]+2, nc)), classes, type, directions)
 			v <- matrix(v, ncol=nc, byrow=TRUE)
 			v <- as.integer(t(v[2:(nrow(v)-1), 2:(ncol(v)-1)]))
 			out <- writeValues(out, v, tr$row[i])
@@ -119,8 +107,8 @@ function(x, type='inner', classes=FALSE, directions=8, asNA=FALSE, filename="", 
 		} else {
 			v <- rbind(v[1,], v, v[nrow(v),])
 		}
-		v <- as.integer(cbind(v, v[,ncol(v)]))
-		v <- .Call('_edge', v, as.integer(c(tr$nrows[i]+2, nc)), classes, type, directions, NAOK=TRUE, PACKAGE='raster')
+		v <- round(cbind(v, v[,ncol(v)]))
+		v <- .edge(v, as.integer(c(tr$nrows[i]+2, nc)), classes, type, directions)
 		v <- matrix(v, ncol=nc, byrow=TRUE)
 		v <- as.integer(t(v[2:(nrow(v)-1), 2:(ncol(v)-1)]))
 		out <- writeValues(out, v, tr$row[i])
