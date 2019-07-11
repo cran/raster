@@ -1,8 +1,8 @@
 48798982d70825fcc687c125323b2619 *ChangeLog
-fdee8e757717cc969875f85f482e063a *DESCRIPTION
-fabb1f457265028545540ba1dabd360a *NAMESPACE
+3e6dc078e21ea907997b03cea7eb9b46 *DESCRIPTION
+cfff874636177710e65db703b4f8a818 *NAMESPACE
 e4b96388b01d8fe2989725ce096f24f1 *R/AAAClasses.R
-5620431ecb73a2f1b3cf25e7baf30344 *R/AAgeneric_functions.R
+622f93185c89c05ddf052bef4b3a411d *R/AAgeneric_functions.R
 5b18e3f31f2b83fe0f0901e547928fa8 *R/GDALtransient.R
 f180fcae52d642edc8730beda1ac1b99 *R/Geary.R
 2d4cd8898df0c27e470528bb6b604bc3 *R/RGB.R
@@ -59,7 +59,7 @@ f6d126480109fc7634a8315b08dbf1c1 *R/commonDataType.R
 f0465e330c110020de7b878b6d54e115 *R/compareCRS.R
 cab6e6b00059d6fc9823050a2342758d *R/compare_Logical.R
 738ad4284c26ddf9c6d19c2a6a7fc93e *R/connection.R
-365fc4ca15f209f31f21d5a2a87863d7 *R/contour.R
+3104e27f04ec56ddc9d875c38962134c *R/contour.R
 3683aa76f6958a3d6f862b4854b1925f *R/cor.R
 c44f02dac5ed1513104a937e333558e7 *R/corLocal.R
 5f58712dd68a5bdbc1d8e097ae142b56 *R/cover.R
@@ -72,7 +72,7 @@ d483e19e1a87f84fe5b8a396e4798385 *R/cut.R
 f67450ded7249f479ba4173d37bf555b *R/cv.R
 d215b0dff243dcee4538cd6bbc7eaaf1 *R/dataProperties.R
 404e7fd3c0406b68bfc7fc3cb1e2ce59 *R/dataType.R
-13cacffd8d9d96b4d19e3ada4ef058c8 *R/density.R
+fe1d06f6438e456b5ddd8457c04c9688 *R/density.R
 8da912ebbd9be8b5a3292f6ea58e1bb1 *R/destair.R
 3569502b06ca9dd4ff0bed5e1b2de97e *R/dim.R
 773bca64fe6b6456dc3cb7ee627e447d *R/direction.R
@@ -192,8 +192,8 @@ c6086ef40bb390abc3c2cb8d605985ce *R/newPLot.R
 8dc0dd5225965c6eec35f881d9fe3033 *R/nsidcICE.R
 d846ce6c7b94ff7d80e24a9371f7ce15 *R/origin.R
 aa26553bfc98a7be46079b9ef38a12dc *R/overlay.R
-a37b86a9c87ecfd2b56d4a685b8452a2 *R/pairs.R
-00963802d04cac1411b9ede9515d520b *R/persp.R
+0cfe28dee07045be9830bdd34680a585 *R/pairs.R
+2bff0c9e7996158a256aa3a48eb84b99 *R/persp.R
 c7e8bbad325765c0c92e2eb3a2a49275 *R/plot.R
 a20ebe13a940951f63df8765b1e9b23a *R/plot2rasters.R
 c68b095738ba9631b321b8f7c6e0443a *R/plotCT.R
@@ -281,7 +281,7 @@ b848d8640be4b17252fa41d9207c52f5 *R/subs.R
 7e95915f252c1abc1b687d038fb835b1 *R/summary.R
 221f2156703fe798a5a4e959de1cc5eb *R/symdif.R
 de83177db1a59b42dae68ab121c3dbee *R/terrain.R
-5e00fbe367c1dc4327624c5973da2b4b *R/text.R
+fec5544b0b90e5d90dbe04442646c0b1 *R/text.R
 7b5cdfb953ba2fe08ba43a101c21090b *R/tmpFile.R
 4a253d2fcd4f326a0bde1ead4676b265 *R/transpose.R
 688db0656739f5b86d0165bc7cf3df9b *R/trim.R
@@ -316,11 +316,11 @@ d068670b8dcc9d358f3f086552800c55 *R/zoom.R
 10a65037e807d625ad034e65425cbcc1 *build/vignette.rds
 8ade5fe2c9ffd5b4cc84a6acc6fb9ebc *inst/doc/Raster.R
 74aa0c58fdf4156039a04334ce4230fd *inst/doc/Raster.Rnw
-805e750d309e19b4a6b3a9111e925a49 *inst/doc/Raster.pdf
+9cb131b421cb2a1403b11757506f4ecf *inst/doc/Raster.pdf
 3c242d66670c2c0ed2b77917c659fefc *inst/doc/functions.Rnw
-23d5ee66487c48a7cb835bd8ec040d6a *inst/doc/functions.pdf
+6947dff9d26391c9afdef6dc7513edce *inst/doc/functions.pdf
 3519fd5418f6190e679e44c0ca986e30 *inst/doc/rasterfile.Rnw
-82049656900af3d49d24e513a530e8b2 *inst/doc/rasterfile.pdf
+e481adb88e1eb45b75b8dd22db2b9b25 *inst/doc/rasterfile.pdf
 836fc2bffa338d9f9a721e00d9cd6078 *inst/external/countries.rds
 c85d689dcf4c7101db48cbab30338201 *inst/external/lux.dbf
 e729936bf5360b37a15365fc295a1901 *inst/external/lux.prj
@@ -443,7 +443,7 @@ b49e7d548d1c00ef9e9e87640b2fb5ea *man/nlayers.Rd
 e78b7afb287446f292a8415c494cf267 *man/origin.Rd
 c9daecbd5f5d3b03a02245c908341b4a *man/overlay.Rd
 96379250813832bfe1652669def0239e *man/pairs.Rd
-8630e95fef7ab31ac19d47ba739c130c *man/persp.Rd
+e94b18a4a00d391e254f98eef93c8269 *man/persp.Rd
 b2e9df2e0ac27bd21e0a4dd677cd5b75 *man/plot.Rd
 72d3eb6e724a714675a43764056ae38b *man/plotRGB.Rd
 12cd4acddba25e73a5931bd5d391c124 *man/pointDistance.Rd
@@ -488,7 +488,7 @@ ec02ea1ca10608ac69efbd96624e9251 *man/setMinMax.Rd
 4384dc6811e9f6fbbf7245fd43a0fecb *man/setValues.Rd
 ba9da985b63e6dfa2bdec1cae19dde0b *man/shapefile.Rd
 5690dbb96d2ea0408fd53bb32adca297 *man/shift.Rd
-756cb45c56c2b044be436bdbe27937a9 *man/slopeAspect.Rd
+b052d0eb654757fff60e517dc55461e7 *man/slopeAspect.Rd
 b35e71b5d7a6e37ef5195e76b2000436 *man/spEasy.Rd
 3d78b6fbd298ea28de6383379b7bf5d5 *man/spplot.Rd
 65bfd0d7ae1a1f11838c6ffbcf493399 *man/stack.Rd
@@ -533,9 +533,9 @@ e7912875e61e298a928371427a363db3 *src/broom.cpp
 0519af96adbbbe08777fde5c98ef9b22 *src/distance.cpp
 97fc10475c8b9695f3a7534eecaa719b *src/distance.h
 b0188c0bd53304d33afaa134d49ec4cc *src/edge.cpp
-a27257e1abc84da3ffa5eb9fd612c3d1 *src/focal_fun.cpp
-af423c4e0a597b2c7974f7022dd9f904 *src/focal_get.cpp
-dc08268ac2ee212d71efc5bd45114bd0 *src/focal_sum.cpp
+8fa285e896abbe487a7729470d738796 *src/focal_fun.cpp
+0e8d74da363ce4d3694e47b1a241ea33 *src/focal_get.cpp
+44a662d2ed11f2deb571768a615417ff *src/focal_sum.cpp
 de722fd0f8f6aa154e53ae6fbb02f10a *src/geodesic.c
 931f9f1e049b10f6de797a8e96952251 *src/geodesic.h
 ddef60d0af91cb1fd0e994c69f2c7f82 *src/getPolygons.cpp
@@ -544,8 +544,8 @@ f9a6b46bdeeae7cb0cf3de6782d93fce *src/memory.cpp
 8c9da6e32cc8145423a65c80eab2500e *src/memory.h
 074a9362891f69c8b0ccb85a95353afb *src/modal.cpp
 15d16970a4635bac1e9bf7a09393ef0f *src/ppmin.cpp
-74ff2e354c2602ffba7637d62e0833cb *src/raster_aggregate.cpp
-079320d90e2614c825ab47979e489821 *src/raster_distance.cpp
+59e92c441aa707a80ac91c8204cd5b67 *src/raster_aggregate.cpp
+578125ad69afb8b3f05c9e1ad1bf711a *src/raster_distance.cpp
 8cd6ef602e2ae21aa33bcc11ea4f026c *src/rasterize.cpp
 91d3b4361df0029ba6eefea4818486a3 *src/reclass.cpp
 4b8c3cdb9143f64f8843b95f89a6acea *src/spat.h

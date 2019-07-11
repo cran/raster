@@ -8,8 +8,8 @@ std::vector<double> do_focal_get(std::vector<double> d, std::vector<unsigned> di
 	int nrow = dim[0];
 	int ncol = dim[1];
 
-	size_t wrows = ngb[0];
-	size_t wcols = ngb[1];
+	int wrows = ngb[0];
+	int wcols = ngb[1];
 
 	size_t n = (nrow-wrows+1) * (ncol-wcols+1) * wrows * wcols;
 	std::vector<double> val(n);
@@ -19,8 +19,8 @@ std::vector<double> do_focal_get(std::vector<double> d, std::vector<unsigned> di
 		return(val);
 	}
 
-	int wr = floor(wrows / 2);
-	int wc = floor(wcols / 2);
+	int wr = wrows / 2;
+	int wc = wcols / 2;
 	wr = std::min(wr, nrow);
 	wc = std::min(wc, ncol);
 	
