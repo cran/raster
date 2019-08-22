@@ -1,8 +1,8 @@
 Package: raster
 Type: Package
 Title: Geographic Data Analysis and Modeling
-Version: 2.9-23
-Date: 2019-07-10
+Version: 3.0-2
+Date: 2019-08-22
 Depends: sp (>= 1.2-0), R (>= 3.0.0)
 Suggests: rgdal (>= 0.9-1), rgeos (>= 0.3-8), ncdf4, igraph, tcltk,
         parallel, rasterVis, MASS, sf, testthat
@@ -44,7 +44,7 @@ Authors@R: c(
 	person("Rafael", "Wueest", role = "ctb")
 	)
 NeedsCompilation: yes
-Packaged: 2019-07-11 05:48:54 UTC; rhijm
+Packaged: 2019-08-22 17:02:34 UTC; rhijm
 Author: Robert J. Hijmans [cre, aut] (<https://orcid.org/0000-0001-5872-2872>),
   Jacob van Etten [ctb],
   Michael Sumner [ctb],
@@ -73,4 +73,4 @@ Author: Robert J. Hijmans [cre, aut] (<https://orcid.org/0000-0001-5872-2872>),
   Rafael Wueest [ctb]
 Maintainer: Robert J. Hijmans <r.hijmans@gmail.com>
 Repository: CRAN
-Date/Publication: 2019-07-11 13:43:08 UTC
+Date/Publication: 2019-08-22 21:50:02 UTC

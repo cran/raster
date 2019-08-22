@@ -24,6 +24,7 @@ if (!isGeneric("extend")) {setGeneric("extend", function(x, y, ...) standardGene
 if (!isGeneric("extract")) { setGeneric("extract", function(x, y, ...) standardGeneric("extract"))}	
 if (!isGeneric("flip")) { setGeneric("flip", function(x, direction, ...) standardGeneric("flip")) }
 if (!isGeneric("focal")) { setGeneric("focal", function(x, ...) standardGeneric("focal"))}
+if (!isGeneric("freq")) {setGeneric("freq", function(x, ...) standardGeneric("freq"))}
 if (!isGeneric("geom")) { setGeneric("geom", function(x, ...) standardGeneric("geom"))}	
 if (!isGeneric("gridDistance")) {setGeneric("gridDistance", function(x, ...) standardGeneric("gridDistance"))}	
 if (!isGeneric("head")) { setGeneric("head", function(x, ...) standardGeneric("head"))}	
@@ -36,6 +37,8 @@ if (!isGeneric("isLonLat")) { setGeneric("isLonLat", function(x, ...) standardGe
 if (!isGeneric("mask")) { setGeneric("mask", function(x, mask, ...) standardGeneric("mask"))}
 if (!isGeneric("merge")) {setGeneric("merge", function(x, y, ...) standardGeneric("merge"))}	
 if (!isGeneric("mosaic")) {setGeneric("mosaic", function(x, y, ...)standardGeneric("mosaic"))}	
+if (!isGeneric("modal")) {setGeneric("modal", function(x, ...) standardGeneric("modal"))}
+
 if (!isGeneric("ncell")) { setGeneric("ncell", function(x) standardGeneric("ncell")) }	
 if (!isGeneric("ncol")) { setGeneric("nrow", function(x) standardGeneric("nrow")) }	
 if (!isGeneric("ncol<-")) { setGeneric("ncol<-", function(x, ..., value) standardGeneric("ncol<-")) }	
@@ -44,8 +47,10 @@ if (!isGeneric("nrow<-")) { setGeneric("nrow<-", function(x, ..., value) standar
 if (!isGeneric('overlay')) { setGeneric('overlay', function(x, y, ...) standardGeneric('overlay'))}
 if (!isGeneric("pairs")) { setGeneric("pairs", function(x, ...)	standardGeneric("pairs"))}
 if (!isGeneric("persp")) { setGeneric("persp", function(x,...) standardGeneric("persp")) }	
+if (!isGeneric("plot")) {setGeneric("plot", function(x,y,...)standardGeneric("plot"))}	
 if (!isGeneric("plotRGB")) { setGeneric("plotRGB", function(x, ...) standardGeneric("plotRGB"))}	
 if (!isGeneric("predict")) {setGeneric("predict", function(object, ...) standardGeneric("predict"))}
+if (!isGeneric("quantile")) {setGeneric("quantile", function(x, ...)standardGeneric("quantile"))}	
 if (!isGeneric("rasterize")) {setGeneric("rasterize", function(x, y, ...) standardGeneric("rasterize"))}	
 if (!isGeneric("readStart")) {setGeneric("readStart", function(x, ...) standardGeneric("readStart"))}
 if (!isGeneric("readStop")) {setGeneric("readStop", function(x)	standardGeneric("readStop"))}	
@@ -53,6 +58,9 @@ if (!isGeneric("reclassify")) { setGeneric("reclassify", function(x, rcl, ...) s
 if (!isGeneric("res")) { setGeneric("res", function(x) standardGeneric("res")) }
 if (!isGeneric("res<-")) { setGeneric("res<-", function(x, value) standardGeneric("res<-")) }
 if (!isGeneric("sampleRegular")) { setGeneric("sampleRegular", function(x, size, ...) standardGeneric("sampleRegular"))}
+if (!isGeneric("sampleRandom")) { setGeneric("sampleRandom", function(x, size, ...) standardGeneric("sampleRandom"))}	
+if (!isGeneric("sampleStratified")) {setGeneric("sampleStratified", function(x, size, ...) standardGeneric("sampleStratified"))}	
+if (!isGeneric("select")) {setGeneric("select", function(x, ...) standardGeneric("select"))}
 if (!isGeneric('setMinMax')) {setGeneric('setMinMax', function(x, ...) standardGeneric('setMinMax')) }	
 if (!isGeneric("shift")) {setGeneric("shift", function(x, ...)
 standardGeneric("shift"))}	
@@ -88,3 +96,11 @@ if (!isGeneric("colFromCell")) { setGeneric("colFromCell", function(object, cell
 
 # (!isGeneric("#")) { setGeneric("#", function(object) standardGeneric("#")) }
 
+if (!isGeneric("xmin")) {setGeneric("xmin", function(x) standardGeneric("xmin"))}
+if (!isGeneric("xmax")) {setGeneric("xmax", function(x)	standardGeneric("xmax"))}
+if (!isGeneric("ymin")) {setGeneric("ymin", function(x)	standardGeneric("ymin"))}
+if (!isGeneric("ymax")) {setGeneric("ymax", function(x)	standardGeneric("ymax"))}
+if (!isGeneric("xmin<-")) { setGeneric("xmin<-", function(x, ..., value) standardGeneric("xmin<-")) }	
+if (!isGeneric("xmax<-")) { setGeneric("xmax<-", function(x, ..., value) standardGeneric("xmax<-")) }	
+if (!isGeneric("ymin<-")) { setGeneric("ymin<-", function(x, ..., value) standardGeneric("ymin<-")) }	
+if (!isGeneric("ymax<-")) { setGeneric("ymax<-", function(x, ..., value) standardGeneric("ymax<-")) }	
