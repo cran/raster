@@ -3,12 +3,6 @@
 # Version 0.9
 # Licence GPL v3
 
-if (!isGeneric("brick")) {
-	setGeneric("brick", function(x, ...)
-		standardGeneric("brick"))
-}	
-
-
 
 setMethod('brick', signature(x='missing'), 
 	function(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, nl=1, crs) {
@@ -243,32 +237,32 @@ setMethod('brick', signature(x='array'),
 	
 
 
-setMethod('brick', signature(x='big.matrix'), 
-	function(x, template, filename='', ...) {
-		stopifnot(inherits(template, 'BasicRaster'))
-		stopifnot(nrow(x) == ncell(template))
-		r <- brick(template)
-		filename <- trim(filename)
-		names(r) <- colnames(x)
-		if (canProcessInMemory(r)) {
-			r <- setValues(r, x[])
-			if (filename != '') {
-				r <- writeRaster(r, filename, ...)
-			}
-		} else {
-			tr <- blockSize(r)
-			pb <- pbCreate(tr$n, ...)
-			r <- writeStart(r, filename, ...)
-			for (i in 1:tr$n) {
-				r <- writeValues(r, x[tr$row[i]:(tr$row[i]+tr$nrows[i]-1), ], tr$row[i] )
-				pbStep(pb) 
-			}
-			r <- writeStop(r)
-			pbClose(pb)
-		}
-		return(r)
-	}
-)
+# setMethod('brick', signature(x='big.matrix'), 
+	# function(x, template, filename='', ...) {
+		# stopifnot(inherits(template, 'BasicRaster'))
+		# stopifnot(nrow(x) == ncell(template))
+		# r <- brick(template)
+		# filename <- trim(filename)
+		# names(r) <- colnames(x)
+		# if (canProcessInMemory(r)) {
+			# r <- setValues(r, x[])
+			# if (filename != '') {
+				# r <- writeRaster(r, filename, ...)
+			# }
+		# } else {
+			# tr <- blockSize(r)
+			# pb <- pbCreate(tr$n, ...)
+			# r <- writeStart(r, filename, ...)
+			# for (i in 1:tr$n) {
+				# r <- writeValues(r, x[tr$row[i]:(tr$row[i]+tr$nrows[i]-1), ], tr$row[i] )
+				# pbStep(pb) 
+			# }
+			# r <- writeStop(r)
+			# pbClose(pb)
+		# }
+		# return(r)
+	# }
+# )
 
 	
 	

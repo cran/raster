@@ -55,9 +55,9 @@
 		} 
 	}
 
-	if ( fileext == ".BIG" | fileext == ".BRD") {
-		return( .rasterFromRasterFile(x, band=band, objecttype, driver='big.matrix', ...) )
-	}
+#	if ( fileext == ".BIG" | fileext == ".BRD") {
+#		return( .rasterFromRasterFile(x, band=band, objecttype, driver='big.matrix', ...) )
+#	}
 
 	if (!is.null(offset)) {
 		return ( .rasterFromASCIIFile(x, offset, ...) )
@@ -117,7 +117,7 @@
 		stop("Cannot create RasterLayer object from this file; perhaps you need to install rgdal first")
 	}
 	test <- try( r <- .rasterFromGDAL(x, band=band, objecttype, ...), silent=silent )
-	if (class(test) == "try-error") {
+	if (inherits(test, "try-error")) {
 		if (!file.exists(x)) {
 			stop("Cannot create a RasterLayer object from this file. (file does not exist)")
 		}

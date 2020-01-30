@@ -1,4 +1,5 @@
 
+
 if (!isGeneric("adjacent")) {setGeneric("adjacent", function(x, ...) standardGeneric("adjacent"))}	
 if (!isGeneric("approxNA")) {setGeneric("approxNA", function(x, ...)		standardGeneric("approxNA"))}	
 if (!isGeneric("area")) {setGeneric("area", function(x, ...) standardGeneric("area"))}	
@@ -10,6 +11,8 @@ if (!isGeneric("bbox")) {setGeneric("bbox", function(obj) standardGeneric("bbox"
 if (!isGeneric("barplot")) {setGeneric("barplot", function(height,...) standardGeneric("barplot"))}	
 if (!isGeneric("boundaries")) {	setGeneric("boundaries", function(x, ...) standardGeneric("boundaries"))}	
 if (!isGeneric("boxplot")) { setGeneric("boxplot", function(x, ...)	standardGeneric("boxplot")) }
+if (!isGeneric("brick")) { setGeneric("brick", function(x, ...)	standardGeneric("brick"))}	
+
 if (!isGeneric('buffer')) {setGeneric('buffer', function(x, ...) standardGeneric('buffer'))}	
 if (!isGeneric("calc")) {setGeneric("calc", function(x, fun, ...) standardGeneric("calc")) }
 if (!isGeneric("clamp")) {setGeneric("clamp", function(x, ...) standardGeneric("clamp")) }
@@ -41,6 +44,7 @@ if (!isGeneric("interpolate")) { setGeneric("interpolate", function(object, ...)
 if (!isGeneric("intersect")) { setGeneric("intersect", function(x, y) standardGeneric("intersect"))}	
 if (!isGeneric("isLonLat")) { setGeneric("isLonLat", function(x, ...) standardGeneric("isLonLat"))}	
 if (!isGeneric("mask")) { setGeneric("mask", function(x, mask, ...) standardGeneric("mask"))}
+if (!isGeneric(".median")) {setGeneric(".median", function(x, y, ...) standardGeneric(".median"))}	
 if (!isGeneric("merge")) {setGeneric("merge", function(x, y, ...) standardGeneric("merge"))}	
 if (!isGeneric("mosaic")) {setGeneric("mosaic", function(x, y, ...)standardGeneric("mosaic"))}	
 if (!isGeneric("modal")) {setGeneric("modal", function(x, ...) standardGeneric("modal"))}
@@ -56,6 +60,8 @@ if (!isGeneric("plot")) {setGeneric("plot", function(x,y,...)standardGeneric("pl
 if (!isGeneric("plotRGB")) { setGeneric("plotRGB", function(x, ...) standardGeneric("plotRGB"))}	
 if (!isGeneric("predict")) {setGeneric("predict", function(object, ...) standardGeneric("predict"))}
 if (!isGeneric("quantile")) {setGeneric("quantile", function(x, ...)standardGeneric("quantile"))}	
+if ( !isGeneric("raster") ) {setGeneric("raster", function(x, ...)	standardGeneric("raster"))}
+
 if (!isGeneric("rasterize")) {setGeneric("rasterize", function(x, y, ...) standardGeneric("rasterize"))}	
 if (!isGeneric("readStart")) {setGeneric("readStart", function(x, ...) standardGeneric("readStart"))}
 if (!isGeneric("readStop")) {setGeneric("readStop", function(x)	standardGeneric("readStop"))}	

@@ -169,7 +169,7 @@ ccodes <- function() {
 	} else {
 		f <- "countries_gadm36_sp.rds"	
 	}
-	filename <- file.path(path, f, sep="")
+	filename <- file.path(path, f)
 	
 	if (!file.exists(filename)) {
 		if (download) {
@@ -413,7 +413,7 @@ ccodes <- function() {
 			if (download) { 
 				theurl <- paste0(baseurl, f)
 				test <- try (.download(theurl, zipfilename) , silent=TRUE)
-				if (class(test) == 'try-error') {
+				if (inherits(test, "try-error")) {
 					stop("cannot download the file")
 				}
 			} else {message("file not available locally, use download=TRUE") }	

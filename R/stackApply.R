@@ -43,7 +43,7 @@ stackApply <- function(x, indices, fun, filename='', na.rm=TRUE, ...) {
 
 	rowcalc <- FALSE
 	fun <- .makeTextFun(fun)
-	if (class(fun) == 'character') { 
+	if (class(fun)[1] == 'character') { 
 		rowcalc <- TRUE 
 		fun <- .getRowFun(fun)
 	} 
@@ -84,9 +84,9 @@ stackApply <- function(x, indices, fun, filename='', na.rm=TRUE, ...) {
 		}
 
 		if (rowcalc) {
-			v <- lapply(uin, function(i) fun(a[, ind==uin[i], drop=FALSE], na.rm=na.rm))
+			v <- lapply(uin, function(i) fun(a[, ind==i, drop=FALSE], na.rm=na.rm))
 		} else {
-			v <- lapply(uin, function(i, ...) apply(a[, ind==uin[i], drop=FALSE], 1, fun, na.rm=na.rm))
+			v <- lapply(uin, function(i, ...) apply(a[, ind==i, drop=FALSE], 1, fun, na.rm=na.rm))
 		}
 		v <- do.call(cbind, v)
 		out <- writeValues(out, v, tr$row[i])
