@@ -20,7 +20,7 @@ dropLayer(x, i, ...)
 \arguments{
   \item{x}{Raster* object}
   \item{i}{integer. Indices of the layers to be dropped}
-  \item{...}{Additional arguments. The layers to add for addLayer. None for dropLayer)}
+  \item{...}{Additional arguments. The layers to add for addLayer. None implemented for dropLayer)}
 }
 
 

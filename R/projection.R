@@ -27,7 +27,28 @@ setMethod("crs<-", signature("BasicRaster", "ANY"),
 
 setMethod("crs<-", signature("Spatial", "ANY"), 
 	function(x, ..., value) {
-		projection(x) <- value
+
+		if (class(value)=="CRS") {
+			crs <- value
+		} else {	
+			crs <- .newCRS(value)
+		}	
+	
+		w <- getOption("warn")
+		on.exit(options("warn" = w))
+		options("warn"=-1)
+
+		ll_warn <- get_ll_warn()
+		ll_warn <- TRUE
+		#ReplCRS <- get_ReplCRS_warn()
+		#ll_TOL <- get_ll_TOL()
+
+		value <- as.character(value)
+		proj4string(x) <- value
+
+		set_ll_warn(ll_warn)
+		#set_ReplCRS_warn(ReplCRS)	
+		#set_ll_TOL(ll_TOL)
 		x
 	}
 )
@@ -61,7 +82,7 @@ setMethod("as.character", signature(x="CRS"),
 		}
 	} 
 	if (inherits(x, "Spatial")) {
-		x@proj4string <- crs
+		proj4string(x) <- crs
 	} else {
 		x@crs <- crs
 	}
@@ -76,7 +97,7 @@ projection <- function(x, asText=TRUE) {
 	if (methods::extends(class(x), "BasicRaster")) { 
 		x <- x@crs 
 	} else if (methods::extends(class(x), "Spatial")) { 
-		x <- x@proj4string
+		x <- proj4string(x)
 	} else if (methods::extends(class(x), "sf")) {
 		return( attr(x$geometry, "crs")$proj4string )
 	} else if (class(x) == "character") { 
@@ -90,14 +111,17 @@ projection <- function(x, asText=TRUE) {
 	}
 	
 	if (asText) {
-		if (is.na(x@projargs)) { 
-			return(as.character(NA))
-		} else {
-			return(trim(x@projargs))
-		}	
-	} else {
-		return(x)
+		if (class(x) == "CRS") { 
+			if (is.na(x@projargs)) { 
+				return(as.character(NA))
+			} else {
+				return(trim(x@projargs))
+			}
+		}
+	} else if (class(x) != "CRS") { 
+		x <- CRS(x)
 	}
+	return(x)
 }
 
 

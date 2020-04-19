@@ -24,7 +24,7 @@ setMethod('crop', signature(x='Spatial', y='ANY'),
 			y <- geometry(y)
 		}
 		
-		if (! compareCRS(x, y) ) {
+		if (!compareCRS(x, y) ) {
 			warning('non identical CRS')
 		}
 		y@proj4string <- x@proj4string

@@ -46,7 +46,7 @@ setMethod('select', signature(x='Spatial'),
 		} else {
 			e <- drawPoly()
 		}
-		e@proj4string <- x@proj4string
+		crs(e) <- proj4string(x)
 		int <- intersect(extent(e), extent(x))
 		if (is.null(int)) {
 			return(  NULL )

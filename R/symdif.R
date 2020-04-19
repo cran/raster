@@ -23,7 +23,7 @@ function(x, y, ...) {
 				warning('non identical CRS')
 				haswarned <- TRUE
 			}
-			y@proj4string <- x@proj4string
+			crs(y) <- proj4string(x)
 		}
 		if (rgeos::gIntersects(x, y)) {
 			part1 <- erase(x, y)
