@@ -7,8 +7,9 @@
 setMethod('extract', signature(x='Raster', y='SpatialLines'), 
 function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, factors=FALSE, along=FALSE, sp=FALSE, ...){ 
 
-	px <- projection(x, asText=FALSE)
-	comp <- compareCRS(px, projection(y), unknown=TRUE)
+	#px <-.getCRS(x, asText=FALSE)
+	px <-.getCRS(x)
+	comp <- compareCRS(px,.getCRS(y), unknown=TRUE)
 	if (!comp) {
 		.requireRgdal()
 		warning('Transforming SpatialLines to the CRS of the Raster object')
@@ -254,18 +255,19 @@ function(x, y, fun=NULL, na.rm=FALSE, cellnumbers=FALSE, df=FALSE, layer, nl, fa
 					vv <- rbind(vv, v)
 				}
 			} 
-			if (cellnumbers) {
-				vv <- cbind(cellFromRowCol(rr, vv[,1], vv[,2]), vv[,-c(1:2)])
-				colnames(vv) <- c('cell', names(x))
-			} else {
-				vv <- vv[,-c(1:2)]
-				if (NCOL(vv) > 1) {
-					colnames(vv) <- names(x)
-				}
-			}
-			res[[i]] <- vv
-			pbStep(pb)
 		}
+		
+		if (cellnumbers) {
+			vv <- cbind(cellFromRowCol(rr, vv[,1], vv[,2]), vv[,-c(1:2)])
+			colnames(vv) <- c('cell', names(x))
+		} else {
+			vv <- vv[,-c(1:2)]
+			if (NCOL(vv) > 1) {
+				colnames(vv) <- names(x)
+			}
+		}
+		res[[i]] <- vv
+		pbStep(pb)
 	}
 	
 	res <- res[1:nlns]

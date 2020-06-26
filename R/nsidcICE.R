@@ -5,7 +5,7 @@
     bx <- basename(x)
     ## test that we can get a date from this
     ## (as POSIXct so that Z-comparisons are more natural)
-    dts <- as.POSIXct(basename(x), format = "nt_%Y%m%d", tz = "GMT")
+    dts <- as.POSIXct(basename(x), format = "nt_%Y%m%d", tz = "UTC")
     ## test that we see _f and _v
     fyes <- tolower(substr(bx, 13L, 13L)) %in% c("f", "n")
     vyes <- tolower(substr(bx, 17L, 17L)) %in% c("v", "n")
@@ -50,7 +50,7 @@
         dat[r100] <- NA
        ## dat[r0] <- NA
 ##      }
-    r <- raster(t(matrix(dat, dims[1])), xmn=ext[1], xmx=ext[2], ymn=ext[3], ymx=ext[4], crs = prj)
+    r <- raster(t(matrix(dat, dims[1])), xmn=ext[1], xmx=ext[2], ymn=ext[3], ymx=ext[4], crs = CRS(prj))
 
     setZ(r, dts, name = "time")
 

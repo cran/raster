@@ -15,7 +15,7 @@ function(x, y) {
 
 	if (! identical(proj4string(x), proj4string(y)) ) {
 		warning('non identical CRS')
-		crs(y) <- proj4string(x)
+		y@proj4string <- x@proj4string
 	}
 	
 	subs <- rgeos::gIntersects(x, y, byid=TRUE)

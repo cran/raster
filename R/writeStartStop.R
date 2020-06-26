@@ -31,11 +31,9 @@ function(x, filename, options=NULL, format, prj=FALSE, ...) {
 	}		
 	
 	if (prj) {
-		crs <- crs(x, asText=T)
-		if (!is.na(crs)) {
-			if (.requireRgdal(FALSE)) { 
-				writeLines(rgdal::showWKT(crs(x, asText=TRUE)), extension(filename, "prj") )
-			}
+		crs <-.getCRS(x)
+		if (crs != "") {
+			writeLines(wkt(x), extension(filename, "prj") )
 		}
 	}
 	return(x)
@@ -67,11 +65,9 @@ function(x, filename, options=NULL, format, prj=FALSE, ...) {
 	}
 	
 	if (prj) {
-		crs <- crs(x, asText=T)
+		crs <-.getCRS(x)
 		if (!is.na(crs)) {
-			if (.requireRgdal(FALSE)) { 
-				writeLines(rgdal::showWKT(crs), extension(filename, "prj") )
-			}
+			writeLines(wkt(x), extension(filename, "prj") )
 		}
 	}	
 	

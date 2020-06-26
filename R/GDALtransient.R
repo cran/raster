@@ -112,8 +112,13 @@
 	}
 
 	rgdal::GDALcall(transient, "SetGeoTransform", gt)
-	# as.character to ensure NA is character
-	rgdal::GDALcall(transient, "SetProject", as.character(projection(r))) 
+	
+	if (.useproj6() & !is.na(r@crs)) {
+		rgdal::GDALcall(transient, "SetProjectWkt", r@crs) 
+	} else {
+		prj <- proj4string(r)
+		rgdal::GDALcall(transient, "SetProject", prj) 
+	}
 	if (is.null(options)) {
 		options <- ''
 	}

@@ -115,7 +115,7 @@ function(x, by=NULL, sums=NULL, dissolve=TRUE, vars=NULL, ...) {
 		v <- .getVars(by, cn)
 		
 		dat <- dat[,v, drop=FALSE]
-		crs <- proj4string(x)
+		crs <- x@proj4string
 		dc <- apply(dat, 1, function(y) paste(as.character(y), collapse='_'))
 		dc <- data.frame(oid=1:length(dc), v=as.integer(as.factor(dc)))
 		id <- dc[!duplicated(dc$v), , drop=FALSE]
@@ -159,11 +159,21 @@ function(x, by=NULL, sums=NULL, dissolve=TRUE, vars=NULL, ...) {
 					)
 			}	
 		} else {
-			x <- lapply(1:nrow(id), function(y) spChFIDs(aggregate(x[dc[dc$v==y,1],], dissolve=FALSE), as.character(y)))
+			#x <- lapply(1:nrow(id), function(y) {
+			#spChFIDs(aggregate(x[dc[dc$v==y,1],], dissolve=FALSE), as.character(y)))
+			x <- lapply(1:nrow(id), function(y) {
+				d <- data.frame(geom(x[dc[dc$v==y,1],]))
+				pmx = tapply(d[,"part"], d[,"object"], max)
+				z <- as.vector(cumsum(pmx) - 1)
+				d$part <- z[d$object] + d$part
+				d$object <- y
+				d <- as(d, "SpatialPolygons")
+				spChFIDs(d, as.character(y))
+			})
 		}
 		
 		x <- do.call(rbind, x)
-		crs(x) <- crs
+		x@proj4string <- crs
 		rownames(dat) <- NULL
 		SpatialPolygonsDataFrame(x, dat, FALSE)
 	}
@@ -213,7 +223,7 @@ function(x, by=NULL, sums=NULL, ...) {
 		v <- .getVars(by, cn)
 		
 		dat <- dat[,v, drop=FALSE]
-		crs <- proj4string(x)
+		crs <- x@proj4string
 		dc <- apply(dat, 1, function(y) paste(as.character(y), collapse='_'))
 		dc <- data.frame(oid=1:length(dc), v=as.integer(as.factor(dc)))
 		id <- dc[!duplicated(dc$v), , drop=FALSE]

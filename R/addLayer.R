@@ -42,7 +42,7 @@ function(x, ...) {
 		x@nrows <- r@nrows
 		x@ncols <- r@ncols
 		x@extent <- r@extent
-		x@crs <- r@crs
+		crs(x) <- .getCRS(r)
 		if (rotated(r)) {
 			x@rotated = r@rotated
 			x@rotation = r@rotation

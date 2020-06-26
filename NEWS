@@ -1,9 +1,9 @@
-to do
-
-There are bugs when using netCDF files that have latitude as the first dimension, and longitude as the second. Fixes proposed by Kassel Hingee. https://github.com/rspatial/raster/issues/83 https://github.com/rspatial/raster/pull/84/
-
-
 --- current version
+
+overhaul of crs to be ready for PROJ6
+several bug fixes (see https://github.com/rspatial/raster/issues?q=is%3Aissue+)
+
+--- 18-April-2020, version 3.1-5
 improvements:
 
 new arguments "smin", "smax" and "samplesize" to "stretch"; and bug fixes. See https://github.com/rspatial/raster/issues/70

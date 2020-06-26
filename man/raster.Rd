@@ -50,9 +50,9 @@ For an overview of the functions in the raster package have a look here: \code{\
 \S4method{raster}{missing}(nrows=180, ncols=360, xmn=-180, xmx=180, ymn=-90, ymx=90, 
 		crs, ext, resolution, vals=NULL)
 
-\S4method{raster}{Extent}(x, nrows=10, ncols=10, crs=NA, ...)
+\S4method{raster}{Extent}(x, nrows=10, ncols=10, crs="", ...)
 
-\S4method{raster}{matrix}(x, xmn=0, xmx=1, ymn=0, ymx=1, crs=NA, template=NULL)
+\S4method{raster}{matrix}(x, xmn=0, xmx=1, ymn=0, ymx=1, crs="", template=NULL)
 
 \S4method{raster}{Spatial}(x, origin, ...) 
 
@@ -149,11 +149,11 @@ r5 <- raster(s, 3)
 baseurl <- "ftp://sidads.colorado.edu/pub/DATASETS/"
 # southern hemisphere
 f1 <- paste(baseurl, 
- "nsidc0051_gsfc_nasateam_seaice/final-gsfc/south/daily/2013/nt_20130114_f17_v01_s.bin",
+ "nsidc0051_gsfc_nasateam_seaice/final-gsfc/south/daily/2013/nt_20130114_f17_v1.1_s.bin",
  sep='')
 # or northern hemisphere
 f2 <- paste(baseurl, 
- "nsidc0051_gsfc_nasateam_seaice/final-gsfc/north/daily/2013/nt_20130105_f17_v01_n.bin",
+ "nsidc0051_gsfc_nasateam_seaice/final-gsfc/north/daily/2013/nt_20130105_f17_v1.1_n.bin",
  sep='')
      
 if (!file.exists(basename(f1))) download.file(f1, basename(f1), mode = "wb")

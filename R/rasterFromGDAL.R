@@ -23,7 +23,7 @@
 
 
 
-.rasterFromGDAL <- function(filename, band, type, sub=0, RAT=TRUE, silent=TRUE, warn=TRUE, crs=NA, ...) {	
+.rasterFromGDAL <- function(filename, band, type, sub=0, RAT=TRUE, silent=TRUE, warn=TRUE, crs="", ...) {	
 
 	.requireRgdal() 
 	
@@ -174,11 +174,14 @@
 		r@rotation <- rot
 	}	
 
-	projection(r) <- .getProj(attr(gdalinfo, 'projection'), crs)
+	crs <- .getProj(attr(gdalinfo, 'projection'), crs)
+	r@crs <- CRS(crs, TRUE) 
+	#r@crs <- CRS(crs, FALSE) 
+	# F to avoid warnings about other than WGS84 datums or ellipsoids  
 	
-#   	r@history[[1]] <- mdata
+#  	r@history[[1]] <- mdata
 
-		
+
 	bi <- attr(gdalinfo, 'df')
 	GDType <- as.character(bi[['GDType']])
 	hasNoDataValues <- bi[['hasNoDataValue']]

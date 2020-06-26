@@ -1,15 +1,15 @@
 Package: raster
 Type: Package
 Title: Geographic Data Analysis and Modeling
-Version: 3.1-5
-Date: 2020-04-18
-Depends: sp (>= 1.2-0), R (>= 3.0.0)
-Suggests: rgdal (>= 0.9-1), rgeos (>= 0.3-8), ncdf4, igraph, tcltk,
-        parallel, rasterVis, MASS, sf, testthat
+Version: 3.3-6
+Date: 2020-06-25
+Depends: sp (>= 1.4.1), R (>= 3.5.0)
+Suggests: rgdal (>= 1.5-8), rgeos (>= 0.3-8), ncdf4, igraph, tcltk,
+        parallel, rasterVis, MASS, sf, testthat, gstat, fields
 LinkingTo: Rcpp
 Imports: Rcpp, methods
 SystemRequirements: C++11
-Description: Reading, writing, manipulating, analyzing and modeling of gridded spatial data. The package implements basic and high-level functions. Processing of very large files is supported. There is a also support for vector data operations such as intersections. See the manual and tutorials on <https://rspatial.org/> to get started.
+Description: Reading, writing, manipulating, analyzing and modeling of spatial data. The package implements basic and high-level functions for raster data and for vector data operations such as intersections. See the manual and tutorials on <https://rspatial.org/> to get started.
 License: GPL (>= 3)
 URL: https://rspatial.org/raster
 BugReports: https://github.com/rspatial/raster/issues/
@@ -20,6 +20,7 @@ Authors@R: c(
 	person("Jacob", "van Etten", role = "ctb"),
 	person("Michael", "Sumner", role = "ctb"),
 	person("Joe", "Cheng", role = "ctb"),
+	person("Dan", "Baston", role = "ctb"),
 	person("Andrew", "Bevan", role = "ctb"),
 	person("Roger", "Bivand", role = "ctb"),
 	person("Lorenzo", "Busetto", role = "ctb"),
@@ -45,11 +46,12 @@ Authors@R: c(
 	person("Rafael", "Wueest", role = "ctb")
 	)
 NeedsCompilation: yes
-Packaged: 2020-04-19 04:48:43 UTC; rhijm
+Packaged: 2020-06-25 19:27:54 UTC; rhijm
 Author: Robert J. Hijmans [cre, aut] (<https://orcid.org/0000-0001-5872-2872>),
   Jacob van Etten [ctb],
   Michael Sumner [ctb],
   Joe Cheng [ctb],
+  Dan Baston [ctb],
   Andrew Bevan [ctb],
   Roger Bivand [ctb],
   Lorenzo Busetto [ctb],
@@ -75,4 +77,4 @@ Author: Robert J. Hijmans [cre, aut] (<https://orcid.org/0000-0001-5872-2872>),
   Rafael Wueest [ctb]
 Maintainer: Robert J. Hijmans <r.hijmans@gmail.com>
 Repository: CRAN
-Date/Publication: 2020-04-19 06:10:02 UTC
+Date/Publication: 2020-06-26 16:00:12 UTC

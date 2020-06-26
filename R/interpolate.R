@@ -21,7 +21,6 @@ setMethod('interpolate', signature(object='Raster'),
 		ncols <- ncol(predrast)
 			
 		lyrnames <- names(object)
-		xylyrnames <- c('x', 'y', lyrnames)
 
 		haveFactor <- FALSE
 		dataclasses <- try( attr(model$terms, "dataClasses")[-1], silent=TRUE)
@@ -120,7 +119,7 @@ setMethod('interpolate', signature(object='Raster'),
 			if (gstatmod) { 
 				if (sp) { 
 					row.names(p) <- 1:nrow(p)
-					blockvals <- SpatialPointsDataFrame(coords=p, data = blockvals, proj4string=projection(predrast, asText = FALSE))
+					blockvals <- SpatialPointsDataFrame(coords=p, data = blockvals, proj4string=.getCRS((predrast)))
 				}
 				if (i == 1) { 
 					predv <- predict(model, blockvals, debug.level=debug.level, ...) 

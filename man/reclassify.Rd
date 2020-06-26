@@ -20,7 +20,11 @@ Reclassification is done with matrix \code{rcl}, in the row order of the reclass
 \arguments{
   \item{x}{Raster* object}
   
-  \item{rcl}{matrix for reclassification. This matrix must have 3 columns. The first two columns are "from" "to" of the input values, and the third column "becomes" has the new value for that range. (You can also supply a vector that can be coerced into a n*3 matrix (with byrow=TRUE)). You can also provide a two column matrix ("is", "becomes") which can be useful for integer values. In that case, the \code{right} argument is automatically set to \code{NA}}
+  \item{rcl}{matrix for reclassification. This matrix can have 3 or 2 columns. 
+  
+  In a \code{3-column matrix} the first two columns are "from" - "to" for the input values, and the third column "becomes" has the new value for that range. (You can also supply a vector that can be coerced into a n*3 matrix (with \code{byrow=TRUE})). 
+  
+  A \code{2-column matrix} represents ("is", "becomes") which can be useful for integer values. In that case, the \code{right} argument is automatically set to \code{NA}}
 
  \item{filename}{character. Output filename (optional) }
   

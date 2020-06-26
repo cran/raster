@@ -21,8 +21,8 @@ setMethod("Arith", signature(e1='Raster', e2='Raster'),
 		nl2 <- nlayers(e2)
 		nl <- max(nl1, nl2)
 
-		proj1 <- projection(e1)
-		proj2 <- projection(e2)
+		proj1 <-.getCRS(e1)
+		proj2 <-.getCRS(e2)
 	
 		if ( ! compareRaster(e1, e2, crs=FALSE, stopiffalse=FALSE) ) {
 			if ( compareRaster(e1, e2, extent=FALSE, rowcol=FALSE, crs=TRUE, res=TRUE, orig=TRUE, stopiffalse=TRUE) ) {
@@ -167,25 +167,6 @@ setMethod("Arith", signature(e1='numeric', e2='RasterLayer'),
 			pbClose(pb)
 			return(r)
 		}		
-	}
-)
-
-
-
-setMethod("Arith", signature(e1='RasterLayerSparse', e2='numeric'),
-    function(e1, e2){ 
-	
-		if (!hasValues(e1)) { stop('RasterLayerSparse has no values') }
-		stopifnot(length(e2) == 1)
-		setValues(e1,  methods::callGeneric(as.numeric(e1@data@values), e2))
-	}
-)
-
-setMethod("Arith", signature(e1='numeric', e2='RasterLayerSparse'),
-    function(e1, e2){ 
-		if (!hasValues(e2)) { stop('RasterLayerSparse has no values') }
-		stopifnot(length(e1) == 1)
-		setValues(e2,  methods::callGeneric(as.numeric(e2@data@values), e1) )
 	}
 )
 
