@@ -1,8 +1,8 @@
-8efa59d2221ffc4881245c61e6867da9 *DESCRIPTION
+4aea772c8751b1e955d56b090a064f16 *DESCRIPTION
 9e9967dd5e483ba8eed46eda990c6b80 *NAMESPACE
 911b969902e1fed34ecd9e6df895efe4 *NEWS
 9cf8d8ba57e32029843babd0c3293a39 *R/AAAClasses.R
-7e2ec19b5b44a55eb877e37471e2972e *R/AAgeneric_functions.R
+1cf8ca47232097ac2f45d33f3fc4c726 *R/AAgeneric_functions.R
 c48803344599610d2c72afb9cd737588 *R/GDALtransient.R
 f180fcae52d642edc8730beda1ac1b99 *R/Geary.R
 2d4cd8898df0c27e470528bb6b604bc3 *R/RGB.R
@@ -36,7 +36,7 @@ d8ef8184c0597963bc5b394514779f80 *R/blend.R
 81091b02646df5e926d643054bfb1a4c *R/blockSize.R
 49978cdfa83cd35fd709ce730630694f *R/boundaries.R
 32e5efe554fbeaefeb4aa8655bf23502 *R/boxplot.R
-ef26f764660c739d35a0d272a669e3c4 *R/brick.R
+26b0e0fbb31d79d3e47095969b7b04b4 *R/brick.R
 d0861a7614407766dc3b4320bf6bfeca *R/buffer.R
 c1307200faa6a5c035a0b27a9cdc7242 *R/calc.R
 ba05befbddbda6b2f68af9c7b281c26b *R/canProcessInMemory.R
@@ -111,7 +111,7 @@ b33d32af14b1c2134efdf9600d57bc08 *R/frbind.R
 a306dc4052e259e8e4bfe7d21a5b2433 *R/freq.R
 d650e91fdce1bfee15349da3938547fc *R/fullFileName.R
 473743a1707348b5ce3587eb19b8e076 *R/gainoffset.R
-5b60dc731b4c3a9e84c4e8e9eb982c4c *R/gdal.R
+309e6512adbe0df582b6bc3f1b115630 *R/gdal.R
 41333b3a0ffa2f669f9a85ec4a239029 *R/gdalFormats.R
 169623ef201e751c3723aaf2ae608298 *R/geom.R
 0a233db75ef645808f1b655c2210e1bc *R/getData.R
@@ -191,7 +191,7 @@ c6086ef40bb390abc3c2cb8d605985ce *R/newPLot.R
 07075bf7ca758c2814aa861eb6b103e4 *R/nlayers.R
 3b100bb974182c34fa7b9a96eef8af22 *R/notused.R
 920e2537a176a9303c07e12153a8f8b4 *R/nsidcICE.R
-d846ce6c7b94ff7d80e24a9371f7ce15 *R/origin.R
+384e5db4c953358993ed1e8f522792e7 *R/origin.R
 bac6784c58fb041dbf04c518d62d00c7 *R/overlay.R
 0cfe28dee07045be9830bdd34680a585 *R/pairs.R
 2bff0c9e7996158a256aa3a48eb84b99 *R/persp.R
