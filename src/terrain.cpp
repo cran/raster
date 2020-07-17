@@ -232,7 +232,7 @@ std::vector<double> do_terrains(std::vector<double> d, std::vector<int> dim, std
 				yw[i] = yw[i] / (8 * dy);
 			}
 						
-			for (size_t i = ncol; i < (ncol * (nrow-1)-1); i++) {
+			for (size_t i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 				if (i % ncol == 0) {
 					q = i / ncol;
 					for (size_t k=0; k<6; k++) {
@@ -240,7 +240,8 @@ std::vector<double> do_terrains(std::vector<double> d, std::vector<int> dim, std
 					}
 				}
 				zx = d[i-1-ncol] * xw[0] + d[i-1] * xw[1] + d[i-1+ncol] * xw[2]
-						+ d[i+1-ncol] * xw[3] + d[i+1] * xw[4] + d[i+1+ncol] * xw[5];
+				   + d[i+1-ncol] * xw[3] + d[i+1] * xw[4] + d[i+1+ncol] * xw[5];
+				   
 				zy = d[i-1-ncol] * yw[0] + d[i-1+ncol] * yw[1] + d[i-ncol] * yw[2] 
 						+ d[i+ncol] * yw[3] + d[i+1-ncol] * yw[4] + d[i+1+ncol] * yw[5];
 				val[i+addn] = sqrt( pow(zy, 2) + pow(zx, 2)  );
@@ -294,7 +295,7 @@ std::vector<double> do_terrains(std::vector<double> d, std::vector<int> dim, std
 				yw[i] = yw[i] / (8 * dy);
 			}
 						
-			for (size_t i = ncol; i < (ncol * (nrow-1)-1); i++) {
+			for (size_t i = ncol+1; i < (ncol * (nrow-1)-1); i++) {
 				if (i % ncol == 0) {
 					q = i / ncol;
 					for (size_t k=0; k<6; k++) {

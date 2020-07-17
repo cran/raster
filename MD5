@@ -1,4 +1,4 @@
-4aea772c8751b1e955d56b090a064f16 *DESCRIPTION
+5ff633798ad955deaf382455d0884a37 *DESCRIPTION
 9e9967dd5e483ba8eed46eda990c6b80 *NAMESPACE
 911b969902e1fed34ecd9e6df895efe4 *NEWS
 9cf8d8ba57e32029843babd0c3293a39 *R/AAAClasses.R
@@ -31,13 +31,13 @@ eb90d83391dc29673df6b9da3dfa7331 *R/as.spatial.R
 987e9d69116214719acc12856c6fbbfd *R/barplot.R
 72bda5118735d8c0d368eb9f04adfbee *R/bbox.R
 5d108b47afa8efcbf0f520a6ab98143e *R/bilinearValue.R
-239bbd781f9863c0dd81f870f935aae0 *R/bind.R
+86ab530bdd7871595575ea0df5967f00 *R/bind.R
 d8ef8184c0597963bc5b394514779f80 *R/blend.R
 81091b02646df5e926d643054bfb1a4c *R/blockSize.R
 49978cdfa83cd35fd709ce730630694f *R/boundaries.R
 32e5efe554fbeaefeb4aa8655bf23502 *R/boxplot.R
 26b0e0fbb31d79d3e47095969b7b04b4 *R/brick.R
-d0861a7614407766dc3b4320bf6bfeca *R/buffer.R
+cea45e0b4ddf9120cd8f98e624d37e18 *R/buffer.R
 c1307200faa6a5c035a0b27a9cdc7242 *R/calc.R
 ba05befbddbda6b2f68af9c7b281c26b *R/canProcessInMemory.R
 f3e08c626da8c736c30e3e13b72dd71c *R/cellFromLine.R
@@ -64,9 +64,9 @@ eda5f13e2587c0042edfccf8559ca9da *R/compare_Logical.R
 c44f02dac5ed1513104a937e333558e7 *R/corLocal.R
 5f58712dd68a5bdbc1d8e097ae142b56 *R/cover.R
 c5cee6b1f0665437644f3de3438d6193 *R/coverBrick.R
-1025554af95d26899821d1d440ef2b1f *R/coverPolygons.R
+53fb8cf1f9b54cee4cce5c6c98949d9e *R/coverPolygons.R
 e035a1b0069f1df9f0cbd2f57d7a152b *R/crop.R
-aa13e4f77a678cacf7be2ba13d531ea9 *R/cropSpatial.R
+bdff096790efef57840b5815dbb8d2a0 *R/cropSpatial.R
 99a4438dec56cc288c67ce673e2001d6 *R/crosstab.R
 a1ec4fd447a90c7897f834a97232f63e *R/cut.R
 f67450ded7249f479ba4173d37bf555b *R/cv.R
@@ -86,7 +86,7 @@ ba5da437d993d96d9f657d0988e396cd *R/direction.R
 963896ffa2d3e68b8a28c0b7c596fae4 *R/drawPoly.R
 15a69d75a655ea21315bf42d820fa2e5 *R/drivers.R
 28d4608948b3e427ca4e442cf212d1be *R/dropLayer.R
-a36d7b80902596ef60e022b8c3a4e155 *R/erase.R
+4d17a68c0ab7e8b129ecd150fe136694 *R/erase.R
 175301aae5f4e436ab3e246271bbf7d0 *R/extend.R
 658d932f3e740a73ad64773513f7f410 *R/extension.R
 300d5606ba63df310fea1a82e98d6488 *R/extent.R
@@ -148,7 +148,7 @@ c8e0713720b111d87fd3380f78362d9f *R/indexReplaceBrick.R
 f590d5b5c82c554d8265d45ba6918498 *R/intDataType.R
 74502c6341de9f6ad1192a29ad0fa252 *R/interpolate.R
 b5c1ee085ea0b99677bed22876034672 *R/intersect.R
-b89fc373154397c52a61baf50ee18e55 *R/intersect_sp.R
+5315033b210d2ed7840166e538c82892 *R/intersect_sp.R
 c5676dcb0c5c3f3833ec20a24b8ee273 *R/is.na.R
 b0ed335d630517e0a7f3649d74995dc7 *R/isLonLat.R
 4d4d56411dc82d5e078e043a09262126 *R/kernelDens.R
@@ -182,7 +182,7 @@ b6ca32c691056fdb586b2bc34a0404bc *R/modalRaster.R
 84c63eefe0e98f95e7e7e539978aaa06 *R/ncell.R
 6a052eb2f72073d72afcee4387b2da3c *R/netCDFread.R
 563d1ffa7bad45d6f13cb9f59bf59543 *R/netCDFreadCells.R
-4ead40b5aa6f24da28415d5a37550617 *R/netCDFtoRasterCD.R
+2c2cce7256416d1b9f785773522bb964 *R/netCDFtoRasterCD.R
 322c27edefaca28163f122af13324d27 *R/netCDFtoRasterGMT.R
 eae8a0e3489850d0ee6468c5ff13e5c2 *R/netCDFtoStack.R
 d933c9337f2064b6e0e4a80c43638fa3 *R/netCDFutil.R
@@ -204,7 +204,7 @@ faf5d5d079decba676c1e49cae6b7a9c *R/plotRGB.R
 e05b963d86aa7a141fc0b2d81aa75084 *R/plotRaster2.R
 e8ccd276bffe64c29310cdcd83464014 *R/pointdistance.R
 d63a91fedf1b0a97edc61ef47ce408e9 *R/predict.R
-5b813ed9d3e6d900f28d017e7ef0cc59 *R/print.R
+0d11414dae1168f4a1eb6af1bbb4d8d0 *R/print.R
 253e1b00d879156bcb58506c6a558296 *R/progressBar.R
 0b72a7f7070e090b3547931a8b5345af *R/project.R
 c3a280579e648a5083f97b71dd466b14 *R/projectRaster.R
@@ -286,9 +286,9 @@ f12defbf18a705dcceda53d8936766a8 *R/summary.R
 2eb768130ac1675df425bac41af34b2f *R/text.R
 7b5cdfb953ba2fe08ba43a101c21090b *R/tmpFile.R
 d7da964a76a847225bba55c77d604c24 *R/transpose.R
-9ae8867831aa277a3a9f4bdd9e92ce4f *R/trim.R
+ec2331816a331dae7190f30bca788009 *R/trim.R
 d6a3aa82137988cad5b620baf783c948 *R/union.R
-cddec0d41e2c6ae5085c98ca30cc9c85 *R/union_sp.R
+ddc227b43969fc02e8d75c297883932f *R/union_sp.R
 74cc3a5412e4165f06047b328b1836b6 *R/unique.R
 2c3df52854a3eee3ee465458ddebace4 *R/unstack.R
 8f5035307d6bc37d4547a228a0694b06 *R/update.R
@@ -310,7 +310,7 @@ deb195398ea10a1bb5a4f8c560e4ae29 *R/writeStartStopAscii.R
 c240ad83d0e95f1021bdc98ce6702bc5 *R/xyCell.R
 4fef0b80cdc7fb9661ba565d5ff66f1f *R/xyMinMax.R
 b550e3cc1c8c68c9bb09cf9d49274bf6 *R/xyResolution.R
-97ccae48af0603352bd8333b84939b64 *R/xyValuesBuffer.R
+2041a9dde7da63fc5c19facbf6edb153 *R/xyValuesBuffer.R
 a87634900f485c7e3e9fcb882fe191e0 *R/zApply.R
 4299faa46bbe88e8cf023e4d761d345a *R/zonal.R
 d068670b8dcc9d358f3f086552800c55 *R/zoom.R
@@ -325,6 +325,11 @@ bed3f7fe573de483736ba2ba73c26341 *inst/external/rlogo.grd
 b3ed7227bb04142c4a36cbe25067d5ac *inst/external/rlogo.gri
 7d6a75f2a0f3617e8f0774411be8349d *inst/external/test.grd
 cb22d2072ca597b022e481bb86f9f989 *inst/external/test.gri
+abe388883dc8cf4db5b9cd1ba772e8e6 *inst/tests/test_getvaluesblock.R
+6752d3a8080729215b419c3639b09a0a *inst/tests/test_rasterize.R
+c60d9a1d08b489ce345c3638e411d381 *inst/tests/test_sf-coercion.R
+d532931dc72b3675c3dbbb98637d6e50 *inst/tests/test_subset.R
+ceefb20f4aeab6dd25bd045d72c70e06 *inst/tests/tinytest.R
 97ba849347e4e2cd0eba47d512c07bd3 *man/Arith-methods.Rd
 062d623d936269344de74c0775a068b1 *man/Compare-methods.Rd
 6047dd6990d8ca1867fcb7ebf2fe05b0 *man/Extent-class.Rd
@@ -381,7 +386,7 @@ d64f9b288e386ced0f0b34cb87dedcbd *man/crop.Rd
 dc99e1ef680f7b9049951d10bcefcdd4 *man/cv.Rd
 c4997a4932e35e6a7e85d671d986491b *man/dataType.Rd
 9e7cb9684628c94bd9be08a3c67ec9f0 *man/datasource.Rd
-e02b0a045ceb237d3796fda7951d70b3 *man/density.Rd
+c16b7475ab57a14888eb4667045b7945 *man/density.Rd
 91adc79fc209ceb2c458617e8b05d891 *man/dimensions.Rd
 ec5f942f620e464780d84e1bf27faa4d *man/direction.Rd
 c19c1f8056f716eef167647ba39f9d13 *man/disaggregate.Rd
@@ -438,7 +443,7 @@ e78b7afb287446f292a8415c494cf267 *man/origin.Rd
 c9daecbd5f5d3b03a02245c908341b4a *man/overlay.Rd
 96379250813832bfe1652669def0239e *man/pairs.Rd
 e94b18a4a00d391e254f98eef93c8269 *man/persp.Rd
-1e1dcf6bbd701e0141e8b1c009cac319 *man/plot.Rd
+3102d0f993589d05e80400505497bd11 *man/plot.Rd
 72d3eb6e724a714675a43764056ae38b *man/plotRGB.Rd
 12cd4acddba25e73a5931bd5d391c124 *man/pointDistance.Rd
 4620e82889760ffb0974b302edefa449 *man/predict.Rd
@@ -488,7 +493,7 @@ ca878bc1593e528cc656c8ce0c15ba04 *man/spEasy.Rd
 0aaea33d3a71164077222ef8c5674614 *man/stack.Rd
 b4e5367a1a3e8e90cbd3a3d9f2c69a13 *man/stackApply.Rd
 cb01d82b0ff33c4c3b07f33fa4a9f401 *man/stackSelect.Rd
-5138e4eb65dff372dc601925052a4efa *man/strech.Rd
+f6bc30f3d45a49fe0c55456334a6733f *man/strech.Rd
 e91f4f702537f7fc416be44c72d74b2f *man/subs.Rd
 cef4b0ae0e8e758830cda58df31c69dd *man/subset.Rd
 7cb3657af929fc13de7bf2c88294947b *man/summary.Rd
@@ -512,7 +517,7 @@ c6fb7e85aefbea01c9ac78ea85273a2b *man/update.Rd
 b2d1db5758eab0d60e5852c79364b23a *man/xyFromCell.Rd
 c939d846d9caccdc1296ab0cbc572d4d *man/zApply.Rd
 30caf8090f30f1e69b7c4fa040e5785d *man/zonal.Rd
-77b905f1f3ae2f2f39ab2f6391c34850 *man/zoom.Rd
+2ed4cd3d565f0dc466b46590fd52fb6b *man/zoom.Rd
 7f2a34ddf86c7e4cf7055cfb6f6fdf6b *man/zvalues.Rd
 fadffd1a59958998d5aa0a8ee4e44874 *src/RasterModule.cpp
 fe0e480c52c98688007d5ad4008b450e *src/RcppExports.cpp
@@ -543,12 +548,7 @@ f9a6b46bdeeae7cb0cf3de6782d93fce *src/memory.cpp
 8cd6ef602e2ae21aa33bcc11ea4f026c *src/rasterize.cpp
 8eebd5a154b6809afa176a2295a20795 *src/reclass.cpp
 4b8c3cdb9143f64f8843b95f89a6acea *src/spat.h
-ebedc7e0da025d66ed6df9dbc23f7dad *src/terrain.cpp
+e15df9dc3db626759d7370b49ed0345b *src/terrain.cpp
 e8793d57c6405d2f688421d75ae5115d *src/util.cpp
 02b3ab8677d52f791681845435a5252a *src/util.h
 6eecc5a74b0d952ec5350934932ab19d *src/xyCell.cpp
-9efa66f4240df3e19d7eca5d58912d25 *tests/testthat.R
-dd3fab976fc6356f9472682143807e94 *tests/testthat/test-getvaluesblock.R
-a6a74ce5252c6387ca9cbeeff3170d1c *tests/testthat/test-rasterize.R
-c60d9a1d08b489ce345c3638e411d381 *tests/testthat/test-sf-coercion.R
-4b4ab185a8da9b0d70651a85ea2d9659 *tests/testthat/test-subset.R

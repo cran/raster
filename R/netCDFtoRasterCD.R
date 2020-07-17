@@ -18,11 +18,13 @@
 		dodays <- FALSE
 		startTime <- substr(un, 13, 30)
 		mult <- 3600
-	} else if (substr(un, 1, 12) == "seconds from") { 
+	} else if ((substr(un, 1, 13) == "seconds since") ||  (substr(un, 1, 12) == "seconds from")) { 
 		doseconds <- TRUE
 		dodays <- FALSE
-		startTime = as.Date(substr(un, 14, 30))
+		startTime = as.Date(substr(un, 15, 31))
 		mult <- 1
+	} else {
+	  return(x)
 	}
 	if (!dodays) {
 		start <- strptime(startTime, "%Y-%m-%d %H:%M:%OS", tz = "UTC")
@@ -131,7 +133,7 @@
 	stopifnot(requireNamespace("ncdf4"))
 	stopifnot(type %in% c('RasterLayer', "RasterBrick"))
 	
-	nc <- ncdf4::nc_open(filename, suppress_dimvals = TRUE)
+	nc <- ncdf4::nc_open(filename, readunlim=FALSE, suppress_dimvals = TRUE)
 	on.exit( ncdf4::nc_close(nc) )		
 	conv <- ncdf4::ncatt_get(nc, 0, "Conventions")
 		
