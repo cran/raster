@@ -43,13 +43,16 @@ writing a geotiff file you can use: \code{options=c("COMPRESS=NONE", "TFW=YES")}
 
 You can use options=c("PROFILE=BASELINE") to create a plain  tif with no GeoTIFF tags. 
 This can be useful when writing files to be read by applications intolerant of unrecognised tags. 
-(see \url{http://www.gdal.org/frmt_gtiff.html})
+(see \url{https://gdal.org/drivers/raster/gtiff.html})
 
 NetCDF files have the following additional, optional, arguments: \code{varname}, \code{varunit}, \code{longname}, \code{xname}, \code{yname}, \code{zname}, \code{zunit}
 
 \code{prj}: Logical. If \code{TRUE}, the crs is written to a .prj file. This can be useful 
 when writing to an ascii file or another file type that does not store the crs
+
+\code{setStatistics}: logical. If \code{TRUE} (the default) the min and max cell values are written to file (if the format permits it)
 }
+
 
 \item{bylayer}{if \code{TRUE}, write a separate file for each layer. You can provide a vector of filenames that matches the number of layers. Or you can provide a single filename that will get a unique suffix (see below)}
 

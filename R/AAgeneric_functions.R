@@ -1,7 +1,11 @@
 
 if (!isGeneric("rectify")) {setGeneric("rectify", function(x, ...) standardGeneric("rectify"))}	
 
-if (!isGeneric("adjacent")) {setGeneric("adjacent", function(x, ...) standardGeneric("adjacent"))}	
+if (!isGeneric("%in%")) { setGeneric("%in%", function(x, table) standardGeneric("%in%"))}
+
+if (!isGeneric("adjacent")) {setGeneric("adjacent", function(x, ...) standardGeneric("adjacent"))}
+if (!isGeneric("animate")) { setGeneric("animate", function(x, ...) standardGeneric("animate")) }	
+	
 if (!isGeneric("approxNA")) {setGeneric("approxNA", function(x, ...)		standardGeneric("approxNA"))}	
 if (!isGeneric("area")) {setGeneric("area", function(x, ...) standardGeneric("area"))}	
 if (!isGeneric("as.data.frame")) { setGeneric("as.data.frame", function(x, row.names = NULL, optional = FALSE, ...) standardGeneric("as.data.frame")) }	
@@ -44,6 +48,7 @@ if (!isGeneric("init")) {setGeneric("init", function(x, ...) standardGeneric("in
 if (!isGeneric("interpolate")) { setGeneric("interpolate", function(object, ...) standardGeneric("interpolate"))}	
 if (!isGeneric("intersect")) { setGeneric("intersect", function(x, y) standardGeneric("intersect"))}	
 if (!isGeneric("isLonLat")) { setGeneric("isLonLat", function(x, ...) standardGeneric("isLonLat"))}	
+if (!isGeneric("match")) { setGeneric("match", function(x, table, nomatch=NA_integer_, incomparables=NULL)		standardGeneric("match"))}	
 if (!isGeneric("mask")) { setGeneric("mask", function(x, mask, ...) standardGeneric("mask"))}
 if (!isGeneric(".median")) {setGeneric(".median", function(x, y, ...) standardGeneric(".median"))}	
 if (!isGeneric("merge")) {setGeneric("merge", function(x, y, ...) standardGeneric("merge"))}	

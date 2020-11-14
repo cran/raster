@@ -130,9 +130,13 @@ projectExtent <- function(object, crs) {
 		fromcrs <- proj4string(fromcrs)	
 		pXY <- rgdal::rawTransform(fromcrs, crs, nrow(xy), xy[,1], xy[,2])
 	}
+
 	
 	pXY <- cbind(pXY[[1]], pXY[[2]])
-	out <- c((pXY[2,1] - pXY[1,1]), (pXY[4,2] - pXY[3,2]))
+#	out <- c((pXY[2,1] - pXY[1,1]), (pXY[4,2] - pXY[3,2]))
+	outex <- extent(pXY)
+	out <- c(xmax(outex) - xmin(outex),	ymax(outex) - ymin(outex))
+
 	if (any(is.na(out))) {
 		if (isLonLat(obj)) {
 			out <- pointDistance(cbind(x1, y1), cbind(x2, y2), lonlat=TRUE)
@@ -276,6 +280,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 
 	if (alignOnly) {
 		to <- .getAlignedRaster(to, from)
+		return (to)
 	}
 	
 #	pbb <- projectExtent(to,.getCRS(from))
@@ -303,7 +308,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 
 	names(to) <- names(from)
 	if ( ! hasValues(from) ) {
-		warning("'from' has no cell values")
+		#warning("'from' has no cell values")
 		return(to)
 	}
 	
