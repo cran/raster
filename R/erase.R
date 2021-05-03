@@ -67,7 +67,7 @@
 setMethod(erase, signature(x='SpatialPolygons', y='SpatialPolygons'),
     function(x, y, ...){ 
 	
-		requireNamespace("rgeos")
+		valgeos <- .checkGEOS(); on.exit(rgeos::set_RGEOS_CheckValidity(valgeos))
 
 		prj <- x@proj4string
 		if (is.na(prj)) prj <- y@proj4string
@@ -114,7 +114,7 @@ setMethod(erase, signature(x='SpatialPolygons', y='SpatialPolygons'),
 		if (dropframe) {
 			return( as(part2, 'SpatialPolygons') )
 		} else {
-			part2$erase_dissolve_ID <- NULL
+			part2@data$erase_dissolve_ID <- NULL
 			return( part2 )
 		}
 	}
@@ -123,7 +123,7 @@ setMethod(erase, signature(x='SpatialPolygons', y='SpatialPolygons'),
 setMethod(erase, signature(x='SpatialLines', y='SpatialPolygons'),
     function(x, y, ...){ 
 	
-		requireNamespace("rgeos")
+		valgeos <- .checkGEOS(); on.exit(rgeos::set_RGEOS_CheckValidity(valgeos))
 		prj <- x@proj4string
 		if (is.na(prj)) prj <- y@proj4string
 		x@proj4string <- CRS(as.character(NA))

@@ -174,7 +174,14 @@
 		r@rotation <- rot
 	}	
 
-	crs <- .getProj(attr(gdalinfo, 'projection'), crs)
+	prj <- attr(gdalinfo, 'projection')
+	if (!is.na(prj)) {
+		prjcom <- attr(prj, 'comment')
+		if ((!is.null(prjcom) && !is.na(prjcom))) {
+			prj <- prjcom
+		}
+	}
+	crs <- .getProj(prj, crs)
 	r@crs <- CRS(crs, TRUE) 
 	#r@crs <- CRS(crs, FALSE) 
 	# F to avoid warnings about other than WGS84 datums or ellipsoids  
@@ -230,7 +237,7 @@
 	
 	if (type == 'RasterBrick') {
 		ub <- unique(bnames)
-		if ((ub != "") && (length(ub) == nlayers(r))) {
+		if ((!all(ub == "")) && (length(ub) == nlayers(r))) {
 			names(r) <- bnames		
 		} else {
 			names(r) <- rep(gsub(" ", "_", extension(basename(filename), "")), nbands)

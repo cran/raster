@@ -7,6 +7,7 @@
 
 \description{
 Project the values of a Raster* object to a new Raster* object with another projection (coordinate reference system, (CRS)). 
+
 You can do this by providing the new projection as a single argument in which case the function sets the extent and resolution of the new object. To have more control over the transformation, and, for example, to assure that the new object lines up with other datasets, you can provide a Raster* object with the properties that the input data should be projected to.
 
 \code{projectExtent} returns a RasterLayer with a projected extent, but without any values. This RasterLayer can then 
@@ -43,8 +44,7 @@ There are two approaches you can follow to project the values of a Raster object
 
 1) Provide a \code{crs} argument, and, optionally, a \code{res} argument, but do not provide a \code{to} argument.
 
-2) Create a template Raster with the CRS you want to project to. You can use an existing object, or use \code{projectExtent} for this
-or an existing Raster* object. Also set the number of rows and columns (or the resolution), and perhaps adjust the extent. The resolution of the output raster should normally be similar to that of the input raster. Then use that object as \code{from} argument to project the input Raster to. 
+2) Create a template Raster with the CRS you want to project to. You can use an existing object, or use \code{projectExtent} for this or an existing Raster* object. Also set the number of rows and columns (or the resolution), and perhaps adjust the extent. The resolution of the output raster should normally be similar to that of the input raster. Then use that object as \code{from} argument to project the input Raster to. 
 This is the preferred method because you have most control. For example you can assure that the resulting Raster object lines up with other Raster objects.
 
 Projection is performed using the PROJ.4 library accessed through the rgdal package. 
@@ -57,6 +57,10 @@ Also see \code{projInfo('proj')}, \code{projInfo('ellps')}, and \code{projInfo('
 }
 
 \note{
+User beware. Sadly, the PROJ.4 notation has been partly deprecated in the GDAL/PROJ library that is used by this function. You can still use it, but *only* with the the WGS84 datum. Other datums are silently ignored. 
+
+When printing a Spat* object the PROJ.4 notation is shown because it is the most concise and clear format available. However, internally a WKT representation is used (see \code{\link{crs}}).
+
 Vector (points, lines, polygons) can be transformed with \code{\link[sp]{spTransform}}.
 
 \code{projectExtent} does not work very well when transforming projected circumpolar data to (e.g.) longitude/latitude. 

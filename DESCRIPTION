@@ -1,9 +1,9 @@
 Package: raster
 Type: Package
 Title: Geographic Data Analysis and Modeling
-Version: 3.4-5
-Date: 2020-11-10
-Depends: sp (>= 1.4.1), R (>= 3.5.0)
+Version: 3.4-10
+Date: 2021-05-02
+Depends: sp (>= 1.4.1), R (>= 3.4.0)
 Suggests: rgdal (>= 1.5-8), rgeos (>= 0.3-8), ncdf4, igraph, tcltk,
         parallel, rasterVis, MASS, sf, tinytest, gstat, fields
 LinkingTo: Rcpp
@@ -37,6 +37,7 @@ Authors@R: c(
 	person("Charles", "Karney", role = "ctb"),
 	person("Matteo", "Mattiuzzi", role = "ctb"),
 	person("Steven", "Mosher", role = "ctb"),
+	person("Babak", "Naimi", role = "ctb"),	
 	person("Jakub", "Nowosad", role = "ctb"),
 	person("Edzer", "Pebesma", role = "ctb"),
 	person("Oscar", "Perpinan Lamigueiro", role = "ctb"),
@@ -47,7 +48,7 @@ Authors@R: c(
 	person("Rafael", "Wueest", role = "ctb")
 	)
 NeedsCompilation: yes
-Packaged: 2020-11-10 22:57:23 UTC; rhijm
+Packaged: 2021-05-03 03:55:25 UTC; rhijm
 Author: Robert J. Hijmans [cre, aut] (<https://orcid.org/0000-0001-5872-2872>),
   Jacob van Etten [ctb],
   Michael Sumner [ctb],
@@ -69,6 +70,7 @@ Author: Robert J. Hijmans [cre, aut] (<https://orcid.org/0000-0001-5872-2872>),
   Charles Karney [ctb],
   Matteo Mattiuzzi [ctb],
   Steven Mosher [ctb],
+  Babak Naimi [ctb],
   Jakub Nowosad [ctb],
   Edzer Pebesma [ctb],
   Oscar Perpinan Lamigueiro [ctb],
@@ -79,4 +81,4 @@ Author: Robert J. Hijmans [cre, aut] (<https://orcid.org/0000-0001-5872-2872>),
   Rafael Wueest [ctb]
 Maintainer: Robert J. Hijmans <r.hijmans@gmail.com>
 Repository: CRAN
-Date/Publication: 2020-11-14 15:30:02 UTC
+Date/Publication: 2021-05-03 05:50:02 UTC

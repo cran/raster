@@ -5,13 +5,6 @@
 
 # partly based on functions in the pixmap package by Friedrich Leisch
 
-if (!isGeneric("RGB")) {
-	setGeneric("RGB", function(x, ...)
-		standardGeneric("RGB"))
-}	
-
-
-
 
 setMethod("RGB", signature(x='RasterLayer'), 
 function(x, filename='', col=rainbow(25),  breaks=NULL, alpha=FALSE, colNA='white',zlim=NULL, zlimcol=NULL, ext=NULL,  ...) { 
@@ -122,8 +115,7 @@ function(x, filename='', col=rainbow(25),  breaks=NULL, alpha=FALSE, colNA='whit
 }
 )
 
-#x = raster(nr=10, nc=10)
-#x[] = 1:100
+#x = raster(nr=10, nc=10, vals=1:100)
 #y = RGB(x)
 #plotRGB(y)
 

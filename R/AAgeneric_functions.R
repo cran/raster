@@ -1,5 +1,10 @@
 
 if (!isGeneric("rectify")) {setGeneric("rectify", function(x, ...) standardGeneric("rectify"))}	
+if (!isGeneric("whiches.max")) {setGeneric("whiches.max", function(x, ...)standardGeneric("whiches.max"))}	
+if (!isGeneric("whicheses.min")) {setGeneric("whiches.min", function(x, ...)standardGeneric("whiches.min"))}	
+
+	
+if (!isGeneric("weighted.mean")) {setGeneric("weighted.mean", function(x, w, ...) standardGeneric("weighted.mean"))}	
 
 if (!isGeneric("%in%")) { setGeneric("%in%", function(x, table) standardGeneric("%in%"))}
 
@@ -21,21 +26,31 @@ if (!isGeneric("brick")) { setGeneric("brick", function(x, ...)	standardGeneric(
 if (!isGeneric("buffer")) {setGeneric("buffer", function(x, ...) standardGeneric("buffer"))}	
 if (!isGeneric("calc")) {setGeneric("calc", function(x, fun, ...) standardGeneric("calc")) }
 if (!isGeneric("clamp")) {setGeneric("clamp", function(x, ...) standardGeneric("clamp")) }
+
+if (!isGeneric("click")) { setGeneric("click", function(x, ...)	standardGeneric("click"))}	
+
+
 if (!isGeneric("clump")) {setGeneric("clump", function(x, ...) standardGeneric("clump")) }	
-if (!isGeneric("contour")) { setGeneric("contour", function(x,...) standardGeneric("contour"))}		
+if (!isGeneric("contour")) { setGeneric("contour", function(x,...) standardGeneric("contour"))}
+
+if ( !isGeneric("corLocal") ) { setGeneric("corLocal", function(x, y, ...) standardGeneric("corLocal"))}
+		
 if (!isGeneric("couldBeLonLat")) { setGeneric("couldBeLonLat", function(x, ...) standardGeneric("couldBeLonLat"))}	
 if (!isGeneric("cover")) {setGeneric("cover", function(x, y, ...) standardGeneric("cover"))}
-if (!isGeneric("cut")) {setGeneric("cut", function(x, ...) standardGeneric("cut"))}	
 if (!isGeneric("crop")) { setGeneric("crop", function(x, y, ...) standardGeneric("crop"))}	
+if (!isGeneric("crosstab")) { setGeneric("crosstab", function(x, y, ...) standardGeneric("crosstab"))}
 if (!isGeneric("crs")) { setGeneric("crs", function(x, ...) standardGeneric("crs")) }	
 if (!isGeneric("crs<-")) { setGeneric("crs<-", function(x, ..., value) standardGeneric("crs<-")) }	
+if (!isGeneric("cut")) {setGeneric("cut", function(x, ...) standardGeneric("cut"))}	
+
+if (!isGeneric("direction")) {setGeneric("direction", function(x, ...) standardGeneric("direction"))}
 if (!isGeneric("density")) { setGeneric("density", function(x, ...) standardGeneric("density"))}	
 if (!isGeneric("disaggregate")) {setGeneric("disaggregate", function(x, ...) standardGeneric("disaggregate"))}
 if (!isGeneric("distance")) {setGeneric("distance", function(x, y, ...)standardGeneric("distance"))}	
 if (!isGeneric("erase")) {setGeneric("erase", function(x, y, ...) standardGeneric("erase"))}
 if (!isGeneric("extend")) {setGeneric("extend", function(x, y, ...) standardGeneric("extend"))}	
 if (!isGeneric("extract")) { setGeneric("extract", function(x, y, ...) standardGeneric("extract"))}	
-if (!isGeneric("flip")) { setGeneric("flip", function(x, direction, ...) standardGeneric("flip")) }
+if (!isGeneric("flip")) { setGeneric("flip", function(x, ...) standardGeneric("flip")) }
 if (!isGeneric("focal")) { setGeneric("focal", function(x, ...) standardGeneric("focal"))}
 if (!isGeneric("freq")) {setGeneric("freq", function(x, ...) standardGeneric("freq"))}
 if (!isGeneric("geom")) { setGeneric("geom", function(x, ...) standardGeneric("geom"))}	
@@ -48,7 +63,11 @@ if (!isGeneric("init")) {setGeneric("init", function(x, ...) standardGeneric("in
 if (!isGeneric("interpolate")) { setGeneric("interpolate", function(object, ...) standardGeneric("interpolate"))}	
 if (!isGeneric("intersect")) { setGeneric("intersect", function(x, y) standardGeneric("intersect"))}	
 if (!isGeneric("isLonLat")) { setGeneric("isLonLat", function(x, ...) standardGeneric("isLonLat"))}	
-if (!isGeneric("match")) { setGeneric("match", function(x, table, nomatch=NA_integer_, incomparables=NULL)		standardGeneric("match"))}	
+if (!isGeneric("layerize")) { setGeneric("layerize", function(x, y, ...) standardGeneric("layerize"))}
+
+if (!isGeneric("metadata")) { setGeneric("metadata", function(x, ...) standardGeneric("metadata"))}	
+
+if (!isGeneric("match")) { setGeneric("match", function(x, table, nomatch=NA_integer_, incomparables=NULL) standardGeneric("match"))}	
 if (!isGeneric("mask")) { setGeneric("mask", function(x, mask, ...) standardGeneric("mask"))}
 if (!isGeneric(".median")) {setGeneric(".median", function(x, y, ...) standardGeneric(".median"))}	
 if (!isGeneric("merge")) {setGeneric("merge", function(x, y, ...) standardGeneric("merge"))}	
@@ -67,6 +86,8 @@ if (!isGeneric("plot")) {setGeneric("plot", function(x,y,...)standardGeneric("pl
 if (!isGeneric("plotRGB")) { setGeneric("plotRGB", function(x, ...) standardGeneric("plotRGB"))}	
 if (!isGeneric("predict")) {setGeneric("predict", function(object, ...) standardGeneric("predict"))}
 if (!isGeneric("quantile")) {setGeneric("quantile", function(x, ...)standardGeneric("quantile"))}	
+
+if (!isGeneric("RGB")) {setGeneric("RGB", function(x, ...)	standardGeneric("RGB"))}	
 if ( !isGeneric("raster") ) {setGeneric("raster", function(x, ...)	standardGeneric("raster"))}
 
 if (!isGeneric("rasterize")) {setGeneric("rasterize", function(x, y, ...) standardGeneric("rasterize"))}	

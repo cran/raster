@@ -7,7 +7,7 @@
 setMethod('extract', signature(x='SpatialPolygons', y='SpatialPoints'), 
 function(x, y, ...){ 
 	
-	stopifnot(requireNamespace("rgeos"))
+	valgeos <- .checkGEOS(); on.exit(rgeos::set_RGEOS_CheckValidity(valgeos))
 	
 	if (! identical(proj4string(x), proj4string(y)) ) {
 		warning('non identical CRS')
