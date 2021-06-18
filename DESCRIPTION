@@ -1,11 +1,12 @@
 Package: raster
 Type: Package
 Title: Geographic Data Analysis and Modeling
-Version: 3.4-10
-Date: 2021-05-02
-Depends: sp (>= 1.4.1), R (>= 3.4.0)
+Version: 3.4-13
+Date: 2021-06-15
+Depends: sp (>= 1.4.1), R (>= 3.5.0)
 Suggests: rgdal (>= 1.5-8), rgeos (>= 0.3-8), ncdf4, igraph, tcltk,
-        parallel, rasterVis, MASS, sf, tinytest, gstat, fields
+        parallel, rasterVis, MASS, sf, tinytest, gstat, fields,
+        exactextractr
 LinkingTo: Rcpp
 Imports: Rcpp, methods
 SystemRequirements: C++11
@@ -48,7 +49,7 @@ Authors@R: c(
 	person("Rafael", "Wueest", role = "ctb")
 	)
 NeedsCompilation: yes
-Packaged: 2021-05-03 03:55:25 UTC; rhijm
+Packaged: 2021-06-16 00:12:39 UTC; rhijm
 Author: Robert J. Hijmans [cre, aut] (<https://orcid.org/0000-0001-5872-2872>),
   Jacob van Etten [ctb],
   Michael Sumner [ctb],
@@ -81,4 +82,4 @@ Author: Robert J. Hijmans [cre, aut] (<https://orcid.org/0000-0001-5872-2872>),
   Rafael Wueest [ctb]
 Maintainer: Robert J. Hijmans <r.hijmans@gmail.com>
 Repository: CRAN
-Date/Publication: 2021-05-03 05:50:02 UTC
+Date/Publication: 2021-06-18 07:40:02 UTC

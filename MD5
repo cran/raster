@@ -1,8 +1,8 @@
-19baaea90a5761bef770f17dfe269e1a *DESCRIPTION
+420a66a32797331156697400f39bc16c *DESCRIPTION
 75b6e7bad45612fbe4b18dc09e3288f6 *NAMESPACE
 7976df7363593f79ccd70eb7264498b6 *NEWS
 9cf8d8ba57e32029843babd0c3293a39 *R/AAAClasses.R
-cf0dd01077cfb7744bd2f255977502e3 *R/AAgeneric_functions.R
+1c48c983526e735b45bc9e3e1b975985 *R/AAgeneric_functions.R
 f5630d600a18369e7ceefd77fd1ab54b *R/GDALtransient.R
 37de111007563a036b3c4ff9b0c44f10 *R/Geary.R
 c926b505e31beca60d533fbc3be7f5f3 *R/RGB.R
@@ -20,7 +20,7 @@ ede514baa0ef5eaed58023e206f20697 *R/area.R
 94b1441314aeac38bc15c201b4177a73 *R/arith.R
 bf04afcad4358556c49107a1520fa4de *R/arith_sp.R
 223a73282a5b7abf959de7591e3f782d *R/as.array.R
-de6133d4a4803755f0598501d75b13ab *R/as.character.R
+5afcb23cebdba03b141ce9c042e9c07b *R/as.character.R
 4bb7ac7f7d1775705701bf183c58b5fe *R/as.data.frame.R
 d8bf63eb2aa46c73b4262465e9bf0f8f *R/as.logical.R
 69ac4322db0e04a858126f25e2615aa6 *R/as.matrix.R
@@ -87,7 +87,7 @@ b5b54b82c4d70b48fb7197c6e0da9eca *R/direction.R
 15a69d75a655ea21315bf42d820fa2e5 *R/drivers.R
 28d4608948b3e427ca4e442cf212d1be *R/dropLayer.R
 f816b21b606778c21e7162c4cd9702ef *R/erase.R
-175301aae5f4e436ab3e246271bbf7d0 *R/extend.R
+0211864aa2373d754beb32aa0535610a *R/extend.R
 658d932f3e740a73ad64773513f7f410 *R/extension.R
 c5643787d3e78f42cea27fd0ac35a92e *R/extent.R
 8139e117ac8136b28d291b9fb7bbbd63 *R/extentUnion.R
@@ -96,7 +96,7 @@ c5643787d3e78f42cea27fd0ac35a92e *R/extent.R
 2e8529d4bf0d8f4d4fd8ce5b18679ad5 *R/extractLines.R
 9d191f76694b0ebd53ba1a42ebdc8217 *R/extractPoints.R
 cc7c1952c1a23bfb3db21bbedafcfe4b *R/extractPoints_sp.R
-0adf19b897bd035e003a4ea9b4f70708 *R/extractPolygons.R
+b8d4020733763e83854d074484c88aa4 *R/extractPolygons.R
 29e5855fd3088aae375f366917c1de6e *R/factor.R
 938b2e7b40165cecd578854b17dd41f1 *R/fasterize.R
 65f4a18f3c138c4bc4d5330a924bc03b *R/filler.R
@@ -133,7 +133,7 @@ f17b5f21fceb414e0f5212365a372780 *R/hdrSAGA.R
 13d8bbbd7f5531a8a445f1bf161ca055 *R/hdrVRT.R
 714c3163e7b131cda273de02680bf792 *R/hdrWorldFile.R
 05888d9c29b9f1abbe76463a336471ac *R/head.R
-8378539f61a0f0e5a92944158be86091 *R/hillShade.R
+f563de32e0a487250a3bb5d92ec441b2 *R/hillShade.R
 19f1aa4c637023a03b2e740de5a92d70 *R/hist.R
 efa2ff4950234e2343fb36ed3bb9feca *R/idwValue.R
 10e7398cbeda28ee4ba6e0cd25148ce4 *R/ifelse.R
@@ -182,7 +182,7 @@ dc0846a3c1e08c0ff74596c2d560c727 *R/moran.R
 84c63eefe0e98f95e7e7e539978aaa06 *R/ncell.R
 e5573118f1750271a1d2b7424580dd6b *R/netCDFread.R
 563d1ffa7bad45d6f13cb9f59bf59543 *R/netCDFreadCells.R
-a75affe2d28092f83af256a590847366 *R/netCDFtoRasterCD.R
+edb5d1799e51311ba7455e607f458100 *R/netCDFtoRasterCD.R
 322c27edefaca28163f122af13324d27 *R/netCDFtoRasterGMT.R
 eae8a0e3489850d0ee6468c5ff13e5c2 *R/netCDFtoStack.R
 e73f6f78ca3224eec192ab64fdf4b76c *R/netCDFutil.R
@@ -199,7 +199,7 @@ bac6784c58fb041dbf04c518d62d00c7 *R/overlay.R
 a20ebe13a940951f63df8765b1e9b23a *R/plot2rasters.R
 d0b5e69f09e127505e248766a42bcccc *R/plotCT.R
 59a42f68753300c351aed2b1a056ace8 *R/plotExent.R
-faf5d5d079decba676c1e49cae6b7a9c *R/plotRGB.R
+f837f0ab0e6317e100217173c6f6a220 *R/plotRGB.R
 55dd82521806975cb9ffc775bb66fa50 *R/plotRaster.R
 e05b963d86aa7a141fc0b2d81aa75084 *R/plotRaster2.R
 e8ccd276bffe64c29310cdcd83464014 *R/pointdistance.R
@@ -315,7 +315,7 @@ a87634900f485c7e3e9fcb882fe191e0 *R/zApply.R
 4299faa46bbe88e8cf023e4d761d345a *R/zonal.R
 d068670b8dcc9d358f3f086552800c55 *R/zoom.R
 47e0201bf562a2e166876b23e67bad65 *R/zzz.R
-76d55e1f131490f5a94b80e908b64aae *build/partial.rdb
+12191bfca7764a315292dc2928d1366a *build/partial.rdb
 836fc2bffa338d9f9a721e00d9cd6078 *inst/external/countries.rds
 c85d689dcf4c7101db48cbab30338201 *inst/external/lux.dbf
 e729936bf5360b37a15365fc295a1901 *inst/external/lux.prj
@@ -340,7 +340,7 @@ e6e3f3c6901dd528896fde2dec1afc89 *man/Logic-methods.Rd
 470cbb508192734f425651d2cc3fcb07 *man/NAvalue.Rd
 e0699ad27d1b74936cbcedf1547ed2b4 *man/RGB.Rd
 24934375376bdd9010bf5c71617c681b *man/Raster-classes.Rd
-8c6fa1e0e5502e8e640d455a798b0044 *man/Rcpp-classes.Rd
+e4ab6daa41de6a19490be9d9cc956571 *man/Rcpp-classes.Rd
 e3d3cc8737a9f33cf329de9ce0878f1d *man/Summary-methods.Rd
 b14a0a3a9582eadb82f89dbf9e7dba5b *man/addLayer.Rd
 d0e0fc612111552db2f0e55af4538113 *man/adjacent.Rd
@@ -356,7 +356,7 @@ b446948e7356af78c84b0bc346bf23f1 *man/as.logical-methods.Rd
 662c1b65d81e75d0129d0020b24cc3cd *man/as.matrix.Rd
 9216dbe150f5a645a44579822924fd62 *man/as.raster.Rd
 c612b935d86bf046db17968078e479db *man/atan2.Rd
-e014958e9f830113a38927807b382243 *man/autocor.Rd
+52af0b0f0165ed9f1adf09be70f8327d *man/autocor.Rd
 7177a45476a606bd173fea369423efda *man/bands.Rd
 831f328f9e60041530a9497cfdab8e79 *man/barplot.Rd
 02a2eb6bcce0645927c08bd812bbe87d *man/bind.Rd
@@ -365,7 +365,7 @@ e014958e9f830113a38927807b382243 *man/autocor.Rd
 4e0c3c9e094797886d0173b778703c46 *man/boxplot.Rd
 86700a94c980eef90de504d03b56e8d0 *man/brick.Rd
 918df7db0b9274795ac3efab104eebea *man/buffer.Rd
-80a601647c5be0e384ca119b037346ac *man/calc.Rd
+7c8666c96e39af0b71ac586ad7adfade *man/calc.Rd
 2ed37e472980e882c7c6d7a4e71fca46 *man/cellFrom.Rd
 60d38d663b7c2dfccdedfdebbc6569d6 *man/cellStats.Rd
 6b5b8cf57f426d559e19397a7aad4da1 *man/cellsFromExtent.Rd
@@ -396,10 +396,10 @@ c19c1f8056f716eef167647ba39f9d13 *man/disaggregate.Rd
 1e848e176b8ee174e029949f6ad0d4c7 *man/draw.Rd
 e076ee0e57ae6d598245bc6edb72ead2 *man/drawExtent.Rd
 fceee5e0d8aa31f5cc939c39a79b5348 *man/erase.Rd
-f163e5e2e254273d640c50c51fb35db5 *man/extend.Rd
+2a81729cfbfaf518ef377fcafbdea866 *man/extend.Rd
 07c974ef67d5a7c1cba408243cd153d7 *man/extension.Rd
 20ed9649970ed7417152361eb8ea1840 *man/extent.Rd
-a443c7b7382c6dcd27861249c00842a8 *man/extract.Rd
+b36382ae09b5ca36bc392c962eb4240d *man/extract.Rd
 db605e0c6d28bb31c5c2975158af5c7e *man/extractIndex.Rd
 fa36a1f1da83b141883bd7e1acf4e0a7 *man/extremeValues.Rd
 a103f9d1d8f7210f60b208d0d4939a8e *man/factor.Rd
@@ -419,7 +419,7 @@ c13a2f31ae576b2039e97fa0e1c45744 *man/getValuesBlock.Rd
 e190506d42b3f55d1bb334343e57fd54 *man/gridDistance.Rd
 73a8f9cc67816633c52711724e64d3d2 *man/hdrFiles.Rd
 8ba92ca56ef61af1e401464bd17c41eb *man/headtail.Rd
-10c4a5a9e4143636fff74b44f52342ca *man/hillShade.Rd
+9f0420e15109dfb25c3139cc50099411 *man/hillShade.Rd
 68880b38ba1eb97ad9dfbc8ea1f66e38 *man/hist.Rd
 9b1252c3f6ed4e29b17c946c05403756 *man/image.Rd
 fc4e9785a37e59954bea419acc632bde *man/iniFile.Rd
@@ -447,9 +447,9 @@ e94b18a4a00d391e254f98eef93c8269 *man/persp.Rd
 3102d0f993589d05e80400505497bd11 *man/plot.Rd
 72d3eb6e724a714675a43764056ae38b *man/plotRGB.Rd
 12cd4acddba25e73a5931bd5d391c124 *man/pointDistance.Rd
-4620e82889760ffb0974b302edefa449 *man/predict.Rd
+5bace8750de3039d68493eb99045fe2e *man/predict.Rd
 649fb977044f9b3e4ec2ab9c76948478 *man/programming.Rd
-b3bf3fda75f0006d863f8f8b26ce3f35 *man/projectRaster.Rd
+b6e54a4e7bf00287fef4068a7f4af516 *man/projectRaster.Rd
 a7acb53e2e57fd82aeda192a91fc458a *man/projection.Rd
 a8845dcadffe786cde4381e41248508f *man/properties.Rd
 3856e4785976d4b9bf4a106a43264353 *man/quantile.Rd
@@ -489,7 +489,7 @@ ec02ea1ca10608ac69efbd96624e9251 *man/setMinMax.Rd
 ba9da985b63e6dfa2bdec1cae19dde0b *man/shapefile.Rd
 5690dbb96d2ea0408fd53bb32adca297 *man/shift.Rd
 b052d0eb654757fff60e517dc55461e7 *man/slopeAspect.Rd
-ca878bc1593e528cc656c8ce0c15ba04 *man/spEasy.Rd
+9dad9206019dde9ac0e6b04a577c09a6 *man/spEasy.Rd
 5974008cad6f29b0fdfa8eee8b7acd52 *man/spplot.Rd
 0aaea33d3a71164077222ef8c5674614 *man/stack.Rd
 b4e5367a1a3e8e90cbd3a3d9f2c69a13 *man/stackApply.Rd
@@ -499,7 +499,7 @@ e91f4f702537f7fc416be44c72d74b2f *man/subs.Rd
 cef4b0ae0e8e758830cda58df31c69dd *man/subset.Rd
 7cb3657af929fc13de7bf2c88294947b *man/summary.Rd
 78ab5a46bf690afc0491e60a97078ed7 *man/symdif.Rd
-20ca861f3611dddb88d59086b5d12b4f *man/terrain.Rd
+4d0c2b3c7a2b923bb0474be5db186673 *man/terrain.Rd
 fd3e870528c1748d5efe2f034fc644de *man/text.Rd
 5e0f4ae16d19004a1315e53c79d76f6c *man/transpose.Rd
 eeb31a2a9ae9cbabc1ca572b86a84162 *man/trim.Rd
@@ -513,7 +513,7 @@ c6fb7e85aefbea01c9ac78ea85273a2b *man/update.Rd
 6529a60b7fee2e04908544eefc87b6c1 *man/which.Rd
 9d3336603f6cf63ca2cd845c7f89d6ad *man/which.minmax.Rd
 164657c9c168e7cbe3fc4b256e9f01ca *man/writeFormats.Rd
-dcaf795c248e4e2490b4295ed8a9ae65 *man/writeRaster.Rd
+b1d370b11c1619fff39c530ed92dbd1f *man/writeRaster.Rd
 65feb1b95f3fe775d7b74122b6774ec3 *man/writeValues.Rd
 b2d1db5758eab0d60e5852c79364b23a *man/xyFromCell.Rd
 c939d846d9caccdc1296ab0cbc572d4d *man/zApply.Rd
