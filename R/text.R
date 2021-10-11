@@ -13,9 +13,9 @@
 #Newsgroups: gmane.comp.lang.r.general
 #Date: 2009-04-24 21:23:25 GMT
 
-	xy <- xy.coords(x,y)
-	xo <- hw * strwidth('A')
-	yo <- hw * strheight('A')
+	xy <- grDevices::xy.coords(x,y)
+	xo <- hw * graphics::strwidth('A')
+	yo <- hw * graphics::strheight('A')
 
 	theta <- seq(pi/4, 2*pi, length.out=8*hw*10)  
 	for (i in theta) {
@@ -88,7 +88,7 @@ setMethod('text', signature(x='SpatialPolygons'),
 			labels <- as.character(labels)
 		}
 		
-		xy <- coordinates(x)[,1:2,drop=FALSE]
+		xy <- sp::coordinates(x)[,1:2,drop=FALSE]
 		if (halo) {
 			.haloText(xy[,1], xy[,2], labels, ...)
 		} else {
@@ -118,7 +118,7 @@ setMethod('text', signature(x='SpatialPoints'),
 			labels <- as.character(labels)
 		}
 
-		xy <- coordinates(x)[,1:2,drop=FALSE]		
+		xy <- sp::coordinates(x)[,1:2,drop=FALSE]		
 		if (halo) {
 			.haloText(xy[,1], xy[,2], labels, ...)
 		} else {

@@ -3,9 +3,24 @@
 # Version 0.9
 # Licence GPL v3
 
+.ext2bb <- function(e) {
+	matrix(as.vector(e), ncol=2, byrow=TRUE)
+}
+
+#setMethod("bbox", signature(obj="SpatRaster"), 
+#	function(obj){ 
+#		.ext2bb(ext(obj))
+#	}
+#)
+
+#setMethod("bbox", signature(obj="SpatVector"), 
+#	function(obj){ 
+#		.ext2bb(ext(obj))
+#	}
+#)
 
 
-if (!isGeneric("extent")) { setGeneric("extent", function(x, ...) standardGeneric("extent")) }	
+
 
 setMethod('extent', signature(x='Extent'), 
 	function(x){ return(x) }
@@ -74,7 +89,7 @@ setMethod('extent', signature(x='BasicRaster'),
 
 setMethod('extent', signature(x='Spatial'), 
 	function(x){ 
-		bndbox <- bbox(x)
+		bndbox <- sp::bbox(x)
 		e <- methods::new('Extent')
 		e@xmin <- bndbox[1,1]
 		e@xmax <- bndbox[1,2]
@@ -221,3 +236,5 @@ setReplaceMethod("[", c("Extent","numeric","missing"),
 		return(x)
 	}
 )
+
+

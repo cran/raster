@@ -17,12 +17,12 @@ setMethod('KML', signature(x='Spatial'),
 		if (! is.na(projection(x))) {
 			if (! isLonLat(x) ) {
 				warning('transforming data to longitude/latitude')
-				spTransform(x, CRS('+proj=longlat +datum=WGS84'))
+				sp::spTransform(x, sp::CRS('+proj=longlat +datum=WGS84'))
 			}
 		}
 		
 		if (!.hasSlot(x, 'data') ) {
-			x <- addAttrToGeom(x, data.frame(id=1:length(x)), match.ID=FALSE)
+			x <- sp::addAttrToGeom(x, data.frame(id=1:length(x)), match.ID=FALSE)
 		}
 		
 		extension(filename) <- '.kml'
@@ -79,14 +79,14 @@ function (x, filename, col=rev(terrain.colors(255)), colNA=NA, maxpixels=100000,
 	
 	
 
-	png(filename = imagefile, width=max(480, blur*ncol(x)), height=max(480,blur*nrow(x)), bg="transparent")
+	grDevices::png(filename = imagefile, width=max(480, blur*ncol(x)), height=max(480,blur*nrow(x)), bg="transparent")
 	if (!is.na(colNA)) {
 		graphics::par(mar=c(0,0,0,0), bg=colNA)
 	} else {
 		graphics::par(mar=c(0,0,0,0))	
 	}
 	image(x, col=col, axes=FALSE, useRaster=TRUE, maxpixels=maxpixels, ...)
-	dev.off()
+	grDevices::dev.off()
 
 	name <- names(x)[1]
 	if (name == "") { name <- 'x' }

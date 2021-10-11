@@ -13,13 +13,13 @@ setAs("data.frame", "SpatialPolygons",
 				pp <- list()
 				for (j in 1:length(p)) {
 					ss <- s[s$part==p[j], ]
-					pol <- Polygon( as.matrix(ss[,c('x', 'y')] ))
+					pol <- sp::Polygon( as.matrix(ss[,c('x', 'y')] ))
 					if (ss$hole[1]) {
 						pol@hole <- TRUE
 					}
 					pp[[j]] <- pol
 				}
-				sp[[i]] <- Polygons(pp, as.character(i))
+				sp[[i]] <- sp::Polygons(pp, as.character(i))
 			}
 			
 		} else if (v == "hole") {
@@ -36,25 +36,25 @@ setAs("data.frame", "SpatialPolygons",
 					hi <- ss$hole > 0
 					holes <- ss[hi, ]
 					ss <- ss[!hi,]
-					pol <- Polygon( as.matrix(ss[,c("x", "y")] ))
+					pol <- sp::Polygon( as.matrix(ss[,c("x", "y")] ))
 					pp[[jj]] <- pol
 					jj <- jj + 1
 					if (nrow(holes) > 0) {
 						uh <- unique(holes$hole)
 						for (k in uh) {
-							pol <- Polygon( as.matrix(holes[holes$hole==k, c("x", "y")] ))
+							pol <- sp::Polygon( as.matrix(holes[holes$hole==k, c("x", "y")] ))
 							pol@hole <- TRUE
 							pp[[jj]] <- pol	
 							jj <- jj + 1
 						}
 					}
-					sp[[i]] <- Polygons(pp, as.character(i))
+					sp[[i]] <- sp::Polygons(pp, as.character(i))
 				}		
 			}
 		} else {
 			stop("cannot process this data.frame")
 		}
-		SpatialPolygons(sp)
+		sp::SpatialPolygons(sp)
 	}
 )
 
@@ -66,7 +66,7 @@ setAs("data.frame", "SpatialPolygonsDataFrame",
 			d <- unique(from[, -c(2:6), drop=FALSE])
 			rownames(d) <- d$object
 			d <- d[, -1, drop=FALSE]
-			SpatialPolygonsDataFrame(x, d)
+			sp::SpatialPolygonsDataFrame(x, d)
 		} else {
 			x
 		}
@@ -78,7 +78,7 @@ setAs("data.frame", "SpatialPolygonsDataFrame",
 
 setAs("data.frame", "SpatialLines",
 	function(from) {
-		if (colnames(from)[1] == "id") colnames(from)[1] <- "object"
+		colnames(from)[1] <- "object"
 		obs <- unique(from$object)
 		sp <- list()
 		for (i in 1:length(obs)) {
@@ -87,12 +87,12 @@ setAs("data.frame", "SpatialLines",
 			pp <- list()
 			for (j in 1:length(p)) {
 				ss <- s[s$part==p[j], ]
-				ln <- Line(as.matrix(ss[,c("x", "y")]))
+				ln <- sp::Line(as.matrix(ss[,c("x", "y")]))
 				pp[[j]] <- ln
 			}
-			sp[[i]] <- Lines(pp, as.character(i))
+			sp[[i]] <- sp::Lines(pp, as.character(i))
 		}
-		SpatialLines(sp)
+		sp::SpatialLines(sp)
 	}
 )
 
@@ -104,7 +104,7 @@ setAs("data.frame", "SpatialLinesDataFrame",
 			d <- unique(from[, -c(2:5), drop=FALSE])
 			rownames(d) <- d$object
 			d <- d[, -1, drop=FALSE]
-			SpatialLinesDataFrame(x, d)
+			sp::SpatialLinesDataFrame(x, d)
 		} else {
 			x
 		}

@@ -10,9 +10,9 @@ rasterFromXYZ <- function(xyz, res=c(NA, NA), crs="", digits=5) {
 
 	if (inherits(xyz, 'SpatialPoints')) {
 		if (inherits(xyz, 'SpatialPointsDataFrame')) {
-			xyz <- cbind(coordinates(xyz)[,1:2,drop=FALSE], xyz@data[,1])
+			xyz <- cbind(sp::coordinates(xyz)[,1:2,drop=FALSE], xyz@data[,1])
 		} else {
-			xyz <- coordinates(xyz)[,1:2,drop=FALSE]		
+			xyz <- sp::coordinates(xyz)[,1:2,drop=FALSE]		
 		}
 	}
 	
@@ -22,10 +22,15 @@ rasterFromXYZ <- function(xyz, res=c(NA, NA), crs="", digits=5) {
 		xyz <- as.matrix(xyz)
 		xyz <- matrix(as.numeric(xyz), ncol=ncol(xyz), nrow=nrow(xyz))
 	}
+	xyz <- xyz[(!is.na(xyz[,1])) & (!is.na(xyz[,2])), ]
+	
 	x <- sort(unique(xyz[,1]))
 	dx <- x[-1] - x[-length(x)]
 
 	if (is.na(res[1])) {
+		if (length(x) < 2) {
+			stop("more than one unique x value needed")
+		}
 		rx <- min(dx)
 		for (i in 1:5) {
 			rx <- rx / i
@@ -52,6 +57,9 @@ rasterFromXYZ <- function(xyz, res=c(NA, NA), crs="", digits=5) {
 	# dy <- round(dy, digits)
 	
 	if (is.na(res[2])) {
+		if (length(y) < 2) {
+			stop("more than one unique y value needed")
+		}
 		ry <- min(dy)
 		for (i in 1:5) {
 			ry <- ry / i

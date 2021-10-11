@@ -13,11 +13,11 @@ function(x, y, fun=NULL, na.rm=FALSE, exact=FALSE, weights=FALSE, normalizeWeigh
 	comp <- compareCRS(px,.getCRS(y), unknown=TRUE)
 	if (!comp) {
 		.requireRgdal()
-		warning('Transforming SpatialPolygons to the CRS of the Raster')
-		y <- spTransform(y, px)
+		warning('Transforming SpatialPolygons to the crs of the Raster')
+		y <- sp::spTransform(y, px)
 	}
 	
-	spbb <- bbox(y)
+	spbb <- sp::bbox(y)
 	rsbb <- bbox(x)
 	addres <- max(res(x))
 	npol <- length(y@polygons)
@@ -112,7 +112,7 @@ function(x, y, fun=NULL, na.rm=FALSE, exact=FALSE, weights=FALSE, normalizeWeigh
 		parallel::clusterExport(cl, c('rsbb', 'rr', 'weights', 'exact', 'addres', 'cellnumbers', 'small'), envir=environment())
 		
 		clFun <- function(i, pp) {
-			spbb <- bbox(pp)
+			spbb <- sp::bbox(pp)
 		
 			if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
 				# do nothing; res[[i]] <- NULL
@@ -231,7 +231,7 @@ function(x, y, fun=NULL, na.rm=FALSE, exact=FALSE, weights=FALSE, normalizeWeigh
 	} else {
 		for (i in 1:npol) {
 			pp <- y[i,]
-			spbb <- bbox(pp)
+			spbb <- sp::bbox(pp)
 		
 			if (spbb[1,1] >= rsbb[1,2] | spbb[1,2] <= rsbb[1,1] | spbb[2,1] >= rsbb[2,2] | spbb[2,2] <= rsbb[2,1]) {
 				# do nothing; res[[i]] <- NULL
@@ -391,7 +391,7 @@ function(x, y, fun=NULL, na.rm=FALSE, exact=FALSE, weights=FALSE, normalizeWeigh
 		}
 		
 		if (!.hasSlot(y, 'data') ) {
-			y <- SpatialPolygonsDataFrame(y, res[, -1, drop=FALSE])
+			y <- sp::SpatialPolygonsDataFrame(y, res[, -1, drop=FALSE])
 		} else {
 			y@data <- cbind(y@data, res[, -1, drop=FALSE])
 		}

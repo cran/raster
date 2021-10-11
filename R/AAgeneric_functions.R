@@ -1,16 +1,20 @@
 
+if (!isGeneric("extent")) { setGeneric("extent", function(x, ...) standardGeneric("extent")) }	
+
 if (!isGeneric("hillShade")) {setGeneric("hillShade", function(x, ...) standardGeneric("hillShade"))}	
 
 if (!isGeneric("rectify")) {setGeneric("rectify", function(x, ...) standardGeneric("rectify"))}	
 if (!isGeneric("whiches.max")) {setGeneric("whiches.max", function(x, ...)standardGeneric("whiches.max"))}	
 if (!isGeneric("whicheses.min")) {setGeneric("whiches.min", function(x, ...)standardGeneric("whiches.min"))}	
-
+if (!isGeneric("origin<-")) {setGeneric("origin<-", function(x, value)	standardGeneric("origin<-"))}
 	
 if (!isGeneric("weighted.mean")) {setGeneric("weighted.mean", function(x, w, ...) standardGeneric("weighted.mean"))}	
 
 if (!isGeneric("%in%")) { setGeneric("%in%", function(x, table) standardGeneric("%in%"))}
 
 if (!isGeneric("adjacent")) {setGeneric("adjacent", function(x, ...) standardGeneric("adjacent"))}
+if (!isGeneric("aggregate")) {setGeneric("aggregate", function(x, ...) standardGeneric("aggregate"))}
+
 if (!isGeneric("animate")) { setGeneric("animate", function(x, ...) standardGeneric("animate")) }	
 	
 if (!isGeneric("approxNA")) {setGeneric("approxNA", function(x, ...)		standardGeneric("approxNA"))}	
@@ -59,6 +63,8 @@ if (!isGeneric("geom")) { setGeneric("geom", function(x, ...) standardGeneric("g
 if (!isGeneric("gridDistance")) {setGeneric("gridDistance", function(x, ...) standardGeneric("gridDistance"))}	
 if (!isGeneric("head")) { setGeneric("head", function(x, ...) standardGeneric("head"))}	
 if (!isGeneric("hasValues")) { setGeneric("hasValues", function(x, ...) standardGeneric("hasValues"))}	
+if (!isGeneric("inMemory")) {setGeneric("inMemory", function(x, ...) standardGeneric("inMemory"))}
+
 #if (!isGeneric("ifel")) {setGeneric("ifel", function(test, yes, no, ...) standardGeneric("ifel"))}	
 if (!isGeneric("image")) {setGeneric("image", function(x,...) standardGeneric("image"))}	
 if (!isGeneric("init")) {setGeneric("init", function(x, ...) standardGeneric("init"))}	
@@ -115,6 +121,7 @@ if (!isGeneric("text")) { setGeneric("text", function(x, ...) standardGeneric("t
 if (!isGeneric("trim")) { setGeneric("trim", function(x, ...) standardGeneric("trim"))}	
 if (!isGeneric("unique")) { setGeneric("unique", function(x, incomparables=FALSE, ...) standardGeneric("unique")) }	
 if (!isGeneric("union")) {setGeneric("union", function(x, y)standardGeneric("union"))}	
+if (!isGeneric("setValues")) {setGeneric("setValues", function(x, values, ...) standardGeneric("setValues"))}
 if (!isGeneric("values")) { setGeneric("values", function(x, ...) standardGeneric("values")) }	
 if (!isGeneric("values<-")) { setGeneric("values<-", function(x, value) standardGeneric("values<-"))}	
 if (!isGeneric("which.max")) {setGeneric("which.max", function(x)standardGeneric("which.max"))}	

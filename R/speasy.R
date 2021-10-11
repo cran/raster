@@ -8,13 +8,13 @@
 
 spLines <- function(x, ..., attr=NULL, crs="") {
 	x <- c(list(x), list(...))
-	x <- rapply(x, Line, how='replace')
-	x <- lapply(1:length(x), function(i) Lines(x[[i]], as.character(i)))
-	x <- SpatialLines(x)
+	x <- rapply(x, sp::Line, how='replace')
+	x <- lapply(1:length(x), function(i) sp::Lines(x[[i]], as.character(i)))
+	x <- sp::SpatialLines(x)
 
 	if (!is.null(attr)) {
 		if (nrow(attr) == length(x)) {
-			x <- SpatialLinesDataFrame(x, attr)
+			x <- sp::SpatialLinesDataFrame(x, attr)
 		} else {
 			msg <- paste('number of rows in attr (', nrow(attr), ') does not match the number of lines (', length(x), ')', sep='')
 			stop(msg)
@@ -30,20 +30,20 @@ spLines <- function(x, ..., attr=NULL, crs="") {
 
 spPolygons <- function(x, ..., attr=NULL, crs="") {
 	x <- c(list(x), list(...))
-	x <- rapply(x, Polygon, how='replace')
+	x <- rapply(x, sp::Polygon, how='replace')
 
 	x <- lapply(1:length(x), function(i) {
 				if (length(x[[i]]) == 1) {
-					Polygons(x[i], as.character(i))
+					sp::Polygons(x[i], as.character(i))
 				} else {
-					Polygons(x[[i]], as.character(i))
+					sp::Polygons(x[[i]], as.character(i))
 				}
 			})
 	
-	x <- SpatialPolygons(x)
+	x <- sp::SpatialPolygons(x)
 	if (!is.null(attr)) {
 		if (nrow(attr) == length(x)) {
-			x <- SpatialPolygonsDataFrame(x, attr)
+			x <- sp::SpatialPolygonsDataFrame(x, attr)
 		} else {
 			msg <- paste('number of rows in attr (', nrow(attr), ') does not match the number of polygons (', length(x), ')', sep='')
 			stop(msg)
