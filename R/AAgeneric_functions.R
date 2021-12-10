@@ -1,4 +1,9 @@
 
+
+
+if (!isGeneric("as.raster")) { setGeneric("as.raster", function(x, ...) standardGeneric("as.raster"))}	
+
+if (!isGeneric("all.equal")) { setGeneric("all.equal", function(target, current, ...) standardGeneric("all.equal"))}	
 if (!isGeneric("extent")) { setGeneric("extent", function(x, ...) standardGeneric("extent")) }	
 
 if (!isGeneric("hillShade")) {setGeneric("hillShade", function(x, ...) standardGeneric("hillShade"))}	
@@ -17,7 +22,7 @@ if (!isGeneric("aggregate")) {setGeneric("aggregate", function(x, ...) standardG
 
 if (!isGeneric("animate")) { setGeneric("animate", function(x, ...) standardGeneric("animate")) }	
 	
-if (!isGeneric("approxNA")) {setGeneric("approxNA", function(x, ...)		standardGeneric("approxNA"))}	
+if (!isGeneric("approxNA")) {setGeneric("approxNA", function(x, ...) standardGeneric("approxNA"))}	
 if (!isGeneric("area")) {setGeneric("area", function(x, ...) standardGeneric("area"))}	
 if (!isGeneric("as.data.frame")) { setGeneric("as.data.frame", function(x, row.names = NULL, optional = FALSE, ...) standardGeneric("as.data.frame")) }	
 if (!isGeneric("as.factor")) {setGeneric("as.factor", function(x) standardGeneric("as.factor"))}

@@ -5,6 +5,7 @@
 
 setMethod("$", "Raster",  function(x, name) { x[[name]] } )
 
+
 setMethod("$<-", "Raster",  
 	function(x, name, value) { 
 		i <- which(name == names(x))[1]
@@ -22,7 +23,16 @@ setMethod("$<-", "Raster",
 			}
 		} else {
 			if (inherits(value, 'Raster')) {
-				x[[name]] <- value
+				if (inherits(x, 'RasterLayer')) {
+					if (name == names(x)) {
+						x <- value
+					} else {
+						x <- stack(x)
+						x[[name]] <- value
+					}
+				} else {
+					x[[name]] <- value
+				}
 			} else {
 				r <- x[[name]]
 				r[] <- value
@@ -59,18 +69,41 @@ function(x,i,j,...,drop=TRUE) {
 
 setReplaceMethod("[[", c("RasterStackBrick", "character", "missing"),
 	function(x, i, j, value) {
+		if (inherits(value, 'Raster')) {
+			names(value) <- i
+		}
 		n <- which(i == names(x))[1]
 		if (is.na(n)) {
 			n <- nlayers(x) + 1
 		} 
-		if (inherits(value, 'Raster')) {
-			names(value) <- i
-		}
 		x[[n]] <- value
 		x
 	}
 )
 
+setReplaceMethod("[[", c("RasterLayer", "character", "missing"),
+	function(x, i, j, value) {
+		stopifnot(length(i) == 1)
+		if (i[1] != names(x)) {
+			x <- stack(x)
+			x[[i]] <- value
+			return(x)
+		}
+		if (inherits(value, 'RasterLayer')) {
+			names(value) <- i
+			return(value) 
+		} else if (inherits(value, 'Raster')) {
+			if (nlayers(value) == 1) {
+				value <- value[[1]]
+				names(value) <- i
+				return(value)
+			} else {
+				stop("too many layers")
+			}
+		}
+		setValues(x, value)
+	}
+)
 
 setReplaceMethod("[[", c("RasterStack", "numeric", "missing"),
 	function(x, i, j, value) {
@@ -106,7 +139,7 @@ setReplaceMethod("[[", c("RasterStack", "numeric", "missing"),
 
 
 
-setReplaceMethod("[[", c("RasterBrick", "numeric", "missing"),
+setReplaceMethod("[[", c("Raster", "numeric", "missing"),
 	function(x, i, j, value) {
 		i <- round(i)
 
@@ -116,6 +149,9 @@ setReplaceMethod("[[", c("RasterBrick", "numeric", "missing"),
 		nl <- nlayers(x)
 		if (i > nl + 1) {
 			stop('index should be <= nlayers(x)+1')
+		}
+		if (inherits(x, "RasterLayer")) {
+			return(value)
 		}
 		
 		if (canProcessInMemory(x)) {

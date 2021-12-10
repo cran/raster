@@ -15,10 +15,10 @@ std::vector<double> do_focal_fun(std::vector<double> d, Rcpp::NumericMatrix w, s
 	size_t wn = wrows * wcols;
 
 	std::vector<double> ans(n);
-	std::vector<double> x(wn);
+	std::vector<double> x;
 	
 	if ((wrows % 2 == 0) | (wcols % 2 == 0)){
-		Rcpp::Rcerr << "weights matrix must have uneven sides";
+		Rcpp::Rcerr << "weights matrix must have uneven sides\n";
 		return(ans);
 	}
 	int wr = wrows / 2;
@@ -44,9 +44,13 @@ std::vector<double> do_focal_fun(std::vector<double> d, Rcpp::NumericMatrix w, s
 					ans[i] = d[i];
 				} else {
 					size_t q = 0;
+					x.resize(0);
+					x.reserve(wn);
 					for (int j = -wr; j <= wr; j++) {
 						for (int k = -wc; k <= wc; k++) {
-							x[q] = d[j * ncol + k + i] * w[q];
+							if (!std::isnan(w[q])) {
+								x.push_back( d[j * ncol + k + i] * w[q] );
+							}
 							q++;
 						}
 					}
@@ -78,9 +82,13 @@ std::vector<double> do_focal_fun(std::vector<double> d, Rcpp::NumericMatrix w, s
 				ans[i] = NAN;
 			} else {
 				size_t q = 0;
+				x.resize(0);
+				x.reserve(wn);
 				for (int j = -wr; j <= wr; j++) {
 					for (int k = -wc; k <= wc; k++) {
-						x[q] = d[j * ncol + k + i] * w[q];
+						if (!std::isnan(w[q])) {
+							x.push_back( d[j * ncol + k + i] * w[q] );
+						}
 						q++;
 					}
 				}

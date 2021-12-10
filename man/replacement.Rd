@@ -9,8 +9,9 @@
 \alias{[<-,RasterStackBrick,missing,missing-method}
 
 \alias{[[<-,RasterStack,numeric,missing-method}
-\alias{[[<-,RasterBrick,numeric,missing-method}
+\alias{[[<-,Raster,numeric,missing-method}
 \alias{[[<-,RasterStackBrick,character,missing-method}
+\alias{[[<-,RasterLayer,character,missing-method}
 
 \alias{[<-,Raster,numeric,numeric-method}
 \alias{[<-,Raster,numeric,missing-method}

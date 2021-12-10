@@ -27,10 +27,7 @@
 	)
 	cells <- cellFromXY(r, xy4)
 
-	w <- getOption('warn')
-	options('warn'=-1)
-	row1 <- rowFromCell(r, min(cells, na.rm=TRUE))
-	options('warn' = w)
+	suppressWarnings(row1 <- rowFromCell(r, min(cells, na.rm=TRUE)))
 	if (is.na(row1)) {
 		if (nls == 1) {
 			return(rep(NA, nrow(xyCoords)))
