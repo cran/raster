@@ -1,4 +1,4 @@
-6ca2b430d65f46bb5345a439b59e853e *DESCRIPTION
+a14a3d7969e7b15d41dfe5c4bc38eec2 *DESCRIPTION
 c5ff767d5ea7a7a6a49f549b5b5bc811 *NAMESPACE
 acc6b01e8279fcc87df32726a63d25c5 *NEWS
 ab4cbfca4ecdd25ce38911c198cfbf58 *R/AAAClasses.R
@@ -119,7 +119,7 @@ f47b5d910876525145f91c12efe5a708 *R/geom.R
 87755ff732f48d32388e653cd1002d2a *R/getValuesBlock.R
 c48910388a81b11c2d81d16481481df2 *R/getValuesFocal.R
 560a823c98ff1eec1a6e59182566e75e *R/getValuesRows.R
-968e52a2844c9d6165c3c8ce32c80651 *R/gridDistance.R
+c399352f999594490645dd9983422e0c *R/gridDistance.R
 336cccf6b1e7f60984900be6afbc8744 *R/gridDistance2.R
 202e1a07121ba2e7300be48c539baf95 *R/hdr.R
 e171c0e26ab30938e8a2b86eacfcd9c6 *R/hdrBIL.R
@@ -139,7 +139,7 @@ b298a63e44a38c4b863f84b14daf3c1f *R/idwValue.R
 10e7398cbeda28ee4ba6e0cd25148ce4 *R/ifelse.R
 d6a67f9f37483c096af83b984e69cde7 *R/image.R
 f2415c0dff9ad3ce4e3dc6c563b512ce *R/imageplot.R
-4484d5d95e96dcd8c3b9f9f8640705a7 *R/imageplot2.R
+5465182c0553377a5c0f2add4e143d22 *R/imageplot2.R
 dceda6fd18da8d9ca20eb37ef2826418 *R/index.R
 e94b8627cabd7ed87640591bb239db42 *R/indexReplace.R
 4de14e4f63dab22cfcd88e43886f994b *R/indexReplaceBrick.R
@@ -274,7 +274,7 @@ ab4f85ef0e2042d165a0c5e03193f093 *R/spplot.R
 9af457e5d4a1ca121ef485cb727ace6d *R/stack.R
 05f28ccae6b20bdc268a0b79aa62ca8a *R/stackApply.R
 6c6d872beb2eda2a4e5180db284dae29 *R/stackFile.R
-99f086cba085f4d5ed9d570dfeb7d52b *R/stackQuick.R
+849916a196040efc968e30838f2879f1 *R/stackQuick.R
 3c9bab661c2685f5d24dead85fc3b468 *R/stackSelect.R
 1b303a6b2b64a906fe025a64f4e0918e *R/stretch.R
 1dfa4b4eabbb5166095ef0997e541523 *R/subs.R
@@ -315,7 +315,7 @@ a87634900f485c7e3e9fcb882fe191e0 *R/zApply.R
 4299faa46bbe88e8cf023e4d761d345a *R/zonal.R
 04018c59009b0d1d04b9f018faa0032f *R/zoom.R
 47e0201bf562a2e166876b23e67bad65 *R/zzz.R
-c0d29d64db5f2e494915da8173d17209 *build/partial.rdb
+6c07fde4477b55c74a0bcccbe4d37567 *build/partial.rdb
 836fc2bffa338d9f9a721e00d9cd6078 *inst/external/countries.rds
 c85d689dcf4c7101db48cbab30338201 *inst/external/lux.dbf
 e729936bf5360b37a15365fc295a1901 *inst/external/lux.prj
@@ -348,7 +348,7 @@ d0e0fc612111552db2f0e55af4538113 *man/adjacent.Rd
 1b49ae5146bdd428bf04bee70402c4d0 *man/alignExtent.Rd
 19a6a6770b9fae0971db7dc799539ff4 *man/animate.Rd
 c708716bd7f41b1a6a4ecc1b8c54c92a *man/approxNA.Rd
-9d8c13e07a9c7cb0458f1b1e36ecf740 *man/area.Rd
+dfe007e1052d23dda3b9784aba89dc74 *man/area.Rd
 aeb32acd8f2562a4be9466831bf19cca *man/as.character.Rd
 fdb2cb9945bec16650d28ead4bbc90ff *man/as.data.frame.Rd
 732c69d3f3ddcab57841ae4ceeac39fd *man/as.list.Rd
@@ -389,7 +389,7 @@ c4997a4932e35e6a7e85d671d986491b *man/dataType.Rd
 f94fa04f4b3569318055995695daa3a2 *man/datasource.Rd
 c16b7475ab57a14888eb4667045b7945 *man/density.Rd
 91adc79fc209ceb2c458617e8b05d891 *man/dimensions.Rd
-ec5f942f620e464780d84e1bf27faa4d *man/direction.Rd
+b9f0dd57238470a916f3e7666d08e61c *man/direction.Rd
 c19c1f8056f716eef167647ba39f9d13 *man/disaggregate.Rd
 235efc054ac9f762359efa50c731d35e *man/distance.Rd
 376870b69cca718812adb22e2c7f5021 *man/distanceFromPoints.Rd
@@ -546,7 +546,7 @@ a396097fc9e7b8a76799bb13efd25a82 *src/memory.cpp
 4f6e7b0b8879a7cbe8f667e455eeffad *src/raster_distance.cpp
 8cd6ef602e2ae21aa33bcc11ea4f026c *src/rasterize.cpp
 8eebd5a154b6809afa176a2295a20795 *src/reclass.cpp
-4b8c3cdb9143f64f8843b95f89a6acea *src/spat.h
+b9624288cf9e6e277eea0cd9ea83b2b0 *src/spat.h
 e4e6f9ef6da14024b9d3606f995b943f *src/terrain.cpp
 e8793d57c6405d2f688421d75ae5115d *src/util.cpp
 02b3ab8677d52f791681845435a5252a *src/util.h
