@@ -11,7 +11,7 @@ Read or write a shapefile
 
 \description{
 Reading and writing of "ESRI shapefile" format spatial data. Only the three vector types (points, lines, and polygons) can be stored in shapefiles. 
-These are simple wrapper functions around readOGR and writeOGR (rgdal package). 
+
 A shapefile should consist of at least four files: .shp (the geometry), .dbf (the attributes), .shx (the index that links the two, and .prj (the coordinate reference system). If the .prj file is missing, a warning is given. If any other file is missing an error occurs (although one could in principle recover the .shx from the .shp file). Additional files are ignored.
 }
 
@@ -29,7 +29,7 @@ A shapefile should consist of at least four files: .shp (the geometry), .dbf (th
   \item{verbose}{logical. If \code{TRUE}, information about the file is printed}
   \item{warnPRJ}{logical. If \code{TRUE}, a warning is given if there is no .prj file}
   \item{stringsAsFactors}{logical. If \code{TRUE}, strings are converted to factors}
-  \item{...}{Additional arguments passed to rgdal functions readOGR or writeOGR}
+  \item{...}{Additional arguments (none)}
 }
 
 \value{

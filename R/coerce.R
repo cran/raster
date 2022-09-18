@@ -57,11 +57,19 @@ setAs("SpatRaster", "Raster",
 				r <- raster::stack(r)
 			}
 		}
+		
+		# things that may be different than the file source
 		try(levels(r) <- cats(from), silent=TRUE)
 		try(names(r) <- names(from))
 		crs(r) <- crs(from)
 		extent(r) <- as.vector(ext(from))
-		return(r)
+		projection(r) <- crs(from)
+		if (hasValues(from)) {
+			so <- scoff(from)
+			gain(r) <- so[,1]
+			offs(r) <- so[,2]
+		}
+		r
 	}
 )
 
@@ -97,6 +105,8 @@ setAs("SpatRaster", "Raster",
 		if (from@file@NAchanged) {
 			NAflag(r) <- from@file@nodatavalue
 		}
+		scoff(r) <- cbind(gain(from), offs(from))
+		
 	} else {
 		if (is.na(from@crs)) {
 			prj <- ""
@@ -116,6 +126,9 @@ setAs("SpatRaster", "Raster",
 		}
 		levs <- levels(from)[[1]]
 		if (!is.null(levs)) {
+			if (ncol(levs) == 1) {
+				levs <- cbind(value=1:nrow(levs), levs)
+			}
 			levels(r) <- levs				
 		}
 	}

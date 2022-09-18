@@ -1,15 +1,15 @@
 Package: raster
 Type: Package
 Title: Geographic Data Analysis and Modeling
-Version: 3.5-29
-Date: 2022-08-14
-Imports: Rcpp, methods, terra (>= 1.6-2)
+Version: 3.6-3
+Date: 2022-09-16
+Imports: Rcpp, methods, terra (>= 1.6-16)
 LinkingTo: Rcpp
 Depends: sp (>= 1.4-5), R (>= 3.5.0)
-Suggests: rgdal (>= 1.5-23), ncdf4, igraph, tcltk, parallel, rasterVis,
-        MASS, sf, tinytest, gstat, fields, exactextractr
+Suggests: ncdf4, igraph, tcltk, parallel, rasterVis, MASS, sf,
+        tinytest, gstat, fields, exactextractr
 SystemRequirements: C++11
-Description: Reading, writing, manipulating, analyzing and modeling of spatial data. The package implements basic and high-level functions for raster data and for vector data operations such as intersections. See the manual and tutorials on <https://rspatial.org/> to get started.
+Description: Reading, writing, manipulating, analyzing and modeling of spatial data. The package implements basic and high-level functions for raster data and for vector data operations such as intersections. This package has been superseded by the "terra" package <https://CRAN.R-project.org/package=terra>. 
 License: GPL (>= 3)
 URL: https://rspatial.org/raster
 BugReports: https://github.com/rspatial/raster/issues/
@@ -49,7 +49,7 @@ Authors@R: c(
 	person("Rafael", "Wueest", role = "ctb")
 	)
 NeedsCompilation: yes
-Packaged: 2022-08-14 06:57:32 UTC; rhijm
+Packaged: 2022-09-17 14:26:01 UTC; rhijm
 Author: Robert J. Hijmans [cre, aut] (<https://orcid.org/0000-0001-5872-2872>),
   Jacob van Etten [ctb],
   Michael Sumner [ctb],
@@ -83,4 +83,4 @@ Author: Robert J. Hijmans [cre, aut] (<https://orcid.org/0000-0001-5872-2872>),
   Rafael Wueest [ctb]
 Maintainer: Robert J. Hijmans <r.hijmans@gmail.com>
 Repository: CRAN
-Date/Publication: 2022-08-14 09:20:02 UTC
+Date/Publication: 2022-09-18 20:26:04 UTC

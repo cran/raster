@@ -4,8 +4,17 @@
 # Licence GPL v3
 
 
+.useproj6 <- function() {
+	FALSE
+}
+
+.rawTransform <- function(projfrom, projto, xy, wkt="") {
+	xy <- terra::vect(xy, crs=projfrom)
+    xy <- terra::project(xy, projto)
+	terra::crds(xy)
+}
+
 projectExtent <- function(object, crs) {
-	.requireRgdal()
 	use_proj6 <- .useproj6()
 	
 	object <- raster(object)
@@ -27,7 +36,7 @@ projectExtent <- function(object, crs) {
 		}
 	} else {
 		projfrom <- proj4string(pfrom)
-		projto <-  proj4string(pto)
+		projto <- proj4string(pto)
 	}
 
 #	rs <- res(object)
@@ -80,15 +89,7 @@ projectExtent <- function(object, crs) {
 	
 	}
 	
-	if (use_proj6) {
-		res <- rgdal::rawTransform( projfrom, projto, nrow(xy), xy[,1], xy[,2], wkt=use_proj6)	
-	} else {
-		res <- rgdal::rawTransform( projfrom, projto, nrow(xy), xy[,1], xy[,2])		
-	}
-	
-	x <- res[[1]]
-	y <- res[[2]]
-	xy <- cbind(x, y)
+	xy <- .rawTransform( projfrom, projto, xy)		
 	xy <- subset(xy, !(is.infinite(xy[,1]) | is.infinite(xy[,2])) )
 	x <- xy[,1]
 	y <- xy[,2]
@@ -125,14 +126,11 @@ projectExtent <- function(object, crs) {
 	fromcrs <- .getCRS(obj)
 	if (proj6) {
 		fromcrs <- wkt(fromcrs)
-		pXY <- rgdal::rawTransform(fromcrs, crs, nrow(xy), xy[,1], xy[,2], wkt=proj6)
 	} else {
-		fromcrs <-  proj4string(fromcrs)	
-		pXY <- rgdal::rawTransform(fromcrs, crs, nrow(xy), xy[,1], xy[,2])
+		fromcrs <- proj4string(fromcrs)	
 	}
-
+	pXY <- .rawTransform(fromcrs, crs, xy)
 	
-	pXY <- cbind(pXY[[1]], pXY[[2]])
 #	out <- c((pXY[2,1] - pXY[1,1]), (pXY[4,2] - pXY[3,2]))
 	outex <- extent(pXY)
 	out <- c(xmax(outex) - xmin(outex),	ymax(outex) - ymin(outex))
@@ -162,7 +160,6 @@ projectExtent <- function(object, crs) {
 
 projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE, over=FALSE, filename="", ...)  {
 
-	.requireRgdal()
 	use_proj6 <- .useproj6()
 
 	projfrom <- .getCRS(from)
@@ -189,16 +186,16 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 		}
 		#compareCRS(projfrom, projto)
 		if (use_proj6) {
-			if (rgdal::compare_CRS(projto, projfrom)["strict"]) {
-				warning("input and ouput crs are the same")
-				#return(from) 
-			}
+		#	if (rgdal::compare_CRS(projto, projfrom)["strict"]) {
+		#		warning("input and ouput crs are the same")
+		#		#return(from) 
+		#	}
 			projfrom <- wkt(projfrom)
 		} else {
-			if ( proj4string(projto) == proj4string(projfrom)) {
+			if (proj4string(projto) == proj4string(projfrom)) {
 				warning("input and ouput crs are the same")
 			}
-			projfrom <-  proj4string(projfrom)
+			projfrom <- proj4string(projfrom)
 		}
 		to <- projectExtent(from, projto)
 		to@crs <- projto
@@ -206,7 +203,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 		if (use_proj6) {
 			projto <- wkt(projto)
 		} else {
-			projto <-  proj4string(projto)		
+			projto <- proj4string(projto)		
 		}
 		if (missing(res)) {
 			res <- .computeRes(from, projto, use_proj6)
@@ -235,15 +232,15 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 			stop("output projection is NA") 
 		} 
 		if (use_proj6) {
-			if (rgdal::compare_CRS(projto, projfrom)["strict"]) {
-				warning("input and ouput crs are the same")
-			}
+		#	if (rgdal::compare_CRS(projto, projfrom)["strict"]) {
+		#		warning("input and ouput crs are the same")
+		#	}
 			projfrom <- wkt(projfrom)
 		} else {
-			if ( proj4string(projto) ==  proj4string(projfrom)) {
+			if (proj4string(projto) == proj4string(projfrom)) {
 				warning("input and ouput crs are the same")
 			}
-			projfrom =  proj4string(projfrom)
+			projfrom = proj4string(projfrom)
 		}
 		
 		e <- extent( projectExtent(from, projto) )
@@ -319,113 +316,16 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 	}
 
 		
-	if (.doCluster()) {
-		
-		cl <- getCluster()
-		on.exit( returnCluster() )
-
-		nodes <- min(ceiling(to@nrows/10), length(cl)) # at least 10 rows per node
-		
-		message('Using cluster with ', nodes, ' nodes')
-		utils::flush.console()
-		
-		tr <- blockSize(to, minblocks=nodes)
-		pb <- pbCreate(tr$n, label='projectRaster', ...)
-
-		parallel::clusterExport(cl, c('tr', 'to', 'from', 'e', 'nl', 'projto_int', 'projfrom', 'method'), envir=environment())
-		
-		clFun <- function(i) {
-			start <- cellFromRowCol(to, tr$row[i], 1)
-			end <- start + tr$nrows[i] * ncol(to) - 1
-			cells <- start:end
-			xy <- xyFromCell(to, cells) 
-			xy <- subset(xy, xy[,1] > e@xmin & xy[,1] < e@xmax)
-			v <- matrix(nrow=length(cells), ncol=nl)
-			if (nrow(xy) > 0) {
-				ci <- match(cellFromXY(to, xy), cells)
-				if (use_proj6) {
-					xy <- rgdal::rawTransform(projto_int, projfrom, nrow(xy), xy[,1], xy[,2], wkt=use_proj6)
-				} else {
-					xy <- rgdal::rawTransform(projto_int, projfrom, nrow(xy), xy[,1], xy[,2])				
-				}
-			
-				xy <- cbind(xy[[1]], xy[[2]])
-				v[ci, ] <- .xyValues(from, xy, method=method)
-			} 
-			return(v)
-		}
-	
-		.sendCall <- eval( parse( text="parallel:::sendCall") )	
-		# for debugging
-		# parallel::clusterExport(cl,c("tr", "projto", "projfrom", "method", "from", "to"))
-        for (i in 1:nodes) {
-			.sendCall(cl[[i]], clFun, list(i), tag=i)
-		}
-		        
-		if (inMemory) {
-			v <- matrix(nrow=ncell(to), ncol=nlayers(from))
-
-			for (i in 1:tr$n) {
-				pbStep(pb, i)
-				d <- .recvOneData(cl)
-				if (! d$value$success) {
-					print(d)
-					stop('cluster error')
-				}
-				start <- cellFromRowCol(to, tr$row[d$value$tag], 1)
-				end <- start + tr$nrows[d$value$tag] * ncol(to) - 1
-				v[start:end, ] <- d$value$value
-				ni <- nodes+i
-				if (ni <= tr$n) {
-					.sendCall(cl[[d$node]], clFun, list(ni), tag=ni)
-				}
-			}
-			
-			to <- setValues(to, v)
-			if (filename != '') {
-				to <- writeRaster(to, filename, ...)
-			}
-			pbClose(pb)
-			return(to)
-			
-		} else {
-			to <- writeStart(to, filename=filename, ...)
-
-			for (i in 1:tr$n) {
-				pbStep(pb, i)
-				d <- .recvOneData(cl)
-				if (! d$value$success ) { 
-					print(d)
-					stop('cluster error') 
-				}
-				to <- writeValues(to, d$value$value, tr$row[d$value$tag])
-				ni <- nodes+i
-				if (ni <= tr$n) {
-					.sendCall(cl[[d$node]], clFun, list(ni), tag=ni)
-				}
-			}
-			pbClose(pb)
-			to <- writeStop(to)	
-			return(to)
-		}	
-
-		
-	} else {
 		# this seems to need smaller chunks
 		#cz <- max(5, 0.1 * .chunk() / nlayers(to))
 		
 		
 		if (inMemory) {
 			
-			xy <- sp::coordinates(to) 
+			xy <- coordinates(to) 
 			xy <- subset(xy, xy[,1] > e@xmin & xy[,1] < e@xmax)
 			cells <- cellFromXY(to, xy)
-			if (use_proj6) {
-				xy <- rgdal::rawTransform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2], wkt=use_proj6 )
-			} else {
-				xy <- rgdal::rawTransform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2])
-			}
-			xy <- cbind(xy[[1]], xy[[2]])
+			xy <- .rawTransform( projto_int, projfrom, xy)
 			to[cells] <- .xyValues(from, xy, method=method)
 			
 			if (filename != '') {
@@ -445,12 +345,7 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 				if (nrow(xy) > 0) {
 					ci <- match(cellFromXY(to, xy), cells)
 
-					if (use_proj6) {
-						xy <- rgdal::rawTransform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2], wkt=use_proj6 )
-					} else {
-						xy <- rgdal::rawTransform( projto_int, projfrom, nrow(xy), xy[,1], xy[,2])
-					}
-					xy <- cbind(xy[[1]], xy[[2]])
+					xy <- .rawTransform( projto_int, projfrom, xy)
 					v <- matrix(nrow=length(cells), ncol=nl)
 					v[ci, ] <- .xyValues(from, xy, method=method)
 					to <- writeValues(to, v, tr$row[i])
@@ -461,6 +356,4 @@ projectRaster <- function(from, to, res, crs, method="bilinear", alignOnly=FALSE
 			to <- writeStop(to)	
 			return(to)
 		}
-	}
 }
-

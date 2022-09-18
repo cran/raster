@@ -32,7 +32,7 @@ projectExtent(object, crs)
   \item{crs}{character or object of class 'CRS'. PROJ.4 description of the coordinate reference system. In projectRaster this is used to set the output CRS if 'to' is missing, or if 'to' has no valid CRS}
   \item{method}{method used to compute values for the new RasterLayer. Either 'ngb' (nearest neighbor), which is useful for categorical variables, or 'bilinear' (bilinear interpolation; the default value), which is appropriate for continuous variables.}
   \item{alignOnly}{logical. Use \code{to} or other parameters only to align the output (i.e. same origin and resolution), but use the projected extent from \code{from}}
-  \item{over}{logical. If \code{TRUE} wrapping around the date-line is turned off. This can be desirable for global data (to avoid mapping the same areas twice) but it is not desireable in other cases}
+  \item{over}{logical. If \code{TRUE} wrapping around the date-line is turned off. This can be desirable for global data (to avoid mapping the same areas twice) but it is not desirable in other cases}
   \item{filename}{character. Output filename}  
   \item{...}{additional arguments as for \code{\link{writeRaster}}}  
   \item{object}{Raster* object}
@@ -47,7 +47,7 @@ There are two approaches you can follow to project the values of a Raster object
 2) Create a template Raster with the CRS you want to project to. You can use an existing object, or use \code{projectExtent} for this or an existing Raster* object. Also set the number of rows and columns (or the resolution), and perhaps adjust the extent. The resolution of the output raster should normally be similar to that of the input raster. Then use that object as \code{from} argument to project the input Raster to. 
 This is the preferred method because you have most control. For example you can assure that the resulting Raster object lines up with other Raster objects.
 
-Projection is performed using the PROJ.4 library accessed through the rgdal package. 
+Projection is performed using the PROJ library. 
 
 
 Also see \code{projInfo('proj')}, \code{projInfo('ellps')}, and \code{projInfo('datum')} for valid PROJ.4 values. 
@@ -72,20 +72,19 @@ RasterLayer or RasterBrick object.
 
 
 \seealso{
-\code{\link{resample}}, \code{\link[rgdal]{CRS-class}}, \code{\link[rgdal]{projInfo}}, \code{\link[sp]{spTransform}}
+\code{\link{resample}}
 }
 
+
 \examples{
+
 # create a new (not projected) RasterLayer with cellnumbers as values
-r <- raster(xmn=-110, xmx=-90, ymn=40, ymx=60, ncols=40, nrows=40)
+r <- raster(xmn=-110, xmx=-90, ymn=40, ymx=60, ncols=40, nrows=40, crs="+proj=longlat")
 r <- setValues(r, 1:ncell(r))
-crs(r)
-# wkt(r)
+projection(r)
+
 # proj.4 projection description
 newproj <- "+proj=lcc +lat_1=48 +lat_2=33 +lon_0=-100 +datum=WGS84"
-
-# we need the rgdal package for this
-if (require(rgdal)) {
 
 #simplest approach
 pr1 <- projectRaster(r, crs=newproj)
@@ -104,17 +103,6 @@ res(pr3) <- 200000
 # now project
 pr3 <- projectRaster(r, pr3)
 
-\dontrun{
-# using a higher resolution
-res(pr1) <- 10000
-pr <- projectRaster(r, pr1, method='bilinear')
-inv <- projectRaster(pr, r, method='bilinear')
-dif <- r - inv
-# small difference
-plot(dif)
-}
-
-}
 }
 
 \keyword{spatial}
