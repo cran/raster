@@ -40,7 +40,8 @@
 	r@file@name <- filename
 	r@file@driver <- 'gdal' 
  	r@data@fromdisk <- TRUE
-	r@file@datanotation <- x@ptr$dataType[1]
+#	r@file@datanotation <- x@ptr$dataType[1]
+	r@file@datanotation <- datatype(x)[1]
 	if (any(hasMinMax(x))) {
 		mnmx <- minmax(x)
 	} else {
@@ -57,6 +58,7 @@
 	r@file@blockrows <- bks[,1]
 	r@file@blockcols <- bks[,2]
 	
+	
 	if (type == 'RasterLayer') {
 		band <- as.integer(band)
 		if ( band > nlyr(x) ) {
@@ -69,7 +71,13 @@
 		r@file@nbands <- as.integer(nlyr(x))
 		r@data@min <- minv[band]
 		r@data@max <- maxv[band]
-	
+
+		if (is.factor(x)[1]) {
+			cts <- cats(x)[[1]]
+			colnames(cts)[1] <- "ID"
+			levels(r) <- cts
+		}
+		
 	} else {
 		r@data@min <- minv
 		r@data@max <- maxv

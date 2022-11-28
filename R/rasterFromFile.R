@@ -22,14 +22,13 @@
 
 	fileext <- toupper(extension(x))
 
-	if (fileext %in% c(".GRD", ".GRI")) {
+	if ((fileext == ".GRD") || (fileext == ".GRI"))  {
 		grifile <- .setFileExtensionValues(x, 'raster')
 		grdfile <- .setFileExtensionHeader(x, 'raster')
-		if ( file.exists( grdfile) & file.exists( grifile)) {
+		if ( file.exists( grdfile) && file.exists( grifile)) {
 			return ( .rasterFromRasterFile(grdfile, band=band, objecttype, ...) )
 		}
 	}
-
 
 	if (! file.exists(x) ) {
 		if (extension(x) == '') {
@@ -64,11 +63,10 @@
 	}
 
            ## MDSumner, NSIDC data
-        if (fileext %in% c(".BIN")) {
-            r <- .rasterFromNSIDCFile(x)
-            if (!is.null(r)) return(r)
-        }
-
+    if (fileext %in% c(".BIN")) {
+        r <- .rasterFromNSIDCFile(x)
+        if (!is.null(r)) return(r)
+    }
 
 #	if(!native) {
 #		if (! .requireRgdal(FALSE) )  {

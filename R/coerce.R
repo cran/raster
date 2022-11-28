@@ -11,7 +11,7 @@ setAs("SpatRaster", "Raster",
 		b <- sources(from, bands=TRUE)
 		nl <- nlyr(from)
 		e <- as.vector(ext(from))
-		prj <- crs(from)
+		prj <- crs(from, proj=TRUE)
 		if (nl == 1) {
 			if (b$source == "") {
 				r <- raster::raster(ncols=ncol(from), nrows=nrow(from), crs=prj,
@@ -61,14 +61,15 @@ setAs("SpatRaster", "Raster",
 		# things that may be different than the file source
 		try(levels(r) <- cats(from), silent=TRUE)
 		try(names(r) <- names(from))
-		crs(r) <- crs(from)
+		#crs(r) <- crs(from)
 		extent(r) <- as.vector(ext(from))
-		projection(r) <- crs(from)
+		projection(r) <- crs(from, proj=TRUE)
 		if (hasValues(from)) {
 			so <- scoff(from)
 			gain(r) <- so[,1]
 			offs(r) <- so[,2]
 		}
+		g <- gc()
 		r
 	}
 )
@@ -97,7 +98,11 @@ setAs("SpatRaster", "Raster",
 			if (is.null(prj)) {
 				prj <- from@crs@projargs
 			}
-			crs(r) <- prj
+			if (utils::packageVersion("terra") > "1.6.41") {
+				crs(r, warn=FALSE) <- prj			
+			} else {
+				crs(r) <- prj
+			}
 			if (nbands(from) != nlayers(from)) {
 				r <- r[[bandnr(from)]]
 			}
@@ -154,7 +159,9 @@ setAs("SpatRaster", "Raster",
 		x <- from[[i]]
 		.fromRasterLayerBrick(x)
 	})
-	do.call(c, s)
+	out <- do.call(c, s)
+	g <- gc()
+	out
 }
 
 
@@ -174,7 +181,11 @@ setAs("Raster", "SpatRaster",
 				prj <- from@crs@projargs
 			}
 		}
-		crs(x) <- prj
+		if (utils::packageVersion("terra") > "1.6.41") {
+			crs(x, warn=FALSE) <- prj			
+		} else {
+			crs(x) <- prj
+		}
 		names(x) <- names(from)
 		ext(x) <- as.vector(extent(from))
 		x

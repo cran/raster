@@ -9,9 +9,13 @@
 }
 
 .rawTransform <- function(projfrom, projto, xy, wkt="") {
-	xy <- terra::vect(xy, crs=projfrom)
-    xy <- terra::project(xy, projto)
-	terra::crds(xy)
+	v <- terra::vect()
+	out <- v@ptr$project_xy(xy[,1], xy[,2], projfrom, projto)
+	matrix(out, ncol=2)
+	
+#	xy <- terra::vect(xy, crs=projfrom)
+#    xy <- terra::project(xy, projto)
+#	terra::crds(xy)
 }
 
 projectExtent <- function(object, crs) {
@@ -90,7 +94,7 @@ projectExtent <- function(object, crs) {
 	}
 	
 	xy <- .rawTransform( projfrom, projto, xy)		
-	xy <- subset(xy, !(is.infinite(xy[,1]) | is.infinite(xy[,2])) )
+	xy <- subset(xy, !(is.infinite(xy[,1]) | is.infinite(xy[,2]) | is.na(xy[,2]) ))
 	x <- xy[,1]
 	y <- xy[,2]
 	

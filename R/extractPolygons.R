@@ -95,8 +95,6 @@ function(x, y, fun=NULL, na.rm=FALSE, exact=FALSE, weights=FALSE, normalizeWeigh
 		return(res[1:npol])
 	}
 	
-
-	
 	rr <- raster(x)
 	
 	pb <- pbCreate(npol, label='extract', ...)
@@ -238,8 +236,8 @@ function(x, y, fun=NULL, na.rm=FALSE, exact=FALSE, weights=FALSE, normalizeWeigh
 			} else {
 				rc <- crop(rr, extent(pp)+addres)
 				if (exact) {
-					erc <- crop(x, rc)
-					xy <- exactextractr::exact_extract(erc, pp, include_cell=cellnumbers, progress=FALSE)[[1]]	
+					#erc <- crop(x, rc)
+					xy <- exactextractr::exact_extract(x, pp, include_cell=cellnumbers, progress=FALSE)[[1]]	
 				} else if (weights) {
 					rc <- .polygonsToRaster(pp, rc, getCover=TRUE, silent=TRUE)
 					rc[rc==0] <- NA
@@ -367,7 +365,7 @@ function(x, y, fun=NULL, na.rm=FALSE, exact=FALSE, weights=FALSE, normalizeWeigh
 		} else {
 			nms <- c('ID', names(x)[lyrs])
 		}
-		if ((weights|exact) & is.null(fun)) {
+		if ((weights) & is.null(fun)) {
 			nms <- c(nms, 'weight')
 		}
 		colnames(res) <- nms
