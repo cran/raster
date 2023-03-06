@@ -8,10 +8,13 @@
 ### from terra
 setAs("SpatRaster", "Raster", 
 	function(from) {
+		if (any(terra::window(from))) {
+			stop("you must remove the 'window' from the SpatRaster before coercion to a Raster*")
+		}
 		b <- sources(from, bands=TRUE)
 		nl <- nlyr(from)
 		e <- as.vector(ext(from))
-		prj <- crs(from, proj=TRUE)
+		prj <- crs(from) #, proj=TRUE)
 		if (nl == 1) {
 			if (b$source == "") {
 				r <- raster::raster(ncols=ncol(from), nrows=nrow(from), crs=prj,
@@ -57,6 +60,12 @@ setAs("SpatRaster", "Raster",
 				r <- raster::stack(r)
 			}
 		}
+
+		if (hasValues(from)) {
+			so <- scoff(from)
+			gain(r) <- so[,1]
+			offs(r) <- so[,2]
+		}
 		
 		# things that may be different than the file source
 		try(levels(r) <- cats(from), silent=TRUE)
@@ -64,12 +73,6 @@ setAs("SpatRaster", "Raster",
 		#crs(r) <- crs(from)
 		extent(r) <- as.vector(ext(from))
 		projection(r) <- crs(from, proj=TRUE)
-		if (hasValues(from)) {
-			so <- scoff(from)
-			gain(r) <- so[,1]
-			offs(r) <- so[,2]
-		}
-		g <- gc()
 		r
 	}
 )
@@ -94,15 +97,6 @@ setAs("SpatRaster", "Raster",
 					levels(r) <- levs
 				}
 			}
-			prj <- comment(from@crs)
-			if (is.null(prj)) {
-				prj <- from@crs@projargs
-			}
-			if (utils::packageVersion("terra") > "1.6.41") {
-				crs(r, warn=FALSE) <- prj			
-			} else {
-				crs(r) <- prj
-			}
 			if (nbands(from) != nlayers(from)) {
 				r <- r[[bandnr(from)]]
 			}
@@ -113,18 +107,9 @@ setAs("SpatRaster", "Raster",
 		scoff(r) <- cbind(gain(from), offs(from))
 		
 	} else {
-		if (is.na(from@crs)) {
-			prj <- ""
-		} else {
-			prj <- comment(from@crs)
-			if (is.null(prj)) {
-				prj <- from@crs@projargs
-			}
-		}
 		r <- rast(	nrows=nrow(from), 
 					ncols=ncol(from),
 					nlyrs=nlayers(from),
-					crs=prj,
 					extent=extent(from))
 		if (hasValues(from)) {
 			values(r) <- values(from)
@@ -137,6 +122,12 @@ setAs("SpatRaster", "Raster",
 			levels(r) <- levs				
 		}
 	}
+	if (.hasSlot(from, "srs")) {
+		prj <- from@srs
+	} else {
+		prj <- .srs_from_sp(from@crs)	
+	}
+	crs(r, warn=FALSE) <- prj			
 	r
 }
 
@@ -172,22 +163,14 @@ setAs("Raster", "SpatRaster",
 		} else {
 			x <- .fromRasterStack(from)
 		}
-		# they may have been changed for file based objects
-		if (is.na(from@crs)) {
-			prj <- ""
-		} else {
-			prj <- comment(from@crs)
-			if (is.null(prj)) {
-				prj <- from@crs@projargs
-			}
-		}
-		if (utils::packageVersion("terra") > "1.6.41") {
-			crs(x, warn=FALSE) <- prj			
-		} else {
-			crs(x) <- prj
-		}
 		names(x) <- names(from)
 		ext(x) <- as.vector(extent(from))
+		if (.hasSlot(from, "srs")) {
+			prj <- from@srs
+		} else {
+			prj <- .srs_from_sp(from@crs)	
+		}
+		crs(x, warn=FALSE) <- prj			
 		x
 	}
 )
