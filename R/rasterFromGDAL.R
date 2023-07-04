@@ -42,7 +42,6 @@
 	r@file@name <- filename
 	r@file@driver <- 'gdal' 
  	r@data@fromdisk <- TRUE
-#	r@file@datanotation <- x@ptr$dataType[1]
 	r@file@datanotation <- datatype(x)[1]
 	if (any(hasMinMax(x))) {
 		mnmx <- minmax(x)
@@ -76,10 +75,11 @@
 
 		if (is.factor(x)[1]) {
 			cts <- cats(x)[[1]]
-			colnames(cts)[1] <- "ID"
-			levels(r) <- cts
+			if (!is.null(cts)) {
+				colnames(cts)[1] <- "ID"
+				levels(r) <- cts
+			}
 		}
-		
 	} else {
 		r@data@min <- minv
 		r@data@max <- maxv

@@ -1,7 +1,7 @@
-ee917749d775b7a87d2b3d80cbcaf441 *DESCRIPTION
+c7213e7630fe5cdbc0ab0dee5f011088 *DESCRIPTION
 67ee2a91432ddcb4d6a9dfc93dcb6441 *NAMESPACE
 08b6dddecc378998f5a86b71e8ff5d82 *NEWS
-8ec4238e3b729b64c501d684b8a09bd3 *R/AAAClasses.R
+8cc868c6b5aefe4c2d43d28df06ede95 *R/AAAClasses.R
 2ad39a4b357fad908e9568c87f2c892a *R/AAgeneric_functions.R
 e157c769c191800888714600d8380ea3 *R/GDALtransient.R
 37de111007563a036b3c4ff9b0c44f10 *R/Geary.R
@@ -51,7 +51,7 @@ cbe143c5f2fca3ff9c079e7fc3e781da *R/cellStats.R
 84e34cac205568a2135f758a17bee7a0 *R/click.R
 79dbefdc765263bc1a035b9c51aae95b *R/clump.R
 351b50b3f150e45d47a551b7b71ee7d5 *R/clusterR.R
-fb22e846acc0e1dfec448012a15004a5 *R/coerce.R
+f363fcfbe6390201db7ce17d88dcae73 *R/coerce.R
 860fa84e6201107a04e7d866a2e254f8 *R/col2RGB.R
 f1670f8661d7b88ab58e624cf6b9fd16 *R/colortable.R
 f6d126480109fc7634a8315b08dbf1c1 *R/commonDataType.R
@@ -128,7 +128,7 @@ dc186fa372ff887dbaab56f6fc31028e *R/hdrEnvi.R
 ffb1e1fffedeaf3d88da7f2b4a5bb58b *R/hdrErdasRaw.R
 1188875b30080a2256b30a2b2fc35db4 *R/hdrIDRISI.R
 448ab2852b3a8abe435e6b4fbd46ee71 *R/hdrPRJ.R
-c625766ad754d0f852da91fb812e3eb0 *R/hdrRaster.R
+c381b7b40f80923923e3982c961e9299 *R/hdrRaster.R
 f17b5f21fceb414e0f5212365a372780 *R/hdrSAGA.R
 13d8bbbd7f5531a8a445f1bf161ca055 *R/hdrVRT.R
 714c3163e7b131cda273de02680bf792 *R/hdrWorldFile.R
@@ -186,7 +186,7 @@ e52374baafa0a2972abd3be15fe20477 *R/netCDFtoRasterCD.R
 322c27edefaca28163f122af13324d27 *R/netCDFtoRasterGMT.R
 eae8a0e3489850d0ee6468c5ff13e5c2 *R/netCDFtoStack.R
 9a2f118f35b872f85f92698171e059a8 *R/netCDFutil.R
-877959d8f56a175814a0f62351c15cc3 *R/netCDFwriteCD.R
+9cedf52958a92dcea3c26996becbf384 *R/netCDFwriteCD.R
 c6086ef40bb390abc3c2cb8d605985ce *R/newPLot.R
 07075bf7ca758c2814aa861eb6b103e4 *R/nlayers.R
 2eef18a8a592d4d636483760dbfd3646 *R/notused.R
@@ -207,8 +207,8 @@ e3c5d4d3a87a2ee58ca2fa5b313fefcc *R/predict.R
 49647c0795d0ad58eec6ddac36fb5f20 *R/print.R
 f7400215d2b0e7c18aa4a5ba4a4780ad *R/progressBar.R
 d01f731a51c9800321c7bb9489612ff0 *R/project.R
-9b4ca370b5029b1afd94b2de323fa1cf *R/projectRaster.R
-0622592b2a4c76300dfcc8149d1366d6 *R/projection.R
+9c1a57f334e06ddffd4d6354b9b13b34 *R/projectRaster.R
+648c2a0e4846c15a6deca7651adf11bc *R/projection.R
 712c7df567606133082ffba0cd94e8e0 *R/properties.R
 c9ed2fd56a87388235a2d1a42dc6ebb2 *R/quad.R
 959d84e06b9cbf6d09d105c05d07a4fa *R/quantile.R
@@ -219,14 +219,14 @@ c50cc3f01347c6cbe11865f6259c4ced *R/rasterFromASCII.R
 c631e6d3919193b6081ddd83cc23f3f2 *R/rasterFromBIL.R
 78633f66f4c398a38b98ddb16d17e1e9 *R/rasterFromCells.R
 d8f4dab32e4a6c4d5e2afe0a57484155 *R/rasterFromFile.R
-cb9805356e6607718a8f56cbb8a5ef7e *R/rasterFromGDAL.R
+0f1d508a09b3883be64f6d95504531b6 *R/rasterFromGDAL.R
 2339533954f3f4ba3f4f527c2a3f4d9b *R/rasterFromIDRISI.R
 0697310be1e94ae77f795174f4aa55ce *R/rasterFromRasterFile.R
 196b47554f0e664e2cf8167b7907a119 *R/rasterFromSAGA.R
 4e791da3a684b32251a70d8911ca4b7d *R/rasterFromSurferFile.R
 3f127f2ee9f1ebc5543016190df20ee8 *R/rasterFromXYZ.R
 8a025cc10a492cbfe5562d8a22e500ab *R/rasterOptions.R
-ed0c08842c4c8be80a521e21fd23b48c *R/rasterToPoints.R
+298c4e8a7ae4c8b6f3723ff795f0041c *R/rasterToPoints.R
 a854f83acef2f67ae5566d1d27180702 *R/rasterToPolygons.R
 294fe3ebf9b6e88e68a25191e3cfb23f *R/rasterize.R
 6b455faaa8d7f3a29a80b863c08e30ce *R/rasterizeLines.R
@@ -302,7 +302,7 @@ d250349f68bb5139da55130f064efaa6 *R/whiches.max.R
 326d8c64f703d11c8a73927b2b60d7ab *R/writeAllAscii.R
 08fd5d03431e78207cca4f2c2eef2803 *R/writeAllGDAL.R
 2f692f9d9a80e31ba11b4bf3d15ff900 *R/writeAllRaster.R
-d156a300959777cabf137a9e1bfb44a4 *R/writeRaster.R
+63056e8f9aa5e12e1756129db1622360 *R/writeRaster.R
 141ac47f36501d5fcc84e224536bbfec *R/writeStartStop.R
 deb195398ea10a1bb5a4f8c560e4ae29 *R/writeStartStopAscii.R
 2533745eb65877e12d59632af912e1d2 *R/writeStartStopGDAL.R
@@ -316,7 +316,7 @@ a87634900f485c7e3e9fcb882fe191e0 *R/zApply.R
 9759b3627bfb6144d9ab5c093bad779c *R/zonal.R
 04018c59009b0d1d04b9f018faa0032f *R/zoom.R
 47e0201bf562a2e166876b23e67bad65 *R/zzz.R
-f01682ffd9d5582c0d3b8a226f3c2b16 *build/partial.rdb
+2836b2c5db38c9819380bd093383d89d *build/partial.rdb
 836fc2bffa338d9f9a721e00d9cd6078 *inst/external/countries.rds
 c85d689dcf4c7101db48cbab30338201 *inst/external/lux.dbf
 e729936bf5360b37a15365fc295a1901 *inst/external/lux.prj
