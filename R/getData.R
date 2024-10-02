@@ -4,14 +4,20 @@
 # Version 0.9
 # October 2008
 
+getData <- function(...) {
 
-getData <- function(name='GADM', download=TRUE, path='', ...) {
+	stop("getData has been removed. Please use the geodata package instead.")
+    
+}
 
-#	w <- getOption('rasterGetDataWarningGiven')
-#	if (is.null(w)) {
-		warning("getData will be removed in a future version of raster\n. Please use the geodata package instead")
-#		options(rasterGetDataWarningGiven=TRUE)
-#	}
+
+.getData <- function(name='GADM', download=TRUE, path='', ...) {
+
+	message("getData will stop working soon!\n. 
+			Please use the geodata package instead.\n
+			Going to sleep for 15 seconds...")
+	
+	Sys.sleep(15)
 	
 	path <- .getDataPath(path)
 

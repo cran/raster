@@ -1,8 +1,8 @@
 Package: raster
 Type: Package
 Title: Geographic Data Analysis and Modeling
-Version: 3.6-26
-Date: 2023-10-12
+Version: 3.6-30
+Date: 2024-10-02
 Imports: Rcpp, methods, terra (>= 1.7-29)
 LinkingTo: Rcpp
 Depends: sp (>= 1.4-5), R (>= 3.5.0)
@@ -48,7 +48,7 @@ Authors@R: c(
 	person("Rafael", "Wueest", role = "ctb")
 	)
 NeedsCompilation: yes
-Packaged: 2023-10-12 15:29:22 UTC; rhijm
+Packaged: 2024-10-02 16:19:18 UTC; rhijm
 Author: Robert J. Hijmans [cre, aut] (<https://orcid.org/0000-0001-5872-2872>),
   Jacob van Etten [ctb],
   Michael Sumner [ctb],
@@ -82,4 +82,4 @@ Author: Robert J. Hijmans [cre, aut] (<https://orcid.org/0000-0001-5872-2872>),
   Rafael Wueest [ctb]
 Maintainer: Robert J. Hijmans <r.hijmans@gmail.com>
 Repository: CRAN
-Date/Publication: 2023-10-14 13:40:12 UTC
+Date/Publication: 2024-10-02 18:10:02 UTC
