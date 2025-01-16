@@ -1,6 +1,6 @@
-616a8626b5e2d29494b6911fe3901887 *DESCRIPTION
-315d9d3afd561fc33ff5c841443463cd *NAMESPACE
-8e63a09f55c46c99cf9a490c8003992f *NEWS
+58ebf3b3795e6883b4ce447e77308bcc *DESCRIPTION
+d66a84574cd91d32c37ed8a4f10d706d *NAMESPACE
+8dcbed71a3de20745a92b411189e0398 *NEWS
 8cc868c6b5aefe4c2d43d28df06ede95 *R/AAAClasses.R
 2ad39a4b357fad908e9568c87f2c892a *R/AAgeneric_functions.R
 bdd38fe1ee6177b894741b0d2f7779b0 *R/GDALtransient.R
@@ -316,7 +316,7 @@ d9397fdb238463ae0c9929aad0347658 *R/zApply.R
 b9cc0e22fcbdd704f6199fecaf8a4382 *R/zonal.R
 227cc9e91a64d5685fc5f6eeac885ee2 *R/zoom.R
 cae0440f702e35b1a156006c63c84a0b *R/zzz.R
-b54db8794555342c4feee5fe0b1b8f5b *build/partial.rdb
+1dda19015f0aa969acee990c150e3ac9 *build/partial.rdb
 836fc2bffa338d9f9a721e00d9cd6078 *inst/external/countries.rds
 c85d689dcf4c7101db48cbab30338201 *inst/external/lux.dbf
 e729936bf5360b37a15365fc295a1901 *inst/external/lux.prj
